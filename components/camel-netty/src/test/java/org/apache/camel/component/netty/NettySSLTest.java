@@ -25,7 +25,11 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isJavaVendor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class NettySSLTest extends BaseNettyTest {
 
@@ -47,35 +51,36 @@ public class NettySSLTest extends BaseNettyTest {
     @Test
     public void testSSLInOutWithNettyConsumer() throws Exception {
         // ibm jdks dont have sun security algorithms
-        if (isJavaVendor("ibm")) {
-            return;
-        }
+        assumeFalse(isJavaVendor("ibm"));
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 // needClientAuth=true so we can get the client certificate
                 // details
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf&needClientAuth=true")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
-                            if (session != null) {
-                                javax.security.cert.X509Certificate cert = session.getPeerCertificateChain()[0];
-                                Principal principal = cert.getSubjectDN();
-                                log.info("Client Cert SubjectDN: {}", principal.getName());
-                                exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
-                            } else {
-                                exchange.getOut().setBody("Cannot start conversion without SSLSession");
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                SSLSession session
+                                        = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+                                if (session != null) {
+                                    javax.security.cert.X509Certificate cert = session.getPeerCertificateChain()[0];
+                                    Principal principal = cert.getSubjectDN();
+                                    log.info("Client Cert SubjectDN: {}", principal.getName());
+                                    exchange.getOut().setBody(
+                                            "When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
+                                } else {
+                                    exchange.getOut().setBody("Cannot start conversion without SSLSession");
+                                }
                             }
-                        }
-                    });
+                        });
             }
         });
         context.start();
 
-        String response = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf",
-                                               "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
-                                               String.class);
+        String response = template.requestBody(
+                "netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf",
+                "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds",
+                String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
 

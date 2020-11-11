@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.irc;
 
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -28,18 +29,22 @@ import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCConstants;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The irc component implements an <a href="https://en.wikipedia.org/wiki/Internet_Relay_Chat">IRC</a> (Internet Relay Chat) transport.
+ * Send and receive messages to/from and IRC chat.
  */
 @UriEndpoint(
-    firstVersion = "1.1.0", 
-    scheme = "irc", 
-    title = "IRC", 
-    syntax = "irc:hostname:port", 
-    alternativeSyntax = "irc:username:password@hostname:port", 
-    label = "chat")
+             firstVersion = "1.1.0",
+             scheme = "irc",
+             title = "IRC",
+             syntax = "irc:hostname:port",
+             alternativeSyntax = "irc:username:password@hostname:port",
+             category = { Category.CHAT })
 public class IrcEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
 
     @UriParam
     private IrcConfiguration configuration;
@@ -124,7 +129,7 @@ public class IrcEndpoint extends DefaultEndpoint {
 
     @Override
     public IrcProducer createProducer() throws Exception {
-        return new IrcProducer(this, component.getIRCConnection(configuration));
+        return new IrcProducer(this);
     }
 
     @Override
@@ -174,9 +179,9 @@ public class IrcEndpoint extends DefaultEndpoint {
 
         // hackish but working approach to prevent an endless loop. Abort after 4 nick attempts.
         if (nick.endsWith("----")) {
-            log.error("Unable to set nick: {} disconnecting", nick);
+            LOG.error("Unable to set nick: {} disconnecting", nick);
         } else {
-            log.warn("Unable to set nick: " + nick + " Retrying with " + nick + "-");
+            LOG.warn("Unable to set nick: {} Retrying with {} -", nick, nick);
             connection.doNick(nick);
             // if the nick failure was doing startup channels weren't joined. So join
             // the channels now. It's a no-op if the channels are already joined.
@@ -185,7 +190,7 @@ public class IrcEndpoint extends DefaultEndpoint {
     }
 
     public void joinChannels() {
-        for (IrcChannel channel : configuration.getChannels()) {
+        for (IrcChannel channel : configuration.getChannelList()) {
             joinChannel(channel);
         }
     }
@@ -205,13 +210,13 @@ public class IrcEndpoint extends DefaultEndpoint {
         String key = channel.getKey();
 
         if (ObjectHelper.isNotEmpty(key)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Joining: {} using {} with secret key", channel, connection.getClass().getName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Joining: {} using {} with secret key", channel, connection.getClass().getName());
             }
             connection.doJoin(chn, key);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Joining: {} using {}", channel, connection.getClass().getName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Joining: {} using {}", channel, connection.getClass().getName());
             }
             connection.doJoin(chn);
         }
@@ -220,4 +225,3 @@ public class IrcEndpoint extends DefaultEndpoint {
         }
     }
 }
-

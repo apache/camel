@@ -20,8 +20,9 @@ import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EtcdWatchTest extends EtcdTestSupport {
 
@@ -68,7 +69,7 @@ public class EtcdWatchTest extends EtcdTestSupport {
     public void testWatchWithTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:watch-with-timeout");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.watch.name());
+        mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, "watch");
         mock.expectedHeaderReceived(EtcdConstants.ETCD_PATH, "/timeoutKey");
         mock.expectedHeaderReceived(EtcdConstants.ETCD_TIMEOUT, true);
         mock.allMessages().body().isNull();
@@ -76,14 +77,14 @@ public class EtcdWatchTest extends EtcdTestSupport {
     }
 
     private void testWatch(String mockEndpoint, final String key, int updates) throws Exception {
-        final String[] values = new String[updates];
+        final Object[] values = new String[updates];
         for (int i = 0; i < updates; i++) {
             values[i] = key + "=myValue-" + i;
         }
 
         MockEndpoint mock = getMockEndpoint(mockEndpoint);
         mock.expectedMessageCount(2);
-        mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.watch.name());
+        mock.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, "watch");
         mock.expectedHeaderReceived(EtcdConstants.ETCD_PATH, key);
         mock.expectedBodiesReceived(values);
 
@@ -99,23 +100,23 @@ public class EtcdWatchTest extends EtcdTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("etcd:watch/myKey1")
-                    .process(NODE_TO_VALUE_IN)
-                    .to("mock:watch-with-path");
-                fromF("etcd:watch/myKeyRecovery?timeout=%s&fromIndex=%s", 1000 * 60 * 5, 1)
-                    .id("watchRecovery")
-                    .autoStartup(false)
-                    .process(NODE_TO_VALUE_IN)
-                    .to("mock:watch-recovery");
-                from("etcd:watch/recursive?recursive=true")
-                   .process(NODE_TO_VALUE_IN)
-                    .to("log:org.apache.camel.component.etcd?level=INFO")
-                    .to("mock:watch-recursive");
-                from("etcd:watch/myKey2")
-                    .process(NODE_TO_VALUE_IN)
-                    .to("mock:watch-with-config-path");
-                from("etcd:watch/timeoutKey?timeout=250&sendEmptyExchangeOnTimeout=true")
-                    .to("mock:watch-with-timeout");
+                from("etcd-watch:myKey1")
+                        .process(NODE_TO_VALUE_IN)
+                        .to("mock:watch-with-path");
+                fromF("etcd-watch:myKeyRecovery?timeout=%s&fromIndex=%s", 1000 * 60 * 5, 1)
+                        .id("watchRecovery")
+                        .autoStartup(false)
+                        .process(NODE_TO_VALUE_IN)
+                        .to("mock:watch-recovery");
+                from("etcd-watch:recursive?recursive=true")
+                        .process(NODE_TO_VALUE_IN)
+                        .to("log:org.apache.camel.component.etcd?level=INFO")
+                        .to("mock:watch-recursive");
+                from("etcd-watch:myKey2")
+                        .process(NODE_TO_VALUE_IN)
+                        .to("mock:watch-with-config-path");
+                from("etcd-watch:timeoutKey?timeout=250&sendEmptyExchangeOnTimeout=true")
+                        .to("mock:watch-with-timeout");
             }
         };
     }

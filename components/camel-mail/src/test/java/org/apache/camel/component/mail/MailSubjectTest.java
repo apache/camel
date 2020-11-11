@@ -19,9 +19,11 @@ package org.apache.camel.component.mail;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test for Mail subject support.
@@ -44,7 +46,7 @@ public class MailSubjectTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments());
+        assertFalse(mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments(), "Should not have attachements");
     }
 
     @Override

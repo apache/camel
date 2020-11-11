@@ -68,6 +68,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
     private String sslKeystore;
     @Metadata(label = "security")
     private SecurityPolicy securityPolicy;
+    @Metadata(label = "advanced")
     private List<BayeuxServer.Extension> extensions;
     @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -129,7 +130,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
                 connector.setHost(endpoint.getUri().getHost());
                 if ("localhost".equalsIgnoreCase(endpoint.getUri().getHost())) {
                     LOG.warn("You use localhost interface! It means that no external connections will be available."
-                            + " Don't you want to use 0.0.0.0 instead (all network interfaces)?");
+                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)?");
                 }
 
                 server.addConnector(connector);
@@ -163,8 +164,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
     }
 
     /**
-     * Disconnects the URL specified on the endpoint from the specified
-     * processor.
+     * Disconnects the URL specified on the endpoint from the specified processor.
      */
     public void disconnect(CometdProducerConsumer prodcon) throws Exception {
         CometdEndpoint endpoint = prodcon.getEndpoint();
@@ -184,10 +184,12 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         }
     }
 
-    protected CometDServlet createServletForConnector(Server server, Connector connector, CometdEndpoint endpoint) throws Exception {
+    protected CometDServlet createServletForConnector(Server server, Connector connector, CometdEndpoint endpoint)
+            throws Exception {
         CometDServlet servlet = new CometDServlet();
 
-        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
+        ServletContextHandler context
+                = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
 
         ServletHolder holder = new ServletHolder();
         holder.setServlet(servlet);
@@ -197,9 +199,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         // pointing to by example classpath:webapp
         if (endpoint.getBaseResource() != null) {
             String[] resources = endpoint.getBaseResource().split(":");
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(">>> Protocol found: " + resources[0] + ", and resource: " + resources[1]);
-            }
+            LOG.debug(">>> Protocol found: {}, and resource: {}", resources[0], resources[1]);
 
             if (resources[0].equals("file")) {
                 context.setBaseResource(Resource.newResource(resources[1]));

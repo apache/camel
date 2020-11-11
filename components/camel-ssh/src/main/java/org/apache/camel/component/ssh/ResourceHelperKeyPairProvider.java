@@ -55,12 +55,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This host key provider loads private keys from the specified resources using
- * {@link ResourceHelper}, and Camel's resource syntax for file:, classpath:, and http:.
- * {@link ResourceHelper}, and Camel's resource syntax for file:, classpath:, and http:.
+ * This host key provider loads private keys from the specified resources using {@link ResourceHelper}, and Camel's
+ * resource syntax for file:, classpath:, and http:. {@link ResourceHelper}, and Camel's resource syntax for file:,
+ * classpath:, and http:.
  *
- * Note that this class has a direct dependency on BouncyCastle and won't work
- * unless it has been correctly registered as a security provider.
+ * Note that this class has a direct dependency on BouncyCastle and won't work unless it has been correctly registered
+ * as a security provider.
  */
 public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -116,8 +116,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
             throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
         }
 
-        final List<KeyPair> keys =
-                new ArrayList<>(this.resources.length);
+        final List<KeyPair> keys = new ArrayList<>(this.resources.length);
 
         for (String resource : resources) {
             PEMParser r = null;
@@ -140,16 +139,16 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
                     JceOpenSSLPKCS8DecryptorProviderBuilder jce = new JceOpenSSLPKCS8DecryptorProviderBuilder();
                     jce.setProvider("BC");
                     InputDecryptorProvider decProv = jce.build(passwordFinder.get());
-                    o = ((PKCS8EncryptedPrivateKeyInfo)o).decryptPrivateKeyInfo(decProv);
+                    o = ((PKCS8EncryptedPrivateKeyInfo) o).decryptPrivateKeyInfo(decProv);
                 }
 
                 if (o instanceof PEMKeyPair) {
-                    o = pemConverter.getKeyPair((PEMKeyPair)o);
+                    o = pemConverter.getKeyPair((PEMKeyPair) o);
                     keys.add((KeyPair) o);
                 } else if (o instanceof KeyPair) {
                     keys.add((KeyPair) o);
                 } else if (o instanceof PrivateKeyInfo) {
-                    PrivateKey privateKey = pemConverter.getPrivateKey((PrivateKeyInfo)o);
+                    PrivateKey privateKey = pemConverter.getPrivateKey((PrivateKeyInfo) o);
                     PublicKey publicKey = convertPrivateToPublicKey(privateKey);
                     if (publicKey != null) {
                         keys.add(new KeyPair(publicKey, privateKey));
@@ -166,14 +165,16 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
         return keys;
     }
 
-    private PublicKey convertPrivateToPublicKey(PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private PublicKey convertPrivateToPublicKey(PrivateKey privateKey)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (privateKey instanceof RSAPrivateCrtKey) {
-            KeySpec keySpec = new RSAPublicKeySpec(((RSAPrivateCrtKey)privateKey).getModulus(),
-                                                            ((RSAPrivateCrtKey)privateKey).getPublicExponent());
+            KeySpec keySpec = new RSAPublicKeySpec(
+                    ((RSAPrivateCrtKey) privateKey).getModulus(),
+                    ((RSAPrivateCrtKey) privateKey).getPublicExponent());
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(keySpec);
         } else if (privateKey instanceof ECPrivateKey) {
-            ECPrivateKey ecPrivateKey = (ECPrivateKey)privateKey;
+            ECPrivateKey ecPrivateKey = (ECPrivateKey) privateKey;
 
             // Derive the public point by multiplying the generator by the private value
             ECParameterSpec paramSpec = EC5Util.convertSpec(ecPrivateKey.getParams());

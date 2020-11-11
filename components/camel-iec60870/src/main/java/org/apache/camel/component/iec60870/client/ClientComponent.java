@@ -24,6 +24,7 @@ import org.apache.camel.component.iec60870.AbstractIecComponent;
 import org.apache.camel.component.iec60870.ConnectionId;
 import org.apache.camel.component.iec60870.Constants;
 import org.apache.camel.component.iec60870.ObjectAddress;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions;
 
@@ -41,28 +42,25 @@ public class ClientComponent extends AbstractIecComponent<ClientConnectionMultip
     @Override
     protected void applyDataModuleOptions(final ClientOptions options, final Map<String, Object> parameters) {
         if (parameters.get(Constants.PARAM_DATA_MODULE_OPTIONS) instanceof DataModuleOptions) {
-            options.setDataModuleOptions((DataModuleOptions)parameters.get(Constants.PARAM_DATA_MODULE_OPTIONS));
+            options.setDataModuleOptions((DataModuleOptions) parameters.get(Constants.PARAM_DATA_MODULE_OPTIONS));
         }
     }
 
     @Override
-    protected Endpoint createEndpoint(final String uri, final ClientConnectionMultiplexor connection, final ObjectAddress address) {
+    protected Endpoint createEndpoint(
+            final String uri, final ClientConnectionMultiplexor connection, final ObjectAddress address) {
         return new ClientEndpoint(uri, this, connection, address);
     }
 
     @Override
     protected ClientConnectionMultiplexor createConnection(final ConnectionId id, final ClientOptions options) {
-        log.debug("Create new connection - id: {}", id);
-
         return new ClientConnectionMultiplexor(new ClientConnection(id.getHost(), id.getPort(), options));
     }
 
     /**
      * Default connection options
-     *
-     * @param defaultConnectionOptions the new default connection options, must
-     *            not be {@code null}
      */
+    @Metadata
     @Override
     public void setDefaultConnectionOptions(final ClientOptions defaultConnectionOptions) {
         super.setDefaultConnectionOptions(defaultConnectionOptions);

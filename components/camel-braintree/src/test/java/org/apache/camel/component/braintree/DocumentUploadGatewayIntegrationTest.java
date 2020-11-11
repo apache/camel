@@ -24,14 +24,19 @@ import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.DocumentUploadGatewayApiMethod;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DocumentUploadGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentUploadGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(DocumentUploadGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(DocumentUploadGatewayApiMethod.class).getName();
 
     @Test
     public void testCreate() throws Exception {
@@ -40,16 +45,14 @@ public class DocumentUploadGatewayIntegrationTest extends AbstractBraintreeTestS
         File evidenceDocument = new File(getClass().getClassLoader().getResource(documentName).getPath());
         DocumentUploadRequest documentUploadRequest = new DocumentUploadRequest(
                 DocumentUpload.Kind.EVIDENCE_DOCUMENT,
-                evidenceDocument
-        );
+                evidenceDocument);
 
         final Result<DocumentUpload> result = requestBody(
                 "direct://CREATE",
-                documentUploadRequest
-        );
+                documentUploadRequest);
 
-        assertNotNull("create result", result);
-        assertTrue("create result success", result.isSuccess());
+        assertNotNull(result, "create result");
+        assertTrue(result.isSuccess(), "create result success");
 
         DocumentUpload documentUpload = result.getTarget();
         assertEquals(documentName, documentUpload.getName());
@@ -61,7 +64,7 @@ public class DocumentUploadGatewayIntegrationTest extends AbstractBraintreeTestS
             public void configure() {
                 // test route for create
                 from("direct://CREATE")
-                    .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
 
             }
         };

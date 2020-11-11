@@ -27,8 +27,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class WireTapStreamCachingTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -53,7 +53,8 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingAMessageUsingWiretapShouldNotDeleteStreamFileBeforeAllExcangesAreComplete() throws InterruptedException {
+    public void testSendingAMessageUsingWiretapShouldNotDeleteStreamFileBeforeAllExcangesAreComplete()
+            throws InterruptedException {
 
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);
@@ -61,13 +62,14 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
 
         // the used file should contain more than one character in order to be
         // streamed into the file system
-        template.sendBody("direct:a", this.getClass().getClassLoader().getResourceAsStream("org/apache/camel/processor/twoCharacters.txt"));
+        template.sendBody("direct:a",
+                this.getClass().getClassLoader().getResourceAsStream("org/apache/camel/processor/twoCharacters.txt"));
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

@@ -33,8 +33,9 @@ public class ServletIntegration implements ServletContainerInitializer {
             @Override
             public void contextInitialized(final ServletContextEvent sce) {
                 final String contextPath = sce.getServletContext().getContextPath();
-                ofNullable(sce.getServletContext().getAttribute(ServerContainer.class.getName())).map(ServerContainer.class::cast)
-                    .ifPresent(container -> JSR356WebSocketComponent.registerServer(contextPath, container));
+                ofNullable(sce.getServletContext().getAttribute(ServerContainer.class.getName()))
+                        .map(ServerContainer.class::cast)
+                        .ifPresent(container -> JSR356WebSocketComponent.registerServer(contextPath, container));
             }
 
             @Override

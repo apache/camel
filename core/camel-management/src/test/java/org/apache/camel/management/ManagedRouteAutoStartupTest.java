@@ -20,7 +20,10 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRouteAutoStartupTest extends ManagementTestSupport {
 
@@ -37,7 +40,7 @@ public class ManagedRouteAutoStartupTest extends ManagementTestSupport {
         ObjectName onFoo = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
         ObjectName onBar = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"bar\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 
@@ -53,7 +56,8 @@ public class ManagedRouteAutoStartupTest extends ManagementTestSupport {
         state = (String) mbeanServer.getAttribute(onFoo, "State");
         assertEquals("Started", state);
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello World" },
+                new String[] { "java.lang.String", "java.lang.Object" });
         assertEquals("Bye World", reply);
 
         // stop Camel

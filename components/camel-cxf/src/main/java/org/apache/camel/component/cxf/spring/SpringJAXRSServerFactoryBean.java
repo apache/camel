@@ -30,12 +30,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean implements
-    ApplicationContextAware, BeanIdAware {
+public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean
+        implements
+        ApplicationContextAware, BeanIdAware {
     private String beanId;
     private LoggingFeature loggingFeature;
     private int loggingSizeLimit;
-    
+
     public SpringJAXRSServerFactoryBean() {
     }
 
@@ -59,12 +60,12 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean impleme
     public void setBeanId(String id) {
         beanId = id;
     }
-    
+
     // add this mothod for testing
     List<String> getSchemaLocations() {
         return schemaLocations;
     }
-    
+
     public boolean isLoggingFeatureEnabled() {
         return loggingFeature != null;
     }
@@ -82,9 +83,9 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean impleme
             }
             getFeatures().add(loggingFeature);
         }
-        
+
     }
-    
+
     public int getLoggingSizeLimit() {
         return loggingSizeLimit;
     }

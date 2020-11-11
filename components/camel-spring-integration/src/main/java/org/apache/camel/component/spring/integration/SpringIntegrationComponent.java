@@ -31,7 +31,8 @@ public class SpringIntegrationComponent extends DefaultComponent {
     }
 
     @Override
-    protected SpringIntegrationEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected SpringIntegrationEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         SpringIntegrationEndpoint endpoint = new SpringIntegrationEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);
         return endpoint;

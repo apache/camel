@@ -21,7 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NewProcessorAndServiceTest extends ContextTestSupport {
 
@@ -32,7 +35,7 @@ public class NewProcessorAndServiceTest extends ContextTestSupport {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
-        assertTrue("MyProcessor should be started", myProcessor.isStarted());
+        assertTrue(myProcessor.isStarted(), "MyProcessor should be started");
     }
 
     @Override

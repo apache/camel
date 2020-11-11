@@ -20,26 +20,26 @@ import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Producer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CounterEndpointTest {
 
     private static final String METRICS_NAME = "metrics.name";
-    private static final Double VALUE = new Long(System.currentTimeMillis()).doubleValue();
+    private static final Double VALUE = Long.valueOf(System.currentTimeMillis()).doubleValue();
 
     @Mock
     private MeterRegistry registry;
@@ -48,13 +48,13 @@ public class CounterEndpointTest {
 
     private InOrder inOrder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         endpoint = new MicrometerEndpoint(null, null, registry, Meter.Type.COUNTER, METRICS_NAME, Tags.empty());
         inOrder = Mockito.inOrder(registry);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         inOrder.verifyNoMoreInteractions();
     }

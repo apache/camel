@@ -22,7 +22,11 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedUnregisterProducerTest extends ManagementTestSupport {
 
@@ -44,20 +48,20 @@ public class ManagedUnregisterProducerTest extends ManagementTestSupport {
 
         ObjectName on = set.iterator().next();
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("mock://result", uri);
 
-        // TODO: populating route id on producers is not implemented yet
-        // String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
-        // assertEquals("route1", routeId);
+        // the producer should have route id
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("route1", routeId);
 
         Boolean singleton = (Boolean) mbeanServer.getAttribute(on, "Singleton");
         assertEquals(Boolean.TRUE, singleton);
 
         context.stop();
 
-        assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
+        assertFalse(mbeanServer.isRegistered(on), "Should no longer be registered");
     }
 
     @Override

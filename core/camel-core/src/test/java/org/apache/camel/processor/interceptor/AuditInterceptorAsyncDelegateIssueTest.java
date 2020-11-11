@@ -26,15 +26,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
 
     private MyIntercepStrategy strategy;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         strategy = new MyIntercepStrategy();
         super.setUp();
@@ -90,7 +92,9 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
         private volatile boolean invoked;
 
         @Override
-        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                CamelContext context, NamedNode definition, Processor target, Processor nextTarget)
+                throws Exception {
             return new DelegateAsyncProcessor(target) {
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     invoked = true;

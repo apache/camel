@@ -31,9 +31,15 @@ import org.apache.camel.component.beanstalk.processors.PutCommand;
 import org.apache.camel.component.beanstalk.processors.ReleaseCommand;
 import org.apache.camel.component.beanstalk.processors.TouchCommand;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.never;
@@ -41,6 +47,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisabledOnOs(OS.WINDOWS)
 public class ProducerTest extends BeanstalkMockTestSupport {
 
     @EndpointInject("beanstalk:tube")
@@ -52,10 +59,10 @@ public class ProducerTest extends BeanstalkMockTestSupport {
     @Produce("direct:start")
     protected ProducerTemplate direct;
 
-    private String testMessage = "hello, world";
+    private final String testMessage = "hello, world";
 
     @Test
-    public void testPut() throws Exception {
+    void testPut() throws Exception {
         final long priority = BeanstalkComponent.DEFAULT_PRIORITY;
         final int delay = BeanstalkComponent.DEFAULT_DELAY;
         final int timeToRun = BeanstalkComponent.DEFAULT_TIME_TO_RUN;
@@ -65,22 +72,20 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         when(client.put(priority, delay, timeToRun, payload)).thenReturn(jobId);
 
         final Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(PutCommand.class));
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() { // TODO: SetBodyProcessor(?)
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody(testMessage);
-            }
-        });
+        // TODO: SetBodyProcessor(?)
+        final Exchange exchange
+                = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> exchange1.getIn().setBody(testMessage));
 
-        assertEquals("Job ID in exchange", Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class));
+        assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).put(priority, delay, timeToRun, payload);
     }
 
     @Test
-    public void testPutOut() throws Exception {
+    void testPutOut() throws Exception {
         final long priority = BeanstalkComponent.DEFAULT_PRIORITY;
         final int delay = BeanstalkComponent.DEFAULT_DELAY;
         final int timeToRun = BeanstalkComponent.DEFAULT_TIME_TO_RUN;
@@ -90,22 +95,20 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         when(client.put(priority, delay, timeToRun, payload)).thenReturn(jobId);
 
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(PutCommand.class));
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOut, new Processor() { // TODO: SetBodyProcessor(?)
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody(testMessage);
-            }
-        });
+        // TODO: SetBodyProcessor(?)
+        final Exchange exchange
+                = template.send(endpoint, ExchangePattern.InOut, exchange1 -> exchange1.getIn().setBody(testMessage));
 
-        assertEquals("Job ID in exchange", Long.valueOf(jobId), exchange.getOut().getHeader(Headers.JOB_ID, Long.class));
+        assertEquals(Long.valueOf(jobId), exchange.getMessage().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).put(priority, delay, timeToRun, payload);
     }
 
     @Test
-    public void testPutWithHeaders() throws Exception {
+    void testPutWithHeaders() throws Exception {
         final long priority = 111;
         final int delay = 5;
         final int timeToRun = 65;
@@ -113,75 +116,68 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         final long jobId = 111;
 
         when(client.put(priority, delay, timeToRun, payload)).thenReturn(jobId);
-
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(PutCommand.class));
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() { // TODO: SetBodyProcessor(?)
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Headers.PRIORITY, priority);
-                exchange.getIn().setHeader(Headers.DELAY, delay);
-                exchange.getIn().setHeader(Headers.TIME_TO_RUN, timeToRun);
-                exchange.getIn().setBody(testMessage);
-            }
+        // TODO: SetBodyProcessor(?)
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> {
+            exchange1.getIn().setHeader(Headers.PRIORITY, priority);
+            exchange1.getIn().setHeader(Headers.DELAY, delay);
+            exchange1.getIn().setHeader(Headers.TIME_TO_RUN, timeToRun);
+            exchange1.getIn().setBody(testMessage);
         });
 
-        assertEquals("Job ID in exchange", Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class));
+        assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).put(priority, delay, timeToRun, payload);
     }
 
     @Test
-    public void testBury() throws Exception {
+    void testBury() throws Exception {
         final long priority = BeanstalkComponent.DEFAULT_PRIORITY;
         final long jobId = 111;
 
         endpoint.setCommand(BeanstalkCommand.bury);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(BuryCommand.class));
 
         when(client.bury(jobId, priority)).thenReturn(true);
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Headers.JOB_ID, jobId);
-            }
-        });
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
-        assertEquals("Op result", Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class));
-        assertEquals("Job ID in exchange", Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class));
+        assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
+        assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).bury(jobId, priority);
     }
 
     @Test
-    public void testBuryNoJobId() throws Exception {
+    void testBuryNoJobId() throws Exception {
         endpoint.setCommand(BeanstalkCommand.bury);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(BuryCommand.class));
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-            }
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> {
         });
 
-        assertTrue("Exchange failed", exchange.isFailed());
+        assertTrue(exchange.isFailed(), "Exchange failed");
 
         verify(client, never()).bury(anyLong(), anyLong());
     }
 
     @Test
-    public void testBuryWithHeaders() throws Exception {
+    void testBuryWithHeaders() throws Exception {
         final long priority = 1000;
         final long jobId = 111;
 
         endpoint.setCommand(BeanstalkCommand.bury);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(BuryCommand.class));
 
@@ -194,165 +190,148 @@ public class ProducerTest extends BeanstalkMockTestSupport {
             }
         });
 
-        assertEquals("Op result", Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class));
-        assertEquals("Job ID in exchange", Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class));
+        assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
+        assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).bury(jobId, priority);
     }
 
     @Test
-    public void testDelete() throws Exception {
+    void testDelete() throws Exception {
         final long jobId = 111;
 
         endpoint.setCommand(BeanstalkCommand.delete);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(DeleteCommand.class));
 
         when(client.delete(jobId)).thenReturn(true);
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Headers.JOB_ID, jobId);
-            }
-        });
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
-        assertEquals("Op result", Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class));
-        assertEquals("Job ID in exchange", Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class));
+        assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
+        assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).delete(jobId);
     }
 
     @Test
-    public void testDeleteNoJobId() throws Exception {
+    void testDeleteNoJobId() throws Exception {
         endpoint.setCommand(BeanstalkCommand.delete);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(DeleteCommand.class));
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-            }
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> {
         });
 
-        assertTrue("Exchange failed", exchange.isFailed());
+        assertTrue(exchange.isFailed(), "Exchange failed");
 
         verify(client, never()).delete(anyLong());
     }
 
     @Test
-    public void testRelease() throws Exception {
+    void testRelease() throws Exception {
         final long priority = BeanstalkComponent.DEFAULT_PRIORITY;
         final int delay = BeanstalkComponent.DEFAULT_DELAY;
         final long jobId = 111;
 
         endpoint.setCommand(BeanstalkCommand.release);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(ReleaseCommand.class));
 
         when(client.release(jobId, priority, delay)).thenReturn(true);
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Headers.JOB_ID, jobId);
-            }
-        });
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
-        assertEquals("Op result", Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class));
-        assertEquals("Job ID in exchange", Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class));
+        assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
+        assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).release(jobId, priority, delay);
     }
 
     @Test
-    public void testReleaseNoJobId() throws Exception {
+    void testReleaseNoJobId() throws Exception {
         endpoint.setCommand(BeanstalkCommand.release);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(ReleaseCommand.class));
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-            }
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> {
         });
 
-        assertTrue("Exchange failed", exchange.isFailed());
+        assertTrue(exchange.isFailed(), "Exchange failed");
 
         verify(client, never()).release(anyLong(), anyLong(), anyInt());
     }
 
     @Test
-    public void testReleaseWithHeaders() throws Exception {
+    void testReleaseWithHeaders() throws Exception {
         final long priority = 1001;
         final int delay = 124;
         final long jobId = 111;
 
         endpoint.setCommand(BeanstalkCommand.release);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(ReleaseCommand.class));
 
         when(client.release(jobId, priority, delay)).thenReturn(true);
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Headers.JOB_ID, jobId);
-                exchange.getIn().setHeader(Headers.PRIORITY, priority);
-                exchange.getIn().setHeader(Headers.DELAY, delay);
-            }
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> {
+            exchange1.getIn().setHeader(Headers.JOB_ID, jobId);
+            exchange1.getIn().setHeader(Headers.PRIORITY, priority);
+            exchange1.getIn().setHeader(Headers.DELAY, delay);
         });
 
-        assertEquals("Op result", Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class));
-        assertEquals("Job ID in exchange", Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class));
+        assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
+        assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).release(jobId, priority, delay);
     }
 
     @Test
-    public void testTouch() throws Exception {
+    void testTouch() throws Exception {
         final long jobId = 111;
 
         endpoint.setCommand(BeanstalkCommand.touch);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(TouchCommand.class));
 
         when(client.touch(jobId)).thenReturn(true);
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Headers.JOB_ID, jobId);
-            }
-        });
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
-        assertEquals("Op result", Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class));
-        assertEquals("Job ID in exchange", Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class));
+        assertEquals(Boolean.TRUE, exchange.getIn().getHeader(Headers.RESULT, Boolean.class), "Op result");
+        assertEquals(Long.valueOf(jobId), exchange.getIn().getHeader(Headers.JOB_ID, Long.class), "Job ID in exchange");
         verify(client).touch(jobId);
     }
 
     @Test
-    public void testTouchNoJobId() throws Exception {
+    void testTouchNoJobId() throws Exception {
         endpoint.setCommand(BeanstalkCommand.touch);
         Producer producer = endpoint.createProducer();
-        assertNotNull("Producer", producer);
+        assertNotNull(producer, "Producer");
         assertThat("Producer class", producer, instanceOf(BeanstalkProducer.class));
         assertThat("Processor class", ((BeanstalkProducer) producer).getCommand(), instanceOf(TouchCommand.class));
 
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-            }
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, exchange1 -> {
         });
 
-        assertTrue("Exchange failed", exchange.isFailed());
+        assertTrue(exchange.isFailed(), "Exchange failed");
 
         verify(client, never()).touch(anyLong());
     }
 
     @Test
-    public void testHeaderOverride() throws Exception {
+    void testHeaderOverride() throws Exception {
         final long priority = 1020;
         final int delay = 50;
         final int timeToRun = 75;
@@ -369,13 +348,13 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         final Long jobIdIn = resultEndpoint.getReceivedExchanges().get(0).getIn().getHeader(Headers.JOB_ID, Long.class);
-        assertNotNull("Job ID in 'In' message", jobIdIn);
+        assertNotNull(jobIdIn, "Job ID in 'In' message");
 
         verify(client).put(priority, delay, timeToRun, payload);
     }
 
     @Test
-    public void test1BeanstalkException() throws Exception {
+    void test1BeanstalkException() throws Exception {
         final long priority = 1020;
         final int delay = 50;
         final int timeToRun = 75;
@@ -394,27 +373,24 @@ public class ProducerTest extends BeanstalkMockTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         final Long jobIdIn = resultEndpoint.getReceivedExchanges().get(0).getIn().getHeader(Headers.JOB_ID, Long.class);
-        assertNotNull("Job ID in 'In' message", jobIdIn);
+        assertNotNull(jobIdIn, "Job ID in 'In' message");
 
         verify(client, times(1)).close();
         verify(client, times(2)).put(priority, delay, timeToRun, payload);
     }
 
     @Test
-    public void test2BeanstalkException() throws Exception {
+    void test2BeanstalkException() throws Exception {
         final long jobId = 111;
 
         when(client.touch(jobId))
                 .thenThrow(new BeanstalkException("test"));
 
         endpoint.setCommand(BeanstalkCommand.touch);
-        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Headers.JOB_ID, jobId);
-            }
-        });
+        final Exchange exchange = template.send(endpoint, ExchangePattern.InOnly,
+                exchange1 -> exchange1.getIn().setHeader(Headers.JOB_ID, jobId));
 
-        assertTrue("Exchange failed", exchange.isFailed());
+        assertTrue(exchange.isFailed(), "Exchange failed");
 
         verify(client, times(2)).touch(jobId);
         verify(client, times(1)).close();

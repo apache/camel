@@ -30,8 +30,8 @@ import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * This implements a {@link ThreadPoolFactory} and generates an Instrumented versions of ExecutorService used to
- * monitor performance of each thread using Metrics.
+ * This implements a {@link ThreadPoolFactory} and generates an Instrumented versions of ExecutorService used to monitor
+ * performance of each thread using Metrics.
  */
 public class InstrumentedThreadPoolFactory implements ThreadPoolFactory {
 

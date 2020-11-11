@@ -23,7 +23,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mongodb.MongoClientURI;
+import com.mongodb.ConnectionString;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.model.Filters;
@@ -57,10 +57,10 @@ public class MongoDBMetaExtension extends AbstractMetaDataExtension {
         LOGGER.debug("Fetching mongodb meta information with params: {}", textParameters);
 
         ConnectionParamsConfiguration mongoConf = new ConnectionParamsConfiguration(textParameters);
-        MongoClientURI connectionURI = new MongoClientURI(mongoConf.getMongoClientURI());
+        ConnectionString connectionString = new ConnectionString(mongoConf.getMongoClientURI());
 
         JsonNode collectionInfoRoot;
-        try (MongoClient mongoConnection = MongoClients.create(connectionURI.getURI())) {
+        try (MongoClient mongoConnection = MongoClients.create(connectionString)) {
             Document collectionInfo = mongoConnection.getDatabase(textParameters.get("database"))
                     .listCollections()
                     .filter(Filters.eq("name", textParameters.get("collection")))
@@ -74,7 +74,7 @@ public class MongoDBMetaExtension extends AbstractMetaDataExtension {
                 return Optional.empty();
             }
             String collectionInfoJson = collectionInfo.toJson();
-            collectionInfoRoot = objectMapper.readTree(collectionInfoJson.replaceAll("bsonType", "type"));
+            collectionInfoRoot = objectMapper.readTree(collectionInfoJson.replace("bsonType", "type"));
         } catch (IOException e) {
             LOGGER.error("Error occurred while reading schema information", e);
             return Optional.empty();
@@ -95,10 +95,10 @@ public class MongoDBMetaExtension extends AbstractMetaDataExtension {
                             .withAttribute(MetaData.CONTENT_TYPE, "application/schema+json")
                             .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
                             .withPayload(root)
-                            .build()
-            );
+                            .build());
         } else {
-            LOGGER.warn("Cannot retrieve info for : {}.{} collection. Likely the collection has not been provided with a validator",
+            LOGGER.warn(
+                    "Cannot retrieve info for : {}.{} collection. Likely the collection has not been provided with a validator",
                     textParameters.get("database"),
                     textParameters.get("collection"));
             return Optional.empty();

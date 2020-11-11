@@ -17,7 +17,7 @@
 package org.apache.camel.component.web3j;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -47,7 +47,7 @@ public class Web3jConsumerCatchUpToLatestTransactionsObservableMockTest extends 
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<Transaction>)args[0]).call(new Transaction());
+                ((Action1<Transaction>) args[0]).call(new Transaction());
                 return subscription;
             }
         });
@@ -66,7 +66,7 @@ public class Web3jConsumerCatchUpToLatestTransactionsObservableMockTest extends 
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<Throwable>)args[1]).call(new RuntimeException("Error"));
+                ((Action1<Throwable>) args[1]).call(new RuntimeException("Error"));
                 return subscription;
             }
         });
@@ -86,7 +86,7 @@ public class Web3jConsumerCatchUpToLatestTransactionsObservableMockTest extends 
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action0)args[2]).call();
+                ((Action0) args[2]).call();
                 return subscription;
             }
         });
@@ -101,8 +101,9 @@ public class Web3jConsumerCatchUpToLatestTransactionsObservableMockTest extends 
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
-                from(getUrl() + OPERATION.toLowerCase() + "=" + CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE + "&fromBlock=5499965")
-                        .to("mock:result");
+                from(getUrl() + OPERATION.toLowerCase() + "=" + CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE
+                     + "&fromBlock=5499965")
+                             .to("mock:result");
             }
         };
     }

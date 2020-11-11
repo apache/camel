@@ -32,7 +32,8 @@ public final class ExchangeHeaders {
     public static final HttpString AGGREGATED_CORRELATION_KEY = new HttpString("CamelAggregatedCorrelationKey");
     public static final HttpString AGGREGATION_STRATEGY = new HttpString("CamelAggregationStrategy");
     public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS = new HttpString("CamelAggregationCompleteAllGroups");
-    public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE = new HttpString("CamelAggregationCompleteAllGroupsInclusive");
+    public static final HttpString AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE
+            = new HttpString("CamelAggregationCompleteAllGroupsInclusive");
     public static final HttpString ASYNC_WAIT = new HttpString("CamelAsyncWait");
 
     public static final HttpString BATCH_INDEX = new HttpString("CamelBatchIndex");
@@ -64,6 +65,7 @@ public final class ExchangeHeaders {
     public static final HttpString EXCEPTION_HANDLED = new HttpString("CamelExceptionHandled");
     public static final HttpString EVALUATE_EXPRESSION_RESULT = new HttpString("CamelEvaluateExpressionResult");
     public static final HttpString ERRORHANDLER_HANDLED = new HttpString("CamelErrorHandlerHandled");
+    @Deprecated
     public static final HttpString EXTERNAL_REDELIVERED = new HttpString("CamelExternalRedelivered");
 
     public static final HttpString FAILURE_HANDLED = new HttpString("CamelFailureHandled");
@@ -100,7 +102,8 @@ public final class ExchangeHeaders {
     public static final HttpString HTTP_SERVLET_RESPONSE = new HttpString("CamelHttpServletResponse");
 
     public static final HttpString INTERCEPTED_ENDPOINT = new HttpString("CamelInterceptedEndpoint");
-    public static final HttpString INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED = new HttpString("CamelInterceptSendToEndpointWhenMatched");
+    public static final HttpString INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED
+            = new HttpString("CamelInterceptSendToEndpointWhenMatched");
 
     public static final HttpString LANGUAGE_SCRIPT = new HttpString("CamelLanguageScript");
     public static final HttpString LOG_DEBUG_BODY_MAX_CHARS = new HttpString("CamelLogDebugBodyMaxChars");
@@ -113,8 +116,6 @@ public final class ExchangeHeaders {
     public static final HttpString MESSAGE_HISTORY = new HttpString("CamelMessageHistory");
     public static final HttpString MULTICAST_INDEX = new HttpString("CamelMulticastIndex");
     public static final HttpString MULTICAST_COMPLETE = new HttpString("CamelMulticastComplete");
-
-    public static final HttpString NOTIFY_EVENT = new HttpString("CamelNotifyEvent");
 
     public static final HttpString ON_COMPLETION = new HttpString("CamelOnCompletion");
     public static final HttpString OVERRULE_FILE_NAME = new HttpString("CamelOverruleFileName");

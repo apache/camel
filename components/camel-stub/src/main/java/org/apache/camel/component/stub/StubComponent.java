@@ -25,10 +25,11 @@ import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.vm.VmComponent;
 
 /**
- * The <a href="http://camel.apache.org/stub.html">Stub Component</a> is for stubbing out endpoints while developing or testing.
+ * The <a href="http://camel.apache.org/stub.html">Stub Component</a> is for stubbing out endpoints while developing or
+ * testing.
  *
- * Allows you to easily stub out a middleware transport by prefixing the URI with "stub:" which is
- * handy for testing out routes, or isolating bits of middleware.
+ * Allows you to easily stub out a middleware transport by prefixing the URI with "stub:" which is handy for testing out
+ * routes, or isolating bits of middleware.
  */
 @org.apache.camel.spi.annotations.Component("stub")
 public class StubComponent extends VmComponent {
@@ -47,12 +48,14 @@ public class StubComponent extends VmComponent {
     }
 
     @Override
-    protected StubEndpoint createEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+    protected StubEndpoint createEndpoint(
+            String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
         return new StubEndpoint(endpointUri, component, queueFactory, concurrentConsumers);
     }
 
     @Override
-    protected StubEndpoint createEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
+    protected StubEndpoint createEndpoint(
+            String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
         return new StubEndpoint(endpointUri, component, queue, concurrentConsumers);
     }
 

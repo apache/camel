@@ -18,21 +18,25 @@ package org.apache.camel.component.ironmq.integrationtest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ironmq.IronMQConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Integration test that requires ironmq account.")
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+
+@Disabled("Integration test that requires ironmq account.")
 public class FileCopyExample extends CamelTestSupport {
     // replace with your proejctid
     private String projectId = "myIronMQproject";
     // replace with your token
     private String token = "myIronMQToken";
 
-    private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&preserveHeaders=true";
+    private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token
+                                          + "&ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&preserveHeaders=true";
 
-    @Before
+    @BeforeEach
     public void clean() {
         template.sendBodyAndHeader(ironMQEndpoint, "fo", IronMQConstants.OPERATION, IronMQConstants.CLEARQUEUE);
         deleteDirectory("target/out");

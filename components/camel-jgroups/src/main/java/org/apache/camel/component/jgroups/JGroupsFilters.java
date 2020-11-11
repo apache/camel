@@ -56,7 +56,7 @@ public final class JGroupsFilters {
                 LOG.debug("Filtering message {}.", body);
                 if (body instanceof View) {
                     View view = (View) body;
-                    Address coordinatorNodeAddress =  view.getMembers().get(COORDINATOR_NODE_INDEX);
+                    Address coordinatorNodeAddress = view.getMembers().get(COORDINATOR_NODE_INDEX);
                     Address channelAddress = exchange.getIn().getHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, Address.class);
                     LOG.debug("Comparing endpoint channel address {} against the coordinator node address {}.",
                             channelAddress, coordinatorNodeAddress);

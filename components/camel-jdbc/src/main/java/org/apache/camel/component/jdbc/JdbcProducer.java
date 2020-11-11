@@ -31,18 +31,24 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 public class JdbcProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcProducer.class);
 
     private DataSource dataSource;
     private int readSize;
     private Map<String, Object> parameters;
 
-    public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, int readSize, Map<String, Object> parameters) throws Exception {
+    public JdbcProducer(JdbcEndpoint endpoint, DataSource dataSource, int readSize,
+                        Map<String, Object> parameters) throws Exception {
         super(endpoint);
         this.dataSource = dataSource;
         this.readSize = readSize;
@@ -88,7 +94,7 @@ public class JdbcProducer extends DefaultProducer {
                     conn.rollback();
                 }
             } catch (Throwable sqle) {
-                log.warn("Error occurred during jdbc rollback. This exception will be ignored.", sqle);
+                LOG.warn("Error occurred during JDBC rollback. This exception will be ignored.", sqle);
             }
             throw e;
         } finally {
@@ -128,9 +134,11 @@ public class JdbcProducer extends DefaultProducer {
         boolean shouldCloseResources = true;
 
         try {
-            final String preparedQuery = getEndpoint().getPrepareStatementStrategy().prepareQuery(sql, getEndpoint().isAllowNamedParameters());
+            final String preparedQuery
+                    = getEndpoint().getPrepareStatementStrategy().prepareQuery(sql, getEndpoint().isAllowNamedParameters());
 
-            Boolean shouldRetrieveGeneratedKeys = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
+            Boolean shouldRetrieveGeneratedKeys
+                    = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
             if (shouldRetrieveGeneratedKeys) {
                 Object expectedGeneratedColumns = exchange.getIn().getHeader(JdbcConstants.JDBC_GENERATED_COLUMNS);
@@ -142,7 +150,8 @@ public class JdbcProducer extends DefaultProducer {
                     ps = conn.prepareStatement(preparedQuery, (int[]) expectedGeneratedColumns);
                 } else {
                     throw new IllegalArgumentException(
-                            "Header specifying expected returning columns isn't an instance of String[] or int[] but " + expectedGeneratedColumns.getClass());
+                            "Header specifying expected returning columns isn't an instance of String[] or int[] but "
+                                                       + expectedGeneratedColumns.getClass());
                 }
             } else {
                 ps = conn.prepareStatement(preparedQuery);
@@ -156,7 +165,7 @@ public class JdbcProducer extends DefaultProducer {
                 getEndpoint().getPrepareStatementStrategy().populateStatement(ps, it, expectedCount);
             }
 
-            log.debug("Executing JDBC PreparedStatement: {}", sql);
+            LOG.debug("Executing JDBC PreparedStatement: {}", sql);
 
             boolean stmtExecutionResult = ps.execute();
             if (stmtExecutionResult) {
@@ -164,10 +173,8 @@ public class JdbcProducer extends DefaultProducer {
                 shouldCloseResources = setResultSet(exchange, conn, rs);
             } else {
                 int updateCount = ps.getUpdateCount();
-                // preserve headers
-                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
                 // and then set the new header
-                exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
+                exchange.getMessage().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
             }
 
             if (shouldRetrieveGeneratedKeys) {
@@ -195,9 +202,10 @@ public class JdbcProducer extends DefaultProducer {
                 PropertyBindingSupport.bindProperties(exchange.getContext(), stmt, copy);
             }
 
-            log.debug("Executing JDBC Statement: {}", sql);
+            LOG.debug("Executing JDBC Statement: {}", sql);
 
-            Boolean shouldRetrieveGeneratedKeys = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
+            Boolean shouldRetrieveGeneratedKeys
+                    = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
             boolean stmtExecutionResult;
             if (shouldRetrieveGeneratedKeys) {
@@ -210,7 +218,8 @@ public class JdbcProducer extends DefaultProducer {
                     stmtExecutionResult = stmt.execute(sql, (int[]) expectedGeneratedColumns);
                 } else {
                     throw new IllegalArgumentException(
-                            "Header specifying expected returning columns isn't an instance of String[] or int[] but " + expectedGeneratedColumns.getClass());
+                            "Header specifying expected returning columns isn't an instance of String[] or int[] but "
+                                                       + expectedGeneratedColumns.getClass());
                 }
             } else {
                 stmtExecutionResult = stmt.execute(sql);
@@ -221,10 +230,8 @@ public class JdbcProducer extends DefaultProducer {
                 shouldCloseResources = setResultSet(exchange, conn, rs);
             } else {
                 int updateCount = stmt.getUpdateCount();
-                // preserve headers
-                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
                 // and then set the new header
-                exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
+                exchange.getMessage().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
             }
 
             if (shouldRetrieveGeneratedKeys) {
@@ -246,7 +253,7 @@ public class JdbcProducer extends DefaultProducer {
                     rs.close();
                 }
             } catch (Throwable sqle) {
-                log.debug("Error by closing result set", sqle);
+                LOG.debug("Error by closing result set", sqle);
             }
         }
     }
@@ -258,7 +265,7 @@ public class JdbcProducer extends DefaultProducer {
                     stmt.close();
                 }
             } catch (Throwable sqle) {
-                log.debug("Error by closing statement", sqle);
+                LOG.debug("Error by closing statement", sqle);
             }
         }
     }
@@ -268,7 +275,7 @@ public class JdbcProducer extends DefaultProducer {
             try {
                 con.setAutoCommit(autoCommit);
             } catch (Throwable sqle) {
-                log.debug("Error by resetting auto commit to its original value", sqle);
+                LOG.debug("Error by resetting auto commit to its original value", sqle);
             }
         }
     }
@@ -280,15 +287,14 @@ public class JdbcProducer extends DefaultProducer {
                     con.close();
                 }
             } catch (Throwable sqle) {
-                log.debug("Error by closing connection", sqle);
+                LOG.debug("Error by closing connection", sqle);
             }
         }
     }
 
     /**
-     * Sets the generated if any to the Exchange in headers :
-     * - {@link JdbcConstants#JDBC_GENERATED_KEYS_ROW_COUNT} : the row count of generated keys
-     * - {@link JdbcConstants#JDBC_GENERATED_KEYS_DATA} : the generated keys data
+     * Sets the generated if any to the Exchange in headers : - {@link JdbcConstants#JDBC_GENERATED_KEYS_ROW_COUNT} :
+     * the row count of generated keys - {@link JdbcConstants#JDBC_GENERATED_KEYS_DATA} : the generated keys data
      *
      * @param exchange      The exchange where to store the generated keys
      * @param conn          Current JDBC connection
@@ -296,11 +302,13 @@ public class JdbcProducer extends DefaultProducer {
      */
     protected void setGeneratedKeys(Exchange exchange, Connection conn, ResultSet generatedKeys) throws SQLException {
         if (generatedKeys != null) {
-            ResultSetIterator iterator = new ResultSetIterator(conn, generatedKeys, getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics(), getEndpoint().isUseGetBytesForBlob());
+            ResultSetIterator iterator = new ResultSetIterator(
+                    conn, generatedKeys, getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics(),
+                    getEndpoint().isUseGetBytesForBlob());
             List<Map<String, Object>> data = extractRows(iterator);
 
-            exchange.getOut().setHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT, data.size());
-            exchange.getOut().setHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, data);
+            exchange.getMessage().setHeader(JdbcConstants.JDBC_GENERATED_KEYS_ROW_COUNT, data.size());
+            exchange.getMessage().setHeader(JdbcConstants.JDBC_GENERATED_KEYS_DATA, data);
         }
     }
 
@@ -312,24 +320,25 @@ public class JdbcProducer extends DefaultProducer {
     protected boolean setResultSet(Exchange exchange, Connection conn, ResultSet rs) throws SQLException {
         boolean answer = true;
 
-        ResultSetIterator iterator = new ResultSetIterator(conn, rs, getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics(), getEndpoint().isUseGetBytesForBlob());
-
-        // preserve headers
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+        ResultSetIterator iterator = new ResultSetIterator(
+                conn, rs, getEndpoint().isUseJDBC4ColumnNameAndLabelSemantics(), getEndpoint().isUseGetBytesForBlob());
 
         JdbcOutputType outputType = getEndpoint().getOutputType();
-        exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, iterator.getColumnNames());
+        exchange.getMessage().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, iterator.getColumnNames());
         if (outputType == JdbcOutputType.StreamList) {
-            exchange.getOut().setBody(new StreamListIterator(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(), iterator));
-            exchange.addOnCompletion(new ResultSetIteratorCompletion(iterator));
+            exchange.getMessage()
+                    .setBody(new StreamListIterator(
+                            getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(),
+                            iterator));
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new ResultSetIteratorCompletion(iterator));
             // do not close resources as we are in streaming mode
             answer = false;
         } else if (outputType == JdbcOutputType.SelectList) {
             List<?> list = extractRows(iterator);
-            exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, list.size());
-            exchange.getOut().setBody(list);
+            exchange.getMessage().setHeader(JdbcConstants.JDBC_ROW_COUNT, list.size());
+            exchange.getMessage().setBody(list);
         } else if (outputType == JdbcOutputType.SelectOne) {
-            exchange.getOut().setBody(extractSingleRow(iterator));
+            exchange.getMessage().setBody(extractSingleRow(iterator));
         }
 
         return answer;
@@ -343,7 +352,8 @@ public class JdbcProducer extends DefaultProducer {
             Map<String, Object> row = iterator.next();
             Object value;
             if (getEndpoint().getOutputClass() != null) {
-                value = JdbcHelper.newBeanInstance(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(), row);
+                value = JdbcHelper.newBeanInstance(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(),
+                        getEndpoint().getBeanRowMapper(), row);
             } else {
                 value = row;
             }
@@ -361,7 +371,8 @@ public class JdbcProducer extends DefaultProducer {
         if (iterator.hasNext()) {
             throw new SQLDataException("Query result not unique for outputType=SelectOne.");
         } else if (getEndpoint().getOutputClass() != null) {
-            return JdbcHelper.newBeanInstance(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(), getEndpoint().getBeanRowMapper(), row);
+            return JdbcHelper.newBeanInstance(getEndpoint().getCamelContext(), getEndpoint().getOutputClass(),
+                    getEndpoint().getBeanRowMapper(), row);
         } else if (row.size() == 1) {
             return row.values().iterator().next();
         } else {

@@ -22,11 +22,11 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
     static final String PROCESSED_FILES_HEADER_NAME = "processedFiles";
-    
+
     @Override
     @Test
     public void testSplitter() throws InterruptedException {
@@ -35,11 +35,12 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
 
         processTarEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "hello", "greetings");
 
-        splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "another/hello.txt", "other/greetings.txt");
+        splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "another/hello.txt",
+                "other/greetings.txt");
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -49,22 +50,22 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
                 TarFileDataFormat tarFile = new TarFileDataFormat();
                 tarFile.setUsingIterator(true);
                 from("file:src/test/resources/org/apache/camel/dataformat/tarfile/data/?delay=1000&noop=true")
-                    .unmarshal(tarFile)
-                    .split(bodyAs(Iterator.class))
+                        .unmarshal(tarFile)
+                        .split(bodyAs(Iterator.class))
                         .streaming()
                         .aggregationStrategy(updateHeader())
                         .convertBodyTo(String.class)
                         .to("mock:processTarEntry")
-                    .end()
-                    .log("Done processing big file: ${header.CamelFileName}")
-                    .setBody().header(PROCESSED_FILES_HEADER_NAME)
-                    .split().body()
+                        .end()
+                        .log("Done processing big file: ${header.CamelFileName}")
+                        .setBody().header(PROCESSED_FILES_HEADER_NAME)
+                        .split().body()
                         .to("mock:splitResult");
             }
         };
 
     }
-    
+
     private AggregationStrategy updateHeader() {
         return new AggregationStrategy() {
             @Override
@@ -74,12 +75,13 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
                     if (processedFiles == null) {
                         processedFiles = oldExchange.getIn().getHeader(TarIterator.TARFILE_ENTRY_NAME_HEADER, String.class);
                     }
-                    processedFiles = processedFiles + "," + newExchange.getIn().getHeader(TarIterator.TARFILE_ENTRY_NAME_HEADER, String.class);
+                    processedFiles = processedFiles + ","
+                                     + newExchange.getIn().getHeader(TarIterator.TARFILE_ENTRY_NAME_HEADER, String.class);
                     newExchange.getIn().setHeader(PROCESSED_FILES_HEADER_NAME, processedFiles);
                 }
                 return newExchange;
             }
-            
+
         };
     }
 

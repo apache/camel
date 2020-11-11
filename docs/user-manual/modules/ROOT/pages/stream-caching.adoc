@@ -13,7 +13,7 @@ Streams are caching in memory. In Camel 2.0, large stream messages (over 64 KB i
 *StreamCache Affects your payload object*
 
 The `StreamCache` will affect your payload object as it will replace the `Stream` payload with a `org.apache.camel.StreamCache` object.
-This `StreamCache` is capable of being re-readable and thus possible to better be routed within Camel using redelivery or xref:content-based-router-eip.adoc[Content Based Router] or the likes.
+This `StreamCache` is capable of being re-readable and thus possible to better be routed within Camel using redelivery or xref:{eip-vc}:eips:content-based-router-eip.adoc[Content Based Router] or the likes.
 
 However to not change the payload under the covers without the end user really knowing we changed the default in Camel 2.0 to *disabled*. So in Camel 2.0 you have to explicit enable it if you want to use it.
 ====
@@ -147,11 +147,11 @@ You set these properties on the `CamelContext` as shown below, where we use a 1 
 
 [source,java]
 ----
-context.getProperties().put(CachedOutputStream.TEMP_DIR, "/tmp/cachedir");
-context.getProperties().put(CachedOutputStream.THRESHOLD, "1048576");
-context.getProperties().put(CachedOutputStream.BUFFER_SIZE, "131072");
+context.getGlobalOptions().put(CachedOutputStream.TEMP_DIR, "/tmp/cachedir");
+context.getGlobalOptions().put(CachedOutputStream.THRESHOLD, "1048576");
+context.getGlobalOptions().put(CachedOutputStream.BUFFER_SIZE, "131072");
 // to enable encryption using RC4
-// context.getProperties().put(CachedOutputStream.CIPHER_TRANSFORMATION, "RC4");
+// context.getGlobalOptions().put(CachedOutputStream.CIPHER_TRANSFORMATION, "RC4");
 ----
 
 And in XML you do:
@@ -176,7 +176,7 @@ You can disable spooling to disk by setting a threshold of 0 or a negative value
 [source,java]
 ----
 // disable spooling to disk
-context.getProperties().put(CachedOutputStream.THRESHOLD, "-1");
+context.getGlobalOptions().put(CachedOutputStream.THRESHOLD, "-1");
 ----
 
 And in XML you do:
@@ -246,7 +246,7 @@ The following patterns is supported:
 * `\#symbolicName#` = the OSGi symbolic name (only for OSGi environments)
 * `\#version#` = the OSGi bundle version (only for OSGi environments)
 * `${env:key}` = the environment variable with the key
-* `$\{key\}` = the JVM system property with the key
+* `$\{key}` = the JVM system property with the key
 
 A couple of examples:
 

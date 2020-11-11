@@ -19,7 +19,7 @@ package org.apache.camel.component.infinispan;
 import java.util.List;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.infinispan.Cache;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.commons.time.TimeService;
@@ -31,7 +31,7 @@ import org.infinispan.test.TestDataSCI;
 import org.infinispan.test.TestingUtil;
 import org.infinispan.transaction.TransactionMode;
 import org.infinispan.util.ControlledTimeService;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class InfinispanClusterTestSupport extends CamelTestSupport {
 
@@ -83,7 +83,7 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ClusteredCacheSupport cluster = new ClusteredCacheSupport(CacheMode.DIST_SYNC, false, 2);
         try {
@@ -95,7 +95,7 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
 
         super.setUp();
     }
-    
+
     @BindToRegistry("cacheContainer")
     public EmbeddedCacheManager loadContainer() {
         return clusteredCacheContainers.get(0);
@@ -106,7 +106,7 @@ public class InfinispanClusterTestSupport extends CamelTestSupport {
         super.tearDown();
 
         // Has to be done later, maybe CamelTestSupport should
-        for (BasicCacheContainer container: clusteredCacheContainers) {
+        for (BasicCacheContainer container : clusteredCacheContainers) {
             container.stop();
         }
     }

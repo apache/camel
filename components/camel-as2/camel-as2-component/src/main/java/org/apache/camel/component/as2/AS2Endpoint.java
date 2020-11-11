@@ -22,6 +22,7 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -39,6 +40,7 @@ import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2ConnectionHelper;
 import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.component.as2.internal.AS2PropertiesHelper;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
@@ -47,9 +49,13 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 import org.apache.http.entity.ContentType;
 
 /**
- * Component used for transferring data secure and reliable over the internet using the AS2 protocol.
+ * Transfer data securely and reliably using the AS2 protocol (RFC4130).
  */
-@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName/methodName", label = "AS2")
+@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName/methodName",
+             apiSyntax = "apiName/methodName",
+             category = { Category.FILE })
+@Metadata(excludeProperties = "startScheduler,initialDelay,delay,timeUnit,useFixedDelay,pollStrategy,runLoggingLevel,sendEmptyMessageWhenIdle"
+                              + ",greedy,scheduler,schedulerProperties,scheduledExecutorService,backoffMultiplier,backoffIdleThreshold,backoffErrorThreshold,repeatCount,bridgeErrorHandler")
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
     @UriParam
@@ -58,11 +64,10 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     private Object apiProxy;
 
     private AS2ClientConnection as2ClientConnection;
-
     private AS2ServerConnection as2ServerConnection;
 
     public AS2Endpoint(String uri, AS2Component component,
-                         AS2ApiName apiName, String methodName, AS2Configuration endpointConfiguration) {
+                       AS2ApiName apiName, String methodName, AS2Configuration endpointConfiguration) {
         super(uri, component, apiName, methodName, AS2ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
@@ -87,12 +92,10 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
         }
         final AS2Consumer consumer = new AS2Consumer(this, processor);
-        // also set consumer.* properties
         configureConsumer(consumer);
         return consumer;
     }
 
-    
     public String getRequestUri() {
         return configuration.getRequestUri();
     }
@@ -132,7 +135,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setAs2To(String as2To) {
         configuration.setAs2To(as2To);
     }
-    
+
     public AS2MessageStructure getAs2MessageStructure() {
         return configuration.getAs2MessageStructure();
     }
@@ -140,7 +143,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setAs2MessageStructure(AS2MessageStructure as2MessageStructure) {
         configuration.setAs2MessageStructure(as2MessageStructure);
     }
-    
+
     public ContentType getEdiMessageType() {
         return configuration.getEdiMessageType();
     }
@@ -148,7 +151,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setEdiMessageContentType(ContentType ediMessageType) {
         configuration.setEdiMessageType(ediMessageType);
     }
-    
+
     public String getEdiMessageTransferEncoding() {
         return configuration.getEdiMessageTransferEncoding();
     }
@@ -156,19 +159,19 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setEdiMessageTransferEncoding(String ediMessageTransferEncoding) {
         configuration.setEdiMessageTransferEncoding(ediMessageTransferEncoding);
     }
-    
+
     public AS2SignatureAlgorithm getSigningAlgorithm() {
         return configuration.getSigningAlgorithm();
     }
-    
+
     public void setSigningAlgorithm(AS2SignatureAlgorithm signingAlgorithm) {
         configuration.setSigningAlgorithm(signingAlgorithm);
     }
-    
+
     public Certificate[] getSigningCertificateChain() {
         return configuration.getSigningCertificateChain();
     }
-    
+
     public void setSigningCertificateChain(Certificate[] signingCertificateChain) {
         configuration.setSigningCertificateChain(signingCertificateChain);
     }
@@ -196,34 +199,34 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public void setDispositionNotificationTo(String dispositionNotificationTo) {
         configuration.setDispositionNotificationTo(dispositionNotificationTo);
     }
-    
+
     public String[] getSignedReceiptMicAlgorithms() {
         return configuration.getSignedReceiptMicAlgorithms();
     }
-    
+
     public void setSignedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
         configuration.setSignedReceiptMicAlgorithms(signedReceiptMicAlgorithms);
     }
-    
+
     public AS2EncryptionAlgorithm getEncryptingAlgorithm() {
         return configuration.getEncryptingAlgorithm();
     }
-    
+
     public void setEncryptingAlgorithm(AS2EncryptionAlgorithm encryptingAlgorithm) {
         configuration.setEncryptingAlgorithm(encryptingAlgorithm);
     }
-    
+
     public Certificate[] getEncryptingCertificateChain() {
         return configuration.getEncryptingCertificateChain();
     }
-    
+
     public void setEncryptingCertificateChain(Certificate[] encryptingCertificateChain) {
         configuration.setEncryptingCertificateChain(encryptingCertificateChain);
     }
 
     @Override
     protected ApiMethodPropertiesHelper<AS2Configuration> getPropertiesHelper() {
-        return AS2PropertiesHelper.getHelper();
+        return AS2PropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override
@@ -235,14 +238,14 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     protected void afterConfigureProperties() {
         // create HTTP connection eagerly, a good way to validate configuration
         switch (apiName) {
-        case CLIENT:
-            createAS2ClientConnection();
-            break;
-        case SERVER:
-            createAS2ServerConnection();
-            break;
-        default:
-            break;
+            case CLIENT:
+                createAS2ClientConnection();
+                break;
+            case SERVER:
+                createAS2ServerConnection();
+                break;
+            default:
+                break;
         }
     }
 
@@ -256,14 +259,14 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
 
     private void createApiProxy(ApiMethod method, Map<String, Object> args) {
         switch (apiName) {
-        case CLIENT:
-            apiProxy = new AS2ClientManager(getAS2ClientConnection());
-            break;
-        case SERVER:
-            apiProxy = new AS2ServerManager(getAS2ServerConnection());
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid API name " + apiName);
+            case CLIENT:
+                apiProxy = new AS2ClientManager(getAS2ClientConnection());
+                break;
+            case SERVER:
+                apiProxy = new AS2ServerManager(getAS2ServerConnection());
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
 
@@ -271,8 +274,9 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         try {
             as2ClientConnection = AS2ConnectionHelper.createAS2ClientConnection(configuration);
         } catch (UnknownHostException e) {
-            throw new RuntimeCamelException(String.format("Client HTTP connection failed: Unknown target host '%s'",
-                    configuration.getTargetHostname()));
+            throw new RuntimeCamelException(
+                    String.format("Client HTTP connection failed: Unknown target host '%s'",
+                            configuration.getTargetHostname()));
         } catch (IOException e) {
             throw new RuntimeCamelException("Client HTTP connection failed", e);
         }

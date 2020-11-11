@@ -21,18 +21,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 import zipkin2.reporter.Reporter;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class ZipkinMDCScopeDecoratorTest extends CamelTestSupport {
-    
+
     private ZipkinTracer zipkin;
 
     protected void setSpanReporter(ZipkinTracer zipkin) {
         zipkin.setSpanReporter(Reporter.NOOP);
     }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -48,10 +51,12 @@ public class ZipkinMDCScopeDecoratorTest extends CamelTestSupport {
         zipkin.init(context);
         return context;
     }
+
     @Test
     public void testZipkinRoute() throws Exception {
         template.requestBody("direct:start", "Camel say hello Cat");
     }
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -67,10 +72,8 @@ public class ZipkinMDCScopeDecoratorTest extends CamelTestSupport {
                                 assertNotNull(MDC.get("spanId"));
                                 assertNotNull(MDC.get("parentId"));
                             }
-                        }); 
+                        });
             }
         };
     }
 }
-
-

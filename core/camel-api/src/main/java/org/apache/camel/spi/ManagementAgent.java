@@ -29,31 +29,31 @@ import org.apache.camel.Service;
 public interface ManagementAgent extends Service {
 
     /**
-     * Registers object with management infrastructure with a specific name. Object must be annotated or 
-     * implement standard MBean interface.
+     * Registers object with management infrastructure with a specific name. Object must be annotated or implement
+     * standard MBean interface.
      *
-     * @param obj  the object to register
-     * @param name the name
+     * @param  obj         the object to register
+     * @param  name        the name
      * @throws JMException is thrown if the registration failed
      */
     void register(Object obj, ObjectName name) throws JMException;
-    
+
     /**
-     * Registers object with management infrastructure with a specific name. Object must be annotated or 
-     * implement standard MBean interface.
+     * Registers object with management infrastructure with a specific name. Object must be annotated or implement
+     * standard MBean interface.
      *
-     * @param obj  the object to register
-     * @param name the name
-     * @param forceRegistration if set to <tt>true</tt>, then object will be registered despite
-     * existing object is already registered with the name.
-     * @throws JMException is thrown if the registration failed
+     * @param  obj               the object to register
+     * @param  name              the name
+     * @param  forceRegistration if set to <tt>true</tt>, then object will be registered despite existing object is
+     *                           already registered with the name.
+     * @throws JMException       is thrown if the registration failed
      */
     void register(Object obj, ObjectName name, boolean forceRegistration) throws JMException;
-    
+
     /**
      * Unregisters object based upon registered name
      *
-     * @param name the name
+     * @param  name        the name
      * @throws JMException is thrown if the unregistration failed
      */
     void unregister(ObjectName name) throws JMException;
@@ -61,26 +61,26 @@ public interface ManagementAgent extends Service {
     /**
      * Is the given object registered
      *
-     * @param name the name
-     * @return <tt>true</tt> if registered
+     * @param  name the name
+     * @return      <tt>true</tt> if registered
      */
     boolean isRegistered(ObjectName name);
 
     /**
      * Creates a new proxy client
      *
-     * @param name   the mbean name
-     * @param mbean  the client interface, such as from the {@link org.apache.camel.api.management.mbean} package.
-     * @return the client or <tt>null</tt> if mbean does not exists
+     * @param  name  the mbean name
+     * @param  mbean the client interface, such as from the {@link org.apache.camel.api.management.mbean} package.
+     * @return       the client or <tt>null</tt> if mbean does not exists
      */
     <T> T newProxyClient(ObjectName name, Class<T> mbean);
 
     /**
      * Get the MBeanServer which hosts managed objects.
      * <p/>
-     * <b>Notice:</b> If the JMXEnabled configuration is not set to <tt>true</tt>,
-     * this method will return <tt>null</tt>.
-     * 
+     * <b>Notice:</b> If the JMXEnabled configuration is not set to <tt>true</tt>, this method will return
+     * <tt>null</tt>.
+     *
      * @return the MBeanServer
      */
     MBeanServer getMBeanServer();
@@ -96,38 +96,10 @@ public interface ManagementAgent extends Service {
      * Get domain name for Camel MBeans.
      * <p/>
      * <b>Notice:</b> That this can be different that the default domain name of the MBean Server.
-     * 
+     *
      * @return domain name
      */
     String getMBeanObjectDomainName();
-
-    /**
-     * Sets the port used by {@link java.rmi.registry.LocateRegistry}.
-     *
-     * @param port the port
-     */
-    void setRegistryPort(Integer port);
-
-    /**
-     * Gets the port used by {@link java.rmi.registry.LocateRegistry}.
-     *
-     * @return the port
-     */
-    Integer getRegistryPort();
-
-    /**
-     * Sets the port clients must use to connect
-     *
-     * @param port the port
-     */
-    void setConnectorPort(Integer port);
-
-    /**
-     * Gets the port clients must use to connect
-     *
-     * @return the port
-     */
-    Integer getConnectorPort();
 
     /**
      * Sets the default domain on the MBean server
@@ -149,34 +121,6 @@ public interface ManagementAgent extends Service {
      * @param domainName the object domain name
      */
     void setMBeanObjectDomainName(String domainName);
-
-    /**
-     * Sets the service url
-     *
-     * @param url the service url
-     */
-    void setServiceUrlPath(String url);
-
-    /**
-     * Gets the service url
-     *
-     * @return the url
-     */
-    String getServiceUrlPath();
-
-    /**
-     * Whether connector should be created, allowing clients to connect remotely
-     *
-     * @param createConnector <tt>true</tt> to create connector
-     */
-    void setCreateConnector(Boolean createConnector);
-
-    /**
-     * Whether connector is created, allowing clients to connect remotely
-     *
-     * @return <tt>true</tt> if connector is created
-     */
-    Boolean getCreateConnector();
 
     /**
      * Whether to use the platform MBean Server.
@@ -215,10 +159,9 @@ public interface ManagementAgent extends Service {
      * <p/>
      * This option is default <tt>false</tt>.
      * <p/>
-     * <b>Important:</b> If this option is enabled then any service is registered as mbean. When using
-     * dynamic EIP patterns using unique endpoint urls, you may create excessive mbeans in the registry.
-     * This could lead to degraded performance as memory consumption will rise due the rising number
-     * of mbeans.
+     * <b>Important:</b> If this option is enabled then any service is registered as mbean. When using dynamic EIP
+     * patterns using unique endpoint urls, you may create excessive mbeans in the registry. This could lead to degraded
+     * performance as memory consumption will rise due the rising number of mbeans.
      *
      * @return <tt>true</tt> if always registering
      */
@@ -229,10 +172,9 @@ public interface ManagementAgent extends Service {
      * <p/>
      * This option is default <tt>false</tt>.
      * <p/>
-     * <b>Important:</b> If this option is enabled then any service is registered as mbean. When using
-     * dynamic EIP patterns using unique endpoint urls, you may create excessive mbeans in the registry.
-     * This could lead to degraded performance as memory consumption will rise due the rising number
-     * of mbeans.
+     * <b>Important:</b> If this option is enabled then any service is registered as mbean. When using dynamic EIP
+     * patterns using unique endpoint urls, you may create excessive mbeans in the registry. This could lead to degraded
+     * performance as memory consumption will rise due the rising number of mbeans.
      *
      * @param registerAlways <tt>true</tt> to always register
      */
@@ -280,9 +222,8 @@ public interface ManagementAgent extends Service {
     /**
      * Sets whether to include host name in the {@link ManagementObjectNameStrategy}.
      * <p/>
-     * By default this is turned off from Camel 2.13 onwards, but this option
-     * can be set to <tt>true</tt> to include the hostname as Camel 2.12 or
-     * older releases does.
+     * By default this is turned off from Camel 2.13 onwards, but this option can be set to <tt>true</tt> to include the
+     * hostname as Camel 2.12 or older releases does.
      *
      * @param includeHostName <tt>true</tt> to include host name in the MBean names.
      */
@@ -319,7 +260,8 @@ public interface ManagementAgent extends Service {
     Boolean getLoadStatisticsEnabled();
 
     /**
-     * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing endpoints).
+     * Sets whether endpoint runtime statistics is enabled (gathers runtime usage of each incoming and outgoing
+     * endpoints).
      * <p/>
      * The default value is <tt>false</tt>
      *
@@ -345,13 +287,13 @@ public interface ManagementAgent extends Service {
      */
     void setStatisticsLevel(ManagementStatisticsLevel level);
 
-    /**                   §
-     * Gets the statistics level
+    /**
+     * § Gets the statistics level
      *
      * @return the level
      */
     ManagementStatisticsLevel getStatisticsLevel();
-    
+
     /**
      * Gets whether host IP Address to be used instead of host name.
      *
@@ -360,7 +302,8 @@ public interface ManagementAgent extends Service {
     Boolean getUseHostIPAddress();
 
     /**
-     * Sets whether to use host IP Address 
+     * Sets whether to use host IP Address
+     * 
      * @param useHostIPAddress <tt>true</tt> to use IP Address.
      */
     void setUseHostIPAddress(Boolean useHostIPAddress);

@@ -21,65 +21,71 @@ import java.util.Map;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
 import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
-    
+
     private static final String BEAN_SERVICE_ENDPOINT_NAME = "serviceEndpoint";
     private static final String BEAN_SERVICE_ADDRESS = "http://localhost/programmatically";
     private static final String BEAN_SERVICE_USERNAME = "BEAN_SERVICE_USERNAME";
     private static final String BEAN_SERVICE_PASSWORD = "BEAN_SERVICE_PASSWORD";
-    
+
     @Test
     public void testCreateCxfRsServerFactoryBean() {
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsServer", CxfRsEndpoint.class);
-        SpringJAXRSServerFactoryBean sfb = (SpringJAXRSServerFactoryBean)endpoint.createJAXRSServerFactoryBean();
-        
-        assertEquals("Get a wrong provider size", 1, sfb.getProviders().size());
-        assertEquals("Get a wrong beanId", sfb.getBeanId(), "rsServer");
-        assertEquals("Get a wrong address", sfb.getAddress(), "http://localhost:9000/router");
-        assertEquals("Get a wrong size of resource classes", sfb.getResourceClasses().size(), 1);
-        assertEquals("Get a wrong resource class", sfb.getResourceClasses().get(0), CustomerService.class);
-        assertEquals("Got the wrong loggingFeatureEnabled", true, sfb.isLoggingFeatureEnabled());
-        assertEquals("Got the wrong loggingSizeLimit", 200, sfb.getLoggingSizeLimit());
-        assertEquals("Got a wrong size of interceptors", 1, sfb.getInInterceptors().size());
-        
+        SpringJAXRSServerFactoryBean sfb = (SpringJAXRSServerFactoryBean) endpoint.createJAXRSServerFactoryBean();
+
+        assertEquals(1, sfb.getProviders().size(), "Get a wrong provider size");
+        assertEquals("rsServer", sfb.getBeanId(), "Get a wrong beanId");
+        assertEquals("http://localhost:9000/router", sfb.getAddress(), "Get a wrong address");
+        assertEquals(1, sfb.getResourceClasses().size(), "Get a wrong size of resource classes");
+        assertEquals(sfb.getResourceClasses().get(0), CustomerService.class, "Get a wrong resource class");
+        assertEquals(true, sfb.isLoggingFeatureEnabled(), "Got the wrong loggingFeatureEnabled");
+        assertEquals(200, sfb.getLoggingSizeLimit(), "Got the wrong loggingSizeLimit");
+        assertEquals(1, sfb.getInInterceptors().size(), "Got a wrong size of interceptors");
+
         Map<String, Object> endpointProps = sfb.getProperties();
         // The beanId key is put by the AbstractCxfBeanDefinitionParser, so the size is 2
-        assertEquals("Single endpoint property is expected", 2, endpointProps.size());
-        assertEquals("Wrong property value", "aValue", endpointProps.get("aKey"));
+        assertEquals(2, endpointProps.size(), "Single endpoint property is expected");
+        assertEquals("aValue", endpointProps.get("aKey"), "Wrong property value");
     }
-    
+
     @Test
     public void testCreateCxfRsClientFactoryBean() {
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://rsClient", CxfRsEndpoint.class);
-        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean)endpoint.createJAXRSClientFactoryBean();
-        assertEquals("Get a wrong beanId", cfb.getBeanId(), "rsClient");
-        assertEquals("Get a wrong address", cfb.getAddress(), "http://localhost:9002/helloworld");        
-        assertTrue("Get a wrong resource class instance", cfb.create() instanceof CustomerService);
-        assertEquals("Got the wrong loggingFeatureEnabled", false, cfb.isLoggingFeatureEnabled());
-        assertEquals("Got the wrong loggingSizeLimit", 0, cfb.getLoggingSizeLimit());
-        assertEquals("Got a wrong size of interceptors", 1, cfb.getInInterceptors().size());
+        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) endpoint.createJAXRSClientFactoryBean();
+        assertEquals("rsClient", cfb.getBeanId(), "Get a wrong beanId");
+        assertEquals("http://localhost:9002/helloworld", cfb.getAddress(), "Get a wrong address");
+        assertTrue(cfb.create() instanceof CustomerService, "Get a wrong resource class instance");
+        assertEquals(false, cfb.isLoggingFeatureEnabled(), "Got the wrong loggingFeatureEnabled");
+        assertEquals(0, cfb.getLoggingSizeLimit(), "Got the wrong loggingSizeLimit");
+        assertEquals(1, cfb.getInInterceptors().size(), "Got a wrong size of interceptors");
 
     }
-    
+
     @Test
     public void testCreateCxfRsClientFactoryBeanProgrammatically() {
-        
+
         CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://" + BEAN_SERVICE_ENDPOINT_NAME, CxfRsEndpoint.class);
-        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean)endpoint.createJAXRSClientFactoryBean();
-        
-        assertNotSame("Got the same object but must be different", super.applicationContext.getBean(BEAN_SERVICE_ENDPOINT_NAME), cfb);
-        assertEquals("Got the wrong address", BEAN_SERVICE_ADDRESS, cfb.getAddress());
-        assertNotNull("Service class must not be null", cfb.getServiceClass());
-        assertEquals("Got the wrong ServiceClass", CustomerService.class, cfb.getServiceClass());
-        assertEquals("Got the wrong username", BEAN_SERVICE_USERNAME, cfb.getUsername());
-        assertEquals("Got the wrong password", BEAN_SERVICE_PASSWORD, cfb.getPassword());                
+        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) endpoint.createJAXRSClientFactoryBean();
+
+        assertNotSame(super.applicationContext.getBean(BEAN_SERVICE_ENDPOINT_NAME), cfb,
+                "Got the same object but must be different");
+        assertEquals(BEAN_SERVICE_ADDRESS, cfb.getAddress(), "Got the wrong address");
+        assertNotNull(cfb.getServiceClass(), "Service class must not be null");
+        assertEquals(CustomerService.class, cfb.getServiceClass(), "Got the wrong ServiceClass");
+        assertEquals(BEAN_SERVICE_USERNAME, cfb.getUsername(), "Got the wrong username");
+        assertEquals(BEAN_SERVICE_PASSWORD, cfb.getPassword(), "Got the wrong password");
     }
 
     public static SpringJAXRSClientFactoryBean serviceEndpoint() {
@@ -91,21 +97,23 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         clientFactoryBean.setPassword(BEAN_SERVICE_PASSWORD);
 
         return clientFactoryBean;
-    }    
-    
+    }
+
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {      
-        
-        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml"));        
+    protected AbstractXmlApplicationContext createApplicationContext() {
+
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml"));
         emulateBeanRegistrationProgrammatically(applicationContext);
-        
+
         return applicationContext;
     }
 
     private void emulateBeanRegistrationProgrammatically(ClassPathXmlApplicationContext applicationContext) {
-        
+
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) applicationContext.getBeanFactory();
-        BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CxfRsSpringEndpointTest.class.getName()).setFactoryMethod("serviceEndpoint");
+        BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
+                .rootBeanDefinition(CxfRsSpringEndpointTest.class.getName()).setFactoryMethod("serviceEndpoint");
         beanFactory.registerBeanDefinition(BEAN_SERVICE_ENDPOINT_NAME, definitionBuilder.getBeanDefinition());
     }
 }

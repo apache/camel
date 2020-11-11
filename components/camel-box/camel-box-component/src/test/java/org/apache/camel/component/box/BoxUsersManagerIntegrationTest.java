@@ -29,17 +29,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxUsersManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxUsersManagerApiMethod;
-import org.junit.After;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 /**
- * Test class for {@link BoxUsersManager}
- * APIs.
+ * Test class for {@link BoxUsersManager} APIs.
  */
 public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
 
@@ -56,7 +60,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
 
     private BoxUser testUser;
 
-    @Ignore
+    @Disabled
     @Test
     public void testAddUserEmailAlias() throws Exception {
         com.box.sdk.EmailAlias result = null;
@@ -67,7 +71,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.email", CAMEL_TEST_USER_EMAIL_ALIAS);
             result = requestBodyAndHeaders("direct://ADDUSEREMAILALIAS", null, headers);
-            assertNotNull("addUserEmailAlias result", result);
+            assertNotNull(result, "addUserEmailAlias result");
             LOG.debug("addUserEmailAlias: " + result);
         } finally {
             if (result != null) {
@@ -82,7 +86,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testCreateAppUser() throws Exception {
         //This test makes sense only with JWT authentication. With standard (OAuth) it will always fail.
-        Assume.assumeTrue("Test has to be executed with standard authentication.", jwtAuthentoication);
+        assumeTrue(jwtAuthentoication, "Test has to be executed with standard authentication.");
 
         com.box.sdk.BoxUser result = null;
 
@@ -98,7 +102,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
 
             result = requestBodyAndHeaders("direct://CREATEAPPUSER", null, headers);
 
-            assertNotNull("createAppUser result", result);
+            assertNotNull(result, "createAppUser result");
             LOG.debug("createAppUser: " + result);
         } finally {
             if (result != null) {
@@ -113,14 +117,15 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testCreateEnterpriseUser() throws Exception {
         //This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return code 403
-        Assume.assumeFalse("Test has to be executed with standard authentication.", jwtAuthentoication);
+        assumeFalse(jwtAuthentoication, "Test has to be executed with standard authentication.");
 
-        String enterpriseUser1Login = (String)options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
+        String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
         if (enterpriseUser1Login != null && "".equals(enterpriseUser1Login.trim())) {
             enterpriseUser1Login = null;
         }
 
-        assertNotNull("Email for enterprise user has to be defined in test-options.properties for this test to succeed.", enterpriseUser1Login);
+        assertNotNull(enterpriseUser1Login,
+                "Email for enterprise user has to be defined in test-options.properties for this test to succeed.");
 
         com.box.sdk.BoxUser result = null;
 
@@ -138,7 +143,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
 
             result = requestBodyAndHeaders("direct://CREATEENTERPRISEUSER", null, headers);
 
-            assertNotNull("createEnterpriseUser result", result);
+            assertNotNull(result, "createEnterpriseUser result");
             LOG.debug("createEnterpriseUser: " + result);
         } finally {
             if (result != null) {
@@ -153,7 +158,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testDeleteUser() throws Exception {
         //This test makes sense only with JWT authentication. With standard (OAuth) it will always fail.
-        Assume.assumeTrue("Test has to be executed with standard authentication.", jwtAuthentoication);
+        assumeTrue(jwtAuthentoication, "Test has to be executed with standard authentication.");
 
         BoxUser.Info info = BoxUser.createAppUser(getConnection(), CAMEL_TEST_CREATE_APP_USER_NAME);
 
@@ -169,12 +174,10 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
 
         Iterable<BoxUser.Info> it = BoxUser.getAllEnterpriseUsers(getConnection(), CAMEL_TEST_CREATE_APP_USER_NAME);
         int searchResults = sizeOfIterable(it);
-        boolean exists = searchResults > 0 ? true : false;
-        assertEquals("deleteUser exists", false, exists);
-        LOG.debug("deleteUser: exists? " + exists);
+        assertFalse(searchResults > 0, "deleteUser exists");
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testDeleteUserEmailAlias() throws Exception {
         EmailAlias emailAlias = null;
@@ -193,8 +196,8 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
 
         requestBodyAndHeaders("direct://DELETEUSEREMAILALIAS", null, headers);
 
-        assertNotNull("deleteUserEmailAlias email aliases", testUser.getEmailAliases());
-        assertEquals("deleteUserEmailAlias email aliases", 0, testUser.getEmailAliases().size());
+        assertNotNull(testUser.getEmailAliases(), "deleteUserEmailAlias email aliases");
+        assertEquals(0, testUser.getEmailAliases().size(), "deleteUserEmailAlias email aliases");
     }
 
     @Test
@@ -208,7 +211,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         @SuppressWarnings("rawtypes")
         final java.util.List result = requestBodyAndHeaders("direct://GETALLENTERPRISEOREXTERNALUSERS", null, headers);
 
-        assertNotNull("getAllEnterpriseOrExternalUsers result", result);
+        assertNotNull(result, "getAllEnterpriseOrExternalUsers result");
         LOG.debug("getAllEnterpriseOrExternalUsers: " + result);
     }
 
@@ -216,7 +219,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     public void testGetCurrentUser() throws Exception {
         final com.box.sdk.BoxUser result = requestBody("direct://GETCURRENTUSER", testUser.getID());
 
-        assertNotNull("getCurrentUser result", result);
+        assertNotNull(result, "getCurrentUser result");
         LOG.debug("getCurrentUser: " + result);
     }
 
@@ -226,7 +229,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         @SuppressWarnings("rawtypes")
         final java.util.Collection result = requestBody("direct://GETUSEREMAILALIAS", testUser.getID());
 
-        assertNotNull("getUserEmailAlias result", result);
+        assertNotNull(result, "getUserEmailAlias result");
         LOG.debug("getUserEmailAlias: " + result);
     }
 
@@ -235,14 +238,14 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         // using String message body for single parameter "userId"
         final com.box.sdk.BoxUser.Info result = requestBody("direct://GETUSERINFO", testUser.getID());
 
-        assertNotNull("getUserInfo result", result);
+        assertNotNull(result, "getUserInfo result");
         LOG.debug("getUserInfo: " + result);
     }
 
     @Test
     public void testUpdateUserInfo() throws Exception {
         //This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return code 403
-        Assume.assumeFalse("Test has to be executed with standard authentication.", jwtAuthentoication);
+        assumeFalse(jwtAuthentoication, "Test has to be executed with standard authentication.");
 
         BoxUser.Info info = testUser.getInfo();
         info.setJobTitle(CAMEL_TEST_USER_JOB_TITLE);
@@ -254,7 +257,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is com.box.sdk.BoxUser.Info
             headers.put("CamelBox.info", info);
             final com.box.sdk.BoxUser result = requestBodyAndHeaders("direct://UPDATEUSERINFO", null, headers);
-            assertNotNull("updateUserInfo result", result);
+            assertNotNull(result, "updateUserInfo result");
             LOG.debug("updateUserInfo: " + result);
         } finally {
             info = testUser.getInfo();
@@ -263,23 +266,24 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         }
     }
 
-
     @Test
     public void testmMoveFolderToUser() throws Exception {
         //This test makes sense only with standard (OAuth) authentication, with JWT it will always fail with return code 403
-        Assume.assumeFalse("Test has to be executed with standard authentication.", jwtAuthentoication);
+        assumeFalse(jwtAuthentoication, "Test has to be executed with standard authentication.");
 
-        String enterpriseUser1Login = (String)options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
-        String enterpriseUser2Login = (String)options.get(CAMEL_TEST_ENTERPRISE_USER2_LOGIN_KEY);
+        String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
+        String enterpriseUser2Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER2_LOGIN_KEY);
         if (enterpriseUser1Login != null && "".equals(enterpriseUser1Login.trim())) {
             enterpriseUser1Login = null;
         }
-        if (enterpriseUser2Login != null &&  "".equals(enterpriseUser2Login.trim())) {
+        if (enterpriseUser2Login != null && "".equals(enterpriseUser2Login.trim())) {
             enterpriseUser2Login = null;
         }
 
-        assertNotNull("Email for enterprise user has to be defined in test-options.properties for this test to succeed.", enterpriseUser1Login);
-        assertNotNull("Email for enterprise user2 has to be defined in test-options.properties for this test to succeed.", enterpriseUser2Login);
+        assertNotNull(enterpriseUser1Login,
+                "Email for enterprise user has to be defined in test-options.properties for this test to succeed.");
+        assertNotNull(enterpriseUser2Login,
+                "Email for enterprise user2 has to be defined in test-options.properties for this test to succeed.");
 
         BoxUser.Info user1 = null;
         BoxUser.Info user2 = null;
@@ -295,7 +299,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.sourceUserId", user2.getID());
 
             final com.box.sdk.BoxFolder.Info result = requestBodyAndHeaders("direct://MOVEFOLDERTOUSER", null, headers);
-            assertNotNull("moveFolderToUser result", result);
+            assertNotNull(result, "moveFolderToUser result");
         } finally {
             if (user1 != null) {
                 try {
@@ -353,12 +357,12 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         };
     }
 
-    @Before
+    @BeforeEach
     public void setupTest() throws Exception {
         createTestUser();
     }
 
-    @After
+    @AfterEach
     public void teardownTest() {
         deleteTestUser();
     }
@@ -387,7 +391,7 @@ public class BoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
             return ((Collection<?>) it).size();
         } else {
             int i = 0;
-            for (@SuppressWarnings("unused") 
+            for (@SuppressWarnings("unused")
             Object obj : it) {
                 i++;
             }

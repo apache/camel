@@ -19,7 +19,10 @@ package org.apache.camel.component.jetty.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestJettyPojoInOutTest extends BaseJettyTest {
 
@@ -51,8 +54,9 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    // just return the default country here
-                    .get("lives").to("direct:start").post("lives").type(UserPojo.class).outType(CountryPojo.class).route().bean(new UserService(), "livesWhere");
+                        // just return the default country here
+                        .get("lives").to("direct:start").post("lives").type(UserPojo.class).outType(CountryPojo.class).route()
+                        .bean(new UserService(), "livesWhere");
 
                 CountryPojo country = new CountryPojo();
                 country.setIso("EN");

@@ -22,7 +22,10 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedSplitterTest extends ManagementTestSupport {
 
@@ -74,7 +77,7 @@ public class ManagedSplitterTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split(simple("${body}")).id("mysend")
+                        .split(simple("${body}")).id("mysend")
                         .to("mock:foo");
             }
         };

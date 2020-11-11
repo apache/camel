@@ -21,10 +21,10 @@ import java.util.stream.Stream;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SObjectNodeTest extends CompositeTestBase {
 
@@ -42,11 +42,11 @@ public class SObjectNodeTest extends CompositeTestBase {
         final Stream<SObjectNode> children = node.getChildNodesOfType("Contacts");
         final SObjectNode[] childrenAry = toArray(children);
 
-        assertEquals("Size of the node should be 2", 2, node.size());
+        assertEquals(2, node.size(), "Size of the node should be 2");
 
-        assertEquals("There should be one child in this node", 1, childrenAry.length);
+        assertEquals(1, childrenAry.length, "There should be one child in this node");
 
-        assertSame("First record should be smith contact", smith, childrenAry[0].getObject());
+        assertSame(smith, childrenAry[0].getObject(), "First record should be smith contact");
     }
 
     @Test
@@ -59,11 +59,11 @@ public class SObjectNodeTest extends CompositeTestBase {
         final Stream<SObjectNode> children = node.getChildNodesOfType("Contacts");
         final SObjectNode[] childrenAry = toArray(children);
 
-        assertEquals("Size of the node should be 2", 2, node.size());
+        assertEquals(2, node.size(), "Size of the node should be 2");
 
-        assertEquals("There should be one child in this node", 1, childrenAry.length);
+        assertEquals(1, childrenAry.length, "There should be one child in this node");
 
-        assertSame("First record should be smith contact", smith, childrenAry[0].getObject());
+        assertSame(smith, childrenAry[0].getObject(), "First record should be smith contact");
     }
 
     @Test
@@ -77,12 +77,12 @@ public class SObjectNodeTest extends CompositeTestBase {
         final Stream<SObjectNode> children = node.getChildNodes();
         final SObjectNode[] childrenAry = toArray(children);
 
-        assertEquals("There should be two child records in this node", 2, childrenAry.length);
+        assertEquals(2, childrenAry.length, "There should be two child records in this node");
 
-        assertSame("First record should be smith contact", smith, childrenAry[0].getObject());
-        assertSame("Second record should be evans contact", evans, childrenAry[1].getObject());
+        assertSame(smith, childrenAry[0].getObject(), "First record should be smith contact");
+        assertSame(evans, childrenAry[1].getObject(), "Second record should be evans contact");
 
-        assertEquals("Size of the node should be 3", 3, node.size());
+        assertEquals(3, node.size(), "Size of the node should be 3");
     }
 
     @Test
@@ -96,12 +96,12 @@ public class SObjectNodeTest extends CompositeTestBase {
         final Stream<AbstractSObjectBase> children = node.getChildren();
         final Object[] childrenAry = children.toArray();
 
-        assertEquals("There should be two child records in this node", 2, childrenAry.length);
+        assertEquals(2, childrenAry.length, "There should be two child records in this node");
 
-        assertSame("First record should be smith contact", smith, childrenAry[0]);
-        assertSame("Second record should be evans contact", evans, childrenAry[1]);
+        assertSame(smith, childrenAry[0], "First record should be smith contact");
+        assertSame(evans, childrenAry[1], "Second record should be evans contact");
 
-        assertEquals("Size of the node should be 3", 3, node.size());
+        assertEquals(3, node.size(), "Size of the node should be 3");
     }
 
     @Test
@@ -112,21 +112,21 @@ public class SObjectNodeTest extends CompositeTestBase {
         node.addChild("Contacts", new SObjectNode(tree, smith));
         node.addChild("Contacts", new SObjectNode(tree, evans));
 
-        assertSame("Object in the node should be the given account", simpleAccount, node.getObject());
-        assertEquals("Type of the object in node should be auto-detected", "Account", node.getObjectType());
+        assertSame(simpleAccount, node.getObject(), "Object in the node should be the given account");
+        assertEquals("Account", node.getObjectType(), "Type of the object in node should be auto-detected");
 
         final Stream<SObjectNode> children = node.getChildNodesOfType("Contacts");
         final SObjectNode[] childrenAry = toArray(children);
 
-        assertEquals("There should be two records in this node", 2, childrenAry.length);
+        assertEquals(2, childrenAry.length, "There should be two records in this node");
 
-        assertSame("First record should be smith contact", smith, childrenAry[0].getObject());
-        assertEquals("Type of first record should be Contact", "Contact", childrenAry[0].getObjectType());
+        assertSame(smith, childrenAry[0].getObject(), "First record should be smith contact");
+        assertEquals("Contact", childrenAry[0].getObjectType(), "Type of first record should be Contact");
 
-        assertSame("Second record should be evans contact", evans, childrenAry[1].getObject());
-        assertEquals("Type of second record should be Contact", "Contact", childrenAry[1].getObjectType());
+        assertSame(evans, childrenAry[1].getObject(), "Second record should be evans contact");
+        assertEquals("Contact", childrenAry[1].getObjectType(), "Type of second record should be Contact");
 
-        assertEquals("Size of the node should be 3", 3, node.size());
+        assertEquals(3, node.size(), "Size of the node should be 3");
     }
 
     @Test
@@ -144,12 +144,12 @@ public class SObjectNodeTest extends CompositeTestBase {
         final Stream<SObjectNode> children = node.getChildNodesOfType("Contacts");
         final SObjectNode[] childrenAry = toArray(children);
 
-        assertEquals("There should be two records in this node", 2, childrenAry.length);
+        assertEquals(2, childrenAry.length, "There should be two records in this node");
 
-        assertSame("First record should be smith contact", smith, childrenAry[0].getObject());
-        assertSame("Second record should be evans contact", evans, childrenAry[1].getObject());
+        assertSame(smith, childrenAry[0].getObject(), "First record should be smith contact");
+        assertSame(evans, childrenAry[1].getObject(), "Second record should be evans contact");
 
-        assertEquals("Size of the node should be 3", 3, node.size());
+        assertEquals(3, node.size(), "Size of the node should be 3");
     }
 
     @Test
@@ -162,12 +162,12 @@ public class SObjectNodeTest extends CompositeTestBase {
         final Stream<AbstractSObjectBase> children = node.getChildrenOfType("Contacts");
         final Object[] childrenAry = children.toArray();
 
-        assertEquals("There should be two child records in this node", 2, childrenAry.length);
+        assertEquals(2, childrenAry.length, "There should be two child records in this node");
 
-        assertSame("First record should be smith contact", smith, childrenAry[0]);
-        assertSame("Second record should be evans contact", evans, childrenAry[1]);
+        assertSame(smith, childrenAry[0], "First record should be smith contact");
+        assertSame(evans, childrenAry[1], "Second record should be evans contact");
 
-        assertEquals("Size of the node should be 3", 3, node.size());
+        assertEquals(3, node.size(), "Size of the node should be 3");
     }
 
     @Test
@@ -181,19 +181,19 @@ public class SObjectNodeTest extends CompositeTestBase {
         final Stream<AbstractSObjectBase> children = node.getChildrenOfType("Contacts");
         final Object[] childrenAry = children.toArray();
 
-        assertEquals("There should be four records in this node", 4, childrenAry.length);
+        assertEquals(4, childrenAry.length, "There should be four records in this node");
 
-        assertSame("First record should be smith contact", smith, childrenAry[0]);
-        assertSame("Second record should be evans contact", evans, childrenAry[1]);
-        assertSame("Third record should be bond contact", bond, childrenAry[2]);
-        assertSame("Fourth record should be moneypeny contact", moneypenny, childrenAry[3]);
+        assertSame(smith, childrenAry[0], "First record should be smith contact");
+        assertSame(evans, childrenAry[1], "Second record should be evans contact");
+        assertSame(bond, childrenAry[2], "Third record should be bond contact");
+        assertSame(moneypenny, childrenAry[3], "Fourth record should be moneypeny contact");
 
-        assertEquals("Size of the node should be 5", 5, node.size());
+        assertEquals(5, node.size(), "Size of the node should be 5");
     }
 
     @Test
     public void typeOfShouldBeBasedOnSimpleClassName() {
-        assertEquals("Type of Account should be 'Account'", "Account", SObjectNode.typeOf(new Account()));
-        assertEquals("Type of Contact should be 'Contact'", "Contact", SObjectNode.typeOf(new Contact()));
+        assertEquals("Account", SObjectNode.typeOf(new Account()), "Type of Account should be 'Account'");
+        assertEquals("Contact", SObjectNode.typeOf(new Contact()), "Type of Contact should be 'Contact'");
     }
 }

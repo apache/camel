@@ -19,9 +19,9 @@ package org.apache.camel.component.sql.stored;
 import java.sql.SQLException;
 
 import org.apache.camel.component.sql.DefaultSqlPrepareStatementStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultSqlPrepareStatementStrategyTest {
 

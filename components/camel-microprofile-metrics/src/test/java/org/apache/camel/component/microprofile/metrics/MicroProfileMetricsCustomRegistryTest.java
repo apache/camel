@@ -22,11 +22,13 @@ import io.smallrye.metrics.MetricsRegistryImpl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsCustomRegistryTest extends CamelTestSupport {
 
@@ -35,7 +37,8 @@ public class MicroProfileMetricsCustomRegistryTest extends CamelTestSupport {
     @Test
     public void testMicroProfileMetricsComponentWithCustomMetricRegistry() {
         template.sendBody("direct:start", null);
-        SortedMap<MetricID, Counter> counters = metricRegistry.getCounters((metricID, metric) -> metricID.getName().equals("test-counter"));
+        SortedMap<MetricID, Counter> counters
+                = metricRegistry.getCounters((metricID, metric) -> metricID.getName().equals("test-counter"));
         MetricID metricID = counters.firstKey();
         assertEquals(1, counters.get(metricID).getCount());
     }
@@ -56,7 +59,7 @@ public class MicroProfileMetricsCustomRegistryTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("microprofile-metrics:counter:test-counter");
+                        .to("microprofile-metrics:counter:test-counter");
             }
         };
     }

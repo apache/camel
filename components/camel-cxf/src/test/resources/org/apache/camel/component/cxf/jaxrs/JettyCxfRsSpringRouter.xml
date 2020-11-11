@@ -40,8 +40,6 @@
     </jaxrs:serviceBeans>       
   </jaxrs:server>
   
-  <!--  bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider"/-->
-
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
   
   <!-- Defined the client endpoint to create the cxf-rs producer -->
@@ -53,7 +51,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" trace="true">
     <route>
        <!-- Jetty server can be used to proxy the request to cxfrs client -->
-       <from uri="jetty://http://localhost:{{CXFTestSupport.port5}}/CxfRsRouterTest/route?matchOnUriPrefix=true&amp;bridgeEndpoint=true"/>
+       <from uri="jetty://http://localhost:{{CXFTestSupport.port5}}/CxfRsRouterTest/route?matchOnUriPrefix=true"/>
        <to uri="cxfrs://bean://rsClient?ignoreDeleteMethodMessageBody=true"/>
     </route>
   </camelContext>

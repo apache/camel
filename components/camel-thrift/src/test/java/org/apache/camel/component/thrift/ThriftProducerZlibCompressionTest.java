@@ -28,43 +28,49 @@ import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TZlibTransport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerZlibCompressionTest.class);
-    
+
     private static TServerSocket serverTransport;
     private static TServer server;
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings({ "rawtypes" })
     private static Calculator.Processor processor;
-    
+
     private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
-    
-    @BeforeClass
-    @SuppressWarnings({"unchecked", "rawtypes"})
+
+    @BeforeAll
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void startThriftServer() throws Exception {
         processor = new Calculator.Processor(new CalculatorSyncServerImpl());
-        
-        serverTransport = new TServerSocket(new InetSocketAddress(InetAddress.getByName("localhost"), THRIFT_TEST_PORT), THRIFT_CLIENT_TIMEOUT);
+
+        serverTransport = new TServerSocket(
+                new InetSocketAddress(InetAddress.getByName("localhost"), THRIFT_TEST_PORT), THRIFT_CLIENT_TIMEOUT);
         TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
         args.processor(processor);
         args.protocolFactory(new TBinaryProtocol.Factory());
         args.transportFactory(new TZlibTransport.Factory());
         server = new TThreadPoolServer(args);
-        
+
         Runnable simple = new Runnable() {
             public void run() {
                 LOG.info("Thrift server with zlib compression started on port: {}", THRIFT_TEST_PORT);
@@ -74,7 +80,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
         new Thread(simple).start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopThriftServer() throws IOException {
         if (server != null) {
             server.stop();
@@ -82,9 +88,9 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
             LOG.info("Thrift server with zlib compression stoped");
         }
     }
-    
+
     @Test
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testCalculateMethodInvocation() throws Exception {
         LOG.info("Thrift calculate method sync test start");
 
@@ -99,7 +105,7 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
         assertTrue(responseBody instanceof Integer);
         assertEquals(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2, responseBody);
     }
-    
+
     @Test
     public void testVoidMethodInvocation() throws Exception {
         LOG.info("Thrift method with empty parameters and void output sync test start");
@@ -108,16 +114,18 @@ public class ThriftProducerZlibCompressionTest extends CamelTestSupport {
         Object responseBody = template.requestBody("direct:thrift-zlib-ping", requestBody);
         assertNull(responseBody);
     }
-        
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:thrift-zlib-calculate")
-                    .to("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?method=calculate&compressionType=ZLIB&synchronous=true");
+                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                            + "/org.apache.camel.component.thrift.generated.Calculator?method=calculate&compressionType=ZLIB&synchronous=true");
                 from("direct:thrift-zlib-ping")
-                    .to("thrift://localhost:" + THRIFT_TEST_PORT + "/org.apache.camel.component.thrift.generated.Calculator?method=ping&compressionType=ZLIB&synchronous=true");
+                        .to("thrift://localhost:" + THRIFT_TEST_PORT
+                            + "/org.apache.camel.component.thrift.generated.Calculator?method=ping&compressionType=ZLIB&synchronous=true");
             }
         };
     }

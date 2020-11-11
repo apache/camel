@@ -30,12 +30,12 @@ import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpMethods;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpHelperTest {
 
@@ -171,6 +171,7 @@ public class HttpHelperTest {
                 createHttpEndpoint(true, "http://www.google.com"));
         assertEquals("http://www.google.com/", url);
     }
+
     @Test
     public void createURLShouldAddPathAndQueryParamsAndSlash() throws Exception {
         String url = HttpHelper.createURL(
@@ -178,6 +179,7 @@ public class HttpHelperTest {
                 createHttpEndpoint(true, "http://www.google.com/context?test=true"));
         assertEquals("http://www.google.com/context/search?test=true", url);
     }
+
     @Test
     public void createURLShouldAddPathAndQueryParamsAndRemoveDuplicateSlash() throws Exception {
         String url = HttpHelper.createURL(
@@ -185,7 +187,6 @@ public class HttpHelperTest {
                 createHttpEndpoint(true, "http://www.google.com/context/?test=true"));
         assertEquals("http://www.google.com/context/search?test=true", url);
     }
-
 
     @Test
     public void testIsStatusCodeOkSimpleRange() throws Exception {
@@ -225,7 +226,8 @@ public class HttpHelperTest {
         return exchange;
     }
 
-    private Exchange createExchangeWithOptionalCamelHttpUriHeader(String endpointURI, String httpPath) throws URISyntaxException {
+    private Exchange createExchangeWithOptionalCamelHttpUriHeader(String endpointURI, String httpPath)
+            throws URISyntaxException {
         CamelContext context = new DefaultCamelContext();
         DefaultExchange exchange = new DefaultExchange(context);
         Message inMsg = exchange.getIn();

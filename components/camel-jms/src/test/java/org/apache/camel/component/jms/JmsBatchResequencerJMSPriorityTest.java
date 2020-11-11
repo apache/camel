@@ -21,8 +21,8 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -30,7 +30,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * JMSPriority being ordered using the resequencer in batch mode.
  */
 public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
-    
+
     @Test
     public void testBatchResequencerJMSPriority() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -48,7 +48,7 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -66,11 +66,11 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("jms:queue:foo")
-                    // sort by JMSPriority by allowing duplicates (message can have same JMSPriority)
-                    // and use reverse ordering so 9 is first output (most important), and 0 is last
-                    // use batch mode and fire every 3th second
-                    .resequence(header("JMSPriority")).batch().timeout(3000).allowDuplicates().reverse()
-                    .to("mock:result");
+                        // sort by JMSPriority by allowing duplicates (message can have same JMSPriority)
+                        // and use reverse ordering so 9 is first output (most important), and 0 is last
+                        // use batch mode and fire every 3rd second
+                        .resequence(header("JMSPriority")).batch().timeout(3000).allowDuplicates().reverse()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -19,21 +19,19 @@ package org.apache.camel.component.cxf;
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.wsdl_first.PersonImpl;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfWsdlFirstTest extends AbstractCxfWsdlFirstTest {
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstBeans.xml");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Object implementor = new PersonImpl();
         String address = "http://localhost:" + getPort1() + "/CxfWsdlFirstTest/PersonService/";

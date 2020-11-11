@@ -40,7 +40,8 @@ import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
 @NoJSR250Annotations
-public class CamelTransportFactory extends AbstractTransportFactory implements ConduitInitiator, DestinationFactory, CamelContextAware {
+public class CamelTransportFactory extends AbstractTransportFactory
+        implements ConduitInitiator, DestinationFactory, CamelContextAware {
 
     public static final String TRANSPORT_ID = "http://cxf.apache.org/transports/camel";
     public static final List<String> DEFAULT_NAMESPACES = Arrays.asList(TRANSPORT_ID);
@@ -51,17 +52,18 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     private Bus bus;
 
     static {
-        URI_PREFIXES.add("camel://");        
+        URI_PREFIXES.add("camel://");
     }
 
     private CamelContext camelContext;
-    
+
     public CamelTransportFactory() {
         CxfHeaderFilterStrategy defaultHeaderFilterStrategy = new CxfHeaderFilterStrategy();
         // Doesn't filter the camel relates headers by default
-        defaultHeaderFilterStrategy.setOutFilterPattern(null);
+        defaultHeaderFilterStrategy.setOutFilterPattern("");
         headerFilterStrategy = defaultHeaderFilterStrategy;
     }
+
     public CamelTransportFactory(Bus b) {
         super(DEFAULT_NAMESPACES);
         bus = b;
@@ -69,14 +71,14 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
 
         CxfHeaderFilterStrategy defaultHeaderFilterStrategy = new CxfHeaderFilterStrategy();
         // Doesn't filter the camel relates headers by default
-        defaultHeaderFilterStrategy.setOutFilterPattern(null);
+        defaultHeaderFilterStrategy.setOutFilterPattern("");
         headerFilterStrategy = defaultHeaderFilterStrategy;
     }
 
     public void setCheckException(boolean check) {
         checkException = check;
     }
-    
+
     public boolean isCheckException() {
         return checkException;
     }
@@ -105,26 +107,30 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
-    
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
+
     @Override
     public void setCamelContext(CamelContext c) {
         camelContext = c;
     }
+
     @Override
     public Destination getDestination(EndpointInfo ei, Bus b) throws IOException {
         return new CamelDestination(camelContext, b, this, ei, headerFilterStrategy, checkException);
     }
+
     @Override
     public Conduit getConduit(EndpointInfo targetInfo, Bus b) throws IOException {
         return getConduit(targetInfo, null, b);
     }
+
     @Override
     public Conduit getConduit(EndpointInfo localInfo, EndpointReferenceType target, Bus b)
-        throws IOException {
+            throws IOException {
         return new CamelConduit(camelContext, b, localInfo, target, headerFilterStrategy);
     }
 
@@ -134,6 +140,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
         bus = b;
         registerFactory();
     }
+
     public final void registerFactory() {
         if (null == bus) {
             return;
@@ -151,7 +158,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
             }
         }
     }
-    
+
     public final void unregisterFactory() {
         if (null == bus) {
             return;
@@ -182,5 +189,3 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
         }
     }
 }
-
-

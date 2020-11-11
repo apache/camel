@@ -39,7 +39,8 @@ public class RestSwaggerProcessor implements Processor {
     private final RestConfiguration configuration;
 
     @SuppressWarnings("unchecked")
-    public RestSwaggerProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters, RestConfiguration configuration) {
+    public RestSwaggerProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters,
+                                RestConfiguration configuration) {
         this.contextIdPattern = contextIdPattern;
         this.contextIdListing = contextIdListing;
         this.configuration = configuration;
@@ -117,7 +118,7 @@ public class RestSwaggerProcessor implements Processor {
                     adapter.noContent();
                 } else {
                     support.renderResourceListing(exchange.getContext(), adapter, swaggerConfig, name, route, json, yaml,
-                        exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
+                            exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
                 }
             }
         } catch (Exception e) {

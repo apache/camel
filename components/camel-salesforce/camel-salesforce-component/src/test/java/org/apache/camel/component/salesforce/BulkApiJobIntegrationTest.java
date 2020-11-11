@@ -21,37 +21,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.googlecode.junittoolbox.ParallelParameterized;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(ParallelParameterized.class)
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 public class BulkApiJobIntegrationTest extends AbstractBulkApiTestBase {
 
-    @Parameter(0)
-    public JobInfo jobInfo;
-
-    @Parameter(1)
-    public String operationName;
-
-    @Before
+    @BeforeEach
     public void setupProfileWithHardDelete() throws IOException {
         final SalesforceLoginConfig loginConfig = LoginConfigHelper.getLoginConfig();
 
-        template().requestBodyAndHeader("salesforce:apexCall/UpdateProfile?apexMethod=PATCH&sObjectClass=java.lang.String", null,
-                                        SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "username", loginConfig.getUserName());
+        template().requestBodyAndHeader("salesforce:apexCall/UpdateProfile?apexMethod=PATCH&sObjectClass=java.lang.String",
+                null,
+                SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "username", loginConfig.getUserName());
     }
 
-    @Test
-    public void testJobLifecycle() throws Exception {
+    @ParameterizedTest
+    @MethodSource("getJobs")
+    public void testJobLifecycle(JobInfo jobInfo, String operationName) throws Exception {
         log.info("Testing Job lifecycle for {} of type {}", jobInfo.getOperation(), jobInfo.getContentType());
 
         // test create
@@ -59,19 +53,18 @@ public class BulkApiJobIntegrationTest extends AbstractBulkApiTestBase {
 
         // test get
         jobInfo = template().requestBody("direct:getJob", jobInfo, JobInfo.class);
-        assertSame("Job should be OPEN", JobStateEnum.OPEN, jobInfo.getState());
+        assertSame(JobStateEnum.OPEN, jobInfo.getState(), "Job should be OPEN");
 
         // test close
         jobInfo = template().requestBody("direct:closeJob", jobInfo, JobInfo.class);
-        assertSame("Job should be CLOSED", JobStateEnum.CLOSED, jobInfo.getState());
+        assertSame(JobStateEnum.CLOSED, jobInfo.getState(), "Job should be CLOSED");
 
         // test abort
         jobInfo = template().requestBody("direct:abortJob", jobInfo, JobInfo.class);
-        assertSame("Job should be ABORTED", JobStateEnum.ABORTED, jobInfo.getState());
+        assertSame(JobStateEnum.ABORTED, jobInfo.getState(), "Job should be ABORTED");
     }
 
     // test jobs for testJobLifecycle
-    @Parameters(name = "operation = {1}")
     public static Iterable<Object[]> getJobs() {
         final List<JobInfo> result = new ArrayList<>();
 
@@ -126,6 +119,6 @@ public class BulkApiJobIntegrationTest extends AbstractBulkApiTestBase {
         queryCsv.setOperation(OperationEnum.QUERY);
         result.add(queryCsv);
 
-        return result.stream().map(j -> new Object[] {j, j.getOperation().name()}).collect(Collectors.toList());
+        return result.stream().map(j -> new Object[] { j, j.getOperation().name() }).collect(Collectors.toList());
     }
 }

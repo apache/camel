@@ -48,7 +48,8 @@ public final class Containers {
             }
 
             // Add custom logger
-            container.withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix(container.getNetworkAliases().stream().collect(joining(","))));
+            container.withLogConsumer(
+                    new Slf4jLogConsumer(LOGGER).withPrefix(container.getNetworkAliases().stream().collect(joining(","))));
 
             new Thread(() -> {
                 container.start();

@@ -20,7 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyRestProducerVerbUpperCaseTest extends BaseJettyTest {
 
@@ -47,7 +49,7 @@ public class JettyRestProducerVerbUpperCaseTest extends BaseJettyTest {
                         assertEquals("GET", method);
 
                         String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody(id + ";Donald Duck");
+                        exchange.getMessage().setBody(id + ";Donald Duck");
                     }
                 });
             }

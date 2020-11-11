@@ -20,17 +20,23 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.params.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class LevelDBGetNotFoundTest extends CamelTestSupport {
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class LevelDBGetNotFoundTest extends LevelDBTestSupport {
 
     private LevelDBFile levelDBFile;
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
@@ -41,7 +47,7 @@ public class LevelDBGetNotFoundTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         levelDBFile.stop();
         super.tearDown();
@@ -49,7 +55,7 @@ public class LevelDBGetNotFoundTest extends CamelTestSupport {
 
     @Test
     public void testGetNotFound() {
-        LevelDBAggregationRepository repo = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo = getRepo();
         repo.setLevelDBFile(levelDBFile);
         repo.setRepositoryName("repo1");
 
@@ -57,12 +63,12 @@ public class LevelDBGetNotFoundTest extends CamelTestSupport {
         exchange.getIn().setBody("Hello World");
 
         Exchange out = repo.get(context, exchange.getExchangeId());
-        assertNull("Should not find exchange", out);
+        assertNull(out, "Should not find exchange");
     }
 
     @Test
     public void testPutAndGetNotFound() {
-        LevelDBAggregationRepository repo = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo = getRepo();
         repo.setLevelDBFile(levelDBFile);
         repo.setRepositoryName("repo1");
 
@@ -72,14 +78,14 @@ public class LevelDBGetNotFoundTest extends CamelTestSupport {
 
         repo.add(context, exchange.getExchangeId(), exchange);
         Exchange out = repo.get(context, exchange.getExchangeId());
-        assertNotNull("Should find exchange", out);
+        assertNotNull(out, "Should find exchange");
 
         Exchange exchange2 = new DefaultExchange(context);
         exchange2.getIn().setBody("Bye World");
         log.info("Created " + exchange2.getExchangeId());
 
         Exchange out2 = repo.get(context, exchange2.getExchangeId());
-        assertNull("Should not find exchange", out2);
+        assertNull(out2, "Should not find exchange");
     }
 
 }

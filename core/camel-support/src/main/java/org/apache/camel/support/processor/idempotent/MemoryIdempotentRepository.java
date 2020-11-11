@@ -27,10 +27,9 @@ import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * A memory based implementation of {@link org.apache.camel.spi.IdempotentRepository}. 
+ * A memory based implementation of {@link org.apache.camel.spi.IdempotentRepository}.
  * <p/>
- * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a
- * memory leak.
+ * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a memory leak.
  */
 @ManagedResource(description = "Memory based idempotent repository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {
@@ -47,8 +46,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     }
 
     /**
-     * Creates a new memory based repository using a {@link LRUCache}
-     * with a default of 1000 entries in the cache.
+     * Creates a new memory based repository using a {@link LRUCache} with a default of 1000 entries in the cache.
      */
     public static IdempotentRepository memoryIdempotentRepository() {
         return new MemoryIdempotentRepository();
@@ -57,7 +55,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     /**
      * Creates a new memory based repository using a {@link LRUCache}.
      *
-     * @param cacheSize  the cache size
+     * @param cacheSize the cache size
      */
     @SuppressWarnings("unchecked")
     public static IdempotentRepository memoryIdempotentRepository(int cacheSize) {
@@ -65,13 +63,11 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
     }
 
     /**
-     * Creates a new memory based repository using the given {@link Map} to
-     * use to store the processed message ids.
+     * Creates a new memory based repository using the given {@link Map} to use to store the processed message ids.
      * <p/>
-     * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a
-     * memory leak.
+     * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a memory leak.
      *
-     * @param cache  the cache
+     * @param cache the cache
      */
     public static IdempotentRepository memoryIdempotentRepository(Map<String, Object> cache) {
         return new MemoryIdempotentRepository(cache);
@@ -111,7 +107,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
         // noop
         return true;
     }
-    
+
     @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {

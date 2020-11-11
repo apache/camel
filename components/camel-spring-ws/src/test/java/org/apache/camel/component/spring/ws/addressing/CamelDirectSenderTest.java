@@ -23,19 +23,22 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.spring.ws.utils.OutputChannelReceiver;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.fest.assertions.Assertions;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
- * Provides abstract test for fault and output params for spring-ws:to: and
- * spring-ws:action: endpoints
+ * Provides abstract test for fault and output params for spring-ws:to: and spring-ws:action: endpoints
  */
+@CamelSpringTest
 public class CamelDirectSenderTest extends AbstractWSATests {
 
     private OutputChannelReceiver customChannel;
@@ -44,7 +47,7 @@ public class CamelDirectSenderTest extends AbstractWSATests {
     private MockEndpoint endpointCamelDirect;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         // initialize beans for catching results
@@ -61,7 +64,7 @@ public class CamelDirectSenderTest extends AbstractWSATests {
     private MessageAddressingProperties customChannelParams() {
         assertNotNull(customChannel);
         assertNotNull(customChannel.getMessageContext());
-        SoapMessage request = (SoapMessage)customChannel.getMessageContext().getRequest();
+        SoapMessage request = (SoapMessage) customChannel.getMessageContext().getRequest();
         assertNotNull(request);
 
         MessageAddressingProperties wsaProperties = TestUtil.getWSAProperties(request);
@@ -117,28 +120,29 @@ public class CamelDirectSenderTest extends AbstractWSATests {
         endpointCamelDirect.assertExchangeReceived(0);
         endpointCamelDirect.assertIsSatisfied();
     }
-    
+
     @Test
     public void customMessageIdGenerator() throws Exception {
         ActionCallback requestCallback = channelIn("http://messageIdStrategy-custom.com");
-        
+
         webServiceTemplate.sendSourceAndReceiveToResult(source, requestCallback, result);
-        
+
         Assertions.assertThat(channelOut().getMessageId()).isEqualTo(new URI("staticTestId"));
     }
-    
+
     @Test
     public void defaultMessageIdGenerator() throws Exception {
         ActionCallback requestCallback = channelIn("http://messageIdStrategy-default.com");
-        
+
         webServiceTemplate.sendSourceAndReceiveToResult(source, requestCallback, result);
-        
+
         Assertions.assertThat(channelOut().getMessageId()).isNotEqualTo(new URI("staticTestId"));
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/component/spring/ws/addresing/CamelDirectSenderTest-context.xml"});
+        return new ClassPathXmlApplicationContext(
+                new String[] { "org/apache/camel/component/spring/ws/addresing/CamelDirectSenderTest-context.xml" });
     }
 
 }

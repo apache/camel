@@ -33,31 +33,15 @@
         <dataFormats>
             <xstream id="xstream-1" mode="NO_REFERENCES"
                 permissions="-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseHistory,org.apache.camel.dataformat.xstream.PurchaseOrder">
-                <converters>
-                    <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
-                </converters>
-                <aliases>                     
-					        <alias name="purchase-order" class="org.apache.camel.dataformat.xstream.PurchaseOrder" />
-                </aliases>
-                <implicitCollections>
-                   <class name="org.apache.camel.dataformat.xstream.PurchaseHistory">
-                      <field>history</field>
-                   </class>
-                </implicitCollections>
+                <converters key="purchase-converter" value="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter"/>
+                <aliases key="purchase-order" value="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
+                <implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history"/>
             </xstream>
             
            <xstream id="xstream-json" driver="json" permissions="org.apache.camel.dataformat.xstream.*">
-                <converters>
-                    <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
-                </converters>
-                <aliases>                     
-					        <alias name="purchase-order" class="org.apache.camel.dataformat.xstream.PurchaseOrder" />
-                </aliases>
-                <implicitCollections>
-                   <class name="org.apache.camel.dataformat.xstream.PurchaseHistory">
-                      <field>history</field>
-                   </class>
-                </implicitCollections>
+               <converters key="purchase-converter" value="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter"/>
+               <aliases key="purchase-order" value="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
+               <implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history"/>
             </xstream>
             
             <xstream id="xstream-driver" driverRef="myDriver" permissions="org.apache.camel.dataformat.xstream.*"/>

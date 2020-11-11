@@ -21,20 +21,24 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Tests new converters added to XmlConverters to make Camel intelligent when
- * needing to convert a NodeList of length 1 into a Document or a Node.
+ * Tests new converters added to XmlConverters to make Camel intelligent when needing to convert a NodeList of length 1
+ * into a Document or a Node.
  */
 public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
 
     private static final String XML_INPUT_SINGLE = "<root><name>Raul</name><surname>Kripalani</surname></root>";
-    private static final String XML_INPUT_MULTIPLE = "<root><name>Raul</name><name>Raul</name><surname>Kripalani</surname></root>";
+    private static final String XML_INPUT_MULTIPLE
+            = "<root><name>Raul</name><name>Raul</name><surname>Kripalani</surname></root>";
 
     /**
-     * A single node XPath selection that internally returns a DTMNodeList of
-     * length 1 can now be automatically converted to a Document/Node.
+     * A single node XPath selection that internally returns a DTMNodeList of length 1 can now be automatically
+     * converted to a Document/Node.
      * 
      * @throws Exception
      */
@@ -51,8 +55,7 @@ public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
     }
 
     /**
-     * Regression test to ensure that a NodeList of length > 1 is not processed
-     * by the new converters.
+     * Regression test to ensure that a NodeList of length > 1 is not processed by the new converters.
      * 
      * @throws Exception
      */
@@ -79,7 +82,8 @@ public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:doTest").transform().xpath("/root/name").choice().when().xpath("/name").to("mock:found").otherwise().to("mock:notfound");
+                from("direct:doTest").transform().xpath("/root/name").choice().when().xpath("/name").to("mock:found")
+                        .otherwise().to("mock:notfound");
             }
         };
     }

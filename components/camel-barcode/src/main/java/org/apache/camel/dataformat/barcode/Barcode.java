@@ -20,9 +20,9 @@ package org.apache.camel.dataformat.barcode;
  * Header variables for the barcode data format.
  */
 public interface Barcode {
-    
+
     /**
      * Format of the barcode (please use {@link BarcodeFormat}).
      */
-    String BARCODE_FORMAT = "BarcodeFormat";  
+    String BARCODE_FORMAT = "BarcodeFormat";
 }

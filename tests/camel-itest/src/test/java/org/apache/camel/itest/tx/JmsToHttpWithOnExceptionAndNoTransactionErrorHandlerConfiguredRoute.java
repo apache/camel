@@ -19,22 +19,19 @@ package org.apache.camel.itest.tx;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
- * Route that listen on a JMS queue and send a request/reply over http
- * before returning a response. Is transacted.
+ * Route that listen on a JMS queue and send a request/reply over http before returning a response. Is transacted.
  * <p/>
- * Notice we use the SpringRouteBuilder that supports transacted
- * error handler.
+ * Notice we use the SpringRouteBuilder that supports transacted error handler.
  */
 public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute extends JmsToHttpRoute {
-
     private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         port = AvailablePortFinder.getNextAvailable();
 
         // if its a 404 then regard it as handled
@@ -45,51 +42,51 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
             }
         }).handled(true).to("mock:404").transform(constant(noAccess));
 
-        from("activemq:queue:data")
-            // must setup policy to indicate transacted route
-            .policy(required)
-            // send a request to http and get the response
-            .to("http://localhost:" + port + "/sender")
-            // convert the response to String so we can work with it and avoid streams only be readable once
-            // as the http component will return data as a stream
-            .convertBodyTo(String.class)
-            // do a choice if the response is okay or not
-            .choice()
+        from("activemq:queue:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
+                // must setup policy to indicate transacted route
+                .policy(required)
+                // send a request to http and get the response
+                .to("http://localhost:" + port + "/sender")
+                // convert the response to String so we can work with it and avoid streams only be readable once
+                // as the http component will return data as a stream
+                .convertBodyTo(String.class)
+                // do a choice if the response is okay or not
+                .choice()
                 // do a xpath to compare if the status is NOT okay
                 .when().xpath("/reply/status != 'ok'")
-                    // as this is based on an unit test we use mocks to verify how many times we did rollback
-                    .to("mock:rollback")
-                    // response is not okay so force a rollback
-                    .rollback()
+                // as this is based on an unit test we use mocks to verify how many times we did rollback
+                .to("mock:JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute")
+                // response is not okay so force a rollback
+                .rollback()
                 .otherwise()
                 // otherwise since its okay, the route ends and the response is sent back
                 // to the original caller
-            .end();
+                .end();
 
         // this is our http router
         from("jetty:http://localhost:" + port + "/sender").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 // first hit is always a error code 500 to force the caller to retry
                 if (counter++ < 1) {
                     // simulate http error 500
-                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                    exchange.getOut().setBody("Damn some internal server error");
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                    exchange.getMessage().setBody("Damn some internal server error");
                     return;
                 }
 
                 String user = exchange.getIn().getHeader("user", String.class);
                 if ("unknown".equals(user)) {
                     // no page for a unknown user
-                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                    exchange.getOut().setBody("Page does not exists");
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
+                    exchange.getMessage().setBody("Page does not exists");
                     return;
                 } else if ("guest".equals(user)) {
                     // not okay for guest user
-                    exchange.getOut().setBody(nok);
+                    exchange.getMessage().setBody(nok);
                     return;
                 }
 
-                exchange.getOut().setBody(ok);
+                exchange.getMessage().setBody(ok);
             }
         });
     }

@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 
 public class EtcdStatsProducer extends AbstractEtcdProducer {
 
-    public EtcdStatsProducer(EtcdStatsEndpoint endpoint, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
-        super(endpoint, configuration, namespace, path);
+    public EtcdStatsProducer(EtcdStatsEndpoint endpoint, EtcdConfiguration configuration, String path) {
+        super(endpoint, configuration, path);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class EtcdStatsProducer extends AbstractEtcdProducer {
         Object answer = endpoint.getStats(getClient());
 
         if (answer != null) {
-            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "stats");
             exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, getPath());
             exchange.getIn().setBody(answer);
         }

@@ -17,13 +17,11 @@
 package org.apache.camel.spi;
 
 /**
- * Allows {@link org.apache.camel.Message} to store a {@link DataType} which
- * represents the data type of the Message. Sometimes message content is marshaled
- * into {@code String}, {@code InputStream} or etc, and the data type structure is
- * not available until it's unmarshaled into Java object. The {@link DataType} stored
- * in a DataTypeAware message carries that missing data type information even if it's
- * marshaled, and whatever the Java class of the body is. This type information is used
- * to detect required {@link Transformer} and {@link Validator}.
+ * Allows {@link org.apache.camel.Message} to store a {@link DataType} which represents the data type of the Message.
+ * Sometimes message content is marshaled into {@code String}, {@code InputStream} or etc, and the data type structure
+ * is not available until it's unmarshaled into Java object. The {@link DataType} stored in a DataTypeAware message
+ * carries that missing data type information even if it's marshaled, and whatever the Java class of the body is. This
+ * type information is used to detect required {@link Transformer} and {@link Validator}.
  * <p/>
  * Data type are automatic turned on if one ore more routes has been explicit configured with input and output types.
  * Otherwise data type is default off.

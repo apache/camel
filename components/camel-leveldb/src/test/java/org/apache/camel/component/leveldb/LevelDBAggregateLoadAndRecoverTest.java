@@ -25,19 +25,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.params.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class LevelDBAggregateLoadAndRecoverTest extends LevelDBTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregateLoadAndRecoverTest.class);
     private static final int SIZE = 200;
     private static AtomicInteger counter = new AtomicInteger();
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
@@ -77,9 +80,9 @@ public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
         int expected = SIZE / 10 / 10;
         int delta = Math.abs(expected - recovered);
         if (delta == 0) {
-            assertEquals("There should be " + expected + " recovered", expected, recovered);
+            assertEquals(expected, recovered, "There should be " + expected + " recovered");
         } else {
-            assertTrue("We expected " + expected + " recovered but the delta is within accepted range " + delta, delta < 3);
+            assertTrue(delta < 3, "We expected " + expected + " recovered but the delta is within accepted range " + delta);
         }
     }
 
@@ -88,14 +91,14 @@ public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
+                LevelDBAggregationRepository repo = getRepo();
                 repo.setUseRecovery(true);
                 // for faster unit testing
                 repo.setRecoveryInterval(500);
 
                 from("seda:start?size=" + SIZE)
-                    .to("log:input?groupSize=500")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .to("log:input?groupSize=500")
+                        .aggregate(header("id"), new MyAggregationStrategy())
                         .aggregationRepository(repo)
                         .completionSize(10)
                         .to("log:output?showHeaders=true")
@@ -109,7 +112,7 @@ public class LevelDBAggregateLoadAndRecoverTest extends CamelTestSupport {
                             }
                         })
                         .to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

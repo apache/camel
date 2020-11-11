@@ -42,28 +42,35 @@ public class SearchTermBuilder {
     private SearchTerm term;
 
     public enum Op {
-        and, or, not;
+        and,
+        or,
+        not;
     }
 
     public enum Comparison {
-        LE, LT, EQ, NE, GT, GE;
+        LE,
+        LT,
+        EQ,
+        NE,
+        GT,
+        GE;
 
         int asNum() {
             switch (this) {
-            case LE :
-                return ComparisonTerm.LE;
-            case LT :
-                return ComparisonTerm.LT;
-            case EQ :
-                return ComparisonTerm.EQ;
-            case NE :
-                return ComparisonTerm.NE;
-            case GT :
-                return ComparisonTerm.GT;
-            case GE :
-                return ComparisonTerm.GE;
-            default :
-                throw new IllegalArgumentException("Unknown comparison " + this);
+                case LE:
+                    return ComparisonTerm.LE;
+                case LT:
+                    return ComparisonTerm.LT;
+                case EQ:
+                    return ComparisonTerm.EQ;
+                case NE:
+                    return ComparisonTerm.NE;
+                case GT:
+                    return ComparisonTerm.GT;
+                case GE:
+                    return ComparisonTerm.GE;
+                default:
+                    throw new IllegalArgumentException("Unknown comparison " + this);
             }
         }
     }

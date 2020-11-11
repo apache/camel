@@ -29,12 +29,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.StartupListener;
 import org.apache.camel.Suspendable;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The timer consumer.
  */
 public class TimerConsumer extends DefaultConsumer implements StartupListener, Suspendable {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);
     private final TimerEndpoint endpoint;
     private volatile TimerTask task;
     private volatile boolean configured;
@@ -51,9 +54,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
+    public void doInit() throws Exception {
         if (endpoint.getDelay() >= 0) {
             task = new TimerTask() {
                 // counter
@@ -63,7 +64,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                 public void run() {
                     if (!isTaskRunAllowed()) {
                         // do not run timer task as it was not allowed
-                        log.debug("Run not allowed for timer: {}", endpoint);
+                        LOG.debug("Run not allowed for timer: {}", endpoint);
                         return;
                     }
 
@@ -76,27 +77,38 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                         } else {
                             // no need to fire anymore as we exceeded repeat
                             // count
-                            log.debug("Cancelling {} timer as repeat count limit reached after {} counts.", endpoint.getTimerName(), endpoint.getRepeatCount());
+                            LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.",
+                                    endpoint.getTimerName(), endpoint.getRepeatCount());
                             cancel();
                         }
                     } catch (Throwable e) {
                         // catch all to avoid the JVM closing the thread and not
                         // firing again
-                        log.warn("Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.", e);
+                        LOG.warn(
+                                "Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.",
+                                e);
                     }
                 }
             };
+        }
+    }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (endpoint.getDelay() >= 0) {
             // only configure task if CamelContext already started, otherwise
             // the StartupListener
             // is configuring the task later
-            if (!configured && endpoint.getCamelContext().getStatus().isStarted()) {
+            if (task != null && !configured && endpoint.getCamelContext().getStatus().isStarted()) {
                 Timer timer = endpoint.getTimer(this);
                 configureTask(task, timer);
             }
         } else {
             // if the delay is negative then we use an ExecutorService and fire messages as soon as possible
-            executorService = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
+            executorService = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                    endpoint.getEndpointUri());
 
             executorService.execute(new Runnable() {
                 public void run() {
@@ -121,7 +133,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
 
         // remove timer
         endpoint.removeTimer(this);
-        
+
         // if executorService is instantiated then we shutdown it
         if (executorService != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(executorService);
@@ -136,16 +148,15 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         if (task != null && !configured) {
             Timer timer = endpoint.getTimer(this);
             configureTask(task, timer);
-        } 
+        }
     }
 
     /**
      * Whether the timer task is allow to run or not
      */
     protected boolean isTaskRunAllowed() {
-        // only allow running the timer task if we can run and are not suspended,
-        // and CamelContext must have been fully started
-        return endpoint.getCamelContext().getStatus().isStarted() && isRunAllowed() && !isSuspended();
+        // only run if we are started
+        return isStarted();
     }
 
     protected void configureTask(TimerTask task, Timer timer) {
@@ -175,18 +186,21 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
 
     protected void sendTimerExchange(long counter) {
         final Exchange exchange = endpoint.createExchange();
-        exchange.setProperty(Exchange.TIMER_COUNTER, counter);
-        exchange.setProperty(Exchange.TIMER_NAME, endpoint.getTimerName());
-        exchange.setProperty(Exchange.TIMER_TIME, endpoint.getTime());
-        exchange.setProperty(Exchange.TIMER_PERIOD, endpoint.getPeriod());
 
-        Date now = new Date();
-        exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
-        // also set now on in header with same key as quartz to be consistent
-        exchange.getIn().setHeader("firedTime", now);
+        if (endpoint.isIncludeMetadata()) {
+            exchange.setProperty(Exchange.TIMER_COUNTER, counter);
+            exchange.setProperty(Exchange.TIMER_NAME, endpoint.getTimerName());
+            exchange.setProperty(Exchange.TIMER_TIME, endpoint.getTime());
+            exchange.setProperty(Exchange.TIMER_PERIOD, endpoint.getPeriod());
 
-        if (log.isTraceEnabled()) {
-            log.trace("Timer {} is firing #{} count", endpoint.getTimerName(), counter);
+            Date now = new Date();
+            exchange.setProperty(Exchange.TIMER_FIRED_TIME, now);
+            // also set now on in header with same key as quartz to be consistent
+            exchange.getIn().setHeader("firedTime", now);
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Timer {} is firing #{} count", endpoint.getTimerName(), counter);
         }
 
         if (!endpoint.isSynchronous()) {

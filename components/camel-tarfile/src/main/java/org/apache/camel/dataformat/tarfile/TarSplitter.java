@@ -23,8 +23,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 
 /**
- * TarSplitter the expression builder which can be used after the splitter
- * Based on the ZipSplitter from camel-zipfile component
+ * TarSplitter the expression builder which can be used after the splitter Based on the ZipSplitter from camel-zipfile
+ * component
  */
 public class TarSplitter implements Expression {
 

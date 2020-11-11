@@ -33,9 +33,15 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CamelConduitTest extends CamelTransportTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CamelConduitTest.class);
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -65,7 +71,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         QName testEndpointQNameA = new QName("http://camel.apache.org/camel-test", "portA");
         QName testEndpointQNameB = new QName("http://camel.apache.org/camel-test", "portB");
         QName testEndpointQNameC = new QName("http://camel.apache.org/camel-test", "portC");
-        
+
         // set up the bus with configure file
         SpringBusFactory bf = new SpringBusFactory();
         BusFactory.setDefaultBus(null);
@@ -78,27 +84,26 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         CamelConduit conduit = new CamelConduit(null, bus, endpointInfo);
         CamelContext context = conduit.getCamelContext();
 
-        assertNotNull("the camel context which get from camel conduit is not null", context);
-        assertEquals("get the wrong camel context", context.getName(), "conduit_context");
+        assertNotNull(context, "the camel context which get from camel conduit is not null");
+        assertEquals("conduit_context", context.getName(), "get the wrong camel context");
         assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
-        
+
         // test the configuration of camelContextId attribute 
         endpointInfo.setAddress("camel://direct:EndpointA");
         endpointInfo.setName(testEndpointQNameC);
         conduit = new CamelConduit(null, bus, endpointInfo);
         context = conduit.getCamelContext();
 
-        assertNotNull("the camel context which get from camel conduit is not null", context);
-        assertEquals("get the wrong camel context", context.getName(), "conduit_context");
+        assertNotNull(context, "the camel context which get from camel conduit is not null");
+        assertEquals("conduit_context", context.getName(), "get the wrong camel context");
         assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
-
 
         endpointInfo.setAddress("camel://direct:EndpointC");
         endpointInfo.setName(testEndpointQNameB);
         conduit = new CamelConduit(null, bus, endpointInfo);
         context = conduit.getCamelContext();
-        assertNotNull("the camel context which get from camel conduit is not null", context);
-        assertEquals("get the wrong camel context", context.getName(), "context");
+        assertNotNull(context, "the camel context which get from camel conduit is not null");
+        assertEquals("context", context.getName(), "get the wrong camel context");
         assertEquals("direct://EndpointC", context.getRoutes().get(0).getEndpoint().getEndpointUri());
         bus.shutdown(false);
     }
@@ -111,14 +116,14 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         try {
             conduit.prepare(message);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.warn("Unexpected error preparing the message: {}", ex.getMessage(), ex);
         }
         verifyMessageContent(message);
     }
 
     public void verifyMessageContent(Message message) {
         OutputStream os = message.getContent(OutputStream.class);
-        assertTrue("OutputStream should not be null", os != null);
+        assertNotNull(os, "OutputStream should not be null");
     }
 
     @Test
@@ -149,15 +154,15 @@ public class CamelConduitTest extends CamelTransportTestSupport {
     }
 
     public void verifyReceivedMessage(String content) {
-        ByteArrayInputStream bis = (ByteArrayInputStream)inMessage.getContent(InputStream.class);
+        ByteArrayInputStream bis = (ByteArrayInputStream) inMessage.getContent(InputStream.class);
         byte bytes[] = new byte[bis.available()];
         try {
             bis.read(bytes);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LOG.warn("I/O error receiving messages: {}", ex.getMessage(), ex);
         }
         String reponse = new String(bytes);
-        assertEquals("The reponse date should be equals", content, reponse);
+        assertEquals(content, reponse, "The reponse date should be equals");
 
     }
 }

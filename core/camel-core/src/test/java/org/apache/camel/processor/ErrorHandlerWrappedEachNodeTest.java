@@ -19,12 +19,13 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test for verifying that error handler is wrapped each individual node in
- * a pipeline. Based on CAMEL-1548.
+ * Unit test for verifying that error handler is wrapped each individual node in a pipeline. Based on CAMEL-1548.
  */
 public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
 
@@ -65,8 +66,8 @@ public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;
     }

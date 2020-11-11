@@ -25,7 +25,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 public abstract class CamelFacebookTestSupport extends CamelTestSupport {
 
@@ -62,13 +62,13 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
 
     protected String getOauthParams() {
         return "oAuthAppId=" + properties.get("oAuthAppId") + "&oAuthAppSecret=" + properties.get("oAuthAppSecret")
-            + (properties.get("oAuthAccessToken") != null
-            ? ("&oAuthAccessToken=" + properties.get("oAuthAccessToken")) : "");
+               + (properties.get("oAuthAccessToken") != null
+                       ? ("&oAuthAccessToken=" + properties.get("oAuthAccessToken")) : "");
     }
 
     protected String getAppOauthParams() {
         return "oAuthAppId=" + properties.get("oAuthAppId")
-             + "&oAuthAppSecret=" + properties.get("oAuthAppSecret");
+               + "&oAuthAppSecret=" + properties.get("oAuthAppSecret");
     }
 
     protected String getShortName(String name) {

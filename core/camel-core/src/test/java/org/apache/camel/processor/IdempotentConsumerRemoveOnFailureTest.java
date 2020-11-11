@@ -24,8 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IdempotentConsumerRemoveOnFailureTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -50,17 +50,18 @@ public class IdempotentConsumerRemoveOnFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                    // in case of a failure we still want the message to be
-                    // regarded as a duplicate, so we set the option to false
-                    .removeOnFailure(false).process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String id = exchange.getIn().getHeader("messageId", String.class);
-                            if (id.equals("2")) {
-                                throw new IllegalArgumentException("Damn I cannot handle id 2");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        // in case of a failure we still want the message to be
+                        // regarded as a duplicate, so we set the option to false
+                        .removeOnFailure(false).process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damn I cannot handle id 2");
+                                }
                             }
-                        }
-                    }).to("mock:result");
+                        }).to("mock:result");
             }
         };
     }
@@ -77,7 +78,7 @@ public class IdempotentConsumerRemoveOnFailureTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         startEndpoint = resolveMandatoryEndpoint("direct:start");

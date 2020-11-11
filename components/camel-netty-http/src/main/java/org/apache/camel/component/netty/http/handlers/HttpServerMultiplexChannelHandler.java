@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http.handlers;
 
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -39,7 +40,6 @@ import org.apache.camel.component.netty.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
-import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
@@ -51,12 +51,17 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
- * A multiplex {@link org.apache.camel.component.netty.http.HttpServerInitializerFactory} which keeps a list of handlers, and delegates to the
- * target handler based on the http context path in the incoming request. This is used to allow to reuse
- * the same Netty consumer, allowing to have multiple routes on the same netty {@link io.netty.bootstrap.ServerBootstrap}
+ * A multiplex {@link org.apache.camel.component.netty.http.HttpServerInitializerFactory} which keeps a list of
+ * handlers, and delegates to the target handler based on the http context path in the incoming request. This is used to
+ * allow to reuse the same Netty consumer, allowing to have multiple routes on the same netty
+ * {@link io.netty.bootstrap.ServerBootstrap}
  */
 @Sharable
-public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandler<Object> implements HttpServerConsumerChannelFactory {
+public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandler<Object>
+        implements HttpServerConsumerChannelFactory {
+
+    private static final List<String> METHODS
+            = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
@@ -123,9 +128,10 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
 
             // special if its an OPTIONS request
             boolean isRestrictedToOptions = handler.getConsumer().getEndpoint().getHttpMethodRestrict() != null
-                && handler.getConsumer().getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
+                    && handler.getConsumer().getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
             if ("OPTIONS".equals(request.method().name()) && !isRestrictedToOptions) {
-                String allowedMethods = CamelServlet.METHODS.stream().filter(m -> isHttpMethodAllowed(request, m)).collect(Collectors.joining(","));
+                String allowedMethods
+                        = METHODS.stream().filter(m -> isHttpMethodAllowed(request, m)).collect(Collectors.joining(","));
                 if (allowedMethods == null && handler.getConsumer().getEndpoint().getHttpMethodRestrict() != null) {
                     allowedMethods = handler.getConsumer().getEndpoint().getHttpMethodRestrict();
                 }
@@ -158,8 +164,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         } else {
             // okay we cannot process this requires so return either 404 or 405.
             // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
-            boolean hasAnyMethod = CamelServlet.METHODS.stream().anyMatch(m -> isHttpMethodAllowed(request, m));
-            HttpResponse response = null;
+            boolean hasAnyMethod = METHODS.stream().anyMatch(m -> isHttpMethodAllowed(request, m));
+            HttpResponse response;
             if (hasAnyMethod) {
                 //method match error, return 405
                 response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
@@ -187,7 +193,9 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
                 return;
             } else {
                 // we cannot throw the exception here
-                LOG.warn("HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.", cause);
+                LOG.warn(
+                        "HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.",
+                        cause);
                 // Now we just send 404 back to the client
                 HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
                 response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
@@ -234,11 +242,11 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
             paths.add(new HttpRestConsumerPath(handler));
         }
 
-        RestConsumerContextPathMatcher.ConsumerPath<HttpServerChannelHandler> best = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
+        RestConsumerContextPathMatcher.ConsumerPath<HttpServerChannelHandler> best
+                = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
         if (best != null) {
             answer = best.getConsumer();
         }
-
 
         // fallback to regular matching
         List<HttpServerChannelHandler> candidates = new ArrayList<>();
@@ -256,7 +264,9 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         }
 
         // extra filter by restrict
-        candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getConsumer().getEndpoint().getHttpMethodRestrict())).collect(Collectors.toList());
+        candidates = candidates.stream()
+                .filter(c -> matchRestMethod(method, c.getConsumer().getEndpoint().getHttpMethodRestrict()))
+                .collect(Collectors.toList());
         if (candidates.size() == 1) {
             answer = candidates.get(0);
         }

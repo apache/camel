@@ -19,10 +19,10 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowEndpointTest {
 
@@ -32,7 +32,7 @@ public class UndertowEndpointTest {
 
     final URI withoutSlash = URI.create("http://0.0.0.0:8080");
 
-    @Before
+    @BeforeEach
     public void createEndpoint() throws URISyntaxException {
         endpoint = new UndertowEndpoint(null, null);
     }

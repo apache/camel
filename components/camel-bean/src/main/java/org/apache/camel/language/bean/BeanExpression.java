@@ -19,23 +19,28 @@ package org.apache.camel.language.bean;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.AfterPropertiesConfigured;
+import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanExpressionProcessor;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
+import org.apache.camel.component.bean.ParameterMappingStrategy;
+import org.apache.camel.component.bean.ParameterMappingStrategyHelper;
 import org.apache.camel.component.bean.RegistryBean;
+import org.apache.camel.component.bean.RequestBeanHolder;
 import org.apache.camel.spi.Language;
-import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.KeyValueHolder;
@@ -48,12 +53,19 @@ import static org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructo
 /**
  * Evaluates an expression using a bean method invocation
  */
-public class BeanExpression implements Expression, Predicate, AfterPropertiesConfigured {
+public class BeanExpression implements Expression, Predicate {
+
+    private ParameterMappingStrategy parameterMappingStrategy;
+    private BeanComponent beanComponent;
+    private Language simple;
+
     private Object bean;
     private String beanName;
     private Class<?> type;
     private String method;
-    private volatile BeanHolder beanHolder;
+    private BeanHolder beanHolder;
+    private boolean ognlMethod;
+    private BeanScope scope = BeanScope.Singleton;
 
     public BeanExpression(Object bean, String method) {
         this.bean = bean;
@@ -80,32 +92,84 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         return bean;
     }
 
-    public void setBean(Object bean) {
-        this.bean = bean;
-    }
-
     public String getBeanName() {
         return beanName;
-    }
-
-    public void setBeanName(String beanName) {
-        this.beanName = beanName;
     }
 
     public Class<?> getType() {
         return type;
     }
 
-    public void setType(Class<?> type) {
-        this.type = type;
-    }
-
     public String getMethod() {
         return method;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
+    public BeanScope getScope() {
+        return scope;
+    }
+
+    public void setScope(BeanScope scope) {
+        this.scope = scope;
+    }
+
+    public ParameterMappingStrategy getParameterMappingStrategy() {
+        return parameterMappingStrategy;
+    }
+
+    public void setParameterMappingStrategy(ParameterMappingStrategy parameterMappingStrategy) {
+        this.parameterMappingStrategy = parameterMappingStrategy;
+    }
+
+    public BeanComponent getBeanComponent() {
+        return beanComponent;
+    }
+
+    public void setBeanComponent(BeanComponent beanComponent) {
+        this.beanComponent = beanComponent;
+    }
+
+    public Language getSimple() {
+        return simple;
+    }
+
+    public void setSimple(Language simple) {
+        this.simple = simple;
+    }
+
+    @Override
+    public void init(CamelContext context) {
+        if (parameterMappingStrategy == null) {
+            parameterMappingStrategy = ParameterMappingStrategyHelper.createParameterMappingStrategy(context);
+        }
+        if (beanComponent == null) {
+            beanComponent = context.getComponent("bean", BeanComponent.class);
+        }
+        if (beanName != null && beanName.startsWith("type:")) {
+            // its a reference to a fqn class so load the class and use type instead
+            String fqn = beanName.substring(5);
+            try {
+                type = context.getClassResolver().resolveMandatoryClass(fqn);
+                beanName = null;
+            } catch (ClassNotFoundException e) {
+                throw new NoSuchBeanException(beanName, e);
+            }
+        }
+        if (beanHolder == null) {
+            beanHolder = createBeanHolder(context, parameterMappingStrategy, beanComponent);
+        }
+
+        // lets see if we can do additional validation that the bean has valid method during creation of the expression
+        Object target = beanHolder.getBean(null);
+        if (method != null) {
+            validateHasMethod(context, target, type, method);
+
+            // validate OGNL if its invalid syntax
+            if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
+                throw new ExpressionIllegalSyntaxException(method);
+            }
+
+            ognlMethod = OgnlHelper.isValidOgnlExpression(method);
+        }
     }
 
     @Override
@@ -126,43 +190,22 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
     }
 
     public Object evaluate(Exchange exchange) {
-
-        // if the bean holder doesn't exist then create it using the context from the exchange
         if (beanHolder == null) {
-            beanHolder = createBeanHolder(exchange.getContext());
+            throw new IllegalStateException("The expression must be initialized first");
         }
-
-        // invoking the bean can either be the easy way or using OGNL
-        if (bean != null || type != null) {
-            validateHasMethod(exchange.getContext(), bean, type, method);
-        }
-
-        // validate OGNL
-        if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
-            ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
-            throw new RuntimeBeanExpressionException(exchange, beanName, method, cause);
-        }
-
-        if (OgnlHelper.isValidOgnlExpression(method)) {
-            // okay the method is an ognl expression
-            try {
+        try {
+            if (ognlMethod) {
+                // okay the method is an ognl expression
                 return invokeOgnlMethod(beanHolder, beanName, method, exchange);
-            } catch (Exception e) {
-                if (e instanceof RuntimeBeanExpressionException) {
-                    throw (RuntimeBeanExpressionException) e;
-                }
-                throw new RuntimeBeanExpressionException(exchange, getBeanName(beanName, beanHolder), method, e);
-            }
-        } else {
-            // regular non ognl invocation
-            try {
+            } else {
+                // regular non ognl invocation
                 return invokeBean(beanHolder, beanName, method, exchange);
-            } catch (Exception e) {
-                if (e instanceof RuntimeBeanExpressionException) {
-                    throw (RuntimeBeanExpressionException) e;
-                }
-                throw new RuntimeBeanExpressionException(exchange, getBeanName(beanName, beanHolder), method, e);
             }
+        } catch (Exception e) {
+            if (e instanceof RuntimeBeanExpressionException) {
+                throw (RuntimeBeanExpressionException) e;
+            }
+            throw new RuntimeBeanExpressionException(exchange, getBeanName(exchange, beanName, beanHolder), method, e);
         }
     }
 
@@ -183,30 +226,15 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         return ObjectHelper.evaluateValuePredicate(value);
     }
 
-    @Override
-    public void afterPropertiesConfigured(CamelContext camelContext) {
-        // lets see if we can do additional validation that the bean has valid method during creation of the expression
-        Object target = bean;
-        if (bean == null && type == null && beanName != null) {
-            target = CamelContextHelper.mandatoryLookup(camelContext, beanName);
-        }
-        validateHasMethod(camelContext, target, type, method);
-
-        // if the bean holder doesn't exist then create it
-        if (beanHolder == null) {
-            beanHolder = createBeanHolder(camelContext);
-        }
-    }
-
     /**
      * Validates the given bean has the method.
      * <p/>
      * This implementation will skip trying to validate OGNL method name expressions.
      *
-     * @param context  camel context
-     * @param bean     the bean instance
-     * @param type     the bean type
-     * @param method   the method, can be <tt>null</tt> if no method name provided
+     * @param  context                                camel context
+     * @param  bean                                   the bean instance
+     * @param  type                                   the bean type
+     * @param  method                                 the method, can be <tt>null</tt> if no method name provided
      * @throws org.apache.camel.RuntimeCamelException is thrown if bean does not have the method
      */
     protected void validateHasMethod(CamelContext context, Object bean, Class<?> type, String method) {
@@ -218,28 +246,29 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
             throw new IllegalArgumentException("Either bean or type should be provided on " + this);
         }
 
-        if (bean == null && hasDefaultPublicNoArgConstructor(type)) {
-            bean = context.getInjector().newInstance(type);
-        }
-
         // do not try to validate ognl methods
         if (OgnlHelper.isValidOgnlExpression(method)) {
             return;
         }
 
+        if (bean == null && hasDefaultPublicNoArgConstructor(type)) {
+            bean = context.getInjector().newInstance(type);
+        }
+
         // if invalid OGNL then fail
         if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
             ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
-            throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(bean != null ? bean : type, method, cause));
+            throw RuntimeCamelException
+                    .wrapRuntimeCamelException(new MethodNotFoundException(bean != null ? bean : type, method, cause));
         }
 
         if (bean != null) {
-            BeanInfo info = new BeanInfo(context, bean.getClass());
+            BeanInfo info = new BeanInfo(context, bean.getClass(), parameterMappingStrategy, beanComponent);
             if (!info.hasMethod(method)) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
             }
         } else {
-            BeanInfo info = new BeanInfo(context, type);
+            BeanInfo info = new BeanInfo(context, type, parameterMappingStrategy, beanComponent);
             // must be a static method as we do not have a bean instance to invoke
             if (!info.hasStaticMethod(method)) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, type, method, true));
@@ -247,35 +276,56 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         }
     }
 
-    private BeanHolder createBeanHolder(CamelContext context) {
+    private BeanHolder createBeanHolder(
+            CamelContext context, ParameterMappingStrategy parameterMappingStrategy, BeanComponent beanComponent) {
         // either use registry lookup or a constant bean
-        BeanHolder holder;
+        BeanHolder holder = null;
         if (bean != null) {
-            holder = new ConstantBeanHolder(bean, context);
+            holder = new ConstantBeanHolder(bean, context, parameterMappingStrategy, beanComponent);
         } else if (beanName != null) {
-            holder = new RegistryBean(context, beanName);
+            RegistryBean rb = new RegistryBean(context, beanName, parameterMappingStrategy, beanComponent);
+            if (scope == BeanScope.Singleton) {
+                // cache holder as its singleton
+                holder = rb.createCacheHolder();
+            } else if (scope == BeanScope.Request) {
+                // wrap in registry scoped
+                holder = new RequestBeanHolder(rb);
+            } else {
+                // prototype scope will lookup bean on each access
+                holder = rb;
+            }
         } else if (type != null) {
-            holder = new ConstantTypeBeanHolder(type, context);
+            ConstantTypeBeanHolder th = new ConstantTypeBeanHolder(type, context, parameterMappingStrategy, beanComponent);
+            if (scope == BeanScope.Singleton && ObjectHelper.hasDefaultPublicNoArgConstructor(type)) {
+                // we can only cache if we can create an instance of the bean, and for that we need a public constructor
+                holder = th.createCacheHolder();
+            } else if (scope == BeanScope.Request) {
+                // wrap in registry scoped
+                holder = new RequestBeanHolder(th);
+            } else {
+                holder = th;
+            }
         } else {
             throw new IllegalArgumentException("Either bean, beanName or type should be set on " + this);
         }
         return holder;
     }
 
-    private static String getBeanName(String beanName, BeanHolder beanHolder) {
+    private static String getBeanName(Exchange exchange, String beanName, BeanHolder beanHolder) {
         String name = beanName;
-        if (name == null && beanHolder != null && beanHolder.getBean() != null) {
-            name = beanHolder.getBean().getClass().getCanonicalName();
+        if (name == null && beanHolder != null && beanHolder.getBean(exchange) != null) {
+            name = beanHolder.getBean(exchange).getClass().getCanonicalName();
         }
-        if (name == null && beanHolder != null && beanHolder.getBeanInfo() != null && beanHolder.getBeanInfo().getType() != null) {
+        if (name == null && beanHolder != null && beanHolder.getBeanInfo() != null
+                && beanHolder.getBeanInfo().getType() != null) {
             name = beanHolder.getBeanInfo().getType().getCanonicalName();
         }
         return name;
     }
 
     /**
-     * Invokes the bean and returns the result. If an exception was thrown while invoking the bean, then the
-     * exception is set on the exchange.
+     * Invokes the bean and returns the result. If an exception was thrown while invoking the bean, then the exception
+     * is set on the exchange.
      */
     private static Object invokeBean(BeanHolder beanHolder, String beanName, String methodName, Exchange exchange) {
         Object result;
@@ -302,7 +352,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
             if (resultExchange.hasProperties()) {
                 exchange.getProperties().putAll(resultExchange.getProperties());
             }
-            if (resultExchange.getOut().hasHeaders()) {
+            if (resultExchange.hasOut() && resultExchange.getOut().hasHeaders()) {
                 exchange.getIn().getHeaders().putAll(resultExchange.getOut().getHeaders());
             }
 
@@ -320,13 +370,13 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
     /**
      * To invoke a bean using a OGNL notation which denotes the chain of methods to invoke.
      * <p/>
-     * For more advanced OGNL you may have to look for a real framework such as OGNL, Mvel or dynamic
-     * programming language such as Groovy.
+     * For more advanced OGNL you may have to look for a real framework such as OGNL, Mvel or dynamic programming
+     * language such as Groovy.
      */
-    private static Object invokeOgnlMethod(BeanHolder beanHolder, String beanName, String ognl, Exchange exchange) {
+    private Object invokeOgnlMethod(BeanHolder beanHolder, String beanName, String ognl, Exchange exchange) {
 
         // we must start with having bean as the result
-        Object result = beanHolder.getBean();
+        Object result = beanHolder.getBean(exchange);
 
         // copy the original exchange to avoid side effects on it
         Exchange resultExchange = ExchangeHelper.createCopy(exchange, true);
@@ -342,12 +392,13 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         String ognlPath = "";
 
         // loop and invoke each method
-        Object beanToCall = beanHolder.getBean();
+        Object beanToCall = beanHolder.getBean(exchange);
         Class<?> beanType = beanHolder.getBeanInfo().getType();
 
         // there must be a bean to call with, we currently does not support OGNL expressions on using purely static methods
         if (beanToCall == null && beanType == null) {
-            throw new IllegalArgumentException("Bean instance and bean type is null. OGNL bean expressions requires to have either a bean instance of the class name of the bean to use.");
+            throw new IllegalArgumentException(
+                    "Bean instance and bean type is null. OGNL bean expressions requires to have either a bean instance of the class name of the bean to use.");
         }
 
         if (ognl != null) {
@@ -362,9 +413,9 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         for (String methodName : methods) {
             BeanHolder holder;
             if (beanToCall != null) {
-                holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
+                holder = new ConstantBeanHolder(beanToCall, exchange.getContext(), parameterMappingStrategy, beanComponent);
             } else if (beanType != null) {
-                holder = new ConstantTypeBeanHolder(beanType, exchange.getContext());
+                holder = new ConstantTypeBeanHolder(beanType, exchange.getContext(), parameterMappingStrategy, beanComponent);
             } else {
                 holder = null;
             }
@@ -373,8 +424,10 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
             boolean nullSafe = OgnlHelper.isNullSafeOperator(methodName);
 
             if (holder == null) {
-                String name = getBeanName(null, beanHolder);
-                throw new RuntimeBeanExpressionException(exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method " + methodName + " on a null instance");
+                String name = getBeanName(exchange, null, beanHolder);
+                throw new RuntimeBeanExpressionException(
+                        exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method "
+                                              + methodName + " on a null instance");
             }
 
             // keep up with how far are we doing
@@ -407,11 +460,12 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
             if (key != null) {
                 // if key is a nested simple expression then re-evaluate that again
                 if (LanguageSupport.hasSimpleFunction(key)) {
-                    Language lan = exchange.getContext().resolveLanguage("simple");
-                    key = lan.createExpression(key).evaluate(exchange, String.class);
+                    Expression exp = simple.createExpression(key);
+                    exp.init(exchange.getContext());
+                    key = exp.evaluate(exchange, String.class);
                 }
                 if (key != null) {
-                    result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean());
+                    result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean(exchange));
                 }
             }
 
@@ -428,8 +482,11 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         return result;
     }
 
-    private static Object lookupResult(Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
+    private static Object lookupResult(
+            Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
         StringHelper.notEmpty(key, "key", "in Simple language ognl path: " + ognlPath);
+
+        final TypeConverter typeConverter = exchange.getContext().getTypeConverter();
 
         // trim key
         key = key.trim();
@@ -438,17 +495,17 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         key = StringHelper.removeLeadingAndEndingQuotes(key);
 
         // try map first
-        Map<?, ?> map = exchange.getContext().getTypeConverter().convertTo(Map.class, result);
+        Map<?, ?> map = typeConverter.convertTo(Map.class, result);
         if (map != null) {
             return map.get(key);
         }
 
         // special for list is last keyword
-        Integer num = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, key);
+        Integer num = typeConverter.tryConvertTo(Integer.class, key);
         boolean checkList = key.startsWith("last") || num != null;
 
         if (checkList) {
-            List<?> list = exchange.getContext().getTypeConverter().convertTo(List.class, result);
+            List<?> list = typeConverter.convertTo(List.class, result);
             if (list != null) {
                 if (key.startsWith("last")) {
                     num = list.size() - 1;
@@ -456,7 +513,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
                     // maybe its an expression to subtract a number after last
                     String after = StringHelper.after(key, "-");
                     if (after != null) {
-                        Integer redux = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, after.trim());
+                        Integer redux = typeConverter.tryConvertTo(Integer.class, after.trim());
                         if (redux != null) {
                             num -= redux;
                         } else {
@@ -464,20 +521,24 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
                         }
                     }
                 }
-                if (num != null && num >= 0 && list.size() > num - 1 && list.size() > 0) {
+                if (num != null && num >= 0 && !list.isEmpty() && list.size() > num - 1) {
                     return list.get(num);
                 }
                 if (!nullSafe) {
                     // not null safe then its mandatory so thrown out of bounds exception
-                    throw new IndexOutOfBoundsException("Index: " + num + ", Size: " + list.size()
-                            + " out of bounds with List from bean: " + bean + "using OGNL path [" + ognlPath + "]");
+                    throw new IndexOutOfBoundsException(
+                            "Index: " + num + ", Size: " + list.size()
+                                                        + " out of bounds with List from bean: " + bean + "using OGNL path ["
+                                                        + ognlPath + "]");
                 }
             }
         }
 
         if (!nullSafe) {
-            throw new IndexOutOfBoundsException("Key: " + key + " not found in bean: " + bean + " of type: "
-                    + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath + "]");
+            throw new IndexOutOfBoundsException(
+                    "Key: " + key + " not found in bean: " + bean + " of type: "
+                                                + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath
+                                                + "]");
         } else {
             // null safe so we can return null
             return null;

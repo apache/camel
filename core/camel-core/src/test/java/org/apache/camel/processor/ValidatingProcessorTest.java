@@ -27,8 +27,10 @@ import org.apache.camel.support.processor.validation.NoXmlBodyValidationExceptio
 import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.util.xml.StringSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -38,7 +40,7 @@ public class ValidatingProcessorTest extends ContextTestSupport {
     protected ValidatingProcessor validating;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         validating = new ValidatingProcessor();
         validating.setSchemaFile(new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd"));
@@ -51,7 +53,8 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedMessageCount(1);
 
-        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>" + "  <username>davsclaus</username>" + "</user>";
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>"
+                     + "  <username>davsclaus</username>" + "</user>";
 
         template.sendBody("direct:start", xml);
 
@@ -63,7 +66,8 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedMessageCount(1);
 
-        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>" + "  <username>davsclaus</username>" + "</user>";
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>"
+                     + "  <username>davsclaus</username>" + "</user>";
 
         template.sendBody("direct:start", new StringSource(xml));
 
@@ -75,7 +79,8 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedMessageCount(2);
 
-        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>" + "  <username>davsclaus</username>" + "</user>";
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>"
+                     + "  <username>davsclaus</username>" + "</user>";
 
         template.sendBody("direct:start", xml);
         template.sendBody("direct:start", xml);
@@ -88,13 +93,15 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         mock.expectedMessageCount(1);
 
-        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">" + "  <username>someone</username>" + "</user>";
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">"
+                     + "  <username>someone</username>" + "</user>";
 
         try {
             template.sendBody("direct:start", xml);
             fail("Should have thrown a RuntimeCamelException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof SchemaValidationException);
+            boolean b = e.getCause() instanceof SchemaValidationException;
+            assertTrue(b);
             // expected
         }
 
@@ -106,13 +113,15 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         mock.expectedMessageCount(1);
 
-        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>" + "  <username>davsclaus</username>";
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>"
+                     + "  <username>davsclaus</username>";
 
         try {
             template.sendBody("direct:start", xml);
             fail("Should have thrown a RuntimeCamelException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof SchemaValidationException);
+            boolean b = e.getCause() instanceof SchemaValidationException;
+            assertTrue(b);
             // expected
         }
 

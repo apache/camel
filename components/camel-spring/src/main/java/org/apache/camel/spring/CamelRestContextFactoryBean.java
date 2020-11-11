@@ -38,6 +38,7 @@ import org.springframework.beans.factory.FactoryBean;
 public class CamelRestContextFactoryBean extends IdentifiedType implements FactoryBean<List<RestDefinition>> {
 
     @XmlElement(name = "rest", required = true)
+    @Metadata(description = "Rest services")
     private List<RestDefinition> rests = new ArrayList<>();
 
     @Override

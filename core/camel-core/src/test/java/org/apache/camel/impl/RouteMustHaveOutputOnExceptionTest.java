@@ -18,7 +18,9 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
 
@@ -32,8 +34,9 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2).backOffMultiplier(1.5).handled(true).delay(1000)
-                    .log("Halting for some time").to("mock:halt").end().end().to("mock:result");
+                from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2)
+                        .backOffMultiplier(1.5).handled(true).delay(1000)
+                        .log("Halting for some time").to("mock:halt").end().end().to("mock:result");
             }
         });
         context.start();
@@ -44,10 +47,11 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2).backOffMultiplier(1.5).handled(true).delay(1000)
-                    .log("Halting for some time").to("mock:halt")
-                    // end missing
-                    .end().to("mock:result");
+                from("direct:start").onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(2)
+                        .backOffMultiplier(1.5).handled(true).delay(1000)
+                        .log("Halting for some time").to("mock:halt")
+                        // end missing
+                        .end().to("mock:result");
             }
         });
         try {

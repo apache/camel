@@ -18,11 +18,14 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit testing using different encodings with the TCP protocol.
@@ -155,13 +158,10 @@ public class MinaEncodingTest extends BaseMinaTest {
         context.addRoutes(new RouteBuilder() {
 
             public void configure() {
-                from(uri).process(new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {
-                        String s = exchange.getIn().getBody(String.class);
-                        assertEquals(hello, s);
-                        exchange.getOut().setBody(bye);
-                    }
+                from(uri).process(exchange -> {
+                    String s = exchange.getIn().getBody(String.class);
+                    assertEquals(hello, s);
+                    exchange.getMessage().setBody(bye);
                 });
             }
         });
@@ -174,7 +174,7 @@ public class MinaEncodingTest extends BaseMinaTest {
         producer.start();
         producer.process(exchange);
 
-        String s = exchange.getOut().getBody(String.class);
+        String s = exchange.getMessage().getBody(String.class);
         assertEquals(bye, s);
 
         producer.stop();

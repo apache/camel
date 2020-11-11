@@ -20,9 +20,9 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rss.RssUtils;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class RssDataFormatTest extends CamelTestSupport {
     private String feedXml;
@@ -46,7 +46,7 @@ public class RssDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         feed = RssUtils.createFeed("file:src/test/data/rss20.xml");
         feedXml = RssConverter.feedToXml(feed);
@@ -60,7 +60,8 @@ public class RssDataFormatTest extends CamelTestSupport {
                 // START SNIPPET: ex
                 from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1000").marshal().rss().to("mock:marshal");
                 // END SNIPPET: ex
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1500").marshal().rss().unmarshal().rss().to("mock:unmarshal");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=1500").marshal().rss().unmarshal().rss()
+                        .to("mock:unmarshal");
             }
         };
     }

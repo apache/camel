@@ -25,5 +25,6 @@ public interface OptaPlannerConstants {
     String IS_SOLVING = "CamelOptaPlannerIsSolving";
     String IS_TERMINATE_EARLY = "CamelOptaPlannerIsTerminateEarly";
     String IS_EVERY_PROBLEM_FACT_CHANGE_PROCESSED = "CamelOptaPlannerIsEveryProblemFactChangeProcessed";
+    String SOLVER_MANAGER = "CamelOptaPlannerSolverManager";
     long IS_EVERY_PROBLEM_FACT_CHANGE_DELAY = 100;
 }

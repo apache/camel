@@ -27,14 +27,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
 
-    static final byte[] LENGTH_HEADER = {0x00, 0x00, 0x40, 0x00}; // 16384 bytes
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumerClientModeReconnectTest.class);
+
+    private static final byte[] LENGTH_HEADER = { 0x00, 0x00, 0x40, 0x00 }; // 16384 bytes
 
     private Processor processor = new P();
     private int port;
@@ -46,8 +50,8 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
     public void unsharableCodecsConflictsTest() throws Exception {
         byte[] data1 = new byte[8192];
         byte[] data2 = new byte[16383];
-        Arrays.fill(data1, (byte)0x38);
-        Arrays.fill(data2, (byte)0x39);
+        Arrays.fill(data1, (byte) 0x38);
+        Arrays.fill(data2, (byte) 0x39);
         byte[] body1 = (new String(LENGTH_HEADER) + new String(data1)).getBytes();
         byte[] body2 = (new String(LENGTH_HEADER) + new String(data2)).getBytes();
 
@@ -63,7 +67,7 @@ public class UnsharableCodecsConflicts2Test extends BaseNettyTest {
             sendBuffer(body1, client1);
             sendBuffer(new String("9").getBytes(), client2);
         } catch (Exception e) {
-            log.error("", e);
+            LOG.error("", e);
         } finally {
             client1.close();
             client2.close();

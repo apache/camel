@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify that redelivery counters is working as expected.
@@ -41,8 +43,10 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(3, counter); // One call + 2 re-deliveries
-        assertEquals(2, redeliveryCounter); // 2 re-deliveries
+        // One call + 2 re-deliveries
+        assertEquals(3, counter);
+        // 2 re-deliveries
+        assertEquals(2, redeliveryCounter);
     }
 
     @Test
@@ -56,8 +60,10 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1, counter); // One call
-        assertEquals(0, redeliveryCounter); // no redeliveries
+        // One call
+        assertEquals(1, counter);
+        // no redeliveries
+        assertEquals(0, redeliveryCounter);
     }
 
     @Test
@@ -71,55 +77,51 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(2, counter); // One call + 1 redelivery
-        assertEquals(1, redeliveryCounter); // 1 redelivery
+        // One call + 1 redelivery
+        assertEquals(2, counter);
+        // 1 redelivery
+        assertEquals(1, redeliveryCounter);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:two").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).onRedelivery(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-                    }
-                }))
-                    // route start here
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            counter++;
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
+                bindToRegistry("redeliveryProcessor", (Processor) (exchange -> {
+                    redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+                }));
+                from("direct:two")
+                        .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0)
+                                .onRedeliveryRef("redeliveryProcessor"))
+                        // route start here
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                counter++;
+                                throw new Exception("Forced exception by unit test");
+                            }
+                        });
 
-                from("direct:no").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).onRedelivery(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-                    }
-                }))
-                    // route start here
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            counter++;
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
+                from("direct:no")
+                        .errorHandler(
+                                deadLetterChannel("mock:error").maximumRedeliveries(0).onRedeliveryRef("redeliveryProcessor"))
+                        // route start here
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                counter++;
+                                throw new Exception("Forced exception by unit test");
+                            }
+                        });
 
-                from("direct:one").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0).onRedelivery(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-                    }
-                }))
-                    // route start here
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            counter++;
-                            throw new Exception("Forced exception by unit test");
-                        }
-                    });
+                from("direct:one")
+                        .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0)
+                                .onRedeliveryRef("redeliveryProcessor"))
+                        // route start here
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                counter++;
+                                throw new Exception("Forced exception by unit test");
+                            }
+                        });
             }
         };
     }

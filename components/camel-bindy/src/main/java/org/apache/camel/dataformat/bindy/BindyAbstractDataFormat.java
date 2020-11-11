@@ -99,9 +99,11 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
         return modelFactory;
     }
 
-    private void registerAdditionalConverter(FormatFactory formatFactory) throws IllegalAccessException, InstantiationException {
+    private void registerAdditionalConverter(FormatFactory formatFactory)
+            throws IllegalAccessException, InstantiationException {
         Function<Class<?>, FormatFactories> g = aClass -> aClass.getAnnotation(FormatFactories.class);
-        Function<FormatFactories, List<Class<? extends FormatFactoryInterface>>> h = formatFactories -> Arrays.asList(formatFactories.value());
+        Function<FormatFactories, List<Class<? extends FormatFactoryInterface>>> h
+                = formatFactories -> Arrays.asList(formatFactories.value());
         List<Class<? extends FormatFactoryInterface>> array = Optional
                 .ofNullable(classType)
                 .map(g)

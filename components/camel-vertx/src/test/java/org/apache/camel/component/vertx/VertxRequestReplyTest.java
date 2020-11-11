@@ -18,7 +18,9 @@ package org.apache.camel.component.vertx;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VertxRequestReplyTest extends VertxBaseTestSupport {
 
@@ -51,7 +53,7 @@ public class VertxRequestReplyTest extends VertxBaseTestSupport {
                 from(startUri).to(middleUri).to(resultUri);
 
                 from(middleUri)
-                    .transform(simple("Bye ${body}"));
+                        .transform(simple("Bye ${body}"));
             }
         };
     }

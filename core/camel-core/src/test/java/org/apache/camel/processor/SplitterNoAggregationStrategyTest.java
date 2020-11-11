@@ -22,7 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitterNoAggregationStrategyTest extends ContextTestSupport {
 
@@ -62,7 +65,8 @@ public class SplitterNoAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body().tokenize(",")).process(new MyProcessor()).to("mock:split").end().to("mock:result");
+                from("direct:start").split(body().tokenize(",")).process(new MyProcessor()).to("mock:split").end()
+                        .to("mock:result");
             }
         };
     }

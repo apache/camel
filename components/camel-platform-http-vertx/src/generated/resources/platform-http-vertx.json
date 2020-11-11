@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "platform-http-vertx",
+    "title": "Platform Http Vertx",
+    "description": "Implementation of the Platform HTTP Engine based on Vert.x Web",
+    "deprecated": false,
+    "firstVersion": "3.2.0",
+    "label": "http",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-platform-http-vertx",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

@@ -23,14 +23,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.init();
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
         return context;
@@ -47,10 +49,9 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
-
 
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -59,13 +60,17 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        mbeanServer.invoke(on, "setGlobalOption", new String[]{Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1"}, new String[]{"java.lang.String", "java.lang.String"});
-        mbeanServer.invoke(on, "setGlobalOption", new String[]{Exchange.LOG_DEBUG_BODY_STREAMS, "true"}, new String[]{"java.lang.String", "java.lang.String"});
+        mbeanServer.invoke(on, "setGlobalOption", new String[] { Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1" },
+                new String[] { "java.lang.String", "java.lang.String" });
+        mbeanServer.invoke(on, "setGlobalOption", new String[] { Exchange.LOG_DEBUG_BODY_STREAMS, "true" },
+                new String[] { "java.lang.String", "java.lang.String" });
 
-        Object invoke = mbeanServer.invoke(on, "getGlobalOption", new String[]{Exchange.LOG_DEBUG_BODY_MAX_CHARS}, new String[]{"java.lang.String"});
+        Object invoke = mbeanServer.invoke(on, "getGlobalOption", new String[] { Exchange.LOG_DEBUG_BODY_MAX_CHARS },
+                new String[] { "java.lang.String" });
         assertEquals("-1", invoke);
 
-        invoke = mbeanServer.invoke(on, "getGlobalOption", new String[]{Exchange.LOG_DEBUG_BODY_STREAMS}, new String[]{"java.lang.String"});
+        invoke = mbeanServer.invoke(on, "getGlobalOption", new String[] { Exchange.LOG_DEBUG_BODY_STREAMS },
+                new String[] { "java.lang.String" });
         assertEquals("true", invoke);
     }
 

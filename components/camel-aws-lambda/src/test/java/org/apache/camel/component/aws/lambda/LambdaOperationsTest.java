@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.aws.lambda;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LambdaOperationsTest {
 
     @Test
     public void supportedOperationCount() {
-        assertEquals(14, LambdaOperations.values().length);
+        assertEquals(18, LambdaOperations.values().length);
     }
 
     @Test
@@ -43,23 +43,31 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.untagResource, LambdaOperations.valueOf("untagResource"));
         assertEquals(LambdaOperations.publishVersion, LambdaOperations.valueOf("publishVersion"));
         assertEquals(LambdaOperations.listVersions, LambdaOperations.valueOf("listVersions"));
+        assertEquals(LambdaOperations.createAlias, LambdaOperations.valueOf("createAlias"));
+        assertEquals(LambdaOperations.deleteAlias, LambdaOperations.valueOf("deleteAlias"));
+        assertEquals(LambdaOperations.getAlias, LambdaOperations.valueOf("getAlias"));
+        assertEquals(LambdaOperations.listAliases, LambdaOperations.valueOf("listAliases"));
     }
 
     @Test
     public void testToString() {
-        assertEquals(LambdaOperations.createFunction.toString(), "createFunction");
-        assertEquals(LambdaOperations.getFunction.toString(), "getFunction");
-        assertEquals(LambdaOperations.listFunctions.toString(), "listFunctions");
-        assertEquals(LambdaOperations.invokeFunction.toString(), "invokeFunction");
-        assertEquals(LambdaOperations.deleteFunction.toString(), "deleteFunction");
-        assertEquals(LambdaOperations.updateFunction.toString(), "updateFunction");
-        assertEquals(LambdaOperations.createEventSourceMapping.toString(), "createEventSourceMapping");
-        assertEquals(LambdaOperations.deleteEventSourceMapping.toString(), "deleteEventSourceMapping");
-        assertEquals(LambdaOperations.listEventSourceMapping.toString(), "listEventSourceMapping");
-        assertEquals(LambdaOperations.listTags.toString(), "listTags");
-        assertEquals(LambdaOperations.tagResource.toString(), "tagResource");
-        assertEquals(LambdaOperations.untagResource.toString(), "untagResource");
-        assertEquals(LambdaOperations.publishVersion.toString(), "publishVersion");
-        assertEquals(LambdaOperations.listVersions.toString(), "listVersions");
+        assertEquals("createFunction", LambdaOperations.createFunction.toString());
+        assertEquals("getFunction", LambdaOperations.getFunction.toString());
+        assertEquals("listFunctions", LambdaOperations.listFunctions.toString());
+        assertEquals("invokeFunction", LambdaOperations.invokeFunction.toString());
+        assertEquals("deleteFunction", LambdaOperations.deleteFunction.toString());
+        assertEquals("updateFunction", LambdaOperations.updateFunction.toString());
+        assertEquals("createEventSourceMapping", LambdaOperations.createEventSourceMapping.toString());
+        assertEquals("deleteEventSourceMapping", LambdaOperations.deleteEventSourceMapping.toString());
+        assertEquals("listEventSourceMapping", LambdaOperations.listEventSourceMapping.toString());
+        assertEquals("listTags", LambdaOperations.listTags.toString());
+        assertEquals("tagResource", LambdaOperations.tagResource.toString());
+        assertEquals("untagResource", LambdaOperations.untagResource.toString());
+        assertEquals("publishVersion", LambdaOperations.publishVersion.toString());
+        assertEquals("listVersions", LambdaOperations.listVersions.toString());
+        assertEquals("createAlias", LambdaOperations.createAlias.toString());
+        assertEquals("deleteAlias", LambdaOperations.deleteAlias.toString());
+        assertEquals("getAlias", LambdaOperations.getAlias.toString());
+        assertEquals("listAliases", LambdaOperations.listAliases.toString());
     }
 }

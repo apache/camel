@@ -25,7 +25,7 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 
 public class OneWayOutgoingChainInterceptor extends AbstractPhaseInterceptor<Message> {
-    
+
     public OneWayOutgoingChainInterceptor() {
         super(Phase.POST_INVOKE);
         this.addBefore(OutgoingChainInterceptor.class.getName());
@@ -36,7 +36,7 @@ public class OneWayOutgoingChainInterceptor extends AbstractPhaseInterceptor<Mes
         closeInput(message);
         return;
     }
-    
+
     private void closeInput(Message message) {
         InputStream is = message.getContent(InputStream.class);
         if (is != null) {

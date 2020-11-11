@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -31,9 +32,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * To collect various metrics directly from Camel routes using the Micrometer library.
+ * Collect various metrics directly from Camel routes using the Micrometer library.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = "micrometer", title = "Micrometer", syntax = "micrometer:metricsType:metricsName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.22.0", scheme = "micrometer", title = "Micrometer",
+             syntax = "micrometer:metricsType:metricsName", producerOnly = true, category = { Category.MONITORING })
 public class MicrometerEndpoint extends DefaultEndpoint {
 
     protected MeterRegistry registry;
@@ -55,7 +57,8 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     @UriParam(description = "Decrement value expression when using counter type")
     private String decrement;
 
-    public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, Meter.Type metricsType, String metricsName, Iterable<Tag> tags) {
+    public MicrometerEndpoint(String uri, Component component, MeterRegistry registry, Meter.Type metricsType,
+                              String metricsName, Iterable<Tag> tags) {
         super(uri, component);
         this.registry = registry;
         this.metricsType = metricsType;

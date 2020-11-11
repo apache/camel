@@ -23,7 +23,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSupport {
 
@@ -43,7 +45,8 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
             assertTrue(pbe.getMethod().getName().contains("hello"));
             assertEquals(555, pbe.getParameterValue());
 
-            NoTypeConversionAvailableException ntae = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
+            NoTypeConversionAvailableException ntae
+                    = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
             assertEquals(Integer.class, ntae.getFromType());
             assertEquals(Document.class, ntae.getToType());
             assertEquals(555, ntae.getValue());
@@ -70,7 +73,7 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
         mock.expectedBodiesReceived("Hello World");
         mock.message(0).header("foo").isNull();
 
-        template.requestBodyAndHeader("direct:start", "Hello World", "foo", (Object)null);
+        template.requestBodyAndHeader("direct:start", "Hello World", "foo", (Object) null);
 
         assertMockEndpointsSatisfied();
     }

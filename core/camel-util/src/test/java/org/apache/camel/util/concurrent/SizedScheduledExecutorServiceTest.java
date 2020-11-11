@@ -20,20 +20,23 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
  */
-public class SizedScheduledExecutorServiceTest extends Assert {
-    
+public class SizedScheduledExecutorServiceTest {
+
     @Test
     public void testSizedScheduledExecutorService() throws Exception {
         ScheduledThreadPoolExecutor delegate = new ScheduledThreadPoolExecutor(5);
-        
+
         SizedScheduledExecutorService sized = new SizedScheduledExecutorService(delegate, 2);
-        
+
         Runnable task = new Runnable() {
             @Override
             public void run() {
@@ -43,7 +46,7 @@ public class SizedScheduledExecutorServiceTest extends Assert {
 
         sized.schedule(task, 2, TimeUnit.SECONDS);
         sized.schedule(task, 3, TimeUnit.SECONDS);
-        
+
         try {
             sized.schedule(task, 4, TimeUnit.SECONDS);
             fail("Should have thrown exception");
@@ -52,7 +55,7 @@ public class SizedScheduledExecutorServiceTest extends Assert {
         }
 
         sized.shutdownNow();
-        assertTrue("Should be shutdown", sized.isShutdown() || sized.isTerminating());
-        assertTrue("Should be shutdown", delegate.isShutdown() || sized.isTerminating());
+        assertTrue(sized.isShutdown() || sized.isTerminating(), "Should be shutdown");
+        assertTrue(delegate.isShutdown() || sized.isTerminating(), "Should be shutdown");
     }
 }

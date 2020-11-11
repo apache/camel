@@ -24,7 +24,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,6 +32,7 @@ import org.apache.camel.Service;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.log.LogEndpoint;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.management.mbean.ManagedAggregateProcessor;
 import org.apache.camel.management.mbean.ManagedBeanProcessor;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
@@ -50,7 +50,6 @@ import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEnricher;
-import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedFailoverLoadBalancer;
 import org.apache.camel.management.mbean.ManagedFilter;
@@ -89,6 +88,7 @@ import org.apache.camel.management.mbean.ManagedSplitter;
 import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedStickyLoadBalancer;
 import org.apache.camel.management.mbean.ManagedStop;
+import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThreads;
@@ -101,19 +101,33 @@ import org.apache.camel.management.mbean.ManagedUnmarshal;
 import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWeightedLoadBalancer;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
+import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.DynamicRouterDefinition;
+import org.apache.camel.model.EnrichDefinition;
 import org.apache.camel.model.ExpressionNode;
+import org.apache.camel.model.IdempotentConsumerDefinition;
 import org.apache.camel.model.LoadBalanceDefinition;
+import org.apache.camel.model.LoopDefinition;
+import org.apache.camel.model.MarshalDefinition;
+import org.apache.camel.model.PollEnrichDefinition;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
+import org.apache.camel.model.RoutingSlipDefinition;
+import org.apache.camel.model.ScriptDefinition;
+import org.apache.camel.model.SetBodyDefinition;
+import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.model.SetPropertyDefinition;
+import org.apache.camel.model.SplitDefinition;
+import org.apache.camel.model.TransformDefinition;
+import org.apache.camel.model.UnmarshalDefinition;
+import org.apache.camel.model.ValidateDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.ClaimCheckProcessor;
-import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.Enricher;
-import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.ExchangePatternProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LogProcessor;
@@ -156,14 +170,17 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectStrategy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.support.processor.ConvertBodyProcessor;
 import org.apache.camel.support.processor.MarshalProcessor;
+import org.apache.camel.support.processor.PredicateValidatingProcessor;
 import org.apache.camel.support.processor.ThroughputLogger;
 import org.apache.camel.support.processor.UnmarshalProcessor;
-import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
 
 /**
  * Default {@link org.apache.camel.spi.ManagementObjectStrategy}.
@@ -178,14 +195,14 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    public Object getManagedObjectForCamelHealth(CamelContext context) {
-        ManagedCamelHealth mch = new ManagedCamelHealth(context);
+    public Object getManagedObjectForCamelHealth(CamelContext context, HealthCheckRegistry healthCheckRegistry) {
+        ManagedCamelHealth mch = new ManagedCamelHealth(context, healthCheckRegistry);
         mch.init(context.getManagementStrategy());
         return mch;
     }
 
     @Override
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForComponent(CamelContext context, Component component, String name) {
         ManagedComponent mc = new ManagedComponent(name, component);
         mc.init(context.getManagementStrategy());
@@ -193,7 +210,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat) {
         ManagedDataFormat md = new ManagedDataFormat(context, dataFormat);
         md.init(context.getManagementStrategy());
@@ -201,7 +218,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({"deprecation", "unchecked"})
+    @SuppressWarnings({ "deprecation", "unchecked" })
     public Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint) {
         // we only want to manage singleton endpoints
         if (!endpoint.isSingleton()) {
@@ -220,16 +237,13 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    public Object getManagedObjectForErrorHandler(CamelContext context, RouteContext routeContext,
-                                                  Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-        ManagedErrorHandler me = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
-        me.init(context.getManagementStrategy());
-        return me;
-    }
-
-    @Override
-    public Object getManagedObjectForRouteController(CamelContext context) {
-        ManagedRouteController mrc = new ManagedRouteController(context);
+    public Object getManagedObjectForRouteController(CamelContext context, RouteController routeController) {
+        ManagedService mrc;
+        if (routeController instanceof SupervisingRouteController) {
+            mrc = new ManagedSupervisingRouteController(context, (SupervisingRouteController) routeController);
+        } else {
+            mrc = new ManagedRouteController(context, routeController);
+        }
         mrc.init(context.getManagementStrategy());
         return mrc;
     }
@@ -247,8 +261,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    public Object getManagedObjectForThreadPool(CamelContext context, ThreadPoolExecutor threadPool,
-                                                String id, String sourceId, String routeId, String threadPoolProfileId) {
+    public Object getManagedObjectForThreadPool(
+            CamelContext context, ThreadPoolExecutor threadPool,
+            String id, String sourceId, String routeId, String threadPoolProfileId) {
         ManagedThreadPool mtp = new ManagedThreadPool(context, threadPool, id, sourceId, routeId, threadPoolProfileId);
         mtp.init(context.getManagementStrategy());
         return mtp;
@@ -295,9 +310,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     @Override
-    @SuppressWarnings({"deprecation", "unchecked"})
-    public Object getManagedObjectForProcessor(CamelContext context, Processor processor,
-                                               NamedNode node, Route route) {
+    @SuppressWarnings({ "deprecation", "unchecked" })
+    public Object getManagedObjectForProcessor(
+            CamelContext context, Processor processor,
+            NamedNode node, Route route) {
         ManagedProcessor answer = null;
 
         ProcessorDefinition<?> definition = (ProcessorDefinition<?>) node;
@@ -305,7 +321,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         if (definition instanceof RecipientListDefinition) {
             // special for RecipientListDefinition, as the processor is wrapped in a pipeline as last
             Pipeline pipeline = (Pipeline) processor;
-            Iterator<Processor> it = pipeline.getProcessors().iterator();
+            Iterator<Processor> it = pipeline.next().iterator();
             while (it.hasNext()) {
                 processor = it.next();
             }
@@ -331,35 +347,40 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof Throttler) {
                 answer = new ManagedThrottler(context, (Throttler) target, definition);
             } else if (target instanceof DynamicRouter) {
-                answer = new ManagedDynamicRouter(context, (DynamicRouter) target, (org.apache.camel.model.DynamicRouterDefinition) definition);
+                answer = new ManagedDynamicRouter(context, (DynamicRouter) target, (DynamicRouterDefinition) definition);
             } else if (target instanceof RoutingSlip) {
-                answer = new ManagedRoutingSlip(context, (RoutingSlip) target, (org.apache.camel.model.RoutingSlipDefinition) definition);
+                answer = new ManagedRoutingSlip(context, (RoutingSlip) target, (RoutingSlipDefinition) definition);
             } else if (target instanceof FilterProcessor) {
-                answer = new ManagedFilter(context, (FilterProcessor) target, (ExpressionNode)definition);
+                answer = new ManagedFilter(context, (FilterProcessor) target, (ExpressionNode) definition);
             } else if (target instanceof LogProcessor) {
                 answer = new ManagedLog(context, (LogProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {
-                answer = new ManagedLoop(context, (LoopProcessor) target, (org.apache.camel.model.LoopDefinition) definition);
+                answer = new ManagedLoop(context, (LoopProcessor) target, (LoopDefinition) definition);
             } else if (target instanceof MarshalProcessor) {
-                answer = new ManagedMarshal(context, (MarshalProcessor) target, (org.apache.camel.model.MarshalDefinition) definition);
+                answer = new ManagedMarshal(context, (MarshalProcessor) target, (MarshalDefinition) definition);
             } else if (target instanceof UnmarshalProcessor) {
-                answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, (org.apache.camel.model.UnmarshalDefinition) definition);
+                answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, (UnmarshalDefinition) definition);
             } else if (target instanceof FailOverLoadBalancer) {
-                answer = new ManagedFailoverLoadBalancer(context, (FailOverLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+                answer = new ManagedFailoverLoadBalancer(
+                        context, (FailOverLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof RandomLoadBalancer) {
-                answer = new ManagedRandomLoadBalancer(context, (RandomLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+                answer = new ManagedRandomLoadBalancer(
+                        context, (RandomLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof RoundRobinLoadBalancer) {
-                answer = new ManagedRoundRobinLoadBalancer(context, (RoundRobinLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+                answer = new ManagedRoundRobinLoadBalancer(
+                        context, (RoundRobinLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof StickyLoadBalancer) {
-                answer = new ManagedStickyLoadBalancer(context, (StickyLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+                answer = new ManagedStickyLoadBalancer(
+                        context, (StickyLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof TopicLoadBalancer) {
-                answer = new ManagedTopicLoadBalancer(context, (TopicLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+                answer = new ManagedTopicLoadBalancer(context, (TopicLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof WeightedLoadBalancer) {
-                answer = new ManagedWeightedLoadBalancer(context, (WeightedLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
+                answer = new ManagedWeightedLoadBalancer(
+                        context, (WeightedLoadBalancer) target, (LoadBalanceDefinition) definition);
             } else if (target instanceof RecipientList) {
                 answer = new ManagedRecipientList(context, (RecipientList) target, (RecipientListDefinition) definition);
             } else if (target instanceof Splitter) {
-                answer = new ManagedSplitter(context, (Splitter) target, (org.apache.camel.model.SplitDefinition) definition);
+                answer = new ManagedSplitter(context, (Splitter) target, (SplitDefinition) definition);
             } else if (target instanceof MulticastProcessor) {
                 answer = new ManagedMulticast(context, (MulticastProcessor) target, definition);
             } else if (target instanceof SamplingThrottler) {
@@ -371,23 +392,23 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof StreamResequencer) {
                 answer = new ManagedResequencer(context, (StreamResequencer) target, definition);
             } else if (target instanceof SetBodyProcessor) {
-                answer = new ManagedSetBody(context, (SetBodyProcessor) target, (org.apache.camel.model.SetBodyDefinition) definition);
+                answer = new ManagedSetBody(context, (SetBodyProcessor) target, (SetBodyDefinition) definition);
             } else if (target instanceof RemoveHeaderProcessor) {
                 answer = new ManagedRemoveHeader(context, (RemoveHeaderProcessor) target, definition);
             } else if (target instanceof RemoveHeadersProcessor) {
                 answer = new ManagedRemoveHeaders(context, (RemoveHeadersProcessor) target, definition);
             } else if (target instanceof SetHeaderProcessor) {
-                answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, (org.apache.camel.model.SetHeaderDefinition) definition);
+                answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, (SetHeaderDefinition) definition);
             } else if (target instanceof RemovePropertyProcessor) {
                 answer = new ManagedRemoveProperty(context, (RemovePropertyProcessor) target, definition);
             } else if (target instanceof RemovePropertiesProcessor) {
                 answer = new ManagedRemoveProperties(context, (RemovePropertiesProcessor) target, definition);
             } else if (target instanceof SetPropertyProcessor) {
-                answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, (org.apache.camel.model.SetPropertyDefinition) definition);
+                answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, (SetPropertyDefinition) definition);
             } else if (target instanceof ExchangePatternProcessor) {
                 answer = new ManagedSetExchangePattern(context, (ExchangePatternProcessor) target, definition);
             } else if (target instanceof ScriptProcessor) {
-                answer = new ManagedScript(context, (ScriptProcessor) target, (org.apache.camel.model.ScriptDefinition) definition);
+                answer = new ManagedScript(context, (ScriptProcessor) target, (ScriptDefinition) definition);
             } else if (target instanceof StepProcessor) {
                 answer = new ManagedStep(context, (StepProcessor) target, definition);
             } else if (target instanceof StopProcessor) {
@@ -397,9 +418,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof ThrowExceptionProcessor) {
                 answer = new ManagedThrowException(context, (ThrowExceptionProcessor) target, definition);
             } else if (target instanceof TransformProcessor) {
-                answer = new ManagedTransformer(context, (TransformProcessor) target, (org.apache.camel.model.TransformDefinition) definition);
+                answer = new ManagedTransformer(context, (TransformProcessor) target, (TransformDefinition) definition);
             } else if (target instanceof PredicateValidatingProcessor) {
-                answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, (org.apache.camel.model.ValidateDefinition) definition);
+                answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, (ValidateDefinition) definition);
             } else if (target instanceof WireTapProcessor) {
                 answer = new ManagedWireTapProcessor(context, (WireTapProcessor) target, definition);
             } else if (target instanceof SendDynamicProcessor) {
@@ -421,13 +442,14 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof BeanProcessor) {
                 answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
             } else if (target instanceof IdempotentConsumer) {
-                answer = new ManagedIdempotentConsumer(context, (IdempotentConsumer) target, (org.apache.camel.model.IdempotentConsumerDefinition) definition);
+                answer = new ManagedIdempotentConsumer(
+                        context, (IdempotentConsumer) target, (IdempotentConsumerDefinition) definition);
             } else if (target instanceof AggregateProcessor) {
-                answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, (org.apache.camel.model.AggregateDefinition) definition);
+                answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, (AggregateDefinition) definition);
             } else if (target instanceof Enricher) {
-                answer = new ManagedEnricher(context, (Enricher) target, (org.apache.camel.model.EnrichDefinition) definition);
+                answer = new ManagedEnricher(context, (Enricher) target, (EnrichDefinition) definition);
             } else if (target instanceof PollEnricher) {
-                answer = new ManagedPollEnricher(context, (PollEnricher) target, (org.apache.camel.model.PollEnrichDefinition) definition);
+                answer = new ManagedPollEnricher(context, (PollEnricher) target, (PollEnrichDefinition) definition);
             }
 
             // special for custom load balancer

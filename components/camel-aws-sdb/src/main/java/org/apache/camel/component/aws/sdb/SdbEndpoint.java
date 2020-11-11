@@ -27,6 +27,7 @@ import com.amazonaws.services.simpledb.AmazonSimpleDBClientBuilder;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
 import com.amazonaws.services.simpledb.model.NoSuchDomainException;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -41,11 +42,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
+ * Store and Retrieve data from/to AWS SDB service.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-sdb", title = "AWS SimpleDB", syntax = "aws-sdb:domainName", producerOnly = true, label = "cloud,database,nosql")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-sdb", title = "AWS SimpleDB", syntax = "aws-sdb:domainName",
+             producerOnly = true, category = { Category.CLOUD, Category.DATABASE, Category.NOSQL })
 public class SdbEndpoint extends ScheduledPollEndpoint {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(SdbEndpoint.class);
 
     private AmazonSimpleDB sdbClient;
@@ -71,9 +73,9 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        
+
         sdbClient = configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
-        
+
         String domainName = getConfiguration().getDomainName();
         LOG.trace("Querying whether domain [{}] already exists...", domainName);
 
@@ -113,7 +115,8 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonSimpleDBClientBuilder.standard().withCredentials(credentialsProvider);
             }
@@ -130,13 +133,8 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         client = clientBuilder.build();
         return client;
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 }

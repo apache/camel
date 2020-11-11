@@ -19,6 +19,7 @@ package org.apache.camel.component.hdfs;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -27,9 +28,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
+ * Read and write from/to an HDFS filesystem using Hadoop 2.x.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "hdfs", title = "HDFS", syntax = "hdfs:hostName:port/path", label = "hadoop,file")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "hdfs", title = "HDFS", syntax = "hdfs:hostName:port/path",
+             category = { Category.BIGDATA, Category.HADOOP, Category.FILE })
 public class HdfsEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

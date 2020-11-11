@@ -40,7 +40,8 @@ public class UpdateIssueProducer extends DefaultProducer {
         JiraRestClient client = ((JiraEndpoint) getEndpoint()).getClient();
         String issueKey = exchange.getIn().getHeader(ISSUE_KEY, String.class);
         if (issueKey == null) {
-            throw new IllegalArgumentException("Missing exchange input header named \'IssueKey\', it should specify the issue key.");
+            throw new IllegalArgumentException(
+                    "Missing exchange input header named \'IssueKey\', it should specify the issue key.");
         }
         Long issueTypeId = exchange.getIn().getHeader(ISSUE_TYPE_ID, Long.class);
         String issueTypeName = exchange.getIn().getHeader(ISSUE_TYPE_NAME, String.class);
@@ -51,7 +52,7 @@ public class UpdateIssueProducer extends DefaultProducer {
         List<String> components = exchange.getIn().getHeader(ISSUE_COMPONENTS, List.class);
         if (issueTypeId == null && issueTypeName != null) {
             Iterable<IssueType> issueTypes = client.getMetadataClient().getIssueTypes().claim();
-            for (IssueType type: issueTypes) {
+            for (IssueType type : issueTypes) {
                 if (issueTypeName.equals(type.getName())) {
                     issueTypeId = type.getId();
                     break;
@@ -60,7 +61,7 @@ public class UpdateIssueProducer extends DefaultProducer {
         }
         if (priorityId == null && priorityName != null) {
             Iterable<Priority> priorities = client.getMetadataClient().getPriorities().claim();
-            for (Priority pri: priorities) {
+            for (Priority pri : priorities) {
                 if (priorityName.equals(pri.getName())) {
                     priorityId = pri.getId();
                     break;
@@ -78,7 +79,7 @@ public class UpdateIssueProducer extends DefaultProducer {
         if (description != null) {
             builder.setDescription(description);
         }
-        if (components != null && components.size() > 0) {
+        if (components != null && !components.isEmpty()) {
             builder.setComponentsNames(components);
         }
         if (priorityId != null) {

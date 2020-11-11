@@ -24,40 +24,40 @@ import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultProducer;
 
 /**
- * {@link Producer} to send data to an AS/400 data queue.
+ * {@link Producer} to send data to an IBM i data queue.
  */
 public class Jt400DataQueueProducer extends DefaultProducer {
 
     private final Jt400Endpoint endpoint;
-    
+
     /**
      * Performs the lifecycle logic of this producer.
      */
-    private final Jt400DataQueueService queueService;
-
     protected Jt400DataQueueProducer(Jt400Endpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.queueService = new Jt400DataQueueService(endpoint);
     }
 
     /**
-     * Sends the {@link Exchange}'s in body to the AS/400 data queue. If the
-     * endpoint's format is set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#binary}, the data queue entry's
-     * data will be sent as a <code>byte[]</code>. If the endpoint's format is
-     * set to {@link org.apache.camel.component.jt400.Jt400Configuration.Format#text}, the data queue entry's data will be sent as a
-     * <code>String</code>.
+     * Sends the {@link Exchange}'s in body to the IBM i data queue. If the endpoint's format is set to
+     * {@link org.apache.camel.component.jt400.Jt400Configuration.Format#binary}, the data queue entry's data will be
+     * sent as a <code>byte[]</code>. If the endpoint's format is set to
+     * {@link org.apache.camel.component.jt400.Jt400Configuration.Format#text}, the data queue entry's data will be sent
+     * as a <code>String</code>.
      * <p/>
-     * If the endpoint is configured to publish to a {@link KeyedDataQueue},
-     * then the {@link org.apache.camel.Message} header <code>KEY</code> must be set.
+     * If the endpoint is configured to publish to a {@link KeyedDataQueue}, then the {@link org.apache.camel.Message}
+     * header <code>KEY</code> must be set.
      */
     @Override
     public void process(Exchange exchange) throws Exception {
-        BaseDataQueue queue = queueService.getDataQueue();
-        if (endpoint.isKeyed()) {
-            process((KeyedDataQueue) queue, exchange);
-        } else {
-            process((DataQueue) queue, exchange);
+        try (Jt400DataQueueService queueService = new Jt400DataQueueService(endpoint)) {
+            queueService.start();
+            BaseDataQueue queue = queueService.getDataQueue();
+            if (endpoint.isKeyed()) {
+                process((KeyedDataQueue) queue, exchange);
+            } else {
+                process((DataQueue) queue, exchange);
+            }
         }
     }
 
@@ -75,16 +75,6 @@ public class Jt400DataQueueProducer extends DefaultProducer {
         } else {
             queue.write(exchange.getIn().getHeader(Jt400Endpoint.KEY, String.class), exchange.getIn().getBody(String.class));
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        queueService.start();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        queueService.stop();
     }
 
 }

@@ -16,21 +16,21 @@
  */
 package org.apache.camel.opentracing;
 
-import io.opentracing.Span;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.opentracing.decorators.SedaSpanDecorator;
+import org.apache.camel.tracing.SpanAdapter;
+import org.apache.camel.tracing.decorators.SedaSpanDecorator;
 
 public class TestSEDASpanDecorator extends SedaSpanDecorator {
 
     @Override
-    public void pre(Span span, Exchange exchange, Endpoint endpoint) {
+    public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
         span.setTag("pre", "test");
     }
 
     @Override
-    public void post(Span span, Exchange exchange, Endpoint endpoint) {
+    public void post(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.post(span, exchange, endpoint);
         span.setTag("post", "test");
     }

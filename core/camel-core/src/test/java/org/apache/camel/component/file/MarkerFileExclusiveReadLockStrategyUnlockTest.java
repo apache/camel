@@ -22,13 +22,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setupDirectory();
         super.setUp();
@@ -40,7 +42,7 @@ public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSu
         writeFiles();
         boolean done = notify.matches(5, TimeUnit.SECONDS);
 
-        assertTrue("Route should be done processing 1 exchanges", done);
+        assertTrue(done, "Route should be done processing 1 exchanges");
 
         assertFileNotExists("target/data/marker-unlock/input-a/file1.dat.camelLock");
         assertFileNotExists("target/data/marker-unlock/input-b/file2.dat.camelLock");
@@ -52,7 +54,9 @@ public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSu
             @Override
             public void configure() throws Exception {
                 from("file:target/data/marker-unlock/input-a?fileName=file1.dat&readLock=markerFile&initialDelay=0&delay=10")
-                    .pollEnrich("file:target/data/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile&initialDelay=0&delay=10").to("mock:result");
+                        .pollEnrich(
+                                "file:target/data/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile&initialDelay=0&delay=10")
+                        .to("mock:result");
             }
         };
     }

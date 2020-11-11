@@ -33,7 +33,10 @@ import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 @XmlEnum(String.class)
 public enum ErrorHandlerType {
 
-    DefaultErrorHandler, DeadLetterChannel, NoErrorHandler, TransactionErrorHandler;
+    DefaultErrorHandler,
+    DeadLetterChannel,
+    NoErrorHandler,
+    TransactionErrorHandler;
 
     /**
      * Get the type as class.
@@ -42,16 +45,16 @@ public enum ErrorHandlerType {
      */
     public Class<?> getTypeAsClass() {
         switch (this) {
-        case DefaultErrorHandler:
-            return DefaultErrorHandlerBuilder.class;
-        case DeadLetterChannel:
-            return DeadLetterChannelBuilder.class;
-        case NoErrorHandler:
-            return NoErrorHandlerBuilder.class;
-        case TransactionErrorHandler:
-            return TransactionErrorHandlerBuilder.class;
-        default:
-            throw new IllegalArgumentException("Unknown error handler: " + this);
+            case DefaultErrorHandler:
+                return DefaultErrorHandlerBuilder.class;
+            case DeadLetterChannel:
+                return DeadLetterChannelBuilder.class;
+            case NoErrorHandler:
+                return NoErrorHandlerBuilder.class;
+            case TransactionErrorHandler:
+                return TransactionErrorHandlerBuilder.class;
+            default:
+                throw new IllegalArgumentException("Unknown error handler: " + this);
         }
     }
 

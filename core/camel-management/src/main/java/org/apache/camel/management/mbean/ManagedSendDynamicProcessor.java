@@ -41,7 +41,8 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
     private String uri;
     private boolean sanitize;
 
-    public ManagedSendDynamicProcessor(CamelContext context, SendDynamicProcessor processor, ProcessorDefinition<?> definition) {
+    public ManagedSendDynamicProcessor(CamelContext context, SendDynamicProcessor processor,
+                                       ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
     }
@@ -128,7 +129,8 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
                         hits = 0L;
                     }
 
-                    CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+                    CompositeData data
+                            = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
                     answer.put(data);
                 }
             }

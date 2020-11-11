@@ -19,7 +19,8 @@ package org.apache.camel.support;
 import org.apache.camel.AsyncCallback;
 
 /**
- * An empty {@link AsyncCallback} which allows to share the same instance instead of creating a new instance for each message.
+ * An empty {@link AsyncCallback} which allows to share the same instance instead of creating a new instance for each
+ * message.
  */
 public final class EmptyAsyncCallback implements AsyncCallback {
 

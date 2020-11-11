@@ -29,7 +29,6 @@ import org.kie.api.event.process.ProcessStartedEvent;
 import org.kie.api.event.process.ProcessVariableChangedEvent;
 import org.kie.internal.runtime.Cacheable;
 
-
 public class CamelProcessEventListener implements ProcessEventListener, Cacheable, JBPMCamelConsumerAware {
 
     private Set<JBPMConsumer> consumers = new LinkedHashSet<>();
@@ -48,7 +47,7 @@ public class CamelProcessEventListener implements ProcessEventListener, Cacheabl
         if (consumers.isEmpty()) {
             return;
         }
-        
+
         sendMessage("afterProcessStarted", event);
     }
 
@@ -130,7 +129,7 @@ public class CamelProcessEventListener implements ProcessEventListener, Cacheabl
     public void removeConsumer(JBPMConsumer consumer) {
         this.consumers.remove(consumer);
     }
-    
+
     protected void sendMessage(String eventType, Object event) {
         this.consumers.stream().filter(c -> c.getStatus().isStarted()).forEach(c -> c.sendMessage(eventType, event));
     }

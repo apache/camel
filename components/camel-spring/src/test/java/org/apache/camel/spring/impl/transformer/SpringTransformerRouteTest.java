@@ -19,9 +19,10 @@ package org.apache.camel.spring.impl.transformer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.transformer.TransformerRouteTest;
+import org.apache.camel.processor.transformer.TransformerRouteTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * A TransformerTest demonstrates contract based declarative transformation via Spring DSL.

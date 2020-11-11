@@ -23,14 +23,21 @@ import com.google.api.services.calendar.model.Calendar;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarCalendarsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$Calendars} APIs.
  */
 public class CalendarCalendarsIntegrationTest extends AbstractGoogleCalendarTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CalendarCalendarsIntegrationTest.class);
 
-    private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarsApiMethod.class).getName();
 
     @Test
     public void testCalendars() throws Exception {
@@ -50,9 +57,10 @@ public class CalendarCalendarsIntegrationTest extends AbstractGoogleCalendarTest
         requestBody("direct://DELETE", calendar.getId());
         try {
             calendarFromGet = requestBody("direct://GET", calendar.getId());
-            assertTrue("Should have not found deleted calendar.", false);
+            fail("Should have not found deleted calendar.");
         } catch (Exception e) {
-            e.printStackTrace();
+            // Likely safe to ignore in this context
+            LOG.debug("Unhandled exception (probably safe to ignore): {}", e.getMessage(), e);
         }
     }
 

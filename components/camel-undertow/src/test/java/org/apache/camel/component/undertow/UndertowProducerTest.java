@@ -21,7 +21,9 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowProducerTest extends BaseUndertowTest {
 
@@ -51,7 +53,8 @@ public class UndertowProducerTest extends BaseUndertowTest {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
         getMockEndpoint("mock:input").expectedHeaderReceived("name", "me");
 
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", null, Exchange.HTTP_QUERY, "name=me", String.class);
+        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", null, Exchange.HTTP_QUERY,
+                "name=me", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -61,7 +64,8 @@ public class UndertowProducerTest extends BaseUndertowTest {
     public void testHttpSimpleHeader() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "POST", String.class);
+        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "POST",
+                String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -72,7 +76,8 @@ public class UndertowProducerTest extends BaseUndertowTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
+        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port}}/foo", "Hello World",
+                Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -83,7 +88,8 @@ public class UndertowProducerTest extends BaseUndertowTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port2}}/bar", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
+        String out = template.requestBodyAndHeader("undertow:http://localhost:{{port2}}/bar", "Hello World",
+                Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("This is the InputStream", out);
 
         assertMockEndpointsSatisfied();
@@ -93,15 +99,16 @@ public class UndertowProducerTest extends BaseUndertowTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             private InputStream is = new ByteArrayInputStream("This is the InputStream".getBytes());
+
             @Override
             public void configure() throws Exception {
                 from("undertow:http://localhost:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
 
                 from("undertow:http://localhost:{{port2}}/bar")
-                    .to("mock:input")
-                    .transform().constant(is);
+                        .to("mock:input")
+                        .transform().constant(is);
             }
         };
     }

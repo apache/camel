@@ -25,14 +25,23 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
 
+    private Logger log = LoggerFactory.getLogger(getClass());
+
     @BindToRegistry("dummy-rest")
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
+
+    @BindToRegistry("bookService")
+    private Object dummy = new Object();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -40,11 +49,15 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // this user REST service is json only
-                rest("/books").tag("dude").description("Book order service").consumes("application/json").produces("application/json")
+                rest("/books").tag("dude").description("Book order service").consumes("application/json")
+                        .produces("application/json")
 
-                    .get("/{id}").description("Find order by id").outType(BookOrder.class).responseMessage().message("The order returned").endResponseMessage().param().name("id")
-                    .type(RestParamType.path).description("The id of the order to get").dataType("integer").endParam().to("bean:bookService?method=getOrder(${header.id})")
-                    .get("/books/{id}/line/{lineNum}").outType(LineItem.class).to("bean:bookService?method=getOrder(${header.id})");
+                        .get("/{id}").description("Find order by id").outType(BookOrder.class).responseMessage()
+                        .message("The order returned").endResponseMessage().param().name("id")
+                        .type(RestParamType.path).description("The id of the order to get").dataType("integer").endParam()
+                        .to("bean:bookService?method=getOrder(${header.id})")
+                        .get("/books/{id}/line/{lineNum}").outType(LineItem.class)
+                        .to("bean:bookService?method=getOrder(${header.id})");
             }
         };
     }
@@ -53,7 +66,7 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -61,7 +74,8 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -84,19 +98,20 @@ public class RestOpenApiReaderModelBookOrderTest extends CamelTestSupport {
 
         context.stop();
     }
-    
+
     @Test
     public void testReaderReadV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();

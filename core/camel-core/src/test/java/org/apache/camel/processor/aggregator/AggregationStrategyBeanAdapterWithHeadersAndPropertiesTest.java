@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregationStrategyBeanAdapterWithHeadersAndPropertiesTest extends ContextTestSupport {
 
@@ -45,16 +45,18 @@ public class AggregationStrategyBeanAdapterWithHeadersAndPropertiesTest extends 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setHeader("foo", constant("yes")).aggregate(constant(true), AggregationStrategies.bean(appender, "appendWithHeadersAndProperties"))
-                    .completionSize(3).to("mock:result");
+                from("direct:start").setHeader("foo", constant("yes"))
+                        .aggregate(constant(true), AggregationStrategies.bean(appender, "appendWithHeadersAndProperties"))
+                        .completionSize(3).to("mock:result");
             }
         };
     }
 
     public static final class MyBodyAppender {
 
-        public String appendWithHeadersAndProperties(String existing, Map<String, String> oldHeaders, Map<String, Integer> oldProperties, String next,
-                                                     Map<String, String> newHeaders, Map<String, Integer> newProperties) {
+        public String appendWithHeadersAndProperties(
+                String existing, Map<String, String> oldHeaders, Map<String, Integer> oldProperties, String next,
+                Map<String, String> newHeaders, Map<String, Integer> newProperties) {
             if (next != null) {
                 Integer count = oldProperties.get("count") + newProperties.get("count");
                 oldProperties.put("count", count);

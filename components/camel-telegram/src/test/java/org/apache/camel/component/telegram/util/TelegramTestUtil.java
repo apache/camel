@@ -25,7 +25,6 @@ import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -39,8 +38,8 @@ public final class TelegramTestUtil {
     /**
      * Creates a sample image.
      *
-     * @param imageIOType the image-io code of the image type (eg. PNG, JPG)
-     * @return a sample image
+     * @param  imageIOType the image-io code of the image type (eg. PNG, JPG)
+     * @return             a sample image
      * @throws IOException if anything goes wrong
      */
     public static byte[] createSampleImage(String imageIOType) throws IOException {
@@ -49,12 +48,13 @@ public final class TelegramTestUtil {
             img = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.png"));
         } else if (imageIOType.equalsIgnoreCase("jpg")) {
             img = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.jpg"));
+        } else if ("webp".equalsIgnoreCase(imageIOType)) {
+            img = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.webp"));
         } else {
             throw new IllegalArgumentException("Unknown format " + imageIOType);
         }
         return img;
     }
-
 
     private static byte[] readBytesFromStream(InputStream in) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream(IOHelper.DEFAULT_BUFFER_SIZE);
@@ -78,7 +78,8 @@ public final class TelegramTestUtil {
     }
 
     public static String stringResource(String path) {
-        try (Reader r = new InputStreamReader(TelegramTestUtil.class.getClassLoader().getResourceAsStream(path), StandardCharsets.UTF_8)) {
+        try (Reader r = new InputStreamReader(
+                TelegramTestUtil.class.getClassLoader().getResourceAsStream(path), StandardCharsets.UTF_8)) {
             return IOHelper.toString(r);
         } catch (IOException e) {
             throw new RuntimeException(e);

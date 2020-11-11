@@ -48,13 +48,15 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon IAM Service
- * <a href="http://aws.amazon.com/iam/">AWS IAM</a>
+ * A Producer which sends messages to the Amazon IAM Service <a href="http://aws.amazon.com/iam/">AWS IAM</a>
  */
 public class IAMProducer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(IAMProducer.class);
     private transient String iamProducerToString;
 
     public IAMProducer(Endpoint endpoint) {
@@ -64,47 +66,47 @@ public class IAMProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listAccessKeys:
-            listAccessKeys(getEndpoint().getIamClient(), exchange);
-            break;
-        case createAccessKey:
-            createAccessKey(getEndpoint().getIamClient(), exchange);
-            break;
-        case deleteAccessKey:
-            deleteAccessKey(getEndpoint().getIamClient(), exchange);
-            break;
-        case updateAccessKey:
-            updateAccessKey(getEndpoint().getIamClient(), exchange);
-            break;
-        case createUser:
-            createUser(getEndpoint().getIamClient(), exchange);
-            break;
-        case deleteUser:
-            deleteUser(getEndpoint().getIamClient(), exchange);
-            break;
-        case getUser:
-            getUser(getEndpoint().getIamClient(), exchange);
-            break;
-        case listUsers:
-            listUsers(getEndpoint().getIamClient(), exchange);
-            break;
-        case createGroup:
-            createGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        case deleteGroup:
-            deleteGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        case listGroups:
-            listGroups(getEndpoint().getIamClient(), exchange);
-            break;
-        case addUserToGroup:
-            addUserToGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        case removeUserFromGroup:
-            removeUserFromGroup(getEndpoint().getIamClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listAccessKeys:
+                listAccessKeys(getEndpoint().getIamClient(), exchange);
+                break;
+            case createAccessKey:
+                createAccessKey(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteAccessKey:
+                deleteAccessKey(getEndpoint().getIamClient(), exchange);
+                break;
+            case updateAccessKey:
+                updateAccessKey(getEndpoint().getIamClient(), exchange);
+                break;
+            case createUser:
+                createUser(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteUser:
+                deleteUser(getEndpoint().getIamClient(), exchange);
+                break;
+            case getUser:
+                getUser(getEndpoint().getIamClient(), exchange);
+                break;
+            case listUsers:
+                listUsers(getEndpoint().getIamClient(), exchange);
+                break;
+            case createGroup:
+                createGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteGroup:
+                deleteGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            case listGroups:
+                listGroups(getEndpoint().getIamClient(), exchange);
+                break;
+            case addUserToGroup:
+                addUserToGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            case removeUserFromGroup:
+                removeUserFromGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -130,7 +132,7 @@ public class IAMProducer extends DefaultProducer {
 
     @Override
     public IAMEndpoint getEndpoint() {
-        return (IAMEndpoint)super.getEndpoint();
+        return (IAMEndpoint) super.getEndpoint();
     }
 
     private void listAccessKeys(AmazonIdentityManagement iamClient, Exchange exchange) {
@@ -138,7 +140,7 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.listAccessKeys();
         } catch (AmazonServiceException ase) {
-            log.trace("List Access Keys command returned the error code {}", ase.getErrorCode());
+            LOG.trace("List Access Keys command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -157,7 +159,7 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.createUser(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Create user command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Create user command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -176,13 +178,13 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.deleteUser(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Delete user command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Delete user command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void getUser(AmazonIdentityManagement iamClient, Exchange exchange) {
         GetUserRequest request = new GetUserRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
@@ -195,7 +197,7 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.getUser(request);
         } catch (AmazonServiceException ase) {
-            log.trace("get user command returned the error code {}", ase.getErrorCode());
+            LOG.trace("get user command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -207,30 +209,30 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.listUsers();
         } catch (AmazonServiceException ase) {
-            log.trace("List users command returned the error code {}", ase.getErrorCode());
+            LOG.trace("List users command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
         CreateAccessKeyRequest request = new CreateAccessKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
-        } 
+        }
         CreateAccessKeyResult result;
         try {
             result = iamClient.createAccessKey(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Create Access Key command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Create Access Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
         DeleteAccessKeyRequest request = new DeleteAccessKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID))) {
@@ -247,13 +249,13 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.deleteAccessKey(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Delete Access Key command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Delete Access Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void updateAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
         UpdateAccessKeyRequest request = new UpdateAccessKeyRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID))) {
@@ -276,13 +278,13 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.updateAccessKey(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Update Access Key command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Update Access Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
         CreateGroupRequest request = new CreateGroupRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
@@ -294,18 +296,18 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_PATH))) {
             String groupPath = exchange.getIn().getHeader(IAMConstants.GROUP_PATH, String.class);
             request.withPath(groupPath);
-        } 
+        }
         CreateGroupResult result;
         try {
             result = iamClient.createGroup(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Create Group command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Create Group command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
         DeleteGroupRequest request = new DeleteGroupRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
@@ -318,25 +320,25 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.deleteGroup(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Delete Group command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Delete Group command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void listGroups(AmazonIdentityManagement iamClient, Exchange exchange) {
         ListGroupsResult result;
         try {
             result = iamClient.listGroups();
         } catch (AmazonServiceException ase) {
-            log.trace("List Groups command returned the error code {}", ase.getErrorCode());
+            LOG.trace("List Groups command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void addUserToGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
         AddUserToGroupRequest request = new AddUserToGroupRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
@@ -355,13 +357,13 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.addUserToGroup(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Add User To Group command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Add User To Group command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void removeUserFromGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
         RemoveUserFromGroupRequest request = new RemoveUserFromGroupRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
@@ -380,19 +382,14 @@ public class IAMProducer extends DefaultProducer {
         try {
             result = iamClient.removeUserFromGroup(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Remove User From Group command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Remove User From Group command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 }

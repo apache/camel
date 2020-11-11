@@ -29,8 +29,8 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
     static int port = AvailablePortFinder.getNextAvailable();
@@ -94,7 +94,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RestConfigurationDefinition restConfig = restConfiguration("jetty").scheme("https").host("localhost").port(port);
+                RestConfigurationDefinition restConfig = restConfiguration().scheme("https").host("localhost").port(port);
                 decorateRestConfiguration(restConfig);
 
                 rest("/TestParams").get().to("direct:get1").post().to("direct:post1");
@@ -104,7 +104,7 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                 from("direct:get1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody("Hello " + id);
+                        exchange.getMessage().setBody("Hello " + id);
                     }
                 });
 
@@ -112,8 +112,8 @@ public class RestHttpsClientAuthRouteTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
                         String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
-                        exchange.getOut().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
-                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, ct);
+                        exchange.getMessage().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
+                        exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, ct);
                     }
                 });
 

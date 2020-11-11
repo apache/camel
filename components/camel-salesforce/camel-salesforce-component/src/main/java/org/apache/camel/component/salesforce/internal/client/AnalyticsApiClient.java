@@ -57,11 +57,16 @@ public interface AnalyticsApiClient {
 
     void getReportDescription(String reportId, Map<String, List<String>> headers, ReportDescriptionResponseCallback callback);
 
-    void executeSyncReport(String reportId, Boolean includeDetails, ReportMetadata reportFilter, Map<String, List<String>> headers, ReportResultsResponseCallback callback);
+    void executeSyncReport(
+            String reportId, Boolean includeDetails, ReportMetadata reportFilter, Map<String, List<String>> headers,
+            ReportResultsResponseCallback callback);
 
-    void executeAsyncReport(String reportId, Boolean includeDetails, ReportMetadata reportFilter, Map<String, List<String>> headers, ReportInstanceResponseCallback callback);
+    void executeAsyncReport(
+            String reportId, Boolean includeDetails, ReportMetadata reportFilter, Map<String, List<String>> headers,
+            ReportInstanceResponseCallback callback);
 
     void getReportInstances(String reportId, Map<String, List<String>> headers, ReportInstanceListResponseCallback callback);
 
-    void getReportResults(String reportId, String instanceId, Map<String, List<String>> headers, ReportResultsResponseCallback callback);
+    void getReportResults(
+            String reportId, String instanceId, Map<String, List<String>> headers, ReportResultsResponseCallback callback);
 }

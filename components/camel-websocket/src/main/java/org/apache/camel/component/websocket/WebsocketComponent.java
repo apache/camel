@@ -105,7 +105,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         MemoryWebsocketStore memoryStore;
         int refCount;
 
-        ConnectorRef(Server server, ServerConnector connector, WebsocketComponentServlet servlet, MemoryWebsocketStore memoryStore) {
+        ConnectorRef(Server server, ServerConnector connector, WebsocketComponentServlet servlet,
+                     MemoryWebsocketStore memoryStore) {
             this.server = server;
             this.connector = connector;
             this.servlet = servlet;
@@ -231,8 +232,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     /**
-     * Disconnects the URL specified on the endpoint from the specified
-     * processor.
+     * Disconnects the URL specified on the endpoint from the specified processor.
      */
     public void disconnect(WebsocketProducerConsumer prodcon) throws Exception {
         // If the connector is not needed anymore then stop it
@@ -243,7 +243,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
             ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
             if (connectorRef != null) {
                 if (connectorRef.decrement() == 0) {
-                    LOG.info("Stopping Jetty Server as the last connector is disconnecting: {}:{}", connectorRef.connector.getHost(), connectorRef.connector.getPort());
+                    LOG.info("Stopping Jetty Server as the last connector is disconnecting: {}:{}",
+                            connectorRef.connector.getHost(), connectorRef.connector.getPort());
                     servlets.remove(createPathSpec(endpoint.getResourceUri()));
                     connectorRef.server.removeConnector(connectorRef.connector);
                     if (connectorRef.connector != null) {
@@ -281,7 +282,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
+        SSLContextParameters sslContextParameters
+                = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
 
         Boolean enableJmx = getAndRemoveParameter(parameters, "enableJmx", Boolean.class);
         String staticResources = getAndRemoveParameter(parameters, "staticResources", String.class);
@@ -351,7 +353,9 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         // configure thread pool if min/max given
         if (minThreads != null || maxThreads != null) {
             if (getThreadPool() != null) {
-                throw new IllegalArgumentException("You cannot configure both minThreads/maxThreads and a custom threadPool on JettyHttpComponent: " + this);
+                throw new IllegalArgumentException(
+                        "You cannot configure both minThreads/maxThreads and a custom threadPool on JettyHttpComponent: "
+                                                   + this);
             }
             QueuedThreadPool qtp = new QueuedThreadPool();
             if (minThreads != null) {
@@ -391,7 +395,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         if (home != null) {
             String[] resources = home.split(":");
             if (LOG.isDebugEnabled()) {
-                LOG.debug(">>> Protocol found: " + resources[0] + ", and resource: " + resources[1]);
+                LOG.debug(">>> Protocol found: {}, and resource: {}", resources[0], resources[1]);
             }
 
             if (resources[0].equals("classpath")) {
@@ -413,7 +417,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         return server;
     }
 
-    protected Server createStaticResourcesServer(ServletContextHandler context, String host, int port, String home) throws Exception {
+    protected Server createStaticResourcesServer(ServletContextHandler context, String host, int port, String home)
+            throws Exception {
         Server server = new Server();
         HttpConfiguration httpConfig = new HttpConfiguration();
         ServerConnector connector = new ServerConnector(server, new HttpConnectionFactory(httpConfig));
@@ -423,7 +428,9 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         return createStaticResourcesServer(server, context, home);
     }
 
-    protected WebsocketComponentServlet addServlet(NodeSynchronization sync, WebsocketProducerConsumer prodcon, String resourceUri) throws Exception {
+    protected WebsocketComponentServlet addServlet(
+            NodeSynchronization sync, WebsocketProducerConsumer prodcon, String resourceUri)
+            throws Exception {
 
         // Get Connector from one of the Jetty Instances to add WebSocket Servlet
         WebsocketEndpoint endpoint = prodcon.getEndpoint();
@@ -440,7 +447,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
                 ServletContextHandler context = (ServletContextHandler) connectorRef.server.getHandler();
                 servlet = createServlet(sync, pathSpec, servlets, context);
                 connectorRef.servlet = servlet;
-                LOG.debug("WebSocket servlet added for the following path : " + pathSpec + ", to the Jetty Server : " + key);
+                LOG.debug("WebSocket servlet added for the following path : {}, to the Jetty Server : {}", pathSpec, key);
             }
 
             return servlet;
@@ -449,7 +456,9 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         }
     }
 
-    protected WebsocketComponentServlet createServlet(NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets, ServletContextHandler handler) {
+    protected WebsocketComponentServlet createServlet(
+            NodeSynchronization sync, String pathSpec, Map<String, WebsocketComponentServlet> servlets,
+            ServletContextHandler handler) {
         WebsocketComponentServlet servlet = new WebsocketComponentServlet(sync, pathSpec, socketFactory);
         servlets.put(pathSpec, servlet);
         ServletHolder servletHolder = new ServletHolder(servlet);
@@ -461,7 +470,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     protected ServletContextHandler createContext(Server server, Connector connector, List<Handler> handlers) throws Exception {
-        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
+        ServletContextHandler context
+                = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
         server.addConnector(connector);
 
         if (handlers != null && !handlers.isEmpty()) {
@@ -486,7 +496,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
             if (context.isStarted()) {
-                throw new IllegalStateException("Server has already been started. Cannot enabled sessionSupport on " + connectorKey);
+                throw new IllegalStateException(
+                        "Server has already been started. Cannot enabled sessionSupport on " + connectorKey);
             } else {
                 context.setSessionHandler(sessionHandler);
             }
@@ -515,8 +526,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     /**
-     * Override the key/trust store check method as it does not account for a factory that has
-     * a pre-configured {@link javax.net.ssl.SSLContext}.
+     * Override the key/trust store check method as it does not account for a factory that has a pre-configured
+     * {@link javax.net.ssl.SSLContext}.
      */
     private static final class WebSocketComponentSslContextFactory extends SslContextFactory {
         // This method is for Jetty 7.0.x ~ 7.4.x
@@ -550,7 +561,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         // Is not correct as it does not support to add port in the URI
         //return String.format("/%s/*", remaining);
 
-        int index = remaining.indexOf("/");
+        int index = remaining.indexOf('/');
         if (index != -1) {
             return remaining.substring(index, remaining.length());
         } else {
@@ -559,8 +570,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     private int extractPortNumber(String remaining) {
-        int index1 = remaining.indexOf(":");
-        int index2 = remaining.indexOf("/");
+        int index1 = remaining.indexOf(':');
+        int index2 = remaining.indexOf('/');
 
         if ((index1 != -1) && (index2 != -1)) {
             String result = remaining.substring(index1 + 1, index2);
@@ -571,7 +582,7 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     private String extractHostName(String remaining) {
-        int index = remaining.indexOf(":");
+        int index = remaining.indexOf(':');
         if (index != -1) {
             return remaining.substring(0, index);
         } else {
@@ -614,11 +625,10 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     /**
      * Set a resource path for static resources (such as .html files etc).
      * <p/>
-     * The resources can be loaded from classpath, if you prefix with <tt>classpath:</tt>,
-     * otherwise the resources is loaded from file system or from JAR files.
+     * The resources can be loaded from classpath, if you prefix with <tt>classpath:</tt>, otherwise the resources is
+     * loaded from file system or from JAR files.
      * <p/>
-     * For example to load from root classpath use <tt>classpath:.</tt>, or
-     * <tt>classpath:WEB-INF/static</tt>
+     * For example to load from root classpath use <tt>classpath:.</tt>, or <tt>classpath:WEB-INF/static</tt>
      * <p/>
      * If not configured (eg <tt>null</tt>) then no static resource is in use.
      */
@@ -682,7 +692,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     /**
-     * If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
+     * If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more
+     * details.
      */
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
@@ -697,8 +708,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     /**
-     * To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
-     * The default values for minThreads is 1.
+     * To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields
+     * are required due to switch to Jetty9. The default values for minThreads is 1.
      */
     public void setMinThreads(Integer minThreads) {
         this.minThreads = minThreads;
@@ -709,8 +720,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     /**
-     * To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
-     * The default values for maxThreads is 1 + 2 * noCores.
+     * To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields
+     * are required due to switch to Jetty9. The default values for maxThreads is 1 + 2 * noCores.
      */
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
@@ -721,7 +732,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     /**
-     * To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+     * To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch
+     * to Jetty9.
      */
     public void setThreadPool(ThreadPool threadPool) {
         this.threadPool = threadPool;
@@ -756,7 +768,8 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
     }
 
     /**
-     * To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol.
+     * To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub
+     * protocol.
      * <p/>
      * The <tt>default</tt> key is reserved for the default implementation.
      */
@@ -824,4 +837,3 @@ public class WebsocketComponent extends DefaultComponent implements SSLContextPa
         servlets.clear();
     }
 }
-

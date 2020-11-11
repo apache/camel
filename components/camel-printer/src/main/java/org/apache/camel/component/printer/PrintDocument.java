@@ -36,7 +36,7 @@ class PrintDocument implements Doc {
         this.stream = stream;
         this.docFlavor = docFlavor;
     }
-   
+
     @Override
     public DocFlavor getDocFlavor() {
         return docFlavor;
@@ -57,30 +57,30 @@ class PrintDocument implements Doc {
         synchronized (this) {
             if (reader != null) {
                 return reader;
-            } 
-            
+            }
+
             if (docFlavor.getMediaType().equalsIgnoreCase("image")) {
                 reader = null;
-            } else if ((docFlavor.getMediaType().equalsIgnoreCase("text")) 
-                || ((docFlavor.getMediaType().equalsIgnoreCase("application")) 
-                && (docFlavor.getMediaSubtype().equalsIgnoreCase("xml")))) {
+            } else if ((docFlavor.getMediaType().equalsIgnoreCase("text"))
+                    || ((docFlavor.getMediaType().equalsIgnoreCase("application"))
+                            && (docFlavor.getMediaSubtype().equalsIgnoreCase("xml")))) {
                 buffer = new byte[stream.available()];
                 int n = stream.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte)stream.read();
+                    buffer[i] = (byte) stream.read();
                 }
-               
+
                 reader = new StringReader(new String(buffer));
                 stream = new ByteArrayInputStream(buffer);
             }
-            
+
             return reader;
         }
     }
 
     @Override
     public InputStream getStreamForBytes() throws IOException {
-        return stream; 
+        return stream;
     }
 
 }

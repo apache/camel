@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.twitter;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 public class DirectMessageDirectTest extends CamelTwitterConsumerTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         /* Uncomment when you need a test direct message

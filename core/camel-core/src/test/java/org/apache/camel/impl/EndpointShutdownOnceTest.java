@@ -26,13 +26,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test that endpoints are only shutdown once when CamelContext is stopping.
  */
-public class EndpointShutdownOnceTest extends Assert {
+public class EndpointShutdownOnceTest {
 
     @Test
     public void testEndpointShutdown() throws Exception {
@@ -42,13 +43,13 @@ public class EndpointShutdownOnceTest extends Assert {
 
         MyEndpoint my = context.getEndpoint("my:foo", MyEndpoint.class);
 
-        assertTrue("Should be started", my.getStatus().isStarted());
+        assertTrue(my.getStatus().isStarted(), "Should be started");
 
         context.stop();
-        assertFalse("Should not be started", my.getStatus().isStarted());
-        assertTrue("Should be stopped", my.getStatus().isStopped());
+        assertFalse(my.getStatus().isStarted(), "Should not be started");
+        assertTrue(my.getStatus().isStopped(), "Should be stopped");
 
-        assertEquals("Should only shutdown once", 1, my.getInvoked());
+        assertEquals(1, my.getInvoked(), "Should only shutdown once");
     }
 
     private static final class MyComponent extends DefaultComponent {

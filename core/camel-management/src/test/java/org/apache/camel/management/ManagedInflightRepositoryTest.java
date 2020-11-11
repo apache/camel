@@ -18,10 +18,11 @@ package org.apache.camel.management;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedInflightRepositoryTest extends ManagementTestSupport {
 
@@ -48,18 +49,15 @@ public class ManagedInflightRepositoryTest extends ManagementTestSupport {
                         .to("mock:a")
                         .process(exchange -> {
                             MBeanServer mbeanServer = getMBeanServer();
-                            ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultInflightRepository");
+                            ObjectName name = ObjectName.getInstance(
+                                    "org.apache.camel:context=camel-1,type=services,name=DefaultInflightRepository");
 
                             Integer size = (Integer) mbeanServer.getAttribute(name, "Size");
                             assertEquals(1, size.intValue());
 
-                            Integer routeSize = (Integer) mbeanServer.invoke(name, "size", new Object[]{"foo"}, new String[]{"java.lang.String"});
+                            Integer routeSize = (Integer) mbeanServer.invoke(name, "size", new Object[] { "foo" },
+                                    new String[] { "java.lang.String" });
                             assertEquals(1, routeSize.intValue());
-
-                            TabularData data = (TabularData) mbeanServer.invoke(name, "browse", null, null);
-                            assertNotNull(data);
-
-                            assertEquals(1, data.size());
                         }).id("myProcessor")
                         .to("mock:result");
             }

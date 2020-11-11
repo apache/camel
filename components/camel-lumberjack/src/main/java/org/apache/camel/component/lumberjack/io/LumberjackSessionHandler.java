@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.lumberjack.io;
 
+import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -36,6 +39,8 @@ final class LumberjackSessionHandler {
     private volatile int version = -1;
     private volatile int windowSize = 1;
     private volatile int nextAck = ACK_UNSET;
+    // this phaser will handle one window processed at a time for each session
+    private final Phaser phaser = new Phaser();
 
     void versionRead(int version) {
         if (this.version == -1) {
@@ -51,6 +56,10 @@ final class LumberjackSessionHandler {
 
     void windowSizeRead(int windowSize) {
         LOG.debug("Lumberjack window size is {}", windowSize);
+        // register a new window process
+        phaser.register();
+        // if another window is being processed in the same session, wait until it ends processing
+        phaser.arriveAndAwaitAdvance();
         this.windowSize = windowSize;
         nextAck = ACK_UNSET;
     }
@@ -66,7 +75,12 @@ final class LumberjackSessionHandler {
             response.writeByte(version);
             response.writeByte(TYPE_ACKNOWLEDGE);
             response.writeInt(sequenceNumber);
-            ctx.writeAndFlush(response);
+            // pause before send, in order to make sure all ACK are received by the client
+            ctx.executor().schedule(() -> {
+                ctx.writeAndFlush(response);
+            }, 10, TimeUnit.MILLISECONDS);
+            // prepare to read another pending window
+            phaser.arriveAndDeregister();
         }
     }
 }

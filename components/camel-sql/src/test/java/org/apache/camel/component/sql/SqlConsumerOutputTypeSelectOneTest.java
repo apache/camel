@@ -24,13 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.hamcrest.CoreMatchers;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  *
@@ -40,7 +41,7 @@ public class SqlConsumerOutputTypeSelectOneTest {
     private EmbeddedDatabase db;
     private DefaultCamelContext camel1;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
@@ -50,7 +51,7 @@ public class SqlConsumerOutputTypeSelectOneTest {
         camel1.getComponent("sql", SqlComponent.class).setDataSource(db);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         camel1.stop();
         db.shutdown();
@@ -72,12 +73,12 @@ public class SqlConsumerOutputTypeSelectOneTest {
         mock.assertIsSatisfied(2000);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
-        Assert.assertThat(exchanges.size(), CoreMatchers.is(1));
+        assertThat(exchanges.size(), CoreMatchers.is(1));
 
         ProjectModel result = exchanges.get(0).getIn().getBody(ProjectModel.class);
-        Assert.assertThat(result.getId(), CoreMatchers.is(3));
-        Assert.assertThat(result.getProject(), CoreMatchers.is("Linux"));
-        Assert.assertThat(result.getLicense(), CoreMatchers.is("XXX"));
+        assertThat(result.getId(), CoreMatchers.is(3));
+        assertThat(result.getProject(), CoreMatchers.is("Linux"));
+        assertThat(result.getLicense(), CoreMatchers.is("XXX"));
     }
 
     @Test
@@ -96,12 +97,12 @@ public class SqlConsumerOutputTypeSelectOneTest {
         mock.assertIsSatisfied(2000);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
-        Assert.assertThat(exchanges.size(), CoreMatchers.is(1));
+        assertThat(exchanges.size(), CoreMatchers.is(1));
 
         Map<String, Object> result = exchanges.get(0).getIn().getBody(Map.class);
-        Assert.assertThat((Integer) result.get("ID"), CoreMatchers.is(3));
-        Assert.assertThat((String) result.get("PROJECT"), CoreMatchers.is("Linux"));
-        Assert.assertThat((String) result.get("LICENSE"), CoreMatchers.is("XXX"));
+        assertThat((Integer) result.get("ID"), CoreMatchers.is(3));
+        assertThat((String) result.get("PROJECT"), CoreMatchers.is("Linux"));
+        assertThat((String) result.get("LICENSE"), CoreMatchers.is("XXX"));
     }
 
     @Test
@@ -120,10 +121,10 @@ public class SqlConsumerOutputTypeSelectOneTest {
         mock.assertIsSatisfied(2000);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
-        Assert.assertThat(exchanges.size(), CoreMatchers.is(1));
+        assertThat(exchanges.size(), CoreMatchers.is(1));
 
         String result = exchanges.get(0).getIn().getBody(String.class);
-        Assert.assertThat(result, CoreMatchers.is("Linux"));
+        assertThat(result, CoreMatchers.is("Linux"));
     }
 
     @Test
@@ -142,9 +143,9 @@ public class SqlConsumerOutputTypeSelectOneTest {
         mock.assertIsSatisfied(2000);
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
-        Assert.assertThat(exchanges.size(), CoreMatchers.is(1));
+        assertThat(exchanges.size(), CoreMatchers.is(1));
 
         Long result = exchanges.get(0).getIn().getBody(Long.class);
-        Assert.assertThat(result, CoreMatchers.is(3L));
+        assertThat(result, CoreMatchers.is(3L));
     }
 }

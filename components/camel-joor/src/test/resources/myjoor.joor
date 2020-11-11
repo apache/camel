@@ -1,0 +1,8 @@
+int number = (int) body;
+if (number % 10 == 0) {
+  return 'A great number';
+} else if (number > 100) {
+  return 'An old Camel rider';
+} else {
+  return 'Happy riding';
+}

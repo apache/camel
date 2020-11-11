@@ -25,6 +25,7 @@ public class SpringDeadLetterChannelNotHandleNewExceptionTest extends DeadLetter
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/DeadLetterChannelNotHandleNewExceptionTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/DeadLetterChannelNotHandleNewExceptionTest.xml");
     }
 }

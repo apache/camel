@@ -49,18 +49,18 @@ import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
 
 /**
- * A class which will auto-discover {@link Converter} objects and methods to pre-load
- * the {@link TypeConverterRegistry} of converters on startup.
+ * A class which will auto-discover {@link Converter} objects and methods to pre-load the {@link TypeConverterRegistry}
+ * of converters on startup.
  * <p/>
- * This implementation supports scanning for type converters in JAR files. The {@link #META_INF_SERVICES}
- * contains a list of packages or FQN class names for {@link Converter} classes. The FQN class names
- * is loaded first and directly by the class loader.
+ * This implementation supports scanning for type converters in JAR files. The {@link #META_INF_SERVICES} contains a
+ * list of packages or FQN class names for {@link Converter} classes. The FQN class names is loaded first and directly
+ * by the class loader.
  * <p/>
- * The {@link PackageScanClassResolver} is being used to scan packages for {@link Converter} classes and
- * this procedure is slower than loading the {@link Converter} classes directly by its FQN class name.
- * Therefore its recommended to specify FQN class names in the {@link #META_INF_SERVICES} file.
- * Likewise the procedure for scanning using {@link PackageScanClassResolver} may require custom implementations
- * to work in various containers such as JBoss, OSGi, etc.
+ * The {@link PackageScanClassResolver} is being used to scan packages for {@link Converter} classes and this procedure
+ * is slower than loading the {@link Converter} classes directly by its FQN class name. Therefore its recommended to
+ * specify FQN class names in the {@link #META_INF_SERVICES} file. Likewise the procedure for scanning using
+ * {@link PackageScanClassResolver} may require custom implementations to work in various containers such as JBoss,
+ * OSGi, etc.
  */
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
@@ -86,7 +86,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 return;
             }
         } catch (Exception e) {
-            throw new TypeConverterLoaderException("Cannot find package names to be used for classpath scanning for annotated type converters.", e);
+            throw new TypeConverterLoaderException(
+                    "Cannot find package names to be used for classpath scanning for annotated type converters.", e);
         }
 
         // if we only have camel-core on the classpath then we have already pre-loaded all its type converters
@@ -117,7 +118,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
             Set<Class<?>> scannedClasses = resolver.findAnnotated(Converter.class, packageNames);
             if (scannedClasses.isEmpty()) {
-                throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
+                throw new TypeConverterLoaderException(
+                        "Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
             }
             LOG.debug("Found {} packages with {} @Converter classes to load", packageNames.length, scannedClasses.size());
             classes.addAll(scannedClasses);
@@ -141,14 +143,14 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     /**
      * Filters the given list of packages and returns an array of <b>only</b> package names.
      * <p/>
-     * This implementation will check the given list of packages, and if it contains a class name,
-     * that class will be loaded directly and added to the list of classes. This optimizes the
-     * type converter to avoid excessive file scanning for .class files.
+     * This implementation will check the given list of packages, and if it contains a class name, that class will be
+     * loaded directly and added to the list of classes. This optimizes the type converter to avoid excessive file
+     * scanning for .class files.
      *
-     * @param resolver the class resolver
-     * @param packageNames the package names
-     * @param classes to add loaded @Converter classes
-     * @return the filtered package names
+     * @param  resolver     the class resolver
+     * @param  packageNames the package names
+     * @param  classes      to add loaded @Converter classes
+     * @return              the filtered package names
      */
     protected String[] filterPackageNamesOnly(PackageScanClassResolver resolver, String[] packageNames, Set<Class<?>> classes) {
         if (packageNames == null || packageNames.length == 0) {
@@ -196,10 +198,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     }
 
     /**
-     * Finds the names of the packages to search for on the classpath looking
-     * for text files on the classpath at the {@link #META_INF_SERVICES} location.
+     * Finds the names of the packages to search for on the classpath looking for text files on the classpath at the
+     * {@link #META_INF_SERVICES} location.
      *
-     * @return a collection of packages to search for
+     * @return             a collection of packages to search for
      * @throws IOException is thrown for IO related errors
      */
     protected String[] findPackageNames() throws IOException {
@@ -242,8 +244,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     }
 
     /**
-     * Tokenizes the line from the META-IN/services file using commas and
-     * ignoring whitespace between packages
+     * Tokenizes the line from the META-IN/services file using commas and ignoring whitespace between packages
      */
     private void tokenize(Set<String> packages, String line) {
         StringTokenizer iter = new StringTokenizer(line, ",");
@@ -298,9 +299,11 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
             // if we should ignore then only log at debug level
             if (ignore) {
-                LOG.debug("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+                LOG.debug("Ignoring converter type: {} as a dependent class could not be found: {}",
+                        type.getCanonicalName(), e, e);
             } else {
-                LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+                LOG.warn("Ignoring converter type: {} as a dependent class could not be found: {}",
+                        type.getCanonicalName(), e, e);
             }
         }
     }
@@ -309,18 +312,20 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         return true;
     }
 
-    private CachingInjector<?> handleHasConverterAnnotation(TypeConverterRegistry registry, Class<?> type,
-                                                            CachingInjector<?> injector, Method method, boolean allowNull) {
+    private CachingInjector<?> handleHasConverterAnnotation(
+            TypeConverterRegistry registry, Class<?> type,
+            CachingInjector<?> injector, Method method, boolean allowNull) {
         if (isValidConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
-                LOG.warn("Ignoring bad converter on type: " + type.getCanonicalName() + " method: " + method
-                        + " as a converter method is not a public and concrete method");
+                LOG.warn(
+                        "Ignoring bad converter on type: {} method: {} as a converter method is not a public and concrete method",
+                        type.getCanonicalName(), method);
             } else {
                 Class<?> toType = method.getReturnType();
                 if (toType.equals(Void.class)) {
-                    LOG.warn("Ignoring bad converter on type: " + type.getCanonicalName() + " method: "
-                            + method + " as a converter method returns a void method");
+                    LOG.warn("Ignoring bad converter on type: {} method: {} as a converter method returns a void method",
+                            type.getCanonicalName(), method);
                 } else {
                     Class<?> fromType = method.getParameterTypes()[0];
                     if (isStatic(modifiers)) {
@@ -336,44 +341,51 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 }
             }
         } else {
-            LOG.warn("Ignoring bad converter on type: " + type.getCanonicalName() + " method: " + method
-                    + " as a converter method should have one parameter");
+            LOG.warn("Ignoring bad converter on type: {} method: {} as a converter method should have one parameter",
+                    type.getCanonicalName(), method);
         }
         return injector;
     }
 
-    private CachingInjector<?> handleHasFallbackConverterAnnotation(TypeConverterRegistry registry, Class<?> type,
-                                                                    CachingInjector<?> injector, Method method, boolean allowNull) {
+    private CachingInjector<?> handleHasFallbackConverterAnnotation(
+            TypeConverterRegistry registry, Class<?> type,
+            CachingInjector<?> injector, Method method, boolean allowNull) {
         if (isValidFallbackConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
-                LOG.warn("Ignoring bad fallback converter on type: " + type.getCanonicalName() + " method: " + method
-                        + " as a fallback converter method is not a public and concrete method");
+                LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method is not "
+                         + "a public and concrete method",
+                        type.getCanonicalName(), method);
             } else {
                 Class<?> toType = method.getReturnType();
                 if (toType.equals(Void.class)) {
-                    LOG.warn("Ignoring bad fallback converter on type: " + type.getCanonicalName() + " method: "
-                            + method + " as a fallback converter method returns a void method");
+                    LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method "
+                             + "returns a void method",
+                            type.getCanonicalName(), method);
                 } else {
                     if (isStatic(modifiers)) {
-                        registerFallbackTypeConverter(registry, new StaticMethodFallbackTypeConverter(method, registry, allowNull), method);
+                        registerFallbackTypeConverter(registry,
+                                new StaticMethodFallbackTypeConverter(method, registry, allowNull), method);
                     } else {
                         if (injector == null) {
                             injector = new CachingInjector<>(registry, CastUtils.cast(type, Object.class));
                         }
-                        registerFallbackTypeConverter(registry, new InstanceMethodFallbackTypeConverter(injector, method, registry, allowNull), method);
+                        registerFallbackTypeConverter(registry,
+                                new InstanceMethodFallbackTypeConverter(injector, method, registry, allowNull), method);
                     }
                 }
             }
         } else {
-            LOG.warn("Ignoring bad fallback converter on type: " + type.getCanonicalName() + " method: " + method
-                    + " as a fallback converter method should have one parameter");
+            LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method should have "
+                     + "one parameter",
+                    type.getCanonicalName(), method);
         }
         return injector;
     }
 
-    protected void registerTypeConverter(TypeConverterRegistry registry,
-                                         Method method, Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
+    protected void registerTypeConverter(
+            TypeConverterRegistry registry,
+            Method method, Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         registry.addTypeConverter(toType, fromType, typeConverter);
     }
 
@@ -396,15 +408,15 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         Class<?>[] parameterTypes = method.getParameterTypes();
         return (parameterTypes != null) && (parameterTypes.length == 3
                 || (parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1]))
-                && (TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1])));
+                        && (TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1])));
     }
 
     /**
      * Filters the given list of packages
      *
-     * @param name  the name to filter out
-     * @param packageNames the packages
-     * @return he packages without the given name
+     * @param  name         the name to filter out
+     * @param  packageNames the packages
+     * @return              he packages without the given name
      */
     protected static String[] filterUnwantedPackage(String name, String[] packageNames) {
         // the filtered packages to return

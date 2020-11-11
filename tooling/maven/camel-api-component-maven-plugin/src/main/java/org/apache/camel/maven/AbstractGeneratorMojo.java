@@ -20,16 +20,14 @@ import java.io.File;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Properties;
 
+import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.util.function.ThrowingHelper;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
@@ -126,12 +124,17 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         this.projectClassLoader = projectClassLoader;
     }
 
-    private ClassLoader buildProjectClassLoader() throws DependencyResolutionRequiredException {
+    private ClassLoader buildProjectClassLoader() throws DependencyResolutionRequiredException, MalformedURLException {
         URL[] urls = project.getTestClasspathElements().stream()
-            .map(File::new)
-            .map(ThrowingHelper.wrapAsFunction(e -> e.toURI().toURL()))
-            .peek(url -> log.debug("Adding project path " + url))
-            .toArray(URL[]::new);
+                .map(File::new)
+                .map(ThrowingHelper.wrapAsFunction(e -> e.toURI().toURL()))
+                .peek(url -> log.debug("Adding project path " + url))
+                .toArray(URL[]::new);
+
+        // if there are no urls then its because we are testing ourselves, then add the urls for source so java source parser can find them
+        if (urls.length == 0) {
+            urls = new URL[] { new URL("file:src/main/java/"), new URL("file:src/test/java/") };
+        }
 
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         return new URLClassLoader(urls, tccl != null ? tccl : getClass().getClassLoader());
@@ -180,22 +183,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     public static void updateResource(BuildContext buildContext, Path out, String data) {
         try {
-            if (data == null) {
-                if (Files.isRegularFile(out)) {
-                    Files.delete(out);
-                    refresh(buildContext, out);
-                }
-            } else {
-                if (Files.isRegularFile(out) && Files.isReadable(out)) {
-                    String content = new String(Files.readAllBytes(out), StandardCharsets.UTF_8);
-                    if (Objects.equals(content, data)) {
-                        return;
-                    }
-                }
-                Files.createDirectories(out.getParent());
-                try (Writer w = Files.newBufferedWriter(out, StandardCharsets.UTF_8)) {
-                    w.append(data);
-                }
+            if (FileUtil.updateFile(out, data)) {
                 refresh(buildContext, out);
             }
         } catch (IOException e) {

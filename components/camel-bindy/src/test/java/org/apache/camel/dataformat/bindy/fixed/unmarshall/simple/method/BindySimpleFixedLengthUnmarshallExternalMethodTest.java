@@ -27,14 +27,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindySimpleFixedLengthUnmarshallExternalMethodTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleFixedLengthUnmarshallExternalMethodTest {
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
@@ -46,7 +48,7 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest extends Abstract
     private MockEndpoint result;
 
     private String expected;
-    
+
     public static String replaceToBar(String fooString) {
         return fooString.replaceAll("Pauline", "Bar");
     }
@@ -63,12 +65,13 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest extends Abstract
         result.assertIsSatisfied();
 
         // check the model
-        BindySimpleFixedLengthUnmarshallExternalMethodTest.Order order = result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallExternalMethodTest.Order.class);
-        Assert.assertEquals(10, order.getOrderNr());
+        BindySimpleFixedLengthUnmarshallExternalMethodTest.Order order = result.getReceivedExchanges().get(0).getIn()
+                .getBody(BindySimpleFixedLengthUnmarshallExternalMethodTest.Order.class);
+        assertEquals(10, order.getOrderNr());
         // the field is not trimmed
-        Assert.assertEquals("  Bar", order.getFirstName());
-        Assert.assertEquals("M    ", order.getLastName());
-        Assert.assertEquals("Hello     ", order.getComment());
+        assertEquals("  Bar", order.getFirstName());
+        assertEquals("M    ", order.getLastName());
+        assertEquals("Hello     ", order.getComment());
     }
 
     public static class ContextConfig extends RouteBuilder {
@@ -80,7 +83,7 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest extends Abstract
         }
 
     }
-    
+
     @FixedLengthRecord(length = 75)
     public static class Order {
 
@@ -90,7 +93,8 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest extends Abstract
         @DataField(pos = 3, length = 2)
         private String clientNr;
 
-        @DataField(pos = 5, length = 9, method = "org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.method.BindySimpleFixedLengthUnmarshallExternalMethodTest.replaceToBar")
+        @DataField(pos = 5, length = 9,
+                   method = "org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.method.BindySimpleFixedLengthUnmarshallExternalMethodTest.replaceToBar")
         private String firstName;
 
         @DataField(pos = 14, length = 5, align = "L")
@@ -218,8 +222,10 @@ public class BindySimpleFixedLengthUnmarshallExternalMethodTest extends Abstract
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }

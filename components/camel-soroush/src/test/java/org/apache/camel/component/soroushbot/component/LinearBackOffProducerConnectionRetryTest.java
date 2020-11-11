@@ -25,9 +25,10 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LinearBackOffProducerConnectionRetryTest extends SoroushBotTestSupport {
 
@@ -35,7 +36,7 @@ public class LinearBackOffProducerConnectionRetryTest extends SoroushBotTestSupp
     org.apache.camel.Endpoint endpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         SoroushBotWS.clear();
@@ -47,7 +48,7 @@ public class LinearBackOffProducerConnectionRetryTest extends SoroushBotTestSupp
             @Override
             public void configure() throws Exception {
                 from("direct:soroush").to("soroush://" + SoroushAction.sendMessage + "/retry 5?maxConnectionRetry=5"
-                        + "&retryWaitingTime=500&retryLinearIncrement=1000&backOffStrategy=linear")
+                                          + "&retryWaitingTime=500&retryLinearIncrement=1000&backOffStrategy=linear")
                         .to("mock:afterAllRetry")
                         .to("mock:beforeAllRetry");
             }
@@ -73,6 +74,6 @@ public class LinearBackOffProducerConnectionRetryTest extends SoroushBotTestSupp
         //cause this thread to sleep an addition of 1 second, during this time,the message must be sent to the server
         afterAllRetry.setAssertPeriod(2000);
         afterAllRetry.assertIsSatisfied();
-        Assert.assertEquals("message sent successfully", SoroushBotWS.getReceivedMessages().get(0), body);
+        assertEquals(SoroushBotWS.getReceivedMessages().get(0), body, "message sent successfully");
     }
 }

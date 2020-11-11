@@ -22,70 +22,70 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.test.AvailablePortFinder;
 
+import static org.apache.camel.itest.TransactionSupport.transactionErrorHandler;
+
 /**
- * Route that listen on a JMS queue and send a request/reply over http
- * before returning a response. Is transacted.
+ * Route that listen on a JMS queue and send a request/reply over http before returning a response. Is transacted.
  * <p/>
- * Notice we use the SpringRouteBuilder that supports transacted
- * error handler.
+ * Notice we use the SpringRouteBuilder that supports transacted error handler.
  */
-public class JmsToHttpRoute extends SpringRouteBuilder {
+public class JmsToHttpRoute extends RouteBuilder {
     protected static int counter;
     protected int port;
-    
+
     @Resource(name = "PROPAGATION_REQUIRED")
     protected SpringTransactionPolicy required;
 
     @EndpointInject("ref:data")
-    protected Endpoint data;    
+    protected Endpoint data;
 
     protected String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
-    protected String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
+    protected String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         port = AvailablePortFinder.getNextAvailable();
 
         // configure a global transacted error handler
         errorHandler(transactionErrorHandler(required));
 
         from(data)
-            // use transaction policy for this route
-            .policy(required)
-            // send a request to http and get the response
-            .to("http://localhost:" + port + "/sender")
-            // convert the response to String so we can work with it and avoid streams only be readable once
-            // as the http component will return data as a stream
-            .convertBodyTo(String.class)
-            // do a choice if the response is okay or not
-            .choice()
+                // use transaction policy for this route
+                .policy(required)
+                // send a request to http and get the response
+                .to("http://localhost:" + port + "/sender")
+                // convert the response to String so we can work with it and avoid streams only be readable once
+                // as the http component will return data as a stream
+                .convertBodyTo(String.class)
+                // do a choice if the response is okay or not
+                .choice()
                 // do a xpath to compare if the status is NOT okay
                 .when().xpath("/reply/status != 'ok'")
-                    // as this is based on an unit test we use mocks to verify how many times we did rollback
-                    .to("mock:rollback")
-                    // response is not okay so force a rollback by throwing an exception
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Rollback please");
-                        }
-                    })
+                // as this is based on an unit test we use mocks to verify how many times we did rollback
+                .to("mock:JmsToHttpRoute")
+                // response is not okay so force a rollback by throwing an exception
+                .process(new Processor() {
+                    public void process(Exchange exchange) {
+                        throw new IllegalArgumentException("Rollback please");
+                    }
+                })
                 .otherwise()
                 // otherwise since its okay, the route ends and the response is sent back
                 // to the original caller
-            .end();
+                .end();
 
         // this is our http route that will fail the first 2 attempts
         // before it sends an ok response
         from("jetty:http://localhost:" + port + "/sender").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 if (counter++ < 2) {
-                    exchange.getOut().setBody(nok);
+                    exchange.getMessage().setBody(nok);
                 } else {
-                    exchange.getOut().setBody(ok);
+                    exchange.getMessage().setBody(ok);
                 }
             }
         });

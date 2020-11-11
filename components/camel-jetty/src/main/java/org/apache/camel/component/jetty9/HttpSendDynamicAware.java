@@ -19,6 +19,6 @@ package org.apache.camel.component.jetty9;
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("jetty")
-public class HttpSendDynamicAware extends org.apache.camel.http.common.HttpSendDynamicAware {
+public class HttpSendDynamicAware extends org.apache.camel.http.base.HttpSendDynamicAware {
 
 }

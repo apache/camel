@@ -29,7 +29,7 @@ public final class JsonParser {
     }
 
     public static JsonStructure parse(final String jsonString) {
-        String json = jsonString.replaceAll("\n", "");
+        String json = jsonString.replace("\n", "");
 
         Stack<JsonStructure> stack = new Stack<>();
 
@@ -37,7 +37,7 @@ public final class JsonParser {
         List<String> doNotIncludeSymbols = Arrays.asList(",", ":", "\"");
         StringBuilder curToken = new StringBuilder();
         String keyName = null;
-        boolean inWord =  false;
+        boolean inWord = false;
         for (char c : json.toCharArray()) {
             // CHECKSTYLE:OFF
             // fallthrough is intended here and as this is only a helper class for tests (as the previously used
@@ -45,75 +45,75 @@ public final class JsonParser {
             // Note that the fall-through was the only rant checkstyle generated, so everything else should follow these
             // guidelines
             switch (c) {
-            case '{':
-                if (!inWord) {
-                    // JsonObject begin
-                    JsonObject newNode = new JsonObject();
-                    addJson(newNode, keyName, stack);
-                    keyName = null;
-                    stack.push(newNode);
-                    break;
-                }
-            case '}':
-                if (!inWord) {
-                    // JsonObject end
-                    if (!stack.isEmpty()) {
-                        ret = stack.pop();
+                case '{':
+                    if (!inWord) {
+                        // JsonObject begin
+                        JsonObject newNode = new JsonObject();
+                        addJson(newNode, keyName, stack);
+                        keyName = null;
+                        stack.push(newNode);
+                        break;
                     }
-                    if (keyName != null) {
-                        if (ret instanceof JsonObject) {
-                            ((JsonObject) ret).addElement(sanitizeKey(keyName), sanitizeData(curToken.toString()));
-                            keyName = null;
-                            curToken.delete(0, curToken.length());
+                case '}':
+                    if (!inWord) {
+                        // JsonObject end
+                        if (!stack.isEmpty()) {
+                            ret = stack.pop();
                         }
+                        if (keyName != null) {
+                            if (ret instanceof JsonObject) {
+                                ((JsonObject) ret).addElement(sanitizeKey(keyName), sanitizeData(curToken.toString()));
+                                keyName = null;
+                                curToken.delete(0, curToken.length());
+                            }
+                        }
+                        break;
                     }
-                    break;
-                }
-            case '[':
-                if (!inWord) {
-                    // JsonArray start
-                    JsonArray newArray = new JsonArray();
-                    addJson(newArray, keyName, stack);
-                    keyName = null;
-                    stack.push(newArray);
-                    break;
-                }
-            case ']':
-                if (!inWord) {
-                    // JsonArray end
-                    if (!stack.isEmpty()) {
-                        ret = stack.pop();
+                case '[':
+                    if (!inWord) {
+                        // JsonArray start
+                        JsonArray newArray = new JsonArray();
+                        addJson(newArray, keyName, stack);
+                        keyName = null;
+                        stack.push(newArray);
+                        break;
                     }
-                    break;
-                }
-            case ':':
-                if (!inWord) {
-                    // Element start
-                    keyName = curToken.toString();
-                    curToken.delete(0, curToken.length());
-                    break;
-                }
-            case ',':
-                if (!inWord) {
-                    // Element separator
-                    if (keyName != null) {
-                        JsonObject jsonObj = (JsonObject) stack.peek();
-                        jsonObj.addElement(sanitizeKey(keyName), sanitizeData(curToken.toString()));
+                case ']':
+                    if (!inWord) {
+                        // JsonArray end
+                        if (!stack.isEmpty()) {
+                            ret = stack.pop();
+                        }
+                        break;
                     }
-                    curToken.delete(0, curToken.length());
-                    keyName = null;
-                    break;
-                }
-            default:
-                if (('"' == c && curToken.length() == 0)
-                        || ('"' == c && curToken.length() > 0 && curToken.charAt(curToken.length() - 1) != '\\')) {
-                    inWord = !inWord;
-                }
-                if (!inWord && !doNotIncludeSymbols.contains("" + c)) {
-                    curToken.append(c);
-                } else if ('"' != c || (curToken.length() > 0 && curToken.charAt(curToken.length() - 1) == '\\')) {
-                    curToken.append(c);
-                }
+                case ':':
+                    if (!inWord) {
+                        // Element start
+                        keyName = curToken.toString();
+                        curToken.delete(0, curToken.length());
+                        break;
+                    }
+                case ',':
+                    if (!inWord) {
+                        // Element separator
+                        if (keyName != null) {
+                            JsonObject jsonObj = (JsonObject) stack.peek();
+                            jsonObj.addElement(sanitizeKey(keyName), sanitizeData(curToken.toString()));
+                        }
+                        curToken.delete(0, curToken.length());
+                        keyName = null;
+                        break;
+                    }
+                default:
+                    if (('"' == c && curToken.length() == 0)
+                            || ('"' == c && curToken.length() > 0 && curToken.charAt(curToken.length() - 1) != '\\')) {
+                        inWord = !inWord;
+                    }
+                    if (!inWord && !doNotIncludeSymbols.contains("" + c)) {
+                        curToken.append(c);
+                    } else if ('"' != c || (curToken.length() > 0 && curToken.charAt(curToken.length() - 1) == '\\')) {
+                        curToken.append(c);
+                    }
             }
             // CHECKSTYLE:ON
         }
@@ -124,9 +124,9 @@ public final class JsonParser {
         if (!stack.isEmpty()) {
             JsonStructure json = stack.peek();
             if (json instanceof JsonObject && key != null) {
-                ((JsonObject)json).addElement(sanitizeKey(key), element);
+                ((JsonObject) json).addElement(sanitizeKey(key), element);
             } else if (json instanceof JsonArray) {
-                ((JsonArray)json).add(element);
+                ((JsonArray) json).add(element);
             }
         }
     }

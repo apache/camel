@@ -36,15 +36,15 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelayedMonoPublisher.class);
 
-    private ExecutorService workerPool;
+    private final ExecutorService workerPool;
+
+    private final List<MonoSubscription> subscriptions = new CopyOnWriteArrayList<>();
+
+    private final AtomicBoolean flushing = new AtomicBoolean();
 
     private volatile T data;
 
     private volatile Throwable exception;
-
-    private List<MonoSubscription> subscriptions = new CopyOnWriteArrayList<>();
-
-    private AtomicBoolean flushing = new AtomicBoolean(false);
 
     public DelayedMonoPublisher(ExecutorService workerPool) {
         this.workerPool = workerPool;
@@ -130,7 +130,7 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
 
         private volatile boolean requested;
 
-        private Subscriber<? super T> subscriber;
+        private final Subscriber<? super T> subscriber;
 
         private MonoSubscription(Subscriber<? super T> subscriber) {
             this.subscriber = subscriber;

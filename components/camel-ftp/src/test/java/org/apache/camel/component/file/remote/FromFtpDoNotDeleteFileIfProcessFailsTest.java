@@ -41,7 +41,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testPollFileAndShouldNotBeDeleted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
@@ -59,7 +59,8 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
@@ -80,9 +81,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // use no delay for fast unit testing
-                onException(IllegalArgumentException.class)
-                    .maximumRedeliveries(2).redeliveryDelay(0)
-                    .to("mock:error");
+                onException(IllegalArgumentException.class).maximumRedeliveries(2).redeliveryDelay(0).to("mock:error");
 
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

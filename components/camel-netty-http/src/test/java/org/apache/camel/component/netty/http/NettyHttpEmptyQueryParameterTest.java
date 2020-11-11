@@ -17,7 +17,9 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpEmptyQueryParameterTest extends BaseNettyTest {
 
@@ -42,8 +44,8 @@ public class NettyHttpEmptyQueryParameterTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().simple("Header: ${header.id}");
+                        .to("mock:input")
+                        .transform().simple("Header: ${header.id}");
             }
         };
     }

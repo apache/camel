@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -42,27 +41,27 @@ public final class MongoDbFallbackConverter {
     @Converter(fallback = true)
     @SuppressWarnings("unchecked")
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
-        throws InvalidPayloadException {
+            throws InvalidPayloadException {
 
         // if the source is a string and we attempt to convert to one of the known mongodb json classes then try that
         if (String.class == value.getClass()) {
 
             if (type == DBObject.class) {
-                Object out = JSON.parse(value.toString());
+                Object out = BasicDBObject.parse(value.toString());
                 if (out instanceof DBObject) {
                     return out;
                 } else {
                     throw new InvalidPayloadException(exchange, type);
                 }
             } else if (type == BasicDBList.class) {
-                Object out = JSON.parse(value.toString());
+                Object out = BasicDBObject.parse(value.toString());
                 if (out instanceof BasicDBList) {
                     return out;
                 } else {
                     throw new InvalidPayloadException(exchange, type);
                 }
             } else if (type == BasicDBObject.class) {
-                Object out = JSON.parse(value.toString());
+                Object out = BasicDBObject.parse(value.toString());
                 if (out instanceof BasicDBObject) {
                     return out;
                 } else {

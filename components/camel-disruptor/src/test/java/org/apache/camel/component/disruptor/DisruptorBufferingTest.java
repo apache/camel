@@ -18,17 +18,19 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This test suite is testing different scenarios where a disruptor is forced to
- * buffer exchanges locally until a consumer is registered.
+ * This test suite is testing different scenarios where a disruptor is forced to buffer exchanges locally until a
+ * consumer is registered.
  */
 public class DisruptorBufferingTest extends CamelTestSupport {
 
     @Test
-    public void testDisruptorBufferingWhileWaitingOnFirstConsumer() throws Exception {
+    void testDisruptorBufferingWhileWaitingOnFirstConsumer() throws Exception {
         template.sendBody("disruptor:foo", "A");
         template.sendBody("disruptor:foo", "B");
         template.sendBody("disruptor:foo", "C");
@@ -41,7 +43,7 @@ public class DisruptorBufferingTest extends CamelTestSupport {
         // Add a first consumer on the endpoint
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo").routeId("bar").to("mock:bar");
             }
         });
@@ -54,7 +56,7 @@ public class DisruptorBufferingTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDisruptorBufferingWhileWaitingOnNextConsumer() throws Exception {
+    void testDisruptorBufferingWhileWaitingOnNextConsumer() throws Exception {
         template.sendBody("disruptor:foo", "A");
         template.sendBody("disruptor:foo", "B");
         template.sendBody("disruptor:foo", "C");
@@ -67,7 +69,7 @@ public class DisruptorBufferingTest extends CamelTestSupport {
         // Add a first consumer on the endpoint
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo").routeId("bar1").delay(200).to("mock:bar");
             }
         });
@@ -92,7 +94,7 @@ public class DisruptorBufferingTest extends CamelTestSupport {
         // Add a new consumer on the endpoint
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo").routeId("bar2").to("mock:bar");
             }
         });
@@ -106,10 +108,10 @@ public class DisruptorBufferingTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").routeId("foo").to("disruptor:foo?size=8");
             }
         };

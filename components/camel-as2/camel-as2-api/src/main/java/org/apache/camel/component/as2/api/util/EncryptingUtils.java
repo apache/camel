@@ -33,19 +33,21 @@ public final class EncryptingUtils {
 
     private EncryptingUtils() {
     }
-    
-    public static CMSEnvelopedDataGenerator createEnvelopDataGenerator(Certificate[] encryptionCertificateChain) throws HttpException {
+
+    public static CMSEnvelopedDataGenerator createEnvelopDataGenerator(Certificate[] encryptionCertificateChain)
+            throws HttpException {
         Args.notNull(encryptionCertificateChain, "encryptionCertificateChain");
         if (encryptionCertificateChain.length == 0 || !(encryptionCertificateChain[0] instanceof X509Certificate)) {
             throw new IllegalArgumentException("Invalid certificate chain");
         }
-        
+
         try {
             X509Certificate encryptionCertificate = (X509Certificate) encryptionCertificateChain[0];
-            
+
             CMSEnvelopedDataGenerator cmsEnvelopeDataGenerator = new CMSEnvelopedDataGenerator();
-            
-            JceKeyTransRecipientInfoGenerator recipientInfoGenerator = new JceKeyTransRecipientInfoGenerator(encryptionCertificate);
+
+            JceKeyTransRecipientInfoGenerator recipientInfoGenerator
+                    = new JceKeyTransRecipientInfoGenerator(encryptionCertificate);
             cmsEnvelopeDataGenerator.addRecipientInfoGenerator(recipientInfoGenerator);
 
             return cmsEnvelopeDataGenerator;
@@ -53,7 +55,7 @@ public final class EncryptingUtils {
             throw new HttpException("Failed to create envelope data generator", e);
         }
     }
-    
+
     public static OutputEncryptor createEncryptor(AS2EncryptionAlgorithm encryptionAlgorithm) throws HttpException {
         Args.notNull(encryptionAlgorithm, "encryptionAlgorithmName");
         try {

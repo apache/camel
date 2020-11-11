@@ -26,49 +26,54 @@ import org.apache.camel.cxf.multipart.MultiPartInvoke;
 import org.apache.camel.cxf.multipart.types.InE;
 import org.apache.camel.cxf.multipart.types.ObjectFactory;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CXFMultiPartTest extends CamelTestSupport {
-    public static final QName SERVICE_NAME = new QName("http://camel.apache.org/cxf/multipart",
-                                                      "MultiPartInvokeService");
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    public static final QName ROUTE_PORT_NAME = new QName("http://camel.apache.org/cxf/multipart",
-                                                         "MultiPartInvokePort");
+public class CXFMultiPartTest extends CamelTestSupport {
+    public static final QName SERVICE_NAME = new QName(
+            "http://camel.apache.org/cxf/multipart",
+            "MultiPartInvokeService");
+
+    public static final QName ROUTE_PORT_NAME = new QName(
+            "http://camel.apache.org/cxf/multipart",
+            "MultiPartInvokePort");
     protected static Endpoint endpoint;
     protected AbstractXmlApplicationContext applicationContext;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
 
         IOHelper.close(applicationContext);
         super.tearDown();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Object implementor = new MultiPartInvokeImpl();
         String address = "http://localhost:" + CXFTestSupport.getPort1() + "/CXFMultiPartTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);
-       
+
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopService() {
         if (endpoint != null) {
             endpoint.stop();
@@ -77,13 +82,13 @@ public class CXFMultiPartTest extends CamelTestSupport {
 
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
-        String reply = invokeMultiPartService("http://localhost:" + CXFTestSupport.getPort3() 
+        String reply = invokeMultiPartService("http://localhost:" + CXFTestSupport.getPort3()
                                               + "/CXFMultiPartTest/CamelContext/RouterPort",
-                                              "in0", "in1");
-        assertNotNull("No response received from service", reply);
+                "in0", "in1");
+        assertNotNull(reply, "No response received from service");
         assertTrue(reply.equals("in0 in1"));
 
-        assertNotNull("No response received from service", reply);
+        assertNotNull(reply, "No response received from service");
         assertTrue(reply.equals("in0 in1"));
 
     }
@@ -98,13 +103,12 @@ public class CXFMultiPartTest extends CamelTestSupport {
         InE e1 = new ObjectFactory().createInE();
         e0.setV(in0);
         e1.setV(in1);
-        
+
         javax.xml.ws.Holder<InE> h = new javax.xml.ws.Holder<>();
         javax.xml.ws.Holder<InE> h1 = new javax.xml.ws.Holder<>();
         multiPartClient.foo(e0, e1, h, h1);
         return h.value.getV() + " " + h1.value.getV();
     }
-   
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

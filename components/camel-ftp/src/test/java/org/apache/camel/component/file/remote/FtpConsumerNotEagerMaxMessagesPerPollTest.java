@@ -26,7 +26,7 @@ public class FtpConsumerNotEagerMaxMessagesPerPollTest extends FtpServerTestSupp
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/poll/?password=admin&delay=6000&delete=true"
-                + "&sortBy=file:name&maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false";
+               + "&sortBy=file:name&maxMessagesPerPoll=2&eagerMaxMessagesPerPoll=false";
     }
 
     @Override
@@ -54,7 +54,7 @@ public class FtpConsumerNotEagerMaxMessagesPerPollTest extends FtpServerTestSupp
 
         assertMockEndpointsSatisfied();
     }
-    
+
     private void prepareFtpServer() throws Exception {
         sendFile(getFtpUrl(), "CCC", "ccc.txt");
         sendFile(getFtpUrl(), "AAA", "aaa.txt");

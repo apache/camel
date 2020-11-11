@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LoopExceptionTest extends ContextTestSupport {
 
@@ -39,7 +39,8 @@ public class LoopExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").loop(3).to("mock:loop").throwException(new IllegalArgumentException("Forced")).end().to("mock:result");
+                from("direct:start").loop(3).to("mock:loop").throwException(new IllegalArgumentException("Forced")).end()
+                        .to("mock:result");
             }
         };
     }

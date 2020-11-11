@@ -19,7 +19,7 @@ package org.apache.camel.builder.xml;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * XPath with and without header test.
@@ -63,11 +63,11 @@ public class XPathHeaderTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:in").choice()
-                    // using $headerName is special notation in Camel to get the
-                    // header key
-                    .when().xpath("$type = 'Camel'").to("mock:camel")
-                    // here we test for the body name tag
-                    .when().xpath("//name = 'Kong'").to("mock:donkey").otherwise().to("mock:other").end();
+                        // using $headerName is special notation in Camel to get the
+                        // header key
+                        .when().xpath("$type = 'Camel'").to("mock:camel")
+                        // here we test for the body name tag
+                        .when().xpath("//name = 'Kong'").to("mock:donkey").otherwise().to("mock:other").end();
                 // END SNIPPET: e1
             }
         };

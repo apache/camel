@@ -261,7 +261,8 @@ public final class HL726Converter {
         parserConfiguration.setInvalidObx2Type("ST");
         parserConfiguration.setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
 
-        DEFAULT_CONTEXT = new DefaultHapiContext(parserConfiguration, ValidationContextFactory.noValidation(), new DefaultModelClassFactory());
+        DEFAULT_CONTEXT = new DefaultHapiContext(
+                parserConfiguration, ValidationContextFactory.noValidation(), new DefaultModelClassFactory());
     }
 
     private HL726Converter() {
@@ -387,6 +388,7 @@ public final class HL726Converter {
     public static ADT_A17 toAdtA17(byte[] body, Exchange exchange) throws HL7Exception, IOException {
         return toMessage(ADT_A17.class, body, exchange);
     }
+
     @Converter
     public static ADT_A18 toAdtA18(String body) throws HL7Exception {
         return toMessage(ADT_A18.class, body);
@@ -2366,7 +2368,7 @@ public final class HL726Converter {
     public static SUR_P09 toSurP09(byte[] body, Exchange exchange) throws HL7Exception, IOException {
         return toMessage(SUR_P09.class, body, exchange);
     }
-    
+
     @Converter
     public static TCU_U10 toTcuU10(String body) throws HL7Exception {
         return toMessage(TCU_U10.class, body);
@@ -2427,7 +2429,6 @@ public final class HL726Converter {
         return toMessage(VXX_V02.class, body, exchange);
     }
 
-    
     static <T extends Message> T toMessage(Class<T> messageClass, String hl7String) {
         try {
             T genericMessage = DEFAULT_CONTEXT.newMessage(messageClass);
@@ -2440,7 +2441,6 @@ public final class HL726Converter {
 
         }
     }
-
 
     static <T extends Message> T toMessage(Class<T> messageClass, byte[] hl7Bytes, Exchange exchange) {
         try {

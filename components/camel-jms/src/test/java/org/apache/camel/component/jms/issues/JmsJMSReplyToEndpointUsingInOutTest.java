@@ -16,31 +16,25 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test using a fixed replyTo specified on the JMS endpoint
@@ -58,40 +52,33 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
 
         // use another thread to listen and send the reply
         ExecutorService executor = Executors.newFixedThreadPool(1);
-        executor.submit(new Callable<Object>() {
-            public Object call() throws Exception {
-                JmsTemplate jms = new JmsTemplate(amq.getConfiguration().getConnectionFactory());
+        executor.submit(() -> {
+            JmsTemplate jms = new JmsTemplate(amq.getConfiguration().getConnectionFactory());
 
-                final TextMessage msg = (TextMessage) jms.receive("nameRequestor");
-                assertEquals("What's your name", msg.getText());
+            final TextMessage msg = (TextMessage) jms.receive("nameRequestor");
+            assertEquals(msg.getText(), "What's your name");
 
-                // there should be a JMSReplyTo so we know where to send the reply
-                final Destination replyTo = msg.getJMSReplyTo();
+            // there should be a JMSReplyTo so we know where to send the reply
+            final Destination replyTo = msg.getJMSReplyTo();
 
-                // send reply
-                jms.send(replyTo, new MessageCreator() {
-                    public Message createMessage(Session session) throws JMSException {
-                        TextMessage replyMsg = session.createTextMessage();
-                        replyMsg.setText("My name is Arnio");
-                        replyMsg.setJMSCorrelationID(msg.getJMSCorrelationID());
-                        return replyMsg;
-                    }
-                });
+            // send reply
+            jms.send(replyTo, session -> {
+                TextMessage replyMsg = session.createTextMessage();
+                replyMsg.setText("My name is Arnio");
+                replyMsg.setJMSCorrelationID(msg.getJMSCorrelationID());
+                return replyMsg;
+            });
 
-                return null;
-            }
+            return null;
         });
-
 
         // now get started and send the first message that gets the ball rolling
         JmsTemplate jms = new JmsTemplate(amq.getConfiguration().getConnectionFactory());
 
-        jms.send("hello", new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                TextMessage msg = session.createTextMessage();
-                msg.setText("Hello, I'm here");
-                return msg;
-            }
+        jms.send("hello", session -> {
+            TextMessage msg = session.createTextMessage();
+            msg.setText("Hello, I'm here");
+            return msg;
         });
 
         assertMockEndpointsSatisfied();
@@ -104,15 +91,11 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
 
             public void configure() throws Exception {
                 from("activemq:queue:hello")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("What's your name");
-                        }
-                    })
-                    // use in out to get a reply as well
-                    .to(ExchangePattern.InOut, "activemq:queue:nameRequestor?replyTo=queue:namedReplyQueue")
-                    // and send the reply to our mock for validation
-                    .to("mock:result");
+                        .process(exchange -> exchange.getMessage().setBody("What's your name"))
+                        // use in out to get a reply as well
+                        .to(ExchangePattern.InOut, "activemq:queue:nameRequestor?replyTo=queue:namedReplyQueue")
+                        // and send the reply to our mock for validation
+                        .to("mock:result");
             }
         };
     }
@@ -125,6 +108,5 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
         amq = camelContext.getComponent("activemq", JmsComponent.class);
         return camelContext;
     }
-
 
 }

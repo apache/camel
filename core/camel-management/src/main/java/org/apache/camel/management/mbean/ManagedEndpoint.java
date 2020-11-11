@@ -56,6 +56,11 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     }
 
     @Override
+    public String getEndpointBaseUri() {
+        return endpoint.getEndpointBaseUri();
+    }
+
+    @Override
     public boolean isSingleton() {
         return endpoint.isSingleton();
     }

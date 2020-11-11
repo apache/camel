@@ -22,8 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  *
@@ -31,11 +33,12 @@ import org.junit.Test;
 public class FileConsumeCharsetTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/files");
         super.setUp();
-        template.sendBodyAndHeader("file://target/data/files?charset=UTF-8", "Hello World \u4f60\u597d", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/data/files?charset=UTF-8", "Hello World \u4f60\u597d", Exchange.FILE_NAME,
+                "report.txt");
     }
 
     @Test
@@ -48,7 +51,7 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
         oneExchangeDone.matchesWaitTime();
 
         // file should not exists
-        assertFalse("File should been deleted", new File("target/data/files/report.txt").exists());
+        assertFalse(new File("target/data/files/report.txt").exists(), "File should been deleted");
     }
 
     @Override
@@ -56,8 +59,8 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
                 from(file("target/data/files/").initialDelay(0).delay(10).fileName("report.txt").delete(true).charset("UTF-8"))
-                    .convertBodyTo(String.class)
-                    .to(mock("result"));
+                        .convertBodyTo(String.class)
+                        .to(mock("result"));
             }
         };
     }

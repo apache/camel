@@ -17,33 +17,27 @@
 package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-/**
- * The camel etcd component allows you to work with <a href="https://coreos.com/etcd">Etcd</a>, a distributed reliable key-value store.
- */
 public abstract class AbstractEtcdEndpoint extends DefaultEndpoint implements EtcdEndpoint {
 
-    private final EtcdNamespace namespace;
+    @UriPath(label = "common", description = "The path the endpoint refers to")
     private final String path;
+    @UriParam
     private final EtcdConfiguration configuration;
 
-    protected AbstractEtcdEndpoint(String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
+    protected AbstractEtcdEndpoint(String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
         super(uri, component);
 
         this.configuration = configuration;
-        this.namespace = namespace;
         this.path = path;
     }
 
     @Override
     public EtcdConfiguration getConfiguration() {
         return this.configuration;
-    }
-
-    @Override
-    public EtcdNamespace getNamespace() {
-        return this.namespace;
     }
 
     @Override

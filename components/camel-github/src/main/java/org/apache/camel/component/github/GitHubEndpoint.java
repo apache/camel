@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.github;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,36 +34,35 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.StringHelper;
 
 /**
- * The github component is used for integrating Camel with github.
+ * Interact with the GitHub API.
  *
- * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK.
- * Available endpoint URIs include:
+ * The endpoint encapsulates portions of the GitHub API, relying on the org.eclipse.egit.github.core Java SDK. Available
+ * endpoint URIs include:
  *
- * CONSUMERS
- * github://pullRequest (new pull requests)
- * github://pullRequestComment (new pull request comments)
- * github://commit/[branch] (new commits)
- * github://tag (new tags)
+ * CONSUMERS github://pullRequest (new pull requests) github://pullRequestComment (new pull request comments)
+ * github://commit/[branch] (new commits) github://tag (new tags)
  *
- * PRODUCERS
- * github://pullRequestComment (create a new pull request comment; see PullRequestCommentProducer for header requirements)
+ * PRODUCERS github://pullRequestComment (create a new pull request comment; see PullRequestCommentProducer for header
+ * requirements)
  *
  * The endpoints will respond with org.eclipse.egit.github.core-provided POJOs (PullRequest, CommitComment,
  * RepositoryTag, RepositoryCommit, etc.)
  *
- * Note: Rather than webhooks, this endpoint relies on simple polling.  Reasons include:
- * - concerned about reliability/stability if this somehow relied on an exposed, embedded server (Jetty?)
- * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
- * - need to support apps running somewhere not publicly accessible where a webhook would fail
+ * Note: Rather than webhooks, this endpoint relies on simple polling. Reasons include: - concerned about
+ * reliability/stability if this somehow relied on an exposed, embedded server (Jetty?) - the types of payloads we're
+ * polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not
+ * publicly accessible where a webhook would fail
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName", label = "api,file")
-public class GitHubEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName",
+             category = { Category.FILE, Category.CLOUD, Category.API })
+public class GitHubEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private GitHubType type;
     @UriPath(label = "consumer")
     private String branchName;
@@ -72,9 +72,11 @@ public class GitHubEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam
     private String oauthToken;
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private String repoOwner;
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private String repoName;
     @UriParam(label = "producer", enums = "error,failure,pending,success")
     private String state;
@@ -107,17 +109,24 @@ public class GitHubEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        Consumer consumer = null;
         if (type == GitHubType.COMMIT) {
             StringHelper.notEmpty(branchName, "branchName", this);
-            return new CommitConsumer(this, processor, branchName);
+            consumer = new CommitConsumer(this, processor, branchName);
         } else if (type == GitHubType.PULLREQUEST) {
-            return new PullRequestConsumer(this, processor);
+            consumer = new PullRequestConsumer(this, processor);
         } else if (type == GitHubType.PULLREQUESTCOMMENT) {
-            return new PullRequestCommentConsumer(this, processor);
+            consumer = new PullRequestCommentConsumer(this, processor);
         } else if (type == GitHubType.TAG) {
-            return new TagConsumer(this, processor);
+            consumer = new TagConsumer(this, processor);
         }
-        throw new IllegalArgumentException("Cannot create consumer with type " + type);
+
+        if (consumer == null) {
+            throw new IllegalArgumentException("Cannot create consumer with type " + type);
+        }
+
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public GitHubType getType() {

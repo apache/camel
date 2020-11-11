@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateCompletionSizeExpressionAndTimeoutTest extends ContextTestSupport {
 
@@ -39,8 +39,9 @@ public class AggregateCompletionSizeExpressionAndTimeoutTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body().tokenize(",")).aggregate(constant(true), new BodyInAggregatingStrategy()).completionSize(constant(2)).completionTimeout(1000)
-                    .to("log:result", "mock:result");
+                from("direct:start").split(body().tokenize(",")).aggregate(constant(true), new BodyInAggregatingStrategy())
+                        .completionSize(constant(2)).completionTimeout(1000)
+                        .to("log:result", "mock:result");
             }
         };
     }

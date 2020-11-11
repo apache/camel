@@ -27,15 +27,16 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.processor.DelegateProcessor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * Demonstrates how you can use a custom id factory to assign ids to Camel Java
- * routes and then attach your own debugger and be able to use the custom ids to
- * know at what point you are debugging
+ * Demonstrates how you can use a custom id factory to assign ids to Camel Java routes and then attach your own debugger
+ * and be able to use the custom ids to know at what point you are debugging
  */
 public class CustomIdFactoryTest extends ContextTestSupport {
 
@@ -45,7 +46,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     private static String ids;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ids = "";
         counter = 0;
@@ -71,7 +72,8 @@ public class CustomIdFactoryTest extends ContextTestSupport {
 
                 // a little content based router so we got 2 paths to route at
                 // runtime
-                from("direct:start").choice().when(body().contains("Hello")).to("mock:hello").otherwise().log("Hey").to("mock:other").end();
+                from("direct:start").choice().when(body().contains("Hello")).to("mock:hello").otherwise().log("Hey")
+                        .to("mock:other").end();
             }
         };
     }
@@ -109,16 +111,19 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     private static class MyDebuggerCheckingId implements InterceptStrategy {
 
         @Override
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                final CamelContext context, final NamedNode definition, Processor target, Processor nextTarget)
+                throws Exception {
 
             // MUST DO THIS
             // force id creation as sub nodes have lazy assigned ids
-            ((OptionalIdentifiedDefinition<?>)definition).idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+            ((OptionalIdentifiedDefinition<?>) definition)
+                    .idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
 
             return new DelegateProcessor(target) {
                 @Override
                 protected void processNext(Exchange exchange) throws Exception {
-                    log.debug("Debugging at: {} with id: {} with exchange: {}", definition, definition.getId(), exchange);
+                    LOG.debug("Debugging at: {} with id: {} with exchange: {}", definition, definition.getId(), exchange);
 
                     // record the path taken at runtime
                     ids += definition.getId();

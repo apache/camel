@@ -31,13 +31,13 @@ public class DomainMetadataCommand extends AbstractSdbCommand {
     @Override
     public void execute() {
         DomainMetadataRequest request = new DomainMetadataRequest()
-            .withDomainName(determineDomainName());
+                .withDomainName(determineDomainName());
         log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
-        
+
         DomainMetadataResult result = this.sdbClient.domainMetadata(request);
-        
+
         log.trace("Received result [{}]", result);
-        
+
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(SdbConstants.TIMESTAMP, result.getTimestamp());
         msg.setHeader(SdbConstants.ITEM_COUNT, result.getItemCount());
@@ -47,13 +47,8 @@ public class DomainMetadataCommand extends AbstractSdbCommand {
         msg.setHeader(SdbConstants.ATTRIBUTE_VALUE_SIZE, result.getAttributeValuesSizeBytes());
         msg.setHeader(SdbConstants.ITEM_NAME_SIZE, result.getItemNamesSizeBytes());
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 }

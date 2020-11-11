@@ -24,9 +24,12 @@ import com.twilio.rest.api.v2010.Account;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.twilio.internal.AccountApiMethod;
 import org.apache.camel.component.twilio.internal.TwilioApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link com.twilio.rest.api.v2010.Account} APIs.
@@ -40,18 +43,18 @@ public class AccountIntegrationTest extends AbstractTwilioTestSupport {
     public void testFetcher() throws Exception {
         final Account result = requestBody("direct://FETCHER", null);
 
-        assertNotNull("fetcher result not null", result);
-        assertNotNull("fetcher result sid not null", result.getSid());
+        assertNotNull(result, "fetcher result not null");
+        assertNotNull(result.getSid(), "fetcher result sid not null");
         LOG.debug("fetcher: " + result);
     }
 
     @Test
     public void testFetcherWithPathSid() throws Exception {
         final Account result = requestBodyAndHeaders("direct://FETCHER", null,
-            headers("CamelTwilioPathSid", ((TwilioComponent) context().getComponent("twilio")).getAccountSid()));
+                headers("CamelTwilioPathSid", ((TwilioComponent) context().getComponent("twilio")).getAccountSid()));
 
-        assertNotNull("fetcher result not null", result);
-        assertNotNull("fetcher result sid not null", result.getSid());
+        assertNotNull(result, "fetcher result not null");
+        assertNotNull(result.getSid(), "fetcher result sid not null");
         LOG.debug("fetcher: " + result);
     }
 
@@ -59,9 +62,9 @@ public class AccountIntegrationTest extends AbstractTwilioTestSupport {
     public void testReader() throws Exception {
         final ResourceSet<Account> result = requestBody("direct://READER", null);
 
-        assertNotNull("reader result not null", result);
+        assertNotNull(result, "reader result not null");
         result.forEach(account -> {
-            assertNotNull("reader result account not null", account);
+            assertNotNull(account, "reader result account not null");
             LOG.debug("reader: " + account);
         });
     }
@@ -69,11 +72,11 @@ public class AccountIntegrationTest extends AbstractTwilioTestSupport {
     @Test
     public void testReaderWithStatusActive() throws Exception {
         final ResourceSet<Account> result = requestBodyAndHeaders("direct://READER", null,
-            headers("CamelTwilioStatus", "active"));
+                headers("CamelTwilioStatus", "active"));
 
-        assertNotNull("reader result not null", result);
+        assertNotNull(result, "reader result not null");
         result.forEach(account -> {
-            assertEquals("reader result account active", Account.Status.ACTIVE, account.getStatus());
+            assertEquals(Account.Status.ACTIVE, account.getStatus(), "reader result account active");
             LOG.debug("reader: " + account);
         });
     }
@@ -90,11 +93,11 @@ public class AccountIntegrationTest extends AbstractTwilioTestSupport {
             public void configure() {
                 // test route for fetcher
                 from("direct://FETCHER")
-                    .to("twilio://" + PATH_PREFIX + "/fetch");
+                        .to("twilio://" + PATH_PREFIX + "/fetch");
 
                 // test route for reader
                 from("direct://READER")
-                    .to("twilio://" + PATH_PREFIX + "/read");
+                        .to("twilio://" + PATH_PREFIX + "/read");
 
             }
         };

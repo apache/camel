@@ -48,39 +48,39 @@ public class JooqProducer extends DefaultProducer {
         String querySQL = configuration.getQuery();
 
         switch (operation) {
-        case EXECUTE:
-            if (ObjectHelper.isEmpty(querySQL)) {
-                Query query = expression.evaluate(exchange, Query.class);
+            case EXECUTE:
+                if (ObjectHelper.isEmpty(querySQL)) {
+                    Query query = expression.evaluate(exchange, Query.class);
 
-                query.attach(dbConfig);
-                query.execute();
-            } else {
+                    query.attach(dbConfig);
+                    query.execute();
+                } else {
+                    DSLContext context = DSL.using(dbConfig);
+                    context.execute(querySQL);
+                }
+
+                break;
+            case FETCH:
+                Result result;
+                if (ObjectHelper.isEmpty(querySQL)) {
+                    ResultQuery resultQuery = expression.evaluate(exchange, ResultQuery.class);
+                    resultQuery.attach(dbConfig);
+                    result = resultQuery.fetch();
+                } else {
+                    DSLContext context = DSL.using(dbConfig);
+                    result = context.fetch(querySQL);
+                }
+
+                Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
+                target.setBody(result);
+                break;
+            case NONE:
                 DSLContext context = DSL.using(dbConfig);
-                context.execute(querySQL);
-            }
-
-            break;
-        case FETCH:
-            Result result;
-            if (ObjectHelper.isEmpty(querySQL)) {
-                ResultQuery resultQuery = expression.evaluate(exchange, ResultQuery.class);
-                resultQuery.attach(dbConfig);
-                result = resultQuery.fetch();
-            } else {
-                DSLContext context = DSL.using(dbConfig);
-                result = context.fetch(querySQL);
-            }
-
-            Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
-            target.setBody(result);
-            break;
-        case NONE:
-            DSLContext context = DSL.using(dbConfig);
-            final UpdatableRecord entity = expression.evaluate(exchange, UpdatableRecord.class);
-            context.batchStore(entity).execute();
-            break;
-        default:
-            throw new IllegalArgumentException("Wrong operation: " + operation);
+                final UpdatableRecord entity = expression.evaluate(exchange, UpdatableRecord.class);
+                context.batchStore(entity).execute();
+                break;
+            default:
+                throw new IllegalArgumentException("Wrong operation: " + operation);
         }
     }
 }

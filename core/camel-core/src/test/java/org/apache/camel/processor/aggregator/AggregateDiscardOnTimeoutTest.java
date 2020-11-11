@@ -22,7 +22,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
 
@@ -58,13 +60,13 @@ public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3)
-                    // use a 0.2 second timeout
-                    .completionTimeout(200)
-                    // speedup checker
-                    .completionTimeoutCheckerInterval(10)
-                    // and if timeout occurred then just discard the aggregated
-                    // message
-                    .discardOnCompletionTimeout().to("mock:aggregated");
+                        // use a 0.2 second timeout
+                        .completionTimeout(200)
+                        // speedup checker
+                        .completionTimeoutCheckerInterval(10)
+                        // and if timeout occurred then just discard the aggregated
+                        // message
+                        .discardOnCompletionTimeout().to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

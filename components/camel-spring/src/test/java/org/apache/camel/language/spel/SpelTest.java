@@ -17,7 +17,9 @@
 package org.apache.camel.language.spel;
 
 import org.apache.camel.LanguageTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpelTest extends LanguageTestSupport {
 
@@ -51,7 +53,7 @@ public class SpelTest extends LanguageTestSupport {
         assertPredicateFails("#{request.headers.foo == 'badString'}");
         assertPredicate("#{message.headers.foo == 'abc'}");
     }
-    
+
     @Test
     public void testResponseCreatesOutMessage() throws Exception {
         assertExpression("#{response.body}", null);

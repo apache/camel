@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CamelPostProcessorHelperSedaConsumePredicateTest extends ContextTestSupport {
 

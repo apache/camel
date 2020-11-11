@@ -26,66 +26,69 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
-public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringContextTests {
-    protected static int port1 = CXFTestSupport.getPort1(); 
-    protected static int port2 = CXFTestSupport.getPort2(); 
+@ExtendWith(SpringExtension.class)
+public class LoggingInterceptorInMessageModeTest {
+    protected static int port1 = CXFTestSupport.getPort1();
+    protected static int port2 = CXFTestSupport.getPort2();
 
     protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/LoggingInterceptorInMessageModeTest/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:" + port2 + "/LoggingInterceptorInMessageModeTest/helloworld";
+    protected static final String SERVICE_ADDRESS
+            = "http://localhost:" + port2 + "/LoggingInterceptorInMessageModeTest/helloworld";
 
     static Server server;
-    
+
     @Autowired
     protected CamelContext context;
-    
-    @BeforeClass
+
+    @BeforeAll
     public static void startService() {
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
-    
+
         svrBean.setAddress(SERVICE_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
-    
+
         server = svrBean.create();
     }
-    @AfterClass
+
+    @AfterAll
     public static void stopService() {
         server.stop();
         server.destroy();
     }
-    
+
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
-        
+
         LoggingOutInterceptor logInterceptor = null;
-                  
-        for (Interceptor<?> interceptor 
-            : context.getEndpoint("cxf:bean:serviceEndpoint", CxfSpringEndpoint.class)
-                                .getOutInterceptors()) {
+
+        for (Interceptor<?> interceptor : context.getEndpoint("cxf:bean:serviceEndpoint", CxfSpringEndpoint.class)
+                .getOutInterceptors()) {
             if (interceptor instanceof LoggingOutInterceptor) {
                 logInterceptor = LoggingOutInterceptor.class.cast(interceptor);
                 break;
             }
         }
-        
+
         assertNotNull(logInterceptor);
         // StringPrintWriter writer = new StringPrintWriter();
         // Unfortunately, LoggingOutInterceptor does not have a setter for writer so
         // we can't capture the output to verify.
         // logInterceptor.setPrintWriter(writer);
-        
+
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ROUTER_ADDRESS);
@@ -94,17 +97,17 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringCon
         HelloService client = (HelloService) proxyFactory.create();
 
         String result = client.echo("hello world");
-        assertEquals("we should get the right answer from router", result, "echo hello world");
+        assertEquals("echo hello world", result, "we should get the right answer from router");
         //assertTrue(writer.getString().indexOf("hello world") > 0);
 
     }
-    
+
     @SuppressWarnings("unused")
     private static final class StringPrintWriter extends PrintWriter {
         private StringPrintWriter() {
             super(new StringWriter());
         }
-        
+
         private StringPrintWriter(int initialSize) {
             super(new StringWriter(initialSize));
         }
@@ -112,7 +115,7 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringCon
         private String getString() {
             flush();
             return ((StringWriter) out).toString();
-        } 
+        }
     }
 
 }

@@ -34,7 +34,8 @@ public final class SpringIntegrationBinding {
         return createSpringIntegrationMessage(exchange, exchange.getIn().getHeaders());
     }
 
-    public static org.springframework.messaging.Message<?> createSpringIntegrationMessage(Exchange exchange, Map<String, Object> headers) {
+    public static org.springframework.messaging.Message<?> createSpringIntegrationMessage(
+            Exchange exchange, Map<String, Object> headers) {
         org.apache.camel.Message message = exchange.getIn();
         return new GenericMessage<>(message.getBody(), headers);
     }
@@ -43,7 +44,8 @@ public final class SpringIntegrationBinding {
         return new GenericMessage<>(message.getBody(), message.getHeaders());
     }
 
-    public static void storeToCamelMessage(org.springframework.messaging.Message<?> siMessage, org.apache.camel.Message cMessage) {
+    public static void storeToCamelMessage(
+            org.springframework.messaging.Message<?> siMessage, org.apache.camel.Message cMessage) {
         cMessage.setBody(siMessage.getPayload());
         cMessage.setHeaders(siMessage.getHeaders());
     }

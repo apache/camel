@@ -35,11 +35,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyConsumerClientModeTest extends BaseNettyTest {
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumerClientModeTest.class);
     private MyServer server;
-
 
     public void startNettyServer() throws Exception {
         server = new MyServer(getPort());
@@ -51,6 +53,7 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
             server.shutdown();
         }
     }
+
     @Test
     public void testNettyRoute() throws Exception {
         try {
@@ -71,12 +74,12 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true").id("client")
-                .process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
-                    }
-                }).to("mock:receive").noAutoStartup();
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                String body = exchange.getIn().getBody(String.class);
+                                exchange.getOut().setBody("Bye " + body);
+                            }
+                        }).to("mock:receive").noAutoStartup();
             }
         };
     }
@@ -98,7 +101,7 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
 
             bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                .childHandler(new ServerInitializer());
+                    .childHandler(new ServerInitializer());
 
             ChannelFuture cf = bootstrap.bind(port).sync();
             channel = cf.channel();
@@ -123,9 +126,10 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
 
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-            cause.printStackTrace();
+            LOG.warn("Unhandled exception caught: {}", cause.getMessage(), cause);
             ctx.close();
         }
+
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
             // Do nothing here

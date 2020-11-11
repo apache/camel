@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -44,8 +44,9 @@ public class AggregateCompletedByBatchConsumerSendEmptyMessageWhenIdleTest exten
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/batch?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true").aggregate(constant(true), new UseLatestAggregationStrategy())
-                    .completionFromBatchConsumer().to("mock:result");
+                from("file:target/data/batch?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true")
+                        .aggregate(constant(true), new UseLatestAggregationStrategy())
+                        .completionFromBatchConsumer().to("mock:result");
 
             }
         };

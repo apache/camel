@@ -28,12 +28,16 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link SolrEndpoint}.
  */
 @Component("solr,solrCloud,solrs")
 public class SolrComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
 
     private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<>();
 
@@ -59,7 +63,7 @@ public class SolrComponent extends DefaultComponent {
         public void setUpdateSolrServer(ConcurrentUpdateSolrClient updateSolrServer) {
             this.updateSolrServer = updateSolrServer;
         }
-        
+
         public CloudSolrClient getCloudSolrServer() {
             return cloudSolrServer;
         }
@@ -106,10 +110,10 @@ public class SolrComponent extends DefaultComponent {
     void shutdownServers(SolrServerReference ref) {
         shutdownServers(ref, false);
     }
-    
+
     private void shutdownServer(SolrClient server) throws IOException {
         if (server != null) {
-            log.info("Shutting down solr server: {}", server);
+            LOG.info("Shutting down solr server: {}", server);
             server.close();
         }
     }
@@ -118,18 +122,18 @@ public class SolrComponent extends DefaultComponent {
         try {
             shutdownServer(ref.getSolrServer());
         } catch (Exception e) {
-            log.warn("Error shutting down solr server. This exception is ignored.", e);
+            LOG.warn("Error shutting down solr server. This exception is ignored.", e);
         }
         try {
             shutdownServer(ref.getUpdateSolrServer());
         } catch (Exception e) {
-            log.warn("Error shutting down streaming solr server. This exception is ignored.", e);
+            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
         }
-        
+
         try {
             shutdownServer(ref.getCloudSolrServer());
         } catch (Exception e) {
-            log.warn("Error shutting down streaming solr server. This exception is ignored.", e);
+            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
         }
 
         if (remove) {

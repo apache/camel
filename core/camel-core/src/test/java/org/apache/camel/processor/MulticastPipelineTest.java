@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MulticastPipelineTest extends ContextTestSupport {
 
@@ -58,7 +58,8 @@ public class MulticastPipelineTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").pipeline().to("direct:a", "direct:b").end().pipeline().to("direct:c", "direct:d").end().to("mock:result");
+                from("direct:start").pipeline().to("direct:a", "direct:b").end().pipeline().to("direct:c", "direct:d").end()
+                        .to("mock:result");
 
                 from("direct:a").to("mock:a").setBody().constant("A");
                 from("direct:b").to("mock:b").setBody().constant("B");
@@ -84,7 +85,8 @@ public class MulticastPipelineTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").multicast().pipeline("direct:a", "direct:b").pipeline("direct:c", "direct:d").end().to("mock:result");
+                from("direct:start").multicast().pipeline("direct:a", "direct:b").pipeline("direct:c", "direct:d").end()
+                        .to("mock:result");
 
                 from("direct:a").to("mock:a").setBody().constant("A");
                 from("direct:b").to("mock:b").setBody().constant("B");
@@ -110,7 +112,8 @@ public class MulticastPipelineTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").multicast().pipeline().to("direct:a", "direct:b").end().pipeline().to("direct:c", "direct:d").end().end().to("mock:result");
+                from("direct:start").multicast().pipeline().to("direct:a", "direct:b").end().pipeline()
+                        .to("direct:c", "direct:d").end().end().to("mock:result");
 
                 from("direct:a").to("mock:a").setBody().constant("A");
                 from("direct:b").to("mock:b").setBody().constant("B");

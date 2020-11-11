@@ -26,8 +26,8 @@ public interface MailUidGenerator {
     /**
      * Generates an unique ID of the mail message depending on if its POP3 or IMAP protocol.
      *
-     * @param message the mail message
-     * @return the unique id, must never be <tt>null</tt>.
+     * @param  message the mail message
+     * @return         the unique id, must never be <tt>null</tt>.
      */
     String generateUuid(MailEndpoint mailEndpoint, Message message);
 

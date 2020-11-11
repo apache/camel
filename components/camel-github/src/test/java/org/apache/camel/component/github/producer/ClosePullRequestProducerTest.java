@@ -28,15 +28,17 @@ import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.PullRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
     public static final String PULL_REQUEST_PRODUCER_ENDPOINT = "direct:validPullRequest";
     protected static final Logger LOG = LoggerFactory.getLogger(ClosePullRequestProducerTest.class);
     private long latestPullRequestId;
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -50,17 +52,14 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
                         .to("github://closePullRequest?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
-
         };
     }
-
 
     @Test
     public void testPullRequestCommentProducer() throws Exception {
         // Create a pull request
         PullRequest pullRequest = pullRequestService.addPullRequest("testPullRequestCommentProducer");
         latestPullRequestId = pullRequest.getId();
-
 
         // Close it
         Endpoint closePullRequestEndpoint = getMandatoryEndpoint(PULL_REQUEST_PRODUCER_ENDPOINT);
@@ -81,9 +80,8 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
             }
         }
 
-        assertTrue("Didn't find pull request " + latestPullRequestId, found);
+        assertTrue(found, "Didn't find pull request " + latestPullRequestId);
     }
-
 
     public class ClosePullRequestProducerProcessor implements Processor {
         @Override
@@ -93,6 +91,5 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST, latestPullRequestId);
         }
     }
-
 
 }

@@ -33,20 +33,12 @@ public final class BodyConverter<T> implements Function<Exchange, T> {
 
     @Override
     public T apply(Exchange exchange) {
-        T answer;
-
-        if (exchange.hasOut()) {
-            answer = exchange.getOut().getBody(type);
-        } else {
-            answer = exchange.getIn().getBody(type);
-        }
-
-        return answer;
+        return exchange.getMessage().getBody(type);
     }
 
+    @SuppressWarnings("unchecked")
     public static <C> BodyConverter<C> forType(Class<C> type) {
         return BodyConverter.class.cast(
-            CACHE.computeIfAbsent(type, BodyConverter::new)
-        );
+                CACHE.computeIfAbsent(type, BodyConverter::new));
     }
 }

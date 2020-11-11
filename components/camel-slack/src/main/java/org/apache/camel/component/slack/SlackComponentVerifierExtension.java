@@ -56,12 +56,14 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS);
 
         if (ObjectHelper.isEmpty(parameters.get("token")) && ObjectHelper.isEmpty(parameters.get("webhookUrl"))) {
-            builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.GENERIC, 
-                    "You must specify a webhookUrl (for producer) or a token (for consumer)").parameterKey("webhookUrl").parameterKey("token").build());
+            builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.GENERIC,
+                    "You must specify a webhookUrl (for producer) or a token (for consumer)").parameterKey("webhookUrl")
+                    .parameterKey("token").build());
         }
         if (ObjectHelper.isNotEmpty(parameters.get("token")) && ObjectHelper.isNotEmpty(parameters.get("webhookUrl"))) {
-            builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.GENERIC, 
-                    "You must specify a webhookUrl (for producer) or a token (for consumer). You can't specify both.").parameterKey("webhookUrl").parameterKey("token").build());
+            builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.GENERIC,
+                    "You must specify a webhookUrl (for producer) or a token (for consumer). You can't specify both.")
+                    .parameterKey("webhookUrl").parameterKey("token").build());
         }
         return builder.build();
     }
@@ -71,12 +73,13 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
     // *********************************
     @Override
     protected Result verifyConnectivity(Map<String, Object> parameters) {
-        return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY).error(parameters, this::verifyCredentials).build();
+        return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY).error(parameters, this::verifyCredentials)
+                .build();
     }
 
     private void verifyCredentials(ResultBuilder builder, Map<String, Object> parameters) {
 
-        String webhookUrl = (String)parameters.get("webhookUrl");
+        String webhookUrl = (String) parameters.get("webhookUrl");
 
         if (ObjectHelper.isNotEmpty(webhookUrl)) {
 
@@ -95,24 +98,28 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
 
                 // Do the post
                 httpPost.setEntity(body);
-                
+
                 HttpResponse response = client.execute(httpPost);
 
                 // 2xx is OK, anything else we regard as failure
                 if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
                     builder
-                        .error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid webhookUrl").parameterKey("webhookUrl").build());
+                            .error(ResultErrorBuilder
+                                    .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid webhookUrl")
+                                    .parameterKey("webhookUrl").build());
                 }
             } catch (Exception e) {
-                builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid webhookUrl").parameterKey("webhookUrl").build());
+                builder.error(ResultErrorBuilder
+                        .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid webhookUrl")
+                        .parameterKey("webhookUrl").build());
             }
-        } 
+        }
         if (ObjectHelper.isNotEmpty(parameters.get("token"))) {
-            String token = (String)parameters.get("token");
+            String token = (String) parameters.get("token");
 
             try {
                 HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
-                HttpPost httpPost = new HttpPost(parameters.get("serverUrl") + "/api/channels.list");
+                HttpPost httpPost = new HttpPost(parameters.get("serverUrl") + "/api/conversations.list");
 
                 List<BasicNameValuePair> params = new ArrayList<>();
                 params.add(new BasicNameValuePair("token", token));
@@ -122,14 +129,20 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
 
                 String jsonString = readResponse(response.getEntity().getContent());
                 if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-                    builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token").parameterKey("token").build());
+                    builder.error(ResultErrorBuilder
+                            .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token")
+                            .parameterKey("token").build());
                 }
                 JsonObject obj = (JsonObject) Jsoner.deserialize(jsonString);
                 if (obj.get("ok") != null && obj.get("ok").equals(false)) {
-                    builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token").parameterKey("token").build());
+                    builder.error(ResultErrorBuilder
+                            .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token")
+                            .parameterKey("token").build());
                 }
             } catch (Exception e) {
-                builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token").parameterKey("token").build());
+                builder.error(ResultErrorBuilder
+                        .withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token")
+                        .parameterKey("token").build());
             }
 
         }

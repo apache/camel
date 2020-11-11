@@ -22,42 +22,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.component.http.HttpMethods.POST;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.apache.http.entity.ContentType.IMAGE_JPEG;
 
 public class HttpBodyTest extends BaseHttpTest {
     private String protocolString = "http://";
     // default content encoding of the local test server
     private String charset = "ISO-8859-1";
     private HttpServer localServer;
+    private String endpointUrl;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
-        expectedHeaders.put("Content-Type", "image/jpeg");
+        expectedHeaders.put(CONTENT_TYPE, IMAGE_JPEG.getMimeType());
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/post", new BasicValidationHandler("POST", null, getBody(), getExpectedContent())).
-                registerHandler("/post1", new HeaderValidationHandler("POST", null, null, getExpectedContent(), expectedHeaders)).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/post", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent()))
+                .registerHandler("/post1",
+                        new HeaderValidationHandler(POST.name(), null, null, getExpectedContent(), expectedHeaders))
+                .create();
         localServer.start();
+
+        endpointUrl = getProtocolString() + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -77,13 +81,11 @@ public class HttpBodyTest extends BaseHttpTest {
 
     @Test
     public void httpPostWithStringBody() throws Exception {
-        Exchange exchange = template.request(getProtocolString() + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/post", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // without this property, camel use the os default encoding
-                // to create the byte array for the StringRequestEntity
-                exchange.setProperty(Exchange.CHARSET_NAME, charset);
-                exchange.getIn().setBody(getBody());
-            }
+        Exchange exchange = template.request(endpointUrl + "/post", exchange1 -> {
+            // without this property, camel use the os default encoding
+            // to create the byte array for the StringRequestEntity
+            exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange1.getIn().setBody(getBody());
         });
 
         assertExchange(exchange);
@@ -91,22 +93,16 @@ public class HttpBodyTest extends BaseHttpTest {
 
     @Test
     public void httpPostWithByteArrayBody() throws Exception {
-        Exchange exchange = template.request(getProtocolString() + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/post", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(getBody().getBytes(charset));
-            }
-        });
+        Exchange exchange
+                = template.request(endpointUrl + "/post", exchange1 -> exchange1.getIn().setBody(getBody().getBytes(charset)));
 
         assertExchange(exchange);
     }
 
     @Test
     public void httpPostWithInputStreamBody() throws Exception {
-        Exchange exchange = template.request(getProtocolString() + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/post", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
-            }
-        });
+        Exchange exchange = template.request(endpointUrl + "/post",
+                exchange1 -> exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset))));
 
         assertExchange(exchange);
     }
@@ -114,11 +110,9 @@ public class HttpBodyTest extends BaseHttpTest {
     @Test
     public void httpPostWithImage() throws Exception {
 
-        Exchange exchange = template.send(getProtocolString() + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/post1", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new File("src/test/data/logo.jpeg"));
-                exchange.getIn().setHeader("Content-Type", "image/jpeg");
-            }
+        Exchange exchange = template.send(endpointUrl + "/post1", exchange1 -> {
+            exchange1.getIn().setBody(new File("src/test/data/logo.jpeg"));
+            exchange1.getIn().setHeader(CONTENT_TYPE, IMAGE_JPEG.getMimeType());
         });
 
         assertExchange(exchange);

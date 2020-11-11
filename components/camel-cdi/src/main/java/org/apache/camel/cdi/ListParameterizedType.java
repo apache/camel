@@ -30,7 +30,7 @@ final class ListParameterizedType implements ParameterizedType {
 
     @Override
     public Type[] getActualTypeArguments() {
-        return new Type[]{argument};
+        return new Type[] { argument };
     }
 
     @Override

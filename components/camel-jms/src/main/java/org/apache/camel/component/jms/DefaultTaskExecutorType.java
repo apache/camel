@@ -29,22 +29,28 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public enum DefaultTaskExecutorType {
 
     /**
-     * Use a {@link ThreadPoolTaskExecutor} as the underlying task executor for consuming messages.
-     * It will be configured with these attributes:
+     * Use a {@link ThreadPoolTaskExecutor} as the underlying task executor for consuming messages. It will be
+     * configured with these attributes:
      * <p/>
      * <li>
-     *   <ul>{@code corePoolSize} = concurrentConsumers</ul>
-     *   <ul>{@code queueSize} = 0 (to use the 'direct handoff' strategy for growing the thread pool,
-     *       see Javadoc of {@link ThreadPoolExecutor}.</ul>
-     *   <ul>{@code maxPoolSize}, default value, i.e. no upper bound (as concurrency should be limited by
-     *       the endpoint's maxConcurrentConsumers, not by the thread pool).</ul>
+     * <ul>
+     * {@code corePoolSize} = concurrentConsumers
+     * </ul>
+     * <ul>
+     * {@code queueSize} = 0 (to use the 'direct handoff' strategy for growing the thread pool, see Javadoc of
+     * {@link ThreadPoolExecutor}.
+     * </ul>
+     * <ul>
+     * {@code maxPoolSize}, default value, i.e. no upper bound (as concurrency should be limited by the endpoint's
+     * maxConcurrentConsumers, not by the thread pool).
+     * </ul>
      * </li>
      */
     ThreadPool,
 
     /**
-     * Use a {@link SimpleAsyncTaskExecutor} as the underlying task executor for consuming messages.
-     * (Legacy mode - default behaviour before version 2.10.3).
+     * Use a {@link SimpleAsyncTaskExecutor} as the underlying task executor for consuming messages. (Legacy mode -
+     * default behaviour before version 2.10.3).
      */
     SimpleAsync
 }

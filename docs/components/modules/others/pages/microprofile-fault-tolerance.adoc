@@ -1,0 +1,29 @@
+[[microprofile-fault-tolerance-other]]
+= Microprofile Fault Tolerance Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-microprofile-fault-tolerance/src/main/docs/microprofile-fault-tolerance.adoc
+:docTitle: Microprofile Fault Tolerance
+:artifactId: camel-microprofile-fault-tolerance
+:description: Circuit Breaker EIP using MicroProfile Fault Tolerance
+:since: 3.3
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/microprofile-fault-tolerance.adoc[opts=optional]
+
+*Since Camel {since}*
+
+This component supports the Circuit Breaker EIP with the MicroProfile Fault Tolerance library.
+
+For more details see the Circuit Breaker EIP documentation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-microprofile-fault-tolerance</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----

@@ -18,17 +18,18 @@ package org.apache.camel.component.braintree;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 
 import com.braintreegateway.TransactionLevelFeeReport;
 import com.braintreegateway.TransactionLevelFeeReportRequest;
-import com.braintreegateway.TransactionLevelFeeReportRow;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.ReportGatewayApiMethod;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link com.braintreegateway.ReportGateway} APIs.
@@ -36,7 +37,8 @@ import org.slf4j.LoggerFactory;
 public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReportGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(ReportGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(ReportGatewayApiMethod.class).getName();
 
     @Test
     public void testTransactionLevelFees() throws Exception {
@@ -53,13 +55,12 @@ public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
         final com.braintreegateway.Result<TransactionLevelFeeReport> result = requestBody(
                 "direct://TRANSACTIONLEVELFEES",
-                request
-        );
+                request);
 
-        assertNotNull("transactionLevelFees result", result);
-        assertTrue("transactionLevelFees success", result.isSuccess());
-        List<TransactionLevelFeeReportRow> rows = result.getTarget().getRows();
-        assertTrue("transactionLevelFeeRows found", rows.size() > 0);
+        assertNotNull(result, "transactionLevelFees result");
+        assertTrue(result.isSuccess(), "transactionLevelFees success");
+        TransactionLevelFeeReport report = result.getTarget();
+        assertNotNull(report);
 
         LOG.debug("transactionLevelFees: " + result);
     }
@@ -70,7 +71,7 @@ public class ReportGatewayIntegrationTest extends AbstractBraintreeTestSupport {
             public void configure() {
                 // test route for transactionLevelFees
                 from("direct://TRANSACTIONLEVELFEES")
-                    .to("braintree://" + PATH_PREFIX + "/transactionLevelFees?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/transactionLevelFees?inBody=request");
 
             }
         };

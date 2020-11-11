@@ -20,12 +20,17 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
     @Test
-    public void testDisruptorVmInOutChainedTimeout() throws Exception {
+    void testDisruptorVmInOutChainedTimeout() throws Exception {
         StopWatch watch = new StopWatch();
 
         try {
@@ -40,14 +45,14 @@ public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
         long delta = watch.taken();
 
-        assertTrue("Should be faster than 1 sec, was: " + delta, delta < 1100);
+        assertTrue(delta < 1100, "Should be faster than 1 sec, was: " + delta);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:b")
                         .to("mock:b")
                         .delay(500)
@@ -57,15 +62,15 @@ public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+    protected RouteBuilder createRouteBuilderForSecondContext() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(noErrorHandler());
 
                 from("disruptor-vm:a")
                         .to("mock:a")
-                                // this timeout will trigger an exception to occur
+                        // this timeout will trigger an exception to occur
                         .to("disruptor-vm:b?timeout=200")
                         .to("mock:a2");
             }

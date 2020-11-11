@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
 
 public class CamelObjectInputStream extends ObjectInputStream {
     private final ClassLoader classLoader;
-    
+
     public CamelObjectInputStream(InputStream in, CamelContext context) throws IOException {
         super(in);
         if (context != null) {
@@ -34,7 +34,7 @@ public class CamelObjectInputStream extends ObjectInputStream {
             this.classLoader = null;
         }
     }
-    
+
     @Override
     protected Class<?> resolveClass(ObjectStreamClass desc) throws ClassNotFoundException, IOException {
         if (classLoader != null) {

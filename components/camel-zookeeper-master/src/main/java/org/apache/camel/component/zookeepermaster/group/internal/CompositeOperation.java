@@ -20,8 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Operation that aggregates several {@link Operation operations} to be performed inside single task passed
- * to thread executor
+ * Operation that aggregates several {@link Operation operations} to be performed inside single task passed to thread
+ * executor
  */
 public class CompositeOperation implements Operation {
 

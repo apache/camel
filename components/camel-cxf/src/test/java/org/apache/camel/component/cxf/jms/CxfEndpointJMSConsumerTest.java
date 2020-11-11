@@ -21,40 +21,43 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.hello_world_soap_http.Greeter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
-        assertNotNull("Should have created a valid spring context", applicationContext);
+        assertNotNull(applicationContext, "Should have created a valid spring context");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        
+
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
-    
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jms/camel-context.xml");
     }
@@ -68,29 +71,28 @@ public class CxfEndpointJMSConsumerTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // just set the response for greetme operation here
                         String me = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Hello " + me);
+                        exchange.getMessage().setBody("Hello " + me);
                     }
                 });
             }
         };
     }
-    
+
     @Test
     public void testInvocation() {
         // Here we just the address with JMS URI
         String address = "jms:jndi:dynamicQueues/test.cxf.jmstransport.queue"
-            + "?jndiInitialContextFactory"
-            + "=org.apache.activemq.jndi.ActiveMQInitialContextFactory"
-            + "&jndiConnectionFactoryName=ConnectionFactory&jndiURL="
-            + "vm://localhost";
-   
+                         + "?jndiInitialContextFactory"
+                         + "=org.apache.activemq.jndi.ActiveMQInitialContextFactory"
+                         + "&jndiConnectionFactoryName=ConnectionFactory&jndiURL="
+                         + "vm://localhost";
+
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(Greeter.class);
         factory.setAddress(address);
         Greeter greeter = factory.create(Greeter.class);
         String response = greeter.greetMe("Willem");
-        assertEquals("Get a wrong response", "Hello Willem", response);
+        assertEquals("Hello Willem", response, "Get a wrong response");
     }
-    
-    
+
 }

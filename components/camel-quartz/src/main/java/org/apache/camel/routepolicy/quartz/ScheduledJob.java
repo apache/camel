@@ -39,19 +39,22 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
         LOG.debug("Running ScheduledJob: jobExecutionContext={}", jobExecutionContext);
 
         SchedulerContext schedulerContext = getSchedulerContext(jobExecutionContext);
-        ScheduledJobState state = (ScheduledJobState) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().toString());
+        ScheduledJobState state
+                = (ScheduledJobState) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().toString());
         Action storedAction = state.getAction();
         Route storedRoute = state.getRoute();
 
-        List<RoutePolicy> policyList = storedRoute.getRouteContext().getRoutePolicyList();
+        List<RoutePolicy> policyList = storedRoute.getRoutePolicyList();
         for (RoutePolicy policy : policyList) {
             try {
                 if (policy instanceof ScheduledRoutePolicy) {
-                    ((ScheduledRoutePolicy)policy).onJobExecute(storedAction, storedRoute);
+                    ((ScheduledRoutePolicy) policy).onJobExecute(storedAction, storedRoute);
                 }
             } catch (Exception e) {
-                throw new JobExecutionException("Failed to execute Scheduled Job for route " + storedRoute.getId()
-                        + " with trigger name: " + jobExecutionContext.getTrigger().getKey(), e);
+                throw new JobExecutionException(
+                        "Failed to execute Scheduled Job for route " + storedRoute.getId()
+                                                + " with trigger name: " + jobExecutionContext.getTrigger().getKey(),
+                        e);
             }
         }
     }
@@ -60,7 +63,8 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
         try {
             return jobExecutionContext.getScheduler().getContext();
         } catch (SchedulerException e) {
-            throw new JobExecutionException("Failed to obtain scheduler context for job " + jobExecutionContext.getJobDetail().getKey());
+            throw new JobExecutionException(
+                    "Failed to obtain scheduler context for job " + jobExecutionContext.getJobDetail().getKey());
         }
     }
 

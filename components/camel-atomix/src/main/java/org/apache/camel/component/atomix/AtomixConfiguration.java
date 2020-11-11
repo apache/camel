@@ -53,7 +53,6 @@ public class AtomixConfiguration<T extends Atomix> implements Cloneable {
     @UriParam(label = "advanced", defaultValue = "false")
     private boolean ephemeral;
 
-
     protected AtomixConfiguration() {
     }
 
@@ -231,8 +230,7 @@ public class AtomixConfiguration<T extends Atomix> implements Cloneable {
     /**
      * Sets if the local member should join groups as PersistentMember or not.
      *
-     * If set to ephemeral the local member will receive an auto generated ID thus
-     * the local one is ignored.
+     * If set to ephemeral the local member will receive an auto generated ID thus the local one is ignored.
      */
     public void setEphemeral(boolean ephemeral) {
         this.ephemeral = ephemeral;

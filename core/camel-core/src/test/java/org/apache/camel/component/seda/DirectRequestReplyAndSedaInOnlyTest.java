@@ -17,8 +17,11 @@
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DirectRequestReplyAndSedaInOnlyTest extends ContextTestSupport {
 
@@ -42,7 +45,7 @@ public class DirectRequestReplyAndSedaInOnlyTest extends ContextTestSupport {
                 // routing
                 // (as we don't want to do request/reply over SEDA)
                 // In EIP patterns the WireTap pattern is what this would be
-                from("direct:start").transform(constant("Bye World")).inOnly("seda:log");
+                from("direct:start").transform(constant("Bye World")).to(ExchangePattern.InOnly, "seda:log");
 
                 from("seda:log").transform(body().prepend("Logging: ")).to("log:log", "mock:log");
             }

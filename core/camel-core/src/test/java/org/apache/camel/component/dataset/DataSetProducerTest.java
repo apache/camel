@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.dataset;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DataSetProducerTest extends ContextTestSupport {
 
@@ -38,10 +38,10 @@ public class DataSetProducerTest extends ContextTestSupport {
     final String resultUri = "mock://result";
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("foo", dataSet);
-        return context;
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+        answer.bind("foo", dataSet);
+        return answer;
     }
 
     @Test
@@ -65,11 +65,13 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToOff() throws Exception {
+    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToOff()
+            throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == i % 2) {
-                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(),
+                        Exchange.DATASET_INDEX, i);
             } else {
                 template.sendBody(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody());
             }
@@ -79,11 +81,13 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToLenient() throws Exception {
+    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToLenient()
+            throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == i % 2) {
-                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(),
+                        Exchange.DATASET_INDEX, i);
             } else {
                 template.sendBody(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody());
             }
@@ -93,18 +97,19 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToStrict() throws Exception {
+    public void testSendingMessagesExplicitlyToDataSetEndpointWithoutDataSetIndexAndDataSetIndexUriParameterSetToStrict()
+            throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
-            template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToStrict, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+            template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToStrict, dataSet.getDefaultBody(), Exchange.DATASET_INDEX,
+                    i);
         }
 
         assertMockEndpointsSatisfied();
     }
 
     /**
-     * Verify that the CamelDataSetIndex header is optional when the
-     * dataSetIndex parameter is unset
+     * Verify that the CamelDataSetIndex header is optional when the dataSetIndex parameter is unset
      */
     @Test
     public void testNotSettingDataSetIndexHeaderWhenDataSetIndexUriParameterIsUnset() throws Exception {
@@ -121,15 +126,15 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     /**
-     * Verify that the CamelDataSetIndex header is ignored when the dataSetIndex
-     * URI paramter is set to off
+     * Verify that the CamelDataSetIndex header is ignored when the dataSetIndex URI paramter is set to off
      */
     @Test
     public void testNotSettingDataSetIndexHeaderWhenDataSetIndexUriParameterSetToOff() throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == (size % 2)) {
-                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToOff, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, size - i);
+                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToOff, dataSet.getDefaultBody(), Exchange.DATASET_INDEX,
+                        size - i);
             } else {
                 template.sendBody(dataSetUriWithDataSetIndexSetToOff, dataSet.getDefaultBody());
             }
@@ -139,15 +144,15 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     /**
-     * Verify that the CamelDataSetIndex header is optional when the
-     * dataSetIndex URI parameter is set to lenient
+     * Verify that the CamelDataSetIndex header is optional when the dataSetIndex URI parameter is set to lenient
      */
     @Test
     public void testNotSettingDataSetIndexHeaderWhenDataSetIndexUriParameterSetToLenient() throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
             if (0 == (size % 2)) {
-                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(), Exchange.DATASET_INDEX, i);
+                template.sendBodyAndHeader(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody(),
+                        Exchange.DATASET_INDEX, i);
             } else {
                 template.sendBody(dataSetUriWithDataSetIndexSetToLenient, dataSet.getDefaultBody());
             }
@@ -157,8 +162,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     /**
-     * Verify that the CamelDataSetIndex header is required when the
-     * dataSetIndex URI parameter is set to strict
+     * Verify that the CamelDataSetIndex header is required when the dataSetIndex URI parameter is set to strict
      */
     @Test
     public void testNotSettingDataSetIndexHeaderWhenDataSetIndexUriParameterSetToStrict() throws Exception {
@@ -172,7 +176,8 @@ public class DataSetProducerTest extends ContextTestSupport {
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at
             // the end will be unique
-            String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToStrict + " due to:" + " No '" + Exchange.DATASET_INDEX
+            String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToStrict + " due to:" + " No '"
+                                         + Exchange.DATASET_INDEX
                                          + "' header available of type: java.lang.Long";
             String actualErrorString = assertionError.getMessage();
             if (actualErrorString.startsWith(expectedErrorString)) {
@@ -183,7 +188,7 @@ public class DataSetProducerTest extends ContextTestSupport {
             }
         }
 
-        Assert.fail("AssertionError should have been generated");
+        fail("AssertionError should have been generated");
     }
 
     @Test
@@ -199,7 +204,7 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
 
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMessageCount((int)size);
+        result.expectedMessageCount((int) size);
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
 
@@ -225,7 +230,7 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
 
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMessageCount((int)size);
+        result.expectedMessageCount((int) size);
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
 
@@ -249,7 +254,7 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
 
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMessageCount((int)size);
+        result.expectedMessageCount((int) size);
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
 
@@ -273,7 +278,7 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
 
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMessageCount((int)size);
+        result.expectedMessageCount((int) size);
         result.expectsAscending(header(Exchange.DATASET_INDEX).convertTo(Number.class));
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
 
@@ -297,7 +302,7 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
 
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMessageCount((int)size);
+        result.expectedMessageCount((int) size);
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
 
         for (long i = 0; i < size; i++) {
@@ -313,7 +318,8 @@ public class DataSetProducerTest extends ContextTestSupport {
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at
             // the end will be unique
-            String expectedErrorString = "Caught exception on " + dataSetUri + " due to: " + "Header: " + Exchange.DATASET_INDEX + " does not match. Expected: " + size / 2
+            String expectedErrorString = "Caught exception on " + dataSetUri + " due to: " + "Header: " + Exchange.DATASET_INDEX
+                                         + " does not match. Expected: " + size / 2
                                          + " but was: " + (size / 2 + 10);
             String actualErrorString = assertionError.getMessage();
             if (actualErrorString.startsWith(expectedErrorString)) {
@@ -324,7 +330,7 @@ public class DataSetProducerTest extends ContextTestSupport {
             }
         }
 
-        Assert.fail("AssertionError should have been generated");
+        fail("AssertionError should have been generated");
     }
 
     @Test
@@ -340,7 +346,7 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
 
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMessageCount((int)size);
+        result.expectedMessageCount((int) size);
 
         for (long i = 0; i < size; i++) {
             if (i == (size / 2)) {
@@ -366,7 +372,7 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
 
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMessageCount((int)size);
+        result.expectedMessageCount((int) size);
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
 
         for (long i = 0; i < size; i++) {
@@ -382,7 +388,8 @@ public class DataSetProducerTest extends ContextTestSupport {
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at
             // the end will be unique
-            String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToLenient + " due to: " + "Header: " + Exchange.DATASET_INDEX
+            String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToLenient + " due to: "
+                                         + "Header: " + Exchange.DATASET_INDEX
                                          + " does not match. Expected: " + size / 2 + " but was: " + (size / 2 + 10);
             String actualErrorString = assertionError.getMessage();
             if (actualErrorString.startsWith(expectedErrorString)) {
@@ -393,7 +400,7 @@ public class DataSetProducerTest extends ContextTestSupport {
             }
         }
 
-        Assert.fail("AssertionError should have been generated");
+        fail("AssertionError should have been generated");
     }
 
     @Test
@@ -409,7 +416,7 @@ public class DataSetProducerTest extends ContextTestSupport {
         long size = dataSet.getSize();
 
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMessageCount((int)size);
+        result.expectedMessageCount((int) size);
         result.allMessages().header(Exchange.DATASET_INDEX).isNotNull();
 
         for (long i = 0; i < size; i++) {
@@ -425,7 +432,8 @@ public class DataSetProducerTest extends ContextTestSupport {
         } catch (AssertionError assertionError) {
             // Check as much of the string as possible - but the ExchangeID at
             // the end will be unique
-            String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToStrict + " due to: " + "Header: " + Exchange.DATASET_INDEX
+            String expectedErrorString = "Caught exception on " + dataSetUriWithDataSetIndexSetToStrict + " due to: "
+                                         + "Header: " + Exchange.DATASET_INDEX
                                          + " does not match. Expected: " + size / 2 + " but was: " + (size / 2 + 10);
             String actualErrorString = assertionError.getMessage();
             if (actualErrorString.startsWith(expectedErrorString)) {
@@ -436,6 +444,6 @@ public class DataSetProducerTest extends ContextTestSupport {
             }
         }
 
-        Assert.fail("AssertionError should have been generated");
+        fail("AssertionError should have been generated");
     }
 }

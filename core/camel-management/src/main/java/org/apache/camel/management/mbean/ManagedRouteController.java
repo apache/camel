@@ -22,35 +22,46 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedRouteControllerMBean;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteController;
 
-public class ManagedRouteController implements ManagedRouteControllerMBean {
-    private final CamelContext context;
+@ManagedResource(description = "Managed RouteController")
+public class ManagedRouteController extends ManagedService implements ManagedRouteControllerMBean {
 
-    public ManagedRouteController(CamelContext context) {
-        this.context = context;
+    private final RouteController controller;
+
+    public ManagedRouteController(CamelContext context, RouteController controller) {
+        super(context, controller);
+        this.controller = controller;
+    }
+
+    public RouteController getRouteController() {
+        return controller;
     }
 
     public void init(ManagementStrategy strategy) {
         // do nothing
     }
 
-    public CamelContext getContext() {
-        return context;
-    }
-
     @Override
     public Collection<String> getControlledRoutes() {
-        RouteController controller = context.getRouteController();
-
         if (controller != null) {
             return controller.getControlledRoutes().stream()
-                .map(Route::getId)
-                .collect(Collectors.toList());
+                    .map(Route::getId)
+                    .collect(Collectors.toList());
         }
 
         return Collections.emptyList();
+    }
+
+    @Override
+    public String getRouteStartupLoggingLevel() {
+        if (controller != null) {
+            return controller.getRouteStartupLoggingLevel().name();
+        } else {
+            return null;
+        }
     }
 }

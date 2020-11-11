@@ -24,13 +24,12 @@ import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.BindParameter;
 import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.SessionStateListener;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -43,7 +42,7 @@ public class SmppProducerLazySessionCreationTest {
     private SmppEndpoint endpoint;
     private SMPPSession session;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         configuration = new SmppConfiguration();
         configuration.setLazySessionCreation(true);
@@ -61,21 +60,9 @@ public class SmppProducerLazySessionCreationTest {
     }
 
     @Test
-    public void doStartShouldNotCreateTheSmppSession() throws Exception {
-        when(endpoint.getConnectionString()).thenReturn("smpp://smppclient@localhost:2775");
-        when(endpoint.isSingleton()).thenReturn(true);
-
-        producer.doStart();
-
-        verify(endpoint).getConnectionString();
-        verify(endpoint).isSingleton();
-        verifyNoMoreInteractions(endpoint, session);
-    }
-
-    @Test
     public void processShouldCreateTheSmppSession() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://smppclient@localhost:2775");
+                .thenReturn("smpp://smppclient@localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
                 BindType.BIND_TX,
                 "smppclient",
@@ -84,8 +71,8 @@ public class SmppProducerLazySessionCreationTest {
                 TypeOfNumber.UNKNOWN,
                 NumberingPlanIndicator.UNKNOWN,
                 "");
-        when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
-            .thenReturn("1");
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
+                .thenReturn("1");
         when(endpoint.isSingleton()).thenReturn(true);
         SmppBinding binding = mock(SmppBinding.class);
         Exchange exchange = mock(Exchange.class);
@@ -104,13 +91,13 @@ public class SmppProducerLazySessionCreationTest {
         verify(session).setEnquireLinkTimer(5000);
         verify(session).setTransactionTimer(10000);
         verify(session).addSessionStateListener(isA(SessionStateListener.class));
-        verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameter);
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter);
     }
 
     @Test
     public void processShouldCreateTheSmppSessionWithTheSystemIdAndPasswordFromTheExchange() throws Exception {
         when(endpoint.getConnectionString())
-            .thenReturn("smpp://localhost:2775");
+                .thenReturn("smpp://localhost:2775");
         BindParameter expectedBindParameter = new BindParameter(
                 BindType.BIND_TX,
                 "smppclient2",
@@ -119,8 +106,8 @@ public class SmppProducerLazySessionCreationTest {
                 TypeOfNumber.UNKNOWN,
                 NumberingPlanIndicator.UNKNOWN,
                 "");
-        when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
-            .thenReturn("1");
+        when(session.connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter))
+                .thenReturn("1");
         SmppBinding binding = mock(SmppBinding.class);
         Exchange exchange = mock(Exchange.class);
         Message in = mock(Message.class);
@@ -136,6 +123,6 @@ public class SmppProducerLazySessionCreationTest {
         producer.doStart();
         producer.process(exchange);
 
-        verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameter);
+        verify(session).connectAndBind("localhost", Integer.valueOf(2775), expectedBindParameter);
     }
 }

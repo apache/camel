@@ -16,7 +16,19 @@
  */
 package org.apache.camel.util.function;
 
+/**
+ * Represents a {@link Runnable} like interface that may thrown an exception.
+ *
+ * @param <T> the type of the exception the accept method may throw
+ *
+ * @see       Runnable
+ */
 @FunctionalInterface
 public interface ThrowingRunnable<T extends Throwable> {
+    /**
+     * Execute an action, potentially throwing an exception.
+     *
+     * @throws T the exception that may be thrown
+     */
     void run() throws T;
 }

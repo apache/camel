@@ -21,9 +21,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.processor.validation.PredicateValidationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.support.processor.PredicateValidationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ValidateRegExpTest extends ContextTestSupport {
 
@@ -31,7 +33,7 @@ public class ValidateRegExpTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -61,7 +63,7 @@ public class ValidateRegExpTest extends ContextTestSupport {
 
             // as the Expression could be different between the DSL and simple
             // language, here we just check part of the message
-            assertTrue("Get a wrong exception message", cause.getMessage().startsWith("Validation failed for Predicate"));
+            assertTrue(cause.getMessage().startsWith("Validation failed for Predicate"), "Get a wrong exception message");
             assertTrue(cause.getMessage().contains("^\\d{2}\\.\\d{2}\\.\\d{4}$"));
 
             String body = cause.getExchange().getIn().getBody(String.class);

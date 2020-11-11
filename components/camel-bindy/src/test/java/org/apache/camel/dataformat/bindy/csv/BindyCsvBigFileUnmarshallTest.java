@@ -22,14 +22,15 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyCsvBigFileUnmarshallTest {
 
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
@@ -52,8 +53,8 @@ public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTe
     public static class ContextConfig extends RouteBuilder {
         @Override
         public void configure() {
-            BindyCsvDataFormat camelDataFormat = 
-                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+            BindyCsvDataFormat camelDataFormat
+                    = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
             from("file://src/test/data/big?noop=true").unmarshal(camelDataFormat).to("mock:result");
         }
 

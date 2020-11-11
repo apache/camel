@@ -23,12 +23,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to indicate an injection point of a
- * <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> into a POJO.
+ * Used to indicate an injection point of a <a href="http://camel.apache.org/using-propertyplaceholder.html">property
+ * placeholder</a> into a POJO.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PARAMETER})
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PARAMETER })
 public @interface PropertyInject {
 
     /**

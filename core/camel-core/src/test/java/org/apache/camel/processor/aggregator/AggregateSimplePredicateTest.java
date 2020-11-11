@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateSimplePredicateTest extends ContextTestSupport {
 
@@ -41,13 +41,14 @@ public class AggregateSimplePredicateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // aggregate all exchanges correlated by the id header.
-                    // Aggregate them using the BodyInAggregatingStrategy
-                    // strategy which
-                    // and when the aggregated body contains A+B+C then complete
-                    // the aggregation
-                    // and send it to mock:aggregated
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionPredicate(body().contains("A+B+C")).to("mock:aggregated");
+                        // aggregate all exchanges correlated by the id header.
+                        // Aggregate them using the BodyInAggregatingStrategy
+                        // strategy which
+                        // and when the aggregated body contains A+B+C then complete
+                        // the aggregation
+                        // and send it to mock:aggregated
+                        .aggregate(header("id"), new BodyInAggregatingStrategy()).completionPredicate(body().contains("A+B+C"))
+                        .to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

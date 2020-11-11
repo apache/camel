@@ -21,14 +21,15 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SjmsComponentRestartTest extends CamelTestSupport {
 
     @BindToRegistry("activemqCF")
-    private ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
-    
+    private ActiveMQConnectionFactory connectionFactory
+            = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;

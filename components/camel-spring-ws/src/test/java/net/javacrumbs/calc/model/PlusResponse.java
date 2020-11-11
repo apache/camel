@@ -21,7 +21,6 @@
 // Generated on: 2017.02.12 at 12:58:35 AM EET 
 //
 
-
 package net.javacrumbs.calc.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,7 +31,8 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -49,13 +49,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "result"
-    })
+        "result"
+})
 @XmlRootElement(name = "plusResponse")
 public class PlusResponse {
 
     protected int result;
-    
+
     /**
      * Gets the value of the result property.
      * 
@@ -63,7 +63,7 @@ public class PlusResponse {
     public int getResult() {
         return result;
     }
-    
+
     /**
      * Sets the value of the result property.
      * 

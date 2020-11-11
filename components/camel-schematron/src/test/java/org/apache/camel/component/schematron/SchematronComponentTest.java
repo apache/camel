@@ -20,15 +20,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.util.Utils;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Schematron Component Test.
  */
 public class SchematronComponentTest extends CamelTestSupport {
-
 
     /**
      * @throws Exception
@@ -58,7 +59,6 @@ public class SchematronComponentTest extends CamelTestSupport {
         template.sendBody("direct:start", payload);
         assertMockEndpointsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
-
 
         // should throw two assertions because of the missing chapters in the XML.
         assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert[1]/svrl:text", result));

@@ -23,9 +23,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.impl.DefaultExecutorServiceManager;
 import org.apache.camel.support.DefaultThreadPoolFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -46,7 +47,7 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
     @Test
     public void testCustomThreadPoolFactory() {
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "foo");
-        assertTrue("Should use custom thread pool factory", factory.isInvoked());
+        assertTrue(factory.isInvoked(), "Should use custom thread pool factory");
     }
 
     public static final class MyCustomThreadPoolFactory extends DefaultThreadPoolFactory {
@@ -60,11 +61,14 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public ExecutorService newThreadPool(int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, boolean allowCoreThreadTimeOut,
-                                             RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
-            throws IllegalArgumentException {
+        public ExecutorService newThreadPool(
+                int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+                boolean allowCoreThreadTimeOut,
+                RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+                throws IllegalArgumentException {
             invoked = true;
-            return super.newThreadPool(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut, rejectedExecutionHandler, threadFactory);
+            return super.newThreadPool(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
+                    rejectedExecutionHandler, threadFactory);
         }
 
         public boolean isInvoked() {

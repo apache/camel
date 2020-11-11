@@ -26,7 +26,7 @@ public class EtcdStatsConsumer extends AbstractEtcdPollingConsumer {
 
     @Override
     public EtcdStatsEndpoint getEndpoint() {
-        return (EtcdStatsEndpoint)super.getEndpoint();
+        return (EtcdStatsEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class EtcdStatsConsumer extends AbstractEtcdPollingConsumer {
 
         if (answer != null) {
             Exchange exchange = endpoint.createExchange();
-            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, endpoint.getNamespace());
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "stats");
             exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, endpoint.getPath());
             exchange.getIn().setBody(answer);
 

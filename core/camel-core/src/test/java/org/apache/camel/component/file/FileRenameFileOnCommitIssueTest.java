@@ -18,16 +18,17 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/renameissue");
         super.setUp();
@@ -49,12 +50,13 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/renameissue?noop=false&initialDelay=0&delay=10").setProperty("PartitionID").simple("${file:name}").convertBodyTo(String.class)
-                    .inOut("direct:source").process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            log.info("The exchange's IN body as String is {}", exchange.getIn().getBody(String.class));
-                        }
-                    }).to("mock:result");
+                from("file://target/data/renameissue?noop=false&initialDelay=0&delay=10").setProperty("PartitionID")
+                        .simple("${file:name}").convertBodyTo(String.class)
+                        .to(ExchangePattern.InOut, "direct:source").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                log.info("The exchange's IN body as String is {}", exchange.getIn().getBody(String.class));
+                            }
+                        }).to("mock:result");
 
                 from("direct:source").transform(body().prepend("Hello "));
             }

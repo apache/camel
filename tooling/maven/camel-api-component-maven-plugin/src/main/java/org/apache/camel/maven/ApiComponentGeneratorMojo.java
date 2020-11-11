@@ -19,8 +19,10 @@ package org.apache.camel.maven;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 
+import org.apache.camel.util.StringHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -32,8 +34,10 @@ import org.apache.velocity.VelocityContext;
  * Generates Camel Component based on a collection of APIs.
  */
 @Mojo(name = "fromApis", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
+      defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
+
+    protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
 
     /**
      * List of API names, proxies and code generation settings.
@@ -42,10 +46,10 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     protected ApiProxy[] apis;
 
     /**
-     * Common Javadoc code generation settings.
+     * Common Javasource code generation settings.
      */
     @Parameter
-    protected FromJavadoc fromJavadoc = new FromJavadoc();
+    protected FromJavasource fromJavasource = new FromJavasource();
 
     /**
      * Names of options that can be set to null value if not specified.
@@ -100,7 +104,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                     }
                 }
                 if (!found) {
-                    throw new MojoExecutionException("Missing one of fromSignatureFile or fromJavadoc for "
+                    throw new MojoExecutionException(
+                            "Missing one of fromSignatureFile or fromJavadoc for "
                                                      + proxyClass);
                 }
             }
@@ -122,7 +127,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         // generate ApiName
         mergeTemplate(getApiContext(), getApiNameFile(), "/api-name-enum.vm");
     }
-    
+
     private void configureMethodGenerator(AbstractApiMethodGeneratorMojo mojo, ApiProxy apiProxy) {
 
         // set AbstractGeneratorMojo properties
@@ -149,37 +154,34 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
         // set AbstractAPIMethodGeneratorMojo properties
         mojo.proxyClass = apiProxy.getProxyClass();
+        mojo.classPrefix = apiProxy.getClassPrefix();
+        mojo.apiName = apiProxy.getApiName();
+        mojo.apiDescription = apiProxy.getApiDescription();
+        mojo.consumerOnly = apiProxy.isConsumerOnly();
+        mojo.producerOnly = apiProxy.isProducerOnly();
     }
 
     private AbstractApiMethodGeneratorMojo getApiMethodGenerator(ApiProxy api) {
         AbstractApiMethodGeneratorMojo apiMethodGenerator = null;
 
-        final File signatureFile = api.getFromSignatureFile();
-        if (signatureFile != null) {
-
-            final FileApiMethodGeneratorMojo fileMojo = new FileApiMethodGeneratorMojo();
-            fileMojo.signatureFile = signatureFile;
-            apiMethodGenerator = fileMojo;
-
-        } else {
-
-            final FromJavadoc apiFromJavadoc = api.getFromJavadoc();
-            if (apiFromJavadoc != null) {
-                final JavadocApiMethodGeneratorMojo javadocMojo = new JavadocApiMethodGeneratorMojo();
-                javadocMojo.excludePackages = apiFromJavadoc.getExcludePackages() != null
-                        ? apiFromJavadoc.getExcludePackages() : fromJavadoc.getExcludePackages();
-                javadocMojo.excludeClasses = apiFromJavadoc.getExcludeClasses() != null
-                        ? apiFromJavadoc.getExcludeClasses() : fromJavadoc.getExcludeClasses();
-                javadocMojo.includeMethods = apiFromJavadoc.getIncludeMethods() != null
-                        ? apiFromJavadoc.getIncludeMethods() : fromJavadoc.getIncludeMethods();
-                javadocMojo.excludeMethods = apiFromJavadoc.getExcludeMethods() != null
-                        ? apiFromJavadoc.getExcludeMethods() : fromJavadoc.getExcludeMethods();
-                javadocMojo.includeStaticMethods = apiFromJavadoc.getIncludeStaticMethods() != null
-                        ? apiFromJavadoc.getIncludeStaticMethods() : fromJavadoc.getIncludeStaticMethods();
-
-                apiMethodGenerator = javadocMojo;
-            }
+        final FromJavasource apiFromJavasource = api.getFromJavasource();
+        if (apiFromJavasource != null) {
+            final JavaSourceApiMethodGeneratorMojo mojo = new JavaSourceApiMethodGeneratorMojo();
+            mojo.excludePackages = apiFromJavasource.getExcludePackages() != null
+                    ? apiFromJavasource.getExcludePackages() : fromJavasource.getExcludePackages();
+            mojo.excludeClasses = apiFromJavasource.getExcludeClasses() != null
+                    ? apiFromJavasource.getExcludeClasses() : fromJavasource.getExcludeClasses();
+            mojo.includeMethods = apiFromJavasource.getIncludeMethods() != null
+                    ? apiFromJavasource.getIncludeMethods() : fromJavasource.getIncludeMethods();
+            mojo.excludeMethods = apiFromJavasource.getExcludeMethods() != null
+                    ? apiFromJavasource.getExcludeMethods() : fromJavasource.getExcludeMethods();
+            mojo.includeStaticMethods = apiFromJavasource.getIncludeStaticMethods() != null
+                    ? apiFromJavasource.getIncludeStaticMethods() : fromJavasource.getIncludeStaticMethods();
+            mojo.aliases = api.getAliases().isEmpty() ? aliases : api.getAliases();
+            mojo.nullableOptions = api.getNullableOptions() != null ? api.getNullableOptions() : nullableOptions;
+            apiMethodGenerator = mojo;
         }
+
         return apiMethodGenerator;
     }
 
@@ -216,18 +218,21 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     private StringBuilder getFileBuilder() {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replaceAll("\\.", Matcher.quoteReplacement(File.separator))).append(File.separator);
+        fileName.append(outPackage.replace(".", Matcher.quoteReplacement(File.separator))).append(File.separator);
         return fileName;
     }
 
-    public static String getApiMethod(String proxyClass) {
-        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);        
-        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
+    public static String getApiMethod(String proxyClass, String classPrefix) {
+        String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
+        String prefix = classPrefix != null ? classPrefix : "";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "ApiMethod";
     }
 
-    public static String getEndpointConfig(String proxyClass) {
+    public static String getEndpointConfig(String proxyClass, String classPrefix) {
         String proxyClassWithCanonicalName = getProxyClassWithCanonicalName(proxyClass);
-        return proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1) + "EndpointConfiguration";
+        String prefix = classPrefix != null ? classPrefix : "";
+        return prefix + proxyClassWithCanonicalName.substring(proxyClassWithCanonicalName.lastIndexOf('.') + 1)
+               + "EndpointConfiguration";
     }
 
     private static String getProxyClassWithCanonicalName(String proxyClass) {
@@ -238,23 +243,14 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         if (enumValue == null || enumValue.isEmpty()) {
             return "DEFAULT";
         }
-        StringBuilder builder = new StringBuilder();
-        if (!Character.isJavaIdentifierStart(enumValue.charAt(0))) {
-            builder.append('_');
-        }
-        for (char c : enumValue.toCharArray()) {
-            char upperCase = Character.toUpperCase(c);
-            if (!Character.isJavaIdentifierPart(upperCase)) {
-                builder.append('_');
-            } else {
-                builder.append(upperCase);
-            }
-        }
-        return builder.toString();
+        String value = StringHelper.camelCaseToDash(enumValue);
+        // replace dash with underscore and upper case
+        value = value.replace('-', '_');
+        value = value.toUpperCase(Locale.ENGLISH);
+        return value;
     }
 
     public static String getNullableOptionValues(String[] nullableOptions) {
-
         if (nullableOptions == null || nullableOptions.length == 0) {
             return "";
         }

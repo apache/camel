@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.7.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-braintree</artifactId>
@@ -61,22 +61,6 @@
             </exclusions>
         </dependency>
 
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>com.braintreepayments.gateway</groupId>
-            <artifactId>braintree-java</artifactId>
-            <version>${braintree-gateway-version}</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.json</groupId>
-                    <artifactId>json</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -86,16 +70,6 @@
         <!-- testing - logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
@@ -103,7 +77,7 @@
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -128,49 +102,52 @@
                                 <api>
                                     <apiName>addOn</apiName>
                                     <proxyClass>com.braintreegateway.AddOnGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>address</apiName>
                                     <proxyClass>com.braintreegateway.AddressGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>clientToken</apiName>
                                     <proxyClass>com.braintreegateway.ClientTokenGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>creditCardVerification</apiName>
+                                    <apiDescription>To verify credit card information</apiDescription>
                                     <proxyClass>com.braintreegateway.CreditCardVerificationGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>customer</apiName>
                                     <proxyClass>com.braintreegateway.CustomerGateway</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>.*ransparent.*</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>discount</apiName>
                                     <proxyClass>com.braintreegateway.DiscountGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>dispute</apiName>
                                     <proxyClass>com.braintreegateway.DisputeGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>documentUpload</apiName>
+                                    <apiDescription>API to upload evidence documents</apiDescription>
                                     <proxyClass>com.braintreegateway.DocumentUploadGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>merchantAccount</apiName>
+                                    <apiDescription>Provides methods to create, find, and update MerchantAccount objects</apiDescription>
                                     <proxyClass>com.braintreegateway.MerchantAccountGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <substitutions>
                                         <substitution>
                                             <method>^.+$</method>
@@ -191,10 +168,11 @@
                                 </api>
                                 <api>
                                     <apiName>paymentMethod</apiName>
+                                    <apiDescription>Provides methods to interact with payments</apiDescription>
                                     <proxyClass>com.braintreegateway.PaymentMethodGateway</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>.*parse.*</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <substitutions>
                                         <substitution>
                                             <method>^.+$</method>
@@ -214,37 +192,39 @@
                                 </api>
                                 <api>
                                     <apiName>paymentMethodNonce</apiName>
+                                    <apiDescription>Provides methods to interact with nonce payments</apiDescription>
                                     <proxyClass>com.braintreegateway.PaymentMethodNonceGateway</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>.*parse.*</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                 </api>
                                 <api>
                                     <apiName>plan</apiName>
                                     <proxyClass>com.braintreegateway.PlanGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>report</apiName>
                                     <proxyClass>com.braintreegateway.ReportGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>settlementBatchSummary</apiName>
+                                    <apiDescription>Provides methods to interact wit settlement summaries</apiDescription>
                                     <proxyClass>com.braintreegateway.SettlementBatchSummaryGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>subscription</apiName>
                                     <proxyClass>com.braintreegateway.SubscriptionGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>transaction</apiName>
                                     <proxyClass>com.braintreegateway.TransactionGateway</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>.*TrData.*|.*ransparent.*</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <substitutions>
                                         <substitution>
                                             <method>^.+$</method>
@@ -271,41 +251,41 @@
                                 </api>
                                 <api>
                                     <apiName>webhookNotification</apiName>
+                                    <apiDescription>To retrieve notifications via webhooks</apiDescription>
                                     <proxyClass>com.braintreegateway.WebhookNotificationGateway</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                             </apis>
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API signatures -->
+                    <dependency>
+                        <groupId>com.braintreepayments.gateway</groupId>
+                        <artifactId>braintree-java</artifactId>
+                        <version>${braintree-gateway-version}</version>
+                        <classifier>sources</classifier>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>org.json</groupId>
+                                <artifactId>json</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
             </plugin>
-
-            <!-- add generated source and test source to build -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
+                <!-- we need to generate additional configurer classes -->
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-generated-sources</id>
+                        <id>generate-configurer</id>
+                        <phase>process-classes</phase>
                         <goals>
-                            <goal>add-source</goal>
+                            <goal>generate-configurer</goal>
                         </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/camel-component</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add-generated-test-sources</id>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-test-sources/camel-component</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -328,21 +308,6 @@
         </pluginManagement>
 
     </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-api-component-maven-plugin</artifactId>
-                <configuration>
-                    <scheme>${schemeName}</scheme>
-                    <componentName>${componentName}</componentName>
-                    <componentPackage>${componentPackage}</componentPackage>
-                    <outPackage>${outPackage}</outPackage>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
 
     <profiles>
         <profile>

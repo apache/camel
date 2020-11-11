@@ -28,10 +28,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XsltDTDTest extends ContextTestSupport {
-    private static final String MESSAGE = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
+    private static final String MESSAGE
+            = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
 
     @Test
     public void testSendingStringMessage() throws Exception {
@@ -57,7 +60,7 @@ public class XsltDTDTest extends ContextTestSupport {
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
-        assertTrue("Get a wrong transformed message", xml.indexOf("<transformed subject=\"\">") > 0);
+        assertTrue(xml.indexOf("<transformed subject=\"\">") > 0, "Get a wrong transformed message");
 
         try {
             endpoint.reset();
@@ -70,12 +73,14 @@ public class XsltDTDTest extends ContextTestSupport {
             list = endpoint.getReceivedExchanges();
             exchange = list.get(0);
             xml = exchange.getIn().getBody(String.class);
-            assertTrue("Get a wrong transformed message", xml.indexOf("<transformed subject=\"\">") > 0);
+            assertTrue(xml.indexOf("<transformed subject=\"\">") > 0, "Get a wrong transformed message");
         } catch (Exception ex) {
             // expect an exception here
-            assertTrue("Get a wrong exception", ex instanceof CamelExecutionException);
+            boolean b1 = ex instanceof CamelExecutionException;
+            assertTrue(b1, "Get a wrong exception");
             // the file could not be found
-            assertTrue("Get a wrong exception cause", ex.getCause() instanceof TransformerException);
+            boolean b = ex.getCause() instanceof TransformerException;
+            assertTrue(b, "Get a wrong exception cause");
         }
     }
 

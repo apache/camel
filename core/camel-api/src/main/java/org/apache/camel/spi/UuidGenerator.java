@@ -22,7 +22,7 @@ package org.apache.camel.spi;
 public interface UuidGenerator {
 
     /**
-     * Generates a UUID string representation.  
+     * Generates a UUID string representation.
      * 
      * @return the unique id.
      */

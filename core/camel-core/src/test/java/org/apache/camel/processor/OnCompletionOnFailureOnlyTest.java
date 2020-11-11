@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OnCompletionOnFailureOnlyTest extends OnCompletionTest {
 
@@ -43,13 +43,13 @@ public class OnCompletionOnFailureOnlyTest extends OnCompletionTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // here we qualify onCompletion to only invoke when the
-                    // exchange failed (exception or FAULT body)
-                    .onCompletion().onFailureOnly().to("log:sync").to("mock:sync")
-                    // must use end to denote the end of the onCompletion route
-                    .end()
-                    // here the original route continues
-                    .process(new MyProcessor()).to("mock:result");
+                        // here we qualify onCompletion to only invoke when the
+                        // exchange failed (exception or FAULT body)
+                        .onCompletion().onFailureOnly().to("log:sync").to("mock:sync")
+                        // must use end to denote the end of the onCompletion route
+                        .end()
+                        // here the original route continues
+                        .process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

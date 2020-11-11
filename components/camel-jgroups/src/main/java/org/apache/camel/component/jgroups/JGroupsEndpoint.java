@@ -18,6 +18,7 @@ package org.apache.camel.component.jgroups;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -31,11 +32,14 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The jgroups component provides exchange of messages between Camel and JGroups clusters.
+ * Exchange messages with JGroups clusters.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", label = "clustering,messaging")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName",
+             category = { Category.CLUSTERING, Category.MESSAGING })
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";
@@ -43,19 +47,22 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     public static final String HEADER_JGROUPS_DEST = "JGROUPS_DEST";
     public static final String HEADER_JGROUPS_CHANNEL_ADDRESS = "JGROUPS_CHANNEL_ADDRESS";
 
-    private AtomicInteger connectCount = new AtomicInteger(0);
+    private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
+    private AtomicInteger connectCount = new AtomicInteger();
 
     private JChannel channel;
     private JChannel resolvedChannel;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String clusterName;
     @UriParam
     private String channelProperties;
     @UriParam(label = "consumer")
     private boolean enableViewMessages;
 
-    public JGroupsEndpoint(String endpointUri, Component component, JChannel channel, String clusterName, String channelProperties, boolean enableViewMessages) {
+    public JGroupsEndpoint(String endpointUri, Component component, JChannel channel, String clusterName,
+                           String channelProperties, boolean enableViewMessages) {
         super(endpointUri, component);
         this.channel = channel;
         this.clusterName = clusterName;
@@ -70,7 +77,9 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new JGroupsConsumer(this, processor, resolvedChannel, clusterName);
+        JGroupsConsumer consumer = new JGroupsConsumer(this, processor, resolvedChannel, clusterName);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public Exchange createExchange(Message message) {
@@ -103,8 +112,10 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        log.trace("Closing JGroups Channel {}", getEndpointUri());
-        resolvedChannel.close();
+        if (resolvedChannel != null) {
+            LOG.trace("Closing JGroups Channel {}", getEndpointUri());
+            resolvedChannel.close();
+        }
         super.doStop();
     }
 
@@ -120,11 +131,10 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     /**
      * Connect shared channel, called by producer and consumer.
-     * @throws Exception
      */
     public void connect() throws Exception {
         connectCount.incrementAndGet();
-        log.trace("Connecting JGroups Channel {}", getEndpointUri());
+        LOG.trace("Connecting JGroups Channel {}", getEndpointUri());
         resolvedChannel.connect(clusterName);
     }
 
@@ -133,7 +143,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
      */
     public void disconnect() {
         if (connectCount.decrementAndGet() == 0) {
-            log.trace("Disconnecting JGroups Channel {}", getEndpointUri());
+            LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
             resolvedChannel.disconnect();
         }
     }
@@ -180,8 +190,8 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances).
-     * By default only regular messages are consumed by the endpoint.
+     * If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only
+     * org.jgroups.Message instances). By default only regular messages are consumed by the endpoint.
      */
     public void setEnableViewMessages(boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;

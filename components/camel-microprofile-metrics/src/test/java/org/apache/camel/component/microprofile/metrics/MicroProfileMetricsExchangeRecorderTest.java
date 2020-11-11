@@ -21,8 +21,8 @@ import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.component.microprofile.metrics.gauge.AtomicIntegerGauge;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Tag;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_METRIC_PREFIX;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_COMPLETED_METRIC_NAME;
@@ -31,13 +31,14 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_FAILURES_HANDLED_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_INFLIGHT_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_TOTAL_METRIC_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsExchangeRecorderTest extends MicroProfileMetricsTestSupport {
 
-    private static final Tag[] TAGS = new Tag[] {new Tag("foo", "bar")};
+    private static final Tag[] TAGS = new Tag[] { new Tag("foo", "bar") };
     private MicroProfileMetricsExchangeRecorder recorder;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         recorder = new MicroProfileMetricsExchangeRecorder(metricRegistry, CAMEL_METRIC_PREFIX, TAGS);
@@ -58,7 +59,8 @@ public class MicroProfileMetricsExchangeRecorderTest extends MicroProfileMetrics
         Counter exchangesTotal = getCounter(CAMEL_METRIC_PREFIX + EXCHANGES_TOTAL_METRIC_NAME, TAGS);
         assertEquals(1, exchangesTotal.getCount());
 
-        AtomicIntegerGauge exchangesInflight = getAtomicIntegerGauge(CAMEL_METRIC_PREFIX + EXCHANGES_INFLIGHT_METRIC_NAME, TAGS);
+        AtomicIntegerGauge exchangesInflight
+                = getAtomicIntegerGauge(CAMEL_METRIC_PREFIX + EXCHANGES_INFLIGHT_METRIC_NAME, TAGS);
         assertEquals(0, exchangesInflight.getValue().intValue());
 
         Counter externalRedeliveries = getCounter(CAMEL_METRIC_PREFIX + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, TAGS);
@@ -71,7 +73,8 @@ public class MicroProfileMetricsExchangeRecorderTest extends MicroProfileMetrics
     @Test
     public void testMetricsRecorderExchangeInflight() {
         recorder.recordExchangeBegin();
-        AtomicIntegerGauge exchangesInflight = getAtomicIntegerGauge(CAMEL_METRIC_PREFIX + EXCHANGES_INFLIGHT_METRIC_NAME, TAGS);
+        AtomicIntegerGauge exchangesInflight
+                = getAtomicIntegerGauge(CAMEL_METRIC_PREFIX + EXCHANGES_INFLIGHT_METRIC_NAME, TAGS);
         assertEquals(1, exchangesInflight.getValue().intValue());
 
         Exchange exchange = ExchangeBuilder.anExchange(context).build();
@@ -80,20 +83,10 @@ public class MicroProfileMetricsExchangeRecorderTest extends MicroProfileMetrics
     }
 
     @Test
-    public void testMetricsRecorderExternalRedeliveries() {
-        Exchange exchange = ExchangeBuilder.anExchange(context)
-            .withProperty(Exchange.EXTERNAL_REDELIVERED, true)
-            .build();
-        recorder.recordExchangeComplete(exchange);
-        Counter externalRedeliveries = getCounter(CAMEL_METRIC_PREFIX + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, TAGS);
-        assertEquals(1, externalRedeliveries.getCount());
-    }
-
-    @Test
     public void testMetricsRecorderFailuresHandled() {
         Exchange exchange = ExchangeBuilder.anExchange(context)
-            .withProperty(Exchange.FAILURE_HANDLED, true)
-            .build();
+                .withProperty(Exchange.FAILURE_HANDLED, true)
+                .build();
         recorder.recordExchangeComplete(exchange);
         Counter failuresHandled = getCounter(CAMEL_METRIC_PREFIX + EXCHANGES_FAILURES_HANDLED_METRIC_NAME, TAGS);
         assertEquals(1, failuresHandled.getCount());

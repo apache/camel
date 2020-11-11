@@ -18,16 +18,17 @@ package org.apache.camel.component.git;
 
 public interface GitConstants {
     String GIT_OPERATION = "CamelGitOperation";
-
     String GIT_FILE_NAME = "CamelGitFilename";
-
     String GIT_COMMIT_MESSAGE = "CamelGitCommitMessage";
-
     String GIT_COMMIT_USERNAME = "CamelGitCommitUsername";
-
     String GIT_COMMIT_EMAIL = "CamelGitCommitEmail";
-
     String GIT_COMMIT_ID = "CamelGitCommitId";
-
     String GIT_ALLOW_EMPTY = "CamelGitAllowEmpty";
+    String GIT_COMMIT_AUTHOR_NAME = "CamelGitAuthorName";
+    String GIT_COMMIT_COMMITTER_NAME = "CamelGitCommiterName";
+    String GIT_COMMIT_TIME = "CamelGitCommitTime";
+    String GIT_BRANCH_LEAF = "CamelGitBranchLeaf";
+    String GIT_BRANCH_OBJECT_ID = "CamelGitBranchObjectId";
+    String GIT_TAG_LEAF = "CamelGitTagLeaf";
+    String GIT_TAG_OBJECT_ID = "CamelGitTagObjectId";
 }

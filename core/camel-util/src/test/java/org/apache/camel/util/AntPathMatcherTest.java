@@ -16,13 +16,16 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for {@link AntPathMatcher}.
  */
-public class AntPathMatcherTest extends Assert {
+public class AntPathMatcherTest {
 
     @Test
     public void test() {

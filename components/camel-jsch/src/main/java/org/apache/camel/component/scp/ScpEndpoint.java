@@ -16,23 +16,29 @@
  */
 package org.apache.camel.component.scp;
 
+import org.apache.camel.Category;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConsumer;
 import org.apache.camel.component.file.remote.RemoteFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * To copy files using the secure copy protocol (SCP).
+ * Copy files to/from remote hosts using the secure copy protocol (SCP).
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "scp", extendsScheme = "ftp", title = "SCP",
-        syntax = "scp:host:port/directoryName", producerOnly = true, label = "file",
-        excludeProperties = "appendChars,binary,charset,doneFileName,download,fastExistsCheck,fileExist,moveExisting,passiveMode"
-                + ",separator,tempFileName,tempPrefix,eagerDeleteTargetFile,keepLastModified,sendNoop"
-                + ",maximumReconnectAttempts,reconnectDelay,autoCreate,bufferSize,siteCommand,stepwise,throwExceptionOnConnectFailed")
+             syntax = "scp:host:port/directoryName", producerOnly = true, category = { Category.FILE })
+@Metadata(excludeProperties = "appendChars,binary,charset,doneFileName,download,fastExistsCheck,fileExist,moveExisting,passiveMode"
+                              + ",separator,tempFileName,tempPrefix,eagerDeleteTargetFile,keepLastModified,sendNoop"
+                              + ",maximumReconnectAttempts,reconnectDelay,autoCreate,bufferSize,siteCommand,stepwise,throwExceptionOnConnectFailed"
+                              + ",transferLoggingIntervalSeconds,transferLoggingLevel,transferLoggingVerbose,resumeDownload"
+                              + ",handleDirectoryParserAbsoluteResult,activePortRange,ftpClient,ftpClientConfig"
+                              + ",ftpClientConfigParameters,ftpClientParameters,account")
 public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
 
     @UriParam
@@ -69,13 +75,18 @@ public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
     }
 
     @Override
+    protected GenericFileProcessStrategy<ScpFile> createGenericFileStrategy() {
+        return new ScpProcessStrategyFactory().createGenericFileProcessStrategy(getCamelContext(), getParamsAsMap());
+    }
+
+    @Override
     public String getScheme() {
         return "scp";
     }
-    
+
     @Override
     public Expression getTempFileName() {
-        log.debug("Creation of temporary files not supported by the scp: protocol.");
+        // creation of temporary files not supported by the scp: protocol
         return null;
     }
 }

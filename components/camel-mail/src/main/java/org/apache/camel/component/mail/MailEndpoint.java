@@ -20,6 +20,7 @@ import javax.mail.Message;
 import javax.mail.search.SearchTerm;
 
 import com.sun.mail.imap.SortTerm;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,15 +33,16 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * To send or receive emails using imap/pop3 or smtp protocols.
+ * Send and receive emails using imap, pop3 and smtp protocols.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
-        syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
-        label = "mail")
+             syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
+             category = { Category.MAIL })
 public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
-    @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
-            description = "Milliseconds before the next poll.")
+    @UriParam(defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, javaType = "java.time.Duration",
+              label = "consumer,scheduler",
+              description = "Milliseconds before the next poll.")
     private long delay = MailConsumer.DEFAULT_CONSUMER_DELAY;
 
     @UriParam
@@ -102,8 +104,9 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.getProtocol().startsWith("smtp")) {
-            throw new IllegalArgumentException("Protocol " + configuration.getProtocol()
-                    + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
+            throw new IllegalArgumentException(
+                    "Protocol " + configuration.getProtocol()
+                                               + " cannot be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
         }
 
         // must use java mail sender impl as we need to get hold of a mail session
@@ -121,11 +124,6 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         answer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         configureConsumer(answer);
         return answer;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return false;
     }
 
     public Exchange createExchange(Message message) {
@@ -192,9 +190,9 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     /**
-     * Specifies the maximum number of messages to gather per poll. By default, no maximum is set.
-     * Can be used to set a limit of e.g. 1000 to avoid downloading thousands of files when the server starts up.
-     * Set a value of 0 or negative to disable this option.
+     * Specifies the maximum number of messages to gather per poll. By default, no maximum is set. Can be used to set a
+     * limit of e.g. 1000 to avoid downloading thousands of files when the server starts up. Set a value of 0 or
+     * negative to disable this option.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
@@ -205,7 +203,8 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     /**
-     * Refers to a {@link javax.mail.search.SearchTerm} which allows to filter mails based on search criteria such as subject, body, from, sent after a certain date etc.
+     * Refers to a {@link javax.mail.search.SearchTerm} which allows to filter mails based on search criteria such as
+     * subject, body, from, sent after a certain date etc.
      */
     public void setSearchTerm(SearchTerm searchTerm) {
         this.searchTerm = searchTerm;
@@ -216,8 +215,8 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     /**
-     * Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3
-     * or when IMAP server does not have the SORT capability.
+     * Sorting order for messages. Only natively supported for IMAP. Emulated to some degree when using POP3 or when
+     * IMAP server does not have the SORT capability.
      */
     public void setSortTerm(SortTerm[] sortTerm) {
         this.sortTerm = sortTerm == null ? null : sortTerm.clone();
@@ -228,7 +227,8 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     /**
-     * Refers to an {@link MailBoxPostProcessAction} for doing post processing tasks on the mailbox once the normal processing ended.
+     * Refers to an {@link MailBoxPostProcessAction} for doing post processing tasks on the mailbox once the normal
+     * processing ended.
      */
     public void setPostProcessAction(MailBoxPostProcessAction postProcessAction) {
         this.postProcessAction = postProcessAction;
@@ -239,9 +239,8 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     /**
-     * A pluggable repository org.apache.camel.spi.IdempotentRepository which allows to cluster
-     * consuming from the same mailbox, and let the repository coordinate whether a mail message
-     * is valid for the consumer to process.
+     * A pluggable repository org.apache.camel.spi.IdempotentRepository which allows to cluster consuming from the same
+     * mailbox, and let the repository coordinate whether a mail message is valid for the consumer to process.
      * <p/>
      * By default no repository is in use.
      */
@@ -254,14 +253,13 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     /**
-     * When using idempotent repository, then when the mail message has been successfully processed and
-     * is committed, should the message id be removed from the idempotent repository (default) or
-     * be kept in the repository.
+     * When using idempotent repository, then when the mail message has been successfully processed and is committed,
+     * should the message id be removed from the idempotent repository (default) or be kept in the repository.
      * <p/>
-     * By default its assumed the message id is unique and has no value to be kept in the repository,
-     * because the mail message will be marked as seen/moved or deleted to prevent it from being
-     * consumed again. And therefore having the message id stored in the idempotent repository has
-     * little value. However this option allows to store the message id, for whatever reason you may have.
+     * By default its assumed the message id is unique and has no value to be kept in the repository, because the mail
+     * message will be marked as seen/moved or deleted to prevent it from being consumed again. And therefore having the
+     * message id stored in the idempotent repository has little value. However this option allows to store the message
+     * id, for whatever reason you may have.
      */
     public void setIdempotentRepositoryRemoveOnCommit(boolean idempotentRepositoryRemoveOnCommit) {
         this.idempotentRepositoryRemoveOnCommit = idempotentRepositoryRemoveOnCommit;

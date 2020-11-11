@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.bean;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to demonstrate that bean invocation must no return Exchange.
@@ -40,7 +41,8 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
             template.sendBody("direct:in", "Hello World");
             fail("Should have thrown IllegalStateException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IllegalStateException);
+            boolean b = e.getCause() instanceof IllegalStateException;
+            assertTrue(b);
             // expected
         }
 
@@ -48,8 +50,8 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("myBean", new MyBean());
         return answer;
     }

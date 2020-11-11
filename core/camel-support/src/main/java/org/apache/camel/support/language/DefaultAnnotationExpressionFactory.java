@@ -32,11 +32,10 @@ import org.apache.camel.support.PredicateToExpressionAdapter;
 public class DefaultAnnotationExpressionFactory implements AnnotationExpressionFactory {
 
     @Override
-    public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
+    public Expression createExpression(
+            CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
+            Class<?> expressionReturnType) {
         String languageName = languageAnnotation.language();
-        if (languageName == null) {
-            throw new IllegalArgumentException("Cannot determine the language from the annotation: " + annotation);
-        }
         Language language = camelContext.resolveLanguage(languageName);
         if (language == null) {
             throw new IllegalArgumentException("Cannot find the language: " + languageName + " on the classpath");
@@ -58,20 +57,22 @@ public class DefaultAnnotationExpressionFactory implements AnnotationExpressionF
         }
         return value.toString();
     }
-    
+
     /**
-     * @param annotation The annotation to get the value of 
-     * @param methodName The annotation name 
-     * @return The value of the annotation
+     * @param  annotation The annotation to get the value of
+     * @param  methodName The annotation name
+     * @return            The value of the annotation
      */
-    protected Object getAnnotationObjectValue(Annotation annotation, String methodName) {        
+    protected Object getAnnotationObjectValue(Annotation annotation, String methodName) {
         try {
-            Method method = annotation.getClass().getMethod(methodName);
+            Method method = annotation.annotationType().getDeclaredMethod(methodName);
             Object value = ObjectHelper.invokeMethod(method, annotation);
             return value;
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Cannot determine the Object value of the annotation: " + annotation
-                + " as it does not have the method: " + methodName + "() method", e);
+            throw new IllegalArgumentException(
+                    "Cannot determine the Object value of the annotation: " + annotation
+                                               + " as it does not have the method: " + methodName + "() method",
+                    e);
         }
     }
 }

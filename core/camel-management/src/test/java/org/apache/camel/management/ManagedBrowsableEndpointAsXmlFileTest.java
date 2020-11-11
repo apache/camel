@@ -21,13 +21,16 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedBrowsableEndpointAsXmlFileTest extends ManagementTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/files");
         super.setUp();
@@ -44,13 +47,15 @@ public class ManagedBrowsableEndpointAsXmlFileTest extends ManagementTestSupport
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"file://target/data/files\"");
+        ObjectName name
+                = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"file://target/data/files\"");
 
-        String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[]{true}, new String[]{"java.lang.Boolean"});
+        String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[] { true },
+                new String[] { "java.lang.Boolean" });
         assertNotNull(out);
         log.info(out);
 
-        assertTrue("Should contain the body", out.contains("Hello World</body>"));
+        assertTrue(out.contains("Hello World</body>"), "Should contain the body");
     }
 
     @Override

@@ -63,8 +63,10 @@ public class SoroushMessage implements Cloneable {
     public SoroushMessage() {
     }
 
-    public SoroushMessage(String to, String from, String body, MinorType type, String time, String fileName, FileType fileType, Double fileSize, String fileUrl, String thumbnailUrl,
-                          Double imageWidth, Double imageHeight, Double fileDuration, Double thumbnailWidth, Double thumbnailHeight, String nickName, String avatarUrl, Double phoneNo,
+    public SoroushMessage(String to, String from, String body, MinorType type, String time, String fileName, FileType fileType,
+                          Double fileSize, String fileUrl, String thumbnailUrl,
+                          Double imageWidth, Double imageHeight, Double fileDuration, Double thumbnailWidth,
+                          Double thumbnailHeight, String nickName, String avatarUrl, Double phoneNo,
                           Double latitude, Double longitude, List<List<CustomKey>> keyboard) {
         this.to = to;
         this.from = from;
@@ -90,21 +92,18 @@ public class SoroushMessage implements Cloneable {
     }
 
     /**
-     * set uploading file to a file
-     * this field help you store file in the message, it also let you automatically upload
-     * it to the soroush server by sending this message to {@code uploadFile} or {@code sendMessage} endpoint.
-     * auto upload file is working in the following condition:
-     * for {@code sendMessage} endpoint:
+     * set uploading file to a file this field help you store file in the message, it also let you automatically upload
+     * it to the soroush server by sending this message to {@code uploadFile} or {@code sendMessage} endpoint. auto
+     * upload file is working in the following condition: for {@code sendMessage} endpoint:
      * {@link SoroushMessage#file}{@code !=null && }{@link SoroushBotEndpoint#autoUploadFile} {@code  && (}
-     * {@link SoroushMessage#fileUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
-     * for {@code uploadFile} endpoint:
-     * {@link SoroushMessage#file}{@code !=null && (}
+     * {@link SoroushMessage#fileUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )} for
+     * {@code uploadFile} endpoint: {@link SoroushMessage#file}{@code !=null && (}
      * {@link SoroushMessage#fileUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
      *
-     * @param file to be uploaded
+     * @param  file                  to be uploaded
      * @throws FileNotFoundException if file not found
-     * @see SoroushBotEndpoint#forceUpload
-     * @see SoroushBotEndpoint#autoUploadFile
+     * @see                          SoroushBotEndpoint#forceUpload
+     * @see                          SoroushBotEndpoint#autoUploadFile
      */
     @JsonIgnore
     public void setFile(File file) throws FileNotFoundException {
@@ -112,21 +111,19 @@ public class SoroushMessage implements Cloneable {
     }
 
     /**
-     * set uploading thumbnail to a {@code thumbnail}
-     * this field help you store thumbnail in the message, it also let you automatically upload
-     * it to the soroush server by sending this message to {@code uploadFile} or {@code sendMessage} endpoint.
-     * auto upload thumbnail is working in the following condition:
-     * for {@code sendMessage} endpoint:
+     * set uploading thumbnail to a {@code thumbnail} this field help you store thumbnail in the message, it also let
+     * you automatically upload it to the soroush server by sending this message to {@code uploadFile} or
+     * {@code sendMessage} endpoint. auto upload thumbnail is working in the following condition: for
+     * {@code sendMessage} endpoint:
      * {@link SoroushMessage#thumbnail}{@code !=null && }{@link SoroushBotEndpoint#autoUploadFile} {@code  && (}
-     * {@link SoroushMessage#thumbnailUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
-     * for {@code uploadFile} endpoint:
-     * {@link SoroushMessage#thumbnail}{@code !=null && (}
+     * {@link SoroushMessage#thumbnailUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )} for
+     * {@code uploadFile} endpoint: {@link SoroushMessage#thumbnail}{@code !=null && (}
      * {@link SoroushMessage#thumbnailUrl}{@code ==null || }{@link SoroushBotEndpoint#forceUpload}{@code )}
      *
-     * @param thumbnail to be uploaded
+     * @param  thumbnail             to be uploaded
      * @throws FileNotFoundException if file not found
-     * @see SoroushBotEndpoint#forceUpload
-     * @see SoroushBotEndpoint#autoUploadFile
+     * @see                          SoroushBotEndpoint#forceUpload
+     * @see                          SoroushBotEndpoint#autoUploadFile
      */
     @JsonIgnore
     public void setThumbnail(File thumbnail) throws FileNotFoundException {
@@ -320,28 +317,28 @@ public class SoroushMessage implements Cloneable {
     @Override
     public String toString() {
         return "SoroushMessage{"
-                + "to='" + to + '\''
-                + ", from='" + from + '\''
-                + ", body='" + body + '\''
-                + ", type=" + type
-                + ", time='" + time + '\''
-                + ", fileName='" + fileName + '\''
-                + ", fileType=" + fileType
-                + ", fileSize=" + fileSize
-                + ", fileUrl='" + fileUrl + '\''
-                + ", thumbnailUrl='" + thumbnailUrl + '\''
-                + ", imageWidth=" + imageWidth
-                + ", imageHeight=" + imageHeight
-                + ", fileDuration=" + fileDuration
-                + ", thumbnailWidth=" + thumbnailWidth
-                + ", thumbnailHeight=" + thumbnailHeight
-                + ", nickName='" + nickName + '\''
-                + ", avatarUrl='" + avatarUrl + '\''
-                + ", phoneNo=" + phoneNo
-                + ", latitude=" + latitude
-                + ", longitude=" + longitude
-                + ", keyboard=" + keyboard
-                + '}';
+               + "to='" + to + '\''
+               + ", from='" + from + '\''
+               + ", body='" + body + '\''
+               + ", type=" + type
+               + ", time='" + time + '\''
+               + ", fileName='" + fileName + '\''
+               + ", fileType=" + fileType
+               + ", fileSize=" + fileSize
+               + ", fileUrl='" + fileUrl + '\''
+               + ", thumbnailUrl='" + thumbnailUrl + '\''
+               + ", imageWidth=" + imageWidth
+               + ", imageHeight=" + imageHeight
+               + ", fileDuration=" + fileDuration
+               + ", thumbnailWidth=" + thumbnailWidth
+               + ", thumbnailHeight=" + thumbnailHeight
+               + ", nickName='" + nickName + '\''
+               + ", avatarUrl='" + avatarUrl + '\''
+               + ", phoneNo=" + phoneNo
+               + ", latitude=" + latitude
+               + ", longitude=" + longitude
+               + ", keyboard=" + keyboard
+               + '}';
     }
 
     @Override
@@ -378,7 +375,8 @@ public class SoroushMessage implements Cloneable {
 
     @Override
     public SoroushMessage clone() throws CloneNotSupportedException {
-        return new SoroushMessage(to,
+        return new SoroushMessage(
+                to,
                 from,
                 body,
                 type,
@@ -398,8 +396,9 @@ public class SoroushMessage implements Cloneable {
                 phoneNo,
                 latitude,
                 longitude,
-                (keyboard == null) ? null : keyboard.stream().map(it -> it == null ? null : new ArrayList<>(it)).collect(Collectors.toList())
-        );
+                (keyboard == null)
+                        ? null
+                        : keyboard.stream().map(it -> it == null ? null : new ArrayList<>(it)).collect(Collectors.toList()));
     }
 
     @Override

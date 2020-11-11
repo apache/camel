@@ -29,11 +29,11 @@ import org.reactivestreams.Subscription;
  */
 public class ConvertingSubscriber<R> implements Subscriber<R> {
 
-    private Class<R> type;
+    private final Class<R> type;
 
-    private Subscriber<Exchange> delegate;
+    private final Subscriber<Exchange> delegate;
 
-    private CamelContext context;
+    private final CamelContext context;
 
     public ConvertingSubscriber(Subscriber<Exchange> delegate, CamelContext context, Class<R> type) {
         Objects.requireNonNull(delegate, "delegate subscriber cannot be null");

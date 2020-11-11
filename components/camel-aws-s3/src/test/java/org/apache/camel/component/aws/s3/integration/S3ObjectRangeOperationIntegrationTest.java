@@ -35,20 +35,22 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
+@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class S3ObjectRangeOperationIntegrationTest extends CamelTestSupport {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(S3ObjectRangeOperationIntegrationTest.class);
 
     @BindToRegistry("amazonS3Client")
-    AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("xxx", "yyy"))).withRegion(Regions.US_WEST_1)
-        .build();
+    AmazonS3 client = AmazonS3ClientBuilder.standard()
+            .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("xxx", "yyy")))
+            .withRegion(Regions.US_WEST_1)
+            .build();
 
     @EndpointInject
     private ProducerTemplate template;

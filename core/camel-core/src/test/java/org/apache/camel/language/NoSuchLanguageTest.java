@@ -18,7 +18,10 @@ package org.apache.camel.language;
 
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.NoSuchLanguageException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NoSuchLanguageTest extends LanguageTestSupport {
 

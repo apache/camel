@@ -29,11 +29,11 @@ public interface SynchronizationRouteAware extends Synchronization {
      * <p/>
      * Notice if the exchange is being routed through multiple routes, there will be callbacks for each route.
      * <p/>
-     * <b>Important:</b> this callback may not invoked if the {@link org.apache.camel.spi.SynchronizationRouteAware} implementation
-     * is being added to the {@link org.apache.camel.spi.UnitOfWork} after the routing has started.
+     * <b>Important:</b> this callback may not invoked if the {@link org.apache.camel.spi.SynchronizationRouteAware}
+     * implementation is being added to the {@link org.apache.camel.spi.UnitOfWork} after the routing has started.
      *
-     * @param route     the route
-     * @param exchange  the exchange
+     * @param route    the route
+     * @param exchange the exchange
      */
     void onBeforeRoute(Route route, Exchange exchange);
 
@@ -44,14 +44,15 @@ public interface SynchronizationRouteAware extends Synchronization {
      * <p/>
      * This invocation happens before these callbacks:
      * <ul>
-     *     <li>The consumer of the route writes any response back to the caller (if in InOut mode)</li>
-     *     <li>The UoW is done calling either {@link #onComplete(org.apache.camel.Exchange)} or {@link #onFailure(org.apache.camel.Exchange)}</li>
+     * <li>The consumer of the route writes any response back to the caller (if in InOut mode)</li>
+     * <li>The UoW is done calling either {@link #onComplete(org.apache.camel.Exchange)} or
+     * {@link #onFailure(org.apache.camel.Exchange)}</li>
      * </ul>
-     * This allows custom logic to be executed after all routing is done, but before the {@link org.apache.camel.Consumer} prepares and writes
-     * any data back to the caller (if in InOut mode).
+     * This allows custom logic to be executed after all routing is done, but before the
+     * {@link org.apache.camel.Consumer} prepares and writes any data back to the caller (if in InOut mode).
      *
-     * @param route     the route
-     * @param exchange  the exchange
+     * @param route    the route
+     * @param exchange the exchange
      */
     void onAfterRoute(Route route, Exchange exchange);
 

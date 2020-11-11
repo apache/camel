@@ -19,12 +19,14 @@ package org.apache.camel.component.velocity;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.velocity.tools.generic.EscapeTool;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VelocityMethodInvokationTest extends CamelTestSupport {
-    
+
     @Test
     public void testVelocityLetter() throws Exception {
         Exchange exchange = template.request("direct:a", new Processor() {
@@ -36,8 +38,8 @@ public class VelocityMethodInvokationTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Dear Christian. You ordered item 7 on Monday &amp; Tuesday.", exchange.getOut().getBody());
-        assertEquals("Christian", exchange.getOut().getHeader("name"));
+        assertEquals("Dear Christian. You ordered item 7 on Monday &amp; Tuesday.", exchange.getMessage().getBody());
+        assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
     @Override
@@ -45,8 +47,8 @@ public class VelocityMethodInvokationTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a")
-                    .setHeader("esc", constant(new EscapeTool()))
-                    .to("velocity:org/apache/camel/component/velocity/escape.vm");
+                        .setHeader("esc", constant(new EscapeTool()))
+                        .to("velocity:org/apache/camel/component/velocity/escape.vm?allowContextMapAll=true");
             }
         };
     }

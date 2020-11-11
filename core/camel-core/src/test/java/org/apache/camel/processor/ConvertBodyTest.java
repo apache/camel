@@ -28,7 +28,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ConvertBodyTest extends ContextTestSupport {
 
@@ -78,7 +81,8 @@ public class ConvertBodyTest extends ContextTestSupport {
         // etc
         getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isEqualTo("UTF-8");
 
-        Exchange srcExchange = ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8").withBody("Hello World").build();
+        Exchange srcExchange = ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8")
+                .withBody("Hello World").build();
 
         template.send("direct:foo", srcExchange);
 
@@ -114,7 +118,8 @@ public class ConvertBodyTest extends ContextTestSupport {
             template.sendBody("direct:invalid", "11");
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof InvalidPayloadException);
+            boolean b = e.getCause() instanceof InvalidPayloadException;
+            assertTrue(b);
         }
 
         assertMockEndpointsSatisfied();

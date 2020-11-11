@@ -22,8 +22,8 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for {@link ChunkComponent} and {@link ChunkEndpoint}
@@ -40,12 +40,13 @@ public class ChunkComponentNestedLayersTest extends CamelTestSupport {
      * Test using two following distinct themeLayer of the same theme without Resource URI header defined
      */
     @Test
-    public void testChunkDoubleLayers() throws Exception {
+    void testChunkDoubleLayers() throws Exception {
         // Prepare
         Exchange exchange = createExchangeWithBody("The Body");
         exchange.getIn().setHeader("name", "Andrew");
         endSimpleMock.expectedMessageCount(1);
-        endSimpleMock.expectedBodiesReceived("<div>\nMars to Andrew. Come in, Andrew. This is the body: <div>\nEarth to Andrew. Come in, Andrew.\n</div>\n\n</div>\n");
+        endSimpleMock.expectedBodiesReceived(
+                "<div>\nMars to Andrew. Come in, Andrew. This is the body: <div>\nEarth to Andrew. Come in, Andrew.\n</div>\n\n</div>\n");
         // Act
         startSimpleProducerTemplate.send(exchange);
         // Verify
@@ -53,7 +54,7 @@ public class ChunkComponentNestedLayersTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -65,4 +66,3 @@ public class ChunkComponentNestedLayersTest extends CamelTestSupport {
         };
     }
 }
-

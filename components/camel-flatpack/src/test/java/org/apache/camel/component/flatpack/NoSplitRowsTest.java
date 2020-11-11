@@ -21,27 +21,28 @@ import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.camel.util.CastUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify that splitRows=false option.
  */
+@CamelSpringTest
 @ContextConfiguration
-public class NoSplitRowsTest extends AbstractJUnit4SpringContextTests {
-    
+public class NoSplitRowsTest {
+
     private static final Logger LOG = LoggerFactory.getLogger(NoSplitRowsTest.class);
 
     @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};
+    protected String[] expectedFirstName = { "JOHN", "JIMMY", "JANE", "FRED" };
 
     @Test
     public void testHeaderAndTrailer() throws Exception {
@@ -61,7 +62,7 @@ public class NoSplitRowsTest extends AbstractJUnit4SpringContextTests {
         // assert body
         int counter = 0;
         for (Map<String, String> row : data.subList(1, 5)) {
-            assertEquals("FIRSTNAME", expectedFirstName[counter], row.get("FIRSTNAME"));
+            assertEquals(expectedFirstName[counter], row.get("FIRSTNAME"), "FIRSTNAME");
             LOG.info("Result: " + counter + " = " + row);
             counter++;
         }

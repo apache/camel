@@ -63,8 +63,8 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     /**
      * Gets the value of a CamelContext global option
      *
-     * @param key the global option key
-     * @return the global option value
+     * @param  key       the global option key
+     * @return           the global option value
      * @throws Exception when an error occurred
      */
     @ManagedOperation(description = "Gets the value of a Camel global option")
@@ -73,8 +73,8 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     /**
      * Sets the value of a CamelContext property name
      *
-     * @param key the global option key
-     * @param value the global option value
+     * @param  key       the global option key
+     * @param  value     the global option value
      * @throws Exception when an error occurred
      */
     @ManagedOperation(description = "Sets the value of a Camel global option")
@@ -206,11 +206,14 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Dumps the routes coverage as XML")
     String dumpRoutesCoverageAsXml() throws Exception;
 
+    @ManagedOperation(description = "Dumps the route templates as XML")
+    String dumpRouteTemplatesAsXml() throws Exception;
+
     /**
      * Creates the endpoint by the given uri
      *
-     * @param uri uri of endpoint to create
-     * @return <tt>true</tt> if a new endpoint was created, <tt>false</tt> if the endpoint already existed
+     * @param  uri       uri of endpoint to create
+     * @return           <tt>true</tt> if a new endpoint was created, <tt>false</tt> if the endpoint already existed
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Creates the endpoint by the given URI")
@@ -219,55 +222,60 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     /**
      * Removes the endpoint by the given pattern
      *
-     * @param pattern the pattern
-     * @return number of endpoints removed
+     * @param  pattern   the pattern
+     * @return           number of endpoints removed
      * @throws Exception is thrown if error occurred
-     * @see org.apache.camel.CamelContext#removeEndpoints(String)
+     * @see              org.apache.camel.CamelContext#removeEndpoints(String)
      */
     @ManagedOperation(description = "Removes endpoints by the given pattern")
     int removeEndpoints(String pattern) throws Exception;
 
     /**
-     * Returns the JSON schema representation with information about the component and the endpoint parameters it supports
+     * Returns the JSON schema representation with information about the component and the endpoint parameters it
+     * supports
      *
-     * @param componentName the name of the component to lookup
-     * @throws Exception is thrown if error occurred
+     * @param  componentName the name of the component to lookup
+     * @throws Exception     is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the endpoint parameters for the given component name")
+    @Deprecated
     String componentParameterJsonSchema(String componentName) throws Exception;
 
     /**
      * Returns the JSON schema representation with information about the data format and the parameters it supports
      *
-     * @param dataFormatName the name of the data format to lookup
-     * @throws Exception is thrown if error occurred
+     * @param  dataFormatName the name of the data format to lookup
+     * @throws Exception      is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the data format parameters for the given data format name")
+    @Deprecated
     String dataFormatParameterJsonSchema(String dataFormatName) throws Exception;
 
     /**
      * Returns the JSON schema representation with information about the language and the parameters it supports
      *
-     * @param languageName the name of the language to lookup
-     * @throws Exception is thrown if error occurred
+     * @param  languageName the name of the language to lookup
+     * @throws Exception    is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the language parameters for the given language name")
+    @Deprecated
     String languageParameterJsonSchema(String languageName) throws Exception;
 
     /**
      * Returns the JSON schema representation with information about the EIP and the parameters it supports
      *
-     * @param eipName the name of the EIP to lookup
+     * @param  eipName   the name of the EIP to lookup
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the EIP parameters for the given EIP name")
+    @Deprecated
     String eipParameterJsonSchema(String eipName) throws Exception;
 
     /**
      * Resets all the performance counters.
      *
-     * @param includeRoutes  whether to reset all routes as well.
-     * @throws Exception is thrown if error occurred
+     * @param  includeRoutes whether to reset all routes as well.
+     * @throws Exception     is thrown if error occurred
      */
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeRoutes) throws Exception;

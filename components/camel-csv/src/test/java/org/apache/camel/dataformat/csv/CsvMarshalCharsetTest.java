@@ -22,15 +22,16 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CsvMarshalCharsetTest extends CamelTestSupport {
 
     @Test
-    public void testMarshal() throws Exception {
+    void testMarshal() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:daltons");
         endpoint.expectedMessageCount(1);
 
@@ -45,7 +46,8 @@ public class CsvMarshalCharsetTest extends CamelTestSupport {
 
         Exchange exchange = endpoint.getExchanges().get(0);
         String body = exchange.getIn().getBody(String.class);
-        assertThat(body, startsWith("L\u00fccky Luke"));
+        assertNotNull(body);
+        assertTrue(body.startsWith("L\u00fccky Luke"));
     }
 
     @Override

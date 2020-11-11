@@ -43,13 +43,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Route policy using Etcd as clustered lock")
-public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromise.IsSimplePromiseResponseHandler<EtcdKeysResponse>, CamelContextAware {
+public class EtcdRoutePolicy extends RoutePolicySupport
+        implements ResponsePromise.IsSimplePromiseResponseHandler<EtcdKeysResponse>, CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdRoutePolicy.class);
 
     private final Object lock = new Object();
-    private final AtomicBoolean leader = new AtomicBoolean(false);
+    private final AtomicBoolean leader = new AtomicBoolean();
     private final Set<Route> suspendedRoutes = new HashSet<>();
-    private final AtomicLong index = new AtomicLong(0);
+    private final AtomicLong index = new AtomicLong();
 
     private int ttl = 60;
     private int watchTimeout = 60 / 3;
@@ -104,7 +105,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
     }
 
     @Override
-    public void onStart(Route route)  {
+    public void onStart(Route route) {
         if (!leader.get() && shouldStopConsumer) {
             stopConsumer(route);
         }
@@ -341,18 +342,17 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
         try {
             if (leader.get()) {
                 EtcdHelper.setIndex(index, client.refresh(servicePath, ttl)
-                    .send()
-                    .get()
-                );
+                        .send()
+                        .get());
             }
 
             LOGGER.debug("Watch (path={}, isLeader={}, index={})", servicePath, leader.get(), index.get());
 
             client.get(servicePath)
-                .waitForChange(index.get())
-                .timeout(watchTimeout, TimeUnit.SECONDS)
-                .send()
-                .addListener(this);
+                    .waitForChange(index.get())
+                    .timeout(watchTimeout, TimeUnit.SECONDS)
+                    .send()
+                    .addListener(this);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
@@ -363,11 +363,11 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
 
         try {
             EtcdKeysResponse response = getClient()
-                .put(servicePath, serviceName)
-                .prevExist(false)
-                .ttl(ttl)
-                .send()
-                .get();
+                    .put(servicePath, serviceName)
+                    .prevExist(false)
+                    .ttl(ttl)
+                    .send()
+                    .get();
 
             result = ObjectHelper.equal(serviceName, response.node.value);
             EtcdHelper.setIndex(index, response);

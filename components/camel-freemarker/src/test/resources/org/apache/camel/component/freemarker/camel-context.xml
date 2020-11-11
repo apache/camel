@@ -28,12 +28,12 @@
 	   	<from uri="direct:start"/>
 	    <filter>
 	   		<method ref="fruitFilter" method="isApple"/>
-        	<to uri="freemarker:org/apache/camel/component/freemarker/AppleTemplate.ftl" />
+        	<to uri="freemarker:org/apache/camel/component/freemarker/AppleTemplate.ftl?allowContextMapAll=true" />
         	<to uri="mock:result" />
 	    </filter>
 	    <filter>
 	   		<method ref="fruitFilter" method="isOrange"/>
-        	<to uri="freemarker:org/apache/camel/component/freemarker/OrangeTemplate.ftl" />
+        	<to uri="freemarker:org/apache/camel/component/freemarker/OrangeTemplate.ftl?allowContextMapAll=true" />
     	    <to uri="mock:result" />
 	    </filter>
    </route>

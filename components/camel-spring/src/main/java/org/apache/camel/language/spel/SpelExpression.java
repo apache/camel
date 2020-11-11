@@ -16,10 +16,12 @@
  */
 package org.apache.camel.language.spel;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.util.RegistryBeanResolver;
+import org.apache.camel.support.ExpressionSupport;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.MapAccessor;
@@ -32,10 +34,11 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
- * Class responsible for evaluating <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions">
- * Spring Expression Language (SpEL)</a> in the context of Camel.
+ * Class responsible for evaluating
+ * <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions"> Spring
+ * Expression Language (SpEL)</a> in the context of Camel.
  */
-public class SpelExpression extends org.apache.camel.support.ExpressionSupport {
+public class SpelExpression extends ExpressionSupport {
 
     private final String expressionString;
     private final Class<?> type;
@@ -43,6 +46,8 @@ public class SpelExpression extends org.apache.camel.support.ExpressionSupport {
 
     // SpelExpressionParser is thread-safe according to the docs
     private final SpelExpressionParser expressionParser;
+
+    private volatile Expression expression;
 
     public SpelExpression(String expressionString, Class<?> type) {
         this(expressionString, type, null);
@@ -61,8 +66,10 @@ public class SpelExpression extends org.apache.camel.support.ExpressionSupport {
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
+        if (expression == null) {
+            init(exchange.getContext());
+        }
         try {
-            Expression expression = parseExpression();
             EvaluationContext evaluationContext = createEvaluationContext(exchange);
             Object value = expression.getValue(evaluationContext);
             // Let Camel handle the type conversion
@@ -101,6 +108,11 @@ public class SpelExpression extends org.apache.camel.support.ExpressionSupport {
     @Override
     protected String assertionFailureMessage(Exchange exchange) {
         return expressionString;
+    }
+
+    @Override
+    public void init(CamelContext context) {
+        expression = parseExpression();
     }
 
     @Override

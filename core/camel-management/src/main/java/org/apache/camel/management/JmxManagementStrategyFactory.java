@@ -54,7 +54,7 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
             // a bit of ugly code to handover pre registered services that has been add to an eager/provisional JmxManagementLifecycleStrategy
             // which is now re-placed with a new JmxManagementLifecycleStrategy that is based on the end user configured settings
             // and therefore will be in use
-            List<JmxManagementLifecycleStrategy.PreRegisterService> preServices = null;
+            List<java.util.function.Consumer<JmxManagementLifecycleStrategy>> preServices = null;
             JmxManagementLifecycleStrategy jmx = camelContext.getLifecycleStrategies().stream()
                     .filter(s -> s instanceof JmxManagementLifecycleStrategy)
                     .map(JmxManagementLifecycleStrategy.class::cast)
@@ -63,9 +63,9 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
                 preServices = jmx.getPreServices();
             }
 
-            if (preServices != null &&  !preServices.isEmpty() && lifecycle instanceof JmxManagementLifecycleStrategy) {
+            if (preServices != null && !preServices.isEmpty() && lifecycle instanceof JmxManagementLifecycleStrategy) {
                 JmxManagementLifecycleStrategy existing = (JmxManagementLifecycleStrategy) lifecycle;
-                for (JmxManagementLifecycleStrategy.PreRegisterService pre : preServices) {
+                for (java.util.function.Consumer<JmxManagementLifecycleStrategy> pre : preServices) {
                     existing.addPreService(pre);
                 }
             }

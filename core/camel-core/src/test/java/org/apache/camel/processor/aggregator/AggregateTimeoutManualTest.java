@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * To be run manually when testing the timeout aggregator
@@ -54,8 +54,8 @@ public class AggregateTimeoutManualTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // timeout after 3 seconds
-                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(3000).to("mock:result");
+                        // timeout after 3 seconds
+                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(3000).to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.kubernetes.consumer.common;
 
-import io.fabric8.kubernetes.api.model.HorizontalPodAutoscaler;
+import io.fabric8.kubernetes.api.model.autoscaling.v1.HorizontalPodAutoscaler;
 import io.fabric8.kubernetes.client.Watcher.Action;
 
 public class HPAEvent {

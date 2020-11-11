@@ -19,9 +19,9 @@ package org.apache.camel.processor.onexception;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for CAMEL-1188
@@ -76,15 +76,15 @@ public class OnExceptionFromChoiceUseOriginalBodyTest extends ContextTestSupport
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         myServiceBean = new MyServiceBean();
         super.setUp();
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myServiceBean", myServiceBean);
         return jndi;
     }
@@ -96,14 +96,17 @@ public class OnExceptionFromChoiceUseOriginalBodyTest extends ContextTestSupport
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                onException(MyTechnicalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true).to("mock:tech");
-                onException(MyFunctionalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true).to("mock:func");
+                onException(MyTechnicalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true)
+                        .to("mock:tech");
+                onException(MyFunctionalException.class).useOriginalMessage().maximumRedeliveries(0).handled(true)
+                        .to("mock:func");
 
                 from("direct:tech").setBody(constant("<order><type>myType</type><user>Tech</user></order>")).to("direct:route");
 
                 from("direct:func").setBody(constant("<order><type>myType</type><user>Func</user></order>")).to("direct:route");
 
-                from("direct:route").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise().to("mock:otherwise");
+                from("direct:route").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise()
+                        .to("mock:otherwise");
             }
         };
     }

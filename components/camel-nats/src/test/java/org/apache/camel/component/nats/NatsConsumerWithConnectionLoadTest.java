@@ -24,18 +24,18 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
-    
+
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
-    
+
     @EndpointInject("mock:result1")
     protected MockEndpoint mockResultEndpoint1;
-    
+
     private Connection connection;
-    
+
     @BindToRegistry("connection")
     public Connection connection() throws Exception {
         Builder options = new Options.Builder();

@@ -19,29 +19,28 @@ package org.apache.camel.component.jms;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
-    
+
     private ClassPathXmlApplicationContext applicationContext;
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {   
+    protected CamelContext createCamelContext() throws Exception {
         applicationContext = createApplicationContext();
         return SpringCamelContext.springCamelContext(applicationContext, true);
-    }    
-    
+    }
+
     private ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsHeaderFilteringWithSpring.xml");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);
         super.tearDown();
     }
-    
-}
 
+}

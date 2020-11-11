@@ -18,9 +18,9 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -31,8 +31,8 @@ public class BeanOgnlPerformanceTest extends ContextTestSupport {
     private String cache = "true";
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;
     }
@@ -57,11 +57,16 @@ public class BeanOgnlPerformanceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").toF("bean:foo?cache=%s&method=hello('Camel')", cache).toF("bean:foo?cache=%s&method=hello('Camel')", cache)
-                    .toF("bean:foo?cache=%s&method=hello('Camel')", cache).toF("bean:foo?cache=%s&method=hello('Camel')", cache)
-                    .toF("bean:foo?cache=%s&method=hello('Camel')", cache).toF("bean:foo?cache=%s&method=hello('Camel')", cache)
-                    .toF("bean:foo?cache=%s&method=hello('Camel')", cache).toF("bean:foo?cache=%s&method=hello('Camel')", cache)
-                    .toF("bean:foo?cache=%s&method=hello('Camel')", cache).toF("bean:foo?cache=%s&method=hello('Camel')", cache).to("mock:result");
+                from("direct:start").toF("bean:foo?cache=%s&method=hello('Camel')", cache)
+                        .toF("bean:foo?cache=%s&method=hello('Camel')", cache)
+                        .toF("bean:foo?cache=%s&method=hello('Camel')", cache)
+                        .toF("bean:foo?cache=%s&method=hello('Camel')", cache)
+                        .toF("bean:foo?cache=%s&method=hello('Camel')", cache)
+                        .toF("bean:foo?cache=%s&method=hello('Camel')", cache)
+                        .toF("bean:foo?cache=%s&method=hello('Camel')", cache)
+                        .toF("bean:foo?cache=%s&method=hello('Camel')", cache)
+                        .toF("bean:foo?cache=%s&method=hello('Camel')", cache)
+                        .toF("bean:foo?cache=%s&method=hello('Camel')", cache).to("mock:result");
             }
         };
     }

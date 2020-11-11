@@ -23,8 +23,7 @@ import java.util.function.BiConsumer;
 import org.apache.camel.util.function.ThrowingFunction;
 
 /**
- * A simple timer utility that use a linked {@link BackOff} to determine when
- * a task should be executed.
+ * A simple timer utility that use a linked {@link BackOff} to determine when a task should be executed.
  */
 public class BackOffTimer {
     private final ScheduledExecutorService scheduler;
@@ -34,8 +33,7 @@ public class BackOffTimer {
     }
 
     /**
-     * Schedule the given function/task to be executed some time in the future
-     * according to the given backOff.
+     * Schedule the given function/task to be executed some time in the future according to the given backOff.
      */
     public Task schedule(BackOff backOff, ThrowingFunction<Task, Boolean, Exception> function) {
         final BackOffTimerTask task = new BackOffTimerTask(backOff, scheduler, function);
@@ -85,6 +83,11 @@ public class BackOffTimer {
          * The current elapsed time.
          */
         long getCurrentElapsedTime();
+
+        /**
+         * The time the first attempt was performed.
+         */
+        long getFirstAttemptTime();
 
         /**
          * The time the last attempt has been performed.

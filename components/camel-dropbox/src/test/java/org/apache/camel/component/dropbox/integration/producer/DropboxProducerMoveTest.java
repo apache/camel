@@ -24,15 +24,15 @@ import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DropboxProducerMoveTest extends DropboxTestSupport {
 
     public static final String COPY_WORKDIR = "/test-workdir";
     public static final String FILE = "file.txt";
 
-    @Before
+    @BeforeEach
     public void removeDir() throws DbxException, IOException {
         createDir(COPY_WORKDIR);
         createFile(FILE, "content");
@@ -62,14 +62,15 @@ public class DropboxProducerMoveTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to(String.format("dropbox://move?accessToken={{accessToken}}&remotePath=%s&newRemotePath=%s", workdir + "/" + FILE, COPY_WORKDIR + "/" + FILE))
+                        .to(String.format("dropbox://move?accessToken={{accessToken}}&remotePath=%s&newRemotePath=%s",
+                                workdir + "/" + FILE, COPY_WORKDIR + "/" + FILE))
                         .to("mock:result");
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE))
                         .setHeader(DropboxConstants.HEADER_NEW_REMOTE_PATH, constant(COPY_WORKDIR + "/" + FILE))
-                    .to("dropbox://move?accessToken={{accessToken}}")
-                    .to("mock:result");
+                        .to("dropbox://move?accessToken={{accessToken}}")
+                        .to("mock:result");
             }
         };
     }

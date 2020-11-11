@@ -24,12 +24,20 @@ import java.util.Optional;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
-import org.junit.Test;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.cometd.client.BayeuxClient;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper.determineReplayIdFor;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class SubscriptionHelperTest {
@@ -53,11 +61,14 @@ public class SubscriptionHelperTest {
         when(endpoint.getConfiguration()).thenReturn(config);
         when(component.getConfig()).thenReturn(new SalesforceEndpointConfig());
 
-        assertEquals("Expecting replayId for `my-topic-1` to be 10, as short topic names have priority", Optional.of(10L), determineReplayIdFor(endpoint, "my-topic-1"));
+        assertEquals(Optional.of(10L), determineReplayIdFor(endpoint, "my-topic-1"),
+                "Expecting replayId for `my-topic-1` to be 10, as short topic names have priority");
 
-        assertEquals("Expecting replayId for `my-topic-2` to be 30, the only one given", Optional.of(30L), determineReplayIdFor(endpoint, "my-topic-2"));
+        assertEquals(Optional.of(30L), determineReplayIdFor(endpoint, "my-topic-2"),
+                "Expecting replayId for `my-topic-2` to be 30, the only one given");
 
-        assertEquals("Expecting replayId for `my-topic-3` to be 14, the default", Optional.of(14L), determineReplayIdFor(endpoint, "my-topic-3"));
+        assertEquals(Optional.of(14L), determineReplayIdFor(endpoint, "my-topic-3"),
+                "Expecting replayId for `my-topic-3` to be 14, the default");
     }
 
     @Test
@@ -79,31 +90,80 @@ public class SubscriptionHelperTest {
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(endpointConfig);
 
-        assertEquals("Expecting replayId for `my-topic-1` to be 5, as endpoint configuration has priority", Optional.of(5L), determineReplayIdFor(endpoint, "my-topic-1"));
+        assertEquals(Optional.of(5L), determineReplayIdFor(endpoint, "my-topic-1"),
+                "Expecting replayId for `my-topic-1` to be 5, as endpoint configuration has priority");
 
-        assertEquals("Expecting replayId for `my-topic-2` to be 3, as endpoint does not configure it", Optional.of(3L), determineReplayIdFor(endpoint, "my-topic-2"));
+        assertEquals(Optional.of(3L), determineReplayIdFor(endpoint, "my-topic-2"),
+                "Expecting replayId for `my-topic-2` to be 3, as endpoint does not configure it");
 
-        assertEquals("Expecting replayId for `my-topic-3` to be 4, as it is endpoint's default", Optional.of(4L), determineReplayIdFor(endpoint, "my-topic-3"));
+        assertEquals(Optional.of(4L), determineReplayIdFor(endpoint, "my-topic-3"),
+                "Expecting replayId for `my-topic-3` to be 4, as it is endpoint's default");
 
         endpointConfig.setDefaultReplayId(null);
 
-        assertEquals("Expecting replayId for `my-topic-3` to be 1, as it is component's default when endpoint does not have a default", Optional.of(1L),
-                     determineReplayIdFor(endpoint, "my-topic-3"));
+        assertEquals(Optional.of(1L), determineReplayIdFor(endpoint, "my-topic-3"),
+                "Expecting replayId for `my-topic-3` to be 1, as it is component's default when endpoint does not have a default");
 
         when(endpoint.getReplayId()).thenReturn(6L);
 
-        assertEquals("Expecting replayId for `my-topic-1` to be 6, as it is endpoint configured explicitly on the endpoint", Optional.of(6L),
-                     determineReplayIdFor(endpoint, "my-topic-1"));
-        assertEquals("Expecting replayId for `my-topic-2` to be 6, as it is endpoint configured explicitly on the endpoint", Optional.of(6L),
-                     determineReplayIdFor(endpoint, "my-topic-2"));
-        assertEquals("Expecting replayId for `my-topic-3` to be 6, as it is endpoint configured explicitly on the endpoint", Optional.of(6L),
-                     determineReplayIdFor(endpoint, "my-topic-3"));
+        assertEquals(Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-1"),
+                "Expecting replayId for `my-topic-1` to be 6, as it is endpoint configured explicitly on the endpoint");
+        assertEquals(Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-2"),
+                "Expecting replayId for `my-topic-2` to be 6, as it is endpoint configured explicitly on the endpoint");
+        assertEquals(Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-3"),
+                "Expecting replayId for `my-topic-3` to be 6, as it is endpoint configured explicitly on the endpoint");
     }
 
     @Test
     public void shouldDetermineChannelNames() {
         assertThat(SubscriptionHelper.getChannelName("topic1")).isEqualTo("/topic/topic1");
-        assertThat(SubscriptionHelper.getChannelName("event/Test")).isEqualTo("/event/Test__e");
+        assertThat(SubscriptionHelper.getChannelName("event/Test")).isEqualTo("/event/Test");
         assertThat(SubscriptionHelper.getChannelName("event/Test__e")).isEqualTo("/event/Test__e");
+    }
+
+    @Test
+    public void shouldNotLoginWhenAccessTokenIsNullAndLazyLoginIsTrue() throws SalesforceException {
+        final SalesforceHttpClient httpClient = mock(SalesforceHttpClient.class);
+        httpClient.setTimeout(0L);
+
+        final SalesforceEndpointConfig endpointConfig = new SalesforceEndpointConfig();
+        endpointConfig.setHttpClient(httpClient);
+
+        final SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
+        loginConfig.setLazyLogin(true);
+
+        final SalesforceSession session = mock(SalesforceSession.class);
+        final SalesforceComponent component = mock(SalesforceComponent.class);
+        when(component.getLoginConfig()).thenReturn(loginConfig);
+        when(component.getConfig()).thenReturn(endpointConfig);
+        when(component.getSession()).thenReturn(session);
+
+        BayeuxClient bayeuxClient = SubscriptionHelper.createClient(component);
+
+        assertNotNull(bayeuxClient);
+        verify(session, never()).login(null);
+    }
+
+    @Test
+    public void shouldLoginWhenAccessTokenIsNullAndLazyLoginIsFalse() throws SalesforceException {
+        final SalesforceHttpClient httpClient = mock(SalesforceHttpClient.class);
+        httpClient.setTimeout(0L);
+
+        final SalesforceEndpointConfig endpointConfig = new SalesforceEndpointConfig();
+        endpointConfig.setHttpClient(httpClient);
+
+        final SalesforceLoginConfig loginConfig = new SalesforceLoginConfig();
+        loginConfig.setLazyLogin(false);
+
+        final SalesforceSession session = mock(SalesforceSession.class);
+        final SalesforceComponent component = mock(SalesforceComponent.class);
+        when(component.getLoginConfig()).thenReturn(loginConfig);
+        when(component.getConfig()).thenReturn(endpointConfig);
+        when(component.getSession()).thenReturn(session);
+
+        BayeuxClient bayeuxClient = SubscriptionHelper.createClient(component);
+
+        assertNotNull(bayeuxClient);
+        verify(session).login(null);
     }
 }

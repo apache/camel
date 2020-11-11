@@ -24,19 +24,22 @@ import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationControllerListBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.KubernetesServer;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KubernetesReplicationControllersProducerTest extends KubernetesTestSupport {
 
-    @Rule
+    @RegisterExtension
     public KubernetesServer server = new KubernetesServer();
 
     @BindToRegistry("kubernetesClient")
@@ -47,7 +50,9 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     @Test
     public void listTest() throws Exception {
         server.expect().withPath("/api/v1/replicationcontrollers")
-            .andReturn(200, new ReplicationControllerListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200,
+                        new ReplicationControllerListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
         List<ReplicationController> result = template.requestBody("direct:list", "", List.class);
 
         assertEquals(3, result.size());
@@ -56,83 +61,82 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     @Test
     public void listByLabelsTest() throws Exception {
         server.expect().withPath("/api/v1/replicationcontrollers?labelSelector=" + toUrlEncoded("key1=value1,key2=value2"))
-            .andReturn(200, new ReplicationControllerListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
-        Exchange ex = template.request("direct:listByLabels", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                Map<String, String> labels = new HashMap<>();
-                labels.put("key1", "value1");
-                labels.put("key2", "value2");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
-            }
+                .andReturn(200,
+                        new ReplicationControllerListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
+        Exchange ex = template.request("direct:listByLabels", exchange -> {
+            Map<String, String> labels = new HashMap<>();
+            labels.put("key1", "value1");
+            labels.put("key2", "value2");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
         });
 
-        List<ReplicationController> result = ex.getOut().getBody(List.class);
+        List<ReplicationController> result = ex.getMessage().getBody(List.class);
 
         assertEquals(3, result.size());
     }
 
     @Test
     public void getReplicationControllerTest() throws Exception {
-        ReplicationController rc1 = new ReplicationControllerBuilder().withNewMetadata().withName("rc1").withNamespace("test").and().build();
+        ReplicationController rc1
+                = new ReplicationControllerBuilder().withNewMetadata().withName("rc1").withNamespace("test").and().build();
 
         server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/rc1").andReturn(200, rc1).once();
-        Exchange ex = template.request("direct:getReplicationController", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "rc1");
-            }
+        Exchange ex = template.request("direct:getReplicationController", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "rc1");
         });
 
-        ReplicationController result = ex.getOut().getBody(ReplicationController.class);
+        ReplicationController result = ex.getMessage().getBody(ReplicationController.class);
 
         assertNotNull(result);
     }
 
     @Test
     public void createAndDeleteReplicationController() throws Exception {
-        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1").andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
-            .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(0).endSpec().withNewStatus().withReplicas(1).endStatus().build()).once();
+        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
+                .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
+                        .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(0).endSpec().withNewStatus()
+                        .withReplicas(1).endStatus().build())
+                .once();
 
-        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1").andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
-            .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(0).endSpec().withNewStatus().withReplicas(0).endStatus().build()).times(5);
+        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
+                .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
+                        .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(0).endSpec().withNewStatus()
+                        .withReplicas(0).endStatus().build())
+                .times(5);
 
-        Exchange ex = template.request("direct:deleteReplicationController", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "repl1");
-            }
+        Exchange ex = template.request("direct:deleteReplicationController", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "repl1");
         });
 
-        boolean rcDeleted = ex.getOut().getBody(Boolean.class);
+        boolean rcDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(rcDeleted);
     }
 
     @Test
     public void createScaleAndDeleteReplicationController() throws Exception {
-        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1").andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
-            .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus().withReplicas(1).endStatus().build()).once();
+        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
+                .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
+                        .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
+                        .withReplicas(1).endStatus().build())
+                .once();
 
-        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1").andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
-            .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus().withReplicas(5).endStatus().build()).always();
-        Exchange ex = template.request("direct:scaleReplicationController", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "repl1");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_REPLICAS, 1);
-            }
+        server.expect().withPath("/api/v1/namespaces/test/replicationcontrollers/repl1")
+                .andReturn(200, new ReplicationControllerBuilder().withNewMetadata().withName("repl1")
+                        .withResourceVersion("1").endMetadata().withNewSpec().withReplicas(5).endSpec().withNewStatus()
+                        .withReplicas(5).endStatus().build())
+                .always();
+        Exchange ex = template.request("direct:scaleReplicationController", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "repl1");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_REPLICAS, 1);
         });
 
         Thread.sleep(3000);
-        int replicas = ex.getOut().getBody(Integer.class);
+        int replicas = ex.getMessage().getBody(Integer.class);
 
         assertEquals(5, replicas);
     }
@@ -142,12 +146,18 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").to("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllers");
-                from("direct:listByLabels").to("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllersByLabels");
-                from("direct:getReplicationController").to("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=getReplicationController");
-                from("direct:createReplicationController").to("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=createReplicationController");
-                from("direct:scaleReplicationController").to("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=scaleReplicationController");
-                from("direct:deleteReplicationController").to("kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=deleteReplicationController");
+                from("direct:list").to(
+                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllers");
+                from("direct:listByLabels").to(
+                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=listReplicationControllersByLabels");
+                from("direct:getReplicationController").to(
+                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=getReplicationController");
+                from("direct:createReplicationController").to(
+                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=createReplicationController");
+                from("direct:scaleReplicationController").to(
+                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=scaleReplicationController");
+                from("direct:deleteReplicationController").to(
+                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=deleteReplicationController");
             }
         };
     }

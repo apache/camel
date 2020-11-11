@@ -18,7 +18,9 @@ package org.apache.camel.component.mybatis;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisInsertWithInputHeaderTest extends MyBatisTestSupport {
 
@@ -41,7 +43,7 @@ public class MyBatisInsertWithInputHeaderTest extends MyBatisTestSupport {
 
         // there should be 3 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
-        assertEquals("There should be 3 rows", 3, rows.intValue());
+        assertEquals(3, rows.intValue(), "There should be 3 rows");
     }
 
     @Override
@@ -50,8 +52,8 @@ public class MyBatisInsertWithInputHeaderTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis:insertAccount?statementType=Insert&inputHeader=" + TEST_CASE_HEADER_NAME)
-                    .to("mock:result");
+                        .to("mybatis:insertAccount?statementType=Insert&inputHeader=" + TEST_CASE_HEADER_NAME)
+                        .to("mock:result");
             }
         };
     }

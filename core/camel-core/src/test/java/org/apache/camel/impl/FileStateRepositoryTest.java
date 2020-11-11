@@ -20,53 +20,50 @@ import java.io.File;
 import java.nio.file.Files;
 
 import org.apache.camel.impl.engine.FileStateRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.impl.engine.FileStateRepository.fileStateRepository;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileStateRepositoryTest {
     private final File repositoryStore = new File("target/data/file-state-repository.dat");
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Remove the repository file if needed
         Files.deleteIfExists(repositoryStore.toPath());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldPreventUsingDelimiterInKey() throws Exception {
         // Given a FileStateRepository
         FileStateRepository repository = fileStateRepository(repositoryStore);
 
         // When trying to use the key delimiter in a key
-        repository.setState("=", "value");
-
         // Then an exception is thrown
+        assertThrows(IllegalArgumentException.class, () -> repository.setState("=", "value"));
+
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldPreventUsingNewLineInKey() throws Exception {
         // Given a FileStateRepository
         FileStateRepository repository = createRepository();
 
         // When trying to use new line in a key
-        repository.setState("\n", "value");
-
         // Then an exception is thrown
+        assertThrows(IllegalArgumentException.class, () -> repository.setState("=", "value"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldPreventUsingNewLineInValue() throws Exception {
         // Given a FileStateRepository
         FileStateRepository repository = createRepository();
 
         // When trying to use new line in a key
-        repository.setState("key", "\n");
-
         // Then an exception is thrown
+        assertThrows(IllegalArgumentException.class, () -> repository.setState("key", "\n"));
     }
 
     @Test
@@ -119,7 +116,7 @@ public class FileStateRepositoryTest {
 
         // And content just to this limit (10x10 bytes)
         for (int i = 0; i < 10; i++) {
-            repository.setState("key", "xxxxx".replace('x', (char)('0' + i)));
+            repository.setState("key", "xxxxx".replace('x', (char) ('0' + i)));
         }
         long previousSize = repositoryStore.length();
 

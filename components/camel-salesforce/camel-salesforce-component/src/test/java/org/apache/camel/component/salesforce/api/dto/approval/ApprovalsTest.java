@@ -24,13 +24,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals.Info;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ApprovalsTest {
 
@@ -52,22 +52,23 @@ public class ApprovalsTest {
 
         assertThat("Should deserialize Approvals", read, instanceOf(Approvals.class));
 
-        final Approvals approvals = (Approvals)read;
+        final Approvals approvals = (Approvals) read;
 
         final Map<String, List<Info>> approvalsMap = approvals.getApprovals();
-        assertEquals("Deserialized approvals should have one entry", 1, approvalsMap.size());
+        assertEquals(1, approvalsMap.size(), "Deserialized approvals should have one entry");
 
         final List<Info> accountApprovals = approvalsMap.get("Account");
-        assertNotNull("Deserialized approvals should contain list of `Account` type approvals", accountApprovals);
+        assertNotNull(accountApprovals, "Deserialized approvals should contain list of `Account` type approvals");
 
-        assertEquals("There should be one approval of `Account` type", 1, accountApprovals.size());
+        assertEquals(1, accountApprovals.size(), "There should be one approval of `Account` type");
 
         final Info accountInfo = accountApprovals.get(0);
 
-        assertNull("Deserialized `Account` approval should have null description", accountInfo.getDescription());
-        assertEquals("Deserialized `Account` approval should have defined id", "04aD00000008Py9", accountInfo.getId());
-        assertEquals("Deserialized `Account` approval should have defined name", "Account Approval Process", accountInfo.getName());
-        assertEquals("Deserialized `Account` approval should have defined object", "Account", accountInfo.getObject());
-        assertEquals("Deserialized `Account` approval should have defined sortOrder", 1, accountInfo.getSortOrder());
+        assertNull(accountInfo.getDescription(), "Deserialized `Account` approval should have null description");
+        assertEquals("04aD00000008Py9", accountInfo.getId(), "Deserialized `Account` approval should have defined id");
+        assertEquals("Account Approval Process", accountInfo.getName(),
+                "Deserialized `Account` approval should have defined name");
+        assertEquals("Account", accountInfo.getObject(), "Deserialized `Account` approval should have defined object");
+        assertEquals(1, accountInfo.getSortOrder(), "Deserialized `Account` approval should have defined sortOrder");
     }
 }

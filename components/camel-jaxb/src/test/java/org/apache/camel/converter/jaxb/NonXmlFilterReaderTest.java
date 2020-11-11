@@ -19,16 +19,16 @@ package org.apache.camel.converter.jaxb;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,7 +36,7 @@ import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class NonXmlFilterReaderTest {
     private NonXmlFilterReader nonXmlFilterReader;
     @Mock
@@ -44,7 +44,7 @@ public class NonXmlFilterReaderTest {
     @Mock
     private Reader readerMock;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         nonXmlFilterReader = new NonXmlFilterReader(readerMock);
         nonXmlFilterReader.nonXmlCharFilterer = nonXmlCharFiltererMock;
@@ -57,9 +57,9 @@ public class NonXmlFilterReaderTest {
         when(readerMock.read(same(buffer), eq(3), eq(5))).thenAnswer(new Answer<Integer>() {
 
             public Integer answer(InvocationOnMock invocation) throws Throwable {
-                try (ConstantReader reader = new ConstantReader(new char[] {'a', 'b', 'c'})) {
+                try (ConstantReader reader = new ConstantReader(new char[] { 'a', 'b', 'c' })) {
                     Object[] args = invocation.getArguments();
-                    return reader.read((char[])args[0], (Integer)args[1], (Integer)args[2]);
+                    return reader.read((char[]) args[0], (Integer) args[1], (Integer) args[2]);
                 }
             }
         });
@@ -69,9 +69,8 @@ public class NonXmlFilterReaderTest {
         verify(readerMock).read(same(buffer), eq(3), eq(5));
         verify(nonXmlCharFiltererMock).filter(same(buffer), eq(3), eq(3));
 
-        assertEquals("Unexpected number of chars read", 3, result);
-        assertArrayEquals("Wrong buffer contents", new char[] {0, 0, 0, 'a', 'b', 'c', 0, 0, 0, 0},
-                buffer);
+        assertEquals(3, result, "Unexpected number of chars read");
+        assertArrayEquals(new char[] { 0, 0, 0, 'a', 'b', 'c', 0, 0, 0, 0 }, buffer, "Wrong buffer contents");
     }
 
     @Test
@@ -82,9 +81,8 @@ public class NonXmlFilterReaderTest {
 
         int result = nonXmlFilterReader.read(buffer, 3, 5);
 
-        assertEquals("Unexpected number of chars read", -1, result);
-        assertArrayEquals("Buffer should not have been affected",
-                          new char[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, buffer);
+        assertEquals(-1, result, "Unexpected number of chars read");
+        assertArrayEquals(new char[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, buffer, "Buffer should not have been affected");
     }
 
     static class ConstantReader extends Reader {

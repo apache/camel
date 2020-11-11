@@ -32,7 +32,8 @@ public class ZookeeperGroupListenerSupport extends ZookeeperGroupSupport impleme
     private final Runnable onLockAcquired;
     private final Runnable onDisconnected;
 
-    public ZookeeperGroupListenerSupport(String clusterPath, Endpoint endpoint, Runnable onLockAcquired, Runnable onDisconnected) {
+    public ZookeeperGroupListenerSupport(String clusterPath, Endpoint endpoint, Runnable onLockAcquired,
+                                         Runnable onDisconnected) {
         this.clusterPath = clusterPath;
         this.endpoint = endpoint;
         this.onLockAcquired = onLockAcquired;
@@ -69,32 +70,34 @@ public class ZookeeperGroupListenerSupport extends ZookeeperGroupSupport impleme
     @Override
     public void groupEvent(Group group, GroupEvent event) {
         switch (event) {
-        case CONNECTED:
-            break;
-        case CHANGED:
-            if (singleton.isConnected()) {
-                if (singleton.isMaster()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Master/Standby endpoint is Master for:  " + endpoint + " in " + endpoint.getCamelContext());
-                    }
-                    onLockOwned();
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Master/Standby endpoint is Standby for: " + endpoint + " in " + endpoint.getCamelContext());
+            case CONNECTED:
+                break;
+            case CHANGED:
+                if (singleton.isConnected()) {
+                    if (singleton.isMaster()) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Master/Standby endpoint is Master for: {} in {}", endpoint,
+                                    endpoint.getCamelContext());
+                        }
+                        onLockOwned();
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Master/Standby endpoint is Standby for: {} in {}", endpoint,
+                                    endpoint.getCamelContext());
+                        }
                     }
                 }
-            }
-            break;
-        case DISCONNECTED:
-            try {
-                LOG.info("Disconnecting as master. Stopping consumer: {}", endpoint);
-                onDisconnected();
-            } catch (Exception e) {
-                LOG.warn("Failed to stop master consumer for: " + endpoint + ". This exception is ignored.", e);
-            }
-            break;
-        default:
-            // noop
+                break;
+            case DISCONNECTED:
+                try {
+                    LOG.info("Disconnecting as master. Stopping consumer: {}", endpoint);
+                    onDisconnected();
+                } catch (Exception e) {
+                    LOG.warn("Failed to stop master consumer for: {}. This exception is ignored.", endpoint, e);
+                }
+                break;
+            default:
+                // noop
         }
     }
 

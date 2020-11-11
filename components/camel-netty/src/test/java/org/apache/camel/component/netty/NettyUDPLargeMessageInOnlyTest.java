@@ -17,7 +17,9 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyUDPLargeMessageInOnlyTest extends BaseNettyTest {
 
@@ -61,7 +63,7 @@ public class NettyUDPLargeMessageInOnlyTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:udp://localhost:{{port}}?receiveBufferSizePredictor=2048&sync=false")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

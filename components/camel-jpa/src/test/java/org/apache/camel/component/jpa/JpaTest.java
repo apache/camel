@@ -32,17 +32,20 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.service.ServiceHelper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-public class JpaTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class JpaTest {
     private static final Logger LOG = LoggerFactory.getLogger(JpaTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;
@@ -67,9 +70,9 @@ public class JpaTest extends Assert {
 
         // now lets assert that there is a result
         List<?> results = entityManager.createQuery(queryText).getResultList();
-        assertEquals("Should have results: " + results, 1, results.size());
+        assertEquals(1, results.size(), "Should have results: " + results);
         SendEmail mail = (SendEmail) results.get(0);
-        assertEquals("address property", "foo@bar.com", mail.getAddress());
+        assertEquals("foo@bar.com", mail.getAddress(), "address property");
 
         // now lets create a consumer to consume it
         consumer = endpoint.createConsumer(new Processor() {
@@ -78,7 +81,7 @@ public class JpaTest extends Assert {
                 receivedExchange = e;
                 // should have a EntityManager
                 EntityManager entityManager = e.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
-                assertNotNull("Should have a EntityManager as header", entityManager);
+                assertNotNull(entityManager, "Should have a EntityManager as header");
                 latch.countDown();
             }
         });
@@ -88,8 +91,8 @@ public class JpaTest extends Assert {
 
         assertNotNull(receivedExchange);
         SendEmail result = receivedExchange.getIn().getBody(SendEmail.class);
-        assertNotNull("Received a POJO", result);
-        assertEquals("address property", "foo@bar.com", result.getAddress());
+        assertNotNull(result, "Received a POJO");
+        assertEquals("foo@bar.com", result.getAddress(), "address property");
     }
 
     @Test
@@ -98,7 +101,7 @@ public class JpaTest extends Assert {
         template.send(listEndpoint, new Processor() {
             public void process(Exchange exchange) {
                 // use a list
-                List list = new ArrayList();
+                List<Object> list = new ArrayList<>();
                 list.add(new SendEmail("foo@bar.com"));
                 list.add(new SendEmail("foo2@bar.com"));
                 exchange.getIn().setBody(list);
@@ -107,24 +110,24 @@ public class JpaTest extends Assert {
 
         // now lets assert that there is a result
         List<?> results = entityManager.createQuery(queryText).getResultList();
-        assertEquals("Should have results: " + results, 2, results.size());
+        assertEquals(2, results.size(), "Should have results: " + results);
         SendEmail mail = (SendEmail) results.get(0);
-        assertEquals("address property", "foo@bar.com", mail.getAddress());
-        assertNotNull("id", mail.getId());
+        assertEquals("foo@bar.com", mail.getAddress(), "address property");
+        assertNotNull(mail.getId(), "id");
 
         SendEmail mail2 = (SendEmail) results.get(1);
-        assertEquals("address property", "foo2@bar.com", mail2.getAddress());
-        assertNotNull("id", mail2.getId());
+        assertEquals("foo2@bar.com", mail2.getAddress(), "address property");
+        assertNotNull(mail2.getId(), "id");
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        camelContext.start();
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startService(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
-        assertNotNull("Could not find endpoint!", value);
-        assertTrue("Should be a JPA endpoint but was: " + value, value instanceof JpaEndpoint);
+        assertNotNull(value, "Could not find endpoint!");
+        assertTrue(value instanceof JpaEndpoint, "Should be a JPA endpoint but was: " + value);
         endpoint = (JpaEndpoint) value;
 
         listEndpoint = camelContext.getEndpoint(getEndpointUri() + "&entityType=java.util.List", JpaEndpoint.class);
@@ -142,15 +145,16 @@ public class JpaTest extends Assert {
         });
 
         List<?> results = entityManager.createQuery(queryText).getResultList();
-        assertEquals("Should have no results: " + results, 0, results.size());
+        assertEquals(0, results.size(), "Should have no results: " + results);
     }
 
     protected String getEndpointUri() {
         return "jpa://" + SendEmail.class.getName();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(consumer, template, camelContext);
+        ServiceHelper.stopService(consumer, template);
+        camelContext.stop();
     }
 }

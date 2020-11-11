@@ -17,8 +17,11 @@
 package org.apache.camel.component.asterisk;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsteriskConfigTest extends CamelTestSupport {
 
@@ -28,10 +31,11 @@ public class AsteriskConfigTest extends CamelTestSupport {
     private String action = "QUEUE_STATUS";
 
     @Test
-    public void asteriskEndpointData() throws Exception {
-        Endpoint endpoint = context.getEndpoint("asterisk://myVoIP?hostname=" + hostname + "&username=" + username + "&password=" + password + "&action=" + action);
-        assertTrue("Endpoint not an AsteriskEndpoint: " + endpoint, endpoint instanceof AsteriskEndpoint);
-        AsteriskEndpoint asteriskEndpoint = (AsteriskEndpoint)endpoint;
+    void asteriskEndpointData() {
+        Endpoint endpoint = context.getEndpoint("asterisk://myVoIP?hostname=" + hostname + "&username=" + username
+                                                + "&password=" + password + "&action=" + action);
+        assertTrue(endpoint instanceof AsteriskEndpoint, "Endpoint not an AsteriskEndpoint: " + endpoint);
+        AsteriskEndpoint asteriskEndpoint = (AsteriskEndpoint) endpoint;
 
         assertEquals(hostname, asteriskEndpoint.getHostname());
         assertEquals(username, asteriskEndpoint.getUsername());

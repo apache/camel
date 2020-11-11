@@ -22,21 +22,21 @@ import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.jupiter.api.Test;
 
 public class JMXMonitorTypeCounterTest extends SimpleBeanFixture {
-    
+
     @Test
     public void counter() throws Exception {
 
         ISimpleMXBean simpleBean = getSimpleMXBean();
-        
+
         // we should get an event after the monitor number reaches 3
         simpleBean.setMonitorNumber(1);
         // this should trigger a notification
         simpleBean.setMonitorNumber(3);
-        
+
         // we should get 1 change from the counter bean
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/monitorNotification.xml"));
-        
+
         // the offset value was two, so another change won't trigger an event. 
         // it'll take 2 more changes to trigger the event
         getMockFixture().getMockEndpoint().setExpectedMessageCount(1);
@@ -49,11 +49,11 @@ public class JMXMonitorTypeCounterTest extends SimpleBeanFixture {
     @Override
     protected JMXUriBuilder buildFromURI() {
         return super.buildFromURI().withMonitorType("counter")
-                                   .withGranularityPeriod(500)
-                                   .withObservedAttribute("MonitorNumber")
-                                   .withInitThreshold(2)
-                                   .withOffset(2)
-                                   .withModulus(100)
-                                   .withDifferenceMode(false);
+                .withGranularityPeriod(500)
+                .withObservedAttribute("MonitorNumber")
+                .withInitThreshold(2)
+                .withOffset(2)
+                .withModulus(100)
+                .withDifferenceMode(false);
     }
 }

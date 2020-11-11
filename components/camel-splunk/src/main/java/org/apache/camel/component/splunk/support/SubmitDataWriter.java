@@ -33,7 +33,7 @@ public class SubmitDataWriter extends SplunkDataWriter {
     }
 
     @Override
-    protected void doWrite(String event) throws IOException {
+    protected synchronized void doWrite(String event) throws IOException {
         Index index = getIndex();
         if (index != null) {
             index.submit(args, event);

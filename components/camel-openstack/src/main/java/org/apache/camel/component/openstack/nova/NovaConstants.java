@@ -42,5 +42,6 @@ public final class NovaConstants extends OpenstackConstants {
     public static final String CREATE_SNAPSHOT = "createSnapshot";
     public static final String ACTION = "action";
 
-    private NovaConstants() { }
+    private NovaConstants() {
+    }
 }

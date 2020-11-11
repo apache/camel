@@ -22,14 +22,18 @@ import java.io.FileInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyFileConsumerTest extends BaseJettyTest {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/binary");
         deleteDirectory("target/test");
@@ -40,10 +44,10 @@ public class JettyFileConsumerTest extends BaseJettyTest {
         deleteDirectory("target/test");
         FileInputStream fis = new FileInputStream(src);
         String response = template.requestBody("http://localhost:{{port}}/myapp/myservice", fis, String.class);
-        assertEquals("Response should be OK ", "OK", response);
+        assertEquals("OK", response, "Response should be OK ");
         File des = new File("target/test/temp.xml");
-        assertTrue("The uploaded file should exists", des.exists());
-        assertEquals("This two file should have same size", src.length(), des.length());
+        assertTrue(des.exists(), "The uploaded file should exists");
+        assertEquals(src.length(), des.length(), "This two file should have same size");
     }
 
     @Test
@@ -53,7 +57,7 @@ public class JettyFileConsumerTest extends BaseJettyTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testSending18k() throws Exception {
         File src = new File("src/main/java/org/apache/camel/component/jetty/JettyHttpComponent.java");
         testingSendingFile(src);
@@ -64,10 +68,10 @@ public class JettyFileConsumerTest extends BaseJettyTest {
         deleteDirectory("target/test");
         File jpg = new File("src/test/resources/java.jpg");
         String response = template.requestBody("http://localhost:{{port}}/myapp/myservice2", jpg, String.class);
-        assertEquals("Response should be OK ", "OK", response);
+        assertEquals("OK", response, "Response should be OK ");
         File des = new File("target/test/java.jpg");
-        assertTrue("The uploaded file should exists", des.exists());
-        assertEquals("This two file should have same size", jpg.length(), des.length());
+        assertTrue(des.exists(), "The uploaded file should exists");
+        assertEquals(jpg.length(), des.length(), "This two file should have same size");
     }
 
     @Test
@@ -81,17 +85,19 @@ public class JettyFileConsumerTest extends BaseJettyTest {
         Thread.sleep(1000);
 
         File des = new File("target/test/java.jpg");
-        assertTrue("The uploaded file should exists", des.exists());
-        assertEquals("This two file should have same size", jpg.length(), des.length());
+        assertTrue(des.exists(), "The uploaded file should exists");
+        assertEquals(jpg.length(), des.length(), "This two file should have same size");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp/myservice").to("file://target/test?fileName=temp.xml").setBody(constant("OK"));
+                from("jetty:http://localhost:{{port}}/myapp/myservice").to("file://target/test?fileName=temp.xml")
+                        .setBody(constant("OK"));
 
-                from("jetty:http://localhost:{{port}}/myapp/myservice2").to("log:foo?showAll=true").to("file://target/test?fileName=java.jpg").setBody(constant("OK"));
+                from("jetty:http://localhost:{{port}}/myapp/myservice2").to("log:foo?showAll=true")
+                        .to("file://target/test?fileName=java.jpg").setBody(constant("OK"));
 
                 from("file://target/binary?noop=true").to("http://localhost:{{port}}/myapp/myservice2").to("mock:result");
             }

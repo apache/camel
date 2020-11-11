@@ -24,7 +24,9 @@ import com.github.brainlag.nsq.NSQConsumer;
 import com.github.brainlag.nsq.lookup.DefaultNSQLookup;
 import com.github.brainlag.nsq.lookup.NSQLookup;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NsqProducerTest extends NsqTestSupport {
 
@@ -46,13 +48,13 @@ public class NsqProducerTest extends NsqTestSupport {
             counter.incrementAndGet();
             message.finished();
             lock.countDown();
-            assertTrue(new String(message.getMessage()).equals(TEST_MESSAGE));
+            assertEquals(TEST_MESSAGE, new String(message.getMessage()));
         });
         consumer.start();
 
-        lock.await(30, TimeUnit.SECONDS);
+        lock.await(60, TimeUnit.SECONDS);
 
-        assertTrue(counter.get() == Long.valueOf(1));
+        assertEquals(1, counter.get());
         consumer.shutdown();
     }
 
@@ -73,13 +75,13 @@ public class NsqProducerTest extends NsqTestSupport {
             counter.incrementAndGet();
             message.finished();
             lock.countDown();
-            assertTrue(message.getAttempts() == 1);
+            assertEquals(1, message.getAttempts());
         });
         consumer.start();
 
         lock.await(30, TimeUnit.SECONDS);
 
-        assertTrue(counter.get() == Long.valueOf(NUMBER_OF_MESSAGES));
+        assertEquals(NUMBER_OF_MESSAGES, counter.get());
         consumer.shutdown();
     }
 

@@ -25,18 +25,22 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirHistoryApiMethod;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirHistory} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirHistory} APIs. The class source won't be generated
+ * again if the generator MOJO finds it under src/test/java.
  */
 public class FhirHistoryIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirHistoryIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirHistoryApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = FhirApiCollection.getCollection().getApiName(FhirHistoryApiMethod.class).getName();
 
     @Test
     public void testOnInstance() throws Exception {
@@ -50,7 +54,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
         Bundle result = requestBodyAndHeaders("direct://ON_INSTANCE", null, headers);
 
         LOG.debug("onInstance: " + result);
-        assertNotNull("onInstance result", result);
+        assertNotNull(result, "onInstance result");
         assertEquals(1, result.getEntry().size());
     }
 
@@ -62,7 +66,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
         Bundle result = requestBodyAndHeaders("direct://ON_SERVER", null, headers);
 
         LOG.debug("onServer: " + result);
-        assertNotNull("onServer result", result);
+        assertNotNull(result, "onServer result");
         assertEquals(1, result.getEntry().size());
     }
 
@@ -79,7 +83,7 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
         Bundle result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
         LOG.debug("onType: " + result);
-        assertNotNull("onType result", result);
+        assertNotNull(result, "onType result");
         assertEquals(1, result.getEntry().size());
     }
 
@@ -93,13 +97,12 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
         // parameter type is Integer
         headers.put("CamelFhir.count", 1);
         // only include the identifier and name
-        headers.put(ExtraParameters.SUBSET_ELEMENTS.getHeaderName(), new String[]{"identifier", "name"});
-
+        headers.put(ExtraParameters.SUBSET_ELEMENTS.getHeaderName(), new String[] { "identifier", "name" });
 
         Bundle result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
         LOG.debug("onType: " + result);
-        assertNotNull("onType result", result);
+        assertNotNull(result, "onType result");
         assertEquals(1, result.getEntry().size());
     }
 
@@ -109,15 +112,15 @@ public class FhirHistoryIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for onInstance
                 from("direct://ON_INSTANCE")
-                    .to("fhir://" + PATH_PREFIX + "/onInstance");
+                        .to("fhir://" + PATH_PREFIX + "/onInstance");
 
                 // test route for onServer
                 from("direct://ON_SERVER")
-                    .to("fhir://" + PATH_PREFIX + "/onServer");
+                        .to("fhir://" + PATH_PREFIX + "/onServer");
 
                 // test route for onType
                 from("direct://ON_TYPE")
-                    .to("fhir://" + PATH_PREFIX + "/onType");
+                        .to("fhir://" + PATH_PREFIX + "/onType");
             }
         };
     }

@@ -25,8 +25,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsumerAutoDownloadFileTest extends SoroushBotTestSupport {
     @Override
@@ -46,11 +48,13 @@ public class ConsumerAutoDownloadFileTest extends SoroushBotTestSupport {
         mockEndpoint.setExpectedCount(4);
         mockEndpoint.assertIsSatisfied();
         List<Exchange> exchanges = mockEndpoint.getExchanges();
-        Assert.assertEquals(exchanges.size(), 4);
+        assertEquals(exchanges.size(), 4);
         exchanges.forEach(exchange -> {
             SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
-            Assert.assertTrue("if fileUrl is not null file may not be null and visa versa", body.getFile() == null ^ body.getFileUrl() != null);
-            Assert.assertTrue("if and only if thumbnail url is null thumbnail may be null", body.getThumbnail() == null ^ body.getThumbnailUrl() != null);
+            assertTrue(body.getFile() == null ^ body.getFileUrl() != null,
+                    "if fileUrl is not null file may not be null and visa versa");
+            assertTrue(body.getThumbnail() == null ^ body.getThumbnailUrl() != null,
+                    "if and only if thumbnail url is null thumbnail may be null");
         });
 
     }

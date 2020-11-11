@@ -24,14 +24,14 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The atomix-map component is used to access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedmap">distributed map</a>.
+ * Access Atomix's <a href="http://atomix.io/atomix/docs/collections/#distributedmap">distributed map</a>.
  */
 @UriEndpoint(
-    firstVersion = "2.20.0",
-    scheme = "atomix-map",
-    title = "Atomix Map",
-    syntax = "atomix-map:resourceName",
-    label = "clustering")
+             firstVersion = "2.20.0",
+             scheme = "atomix-map",
+             title = "Atomix Map",
+             syntax = "atomix-map:resourceName",
+             label = "clustering")
 public class AtomixMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMapComponent, AtomixMapConfiguration> {
     @UriParam
     private AtomixMapConfiguration configuration;

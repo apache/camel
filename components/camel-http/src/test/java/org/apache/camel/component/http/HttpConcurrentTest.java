@@ -16,63 +16,52 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpConcurrentTest extends BaseHttpTest {
 
     private final AtomicInteger counter = new AtomicInteger();
 
-
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new HttpRequestHandler() {
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            // ignore
-                        }
-                        response.setStatusCode(HttpStatus.SC_OK);
-                        response.setEntity(new StringEntity("" + counter.incrementAndGet()));
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", (request, response, context) -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        // ignore
                     }
+                    response.setStatusCode(HttpStatus.SC_OK);
+                    response.setEntity(new StringEntity("" + counter.incrementAndGet()));
                 }).create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -98,13 +87,10 @@ public class HttpConcurrentTest extends BaseHttpTest {
         // so no need for a thread-safe Map implementation
         Map<Integer, Future<String>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
-            final int index = i;
-            Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
-                    return template.requestBody("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort(), null, String.class);
-                }
-            });
-            responses.put(index, out);
+            Future<String> out = executor.submit(() -> template.requestBody(
+                    "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort(), null,
+                    String.class));
+            responses.put(i, out);
         }
 
         assertEquals(files, responses.size());
@@ -116,7 +102,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
         }
 
         // should be 'files' unique responses
-        assertEquals("Should be " + files + " unique responses", files, unique.size());
+        assertEquals(files, unique.size(), "Should be " + files + " unique responses");
         executor.shutdownNow();
     }
 

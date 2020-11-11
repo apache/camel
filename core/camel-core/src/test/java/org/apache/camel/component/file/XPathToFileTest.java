@@ -23,13 +23,16 @@ import org.w3c.dom.Document;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XPathToFileTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/xpath");
         super.setUp();
@@ -40,7 +43,8 @@ public class XPathToFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
-        String xml = "<foo><person id=\"1\">Claus<country>SE</country></person>" + "<person id=\"2\">Jonathan<country>CA</country></person></foo>";
+        String xml = "<foo><person id=\"1\">Claus<country>SE</country></person>"
+                     + "<person id=\"2\">Jonathan<country>CA</country></person></foo>";
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);
 
         template.sendBody("direct:start", doc);
@@ -48,12 +52,14 @@ public class XPathToFileTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         File first = new File("target/data/xpath/xpath-0.xml");
-        assertTrue("File xpath-0.xml should exists", first.exists());
-        assertEquals("<person id=\"1\">Claus<country>SE</country></person>", context.getTypeConverter().convertTo(String.class, first));
+        assertTrue(first.exists(), "File xpath-0.xml should exists");
+        assertEquals("<person id=\"1\">Claus<country>SE</country></person>",
+                context.getTypeConverter().convertTo(String.class, first));
 
         File second = new File("target/data/xpath/xpath-1.xml");
-        assertTrue("File xpath-1.xml should exists", second.exists());
-        assertEquals("<person id=\"2\">Jonathan<country>CA</country></person>", context.getTypeConverter().convertTo(String.class, second));
+        assertTrue(second.exists(), "File xpath-1.xml should exists");
+        assertEquals("<person id=\"2\">Jonathan<country>CA</country></person>",
+                context.getTypeConverter().convertTo(String.class, second));
     }
 
     @Override
@@ -61,8 +67,9 @@ public class XPathToFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(xpath("/foo/person")).log("${bodyAs(String)}").to("file://target/data/xpath?fileName=xpath-${exchangeProperty.CamelSplitIndex}.xml")
-                    .to("mock:result");
+                from("direct:start").split(xpath("/foo/person")).log("${bodyAs(String)}")
+                        .to("file://target/data/xpath?fileName=xpath-${exchangeProperty.CamelSplitIndex}.xml")
+                        .to("mock:result");
             }
         };
     }

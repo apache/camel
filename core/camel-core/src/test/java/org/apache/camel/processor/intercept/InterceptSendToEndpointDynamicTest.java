@@ -20,17 +20,16 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
- * Unit test for intercepting sending to endpoint with dynamic endpoints and uri
- * matching
+ * Unit test for intercepting sending to endpoint with dynamic endpoints and uri matching
  */
 public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/foo");
         deleteDirectory("target/data/bar");
@@ -100,7 +99,8 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
                 // target/data/bar directory
                 interceptSendToEndpoint("file://target/data/(foo|bar)").skipSendToOriginalEndpoint().to("mock:detour");
 
-                from("direct:first").to("file://target/data/foo").to("file://target/data/bar").to("file://target/data/cheese").to("mock:result");
+                from("direct:first").to("file://target/data/foo").to("file://target/data/bar").to("file://target/data/cheese")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         });

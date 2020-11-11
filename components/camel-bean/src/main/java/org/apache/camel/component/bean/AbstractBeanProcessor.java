@@ -17,38 +17,33 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
+import org.apache.camel.BeanScope;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A {@link Processor} which converts the inbound exchange to a method
- * invocation on a POJO
+ * A {@link Processor} which converts the inbound exchange to a method invocation on a POJO
  */
 public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractBeanProcessor.class);
 
     private final BeanHolder beanHolder;
     private transient Processor processor;
     private transient boolean lookupProcessorDone;
     private final Object lock = new Object();
-    private Boolean cache;
+    private BeanScope scope;
     private String method;
     private boolean shorthandMethod;
 
     public AbstractBeanProcessor(Object pojo, BeanInfo beanInfo) {
         this(new ConstantBeanHolder(pojo, beanInfo));
-    }
-
-    public AbstractBeanProcessor(Object pojo, CamelContext camelContext, ParameterMappingStrategy parameterMappingStrategy) {
-        this(pojo, new BeanInfo(camelContext, pojo.getClass(), parameterMappingStrategy));
-    }
-
-    public AbstractBeanProcessor(Object pojo, CamelContext camelContext) {
-        this(pojo, camelContext, BeanInfo.createParameterMappingStrategy(camelContext));
     }
 
     public AbstractBeanProcessor(BeanHolder beanHolder) {
@@ -68,7 +63,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         Object bean;
         BeanInfo beanInfo;
         try {
-            bean = beanHolder.getBean();
+            bean = beanHolder.getBean(exchange);
             // get bean info for this bean instance (to avoid thread issue)
             beanInfo = beanHolder.getBeanInfo(bean);
             if (beanInfo == null) {
@@ -88,7 +83,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
             Processor target = getProcessor();
             if (target == null) {
                 // only attempt to lookup the processor once or nearly once
-                boolean allowCache = cache == null || cache; // allow cache by default
+                // allow cache by default or if the scope is singleton
+                boolean allowCache = scope == null || scope == BeanScope.Singleton;
                 if (allowCache) {
                     if (!lookupProcessorDone) {
                         synchronized (lock) {
@@ -104,8 +100,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
                 }
             }
             if (target != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Using a custom adapter as bean invocation: {}", target);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Using a custom adapter as bean invocation: {}", target);
                 }
                 try {
                     target.process(exchange);
@@ -139,7 +135,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         }
 
         if (invocation == null) {
-            exchange.setException(new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean));
+            exchange.setException(new IllegalStateException(
+                    "No method invocation could be created, no matching method could be found on: " + bean));
             callback.done(true);
             return true;
         }
@@ -157,7 +154,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     }
 
     public Object getBean() {
-        return beanHolder.getBean();
+        return beanHolder.getBean(null);
     }
 
     // Properties
@@ -167,12 +164,12 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         return method;
     }
 
-    public Boolean getCache() {
-        return cache;
+    public BeanScope getScope() {
+        return scope;
     }
 
-    public void setCache(Boolean cache) {
-        this.cache = cache;
+    public void setScope(BeanScope scope) {
+        this.scope = scope;
     }
 
     /**
@@ -187,8 +184,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     }
 
     /**
-     * Sets whether to support getter style method name, so you can
-     * say the method is called 'name' but it will invoke the 'getName' method.
+     * Sets whether to support getter style method name, so you can say the method is called 'name' but it will invoke
+     * the 'getName' method.
      * <p/>
      * Is by default turned off.
      */
@@ -208,7 +205,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
             try {
                 // Start the bean if it implements Service interface and if cached
                 // so meant to be reused
-                ServiceHelper.startService(beanHolder.getBean());
+                ServiceHelper.startService(beanHolder.getBean(null));
             } catch (NoSuchBeanException e) {
                 // ignore
             }
@@ -223,7 +220,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
             try {
                 // Stop the bean if it implements Service interface and if cached
                 // so meant to be reused
-                ServiceHelper.stopService(beanHolder.getBean());
+                ServiceHelper.stopService(beanHolder.getBean(null));
             } catch (NoSuchBeanException e) {
                 // ignore
             }

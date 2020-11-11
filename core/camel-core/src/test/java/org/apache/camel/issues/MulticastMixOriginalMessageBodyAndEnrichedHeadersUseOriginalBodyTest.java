@@ -18,7 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalBodyTest extends ContextTestSupport {
 
@@ -36,8 +36,9 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersUseOriginalBodyTes
 
                 onException(Exception.class).useOriginalBody().handled(true).to("mock:b");
 
-                from("direct:start").setBody(constant("Changed body")).setHeader("foo", constant("bar")).multicast().shareUnitOfWork().stopOnException().to("direct:a")
-                    .to("direct:b").end();
+                from("direct:start").setBody(constant("Changed body")).setHeader("foo", constant("bar")).multicast()
+                        .shareUnitOfWork().stopOnException().to("direct:a")
+                        .to("direct:b").end();
 
                 from("direct:a").to("mock:a");
 

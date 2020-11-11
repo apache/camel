@@ -21,15 +21,16 @@ import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class SessionIntegrationTest extends Assert implements SalesforceSession.SalesforceSessionListener {
+public class SessionIntegrationTest implements SalesforceSession.SalesforceSessionListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(SessionIntegrationTest.class);
     private static final int TIMEOUT = 60000;
@@ -44,7 +45,8 @@ public class SessionIntegrationTest extends Assert implements SalesforceSession.
         final SalesforceHttpClient httpClient = new SalesforceHttpClient(sslContextFactory);
         httpClient.setConnectTimeout(TIMEOUT);
 
-        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), httpClient, TIMEOUT, LoginConfigHelper.getLoginConfig());
+        final SalesforceSession session
+                = new SalesforceSession(new DefaultCamelContext(), httpClient, TIMEOUT, LoginConfigHelper.getLoginConfig());
         session.addListener(this);
         httpClient.setSession(session);
 
@@ -53,15 +55,15 @@ public class SessionIntegrationTest extends Assert implements SalesforceSession.
             String loginToken = session.login(session.getAccessToken());
             LOG.info("First token " + loginToken);
 
-            assertTrue("SalesforceSessionListener onLogin NOT called", onLoginTriggered);
+            assertTrue(onLoginTriggered, "SalesforceSessionListener onLogin NOT called");
             onLoginTriggered = false;
 
             // refresh token, also causes logout
             loginToken = session.login(loginToken);
             LOG.info("Refreshed token " + loginToken);
 
-            assertTrue("SalesforceSessionListener onLogout NOT called", onLogoutTriggered);
-            assertTrue("SalesforceSessionListener onLogin NOT called", onLoginTriggered);
+            assertTrue(onLogoutTriggered, "SalesforceSessionListener onLogout NOT called");
+            assertTrue(onLoginTriggered, "SalesforceSessionListener onLogin NOT called");
 
         } finally {
             // logout finally

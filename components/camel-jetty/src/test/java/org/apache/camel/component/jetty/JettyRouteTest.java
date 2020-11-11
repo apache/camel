@@ -21,7 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for wiki demonstration.
@@ -39,7 +42,7 @@ public class JettyRouteTest extends BaseJettyTest {
     @Test
     public void testHttpProxyHostHeader() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/proxyServer", null, String.class);
-        assertEquals("Get a wrong host header", "localhost:" + getPort2(), out);
+        assertEquals("localhost:" + getPort2(), out, "Get a wrong host header");
     }
 
     @Override
@@ -73,7 +76,7 @@ public class JettyRouteTest extends BaseJettyTest {
             assertEquals("bookid=123", body);
 
             // send a html response
-            exchange.getOut().setBody("<html><body>Book 123 is Camel in Action</body></html>");
+            exchange.getMessage().setBody("<html><body>Book 123 is Camel in Action</body></html>");
         }
     }
     // END SNIPPET: e2

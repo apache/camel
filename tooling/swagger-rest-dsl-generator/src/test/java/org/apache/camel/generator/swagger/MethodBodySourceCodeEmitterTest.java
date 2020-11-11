@@ -19,7 +19,7 @@ package org.apache.camel.generator.swagger;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.MethodSpec.Builder;
 import org.apache.camel.model.rest.RestParamType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,8 +33,8 @@ public class MethodBodySourceCodeEmitterTest {
 
         emitter.emit("rest");
         emitter.emit("put", "/pet");
-        emitter.emit("consumes", new Object[] {new String[] {"application/json", "application/xml"}});
-        emitter.emit("produces", new Object[] {new String[] {"application/xml", "application/json"}});
+        emitter.emit("consumes", new Object[] { new String[] { "application/json", "application/xml" } });
+        emitter.emit("produces", new Object[] { new String[] { "application/xml", "application/json" } });
         emitter.emit("param");
         emitter.emit("name", "body");
         emitter.emit("type", RestParamType.body);
@@ -42,15 +42,15 @@ public class MethodBodySourceCodeEmitterTest {
         emitter.emit("endParam");
 
         assertThat(emitter.result().toString()).isEqualTo("void configure() {\n"//
-            + "  rest()\n"//
-            + "    .put(\"/pet\")\n"//
-            + "      .consumes(\"application/json,application/xml\")\n"//
-            + "      .produces(\"application/xml,application/json\")\n"//
-            + "      .param()\n"//
-            + "        .name(\"body\")\n"//
-            + "        .type(org.apache.camel.model.rest.RestParamType.body)\n"//
-            + "        .required(true)\n"//
-            + "      .endParam();\n"//
-            + "}\n");
+                                                          + "  rest()\n"//
+                                                          + "    .put(\"/pet\")\n"//
+                                                          + "      .consumes(\"application/json,application/xml\")\n"//
+                                                          + "      .produces(\"application/xml,application/json\")\n"//
+                                                          + "      .param()\n"//
+                                                          + "        .name(\"body\")\n"//
+                                                          + "        .type(org.apache.camel.model.rest.RestParamType.body)\n"//
+                                                          + "        .required(true)\n"//
+                                                          + "      .endParam();\n"//
+                                                          + "}\n");
     }
 }

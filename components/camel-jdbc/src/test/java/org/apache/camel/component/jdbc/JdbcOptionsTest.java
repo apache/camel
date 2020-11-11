@@ -24,7 +24,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JdbcOptionsTest extends AbstractJdbcTestSupport {
 
@@ -56,7 +60,6 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
         mock.assertIsSatisfied();
 
         String body = mock.getExchanges().get(0).getIn().getBody(String.class);
-        assertNull(body);
 
         // now test to see that they were inserted and committed properly
         MockEndpoint mockTest = getMockEndpoint("mock:retrieve");
@@ -78,18 +81,18 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             assertEquals("No bean could be found in the registry for: xxx of type: javax.sql.DataSource",
-                e.getCause().getMessage());
+                    e.getCause().getMessage());
         }
     }
-    
+
     @Test
     public void testResettingAutoCommitOption() throws Exception {
         Connection connection = db.getConnection();
         assertTrue(connection.getAutoCommit());
         connection.close();
-        
+
         template.sendBody("direct:retrieve", "select * from customer");
-        
+
         connection = db.getConnection();
         assertTrue(connection.getAutoCommit());
         connection.close();

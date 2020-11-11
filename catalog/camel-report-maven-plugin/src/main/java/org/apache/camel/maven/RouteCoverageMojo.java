@@ -80,11 +80,9 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     /**
      * Whether to fail if a route was not fully covered.
      *
-     * Note the option coverageThreshold can be used
-     * to set a minimum coverage threshold in percentage.
+     * Note the option coverageThreshold can be used to set a minimum coverage threshold in percentage.
      *
-     * @parameter property="camel.failOnError"
-     *            default-value="false"
+     * @parameter property="camel.failOnError" default-value="false"
      */
     @Parameter(property = "camel.failOnError", defaultValue = "false")
     private boolean failOnError;
@@ -92,8 +90,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     /**
      * The minimum route coverage in percent when using failOnError.
      *
-     * @parameter property="camel.coverageThreshold"
-     *            default-value="100"
+     * @parameter property="camel.coverageThreshold" default-value="100"
      */
     private byte coverageThreshold = 100;
 
@@ -104,24 +101,24 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     private boolean includeTest;
 
     /**
-     * To filter the names of java and xml files to only include files matching any of the given list of patterns (wildcard and regular expression).
-     * Multiple values can be separated by comma.
+     * To filter the names of java and xml files to only include files matching any of the given list of patterns
+     * (wildcard and regular expression). Multiple values can be separated by comma.
      */
     @Parameter(property = "camel.includes")
     private String includes;
 
     /**
-     * To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard and regular expression).
-     * Multiple values can be separated by comma.
+     * To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard
+     * and regular expression). Multiple values can be separated by comma.
      */
     @Parameter(property = "camel.excludes")
     private String excludes;
 
     /**
-     * Whether to allow anonymous routes (routes without any route id assigned).
-     * By using route id's then its safer to match the route cover data with the route source code.
-     * Anonymous routes are less safe to use for route coverage as its harder to know
-     * exactly which route that was tested corresponds to which of the routes from the source code.
+     * Whether to allow anonymous routes (routes without any route id assigned). By using route id's then its safer to
+     * match the route cover data with the route source code. Anonymous routes are less safe to use for route coverage
+     * as its harder to know exactly which route that was tested corresponds to which of the routes from the source
+     * code.
      */
     @Parameter(property = "camel.anonymousRoutes", defaultValue = "false")
     private boolean anonymousRoutes;
@@ -253,7 +250,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
             // grab dump data for the route
             try {
-                List<CoverageData> coverageData = RouteCoverageHelper.parseDumpRouteCoverageByRouteId("target/camel-route-coverage", routeId);
+                List<CoverageData> coverageData = RouteCoverageHelper.parseDumpRouteCoverageByRouteId(project.getBasedir() + "/target/camel-route-coverage", routeId);
                 if (coverageData.isEmpty()) {
                     getLog().warn("No route coverage data found for route: " + routeId
                         + ". Make sure to enable route coverage in your unit tests and assign unique route ids to your routes. Also remember to run unit tests first.");
@@ -285,7 +282,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         if (anonymousRoutes && !anonymousRouteTrees.isEmpty()) {
             // grab dump data for the route
             try {
-                Map<String, List<CoverageData>> datas = RouteCoverageHelper.parseDumpRouteCoverageByClassAndTestMethod("target/camel-route-coverage");
+                Map<String, List<CoverageData>> datas = RouteCoverageHelper.parseDumpRouteCoverageByClassAndTestMethod(project.getBasedir() + "/target/camel-route-coverage");
                 if (datas.isEmpty()) {
                     getLog().warn("No route coverage data found"
                         + ". Make sure to enable route coverage in your unit tests. Also remember to run unit tests first.");
@@ -380,7 +377,9 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     // CHECKSTYLE:ON
 
     @SuppressWarnings("unchecked")
-    private String templateCoverageData(String fileName, String routeId, List<RouteCoverageNode> model, AtomicInteger notCovered) throws MojoExecutionException {
+    private String templateCoverageData(
+            String fileName, String routeId, List<RouteCoverageNode> model, AtomicInteger notCovered)
+            throws MojoExecutionException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         PrintStream sw = new PrintStream(bos);
 
@@ -416,14 +415,16 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         }
 
         sw.println();
-        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format("%.1f", percentage) + "% / threshold " + coverageThreshold + ".0%)");
+        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format("%.1f", percentage)
+                   + "% / threshold " + coverageThreshold + ".0%)");
         sw.println("Status: " + (success ? "Success" : "Failed"));
         sw.println();
 
         return bos.toString();
     }
 
-    private static List<RouteCoverageNode> gatherRouteCoverageSummary(List<CamelNodeDetails> route, List<CoverageData> coverageData) {
+    private static List<RouteCoverageNode> gatherRouteCoverageSummary(
+            List<CamelNodeDetails> route, List<CoverageData> coverageData) {
         List<RouteCoverageNode> answer = new ArrayList<>();
 
         Iterator<CoverageData> it = coverageData.iterator();
@@ -435,7 +436,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         return answer;
     }
 
-    private static void gatherRouteCoverageSummary(CamelNodeDetails node, Iterator<CoverageData> it, AtomicInteger level, List<RouteCoverageNode> answer) {
+    private static void gatherRouteCoverageSummary(
+            CamelNodeDetails node, Iterator<CoverageData> it, AtomicInteger level, List<RouteCoverageNode> answer) {
         // we want to skip data for policy/transacted as they are abstract nodes and just gather their children immediately
         boolean skipData = "policy".equals(node.getName()) || "transacted".equals(node.getName());
         if (skipData) {
@@ -598,8 +600,9 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         return name;
     }
 
-    private void appendSourcefileNode(Document document, String sourceFileName, Element pack,
-                                      List<RouteCoverageNode> coverage) {
+    private void appendSourcefileNode(
+            Document document, String sourceFileName, Element pack,
+            List<RouteCoverageNode> coverage) {
         Element sourcefile = document.createElement("sourcefile");
         createAttrString(document, sourcefile, "name", sourceFileName);
         pack.appendChild(sourcefile);

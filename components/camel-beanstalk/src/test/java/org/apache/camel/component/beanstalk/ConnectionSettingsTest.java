@@ -17,39 +17,44 @@
 package org.apache.camel.component.beanstalk;
 
 import com.surftools.BeanstalkClient.Client;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConnectionSettingsTest {
 
     @Test
-    public void parseUriTest() {
+    void parseUriTest() {
         final ConnectionSettingsFactory factory = BeanstalkComponent.getConnectionSettingsFactory();
-        assertEquals("Full URI", new ConnectionSettings("host.domain.tld", 11300, "someTube"), factory.parseUri("host.domain.tld:11300/someTube"));
-        assertEquals("No port", new ConnectionSettings("host.domain.tld", Client.DEFAULT_PORT, "someTube"), factory.parseUri("host.domain.tld/someTube"));
-        assertEquals("Only tube", new ConnectionSettings(Client.DEFAULT_HOST, Client.DEFAULT_PORT, "someTube"), factory.parseUri("someTube"));
+        assertEquals(new ConnectionSettings("host.domain.tld", 11300, "someTube"),
+                factory.parseUri("host.domain.tld:11300/someTube"), "Full URI");
+        assertEquals(new ConnectionSettings("host.domain.tld", Client.DEFAULT_PORT, "someTube"),
+                factory.parseUri("host.domain.tld/someTube"), "No port");
+        assertEquals(new ConnectionSettings(Client.DEFAULT_HOST, Client.DEFAULT_PORT, "someTube"), factory.parseUri("someTube"),
+                "Only tube");
     }
 
     @Test
-    public void parseTubesTest() {
+    void parseTubesTest() {
         final ConnectionSettingsFactory factory = BeanstalkComponent.getConnectionSettingsFactory();
-        assertArrayEquals("Full URI", new String[]{"tube1", "tube2"}, factory.parseUri("host:90/tube1+tube2").tubes);
-        assertArrayEquals("No port", new String[]{"tube1", "tube2"}, factory.parseUri("host/tube1+tube2").tubes);
-        assertArrayEquals("Only tubes", new String[]{"tube1", "tube2"}, factory.parseUri("tube1+tube2").tubes);
-        assertArrayEquals("Empty URI", new String[0], factory.parseUri("").tubes);
+        assertArrayEquals(new String[] { "tube1", "tube2" }, factory.parseUri("host:90/tube1+tube2").tubes, "Full URI");
+        assertArrayEquals(new String[] { "tube1", "tube2" }, factory.parseUri("host/tube1+tube2").tubes, "No port");
+        assertArrayEquals(new String[] { "tube1", "tube2" }, factory.parseUri("tube1+tube2").tubes, "Only tubes");
+        assertArrayEquals(new String[0], factory.parseUri("").tubes, "Empty URI");
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void notValidHost() {
-        final ConnectionSettingsFactory factory = BeanstalkComponent.getConnectionSettingsFactory();
-        fail(String.format("Calling on not valid URI must raise exception, but got result %s", factory.parseUri("not_valid?host/tube?")));
+    @Test
+    void notValidHost() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            final ConnectionSettingsFactory factory = BeanstalkComponent.getConnectionSettingsFactory();
+            factory.parseUri("not_valid?host/tube?");
+        }, "Calling on not valid URI must raise exception");
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         BeanstalkComponent.setConnectionSettingsFactory(new ConnectionSettingsFactory());
     }

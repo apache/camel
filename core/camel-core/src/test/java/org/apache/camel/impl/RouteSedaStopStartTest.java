@@ -21,7 +21,9 @@ import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteSedaStopStartTest extends ContextTestSupport {
 
@@ -44,7 +46,7 @@ public class RouteSedaStopStartTest extends ContextTestSupport {
         assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
         Route route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Stopped", ((StatefulService)route).getStatus().name());
+            assertEquals("Stopped", ((StatefulService) route).getStatus().name());
         }
 
         template.sendBody("seda:foo", "B");
@@ -61,7 +63,7 @@ public class RouteSedaStopStartTest extends ContextTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
         route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Started", ((StatefulService)route).getStatus().name());
+            assertEquals("Started", ((StatefulService) route).getStatus().name());
         }
     }
 

@@ -27,9 +27,12 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SqsComponentSpringTest extends CamelSpringTestSupport {
 
@@ -83,8 +86,8 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ATTRIBUTES));
 
-        assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
+        assertNotNull(exchange.getMessage().getHeader(SqsConstants.MESSAGE_ID));
+        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getMessage().getHeader(SqsConstants.MD5_OF_BODY));
     }
 
     @Test

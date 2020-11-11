@@ -23,13 +23,16 @@ import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.apache.camel.dataformat.csv.TestUtils.LS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * Spring based integration test for the <code>CsvDataFormat</code> demonstrating the usage of
- * the <tt>autogenColumns</tt>, <tt>configRef</tt> and <tt>strategyRef</tt> options.
+ * Spring based integration test for the <code>CsvDataFormat</code> demonstrating the usage of the
+ * <tt>autogenColumns</tt>, <tt>configRef</tt> and <tt>strategyRef</tt> options.
  */
 public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
 
@@ -40,7 +43,7 @@ public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
     private MockEndpoint result2;
 
     @Test
-    public void retrieveColumnsWithAutogenColumnsFalseAndItemColumnsSet() throws Exception {
+    void retrieveColumnsWithAutogenColumnsFalseAndItemColumnsSet() throws Exception {
         result.expectedMessageCount(1);
 
         template.sendBody("direct:start", createBody());
@@ -55,7 +58,7 @@ public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void retrieveColumnsWithAutogenColumnsFalseAndOrderIdAmountColumnsSet() throws Exception {
+    void retrieveColumnsWithAutogenColumnsFalseAndOrderIdAmountColumnsSet() throws Exception {
         result2.expectedMessageCount(1);
 
         template.sendBody("direct:start2", createBody());
@@ -88,6 +91,7 @@ public class CsvMarshalAutogenColumnsSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvMarshalAutogenColumnsSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvMarshalAutogenColumnsSpringTest-context.xml");
     }
 }

@@ -1,0 +1,16 @@
+[[jta-other]]
+= JTA Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-jta/src/main/docs/jta.adoc
+:docTitle: JTA
+:artifactId: camel-jta
+:description: Using Camel With JTA Transaction Manager
+:since: 3.4
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/jta.adoc[opts=optional]
+
+*Since Camel {since}*
+
+The `camel-jta` component is used for integrating Camel's transaction support with JTA.
+
+See more details in the xref:{eip-vc}:eips:transactional-client.adoc[Transactional Client] documentation.

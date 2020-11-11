@@ -23,7 +23,6 @@ import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.PodSpec;
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -45,7 +44,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -60,28 +59,28 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_PODS_OPERATION:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_PODS_OPERATION:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_PODS_BY_LABELS_OPERATION:
-            doListPodsByLabel(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_PODS_BY_LABELS_OPERATION:
+                doListPodsByLabel(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_POD_OPERATION:
-            doGetPod(exchange, operation);
-            break;
+            case KubernetesOperations.GET_POD_OPERATION:
+                doGetPod(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_POD_OPERATION:
-            doCreatePod(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_POD_OPERATION:
+                doCreatePod(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_POD_OPERATION:
-            doDeletePod(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_POD_OPERATION:
+                doDeletePod(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -104,7 +103,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get pods by labels require specify a labels set");
         }
 
-        FilterWatchListMultiDeletable<Pod, PodList, Boolean, Watch, Watcher<Pod>> pods = getEndpoint().getKubernetesClient().pods().inAnyNamespace();
+        FilterWatchListMultiDeletable<Pod, PodList, Boolean, Watch> pods
+                = getEndpoint().getKubernetesClient().pods().inAnyNamespace();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             pods.withLabel(entry.getKey(), entry.getValue());
         }
@@ -150,7 +150,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Create a specific pod require specify a pod spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
-        Pod podCreating = new PodBuilder().withNewMetadata().withName(podName).withLabels(labels).endMetadata().withSpec(podSpec).build();
+        Pod podCreating = new PodBuilder().withNewMetadata().withName(podName).withLabels(labels).endMetadata()
+                .withSpec(podSpec).build();
         pod = getEndpoint().getKubernetesClient().pods().inNamespace(namespaceName).create(podCreating);
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);

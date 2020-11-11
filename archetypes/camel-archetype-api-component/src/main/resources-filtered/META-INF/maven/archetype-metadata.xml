@@ -27,17 +27,11 @@
     <requiredProperty key="camel-version">
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="log4j-version">
-      <defaultValue>${log4j-version}</defaultValue>
-    </requiredProperty>
     <requiredProperty key="maven-compiler-plugin-version">
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="maven-resources-plugin-version">
       <defaultValue>${maven-resources-plugin-version}</defaultValue>
-    </requiredProperty>
-    <requiredProperty key="maven-bundle-plugin-version">
-      <defaultValue>${maven-bundle-plugin-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="maven-javadoc-plugin-version">
       <defaultValue>${maven-javadoc-plugin-version}</defaultValue>
@@ -45,11 +39,17 @@
     <requiredProperty key="build-helper-maven-plugin-version">
       <defaultValue>${build-helper-maven-plugin-version}</defaultValue>
     </requiredProperty>
+    <requiredProperty key="maven-surefire-plugin-version">
+      <defaultValue>${maven-surefire-plugin-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="junit-jupiter-version">
+      <defaultValue>${junit-jupiter-version}</defaultValue>
+    </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>
     </requiredProperty>
-    <requiredProperty key="log4j-version">
-      <defaultValue>${log4j-version}</defaultValue>
+    <requiredProperty key="log4j2-version">
+      <defaultValue>${log4j2-version}</defaultValue>
     </requiredProperty>
   </requiredProperties>
 

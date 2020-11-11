@@ -16,15 +16,41 @@
  */
 package org.apache.camel.component.resilience4j;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CircuitBreakerConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResilienceRouteOkTest extends CamelTestSupport {
 
+    private BeanIntrospection bi;
+
+    @Override
+    protected boolean useJmx() {
+        return false;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        bi.setLoggingLevel(LoggingLevel.INFO);
+        bi.resetCounters();
+
+        return context;
+    }
+
     @Test
     public void testResilience() throws Exception {
+        assertEquals(0, bi.getInvokedCounter());
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
@@ -32,6 +58,8 @@ public class ResilienceRouteOkTest extends CamelTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+
+        assertEquals(0, bi.getInvokedCounter());
     }
 
     @Override
@@ -39,7 +67,8 @@ public class ResilienceRouteOkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").circuitBreaker().to("direct:foo").to("log:foo").onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start").circuitBreaker().to("direct:foo").to("log:foo").onFallback().transform()
+                        .constant("Fallback message").end().to("log:result").to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }

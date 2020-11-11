@@ -23,12 +23,16 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -39,7 +43,7 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     private FileIdempotentRepository repository = new FileIdempotentRepository();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/inbox");
         createDirectory("target/data/inbox");
@@ -55,8 +59,8 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
 
         repository.setFileStore(new File("target/repo.txt"));
         jndi.bind("repo", repository);
@@ -70,7 +74,8 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(RuntimeException.class).process(new ShutDown());
 
-                from("file:target/data/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10").to("log:begin").inOut("seda:process");
+                from("file:target/data/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10")
+                        .to("log:begin").to(ExchangePattern.InOut, "seda:process");
 
                 from("seda:process").throwException(new RuntimeException("Testing with exception"));
             }
@@ -80,9 +85,9 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     @Test
     public void testRepo() throws Exception {
         boolean done = latch.await(10, TimeUnit.SECONDS);
-        assertTrue("Should stop Camel", done);
+        assertTrue(done, "Should stop Camel");
 
-        assertEquals("No file should be reported consumed", 0, repository.getCache().keySet().size());
+        assertEquals(0, repository.getCache().keySet().size(), "No file should be reported consumed");
     }
 
     protected class ShutDown implements Processor {
@@ -100,8 +105,8 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
                         log.info("Stopped Camel complete");
                         latch.countDown();
                     } catch (Exception e) {
-                        // ignore
-                        e.printStackTrace();
+                        // safe to ignore
+                        log.trace("Exception was thrown (safe to ignore): {}", e.getMessage(), e);
                     }
                 }
             };

@@ -28,11 +28,18 @@ import org.apache.camel.Consumer;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link ScheduledBatchPollingConsumer}.
  */
 public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultScheduledPollConsumerScheduler.class);
+
+    private static final int DEFAULT_INITIAL_DELAY = 1000;
+    private static final int DEFAULT_DELAY = 500;
 
     private CamelContext camelContext;
     private Consumer consumer;
@@ -42,8 +49,8 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
     private Runnable task;
     private int concurrentTasks = 1;
 
-    private long initialDelay = 1000;
-    private long delay = 500;
+    private long initialDelay = -1;
+    private long delay = -1;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay = true;
 
@@ -135,22 +142,47 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
     @Override
     public void startScheduler() {
         // only schedule task if we have not already done that
-        if (futures.size() == 0) {
+
+        // convert initial and delay according to whether they have been set or need to use their default value
+        long currentInitialDelay;
+        if (initialDelay < 0) {
+            // compute the default initial delay that are millis to use current time unit
+            currentInitialDelay = timeUnit.convert(DEFAULT_INITIAL_DELAY, TimeUnit.MILLISECONDS);
+        } else {
+            currentInitialDelay = initialDelay;
+        }
+        long currentDelay;
+        if (delay <= 0) {
+            // compute the default delay that are millis to use current time unit
+            currentDelay = timeUnit.convert(DEFAULT_DELAY, TimeUnit.MILLISECONDS);
+            if (currentDelay <= 0) {
+                // delay must be at least 1
+                currentDelay = 1;
+            }
+        } else {
+            currentDelay = delay;
+        }
+
+        if (futures.isEmpty()) {
             if (isUseFixedDelay()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
-                            new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
+                            currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
+                            consumer.getEndpoint());
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
-                    futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, getInitialDelay(), getDelay(), getTimeUnit()));
+                    futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, currentInitialDelay, currentDelay,
+                            getTimeUnit()));
                 }
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
-                            new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
+                            currentInitialDelay, currentDelay, getTimeUnit().name().toLowerCase(Locale.ENGLISH),
+                            consumer.getEndpoint());
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
-                    futures.add(scheduledExecutorService.scheduleAtFixedRate(task, getInitialDelay(), getDelay(), getTimeUnit()));
+                    futures.add(scheduledExecutorService.scheduleAtFixedRate(task, currentInitialDelay, currentDelay,
+                            getTimeUnit()));
                 }
             }
         }
@@ -158,7 +190,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
 
     @Override
     public boolean isSchedulerStarted() {
-        return futures != null && futures.size() > 0;
+        return futures != null && !futures.isEmpty();
     }
 
     @Override
@@ -180,7 +212,7 @@ public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implem
     @Override
     protected void doStop() throws Exception {
         if (isSchedulerStarted()) {
-            log.debug("This consumer is stopping, so cancelling scheduled task: {}", futures);
+            LOG.debug("This consumer is stopping, so cancelling scheduled task: {}", futures);
             for (ScheduledFuture<?> future : futures) {
                 future.cancel(true);
             }

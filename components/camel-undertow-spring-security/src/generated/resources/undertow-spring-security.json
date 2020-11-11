@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "undertow-spring-security",
+    "title": "Undertow Spring Security",
+    "description": "Spring Security Provider for camel-undertow",
+    "deprecated": false,
+    "firstVersion": "3.3.0",
+    "label": "security",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-undertow-spring-security",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

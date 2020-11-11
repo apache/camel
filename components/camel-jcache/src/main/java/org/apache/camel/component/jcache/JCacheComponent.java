@@ -25,6 +25,7 @@ import javax.cache.configuration.Configuration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
@@ -32,10 +33,15 @@ import org.apache.camel.support.DefaultComponent;
 @Component("jcache")
 public class JCacheComponent extends DefaultComponent {
 
+    @Metadata
     private String cachingProvider;
+    @Metadata
     private Configuration cacheConfiguration;
+    @Metadata
     private String cacheConfigurationPropertiesRef;
+    @Metadata
     private Map cacheConfigurationProperties;
+    @Metadata
     private String configurationUri;
 
     public JCacheComponent() {
@@ -112,7 +118,8 @@ public class JCacheComponent extends DefaultComponent {
     }
 
     /**
-     * References to an existing {@link Properties} or {@link Map} to lookup in the registry to use for configuring jcache.
+     * References to an existing {@link Properties} or {@link Map} to lookup in the registry to use for configuring
+     * jcache.
      */
     public void setCacheConfigurationPropertiesRef(String cacheConfigurationPropertiesRef) {
         this.cacheConfigurationPropertiesRef = cacheConfigurationPropertiesRef;

@@ -20,13 +20,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileRecursiveDepthTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/depth");
         super.setUp();
@@ -86,11 +86,14 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("file:target/data/depth?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2").convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/depth?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2")
+                        .convertBodyTo(String.class).to("mock:result");
 
-                from("file:target/data/depth2?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=99").convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/depth2?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=99")
+                        .convertBodyTo(String.class).to("mock:result");
 
-                from("file:target/data/depth3?initialDelay=0&delay=10&recursive=true&minDepth=1&maxDepth=1").convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/depth3?initialDelay=0&delay=10&recursive=true&minDepth=1&maxDepth=1")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -87,7 +87,7 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         this.manager = manager;
         this.stoppeddRoutes = new HashSet<>();
         this.startedRoutes = new HashSet<>();
-        this.leader = new AtomicBoolean(false);
+        this.leader = new AtomicBoolean();
         this.shouldStopRoute = true;
         this.lockKey = lockKey;
         this.lockValue = lockValue;
@@ -112,7 +112,7 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         super.onInit(route);
 
         LOGGER.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
-        route.getRouteContext().setAutoStartup(false);
+        route.setAutoStartup(false);
 
         stoppeddRoutes.add(route);
 
@@ -139,7 +139,8 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
 
         try {
             this.manager.start();
-            this.executorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "InfinispanRoutePolicy");
+            this.executorService = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
+                    "InfinispanRoutePolicy");
 
             if (lifespanTimeUnit.convert(lifespan, TimeUnit.SECONDS) < 2) {
                 throw new IllegalArgumentException("Lock lifespan can not be less that 2 seconds");
@@ -268,7 +269,6 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         this.lockValue = lockValue;
     }
 
-
     @ManagedAttribute(description = "The key lifespan for the lock")
     public long getLifespan() {
         return lifespan;
@@ -363,6 +363,7 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
                 run();
             }
         }
+
         @CacheEntryExpired
         public void onCacheEntryExpired(CacheEntryEvent<Object, Object> event) {
             if (ObjectHelper.equal(lockKey, event.getKey())) {
@@ -372,7 +373,7 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
     }
 
     @ClientListener
-    private final class RemoteCacheService extends ServiceSupport  implements Runnable {
+    private final class RemoteCacheService extends ServiceSupport implements Runnable {
         private RemoteCache<String, String> cache;
         private ScheduledFuture<?> future;
         private Long version;
@@ -413,7 +414,7 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
                 LOGGER.debug("Lock refresh key={} with version={}", lockKey, version);
 
                 // I'm still the leader, so refresh the key so it does not expire.
-                if (!cache.replaceWithVersion(lockKey, lockValue, version, (int)lifespanTimeUnit.toSeconds(lifespan))) {
+                if (!cache.replaceWithVersion(lockKey, lockValue, version, (int) lifespanTimeUnit.toSeconds(lifespan))) {
                     setLeader(false);
                 } else {
                     version = cache.getWithMetadata(lockKey).getVersion();

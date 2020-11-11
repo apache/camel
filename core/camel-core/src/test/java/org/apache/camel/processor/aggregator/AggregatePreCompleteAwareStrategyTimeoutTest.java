@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInPreCompleteAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSupport {
 
@@ -68,8 +68,9 @@ public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
-                    .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy()).completionTimeout(100)
+                        .completionTimeoutCheckerInterval(10)
+                        .to("mock:aggregated");
             }
         };
     }

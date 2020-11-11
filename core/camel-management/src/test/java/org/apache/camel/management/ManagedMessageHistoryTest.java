@@ -24,7 +24,11 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedMessageHistoryTest extends ManagementTestSupport {
 
@@ -55,7 +59,7 @@ public class ManagedMessageHistoryTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
         Boolean mh = (Boolean) mbeanServer.getAttribute(on, "MessageHistory");
@@ -63,7 +67,7 @@ public class ManagedMessageHistoryTest extends ManagementTestSupport {
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultMessageHistoryFactory");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         Boolean en = (Boolean) mbeanServer.getAttribute(on, "Enabled");
         assertEquals(Boolean.TRUE, en);
         Boolean cm = (Boolean) mbeanServer.getAttribute(on, "CopyMessage");
@@ -81,23 +85,22 @@ public class ManagedMessageHistoryTest extends ManagementTestSupport {
                 context.getMessageHistoryFactory().setNodePattern("step");
 
                 from("direct:start")
-                    .step("a")
+                        .step("a")
                         .to("log:foo")
                         .to("mock:a")
-                    .end()
-                    .step("b")
+                        .end()
+                        .step("b")
                         .to("direct:bar")
                         .to("mock:b")
-                    .end();
+                        .end();
 
                 from("direct:bar")
-                    .step("bar")
+                        .step("bar")
                         .to("log:bar")
                         .to("mock:bar")
-                    .end();
+                        .end();
             }
         };
     }
-
 
 }

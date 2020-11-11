@@ -23,7 +23,10 @@ import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.Delimiters;
 import io.netty.util.CharsetUtil;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyManualEndpointTest extends BaseNettyTest {
 
@@ -54,7 +57,7 @@ public class NettyManualEndpointTest extends BaseNettyTest {
                 nettyConfig.setSync(false);
 
                 // need to add encoders and decoders manually
-                nettyConfig.setEncoder(ChannelHandlerFactories.newStringEncoder(CharsetUtil.UTF_8, "tcp"));
+                nettyConfig.addEncoder(ChannelHandlerFactories.newStringEncoder(CharsetUtil.UTF_8, "tcp"));
                 List<ChannelHandler> decoders = new ArrayList<>();
                 decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(1000, Delimiters.lineDelimiter(), "tcp"));
                 decoders.add(ChannelHandlerFactories.newStringDecoder(CharsetUtil.UTF_8, "tcp"));

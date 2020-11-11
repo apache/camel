@@ -24,15 +24,16 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The atomix-messaging component is used to access Atomix's <a href="http://atomix.io/atomix/docs/groups/#messaging">group messaging</a>.
+ * Access Atomix's <a href="http://atomix.io/atomix/docs/groups/#messaging">group messaging</a>.
  */
 @UriEndpoint(
-    firstVersion = "2.20.0",
-    scheme = "atomix-messaging",
-    title = "Atomix Messaging",
-    syntax = "atomix-messaging:resourceName",
-    label = "clustering")
-public final class AtomixMessagingEndpoint extends AbstractAtomixClientEndpoint<AtomixMessagingComponent, AtomixMessagingConfiguration> {
+             firstVersion = "2.20.0",
+             scheme = "atomix-messaging",
+             title = "Atomix Messaging",
+             syntax = "atomix-messaging:resourceName",
+             label = "clustering")
+public final class AtomixMessagingEndpoint
+        extends AbstractAtomixClientEndpoint<AtomixMessagingComponent, AtomixMessagingConfiguration> {
     @UriParam
     private AtomixMessagingConfiguration configuration;
 
@@ -62,4 +63,3 @@ public final class AtomixMessagingEndpoint extends AbstractAtomixClientEndpoint<
         this.configuration = configuration;
     }
 }
-

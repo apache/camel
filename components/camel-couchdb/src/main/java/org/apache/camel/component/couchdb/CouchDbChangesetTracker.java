@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.lightcouch.Changes;
 import org.lightcouch.ChangesResult;
 import org.lightcouch.CouchDbException;
-import org.lightcouch.CouchDbInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +45,7 @@ public class CouchDbChangesetTracker implements Runnable {
     private void initChanges(final String sequence) {
         String since = sequence;
         if (null == since) {
-            CouchDbInfo dbInfo = couchClient.context().info();
-            since = dbInfo.getUpdateSeq(); // get latest update seq
+            since = couchClient.getLatestUpdateSequence();
         }
         LOG.debug("Last sequence [{}]", since);
         changes = couchClient.changes().style(endpoint.getStyle()).includeDocs(true)
@@ -77,7 +75,8 @@ public class CouchDbChangesetTracker implements Runnable {
 
                         Exchange exchange = endpoint.createExchange(lastSequence, feed.getId(), doc, feed.isDeleted());
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Created exchange [exchange={}, _id={}, seq={}", new Object[]{exchange, feed.getId(), lastSequence});
+                            LOG.trace("Created exchange [exchange={}, _id={}, seq={}",
+                                    new Object[] { exchange, feed.getId(), lastSequence });
                         }
 
                         try {
@@ -93,7 +92,7 @@ public class CouchDbChangesetTracker implements Runnable {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("CouchDb Exception encountered waiting for changes!  Attempting to recover...", e);
                     }
-                    if (!waitForStability(lastSequence)) { 
+                    if (!waitForStability(lastSequence)) {
                         throw e;
                     }
                 }
@@ -129,9 +128,8 @@ public class CouchDbChangesetTracker implements Runnable {
                 problems = false;
 
             } catch (Exception e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Failed to get CouchDb server version and/or reset change listener!  Attempt: " + repeatDbErrorCount, e);
-                }
+                LOG.debug("Failed to get CouchDb server version and/or reset change listener!  Attempt: {}",
+                        repeatDbErrorCount, e);
             }
         }
         return true;

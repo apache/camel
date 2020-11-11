@@ -21,7 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregateFromWireTapTest extends ContextTestSupport {
 
@@ -40,7 +42,7 @@ public class AggregateFromWireTapTest extends ContextTestSupport {
 
         String body = aggregated.getReceivedExchanges().get(0).getIn().getBody(String.class);
         // should be either AB or BA (wiretap can be run out of order)
-        assertTrue("Should be AB or BA, was: " + body, "AB".equals(body) || "BA".equals(body));
+        assertTrue("AB".equals(body) || "BA".equals(body), "Should be AB or BA, was: " + body);
     }
 
     @Override
@@ -52,13 +54,14 @@ public class AggregateFromWireTapTest extends ContextTestSupport {
                 from("direct:start").wireTap("direct:tap").to("mock:end");
 
                 from("direct:tap")
-                    // just use a constant correlation expression as we want to
-                    // agg everything
-                    // in the same group. set batch size to two which means to
-                    // fire when we
-                    // have aggregated 2 messages, if not the timeout of 5 sec
-                    // will kick in
-                    .aggregate(constant(true), new MyAggregationStrategy()).completionSize(2).completionTimeout(5000L).to("direct:aggregated").end();
+                        // just use a constant correlation expression as we want to
+                        // agg everything
+                        // in the same group. set batch size to two which means to
+                        // fire when we
+                        // have aggregated 2 messages, if not the timeout of 5 sec
+                        // will kick in
+                        .aggregate(constant(true), new MyAggregationStrategy()).completionSize(2).completionTimeout(5000L)
+                        .to("direct:aggregated").end();
 
                 from("direct:aggregated").to("mock:aggregated");
             }

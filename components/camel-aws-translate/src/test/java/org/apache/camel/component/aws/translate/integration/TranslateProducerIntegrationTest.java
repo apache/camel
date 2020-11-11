@@ -24,11 +24,13 @@ import org.apache.camel.component.aws.translate.TranslateConstants;
 import org.apache.camel.component.aws.translate.TranslateLanguageEnum;
 import org.apache.camel.component.aws.translate.TranslateOperations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("This test must be manually started, you need to specify AWS Credentials")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("This test must be manually started, you need to specify AWS Credentials")
 public class TranslateProducerIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
@@ -50,7 +52,7 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String resultGet = (String)exchange.getIn().getBody();
+        String resultGet = (String) exchange.getIn().getBody();
         assertEquals("Hallo, Miss.", resultGet);
     }
 
@@ -69,7 +71,7 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String resultGet = (String)exchange.getIn().getBody();
+        String resultGet = (String) exchange.getIn().getBody();
         assertEquals("Hallo, Miss.", resultGet);
     }
 
@@ -78,9 +80,12 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:translateText").to("aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText").to("mock:result");
+                from("direct:translateText").to(
+                        "aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText")
+                        .to("mock:result");
                 from("direct:translateTextAuto")
-                    .to("aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText&autodetectSourceLanguage=true").to("mock:result");
+                        .to("aws-translate://test?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&operation=translateText&autodetectSourceLanguage=true")
+                        .to("mock:result");
             }
         };
     }

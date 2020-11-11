@@ -22,19 +22,18 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfRsAsyncProducerSessionTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1();
     private static int port2 = CXFTestSupport.getPort("CxfRsProducerSessionTest.jetty");
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
     public int getPort1() {
         return port1;
@@ -51,45 +50,45 @@ public class CxfRsAsyncProducerSessionTest extends CamelSpringTestSupport {
 
     @Test
     public void testNoSessionProxy() {
-        String response = sendMessage("direct://proxy", "World", Boolean.FALSE).getOut().getBody(String.class);
+        String response = sendMessage("direct://proxy", "World", Boolean.FALSE).getMessage().getBody(String.class);
         assertEquals("New New World", response);
-        response = sendMessage("direct://proxy", "World", Boolean.FALSE).getOut().getBody(String.class);
+        response = sendMessage("direct://proxy", "World", Boolean.FALSE).getMessage().getBody(String.class);
         assertEquals("New New World", response);
     }
 
     @Test
     public void testExchangeSessionProxy() {
-        String response = sendMessage("direct://proxyexchange", "World", Boolean.FALSE).getOut().getBody(String.class);
+        String response = sendMessage("direct://proxyexchange", "World", Boolean.FALSE).getMessage().getBody(String.class);
         assertEquals("Old New World", response);
-        response = sendMessage("direct://proxyexchange", "World", Boolean.FALSE).getOut().getBody(String.class);
+        response = sendMessage("direct://proxyexchange", "World", Boolean.FALSE).getMessage().getBody(String.class);
         assertEquals("Old New World", response);
     }
 
     @Test
     public void testInstanceSession() {
-        String response = sendMessage("direct://proxyinstance", "World", Boolean.FALSE).getOut().getBody(String.class);
+        String response = sendMessage("direct://proxyinstance", "World", Boolean.FALSE).getMessage().getBody(String.class);
         assertEquals("Old New World", response);
-        response = sendMessage("direct://proxyinstance", "World", Boolean.FALSE).getOut().getBody(String.class);
+        response = sendMessage("direct://proxyinstance", "World", Boolean.FALSE).getMessage().getBody(String.class);
         assertEquals("Old Old World", response);
         // we do the instance tests for proxy and http in one test because order
         // matters here
-        response = sendMessage("direct://httpinstance", "World", Boolean.TRUE).getOut().getBody(String.class);
+        response = sendMessage("direct://httpinstance", "World", Boolean.TRUE).getMessage().getBody(String.class);
         assertEquals("Old Old World", response);
     }
 
     @Test
     public void testNoSessionHttp() {
-        String response = sendMessage("direct://http", "World", Boolean.TRUE).getOut().getBody(String.class);
+        String response = sendMessage("direct://http", "World", Boolean.TRUE).getMessage().getBody(String.class);
         assertEquals("New New World", response);
-        response = sendMessage("direct://http", "World", Boolean.TRUE).getOut().getBody(String.class);
+        response = sendMessage("direct://http", "World", Boolean.TRUE).getMessage().getBody(String.class);
         assertEquals("New New World", response);
     }
 
     @Test
     public void testExchangeSessionHttp() {
-        String response = sendMessage("direct://httpexchange", "World", Boolean.TRUE).getOut().getBody(String.class);
+        String response = sendMessage("direct://httpexchange", "World", Boolean.TRUE).getMessage().getBody(String.class);
         assertEquals("Old New World", response);
-        response = sendMessage("direct://httpexchange", "World", Boolean.TRUE).getOut().getBody(String.class);
+        response = sendMessage("direct://httpexchange", "World", Boolean.TRUE).getMessage().getBody(String.class);
         assertEquals("Old New World", response);
     }
 

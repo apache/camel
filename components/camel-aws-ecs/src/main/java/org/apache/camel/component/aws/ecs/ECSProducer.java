@@ -32,12 +32,15 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon ECS Service
- * <a href="http://aws.amazon.com/ecs/">AWS ECS</a>
+ * A Producer which sends messages to the Amazon ECS Service <a href="http://aws.amazon.com/ecs/">AWS ECS</a>
  */
 public class ECSProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ECSProducer.class);
 
     private transient String ecsProducerToString;
 
@@ -48,20 +51,20 @@ public class ECSProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listClusters:
-            listClusters(getEndpoint().getEcsClient(), exchange);
-            break;
-        case describeCluster:
-            describeCluster(getEndpoint().getEcsClient(), exchange);
-            break;
-        case createCluster:
-            createCluster(getEndpoint().getEcsClient(), exchange);
-            break;
-        case deleteCluster:
-            deleteCluster(getEndpoint().getEcsClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listClusters:
+                listClusters(getEndpoint().getEcsClient(), exchange);
+                break;
+            case describeCluster:
+                describeCluster(getEndpoint().getEcsClient(), exchange);
+                break;
+            case createCluster:
+                createCluster(getEndpoint().getEcsClient(), exchange);
+                break;
+            case deleteCluster:
+                deleteCluster(getEndpoint().getEcsClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -87,7 +90,7 @@ public class ECSProducer extends DefaultProducer {
 
     @Override
     public ECSEndpoint getEndpoint() {
-        return (ECSEndpoint)super.getEndpoint();
+        return (ECSEndpoint) super.getEndpoint();
     }
 
     private void listClusters(AmazonECS ecsClient, Exchange exchange) {
@@ -100,13 +103,13 @@ public class ECSProducer extends DefaultProducer {
         try {
             result = ecsClient.listClusters();
         } catch (AmazonServiceException ase) {
-            log.trace("List Clusters command returned the error code {}", ase.getErrorCode());
+            LOG.trace("List Clusters command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createCluster(AmazonECS ecsClient, Exchange exchange) {
         CreateClusterRequest request = new CreateClusterRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECSConstants.CLUSTER_NAME))) {
@@ -117,30 +120,30 @@ public class ECSProducer extends DefaultProducer {
         try {
             result = ecsClient.createCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Create Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Create Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeCluster(AmazonECS ecsClient, Exchange exchange) {
         DescribeClustersRequest request = new DescribeClustersRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECSConstants.CLUSTER_NAME))) {
             String clusterName = exchange.getIn().getHeader(ECSConstants.CLUSTER_NAME, String.class);
             request.withClusters(clusterName);
-        } 
+        }
         DescribeClustersResult result;
         try {
             result = ecsClient.describeClusters(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Describe Clusters command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Describe Clusters command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteCluster(AmazonECS ecsClient, Exchange exchange) {
         DeleteClusterRequest request = new DeleteClusterRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECSConstants.CLUSTER_NAME))) {
@@ -153,19 +156,14 @@ public class ECSProducer extends DefaultProducer {
         try {
             result = ecsClient.deleteCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 }

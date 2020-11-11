@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -51,13 +52,13 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * Helper for introspections of beans.
  * <p/>
- * <b>Important: </b> Its recommended to call the {@link #stop()} method when
- * {@link org.apache.camel.CamelContext} is being stopped. This allows to clear the introspection cache.
+ * <b>Important: </b> Its recommended to call the {@link #stop()} method when {@link org.apache.camel.CamelContext} is
+ * being stopped. This allows to clear the introspection cache.
  * <p/>
  * This implementation will skip methods from <tt>java.lang.Object</tt> and <tt>java.lang.reflect.Proxy</tt>.
  * <p/>
- * This implementation will use a cache when the {@link #getProperties(Object, java.util.Map, String)}
- * method is being used. Also the {@link #cacheClass(Class)} method gives access to the introspect cache.
+ * This implementation will use a cache when the {@link #getProperties(Object, java.util.Map, String)} method is being
+ * used. Also the {@link #cacheClass(Class)} method gives access to the introspect cache.
  *
  * @deprecated use {@link org.apache.camel.spi.BeanIntrospection}
  */
@@ -123,7 +124,8 @@ public final class IntrospectionSupport {
     public static void clearCache() {
         if (LOG.isDebugEnabled() && CACHE instanceof LRUCache) {
             LRUCache localCache = (LRUCache) IntrospectionSupport.CACHE;
-            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", localCache.size(), localCache.getHits(), localCache.getMisses(), localCache.getEvicted());
+            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", localCache.size(), localCache.getHits(),
+                    localCache.getMisses(), localCache.getEvicted());
         }
         CACHE.clear();
     }
@@ -199,7 +201,7 @@ public final class IntrospectionSupport {
 
         return false;
     }
-    
+
     public static boolean isSetter(Method method) {
         return isSetter(method, false);
     }
@@ -207,11 +209,11 @@ public final class IntrospectionSupport {
     /**
      * Will inspect the target for properties.
      * <p/>
-     * Notice a property must have both a getter/setter method to be included.
-     * Notice all <tt>null</tt> values won't be included.
+     * Notice a property must have both a getter/setter method to be included. Notice all <tt>null</tt> values won't be
+     * included.
      *
-     * @param target         the target bean
-     * @return the map with found properties
+     * @param  target the target bean
+     * @return        the map with found properties
      */
     public static Map<String, Object> getNonNullProperties(Object target) {
         Map<String, Object> properties = new HashMap<>();
@@ -224,13 +226,13 @@ public final class IntrospectionSupport {
     /**
      * Will inspect the target for properties.
      * <p/>
-     * Notice a property must have both a getter/setter method to be included.
-     * Notice all <tt>null</tt> values will be included.
+     * Notice a property must have both a getter/setter method to be included. Notice all <tt>null</tt> values will be
+     * included.
      *
-     * @param target         the target bean
-     * @param properties     the map to fill in found properties
-     * @param optionPrefix   an optional prefix to append the property key
-     * @return <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     * @param  target       the target bean
+     * @param  properties   the map to fill in found properties
+     * @param  optionPrefix an optional prefix to append the property key
+     * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
     public static boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix) {
         return getProperties(target, properties, optionPrefix, true);
@@ -241,13 +243,14 @@ public final class IntrospectionSupport {
      * <p/>
      * Notice a property must have both a getter/setter method to be included.
      *
-     * @param target         the target bean
-     * @param properties     the map to fill in found properties
-     * @param optionPrefix   an optional prefix to append the property key
-     * @param includeNull    whether to include <tt>null</tt> values
-     * @return <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     * @param  target       the target bean
+     * @param  properties   the map to fill in found properties
+     * @param  optionPrefix an optional prefix to append the property key
+     * @param  includeNull  whether to include <tt>null</tt> values
+     * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
-    public static boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull) {
+    public static boolean getProperties(
+            Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull) {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
@@ -271,7 +274,7 @@ public final class IntrospectionSupport {
                     }
                 } catch (Exception e) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Error invoking getter method " + method + ". This exception is ignored.", e);
+                        LOG.trace("Error invoking getter method {}. This exception is ignored.", method, e);
                     }
                 }
             }
@@ -283,8 +286,8 @@ public final class IntrospectionSupport {
     /**
      * Introspects the given class.
      *
-     * @param clazz the class
-     * @return the introspection result as a {@link BeanIntrospection.ClassInfo} structure.
+     * @param  clazz the class
+     * @return       the introspection result as a {@link BeanIntrospection.ClassInfo} structure.
      */
     public static BeanIntrospection.ClassInfo cacheClass(Class<?> clazz) {
         BeanIntrospection.ClassInfo cache = CACHE.get(clazz);
@@ -365,7 +368,8 @@ public final class IntrospectionSupport {
         }
     }
 
-    public static Object getProperty(Object target, String propertyName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static Object getProperty(Object target, String propertyName)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(propertyName, "property");
 
@@ -403,7 +407,8 @@ public final class IntrospectionSupport {
         return getPropertyGetter(type, propertyName, false);
     }
 
-    public static Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase) throws NoSuchMethodException {
+    public static Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase)
+            throws NoSuchMethodException {
         if (ignoreCase) {
             List<Method> methods = new ArrayList<>();
             methods.addAll(Arrays.asList(type.getDeclaredMethods()));
@@ -442,7 +447,8 @@ public final class IntrospectionSupport {
         try {
             Method method = type.getMethod("is" + StringHelper.capitalize(propertyName, true));
             if (method != null) {
-                return method.getReturnType().isAssignableFrom(boolean.class) || method.getReturnType().isAssignableFrom(Boolean.class);
+                return method.getReturnType().isAssignableFrom(boolean.class)
+                        || method.getReturnType().isAssignableFrom(Boolean.class);
             }
         } catch (NoSuchMethodException e) {
             // ignore
@@ -454,7 +460,9 @@ public final class IntrospectionSupport {
      * @deprecated use {@link PropertyBindingSupport}
      */
     @Deprecated
-    public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix, boolean allowBuilderPattern) throws Exception {
+    public static boolean setProperties(
+            Object target, Map<String, Object> properties, String optionPrefix, boolean allowBuilderPattern)
+            throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
@@ -471,7 +479,7 @@ public final class IntrospectionSupport {
                 }
             }
         }
-        
+
         return rc;
     }
 
@@ -540,7 +548,9 @@ public final class IntrospectionSupport {
      * @deprecated use {@link PropertyBindingSupport}
      */
     @Deprecated
-    public static boolean setProperties(CamelContext context, TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
+    public static boolean setProperties(
+            CamelContext context, TypeConverter typeConverter, Object target, Map<String, Object> properties)
+            throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
@@ -560,7 +570,8 @@ public final class IntrospectionSupport {
      * @deprecated use {@link PropertyBindingSupport}
      */
     @Deprecated
-    public static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties) throws Exception {
+    public static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties)
+            throws Exception {
         return setProperties(null, typeConverter, target, properties);
     }
 
@@ -575,34 +586,40 @@ public final class IntrospectionSupport {
     /**
      * This method supports three modes to set a property:
      *
-     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to use.
+     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to
+     * use.
      *
-     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName} are
-     * NULL and {@code value} is non-NULL.
+     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName}
+     * are NULL and {@code value} is non-NULL.
      *
      * 3. Setting a property that has not yet been resolved, the property will be resolved based on the suitable methods
      * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
-    public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
-                                      boolean allowBuilderPattern) throws Exception {
+    public static boolean setProperty(
+            CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
+            boolean allowBuilderPattern)
+            throws Exception {
         return setProperty(context, typeConverter, target, name, value, refName, allowBuilderPattern, false, false);
     }
 
     /**
      * This method supports three modes to set a property:
      *
-     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to use.
+     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to
+     * use.
      *
-     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName} are
-     * NULL and {@code value} is non-NULL.
+     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName}
+     * are NULL and {@code value} is non-NULL.
      *
      * 3. Setting a property that has not yet been resolved, the property will be resolved based on the suitable methods
      * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
-    public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
-                                      boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) throws Exception {
+    public static boolean setProperty(
+            CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
+            boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase)
+            throws Exception {
 
         // does the property name include a lookup key, then we need to set the property as a map or list
         if (name.contains("[") && name.endsWith("]")) {
@@ -621,6 +638,8 @@ public final class IntrospectionSupport {
                         obj = new LinkedHashMap<>();
                     } else if (Collection.class.isAssignableFrom(returnType)) {
                         obj = new ArrayList<>();
+                    } else if (returnType.isArray()) {
+                        obj = Array.newInstance(returnType.getComponentType(), 0);
                     }
                 } else {
                     // fallback as map type
@@ -628,7 +647,8 @@ public final class IntrospectionSupport {
                 }
                 boolean hit = IntrospectionSupport.setProperty(context, target, key, obj);
                 if (!hit) {
-                    throw new IllegalArgumentException("Cannot set property: " + name + " as a Map because target bean has no setter method for the Map");
+                    throw new IllegalArgumentException(
+                            "Cannot set property: " + name + " as a Map because target bean has no setter method for the Map");
                 }
             }
             if (obj instanceof Map) {
@@ -646,15 +666,58 @@ public final class IntrospectionSupport {
                     value = CamelContextHelper.lookup(context, s);
                 }
                 if (isNotEmpty(lookupKey)) {
-                    int idx = Integer.valueOf(lookupKey);
-                    list.add(idx, value);
+                    int idx = Integer.parseInt(lookupKey);
+                    if (idx < list.size()) {
+                        list.set(idx, value);
+                    } else if (idx == list.size()) {
+                        list.add(value);
+                    } else {
+                        // If the list implementation is based on an array, we
+                        // can increase tha capacity to the required value to
+                        // avoid potential re-allocation weh invoking List::add.
+                        //
+                        // Note that ArrayList is the default List impl that
+                        // is automatically created if the property is null.
+                        if (list instanceof ArrayList) {
+                            ((ArrayList) list).ensureCapacity(idx + 1);
+                        }
+                        while (list.size() < idx) {
+                            list.add(null);
+                        }
+                        list.add(idx, value);
+                    }
                 } else {
                     list.add(value);
                 }
                 return true;
+            } else if (obj.getClass().isArray() && lookupKey != null) {
+                if (context != null && refName != null && value == null) {
+                    String s = StringHelper.replaceAll(refName, "#", "");
+                    value = CamelContextHelper.lookup(context, s);
+                }
+                int idx = Integer.parseInt(lookupKey);
+                int size = Array.getLength(obj);
+                if (idx >= size) {
+                    obj = Arrays.copyOf((Object[]) obj, idx + 1);
+
+                    // replace array
+                    boolean hit = IntrospectionSupport.setProperty(context, target, key, obj);
+                    if (!hit) {
+                        throw new IllegalArgumentException(
+                                "Cannot set property: " + name
+                                                           + " as an array because target bean has no setter method for the array");
+                    }
+                }
+
+                Array.set(obj, idx, value);
+
+                return true;
             } else {
                 // not a map or list
-                throw new IllegalArgumentException("Cannot set property: " + name + " as either a Map/List because target bean is not a Map or List type: " + target);
+                throw new IllegalArgumentException(
+                        "Cannot set property: " + name
+                                                   + " as either a Map/List/array because target bean is not a Map, List or array type: "
+                                                   + target);
             }
         }
 
@@ -728,11 +791,13 @@ public final class IntrospectionSupport {
                         if ((parameterType == Boolean.class || parameterType == boolean.class) && ref instanceof String) {
                             String val = (String) ref;
                             if (!val.equalsIgnoreCase("true") && !val.equalsIgnoreCase("false")) {
-                                throw new IllegalArgumentException("Cannot convert the String value: " + ref + " to type: " + parameterType
-                                        + " as the value is not true or false");
+                                throw new IllegalArgumentException(
+                                        "Cannot convert the String value: " + ref + " to type: " + parameterType
+                                                                   + " as the value is not true or false");
                             }
                         }
-                        Object convertedValue = typeConverter != null ? typeConverter.mandatoryConvertTo(parameterType, ref) : ref;
+                        Object convertedValue
+                                = typeConverter != null ? typeConverter.mandatoryConvertTo(parameterType, ref) : ref;
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, convertedValue);
@@ -750,14 +815,14 @@ public final class IntrospectionSupport {
                     // lets unwrap the exception
                     Throwable throwable = e.getCause();
                     if (throwable instanceof Exception) {
-                        Exception exception = (Exception)throwable;
+                        Exception exception = (Exception) throwable;
                         throw exception;
                     } else {
-                        Error error = (Error)throwable;
+                        Error error = (Error) throwable;
                         throw error;
                     }
                 }
-            // ignore exceptions as there could be another setter method where we could type convert successfully
+                // ignore exceptions as there could be another setter method where we could type convert successfully
             } catch (SecurityException e) {
                 typeConversionFailed = e;
             } catch (NoTypeConversionAvailableException e) {
@@ -767,23 +832,25 @@ public final class IntrospectionSupport {
             }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Setter \"{}\" with parameter type \"{}\" could not be used for type conversions of {}",
-                        new Object[]{setter, parameterType, ref});
+                        new Object[] { setter, parameterType, ref });
             }
         }
 
         if (typeConversionFailed != null && !isPropertyPlaceholder(context, value)) {
             // we did not find a setter method to use, and if we did try to use a type converter then throw
             // this kind of exception as the caused by will hint this error
-            throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
-                    + " as there isn't a setter method with same type: " + (value != null ? value.getClass().getCanonicalName() : "[null]")
-                    + " nor type conversion possible: " + typeConversionFailed.getMessage());
+            throw new IllegalArgumentException(
+                    "Could not find a suitable setter for property: " + name
+                                               + " as there isn't a setter method with same type: "
+                                               + (value != null ? value.getClass().getCanonicalName() : "[null]")
+                                               + " nor type conversion possible: " + typeConversionFailed.getMessage());
         } else {
             return false;
         }
     }
 
     static boolean isPropertyPlaceholder(CamelContext context, Object value) {
-        if (context != null) {
+        if (context != null && value != null) {
             String text = value.toString();
             return text.contains(PropertiesComponent.PREFIX_TOKEN) && text.contains(PropertiesComponent.SUFFIX_TOKEN);
         }
@@ -792,14 +859,17 @@ public final class IntrospectionSupport {
 
     public static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
-        return setProperty(context, context != null ? context.getTypeConverter() : null, target, name, value, null, true, false, false);
+        return setProperty(context, context != null ? context.getTypeConverter() : null, target, name, value, null, true, false,
+                false);
     }
 
-    public static boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
+    public static boolean setProperty(
+            CamelContext context, TypeConverter typeConverter, Object target, String name, Object value)
+            throws Exception {
         // allow build pattern as a setter as well
         return setProperty(context, typeConverter, target, name, value, null, true, false, false);
     }
-    
+
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(null, typeConverter, target, name, value, null, true, false, false);
@@ -816,8 +886,9 @@ public final class IntrospectionSupport {
         return setProperty(target, name, value, true);
     }
 
-    public static Set<Method> findSetterMethods(Class<?> clazz, String name,
-                                                boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
+    public static Set<Method> findSetterMethods(
+            Class<?> clazz, String name,
+            boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
         Set<Method> candidates = new LinkedHashSet<>();
 
         // Build the method name
@@ -860,8 +931,9 @@ public final class IntrospectionSupport {
         return candidates;
     }
 
-    static Set<Method> findSetterMethods(Class<?> clazz, String name, Object value,
-                                         boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
+    static Set<Method> findSetterMethods(
+            Class<?> clazz, String name, Object value,
+            boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
         Set<Method> candidates = findSetterMethods(clazz, name, allowBuilderPattern, allowPrivateSetter, ignoreCase);
 
         if (candidates.isEmpty()) {
@@ -873,7 +945,7 @@ public final class IntrospectionSupport {
             // find the best match if possible
             LOG.trace("Found {} suitable setter methods for setting {}", candidates.size(), name);
             // prefer to use the one with the same instance if any exists
-            for (Method method : candidates) {                               
+            for (Method method : candidates) {
                 if (method.getParameterTypes()[0].isInstance(value)) {
                     LOG.trace("Method {} is the best candidate as it has parameter with same instance type", method);
                     // retain only this method in the answer
@@ -887,8 +959,9 @@ public final class IntrospectionSupport {
         }
     }
 
-    static List<Method> findSetterMethodsOrderedByParameterType(Class<?> target, String propertyName,
-                                                                boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
+    static List<Method> findSetterMethodsOrderedByParameterType(
+            Class<?> target, String propertyName,
+            boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
         List<Method> answer = new LinkedList<>();
         List<Method> primitives = new LinkedList<>();
         Set<Method> setters = findSetterMethods(target, propertyName, allowBuilderPattern, allowPrivateSetter, ignoreCase);

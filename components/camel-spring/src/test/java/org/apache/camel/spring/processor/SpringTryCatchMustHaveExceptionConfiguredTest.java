@@ -19,16 +19,19 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         try {
-            createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryCatchMustHaveExceptionConfiguredTest.xml");
+            createSpringCamelContext(this,
+                    "org/apache/camel/spring/processor/SpringTryCatchMustHaveExceptionConfiguredTest.xml");
             fail("Should have thrown exception");
         } catch (Exception e) {
             FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);

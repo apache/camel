@@ -19,7 +19,10 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
 
@@ -46,7 +49,7 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
         });
 
         assertNotNull(out);
-        assertEquals("Bye World", out.getOut().getBody(String.class));
+        assertEquals("Bye World", out.getMessage().getBody(String.class));
 
         assertMockEndpointsSatisfied();
     }
@@ -56,9 +59,11 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setHeader(Exchange.FILE_NAME, constant("test.txt")).to("http://localhost:{{port}}/test/filter").to("mock:result");
+                from("direct:start").setHeader(Exchange.FILE_NAME, constant("test.txt"))
+                        .to("http://localhost:{{port}}/test/filter").to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/test/filter").to("mock:input").setHeader("CamelDummy", constant("dummy")).transform(simple("Bye ${body}"));
+                from("jetty:http://localhost:{{port}}/test/filter").to("mock:input").setHeader("CamelDummy", constant("dummy"))
+                        .transform(simple("Bye ${body}"));
             }
         };
     }

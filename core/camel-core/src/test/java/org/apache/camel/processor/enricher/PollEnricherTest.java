@@ -22,8 +22,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PollEnricherTest extends ContextTestSupport {
 
@@ -32,7 +34,7 @@ public class PollEnricherTest extends ContextTestSupport {
     protected MockEndpoint mock;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         mock = getMockEndpoint("mock:mock");
@@ -93,7 +95,7 @@ public class PollEnricherTest extends ContextTestSupport {
         // bit later and we wait
         mock.assertIsSatisfied();
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take approx 0.25 sec: was " + delta, delta > 150);
+        assertTrue(delta > 150, "Should take approx 0.25 sec: was " + delta);
     }
 
     // -------------------------------------------------------------
@@ -104,7 +106,7 @@ public class PollEnricherTest extends ContextTestSupport {
     public void testPollEnrichInOut() throws InterruptedException {
         template.sendBody("seda:foo4", "blah");
 
-        String result = (String)template.sendBody("direct:enricher-test-4", ExchangePattern.InOut, "test");
+        String result = (String) template.sendBody("direct:enricher-test-4", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
     }
 

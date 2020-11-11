@@ -25,10 +25,10 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 public class FromFtpConsumerTemplateRollbackTest extends FtpServerTestSupport {
 
@@ -37,7 +37,8 @@ public class FromFtpConsumerTemplateRollbackTest extends FtpServerTestSupport {
     }
 
     protected String getFtpUrlInvalid() {
-        // use invalid starting directory and do not allow creating it so we force the poll to fail
+        // use invalid starting directory and do not allow creating it so we
+        // force the poll to fail
         return "ftp://admin@localhost:" + getPort() + "/unknown?password=admin&binary=false&delete=true&autoCreate=false";
     }
 
@@ -60,7 +61,8 @@ public class FromFtpConsumerTemplateRollbackTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();

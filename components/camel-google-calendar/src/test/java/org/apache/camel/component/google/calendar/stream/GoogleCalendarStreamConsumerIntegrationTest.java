@@ -18,7 +18,7 @@ package org.apache.camel.component.google.calendar.stream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class GoogleCalendarStreamConsumerIntegrationTest extends AbstractGoogleCalendarStreamTestSupport {
 
@@ -27,7 +27,7 @@ public class GoogleCalendarStreamConsumerIntegrationTest extends AbstractGoogleC
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         Thread.sleep(10000);
-        
+
         assertMockEndpointsSatisfied();
     }
 

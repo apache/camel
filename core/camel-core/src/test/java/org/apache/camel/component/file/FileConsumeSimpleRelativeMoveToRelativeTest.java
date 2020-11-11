@@ -20,15 +20,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/data/move";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/move");
         super.setUp();
@@ -54,7 +54,8 @@ public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/move?recursive=true&move=.done&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/move?recursive=true&move=.done&initialDelay=0&delay=10").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

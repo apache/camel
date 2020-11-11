@@ -60,24 +60,26 @@ public class IOTAProducer extends DefaultProducer {
             String message = TrytesConverter.asciiToTrytes(exchange.getIn().getBody(String.class));
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("endpoint: security level {} depth {} minWeightMagnitude {} tag {} ", endpoint.getSecurityLevel(), endpoint.getDepth(), endpoint.getMinWeightMagnitude(), tag);
+                LOG.debug("endpoint: security level {} depth {} minWeightMagnitude {} tag {} ", endpoint.getSecurityLevel(),
+                        endpoint.getDepth(), endpoint.getMinWeightMagnitude(), tag);
                 LOG.debug("Sending value {} with message {} to address {}", value, message, address);
             }
 
             List<Transfer> transfers = new ArrayList<>();
             transfers.add(new Transfer(address, value, message, tag));
             SendTransferResponse response = endpoint.getApiClient()
-                                            .sendTransfer(seed, endpoint.getSecurityLevel(), endpoint.getDepth(), endpoint.getMinWeightMagnitude(), transfers, null, null, false, true, null);
+                    .sendTransfer(seed, endpoint.getSecurityLevel(), endpoint.getDepth(), endpoint.getMinWeightMagnitude(),
+                            transfers, null, null, false, true, null);
 
             exchange.getIn().setBody(response.getTransactions());
         } else if (endpoint.getOperation().equals(IOTAConstants.GET_NEW_ADDRESS_OPERATION)) {
             Integer index = exchange.getIn().getHeader(IOTAConstants.ADDRESS_INDEX_HEADER, Integer.class);
 
             AddressRequest addressRequest = new AddressRequest.Builder(seed, endpoint.getSecurityLevel())
-                .index(index)
-                .checksum(true)
-                .amount(1)
-                .build();
+                    .index(index)
+                    .checksum(true)
+                    .amount(1)
+                    .build();
 
             GetNewAddressResponse response = endpoint.getApiClient().generateNewAddresses(addressRequest);
             exchange.getIn().setBody(response.getAddresses());
@@ -85,7 +87,8 @@ public class IOTAProducer extends DefaultProducer {
             Integer startIdx = exchange.getIn().getHeader(IOTAConstants.ADDRESS_START_INDEX_HEADER, Integer.class);
             Integer endIdx = exchange.getIn().getHeader(IOTAConstants.ADDRESS_END_INDEX_HEADER, Integer.class);
 
-            GetTransferResponse response = endpoint.getApiClient().getTransfers(seed, endpoint.getSecurityLevel(), startIdx, endIdx, true);
+            GetTransferResponse response
+                    = endpoint.getApiClient().getTransfers(seed, endpoint.getSecurityLevel(), startIdx, endIdx, true);
 
             exchange.getIn().setBody(response.getTransfers());
         }

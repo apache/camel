@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test to verify that aggregate by interval only also works.
@@ -51,8 +51,8 @@ public class AggregateCompletionIntervalTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("seda:start").aggregate(header("id"), new UseLatestAggregationStrategy())
-                    // trigger completion every 2nd second
-                    .completionInterval(2000).to("mock:result");
+                        // trigger completion every 2nd second
+                        .completionInterval(2000).to("mock:result");
                 // END SNIPPET: e1
             }
         };

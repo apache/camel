@@ -22,8 +22,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.junit.Test;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JettySuspendWhileInProgressTest extends BaseJettyTest {
 
@@ -74,7 +78,8 @@ public class JettySuspendWhileInProgressTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty://" + serverUri).log("Got data will wait 10 sec with reply").delay(10000).transform(simple("Bye ${header.name}"));
+                from("jetty://" + serverUri).log("Got data will wait 10 sec with reply").delay(10000)
+                        .transform(simple("Bye ${header.name}"));
             }
         };
     }

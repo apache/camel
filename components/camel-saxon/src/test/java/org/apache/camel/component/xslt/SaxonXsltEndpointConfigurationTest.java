@@ -22,9 +22,14 @@ import net.sf.saxon.Configuration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.xslt.saxon.XsltSaxonComponent;
 import org.apache.camel.component.xslt.saxon.XsltSaxonEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SaxonXsltEndpointConfigurationTest extends CamelSpringTestSupport {
     @Test
@@ -39,7 +44,7 @@ public class SaxonXsltEndpointConfigurationTest extends CamelSpringTestSupport {
 
         for (Endpoint ep : context.getEndpoints()) {
             if (ep instanceof XsltSaxonEndpoint) {
-                endpoint = (XsltSaxonEndpoint)ep;
+                endpoint = (XsltSaxonEndpoint) ep;
                 break;
             }
         }

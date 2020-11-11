@@ -19,11 +19,12 @@ package org.apache.camel.converter;
 import java.time.Duration;
 
 import org.apache.camel.Converter;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Converters for java.time.Duration.
  */
-@Converter(generateLoader = true)
+@Converter(generateBulkLoader = true)
 public final class DurationConverter {
 
     /**
@@ -31,18 +32,27 @@ public final class DurationConverter {
      */
     private DurationConverter() {
     }
-    
-    @Converter
-    public static long toMilliSeconds(Duration source) {
+
+    @Converter(order = 1)
+    public static Long toMilliSeconds(Duration source) {
         return source.toMillis();
     }
 
-    @Converter
-    public static Duration toDuration(String source) {
-        return Duration.parse(source);
+    @Converter(order = 2)
+    public static Duration toDuration(Long source) {
+        return Duration.ofMillis(source);
     }
 
-    @Converter
+    @Converter(order = 3)
+    public static Duration toDuration(String source) {
+        if (source.startsWith("P") || source.startsWith("-P") || source.startsWith("p") || source.startsWith("-p")) {
+            return Duration.parse(source);
+        } else {
+            return Duration.ofMillis(TimeUtils.toMilliSeconds(source));
+        }
+    }
+
+    @Converter(order = 4)
     public static String toString(Duration source) {
         return source.toString();
     }

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 
 /**
  * Strategy for management.
@@ -31,48 +32,47 @@ import org.apache.camel.Service;
  * @see ManagementObjectNameStrategy
  * @see org.apache.camel.spi.ManagementAgent
  */
-public interface ManagementStrategy extends Service {
+public interface ManagementStrategy extends StaticService {
 
     /**
-     * Adds a managed object allowing the ManagementStrategy implementation to record or expose
-     * the object as it sees fit.
+     * Adds a managed object allowing the ManagementStrategy implementation to record or expose the object as it sees
+     * fit.
      *
-     * @param managedObject the managed object
-     * @throws Exception can be thrown if the object could not be added
+     * @param  managedObject the managed object
+     * @throws Exception     can be thrown if the object could not be added
      */
     void manageObject(Object managedObject) throws Exception;
 
     /**
      * Removes the managed object.
      *
-     * @param managedObject the managed object
-     * @throws Exception can be thrown if the object could not be removed
+     * @param  managedObject the managed object
+     * @throws Exception     can be thrown if the object could not be removed
      */
     void unmanageObject(Object managedObject) throws Exception;
 
     /**
      * Determines if an object or name is managed.
      *
-     * @param managedObject the object to consider
-     * @return <tt>true</tt> if the given object is managed
+     * @param  managedObject the object to consider
+     * @return               <tt>true</tt> if the given object is managed
      */
     boolean isManaged(Object managedObject);
 
     /**
      * Determines if an object or name is managed.
      *
-     * @param name the name to consider
-     * @return <tt>true</tt> if the given name is managed
+     * @param  name the name to consider
+     * @return      <tt>true</tt> if the given name is managed
      */
     boolean isManagedName(Object name);
 
     /**
-     * Management events provide a single model for capturing information about execution points in the
-     * application code. Management strategy implementations decide if and where to record these events.
-     * Applications communicate events to management strategy implementations via the notify(EventObject)
-     * method.
+     * Management events provide a single model for capturing information about execution points in the application
+     * code. Management strategy implementations decide if and where to record these events. Applications communicate
+     * events to management strategy implementations via the notify(EventObject) method.
      *
-     * @param event the event
+     * @param  event     the event
      * @throws Exception can be thrown if the notification failed
      */
     void notify(CamelEvent event) throws Exception;
@@ -87,8 +87,7 @@ public interface ManagementStrategy extends Service {
     /**
      * Adds the event notifier to use.
      * <p/>
-     * Ensure the event notifier has been started if its a {@link Service}, as otherwise
-     * it would not be used.
+     * Ensure the event notifier has been started if its a {@link Service}, as otherwise it would not be used.
      *
      * @param eventNotifier event notifier
      */
@@ -97,8 +96,8 @@ public interface ManagementStrategy extends Service {
     /**
      * Removes the event notifier
      *
-     * @param eventNotifier event notifier to remove
-     * @return <tt>true</tt> if removed, <tt>false</tt> if already removed
+     * @param  eventNotifier event notifier to remove
+     * @return               <tt>true</tt> if removed, <tt>false</tt> if already removed
      */
     boolean removeEventNotifier(EventNotifier eventNotifier);
 
@@ -163,8 +162,8 @@ public interface ManagementStrategy extends Service {
      * <p/>
      * Is used to filter out unwanted processors to avoid managing at too fine grained level.
      *
-     * @param definition definition of the processor
-     * @return <tt>true</tt> to manage it
+     * @param  definition definition of the processor
+     * @return            <tt>true</tt> to manage it
      */
     boolean manageProcessor(NamedNode definition);
 

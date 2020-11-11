@@ -45,7 +45,10 @@ public class InOnlyProducer extends SjmsProducer {
     }
 
     @Override
-    public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer, final ReleaseProducerCallback releaseProducerCallback) throws Exception {
+    public void sendMessage(
+            final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer,
+            final ReleaseProducerCallback releaseProducerCallback)
+            throws Exception {
         try {
             Message message = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
             producer.getMessageProducer().send(message);

@@ -18,6 +18,8 @@ package org.apache.camel.component.weather;
 
 import org.apache.camel.builder.RouteBuilder;
 
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+
 public class CurrentWeatherConsumerXmlTest extends BaseWeatherConsumerTest {
 
     @Override

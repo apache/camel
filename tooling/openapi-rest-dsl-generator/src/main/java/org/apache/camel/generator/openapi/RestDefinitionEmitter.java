@@ -49,9 +49,9 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
         } catch (final Throwable e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
-            } else {
-                throw new IllegalStateException(e);
             }
+
+            throw new IllegalStateException(e);
         }
 
         return this;
@@ -62,7 +62,7 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
         return definition;
     }
 
-    Object[] argumentsFor(final Object[] args) {
+    static Object[] argumentsFor(final Object[] args) {
         final List<Object> arguments = new ArrayList<>(args.length);
 
         for (final Object arg : args) {
@@ -76,7 +76,7 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
         return arguments.toArray(new Object[arguments.size()]);
     }
 
-    Class<?>[] parameterTypesOf(final Object[] args) {
+    static Class<?>[] parameterTypesOf(final Object[] args) {
         final Class<?>[] parameterTypes = new Class<?>[args.length];
 
         for (int i = 0; i < args.length; i++) {
@@ -86,7 +86,7 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
         return parameterTypes;
     }
 
-    Class<?>[] typesOf(final Object[] args) {
+    static Class<?>[] typesOf(final Object[] args) {
         final Class<?>[] types = new Class<?>[args.length];
 
         for (int i = 0; i < types.length; i++) {

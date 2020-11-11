@@ -27,49 +27,52 @@ import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoasterSplitTokenizeTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoasterSplitTokenizeTest.class);
 
     @Test
-    public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/SplitTokenizeTest.java"));
+    void parse() throws Exception {
+        JavaClassSource clazz = (JavaClassSource) Roaster
+                .parse(new File("src/test/java/org/apache/camel/parser/java/SplitTokenizeTest.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
 
         List<CamelEndpointDetails> details = new ArrayList<>();
-        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, "src/test/java", "org/apache/camel/parser/SplitTokenizeTest.java", details);
+        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, "src/test/java", "org/apache/camel/parser/SplitTokenizeTest.java",
+                details);
         LOG.info("{}", details);
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
             LOG.info("Consumer: " + result.getElement());
         }
-        Assert.assertEquals("direct:a", list.get(0).getElement());
-        Assert.assertEquals("direct:b", list.get(1).getElement());
-        Assert.assertEquals("direct:c", list.get(2).getElement());
-        Assert.assertEquals("direct:d", list.get(3).getElement());
-        Assert.assertEquals("direct:e", list.get(4).getElement());
-        Assert.assertEquals("direct:f", list.get(5).getElement());
+        assertEquals("direct:a", list.get(0).getElement());
+        assertEquals("direct:b", list.get(1).getElement());
+        assertEquals("direct:c", list.get(2).getElement());
+        assertEquals("direct:d", list.get(3).getElement());
+        assertEquals("direct:e", list.get(4).getElement());
+        assertEquals("direct:f", list.get(5).getElement());
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, true);
         for (ParserResult result : list) {
             LOG.info("Producer: " + result.getElement());
         }
-        Assert.assertEquals("mock:split", list.get(0).getElement());
-        Assert.assertEquals("mock:split", list.get(1).getElement());
-        Assert.assertEquals("mock:split", list.get(2).getElement());
-        Assert.assertEquals("mock:split", list.get(3).getElement());
-        Assert.assertEquals("mock:split", list.get(4).getElement());
-        Assert.assertEquals("mock:split", list.get(5).getElement());
+        assertEquals("mock:split", list.get(0).getElement());
+        assertEquals("mock:split", list.get(1).getElement());
+        assertEquals("mock:split", list.get(2).getElement());
+        assertEquals("mock:split", list.get(3).getElement());
+        assertEquals("mock:split", list.get(4).getElement());
+        assertEquals("mock:split", list.get(5).getElement());
 
-        Assert.assertEquals(12, details.size());
-        Assert.assertEquals("direct:a", details.get(0).getEndpointUri());
-        Assert.assertEquals("mock:split", details.get(11).getEndpointUri());
+        assertEquals(12, details.size());
+        assertEquals("direct:a", details.get(0).getEndpointUri());
+        assertEquals("mock:split", details.get(11).getEndpointUri());
     }
 
 }

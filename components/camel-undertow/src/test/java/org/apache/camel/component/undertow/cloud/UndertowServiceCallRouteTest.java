@@ -20,22 +20,24 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowServiceCallRouteTest extends CamelTestSupport {
 
     @Test
     public void testCustomCall() throws Exception {
-        Assert.assertEquals("8081", template.requestBody("direct:custom", "hello", String.class));
-        Assert.assertEquals("8082", template.requestBody("direct:custom", "hello", String.class));
+        assertEquals("8081", template.requestBody("direct:custom", "hello", String.class));
+        assertEquals("8082", template.requestBody("direct:custom", "hello", String.class));
     }
 
     @Test
     public void testDefaultSchema() throws Exception {
         try {
-            Assert.assertEquals("8081", template.requestBody("direct:default", "hello", String.class));
+            assertEquals("8081", template.requestBody("direct:default", "hello", String.class));
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof ResolveEndpointFailedException);
         }
@@ -47,26 +49,26 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:custom")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
                         .component("undertow")
                         .staticServiceDiscovery()
-                            .servers("myService@localhost:8081")
-                            .servers("myService@localhost:8082")
+                        .servers("myService@localhost:8081")
+                        .servers("myService@localhost:8082")
                         .endParent();
 
                 from("direct:default")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
                         .staticServiceDiscovery()
-                            .servers("myService@localhost:8081")
-                            .servers("myService@localhost:8082")
+                        .servers("myService@localhost:8081")
+                        .servers("myService@localhost:8082")
                         .endParent();
 
                 from("undertow:http://localhost:8081")
-                    .transform().constant("8081");
+                        .transform().constant("8081");
                 from("undertow:http://localhost:8082")
-                    .transform().constant("8082");
+                        .transform().constant("8082");
             }
         };
     }

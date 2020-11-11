@@ -24,8 +24,11 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.dataformat.csv.TestUtils.LS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
 
@@ -33,7 +36,7 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
     private MockEndpoint result;
 
     @Test
-    public void testCsvMarshal() throws Exception {
+    void testCsvMarshal() throws Exception {
         result.expectedMessageCount(1);
 
         template.sendBody("direct:start", createBody());
@@ -65,10 +68,10 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 CsvDataFormat csv = new CsvDataFormat().setDelimiter('|').setHeaderDisabled(true);
 
                 from("direct:start").marshal(csv).convertBodyTo(String.class).to("mock:result");

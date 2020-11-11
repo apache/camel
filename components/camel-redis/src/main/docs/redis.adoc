@@ -1,0 +1,12 @@
+[[redis-other]]
+= Redis Component
+:docTitle: Redis
+:artifactId: camel-redis
+:description: Aggregation repository using Redis as datastore
+:since: 3.5
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/redis.adoc[opts=optional]
+
+*Since Camel {since}*
+
+The Redis component provides an `AggregationStrategy` to use Redis as the backend datastore.

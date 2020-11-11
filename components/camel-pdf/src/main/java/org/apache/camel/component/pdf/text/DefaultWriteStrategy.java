@@ -25,8 +25,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
 /**
- * Writes given lines to PDF document. If document already contains some text then new text will be appended
- * to new page.
+ * Writes given lines to PDF document. If document already contains some text then new text will be appended to new
+ * page.
  */
 public class DefaultWriteStrategy implements WriteStrategy {
 

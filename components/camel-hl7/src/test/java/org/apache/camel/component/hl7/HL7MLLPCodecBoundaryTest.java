@@ -26,11 +26,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test for situation where the two end bytes are split across different byte
- * buffers.
+ * Test for situation where the two end bytes are split across different byte buffers.
  */
 public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
 

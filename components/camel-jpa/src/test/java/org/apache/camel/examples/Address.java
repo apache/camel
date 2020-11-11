@@ -22,7 +22,7 @@ import javax.persistence.Id;
 
 @Entity
 public class Address {
-    
+
     @Id
     @GeneratedValue
     private Long id;
@@ -44,7 +44,7 @@ public class Address {
     public void setAddressLine1(String addressLine1) {
         this.addressLine1 = addressLine1;
     }
-    
+
     public String getAddressLine2() {
         return addressLine2;
     }

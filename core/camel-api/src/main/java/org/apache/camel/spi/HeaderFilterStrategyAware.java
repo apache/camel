@@ -17,8 +17,7 @@
 package org.apache.camel.spi;
 
 /**
- * An interface to represent an object which can make use of
- * injected {@link HeaderFilterStrategy}.
+ * An interface to represent an object which can make use of injected {@link HeaderFilterStrategy}.
  * 
  * @since 1.5
  */

@@ -18,15 +18,18 @@ package org.apache.camel.component.bean;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanLifecycleTest extends ContextTestSupport {
 
@@ -35,7 +38,7 @@ public class BeanLifecycleTest extends ContextTestSupport {
     private MyBean statefulInstanceInRegistryNoCache;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         statefulInstance = new MyBean();
         statefulInstanceInRegistry = new MyBean();
@@ -45,7 +48,7 @@ public class BeanLifecycleTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -71,8 +74,8 @@ public class BeanLifecycleTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("statefulInstanceInRegistry", statefulInstanceInRegistry);
         jndi.bind("statefulInstanceInRegistryNoCache", statefulInstanceInRegistryNoCache);
         return jndi;
@@ -83,10 +86,13 @@ public class BeanLifecycleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").routeId("foo").bean(statefulInstance, "doSomething").bean(MyStatefulBean.class, "doSomething")
-                    .bean(MyStatefulBean.class.getName(), "doSomething", true).bean(MyStatelessBean.class.getName(), "doSomething", false)
-                    .to("bean:statefulInstanceInRegistry?method=doSomething&cache=true").to("bean:statefulInstanceInRegistryNoCache?method=doSomething&cache=false")
-                    .to("mock:result");
+                from("direct:foo").routeId("foo").bean(statefulInstance, "doSomething", BeanScope.Prototype)
+                        .bean(MyStatefulBean.class, "doSomething")
+                        .bean(MyStatefulBean.class.getName(), "doSomething", BeanScope.Singleton)
+                        .bean(MyStatelessBean.class.getName(), "doSomething", BeanScope.Prototype)
+                        .to("bean:statefulInstanceInRegistry?method=doSomething&scope=Singleton")
+                        .to("bean:statefulInstanceInRegistryNoCache?method=doSomething&scope=Prototype")
+                        .to("mock:result");
             }
         };
     }

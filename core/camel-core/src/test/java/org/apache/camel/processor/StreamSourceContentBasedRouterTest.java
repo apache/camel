@@ -24,12 +24,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.xml.StringSource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
- * Test for handling a StreamSource in a content-based router with XPath
- * predicates
+ * Test for handling a StreamSource in a content-based router with XPath predicates
  */
 public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     protected MockEndpoint x;
@@ -58,7 +57,7 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -74,7 +73,8 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
                 // is enabled and make sure the predicates can be evaluated
                 // multiple times
 
-                from("direct:start").streamCaching().choice().when().xpath("/message/text() = 'xx'").to("mock:x").when().xpath("/message/text() = 'yy'").to("mock:y");
+                from("direct:start").streamCaching().choice().when().xpath("/message/text() = 'xx'").to("mock:x").when()
+                        .xpath("/message/text() = 'yy'").to("mock:y");
             }
         };
     }

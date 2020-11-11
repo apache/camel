@@ -38,9 +38,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumerClientModeReuseChannelTest.class);
 
     private final List<Channel> channels = new ArrayList<>();
 
@@ -79,18 +85,18 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?textline=true&clientMode=true&reuseChannel=true").id("client")
-                    .process(new Processor() {
-                        public void process(final Exchange exchange) {
-                            final Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
-                            channels.add(channel);
-                            assertTrue("Should be active", channel.isActive());
+                        .process(new Processor() {
+                            public void process(final Exchange exchange) {
+                                final Channel channel = exchange.getProperty(NettyConstants.NETTY_CHANNEL, Channel.class);
+                                channels.add(channel);
+                                assertTrue(channel.isActive(), "Should be active");
 
-                            String body = exchange.getIn().getBody(String.class);
-                            exchange.getOut().setBody("Bye " + body);
-                        }
-                    })
-                    .to("mock:receive")
-                    .noAutoStartup();
+                                String body = exchange.getIn().getBody(String.class);
+                                exchange.getOut().setBody("Bye " + body);
+                            }
+                        })
+                        .to("mock:receive")
+                        .noAutoStartup();
             }
         };
     }
@@ -112,7 +118,7 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
 
             bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                .childHandler(new ServerInitializer());
+                    .childHandler(new ServerInitializer());
 
             ChannelFuture cf = bootstrap.bind(port).sync();
             channel = cf.channel();
@@ -136,7 +142,7 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
 
         @Override
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-            cause.printStackTrace();
+            LOG.warn("Unhandled exception caught: {}", cause.getMessage(), cause);
             ctx.close();
         }
 
@@ -162,7 +168,7 @@ public class NettyConsumerClientModeReuseChannelTest extends BaseNettyTest {
 
             // Add the text line codec combination first,
             pipeline.addLast("framer", new DelimiterBasedFrameDecoder(
-                8192, Delimiters.lineDelimiter()));
+                    8192, Delimiters.lineDelimiter()));
             // the encoder and decoder are static as these are sharable
             pipeline.addLast("decoder", DECODER);
             pipeline.addLast("encoder", ENCODER);

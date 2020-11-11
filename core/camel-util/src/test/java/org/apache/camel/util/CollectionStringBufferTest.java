@@ -16,10 +16,11 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CollectionStringBufferTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CollectionStringBufferTest {
 
     @Test
     public void testCollectionStringBufferDefault() {

@@ -21,17 +21,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * This annotation represents the root class of the model. When a message (FIX
- * message containing key-value pairs) must be described in the model, we will
- * use this annotation. The key pair separator (mandatory) defines the separator
- * between the key and the value The pair separator (mandatory) allows to define
- * which character separate the pairs from each other The name is optional and
- * could be used in the future to bind a property which a different name The
- * type (optional) allow to define the type of the message (e.g. FIX, EMX, ...)
- * The version (optional) defines the version of the message (e.g. 4.1, ...) The
- * crlf (optional) is used to add a new line after a record. By default, the
- * value is WINDOWS The isOrdered (optional) boolean is used to ordered the
- * message generated in output (line feed and carriage return on windows
+ * This annotation represents the root class of the model. When a message (FIX message containing key-value pairs) must
+ * be described in the model, we will use this annotation. The key pair separator (mandatory) defines the separator
+ * between the key and the value The pair separator (mandatory) allows to define which character separate the pairs from
+ * each other The name is optional and could be used in the future to bind a property which a different name The type
+ * (optional) allow to define the type of the message (e.g. FIX, EMX, ...) The version (optional) defines the version of
+ * the message (e.g. 4.1, ...) The crlf (optional) is used to add a new line after a record. By default, the value is
+ * WINDOWS The isOrdered (optional) boolean is used to ordered the message generated in output (line feed and carriage
+ * return on windows
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -52,16 +49,14 @@ public @interface Message {
     String pairSeparator();
 
     /**
-     * Key value pair separator is used to split the values from their keys
-     * (mandatory)
+     * Key value pair separator is used to split the values from their keys (mandatory)
      * 
      * @return String
      */
     String keyValuePairSeparator();
 
     /**
-     * type is used to define the type of the message (e.g. FIX, EMX, ...)
-     * (optional)
+     * type is used to define the type of the message (e.g. FIX, EMX, ...) (optional)
      */
     String type() default "FIX";
 
@@ -71,8 +66,8 @@ public @interface Message {
     String version() default "4.1";
 
     /**
-     * Character to be used to add a carriage return after each record
-     * (optional) Three values can be used : WINDOWS, UNIX or MAC
+     * Character to be used to add a carriage return after each record (optional) Three values can be used : WINDOWS,
+     * UNIX or MAC
      * 
      * @return String
      */

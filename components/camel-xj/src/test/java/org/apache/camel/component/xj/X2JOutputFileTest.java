@@ -22,8 +22,8 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class X2JOutputFileTest extends CamelTestSupport {
 
@@ -33,7 +33,8 @@ public class X2JOutputFileTest extends CamelTestSupport {
         mock.expectedBodiesReceived("{\"hello\":\"world!\"}");
         mock.message(0).body().isInstanceOf(File.class);
 
-        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME, "target/X2JOutputFileTest.json");
+        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,
+                "target/X2JOutputFileTest.json");
 
         assertMockEndpointsSatisfied();
     }

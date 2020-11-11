@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -64,12 +64,12 @@ public class SimpleResultTypeRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:foo")
-                    // set using builder support
-                    .setHeader("cool", simple("true", Boolean.class)).setHeader("fail", simple("true")).to("mock:foo");
+                        // set using builder support
+                        .setHeader("cool", simple("true", Boolean.class)).setHeader("fail", simple("true")).to("mock:foo");
 
                 from("direct:bar")
-                    // set using expression clause
-                    .setHeader("cool").simple("true", Boolean.class).setHeader("fail", simple("true")).to("mock:bar");
+                        // set using expression clause
+                        .setHeader("cool").simple("true", Boolean.class).setHeader("fail", simple("true")).to("mock:bar");
             }
         };
     }

@@ -17,8 +17,7 @@
 package org.apache.camel.cloud;
 
 /**
- * An interface to represent an object which wishes to be injected with
- * a {@link ServiceChooser}
+ * An interface to represent an object which wishes to be injected with a {@link ServiceChooser}
  */
 public interface ServiceChooserAware {
 

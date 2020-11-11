@@ -16,15 +16,40 @@
  */
 package org.apache.camel.component.ipfs;
 
-import java.net.URI;
 import java.util.Map;
 
+import io.nessus.ipfs.client.DefaultIPFSClient;
+import io.nessus.ipfs.client.IPFSClient;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 @Component("ipfs")
 public class IPFSComponent extends DefaultComponent {
+
+    @Metadata(description = "The ipfs host", defaultValue = "127.0.0.1")
+    private String ipfsHost = "127.0.0.1";
+    @Metadata(description = "The ipfs port", defaultValue = "5001")
+    private int ipfsPort = 5001;
+
+    private IPFSClient client;
+
+    public String getIpfsHost() {
+        return ipfsHost;
+    }
+
+    public void setIpfsHost(String ipfsHost) {
+        this.ipfsHost = ipfsHost;
+    }
+
+    public int getIpfsPort() {
+        return ipfsPort;
+    }
+
+    public void setIpfsPort(int ipfsPort) {
+        this.ipfsPort = ipfsPort;
+    }
 
     @Override
     protected Endpoint createEndpoint(String urispec, String remaining, Map<String, Object> parameters) throws Exception {
@@ -33,23 +58,16 @@ public class IPFSComponent extends DefaultComponent {
         IPFSEndpoint endpoint = new IPFSEndpoint(urispec, this, config);
         setProperties(endpoint, parameters);
 
-        // Derive host:port and cmd from the give uri
-        URI uri = new URI(urispec);
-        String host = uri.getHost();
-        int port = uri.getPort();
         String cmd = remaining;
-        if (!cmd.equals(host)) {
-            if (host != null) {
-                config.setIpfsHost(host);
-            }
-            if (port > 0) {
-                config.setIpfsPort(port);
-            }
-            int idx = cmd.indexOf('/');
-            cmd = cmd.substring(idx + 1);
-        }
         config.setIpfsCmd(cmd);
 
         return endpoint;
+    }
+
+    public IPFSClient getIPFSClient() {
+        if (client == null) {
+            client = new DefaultIPFSClient(ipfsHost, ipfsPort);
+        }
+        return client;
     }
 }

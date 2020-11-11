@@ -20,20 +20,19 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.meta.Experimental;
 
 /**
- * Used for introspecting beans properties via Java reflection; such as extracting current property values,
- * or updating one or more properties etc.
+ * Used for introspecting beans properties via Java reflection; such as extracting current property values, or updating
+ * one or more properties etc.
  *
- * End users should favour using org.apache.camel.support.PropertyBindingSupport instead.
+ * End users should favour using {@link org.apache.camel.support.PropertyBindingSupport} instead.
  */
-@Experimental
-public interface BeanIntrospection extends StaticService {
+public interface BeanIntrospection extends StaticService, AfterPropertiesConfigured {
 
     /**
      * Structure of an introspected class.
@@ -93,13 +92,13 @@ public interface BeanIntrospection extends StaticService {
     /**
      * Will inspect the target for properties.
      * <p/>
-     * Notice a property must have both a getter/setter method to be included.
-     * Notice all <tt>null</tt> values will be included.
+     * Notice a property must have both a getter/setter method to be included. Notice all <tt>null</tt> values will be
+     * included.
      *
-     * @param target         the target bean
-     * @param properties     the map to fill in found properties
-     * @param optionPrefix   an optional prefix to append the property key
-     * @return <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     * @param  target       the target bean
+     * @param  properties   the map to fill in found properties
+     * @param  optionPrefix an optional prefix to append the property key
+     * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
     boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix);
 
@@ -108,19 +107,19 @@ public interface BeanIntrospection extends StaticService {
      * <p/>
      * Notice a property must have both a getter/setter method to be included.
      *
-     * @param target         the target bean
-     * @param properties     the map to fill in found properties
-     * @param optionPrefix   an optional prefix to append the property key
-     * @param includeNull    whether to include <tt>null</tt> values
-     * @return <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     * @param  target       the target bean
+     * @param  properties   the map to fill in found properties
+     * @param  optionPrefix an optional prefix to append the property key
+     * @param  includeNull  whether to include <tt>null</tt> values
+     * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
     boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull);
 
     /**
      * Introspects the given class.
      *
-     * @param clazz the class
-     * @return the introspection result as a {@link ClassInfo} structure.
+     * @param  clazz the class
+     * @return       the introspection result as a {@link ClassInfo} structure.
      */
     ClassInfo cacheClass(Class<?> clazz);
 
@@ -137,32 +136,34 @@ public interface BeanIntrospection extends StaticService {
     /**
      * Gets the property or else returning the default value.
      *
-     * @param target         the target bean
-     * @param propertyName   the property name
-     * @param defaultValue   the default value
-     * @param ignoreCase     whether to ignore case for matching the property name
-     * @return the property value, or the default value if the target does not have a property with the given name
+     * @param  target       the target bean
+     * @param  propertyName the property name
+     * @param  defaultValue the default value
+     * @param  ignoreCase   whether to ignore case for matching the property name
+     * @return              the property value, or the default value if the target does not have a property with the
+     *                      given name
      */
     Object getOrElseProperty(Object target, String propertyName, Object defaultValue, boolean ignoreCase);
 
     /**
      * Gets the getter method for the property.
      *
-     * @param type            the target class
-     * @param propertyName    the property name
-     * @param ignoreCase      whether to ignore case for matching the property name
-     * @return                the getter method
-     * @throws NoSuchMethodException  is thrown if there are no getter method for the property
+     * @param  type                  the target class
+     * @param  propertyName          the property name
+     * @param  ignoreCase            whether to ignore case for matching the property name
+     * @return                       the getter method
+     * @throws NoSuchMethodException is thrown if there are no getter method for the property
      */
     Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase) throws NoSuchMethodException;
 
     /**
      * This method supports three modes to set a property:
      *
-     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to use.
+     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to
+     * use.
      *
-     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName} are
-     * NULL and {@code value} is non-NULL.
+     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName}
+     * are NULL and {@code value} is non-NULL.
      *
      * 3. Setting a property that has not yet been resolved, the property will be resolved based on the suitable methods
      * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
@@ -173,21 +174,25 @@ public interface BeanIntrospection extends StaticService {
     /**
      * This method supports three modes to set a property:
      *
-     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to use.
+     * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to
+     * use.
      *
-     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName} are
-     * NULL and {@code value} is non-NULL.
+     * 2. Setting a property that has already been resolved, this is the case when {@code context} and {@code refName}
+     * are NULL and {@code value} is non-NULL.
      *
      * 3. Setting a property that has not yet been resolved, the property will be resolved based on the suitable methods
      * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
-    boolean setProperty(CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
-                                      boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) throws Exception;
+    boolean setProperty(
+            CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
+            boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase)
+            throws Exception;
 
     /**
      * Find all the setter methods on the class
      */
-    Set<Method> findSetterMethods(Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase);
+    Set<Method> findSetterMethods(
+            Class<?> clazz, String name, boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase);
 
 }

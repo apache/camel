@@ -40,18 +40,23 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
     @Inject
     protected CamelContext camelContext;
 
+    protected abstract boolean acceptHealthCheck(AbstractHealthCheck check);
+
     @Override
     public HealthCheckResponse call() {
         final HealthCheckResponseBuilder builder = HealthCheckResponse.builder();
         builder.name(getHealthCheckName());
+        builder.up();
 
         if (camelContext != null) {
-            Collection<Result> results = HealthCheckHelper.invoke(camelContext, (HealthCheckFilter) check -> check.getGroup() != null && check.getGroup().equals(getHealthGroupFilterExclude()));
-            if (!results.isEmpty()) {
-                builder.up();
-            }
+            Collection<Result> results = HealthCheckHelper.invoke(camelContext,
+                    (HealthCheckFilter) check ->
+                    // skip context as we have our own context check
+                    check.getId().equals("context")
+                            // or if not accepted
+                            || check instanceof AbstractHealthCheck && !acceptHealthCheck((AbstractHealthCheck) check));
 
-            for (Result result: results) {
+            for (Result result : results) {
                 Map<String, Object> details = result.getDetails();
                 boolean enabled = true;
 
@@ -82,13 +87,22 @@ public abstract class AbstractCamelMicroProfileHealthCheck implements HealthChec
     }
 
     /**
-     * Gets the name of a specific health group to exclude when invoking a Camel HealthCheck
-     * @return the health group to exclude
+     * Whether this health check can be used for readiness checks
      */
-    abstract String getHealthGroupFilterExclude();
+    public boolean isReadiness() {
+        return true;
+    }
+
+    /**
+     * Whether this health check can be used for liveness checks
+     */
+    public boolean isLiveness() {
+        return true;
+    }
 
     /**
      * Gets the name of the health check which will be used as a heading for the associated checks.
+     * 
      * @return the health check name
      */
     abstract String getHealthCheckName();

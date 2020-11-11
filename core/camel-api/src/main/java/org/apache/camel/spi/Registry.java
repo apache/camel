@@ -16,19 +16,21 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * Represents a {@link BeanRepository} which may also be capable
- * of binding beans to its repository.
+ * Represents a {@link BeanRepository} which may also be capable of binding beans to its repository.
  */
 public interface Registry extends BeanRepository {
 
     /**
      * Binds the bean to the repository (if possible).
+     * 
+     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
      *
-     * @param id   the id of the bean
-     * @param bean the bean
+     * @param  id                    the id of the bean
+     * @param  bean                  the bean
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
     default void bind(String id, Object bean) throws RuntimeCamelException {
@@ -38,12 +40,13 @@ public interface Registry extends BeanRepository {
     /**
      * Binds the bean to the repository (if possible).
      * <p/>
-     * Binding by id and type allows to bind multiple entries with the same
-     * id but with different type.
+     * Binding by id and type allows to bind multiple entries with the same id but with different type.
      *
-     * @param id   the id of the bean
-     * @param type the type of the bean to associate the binding
-     * @param bean the bean
+     * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
+     *
+     * @param  id                    the id of the bean
+     * @param  type                  the type of the bean to associate the binding
+     * @param  bean                  the bean
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
     void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException;
@@ -51,8 +54,8 @@ public interface Registry extends BeanRepository {
     /**
      * Strategy to wrap the value to be stored in the registry.
      *
-     * @param value  the value
-     * @return the value to store
+     * @param  value the value
+     * @return       the value to store
      */
     default Object wrap(Object value) {
         return value;

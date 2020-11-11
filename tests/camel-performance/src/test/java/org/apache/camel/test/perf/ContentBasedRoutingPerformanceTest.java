@@ -18,7 +18,7 @@ package org.apache.camel.test.perf;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ContentBasedRoutingPerformanceTest extends AbstractBasePerformanceTest {
 
@@ -93,22 +93,22 @@ public class ContentBasedRoutingPerformanceTest extends AbstractBasePerformanceT
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:filter-simple")
-                    .filter().simple("${body} contains 'xadmin;server1;community#1.0##'")
+                        .filter().simple("${body} contains 'xadmin;server1;community#1.0##'")
                         .to("mock:end");
 
                 from("direct:filter-expression")
-                    .filter(body().contains("<order><symbol>IBM</symbol><buyerID>asankha</buyerID>"))
+                        .filter(body().contains("<order><symbol>IBM</symbol><buyerID>asankha</buyerID>"))
                         .to("mock:end");
 
                 from("direct:choice-simple")
-                    .choice()
+                        .choice()
                         .when().simple("${body} contains 'xadmin;server1;community#1.0##'")
-                            .to("mock:end");
+                        .to("mock:end");
 
                 from("direct:choice-expression")
-                    .choice()
+                        .choice()
                         .when(body().contains("<order><symbol>IBM</symbol><buyerID>asankha</buyerID>"))
-                            .to("mock:end");
+                        .to("mock:end");
             }
         };
     }

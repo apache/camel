@@ -41,9 +41,8 @@ public enum AsteriskAction implements Function<Exchange, ManagerAction> {
         @Override
         public ManagerAction apply(Exchange exchange) {
             return new ExtensionStateAction(
-                exchange.getIn().getHeader(AsteriskConstants.EXTENSION, String.class),
-                exchange.getIn().getHeader(AsteriskConstants.CONTEXT, String.class)
-            );
+                    exchange.getIn().getHeader(AsteriskConstants.EXTENSION, String.class),
+                    exchange.getIn().getHeader(AsteriskConstants.CONTEXT, String.class));
         }
     }
 }

@@ -107,7 +107,8 @@ public class PackageScanRouteBuilderFinder {
         return false;
     }
 
-    protected RoutesBuilder instantiateBuilder(Class<? extends RoutesBuilder> type) throws IllegalAccessException, InstantiationException {
+    protected RoutesBuilder instantiateBuilder(Class<? extends RoutesBuilder> type)
+            throws IllegalAccessException, InstantiationException {
         return camelContext.getInjector().newInstance(type);
     }
 }

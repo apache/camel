@@ -116,7 +116,8 @@ public class KeyStoreLoader {
 
         if (effectiveKeyAlias == null) {
             if (keyStore.size() != 1) {
-                throw new IllegalArgumentException("Key store contains more than one key. The use of the 'keyAlias' parameter is required.");
+                throw new IllegalArgumentException(
+                        "Key store contains more than one key. The use of the 'keyAlias' parameter is required.");
             }
             try {
                 effectiveKeyAlias = keyStore.aliases().nextElement();
@@ -125,16 +126,17 @@ public class KeyStoreLoader {
             }
         }
 
-        final Key privateKey = keyStore.getKey(effectiveKeyAlias, this.keyPassword != null ? this.keyPassword.toCharArray() : null);
+        final Key privateKey
+                = keyStore.getKey(effectiveKeyAlias, this.keyPassword != null ? this.keyPassword.toCharArray() : null);
 
         if (privateKey instanceof PrivateKey) {
-            final X509Certificate certificate = (X509Certificate)keyStore.getCertificate(effectiveKeyAlias);
+            final X509Certificate certificate = (X509Certificate) keyStore.getCertificate(effectiveKeyAlias);
             if (certificate == null) {
                 return null;
             }
 
             final PublicKey publicKey = certificate.getPublicKey();
-            final KeyPair keyPair = new KeyPair(publicKey, (PrivateKey)privateKey);
+            final KeyPair keyPair = new KeyPair(publicKey, (PrivateKey) privateKey);
             return new Result(certificate, keyPair);
         }
 

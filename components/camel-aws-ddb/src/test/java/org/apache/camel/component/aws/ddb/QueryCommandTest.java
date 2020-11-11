@@ -28,10 +28,10 @@ import com.amazonaws.services.dynamodbv2.model.ConsumedCapacity;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueryCommandTest {
 
@@ -40,7 +40,7 @@ public class QueryCommandTest {
     private DdbConfiguration configuration;
     private Exchange exchange;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
         configuration = new DdbConfiguration();
@@ -61,14 +61,14 @@ public class QueryCommandTest {
         exchange.getIn().setHeader(DdbConstants.START_KEY, startKey);
         exchange.getIn().setHeader(DdbConstants.LIMIT, 10);
         exchange.getIn().setHeader(DdbConstants.SCAN_INDEX_FORWARD, true);
-        
+
         Map<String, Condition> keyConditions = new HashMap<>();
         Condition condition = new Condition()
-            .withComparisonOperator(ComparisonOperator.GT.toString())
-            .withAttributeValueList(new AttributeValue().withN("1985"));
-        
+                .withComparisonOperator(ComparisonOperator.GT.toString())
+                .withAttributeValueList(new AttributeValue().withN("1985"));
+
         keyConditions.put("1", condition);
-        
+
         exchange.getIn().setHeader(DdbConstants.KEY_CONDITIONS, keyConditions);
 
         command.execute();

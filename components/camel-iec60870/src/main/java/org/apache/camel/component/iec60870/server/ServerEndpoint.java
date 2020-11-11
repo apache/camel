@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.iec60870.server;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,11 +29,10 @@ import org.apache.camel.support.DefaultComponent;
 import static java.util.Objects.requireNonNull;
 
 /**
- * IEC 60870 component used for telecontrol (supervisory control and data acquisition)
- * such as controlling electric power transmission grids and other geographically widespread control systems.
+ * IEC 60870 supervisory control and data acquisition (SCADA) server using NeoSCADA implementation.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "iec60870-server", syntax = "iec60870-server:uriPath",
-    title = "IEC 60870 Server", label = "iot")
+             title = "IEC 60870 Server", category = { Category.IOT })
 public class ServerEndpoint extends AbstractIecEndpoint<ServerConnectionMultiplexor> {
 
     /**
@@ -41,7 +41,8 @@ public class ServerEndpoint extends AbstractIecEndpoint<ServerConnectionMultiple
     @UriParam(defaultValue = "true")
     private boolean filterNonExecute = true;
 
-    public ServerEndpoint(final String uri, final DefaultComponent component, final ServerConnectionMultiplexor connection, final ObjectAddress address) {
+    public ServerEndpoint(final String uri, final DefaultComponent component, final ServerConnectionMultiplexor connection,
+                          final ObjectAddress address) {
         super(uri, component, requireNonNull(connection), address);
     }
 

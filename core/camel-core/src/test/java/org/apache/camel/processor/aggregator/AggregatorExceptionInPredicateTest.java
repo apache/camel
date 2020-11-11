@@ -23,7 +23,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Based on CAMEL-1546
@@ -61,16 +61,17 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
-                from("direct:start").aggregate(header("id")).completionTimeout(500).aggregationStrategy(new AggregationStrategy() {
+                from("direct:start").aggregate(header("id")).completionTimeout(500)
+                        .aggregationStrategy(new AggregationStrategy() {
 
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        Object body = newExchange.getIn().getBody();
-                        if ("Damn".equals(body)) {
-                            throw new IllegalArgumentException();
-                        }
-                        return newExchange;
-                    }
-                }).to("mock:result");
+                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                                Object body = newExchange.getIn().getBody();
+                                if ("Damn".equals(body)) {
+                                    throw new IllegalArgumentException();
+                                }
+                                return newExchange;
+                            }
+                        }).to("mock:result");
 
                 from("direct:predicate").aggregate(new Expression() {
 

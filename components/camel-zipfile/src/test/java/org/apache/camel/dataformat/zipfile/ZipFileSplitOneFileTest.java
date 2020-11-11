@@ -28,14 +28,16 @@ import java.util.zip.ZipOutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class ZipFileSplitOneFileTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/zip-unmarshal");
         super.setUp();
@@ -60,12 +62,12 @@ public class ZipFileSplitOneFileTest extends CamelTestSupport {
                 zf.setUsingIterator(true);
 
                 from("file://target/zip-unmarshal?noop=true&include=.*zip")
-                    .to("mock:input")
-                    .unmarshal(zf)
-                    .split(bodyAs(Iterator.class)).streaming()
+                        .to("mock:input")
+                        .unmarshal(zf)
+                        .split(bodyAs(Iterator.class)).streaming()
                         .convertBodyTo(String.class)
                         .to("mock:end")
-                    .end();
+                        .end();
             }
         };
     }

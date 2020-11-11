@@ -38,5 +38,8 @@ public interface JiraConstants {
     String ISSUE_WATCHERS_ADD = "IssueWatchersAdd";
     String ISSUE_WATCHERS_REMOVE = "IssueWatchersRemove";
     String JIRA_REST_CLIENT_FACTORY = "JiraRestClientFactory";
-
+    String PARENT_ISSUE_KEY = "ParentIssueKey";
+    String CHILD_ISSUE_KEY = "ChildIssueKey";
+    String LINK_TYPE = "linkType";
+    String MINUTES_SPENT = "minutesSpent";
 }

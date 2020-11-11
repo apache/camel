@@ -19,6 +19,7 @@ package org.apache.camel.component.atom;
 import java.util.Date;
 
 import org.apache.abdera.model.Feed;
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedComponent;
@@ -27,10 +28,10 @@ import org.apache.camel.component.feed.FeedPollingConsumer;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The atom component is used for consuming Atom RSS feeds.
+ * Poll Atom RSS feeds.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "atom", title = "Atom", syntax = "atom:feedUri", consumerOnly = true,
-        label = "rss", lenientProperties = true)
+             category = { Category.RSS }, lenientProperties = true)
 public class AtomEndpoint extends FeedEndpoint {
 
     public AtomEndpoint() {
@@ -43,7 +44,7 @@ public class AtomEndpoint extends FeedEndpoint {
     @Override
     public Exchange createExchange(Object feed) {
         Exchange exchange = createExchangeWithFeedHeader(feed, AtomConstants.ATOM_FEED);
-        exchange.getIn().setBody(((Feed)feed).getEntries());
+        exchange.getIn().setBody(((Feed) feed).getEntries());
         return exchange;
     }
 
@@ -55,12 +56,14 @@ public class AtomEndpoint extends FeedEndpoint {
     }
 
     @Override
-    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) throws Exception {
+    protected FeedPollingConsumer createEntryPollingConsumer(
+            FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries)
+            throws Exception {
         AtomEntryPollingConsumer answer = new AtomEntryPollingConsumer(this, processor, filter, lastUpdate, throttleEntries);
         configureConsumer(answer);
         return answer;
-    }  
-    
+    }
+
     @Override
     protected FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) throws Exception {
         AtomPollingConsumer answer = new AtomPollingConsumer(this, processor);

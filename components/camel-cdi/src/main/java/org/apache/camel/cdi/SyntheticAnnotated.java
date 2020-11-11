@@ -55,7 +55,7 @@ final class SyntheticAnnotated implements Annotated {
     SyntheticAnnotated(Class<?> type, Set<Type> types, Class<?> javaClass, Collection<Annotation> annotations) {
         this.type = type;
         this.types = types;
-        this.javaClass  = javaClass;
+        this.javaClass = javaClass;
         this.annotations = new HashSet<>(annotations);
     }
 
@@ -81,18 +81,18 @@ final class SyntheticAnnotated implements Annotated {
     @Override
     public <T extends Annotation> T getAnnotation(Class<T> type) {
         return annotations.stream()
-            .filter(isAnnotationType(type))
-            .findFirst()
-            .map(type::cast)
-            .orElse(null);
+                .filter(isAnnotationType(type))
+                .findFirst()
+                .map(type::cast)
+                .orElse(null);
     }
 
     @Override
     public <T extends Annotation> Set<T> getAnnotations(Class<T> type) {
         return annotations.stream()
-            .filter(isAnnotationType(type))
-            .map(type::cast)
-            .collect(toSet());
+                .filter(isAnnotationType(type))
+                .map(type::cast)
+                .collect(toSet());
     }
 
     @Override

@@ -39,14 +39,16 @@ public class RestNettyHttpBinding extends DefaultNettyHttpBinding {
     @Override
     public RestNettyHttpBinding copy() {
         try {
-            return (RestNettyHttpBinding)this.clone();
+            return (RestNettyHttpBinding) this.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
     }
 
     @Override
-    public void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
+    public void populateCamelHeaders(
+            HttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration)
+            throws Exception {
         super.populateCamelHeaders(request, headers, exchange, configuration);
 
         String path = request.uri();

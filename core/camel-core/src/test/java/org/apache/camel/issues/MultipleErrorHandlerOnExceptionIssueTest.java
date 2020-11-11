@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -62,11 +62,15 @@ public class MultipleErrorHandlerOnExceptionIssueTest extends ContextTestSupport
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 from("seda:a")
-                    .errorHandler(deadLetterChannel("mock:dead.a").maximumRedeliveries(3).redeliveryDelay(0).retryAttemptedLogLevel(LoggingLevel.WARN).asyncDelayedRedelivery())
-                    .to("mock:a").throwException(new IllegalArgumentException("Forced A"));
+                        .errorHandler(deadLetterChannel("mock:dead.a").maximumRedeliveries(3).redeliveryDelay(0)
+                                .retryAttemptedLogLevel(LoggingLevel.WARN).asyncDelayedRedelivery())
+                        .to("mock:a").throwException(new IllegalArgumentException("Forced A"));
 
-                from("seda:b").errorHandler(deadLetterChannel("mock:dead.b").maximumRedeliveries(2).redeliveryDelay(0).retryAttemptedLogLevel(LoggingLevel.WARN)).to("mock:b")
-                    .throwException(new IOException("Some IO error"));
+                from("seda:b")
+                        .errorHandler(deadLetterChannel("mock:dead.b").maximumRedeliveries(2).redeliveryDelay(0)
+                                .retryAttemptedLogLevel(LoggingLevel.WARN))
+                        .to("mock:b")
+                        .throwException(new IOException("Some IO error"));
             }
         };
     }

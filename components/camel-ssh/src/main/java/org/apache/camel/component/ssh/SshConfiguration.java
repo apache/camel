@@ -112,8 +112,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * Sets the username to use in logging into the remote SSH server.
      *
-     * @param username
-     *            String representing login username.
+     * @param username String representing login username.
      */
     public void setUsername(String username) {
         this.username = username;
@@ -126,8 +125,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * Sets the hostname of the remote SSH server.
      *
-     * @param host
-     *            String representing hostname of SSH server.
+     * @param host String representing hostname of SSH server.
      */
     public void setHost(String host) {
         this.host = host;
@@ -140,8 +138,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * Sets the port number for the remote SSH server.
      *
-     * @param port
-     *            int representing port number on remote host. Defaults to 22.
+     * @param port int representing port number on remote host. Defaults to 22.
      */
     public void setPort(int port) {
         this.port = port;
@@ -152,11 +149,9 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the password to use in connecting to remote SSH server. Requires
-     * keyPairProvider to be set to null.
+     * Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null.
      *
-     * @param password
-     *            String representing password for username at remote host.
+     * @param password String representing password for username at remote host.
      */
     public void setPassword(String password) {
         this.password = password;
@@ -167,13 +162,11 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the command string to send to the remote SSH server during every poll
-     * cycle. Only works with camel-ssh component being used as a consumer, i.e.
-     * from("ssh://...") You may need to end your command with a newline, and that
-     * must be URL encoded %0A
+     * Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh
+     * component being used as a consumer, i.e. from("ssh://...") You may need to end your command with a newline, and
+     * that must be URL encoded %0A
      *
-     * @param pollCommand
-     *            String representing the command to send.
+     * @param pollCommand String representing the command to send.
      */
     public void setPollCommand(String pollCommand) {
         this.pollCommand = pollCommand;
@@ -184,15 +177,12 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the KeyPairProvider reference to use when connecting using Certificates
-     * to the remote SSH Server.
+     * Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server.
      *
-     * @param keyPairProvider
-     *            KeyPairProvider reference to use in authenticating. If set to
-     *            'null', then will attempt to connect using username/password
-     *            settings.
+     * @param keyPairProvider KeyPairProvider reference to use in authenticating. If set to 'null', then will attempt to
+     *                        connect using username/password settings.
      *
-     * @see KeyPairProvider
+     * @see                   KeyPairProvider
      */
     public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
         this.keyPairProvider = keyPairProvider;
@@ -203,15 +193,13 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the key type to pass to the KeyPairProvider as part of authentication.
-     * KeyPairProvider.loadKey(...) will be passed this value. From Camel 3.0.0 / 2.25.0,
-     * by default Camel will select the first available KeyPair that is loaded. Prior to
-     * this, a KeyType of 'ssh-rsa' was enforced by default.
+     * Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be
+     * passed this value. From Camel 3.0.0 / 2.25.0, by default Camel will select the first available KeyPair that is
+     * loaded. Prior to this, a KeyType of 'ssh-rsa' was enforced by default.
      *
-     * @param keyType
-     *            String defining the type of KeyPair to use for authentication.
+     * @param keyType String defining the type of KeyPair to use for authentication.
      *
-     * @see KeyPairProvider
+     * @see           KeyPairProvider
      */
     public void setKeyType(String keyType) {
         this.keyType = keyType;
@@ -222,31 +210,13 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the timeout in milliseconds to wait in establishing the remote SSH
-     * server connection. Defaults to 30000 milliseconds.
+     * Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000
+     * milliseconds.
      *
-     * @param timeout
-     *            long milliseconds to wait.
+     * @param timeout long milliseconds to wait.
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
-    }
-
-    /**
-     * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
-     */
-    @Deprecated
-    public String getCertFilename() {
-        return ((certResource != null) && certResource.startsWith("file:")) ? certResource.substring(5) : null;
-    }
-
-    /**
-     * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
-     */
-    @Deprecated
-    @Metadata(deprecationNote = "As of version 2.11, replaced by certResource.")
-    public void setCertFilename(String certFilename) {
-        this.certResource = "file:" + certFilename;
     }
 
     public String getCertResource() {
@@ -255,11 +225,9 @@ public class SshConfiguration implements Cloneable {
 
     /**
      * Sets the resource path of the certificate to use for Authentication. Will use
-     * {@link ResourceHelperKeyPairProvider} to resolve file based certificate, and
-     * depends on keyType setting.
+     * {@link ResourceHelperKeyPairProvider} to resolve file based certificate, and depends on keyType setting.
      *
-     * @param certResource
-     *            String file, classpath, or http url for the certificate
+     * @param certResource String file, classpath, or http url for the certificate
      */
     public void setCertResource(String certResource) {
         this.certResource = certResource;
@@ -272,8 +240,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * Sets the password to use in loading certResource, if certResource is an encrypted key.
      *
-     * @param certResourcePassword
-     *            String representing password use to load the certResource key
+     * @param certResourcePassword String representing password use to load the certResource key
      */
     public void setCertResourcePassword(String certResourcePassword) {
         this.certResourcePassword = certResourcePassword;
@@ -286,8 +253,7 @@ public class SshConfiguration implements Cloneable {
     /**
      * Sets the resource path for a known_hosts file
      *
-     * @param knownHostsResource
-     *            String file, classpath, or http url for the certificate
+     * @param knownHostsResource String file, classpath, or http url for the certificate
      */
     public void setKnownHostsResource(String knownHostsResource) {
         this.knownHostsResource = knownHostsResource;
@@ -298,11 +264,10 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies whether a connection to an unknown host should fail or not. This
-     * value is only checked when the property knownHosts is set.
+     * Specifies whether a connection to an unknown host should fail or not. This value is only checked when the
+     * property knownHosts is set.
      *
-     * @param failOnUnknownHost
-     *            boolean flag, whether a connection to an unknown host should fail
+     * @param failOnUnknownHost boolean flag, whether a connection to an unknown host should fail
      */
     public void setFailOnUnknownHost(boolean failOnUnknownHost) {
         this.failOnUnknownHost = failOnUnknownHost;
@@ -313,13 +278,11 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the channel type to pass to the Channel as part of command execution.
-     * Defaults to "exec".
+     * Sets the channel type to pass to the Channel as part of command execution. Defaults to "exec".
      *
-     * @param channelType
-     *            String defining the type of Channel to use for command execution.
+     * @param channelType String defining the type of Channel to use for command execution.
      *
-     * @see org.apache.sshd.common.channel.Channel
+     * @see               org.apache.sshd.common.channel.Channel
      */
     public void setChannelType(String channelType) {
         this.channelType = channelType;
@@ -332,9 +295,8 @@ public class SshConfiguration implements Cloneable {
     /**
      * Sets the shellPrompt to be dropped when response is read after command execution
      *
-     * @param shellPrompt
-     *            String defining ending string of command line which has to be dropped when response is
-     *            read after command execution.
+     * @param shellPrompt String defining ending string of command line which has to be dropped when response is read
+     *                    after command execution.
      */
     public void setShellPrompt(String shellPrompt) {
         this.shellPrompt = shellPrompt;
@@ -345,11 +307,9 @@ public class SshConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the sleep period in milliseconds to wait reading response from shell prompt.
-     * Defaults to 100 milliseconds.
+     * Sets the sleep period in milliseconds to wait reading response from shell prompt. Defaults to 100 milliseconds.
      *
-     * @param sleepForShellPrompt
-     *            long milliseconds to wait.
+     * @param sleepForShellPrompt long milliseconds to wait.
      */
     public void setSleepForShellPrompt(long sleepForShellPrompt) {
         this.sleepForShellPrompt = sleepForShellPrompt;

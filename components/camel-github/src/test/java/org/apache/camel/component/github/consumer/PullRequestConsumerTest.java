@@ -24,7 +24,7 @@ import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.eclipse.egit.github.core.PullRequest;
 import org.eclipse.egit.github.core.User;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,6 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
             }
         };
     }
-
 
     @Test
     public void pullRequestTest() throws Exception {
@@ -68,7 +67,8 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
             pullRequest.getHtmlUrl();
             pullRequest.getUser().getLogin();
             pullRequest.getUser().getHtmlUrl();
-            LOG.debug("Got PullRequest " + pullRequest.getHtmlUrl() + " [" + pullRequest.getTitle() + "] From " + pullRequestUser.getLogin());
+            LOG.debug("Got PullRequest " + pullRequest.getHtmlUrl() + " [" + pullRequest.getTitle() + "] From "
+                      + pullRequestUser.getLogin());
         }
     }
 }

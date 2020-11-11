@@ -23,26 +23,30 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.component.spring.ws.utils.TestUtil;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestSupport {
 
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.stockquotes.edu/\"><symbol>GOOG</symbol></GetQuote>";
 
     private String expectedResponse;
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
-        expectedResponse = context.getTypeConverter().convertTo(String.class, getClass().getResourceAsStream("/stockquote-response.xml"));
+        expectedResponse = context.getTypeConverter().convertTo(String.class,
+                getClass().getResourceAsStream("/stockquote-response.txt"));
     }
 
     @Test
@@ -57,7 +61,8 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/ws/ConsumerEndpointMappingByBeanNameRouteTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/spring/ws/ConsumerEndpointMappingByBeanNameRouteTest-context.xml");
     }
 
 }

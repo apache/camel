@@ -16,19 +16,27 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class FilePathResolverTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class FilePathResolverTest {
 
     @Test
     public void testFilePathResolver() throws Exception {
         assertEquals("/foo/bar", FilePathResolver.resolvePath("/foo/bar"));
+
+        assertEquals("/foo/myserver/bar", FilePathResolver.resolvePath("/foo/${env.FOO_SERVICE_HOST}/bar"));
 
         String tmp = System.getProperty("java.io.tmpdir");
         assertEquals(tmp + "foo", FilePathResolver.resolvePath("${java.io.tmpdir}foo"));
 
         System.setProperty("beer", "Carlsberg");
         assertEquals(tmp + "foo/Carlsberg", FilePathResolver.resolvePath("${java.io.tmpdir}foo/${beer}"));
+
+        assertEquals("/myprefix/" + tmp + "bar/Carlsberg",
+                FilePathResolver.resolvePath("/myprefix/${java.io.tmpdir}bar/${beer}"));
+
+        assertEquals("/foo/myserver/bar/Carlsberg", FilePathResolver.resolvePath("/foo/${env.FOO_SERVICE_HOST}/bar/${beer}"));
     }
 }

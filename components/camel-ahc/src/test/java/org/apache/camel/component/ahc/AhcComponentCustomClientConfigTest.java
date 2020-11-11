@@ -46,22 +46,22 @@ public class AhcComponentCustomClientConfigTest extends BaseAhcTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // redirect to test the client config worked as we told it to follow redirects
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "301");
-                                exchange.getOut().setHeader("Location", getTestServerEndpointTwoUrl());
+                                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, "301");
+                                exchange.getMessage().setHeader("Location", getTestServerEndpointTwoUrl());
                             }
                         });
 

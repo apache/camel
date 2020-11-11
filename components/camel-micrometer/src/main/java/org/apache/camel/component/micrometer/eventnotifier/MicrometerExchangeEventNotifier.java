@@ -19,6 +19,7 @@ package org.apache.camel.component.micrometer.eventnotifier;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
@@ -28,11 +29,13 @@ import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
+import org.apache.camel.spi.InflightRepository;
 
 public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNotifier<ExchangeEvent> {
-
+    private InflightRepository inflightRepository;
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
-    private MicrometerExchangeEventNotifierNamingStrategy namingStrategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
+    private MicrometerExchangeEventNotifierNamingStrategy namingStrategy
+            = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
 
     public MicrometerExchangeEventNotifier() {
         super(ExchangeEvent.class);
@@ -55,8 +58,15 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     }
 
     @Override
+    protected void doStart() throws Exception {
+        inflightRepository = getCamelContext().getInflightRepository();
+        super.doStart();
+    }
+
+    @Override
     public void notify(CamelEvent eventObject) {
         if (!(getIgnoreExchanges().test(((ExchangeEvent) eventObject).getExchange()))) {
+            handleExchangeEvent((ExchangeEvent) eventObject);
             if (eventObject instanceof ExchangeSentEvent) {
                 handleSentEvent((ExchangeSentEvent) eventObject);
             } else if (eventObject instanceof ExchangeCreatedEvent) {
@@ -64,6 +74,17 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
             } else if (eventObject instanceof ExchangeCompletedEvent || eventObject instanceof ExchangeFailedEvent) {
                 handleDoneEvent((ExchangeEvent) eventObject);
             }
+        }
+    }
+
+    private void handleExchangeEvent(ExchangeEvent exchangeEvent) {
+        Exchange exchange = exchangeEvent.getExchange();
+        if (exchange.getFromRouteId() != null && exchange.getFromEndpoint() != null) {
+            String name = namingStrategy.getInflightExchangesName(exchange, exchange.getFromEndpoint());
+            Tags tags = namingStrategy.getInflightExchangesTags(exchangeEvent, exchange.getFromEndpoint());
+            Gauge.builder(name, () -> getInflightExchangesInRoute(exchangeEvent))
+                    .tags(tags)
+                    .register(getMeterRegistry());
         }
     }
 
@@ -88,5 +109,9 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         }
     }
 
+    private int getInflightExchangesInRoute(ExchangeEvent exchangeEvent) {
+        String routeId = exchangeEvent.getExchange().getFromRouteId();
+        return inflightRepository.size(routeId);
+    }
 
 }

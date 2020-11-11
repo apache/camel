@@ -20,12 +20,14 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-@Ignore
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled
 public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
     @Override

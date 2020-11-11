@@ -36,7 +36,7 @@ public class MyOtherRoute extends RouteBuilder implements CamelContextAware {
             throw new IllegalArgumentException("Should be named foo");
         }
     }
-    
+
     @Override
     public CamelContext getCamelContext() {
         return ctx;

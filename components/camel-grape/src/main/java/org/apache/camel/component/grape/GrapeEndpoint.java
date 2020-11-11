@@ -22,6 +22,7 @@ import java.util.List;
 import groovy.grape.Grape;
 import groovy.lang.Closure;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,10 +33,10 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
 /**
- * The grape component allows you to fetch, load and manage additional jars when
- * CamelContext is running.
+ * Fetch, load and manage additional jars dynamically after Camel Context was started.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape", producerOnly = true, label = "management,deployment")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape",
+             producerOnly = true, category = { Category.MANAGEMENT, Category.DEPLOYMENT })
 public class GrapeEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Maven coordinates to use as default to grab if the message body is empty.")

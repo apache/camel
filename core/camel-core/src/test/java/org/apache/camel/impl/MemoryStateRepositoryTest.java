@@ -17,9 +17,9 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.impl.engine.MemoryStateRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MemoryStateRepositoryTest {
     @Test

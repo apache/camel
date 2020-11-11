@@ -33,7 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     private Document<Feed> document;
 
-    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
+    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate,
+                                    boolean throttleEntries) {
         super(endpoint, processor, filter, lastUpdate, throttleEntries);
     }
 

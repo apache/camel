@@ -25,15 +25,15 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unite test for {@link InfinispanLocalAggregationRepository}
@@ -43,7 +43,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
     private static InfinispanLocalAggregationRepository aggregationRepository;
     private CamelContext camelContext = new DefaultCamelContext();
 
-    @BeforeClass
+    @BeforeAll
     public static void starting() throws Exception {
         Configuration conf = new ConfigurationBuilder().build();
         aggregationRepository = new InfinispanLocalAggregationRepository();
@@ -51,7 +51,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
         aggregationRepository.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopping() throws Exception {
         aggregationRepository.stop();
     }
@@ -60,7 +60,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
         DefaultExchangeHolder holder = aggregationRepository.getCache().get(key);
         if (holder == null) {
             return false;
-        } 
+        }
         return true;
     }
 
@@ -83,7 +83,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
         Exchange exchange = new DefaultExchange(camelContext);
         aggregationRepository.add(camelContext, key, exchange);
         assertTrue(exists(key));
-        
+
         // When
         Exchange exchange2 = aggregationRepository.get(camelContext, key);
         // Then
@@ -130,7 +130,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
     @Test
     public void testGetKeys() {
         // Given
-        String[] keys = {"GetKeys1", "GetKeys2"};
+        String[] keys = { "GetKeys1", "GetKeys2" };
         addExchanges(keys);
         // When
         Set<String> keySet = aggregationRepository.getKeys();
@@ -188,7 +188,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
     @Test
     public void testScan() {
         // Given
-        String[] keys = {"Scan1", "Scan2"};
+        String[] keys = { "Scan1", "Scan2" };
         addExchanges(keys);
         // When
         Set<String> exchangeIdSet = aggregationRepository.scan(camelContext);
@@ -201,7 +201,7 @@ public class InfinispanLocalAggregationRepositoryOperationsTest {
     @Test
     public void testRecover() {
         // Given
-        String[] keys = {"Recover1", "Recover2"};
+        String[] keys = { "Recover1", "Recover2" };
         addExchanges(keys);
         // When
         Exchange exchange2 = aggregationRepository.recover(camelContext, "Recover2");

@@ -20,12 +20,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DisruptorWaitForTaskNeverTest extends CamelTestSupport {
     @Test
-    public void testInOut() throws Exception {
+    void testInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         final String out = template.requestBody("direct:start", "Hello World", String.class);
@@ -36,7 +38,7 @@ public class DisruptorWaitForTaskNeverTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInOnly() throws Exception {
+    void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         final Exchange out = template.send("direct:start", new Processor() {
@@ -54,10 +56,10 @@ public class DisruptorWaitForTaskNeverTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start").to("disruptor:foo?waitForTaskToComplete=Never");
 
                 from("disruptor:foo?waitForTaskToComplete=Never").transform(constant("Bye World"))

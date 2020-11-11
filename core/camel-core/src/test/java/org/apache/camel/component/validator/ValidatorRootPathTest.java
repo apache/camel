@@ -19,8 +19,8 @@ package org.apache.camel.component.validator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ValidatorRootPathTest extends ContextTestSupport {
 
@@ -33,15 +33,15 @@ public class ValidatorRootPathTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(0);
 
         template
-            .sendBody("direct:rootPath",
-                      "<report xmlns='http://foo.com/report' xmlns:rb='http://foo.com/report-base'><author><rb:name>Knuth</rb:name></author><content><rb:chapter><rb:subject></rb:subject>"
-                                         + "<rb:abstract></rb:abstract><rb:body></rb:body></rb:chapter></content></report>");
+                .sendBody("direct:rootPath",
+                        "<report xmlns='http://foo.com/report' xmlns:rb='http://foo.com/report-base'><author><rb:name>Knuth</rb:name></author><content><rb:chapter><rb:subject></rb:subject>"
+                                             + "<rb:abstract></rb:abstract><rb:body></rb:body></rb:chapter></content></report>");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

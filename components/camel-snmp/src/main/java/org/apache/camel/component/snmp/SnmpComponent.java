@@ -23,8 +23,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * Represents the component that manages {@link SnmpEndpoint}. It holds the list
- * of named direct endpoints.
+ * Represents the component that manages {@link SnmpEndpoint}. It holds the list of named direct endpoints.
  */
 @Component("snmp")
 public class SnmpComponent extends DefaultComponent {

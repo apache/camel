@@ -22,22 +22,22 @@ import org.apache.camel.component.wordpress.WordpressTestConstants;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.component.wordpress.api.model.Taxonomy;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceTaxonomy;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.junit.Assert.assertThat;
 
-@Ignore("Not implemented yet")
+@Disabled("Not implemented yet")
 public class WordpressServiceTaxonomyAdapterIT {
 
     private static WordpressServiceTaxonomy serviceTaxonomy;
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         final WordpressServiceProvider serviceProvider = WordpressServiceProvider.getInstance();
         serviceProvider.init(WordpressTestConstants.WORDPRESS_DEMO_URL);

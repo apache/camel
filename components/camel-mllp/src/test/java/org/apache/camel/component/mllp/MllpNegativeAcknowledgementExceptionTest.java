@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestSupport {
     static final String EXCEPTION_MESSAGE = "Negative Acknowledgement";
@@ -38,7 +38,8 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
      */
     @Test
     public void testConstructorOne() throws Exception {
-        instance = new MllpNegativeAcknowledgementExceptionStub(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpNegativeAcknowledgementExceptionStub(
+                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -53,7 +54,8 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
      */
     @Test
     public void testConstructorTwo() throws Exception {
-        instance = new MllpNegativeAcknowledgementExceptionStub(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpNegativeAcknowledgementExceptionStub(
+                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
 
         assertTrue(instance.getMessage().startsWith(EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -68,7 +70,8 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
      */
     @Test
     public void testGetAcknowledgmentType() throws Exception {
-        instance = new MllpNegativeAcknowledgementExceptionStub(EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpNegativeAcknowledgementExceptionStub(
+                EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
 
         assertNull(instance.getAcknowledgmentType());
     }
@@ -79,7 +82,8 @@ public class MllpNegativeAcknowledgementExceptionTest extends MllpExceptionTestS
             super(message, hl7Message, hl7Acknowledgement);
         }
 
-        MllpNegativeAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+        MllpNegativeAcknowledgementExceptionStub(String message, byte[] hl7Message, byte[] hl7Acknowledgement,
+                                                 Throwable cause) {
             super(message, hl7Message, hl7Acknowledgement, cause);
         }
 

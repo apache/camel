@@ -25,11 +25,9 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.ExchangeHelper;
 
 /**
- * Utility to hide the complexity of choosing which OutputStream
- * implementation to choose.
+ * Utility to hide the complexity of choosing which OutputStream implementation to choose.
  * <p/>
- * Itself masquerades as an OutputStream, but really delegates to a
- * CachedOutputStream of a ByteArrayOutputStream.
+ * Itself masquerades as an OutputStream, but really delegates to a CachedOutputStream of a ByteArrayOutputStream.
  */
 public final class OutputStreamBuilder extends OutputStream {
 
@@ -46,11 +44,10 @@ public final class OutputStreamBuilder extends OutputStream {
     /**
      * Creates a new OutputStreamBuilder with the current exchange
      * <p/>
-     * Use the {@link #build()} when writing to the stream is finished,
-     * and you need the result of this operation.
+     * Use the {@link #build()} when writing to the stream is finished, and you need the result of this operation.
      *
-     * @param exchange the current Exchange
-     * @return the builder
+     * @param  exchange the current Exchange
+     * @return          the builder
      */
     public static OutputStreamBuilder withExchange(final Exchange exchange) {
         return new OutputStreamBuilder(exchange);
@@ -82,14 +79,13 @@ public final class OutputStreamBuilder extends OutputStream {
     }
 
     /**
-     * Builds the result of using this builder as either a
-     * {@link org.apache.camel.converter.stream.CachedOutputStream} if stream caching is enabled,
-     * otherwise byte[].
+     * Builds the result of using this builder as either a {@link org.apache.camel.converter.stream.CachedOutputStream}
+     * if stream caching is enabled, otherwise byte[].
      */
     public Object build() throws IOException {
         if (outputStream instanceof CachedOutputStream) {
-            return ((CachedOutputStream)outputStream).newStreamCache();
+            return ((CachedOutputStream) outputStream).newStreamCache();
         }
-        return ((ByteArrayOutputStream)outputStream).toByteArray();
+        return ((ByteArrayOutputStream) outputStream).toByteArray();
     }
 }

@@ -18,7 +18,7 @@ package org.apache.camel.spring.spi;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,9 +27,9 @@ public class BridgePropertyPlaceholderConfigurerTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurer.xml");   
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/spi/bridgePropertyPlaceholderConfigurer.xml");
     }
-    
+
     @Test
     public void testProperty() throws Exception {
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);

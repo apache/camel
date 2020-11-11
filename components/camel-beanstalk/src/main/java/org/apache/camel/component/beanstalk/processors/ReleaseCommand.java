@@ -37,7 +37,7 @@ public class ReleaseCommand extends DefaultCommand {
     public void act(final Client client, final Exchange exchange) throws NoSuchHeaderException {
         final Message in = exchange.getIn();
 
-        final Long jobId = BeanstalkExchangeHelper.getJobID(exchange);
+        final long jobId = BeanstalkExchangeHelper.getJobID(exchange);
         final long priority = BeanstalkExchangeHelper.getPriority(endpoint, in);
         final int delay = BeanstalkExchangeHelper.getDelay(endpoint, in);
 
@@ -45,7 +45,8 @@ public class ReleaseCommand extends DefaultCommand {
         if (!result && LOG.isWarnEnabled()) {
             LOG.warn(String.format("Failed to release job %d (priority %d, delay %d)", jobId, priority, delay));
         } else if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Job %d released with priority %d, delay %d seconds. Result is %b", jobId, priority, delay, result));
+            LOG.debug(String.format("Job %d released with priority %d, delay %d seconds. Result is %b", jobId, priority, delay,
+                    result));
         }
 
         answerWith(exchange, Headers.RESULT, result);

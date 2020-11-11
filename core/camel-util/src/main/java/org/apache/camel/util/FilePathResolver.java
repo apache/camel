@@ -16,17 +16,10 @@
  */
 package org.apache.camel.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * A resolver for file paths that supports resolving with system and environment properties.
  */
 public final class FilePathResolver {
-
-    // must be non greedy patterns
-    private static final Pattern ENV_PATTERN = Pattern.compile("\\$\\{env:(.*?)\\}", Pattern.DOTALL);
-    private static final Pattern SYS_PATTERN = Pattern.compile("\\$\\{(.*?)\\}", Pattern.DOTALL);
 
     private FilePathResolver() {
     }
@@ -36,42 +29,47 @@ public final class FilePathResolver {
      * <p/>
      * The pattern is:
      * <ul>
-     *   <li><tt>${env.key}</tt> for environment variables.</li>
-     *   <li><tt>${key}</tt> for JVM system properties.</li>
+     * <li><tt>${env.key}</tt> for environment variables.</li>
+     * <li><tt>${key}</tt> for JVM system properties.</li>
      * </ul>
      * For example: <tt>${env.KARAF_HOME}/data/logs</tt>
      *
-     * @param path  the path
-     * @return the resolved path
+     * @param  path                     the path
+     * @return                          the resolved path
      * @throws IllegalArgumentException is thrown if system property / environment not found
      */
     public static String resolvePath(String path) throws IllegalArgumentException {
-        Matcher matcher = ENV_PATTERN.matcher(path);
-        while (matcher.find()) {
-            String key = matcher.group(1);
-            String value = System.getenv(key);
-            if (ObjectHelper.isEmpty(value)) {
-                throw new IllegalArgumentException("Cannot find system environment with key: " + key);
-            }
-            // must quote the replacement to have it work as literal replacement
-            value = Matcher.quoteReplacement(value);
-            path = matcher.replaceFirst(value);
-            // must match again as location is changed
-            matcher = ENV_PATTERN.matcher(path);
+        int count = StringHelper.countChar(path, '}') + 1;
+        if (count <= 1) {
+            return path;
         }
 
-        matcher = SYS_PATTERN.matcher(path);
-        while (matcher.find()) {
-            String key = matcher.group(1);
-            String value = System.getProperty(key);
-            if (ObjectHelper.isEmpty(value)) {
-                throw new IllegalArgumentException("Cannot find JVM system property with key: " + key);
+        String[] functions = StringHelper.splitOnCharacter(path, "}", count);
+        for (String fun : functions) {
+            int pos = fun.indexOf("${env.");
+            if (pos != -1) {
+                String key = fun.substring(pos + 6);
+                String value = System.getenv(key);
+                if (value != null) {
+                    path = path.replace("${env." + key + "}", value);
+                }
             }
-            // must quote the replacement to have it work as literal replacement
-            value = Matcher.quoteReplacement(value);
-            path = matcher.replaceFirst(value);
-            // must match again as location is changed
-            matcher = SYS_PATTERN.matcher(path);
+        }
+
+        count = StringHelper.countChar(path, '}') + 1;
+        if (count <= 1) {
+            return path;
+        }
+        functions = StringHelper.splitOnCharacter(path, "}", count);
+        for (String fun : functions) {
+            int pos = fun.indexOf("${");
+            if (pos != -1) {
+                String key = fun.substring(pos + 2);
+                String value = System.getProperty(key);
+                if (value != null) {
+                    path = path.replace("${" + key + "}", value);
+                }
+            }
         }
 
         return path;

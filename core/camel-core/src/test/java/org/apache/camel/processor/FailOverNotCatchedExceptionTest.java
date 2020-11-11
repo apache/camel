@@ -25,8 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
 
@@ -35,7 +38,7 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -50,13 +53,13 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // here we will load balance if IOException was thrown
-                    // any other kind of exception will result in the Exchange
-                    // as failed
-                    // to failover over any kind of exception we can just omit
-                    // the exception
-                    // in the failOver DSL
-                    .loadBalance().failover(IOException.class).to("direct:x", "direct:y", "direct:z");
+                        // here we will load balance if IOException was thrown
+                        // any other kind of exception will result in the Exchange
+                        // as failed
+                        // to failover over any kind of exception we can just omit
+                        // the exception
+                        // in the failOver DSL
+                        .loadBalance().failover(IOException.class).to("direct:x", "direct:y", "direct:z");
                 // END SNIPPET: e1
 
                 from("direct:x").to("mock:x").process(new Processor() {

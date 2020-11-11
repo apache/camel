@@ -46,11 +46,9 @@ public abstract class AbstractHttpSegmentDecorator extends AbstractSegmentDecora
     public void post(Entity segment, Exchange exchange, Endpoint endpoint) {
         super.post(segment, exchange, endpoint);
 
-        if (exchange.hasOut()) {
-            Object responseCode = exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE);
-            if (responseCode instanceof Integer) {
-                segment.putMetadata("htt.response.code", responseCode);
-            }
+        Object responseCode = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE);
+        if (responseCode instanceof Integer) {
+            segment.putMetadata("htt.response.code", responseCode);
         }
     }
 
@@ -58,7 +56,7 @@ public abstract class AbstractHttpSegmentDecorator extends AbstractSegmentDecora
         // 1. Use method provided in header.
         Object method = exchange.getIn().getHeader(Exchange.HTTP_METHOD);
         if (method instanceof String) {
-            return (String)method;
+            return (String) method;
         }
 
         // 2. GET if query string is provided in header.
@@ -79,7 +77,6 @@ public abstract class AbstractHttpSegmentDecorator extends AbstractSegmentDecora
         // 5. GET otherwise.
         return GET_METHOD;
     }
-
 
     protected String getHttpUrl(Exchange exchange, Endpoint endpoint) {
         Object url = exchange.getIn().getHeader(Exchange.HTTP_URL);

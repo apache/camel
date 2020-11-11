@@ -44,7 +44,7 @@ public class AnnotatedDataSetCallback implements org.apache.camel.component.flin
         this.objectWithCallback = objectWithCallback;
         this.camelContext = camelContext;
         this.dataSetCallbacks = findMethodsWithAnnotation(objectWithCallback.getClass(), DataSetCallback.class);
-        if (dataSetCallbacks.size() == 0) {
+        if (dataSetCallbacks.isEmpty()) {
             throw new UnsupportedOperationException("Can't find methods annotated with @DataSetCallback");
         }
     }
@@ -67,7 +67,8 @@ public class AnnotatedDataSetCallback implements org.apache.camel.component.flin
 
             if (camelContext != null) {
                 for (int i = 1; i < arguments.size(); i++) {
-                    arguments.set(i, camelContext.getTypeConverter().convertTo(callbackMethod.getParameterTypes()[i], arguments.get(i)));
+                    arguments.set(i,
+                            camelContext.getTypeConverter().convertTo(callbackMethod.getParameterTypes()[i], arguments.get(i)));
                 }
             }
 

@@ -17,9 +17,13 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of a type converter registry used for
@@ -27,24 +31,22 @@ import org.apache.camel.spi.PackageScanClassResolver;
  * <p/>
  * This implementation will load type converters up-front on startup.
  */
-public class DefaultTypeConverter extends BaseTypeConverterRegistry {
+public class DefaultTypeConverter extends BaseTypeConverterRegistry implements AnnotationScanTypeConverters {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTypeConverter.class);
+
+    private volatile boolean loadTypeConvertersDone;
     private final boolean loadTypeConverters;
 
     public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector,
-                                FactoryFinder factoryFinder, boolean loadTypeConverters) {
-        this(null, resolver, injector, factoryFinder, loadTypeConverters);
+                                boolean loadTypeConverters) {
+        this(null, resolver, injector, loadTypeConverters);
     }
 
     public DefaultTypeConverter(CamelContext camelContext, PackageScanClassResolver resolver, Injector injector,
-                                FactoryFinder factoryFinder, boolean loadTypeConverters) {
-        super(camelContext, resolver, injector, factoryFinder);
+                                boolean loadTypeConverters) {
+        super(camelContext, resolver, injector);
         this.loadTypeConverters = loadTypeConverters;
-    }
-
-    @Override
-    public boolean allowNull() {
-        return false;
     }
 
     @Override
@@ -54,19 +56,43 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
     }
 
     @Override
-    protected void doInit() {
-        super.doInit();
-    }
+    protected void doInit() throws Exception {
+        StopWatch watch = new StopWatch();
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+        super.doInit();
 
         // core type converters is always loaded which does not use any classpath scanning and therefore is fast
         loadCoreAndFastTypeConverters();
 
+        String time = TimeUtils.printDuration(watch.taken());
+        LOG.debug("Loaded {} type converters in {}", typeMappings.size(), time);
+
+        if (!loadTypeConvertersDone && isLoadTypeConverters()) {
+            scanTypeConverters();
+        }
+    }
+
+    private boolean isLoadTypeConverters() {
+        boolean load = loadTypeConverters;
+        if (camelContext != null) {
+            // camel context can override
+            load = camelContext.isLoadTypeConverters();
+        }
+        return load;
+    }
+
+    @Override
+    public void scanTypeConverters() throws Exception {
+        StopWatch watch = new StopWatch();
+
         // we are using backwards compatible legacy mode to detect additional converters
-        if (loadTypeConverters) {
+        if (!loadTypeConvertersDone) {
+            loadTypeConvertersDone = true;
+
+            if (resolver != null) {
+                typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+            }
+
             int fast = typeMappings.size();
             // load type converters up front
             loadTypeConverters();
@@ -74,17 +100,19 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
 
             // report how many type converters we have loaded
             if (additional > 0) {
-                log.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
-                log.warn("Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.", additional);
+                LOG.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
+                LOG.warn(
+                        "Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.",
+                        additional);
+            }
+
+            // lets clear the cache from the resolver as its often only used during startup
+            if (resolver != null) {
+                resolver.clearCache();
             }
         }
-    }
 
-    @Override
-    protected void initTypeConverterLoaders() {
-        if (resolver != null) {
-            typeConverterLoaders.add(new FastAnnotationTypeConverterLoader(resolver));
-        }
+        String time = TimeUtils.printDuration(watch.taken());
+        LOG.debug("Scanned {} type converters in {}", typeMappings.size(), time);
     }
-
 }

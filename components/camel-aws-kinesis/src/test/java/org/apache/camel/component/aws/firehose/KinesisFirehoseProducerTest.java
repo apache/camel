@@ -22,20 +22,19 @@ import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import com.amazonaws.services.kinesisfirehose.model.PutRecordRequest;
 import com.amazonaws.services.kinesisfirehose.model.PutRecordResult;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class KinesisFirehoseProducerTest {
 
     private static final String STREAM_NAME = "streams";
@@ -52,24 +51,18 @@ public class KinesisFirehoseProducerTest {
     @Mock
     private Message inMessage;
     @Mock
-    private Message outMessage;
-    @Mock
     private PutRecordResult putRecordResult;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    @Mock(lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
     private Exchange exchange;
 
     private KinesisFirehoseProducer kinesisFirehoseProducer;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         when(kinesisFirehoseEndpoint.getClient()).thenReturn(kinesisFirehoseClient);
         when(kinesisFirehoseEndpoint.getConfiguration()).thenReturn(kinesisFirehoseConfiguration);
         when(kinesisFirehoseEndpoint.getConfiguration().getStreamName()).thenReturn(STREAM_NAME);
-        when(exchange.getOut()).thenReturn(outMessage);
-        when(exchange.getIn()).thenReturn(inMessage);
-        when(exchange.getPattern()).thenReturn(ExchangePattern.InOut);
-
-        when(inMessage.getBody(ByteBuffer.class)).thenReturn(SAMPLE_BUFFER);
+        when(exchange.getMessage()).thenReturn(inMessage);
 
         when(putRecordResult.getRecordId()).thenReturn(RECORD_ID);
         when(kinesisFirehoseClient.putRecord(any(PutRecordRequest.class))).thenReturn(putRecordResult);
@@ -79,7 +72,7 @@ public class KinesisFirehoseProducerTest {
     @Test
     public void shouldPutRecordIntoStreamWhenProcessingExchange() throws Exception {
         kinesisFirehoseProducer.process(exchange);
-        verify(outMessage).setHeader(KinesisFirehoseConstants.RECORD_ID, RECORD_ID);
+        verify(inMessage).setHeader(KinesisFirehoseConstants.RECORD_ID, RECORD_ID);
     }
 
 }

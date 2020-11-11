@@ -18,12 +18,15 @@ package org.apache.camel.component.mongodb;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CreateCollectionOptions;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbChangeStreamsConsumerTest extends AbstractMongoDbTest {
 
@@ -89,10 +92,44 @@ public class MongoDbChangeStreamsConsumerTest extends AbstractMongoDbTest {
 
         Document actualDocument = mock.getExchanges().get(0).getIn().getBody(Document.class);
         assertEquals("value2", actualDocument.get("string"));
-
         context.getRouteController().stopRoute(consumerRouteId);
     }
 
+    @Test
+    public void operationTypeAndIdHeaderTest() throws Exception {
+        assertEquals(0, mongoCollection.countDocuments());
+        MockEndpoint mock = getMockEndpoint("mock:test");
+        mock.expectedMessageCount(2);
+
+        String consumerRouteId = "simpleConsumer";
+        addTestRoutes();
+        context.getRouteController().startRoute(consumerRouteId);
+
+        ObjectId objectId = new ObjectId();
+        Thread t = new Thread(() -> {
+            mongoCollection.insertOne(new Document("_id", objectId).append("string", "value"));
+            mongoCollection.deleteOne(new Document("_id", objectId));
+        });
+
+        t.start();
+        t.join();
+
+        mock.assertIsSatisfied();
+
+        Exchange insertExchange = mock.getExchanges().get(0);
+        assertEquals("insert", insertExchange.getIn().getHeader("CamelMongoDbStreamOperationType"));
+        assertEquals(objectId, insertExchange.getIn().getHeader("_id"));
+
+        Exchange deleteExchange = mock.getExchanges().get(1);
+        Document deleteBodyDocument = deleteExchange.getIn().getBody(Document.class);
+        String deleteBody = "{\"_id\": \"" + objectId.toHexString() + "\"}";
+        assertEquals("delete", deleteExchange.getIn().getHeader("CamelMongoDbStreamOperationType"));
+        assertEquals(objectId, deleteExchange.getIn().getHeader("_id"));
+        assertEquals(1, deleteBodyDocument.size());
+        assertTrue(deleteBodyDocument.containsKey("_id"));
+        assertEquals(objectId.toHexString(), deleteBodyDocument.getObjectId("_id").toHexString());
+        context.getRouteController().stopRoute(consumerRouteId);
+    }
 
     protected void addTestRoutes() throws Exception {
         context.addRoutes(new RouteBuilder() {

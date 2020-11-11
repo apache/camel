@@ -19,8 +19,8 @@ package org.apache.camel.language.groovy;
 import java.net.URLEncoder;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class LanguageGroovyRouteTest extends CamelTestSupport {
 

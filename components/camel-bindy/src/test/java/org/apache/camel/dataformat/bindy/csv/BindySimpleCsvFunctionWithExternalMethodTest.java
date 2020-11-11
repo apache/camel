@@ -26,43 +26,47 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSupport {
-    
+
     @EndpointInject("mock:resultMarshal1")
     private MockEndpoint mockEndPointMarshal1;
-    
+
     @EndpointInject("mock:resultUnMarshal1")
     private MockEndpoint mockEndPointUnMarshal1;
-    
+
     @EndpointInject("mock:resultMarshal2")
     private MockEndpoint mockEndPointMarshal2;
-    
+
     @EndpointInject("mock:resultUnMarshal2")
     private MockEndpoint mockEndPointUnMarshal2;
-    
+
     public static String replaceToBar(String fooString) {
         return fooString.replaceAll("foo", "bar");
     }
-    
+
     @Test
     public void testUnMarshallMessage() throws Exception {
 
         mockEndPointMarshal1.expectedMessageCount(1);
-        mockEndPointMarshal1.expectedBodiesReceived("\"123\",\"\"\"foo\"\"\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+        mockEndPointMarshal1
+                .expectedBodiesReceived("\"123\",\"\"\"foo\"\"\",\"10\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         BindyCsvRowFormat7621 body = new BindyCsvRowFormat7621();
         body.setFirstField("123");
         body.setSecondField("\"foo\"");
         body.setNumber(new BigDecimal(10));
         template.sendBody("direct:startMarshal1", body);
-        
+
         assertMockEndpointsSatisfied();
-        
-        BindyCsvRowFormat7621 model = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat7621.class);
-        
+
+        BindyCsvRowFormat7621 model
+                = mockEndPointUnMarshal1.getReceivedExchanges().get(0).getIn().getBody(BindyCsvRowFormat7621.class);
+
         assertEquals("123", model.getFirstField());
         assertEquals("\"bar\"", model.getSecondField());
         assertEquals(new BigDecimal(10), model.getNumber());
@@ -73,17 +77,16 @@ public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                BindyCsvDataFormat camelDataFormat1 =
-                    new BindyCsvDataFormat(BindyCsvRowFormat7621.class);
-                
+                BindyCsvDataFormat camelDataFormat1 = new BindyCsvDataFormat(BindyCsvRowFormat7621.class);
+
                 from("direct:startMarshal1")
-                    .marshal(camelDataFormat1)
-                    .to("mock:resultMarshal1")
-                    .to("direct:middle1");
-                
+                        .marshal(camelDataFormat1)
+                        .to("mock:resultMarshal1")
+                        .to("direct:middle1");
+
                 from("direct:middle1")
-                    .unmarshal(camelDataFormat1)
-                    .to("mock:resultUnMarshal1");
+                        .unmarshal(camelDataFormat1)
+                        .to("mock:resultUnMarshal1");
             }
         };
     }
@@ -95,7 +98,8 @@ public class BindySimpleCsvFunctionWithExternalMethodTest extends CamelTestSuppo
         @DataField(pos = 1)
         private String firstField;
 
-        @DataField(pos = 2, method = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar")
+        @DataField(pos = 2,
+                   method = "org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar")
         private String secondField;
 
         @DataField(pos = 3, pattern = "########.##")

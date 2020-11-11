@@ -24,6 +24,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -34,9 +35,10 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-ses component is used for sending emails with Amazon's SES service.
+ * Send e-mails through AWS SES service.
  */
-@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-ses", title = "AWS Simple Email Service", syntax = "aws-ses:from", producerOnly = true, label = "cloud,mail")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-ses", title = "AWS Simple Email Service (SES)", syntax = "aws-ses:from",
+             producerOnly = true, category = { Category.CLOUD, Category.MAIL })
 public class SesEndpoint extends DefaultEndpoint {
 
     private AmazonSimpleEmailService sesClient;
@@ -48,15 +50,15 @@ public class SesEndpoint extends DefaultEndpoint {
         super(uri, component);
         this.configuration = configuration;
     }
-    
+
     @Override
     public void doStart() throws Exception {
         super.doStart();
         sesClient = configuration.getAmazonSESClient() != null
-            ? configuration.getAmazonSESClient()
-            : createSESClient();
+                ? configuration.getAmazonSESClient()
+                : createSESClient();
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonSESClient())) {
@@ -101,7 +103,8 @@ public class SesEndpoint extends DefaultEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonSimpleEmailServiceClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonSimpleEmailServiceClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonSimpleEmailServiceClientBuilder.standard().withCredentials(credentialsProvider);
             }

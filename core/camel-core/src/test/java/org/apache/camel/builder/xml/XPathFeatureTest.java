@@ -26,17 +26,23 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.language.xpath.XPathBuilder.xpath;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XPathFeatureTest extends ContextTestSupport {
     public static final String DOM_BUILDER_FACTORY_FEATURE = XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE;
 
-    public static final String XML_DATA = " <!DOCTYPE foo [ " + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
-    public static final String XML_DATA_INVALID = " <!DOCTYPE foo [ " + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
+    public static final String XML_DATA
+            = " <!DOCTYPE foo [ " + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
+    public static final String XML_DATA_INVALID
+            = " <!DOCTYPE foo [ "
+              + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         resetCoreConverters();
         super.setUp();
@@ -62,8 +68,8 @@ public class XPathFeatureTest extends ContextTestSupport {
 
     @Test
     public void testXPathResult() throws Exception {
-        String result = (String)xpath("/").stringResult().evaluate(createExchange(XML_DATA));
-        assertEquals("Get a wrong result", "  ", result);
+        String result = (String) xpath("/").stringResult().evaluate(createExchange(XML_DATA));
+        assertEquals("  ", result, "Get a wrong result");
     }
 
     @Test
@@ -74,7 +80,9 @@ public class XPathFeatureTest extends ContextTestSupport {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA));
             fail("Expect an Exception here");
         } catch (TypeConversionException ex) {
-            assertTrue("Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + FileNotFoundException.class, ex.getCause() instanceof FileNotFoundException);
+            boolean b = ex.getCause() instanceof FileNotFoundException;
+            assertTrue(b,
+                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + FileNotFoundException.class);
         } finally {
             System.clearProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities");
         }
@@ -87,8 +95,9 @@ public class XPathFeatureTest extends ContextTestSupport {
             xpath("/").documentType(Exchange.class).stringResult().evaluate(createExchange(XML_DATA));
             fail("Expect an Exception here");
         } catch (RuntimeCamelException ex) {
-            assertTrue("Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + NoTypeConversionAvailableException.class,
-                       ex.getCause() instanceof NoTypeConversionAvailableException);
+            boolean b = ex.getCause() instanceof NoTypeConversionAvailableException;
+            assertTrue(b, "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of "
+                          + NoTypeConversionAvailableException.class);
         }
     }
 
@@ -98,7 +107,9 @@ public class XPathFeatureTest extends ContextTestSupport {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA_INVALID));
             fail("Expect an Exception here");
         } catch (TypeConversionException ex) {
-            assertTrue("Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + SAXParseException.class, ex.getCause() instanceof SAXParseException);
+            boolean b = ex.getCause() instanceof SAXParseException;
+            assertTrue(b,
+                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + SAXParseException.class);
         }
     }
 

@@ -27,10 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsDiscoveryTest extends CamelTestSupport {
     protected MyRegistry myRegistry = new MyRegistry();
@@ -49,7 +50,7 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         Thread.sleep(1000);
 
         Map<String, Map<?, ?>> map = new HashMap<>(myRegistry.getServices());
-        assertTrue("There should be 1 or more, was: " + map.size(), map.size() >= 1);
+        assertTrue(map.size() >= 1, "There should be 1 or more, was: " + map.size());
     }
 
     @Override
@@ -74,14 +75,14 @@ public class JmsDiscoveryTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // lets setup the heartbeats
                 from("timer:heartbeats?delay=100")
-                    .to("bean:service1?method=status")
-                    .to("activemq:topic:registry.heartbeats");
+                        .to("bean:service1?method=status")
+                        .to("activemq:topic:registry.heartbeats");
 
                 // defer shutting this route down as the first route depends upon it to
                 // be running so it can complete its current exchanges
                 from("activemq:topic:registry.heartbeats")
-                    .shutdownRoute(ShutdownRoute.Defer)
-                    .to("bean:registry?method=onEvent", "mock:result");
+                        .shutdownRoute(ShutdownRoute.Defer)
+                        .to("bean:registry?method=onEvent", "mock:result");
             }
         };
     }

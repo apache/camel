@@ -24,10 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify that the noop file strategy usage of lock files.
@@ -35,7 +36,7 @@ import static org.awaitility.Awaitility.await;
 public class FileNoOpLockFileTest extends ContextTestSupport {
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         deleteDirectory("target/data/reports");
         super.tearDown();
@@ -88,7 +89,8 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         filename += "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
 
         File file = new File(filename);
-        assertEquals("Lock file should " + (expected ? "exists" : "not exists"), expected, file.exists());
+        String s = "Lock file should " + (expected ? "exists" : "not exists");
+        assertEquals(expected, file.exists(), s);
     }
 
     @Override
@@ -96,10 +98,12 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // for locks
-                from("file://target/data/reports/locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile").process(new MyNoopProcessor()).to("mock:report");
+                from("file://target/data/reports/locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile")
+                        .process(new MyNoopProcessor()).to("mock:report");
 
                 // for no locks
-                from("file://target/data/reports/notlocked/?initialDelay=0&delay=10&noop=true&readLock=none").process(new MyNoopProcessor()).to("mock:report");
+                from("file://target/data/reports/notlocked/?initialDelay=0&delay=10&noop=true&readLock=none")
+                        .process(new MyNoopProcessor()).to("mock:report");
             }
         };
     }

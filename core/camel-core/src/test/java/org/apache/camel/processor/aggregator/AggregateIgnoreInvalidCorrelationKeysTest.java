@@ -21,7 +21,10 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSupport {
 
@@ -35,7 +38,8 @@ public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).ignoreInvalidCorrelationKeys().to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2)
+                        .ignoreInvalidCorrelationKeys().to("mock:result");
             }
         });
         context.start();
@@ -57,7 +61,8 @@ public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2)
+                        .to("mock:result");
             }
         });
         context.start();

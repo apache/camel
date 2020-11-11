@@ -26,8 +26,8 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -95,6 +95,6 @@ public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
             throw new RuntimeException("Failed to start broker", e);
         }
 
-        return new ClassPathXmlApplicationContext("org/apache/activemq/camel/jmsConsumeSendTransacted.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/activemq/jmsConsumeSendTransacted.xml");
     }
 }

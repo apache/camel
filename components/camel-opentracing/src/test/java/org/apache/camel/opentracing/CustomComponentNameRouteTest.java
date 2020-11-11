@@ -16,30 +16,20 @@
  */
 package org.apache.camel.opentracing;
 
-import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CustomComponentNameRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-        new SpanTestData().setLabel("myseda:b server").setUri("myseda://b").setOperation("b")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(1).addLogMessage("routing at b"),
-        new SpanTestData().setLabel("myseda:b client").setUri("myseda://b").setOperation("b")
-            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
-        new SpanTestData().setLabel("myseda:c server").setUri("myseda://c").setOperation("c")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(3).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
-        new SpanTestData().setLabel("myseda:c client").setUri("myseda://c").setOperation("c")
-            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
-        new SpanTestData().setLabel("myseda:a server").setUri("myseda://a").setOperation("a")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(5).addLogMessage("routing at a").addLogMessage("End of routing"),
-        new SpanTestData().setLabel("myseda:a client").setUri("myseda://a").setOperation("a")
-            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(6),
-        new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-            .setKind(Tags.SPAN_KIND_SERVER).setParentId(7),
-        new SpanTestData().setLabel("direct:start client").setUri("direct://start").setOperation("start")
-            .setKind(Tags.SPAN_KIND_CLIENT)
+            new SpanTestData().setLabel("myseda:b server").setUri("myseda://b").setOperation("b")
+                    .setParentId(2).addLogMessage("routing at b"),
+            new SpanTestData().setLabel("myseda:c server").setUri("myseda://c").setOperation("c")
+                    .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
+            new SpanTestData().setLabel("myseda:a server").setUri("myseda://a").setOperation("a")
+                    .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
     };
 
     public CustomComponentNameRouteTest() {
@@ -63,19 +53,19 @@ public class CustomComponentNameRouteTest extends CamelOpenTracingTestSupport {
                 from("direct:start").to("myseda:a").routeId("start");
 
                 from("myseda:a").routeId("a")
-                    .log("routing at ${routeId}")
-                    .to("myseda:b")
-                    .delay(2000)
-                    .to("myseda:c")
-                    .log("End of routing");
+                        .log("routing at ${routeId}")
+                        .to("myseda:b")
+                        .delay(2000)
+                        .to("myseda:c")
+                        .log("End of routing");
 
                 from("myseda:b").routeId("b")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"));
 
                 from("myseda:c").routeId("c")
-                    .to("log:test")
-                    .delay(simple("${random(0,100)}"));
+                        .to("log:test")
+                        .delay(simple("${random(0,100)}"));
             }
         };
     }

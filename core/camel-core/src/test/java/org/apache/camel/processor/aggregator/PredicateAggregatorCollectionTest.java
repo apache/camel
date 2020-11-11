@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for PredicateAggregatorCollection.
@@ -62,9 +62,9 @@ public class PredicateAggregatorCollectionTest extends ContextTestSupport {
                 // our route is aggregating from the direct queue and sending
                 // the response to the mock
                 from("direct:start")
-                    // we use the collection based aggregator we already have
-                    // configured
-                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionSize(3).to("mock:result");
+                        // we use the collection based aggregator we already have
+                        // configured
+                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionSize(3).to("mock:result");
                 // END SNIPPET: e1
             }
         };

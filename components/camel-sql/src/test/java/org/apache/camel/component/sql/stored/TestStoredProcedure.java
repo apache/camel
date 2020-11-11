@@ -27,7 +27,6 @@ public final class TestStoredProcedure {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestStoredProcedure.class);
 
-
     private TestStoredProcedure() {
     }
 

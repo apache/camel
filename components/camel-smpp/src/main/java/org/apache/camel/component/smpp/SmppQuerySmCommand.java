@@ -38,7 +38,7 @@ public class SmppQuerySmCommand extends AbstractSmppCommand {
             log.debug("Querying for a short message for exchange id '{}' and message id '{}'...",
                     exchange.getExchangeId(), querySm.getMessageId());
         }
-        
+
         QuerySmResult querySmResult;
         try {
             querySmResult = session.queryShortMessage(

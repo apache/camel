@@ -34,7 +34,7 @@ import javax.management.timer.TimerNotification;
 public class SimpleBean extends NotificationBroadcasterSupport implements ISimpleMXBean {
 
     private static final long serialVersionUID = -1230507995730071242L;
-    
+
     private int mSequence;
     /**
      * Use the same timestamp every time so the assertions are easier
@@ -64,6 +64,7 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
     public Integer getMonitorNumber() {
         return mMonitorNumber;
     }
+
     @Override
     public void setMonitorNumber(Integer aNumber) {
         mMonitorNumber = aNumber;
@@ -73,11 +74,11 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
     public Long getLongNumber() {
         return mLongNumber;
     }
+
     @Override
     public void setLongNumber(Long aNumber) {
         mLongNumber = aNumber;
     }
-
 
     public int getSequence() {
         return mSequence;
@@ -110,7 +111,8 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
 
     @Override
     public void triggerConnectionNotification() {
-        JMXConnectionNotification n = new JMXConnectionNotification("connection", this,
+        JMXConnectionNotification n = new JMXConnectionNotification(
+                "connection", this,
                 "conn-123", mSequence++, "connection notification", null);
         n.setTimeStamp(mTimestamp);
         sendNotification(n);
@@ -118,7 +120,8 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
 
     @Override
     public void triggerMBeanServerNotification() throws Exception {
-        MBeanServerNotification n = new MBeanServerNotification("mbeanserver", this, mSequence++, new ObjectName("TestDomain", "name", "foo"));
+        MBeanServerNotification n
+                = new MBeanServerNotification("mbeanserver", this, mSequence++, new ObjectName("TestDomain", "name", "foo"));
         n.setTimeStamp(mTimestamp);
         sendNotification(n);
     }
@@ -129,7 +132,8 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
         for (int i = 1; i <= 3; i++) {
             list.add(new ObjectName("TestDomain", "name", "mbean-" + i));
         }
-        RelationNotification n = new RelationNotification(RelationNotification.RELATION_BASIC_CREATION,
+        RelationNotification n = new RelationNotification(
+                RelationNotification.RELATION_BASIC_CREATION,
                 new ObjectName("TestDomain", "name", "source"), mSequence++, mTimestamp,
                 "relation message",
                 "relation-id",
@@ -141,7 +145,8 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
 
     @Override
     public void triggerTimerNotification() {
-        TimerNotification n = new TimerNotification("timer.notification", this, mSequence++, mTimestamp, "timer-notification", 100);
+        TimerNotification n
+                = new TimerNotification("timer.notification", this, mSequence++, mTimestamp, "timer-notification", 100);
         sendNotification(n);
     }
 }

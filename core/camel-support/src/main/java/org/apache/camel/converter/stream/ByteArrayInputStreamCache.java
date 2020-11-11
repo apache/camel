@@ -40,7 +40,7 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
     }
 
     @Override
-    public void reset() {
+    public synchronized void reset() {
         try {
             super.reset();
         } catch (IOException e) {

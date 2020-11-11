@@ -19,43 +19,34 @@ package org.apache.camel.component.kafka.serde;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-@RunWith(Parameterized.class)
 public class DefaultKafkaHeaderSerializerTest {
 
     private KafkaHeaderSerializer serializer = new DefaultKafkaHeaderSerializer();
 
-    private Object value;
-    private byte[] expectedResult;
-
-    public DefaultKafkaHeaderSerializerTest(Object value, byte[] expectedResult) {
-        this.value = value;
-        this.expectedResult = expectedResult;
-    }
-
-    @Test
-    public void serialize() {
+    @ParameterizedTest
+    @MethodSource("primeNumbers")
+    public void serialize(Object value, byte[] expectedResult) {
         byte[] result = serializer.serialize("someKey", value);
 
         assertArrayEquals(expectedResult, result);
     }
 
-    @Parameterized.Parameters
-    public static Collection primeNumbers() {
-        return Arrays.asList(new Object[][]{
-            {Boolean.TRUE, "true".getBytes()},               //boolean
-            {-12, new byte[]{-1, -1, -1, -12}},              //integer
-            {19L, new byte[]{0, 0, 0, 0, 0, 0, 0, 19}},      //long
-            {22.0D, new byte[]{64, 54, 0, 0, 0, 0, 0, 0}},   //double
-            {"someValue", "someValue".getBytes()},           //string
-            {new byte[]{0, 2, -43}, new byte[]{0, 2, -43}},  //byte[]
-            {null, null},                                    //null
-            {new Object(), null}                             //unknown type
+    public static Collection<Object[]> primeNumbers() {
+        return Arrays.asList(new Object[][] {
+                { Boolean.TRUE, "true".getBytes() }, // boolean
+                { -12, new byte[] { -1, -1, -1, -12 } }, // integer
+                { 19L, new byte[] { 0, 0, 0, 0, 0, 0, 0, 19 } }, // long
+                { 22.0D, new byte[] { 64, 54, 0, 0, 0, 0, 0, 0 } }, // double
+                { "someValue", "someValue".getBytes() }, // string
+                { new byte[] { 0, 2, -43 }, new byte[] { 0, 2, -43 } }, // byte[]
+                { null, null }, // null
+                { new Object(), null } // unknown
+                                      // type
         });
     }
 }

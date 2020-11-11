@@ -19,8 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 public class DetourTest extends ContextTestSupport {
 
@@ -61,8 +61,8 @@ public class DetourTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         controlBean = new ControlBean();
         jndi.bind("controlBean", controlBean);
         return jndi;
@@ -73,7 +73,8 @@ public class DetourTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start").choice().when().method("controlBean", "isDetour").to("mock:detour").end().to("mock:result");
+                from("direct:start").choice().when().method("controlBean", "isDetour").to("mock:detour").end()
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

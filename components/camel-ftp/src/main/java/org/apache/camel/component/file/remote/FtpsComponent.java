@@ -21,9 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.PropertiesHelper;
@@ -35,7 +33,6 @@ import org.apache.commons.net.ftp.FTPFile;
  * If desired, the JVM property <tt>-Djavax.net.debug=all</tt> can be used to see wire-level SSL details.
  */
 @Component("ftps")
-@FileProcessStrategy(FtpProcessStrategyFactory.class)
 public class FtpsComponent extends FtpComponent implements SSLContextParametersAware {
 
     @Metadata(label = "security", defaultValue = "false")
@@ -49,10 +46,12 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     }
 
     @Override
-    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters)
+            throws Exception {
         String baseUri = getBaseUri(uri);
 
-        // lets make sure we create a new configuration as each endpoint can customize its own version
+        // lets make sure we create a new configuration as each endpoint can
+        // customize its own version
         // must pass on baseUri to the configuration (see above)
         FtpsConfiguration config = new FtpsConfiguration(new URI(baseUri));
 
@@ -72,9 +71,9 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     }
 
     /**
-     * Extract additional ftp client key store options from the parameters map (parameters starting with 
-     * 'ftpClient.keyStore.'). To remember these parameters, we set them in the endpoint and we can use 
-     * them when creating a client.
+     * Extract additional ftp client key store options from the parameters map (parameters starting with
+     * 'ftpClient.keyStore.'). To remember these parameters, we set them in the endpoint and we can use them when
+     * creating a client.
      */
     protected void extractAndSetFtpClientKeyStoreParameters(Map<String, Object> parameters, FtpsEndpoint endpoint) {
         if (PropertiesHelper.hasProperties(parameters, "ftpClient.keyStore.")) {
@@ -84,9 +83,9 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     }
 
     /**
-     * Extract additional ftp client trust store options from the parameters map (parameters starting with 
-     * 'ftpClient.trustStore.'). To remember these parameters, we set them in the endpoint and we can use 
-     * them when creating a client.
+     * Extract additional ftp client trust store options from the parameters map (parameters starting with
+     * 'ftpClient.trustStore.'). To remember these parameters, we set them in the endpoint and we can use them when
+     * creating a client.
      */
     protected void extractAndSetFtpClientTrustStoreParameters(Map<String, Object> parameters, FtpsEndpoint endpoint) {
         if (PropertiesHelper.hasProperties(parameters, "ftpClient.trustStore.")) {

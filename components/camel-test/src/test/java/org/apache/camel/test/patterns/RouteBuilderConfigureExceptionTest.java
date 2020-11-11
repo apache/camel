@@ -46,10 +46,9 @@ public class RouteBuilderConfigureExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .choice()
+                        .choice()
                         .when(iAmNull).to("mock:dead");
             }
         };
     }
 }
-

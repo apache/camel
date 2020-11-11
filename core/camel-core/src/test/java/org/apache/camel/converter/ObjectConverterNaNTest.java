@@ -17,7 +17,9 @@
 package org.apache.camel.converter;
 
 import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ObjectConverterNaNTest extends ContextTestSupport {
 
@@ -85,14 +87,14 @@ public class ObjectConverterNaNTest extends ContextTestSupport {
     @Test
     public void testDoubleToFloatWithNaN() throws Exception {
         assertEquals(Float.valueOf("4"), context.getTypeConverter().convertTo(Float.class, Double.valueOf("4")));
-        assertEquals((Float)Float.NaN, context.getTypeConverter().convertTo(Float.class, Double.NaN));
+        assertEquals((Object) (Float) Float.NaN, context.getTypeConverter().convertTo(Float.class, Double.NaN));
         assertEquals(Float.valueOf("3"), context.getTypeConverter().convertTo(Float.class, Double.valueOf("3")));
     }
 
     @Test
     public void testFloatToDoubleWithNaN() throws Exception {
         assertEquals(Double.valueOf("4"), context.getTypeConverter().convertTo(Double.class, Float.valueOf("4")));
-        assertEquals((Double)Double.NaN, context.getTypeConverter().convertTo(Double.class, Float.NaN));
+        assertEquals((Object) (Double) Double.NaN, context.getTypeConverter().convertTo(Double.class, Float.NaN));
         assertEquals(Double.valueOf("3"), context.getTypeConverter().convertTo(Double.class, Float.valueOf("3")));
     }
 }

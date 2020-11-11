@@ -20,7 +20,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateCompletionOnNewCorrelationGroupTest extends ContextTestSupport {
 
@@ -44,8 +44,9 @@ public class AggregateCompletionOnNewCorrelationGroupTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionOnNewCorrelationGroup().completionSize(3).to("log:aggregated",
-                                                                                                                                                 "mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionOnNewCorrelationGroup()
+                        .completionSize(3).to("log:aggregated",
+                                "mock:aggregated");
             }
         };
     }

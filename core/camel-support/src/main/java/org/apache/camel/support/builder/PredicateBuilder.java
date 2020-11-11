@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -52,6 +53,11 @@ public class PredicateBuilder {
             }
 
             @Override
+            public void init(CamelContext camelContext) {
+                predicate.init(camelContext);
+            }
+
+            @Override
             public String toString() {
                 return "not (" + predicate + ")";
             }
@@ -67,6 +73,12 @@ public class PredicateBuilder {
         return new Predicate() {
             public boolean matches(Exchange exchange) {
                 return left.matches(exchange) && right.matches(exchange);
+            }
+
+            @Override
+            public void init(CamelContext camelContext) {
+                left.init(camelContext);
+                right.init(camelContext);
             }
 
             @Override
@@ -86,6 +98,12 @@ public class PredicateBuilder {
         return new Predicate() {
             public boolean matches(Exchange exchange) {
                 return left.matches(exchange) || right.matches(exchange);
+            }
+
+            @Override
+            public void init(CamelContext camelContext) {
+                left.init(camelContext);
+                right.init(camelContext);
             }
 
             @Override
@@ -139,6 +157,13 @@ public class PredicateBuilder {
                     }
                 }
                 return false;
+            }
+
+            @Override
+            public void init(CamelContext camelContext) {
+                for (Predicate in : predicates) {
+                    in.init(camelContext);
+                }
             }
 
             @Override
@@ -314,7 +339,7 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.contains(leftValue, rightValue);
+                return ObjectHelper.typeCoerceContains(exchange.getContext().getTypeConverter(), leftValue, rightValue, false);
             }
 
             protected String getOperationText() {
@@ -335,7 +360,7 @@ public class PredicateBuilder {
                     return false;
                 }
 
-                return ObjectHelper.containsIgnoreCase(leftValue, rightValue);
+                return ObjectHelper.typeCoerceContains(exchange.getContext().getTypeConverter(), leftValue, rightValue, true);
             }
 
             protected String getOperationText() {
@@ -392,6 +417,11 @@ public class PredicateBuilder {
             public boolean matches(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
                 return type.isInstance(value);
+            }
+
+            @Override
+            public void init(CamelContext camelContext) {
+                expression.init(camelContext);
             }
 
             @Override
@@ -485,6 +515,11 @@ public class PredicateBuilder {
                     return matcher.matches();
                 }
                 return false;
+            }
+
+            @Override
+            public void init(CamelContext camelContext) {
+                expression.init(camelContext);
             }
 
             @Override

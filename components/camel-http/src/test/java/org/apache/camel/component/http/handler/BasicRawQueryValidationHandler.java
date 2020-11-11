@@ -27,7 +27,8 @@ import org.apache.http.HttpRequest;
  */
 public class BasicRawQueryValidationHandler extends BasicValidationHandler {
 
-    public BasicRawQueryValidationHandler(String expectedMethod, String expectedQuery, Object expectedContent, String responseContent) {
+    public BasicRawQueryValidationHandler(String expectedMethod, String expectedQuery, Object expectedContent,
+                                          String responseContent) {
         super(expectedMethod, expectedQuery, expectedContent, responseContent);
     }
 

@@ -28,14 +28,16 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
     private static int port;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         port = AvailablePortFinder.getNextAvailable();
     }
@@ -65,17 +67,19 @@ public class LumberjackComponentGlobalSSLTest extends CamelTestSupport {
 
         // We're expecting 25 messages with Maps
         MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedMessageCount(25);
+        mock.expectedMessageCount(60);
         mock.allMessages().body().isInstanceOf(Map.class);
 
+        List<Integer> windows = Arrays.asList(15, 10, 15, 10, 10);
+
         // When sending messages
-        List<Integer> responses = LumberjackUtil.sendMessages(port, createClientSSLContextParameters());
+        List<Integer> responses = LumberjackUtil.sendMessages(port, createClientSSLContextParameters(), windows);
 
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();
 
         // And we should have replied with 2 acknowledgments for each window frame
-        assertEquals(Arrays.asList(10, 15), responses);
+        assertEquals(windows, responses);
     }
 
     /**

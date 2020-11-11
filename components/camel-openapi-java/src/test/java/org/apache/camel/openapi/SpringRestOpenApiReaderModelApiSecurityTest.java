@@ -22,12 +22,20 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTestSupport {
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -36,10 +44,9 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
 
     @Test
     public void testReaderRead() throws Exception {
-        
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -47,7 +54,8 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -55,7 +63,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"securityDefinitions\" : {"));
@@ -75,23 +83,23 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         assertTrue(json.contains("\"type\" : \"string\""));
         assertTrue(json.contains("\"format\" : \"date\""));
         assertFalse(json.contains("\"enum\""));
+
         context.stop();
-        
     }
-    
+
     @Test
     public void testReaderReadV3() throws Exception {
-        
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -99,7 +107,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"securitySchemes\" : {"));
@@ -120,7 +128,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         assertTrue(json.contains("\"type\" : \"string\""));
         assertTrue(json.contains("\"format\" : \"date\""));
         assertFalse(json.contains("\"enum\""));
+
         context.stop();
-        
     }
 }

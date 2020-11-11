@@ -1,0 +1,42 @@
+{
+  "DebeziumMySqlComponentBuilderFactory": {
+    "scheme": "debezium-mysql",
+    "syntax": "debezium-mysql:name",
+    "async": false,
+    "consumerOnly": true,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-debezium-mysql",
+    "version": "3.4.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "Debezium MySQL Connector",
+    "description": "Represents a Debezium MySQL endpoint which is used to capture changes in MySQL database so that that applications can see those changes and respond to them.",
+    "firstVersion": "3.0.0",
+    "javaType": "org.apache.camel.component.debezium.DebeziumMySqlComponent",
+    "label": "database,sql,mysql",
+    "deprecated": false,
+    "deprecationNote": "database,sql,mysql",
+    "options": []
+  },
+  "TimerComponentBuilderFactory": {
+    "scheme": "timer",
+    "syntax": "timer:timerName",
+    "async": false,
+    "consumerOnly": true,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-timer",
+    "version": "3.4.0-SNAPSHOT",
+    "endpointOptions": [],
+    "title": "Timer",
+    "description": "The timer component is used for generating message exchanges when a timer fires.",
+    "firstVersion": "1.0.0",
+    "javaType": "org.apache.camel.component.timer.TimerComponent",
+    "label": "core,scheduling",
+    "deprecated": false,
+    "deprecationNote": "core,scheduling",
+    "options": []
+  }
+}

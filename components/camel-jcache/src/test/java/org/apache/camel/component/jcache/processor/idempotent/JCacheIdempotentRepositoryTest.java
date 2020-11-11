@@ -21,12 +21,15 @@ import javax.cache.Cache;
 import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger(JCacheIdempotentRepositoryTest.class);
@@ -36,7 +39,7 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     private JCacheIdempotentRepository repository;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         cacheManager = JCacheHelper.createManager(new JCacheConfiguration("idempotent-repository"));
         cache = cacheManager.getCache();
@@ -47,7 +50,7 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         repository.stop();
         cacheManager.close();
@@ -89,7 +92,7 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
     public void doesNotRemoveMissingKey() throws Exception {
         assertFalse(repository.remove("One"));
     }
-    
+
     @Test
     public void clearCache() throws Exception {
         assertTrue(repository.add("One"));
@@ -97,9 +100,9 @@ public class JCacheIdempotentRepositoryTest extends CamelTestSupport {
 
         assertTrue(cache.containsKey("One"));
         assertTrue(cache.containsKey("Two"));
-        
+
         repository.clear();
-        
+
         assertFalse(cache.containsKey("One"));
         assertFalse(cache.containsKey("Two"));
     }

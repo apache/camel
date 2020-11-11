@@ -25,14 +25,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
@@ -40,8 +43,8 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
     private static String afterThreadName;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("foo", new MyPolicy("foo"));
         return jndi;
     }
@@ -63,9 +66,9 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
         MyPolicy foo = context.getRegistry().lookupByNameAndType("foo", MyPolicy.class);
 
-        assertEquals("Should only be invoked 1 time", 1, foo.getInvoked());
+        assertEquals(1, foo.getInvoked(), "Should only be invoked 1 time");
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -76,8 +79,8 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
-                    // wraps the entire route in the same policy
-                    .policy("foo").to("mock:foo").to("async:bye:camel").to("mock:bar").to("mock:result");
+                        // wraps the entire route in the same policy
+                        .policy("foo").to("mock:foo").to("async:bye:camel").to("mock:bar").to("mock:result");
 
                 from("direct:send").to("mock:before").to("log:before").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -102,12 +105,12 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
         }
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             // no need to modify the route
         }
 
         @Override
-        public Processor wrap(RouteContext routeContext, final Processor processor) {
+        public Processor wrap(Route route, final Processor processor) {
             return new AsyncProcessor() {
                 public boolean process(final Exchange exchange, final AsyncCallback callback) {
                     invoked++;
@@ -122,12 +125,14 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
                 }
 
                 public void process(Exchange exchange) throws Exception {
-                    final AsyncProcessorAwaitManager awaitManager = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+                    final AsyncProcessorAwaitManager awaitManager
+                            = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
                     awaitManager.process(this, exchange);
                 }
 
                 public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-                    AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+                    AsyncCallbackToCompletableFutureAdapter<Exchange> callback
+                            = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
                     process(exchange, callback);
                     return callback.getFuture();
                 }

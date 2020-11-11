@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.codec.BinaryDecoder;
@@ -44,32 +43,33 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseContent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProxyServerTest extends BaseHttpTest {
 
     private HttpServer proxy;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("Proxy-Connection", "Keep-Alive");
-        proxy = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders)).create();
+        proxy = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext()).registerHandler("*",
+                        new HeaderValidationHandler(GET.name(), null, null, getExpectedContent(), expectedHeaders))
+                .create();
         proxy.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -86,30 +86,59 @@ public class HttpProxyServerTest extends BaseHttpTest {
         List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseProxyBasicUnauthorized());
-        ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
-        return httpproc;
+        return new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
     }
 
     @Test
     public void testDifferentHttpProxyConfigured() throws Exception {
-        HttpEndpoint http1 = context.getEndpoint("http://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234", HttpEndpoint.class);
-        HttpEndpoint http2 = context.getEndpoint("http://www.google.com?test=parameter&proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345", HttpEndpoint.class);
+        HttpEndpoint http1 = context.getEndpoint("http://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234",
+                HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint(
+                "http://www.google.com?test=parameter&proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345", HttpEndpoint.class);
         // HttpClientBuilder doesn't support get the configuration here
 
         //As the endpointUri is recreated, so the parameter could be in different place, so we use the URISupport.normalizeUri
-        assertEquals("Get a wrong endpoint uri of http1", "http://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234", URISupport.normalizeUri(http1.getEndpointUri()));
-        assertEquals("Get a wrong endpoint uri of http2", "http://www.google.com?proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
+        assertEquals("http://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234",
+                URISupport.normalizeUri(http1.getEndpointUri()), "Get a wrong endpoint uri of http1");
+        assertEquals("http://www.google.com?proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345&test=parameter",
+                URISupport.normalizeUri(http2.getEndpointUri()), "Get a wrong endpoint uri of http2");
 
-        assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
+        assertEquals(http1.getEndpointKey(), http2.getEndpointKey(), "Should get the same EndpointKey");
     }
 
     @Test
     public void httpGetWithProxyAndWithoutUser() throws Exception {
 
-        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyAuthHost=" + getProxyHost() + "&proxyAuthPort=" + getProxyPort(), new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyAuthHost="
+                                             + getProxyHost() + "&proxyAuthPort=" + getProxyPort(),
+                exchange1 -> {
+                });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpGetWithProxyAndWithoutUserTwo() throws Exception {
+
+        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyHost=" + getProxyHost()
+                                             + "&proxyPort=" + getProxyPort(),
+                exchange1 -> {
+                });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpGetWithProxyOnComponent() throws Exception {
+        HttpComponent http = context.getComponent("http", HttpComponent.class);
+        http.setProxyAuthHost(getProxyHost());
+        http.setProxyAuthPort(Integer.parseInt(getProxyPort()));
+
+        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort(), exchange1 -> {
         });
+
+        http.setProxyAuthHost(null);
+        http.setProxyAuthPort(null);
 
         assertExchange(exchange);
     }

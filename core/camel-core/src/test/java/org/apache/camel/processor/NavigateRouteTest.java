@@ -24,7 +24,10 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.support.processor.ConvertBodyProcessor;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for navigating a route (runtime processors, not the model).
@@ -45,7 +48,7 @@ public class NavigateRouteTest extends ContextTestSupport {
         Navigate<Processor> nav = context.getRoutes().get(0).navigate();
         navigateRoute(nav);
 
-        assertEquals("There should be 6 processors to navigate", 6, processors.size());
+        assertEquals(6, processors.size(), "There should be 6 processors to navigate");
     }
 
     @SuppressWarnings("unchecked")
@@ -54,25 +57,25 @@ public class NavigateRouteTest extends ContextTestSupport {
             return;
         }
         if (nav.getClass().getName().endsWith("ProcessorToReactiveProcessorBridge")) {
-            nav = (Navigate)((Navigate)nav).next().get(0);
+            nav = (Navigate) ((Navigate) nav).next().get(0);
         }
 
         for (Processor child : nav.next()) {
             processors.add(child);
 
             if (child instanceof SendProcessor) {
-                SendProcessor send = (SendProcessor)child;
+                SendProcessor send = (SendProcessor) child;
                 assertEquals("mock://result", send.getDestination().getEndpointUri());
             }
 
             if (child instanceof ConvertBodyProcessor) {
-                ConvertBodyProcessor convert = (ConvertBodyProcessor)child;
+                ConvertBodyProcessor convert = (ConvertBodyProcessor) child;
                 assertEquals(String.class, convert.getType());
             }
 
             // navigate children
             if (child instanceof Navigate) {
-                navigateRoute((Navigate<Processor>)child);
+                navigateRoute((Navigate<Processor>) child);
             }
         }
     }

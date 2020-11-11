@@ -19,14 +19,16 @@ package org.apache.camel.component.sjms.batch;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * JUnit Test aspect that creates an embedded ActiveMQ broker at the beginning of each test and shuts it down after.
  */
-public class EmbeddedActiveMQBroker extends ExternalResource {
+public class EmbeddedActiveMQBroker implements BeforeEachCallback, AfterEachCallback {
 
     private final Logger log = LoggerFactory.getLogger(EmbeddedActiveMQBroker.class);
     private final String brokerId;
@@ -53,13 +55,13 @@ public class EmbeddedActiveMQBroker extends ExternalResource {
     }
 
     @Override
-    protected void before() throws Throwable {
+    public void beforeEach(ExtensionContext context) throws Exception {
         log.info("Starting embedded broker[{}] on {}", brokerId, tcpConnectorUri);
         brokerService.start();
     }
 
     @Override
-    protected void after() {
+    public void afterEach(ExtensionContext context) throws Exception {
         try {
             log.info("Stopping embedded broker[{}]", brokerId);
             brokerService.stop();

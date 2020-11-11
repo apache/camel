@@ -16,17 +16,19 @@
  */
 package org.apache.camel.util.function;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PredicatesTest {
 
     @Test
     public void testNegate() {
-        Assert.assertFalse(Predicates.of(String::isEmpty).test("something"));
-        Assert.assertTrue(Predicates.of(String::isEmpty).negate().test("something"));
-        Assert.assertTrue(Predicates.negate(String::isEmpty).test("something"));
-        Assert.assertFalse(Predicates.negate(String::isEmpty).test(""));
-        Assert.assertFalse(Predicates.of(String::isEmpty).negate().test(""));
+        assertFalse(Predicates.of(String::isEmpty).test("something"));
+        assertTrue(Predicates.of(String::isEmpty).negate().test("something"));
+        assertTrue(Predicates.negate(String::isEmpty).test("something"));
+        assertFalse(Predicates.negate(String::isEmpty).test(""));
+        assertFalse(Predicates.of(String::isEmpty).negate().test(""));
     }
 }

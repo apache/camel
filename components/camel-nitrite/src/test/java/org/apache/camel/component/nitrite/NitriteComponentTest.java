@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.dizitart.no2.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NitriteComponentTest extends AbstractNitriteTest {
 
@@ -35,22 +35,17 @@ public class NitriteComponentTest extends AbstractNitriteTest {
         mockB.setExpectedMessageCount(1);
         mockC.setExpectedMessageCount(1);
 
-
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb() + ".a.db"),
-                Document.createDocument("key1", "db_a")
-        );
+                Document.createDocument("key1", "db_a"));
         template.sendBody(String.format("nitrite://%s?collection=collection", tempDb() + ".b.db"),
-                Document.createDocument("key1", "db_b")
-        );
+                Document.createDocument("key1", "db_b"));
         template.sendBody(String.format("nitrite://%s?collection=collection2", tempDb() + ".c.db"),
-                Document.createDocument("key1", "db_c")
-        );
+                Document.createDocument("key1", "db_c"));
 
         mockA.assertIsSatisfied();
         mockB.assertIsSatisfied();
         mockC.assertIsSatisfied();
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

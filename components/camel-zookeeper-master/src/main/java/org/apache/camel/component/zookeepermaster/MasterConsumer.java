@@ -64,9 +64,9 @@ public class MasterConsumer extends DefaultConsumer {
     public String slaves() {
         try {
             return new ObjectMapper()
-                .enable(SerializationFeature.INDENT_OUTPUT)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .writeValueAsString(groupListener.getGroup().slaves());
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .writeValueAsString(groupListener.getGroup().slaves());
         } catch (Exception e) {
             return null;
         }
@@ -96,7 +96,8 @@ public class MasterConsumer extends DefaultConsumer {
         this.groupListener.setMaximumConnectionTimeout(endpoint.getComponent().getMaximumConnectionTimeout());
         ServiceHelper.startService(groupListener);
 
-        LOG.info("Attempting to become master for endpoint: " + endpoint + " in " + endpoint.getCamelContext() + " with singletonID: " + endpoint.getGroupName());
+        LOG.info("Attempting to become master for endpoint: " + endpoint + " in " + endpoint.getCamelContext()
+                 + " with singletonID: " + endpoint.getGroupName());
         thisNodeState = createNodeState();
         groupListener.updateState(thisNodeState);
     }

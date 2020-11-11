@@ -18,7 +18,9 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RecipientListStopOnExceptionWithOnExceptionTest extends ContextTestSupport {
 
@@ -29,7 +31,8 @@ public class RecipientListStopOnExceptionWithOnExceptionTest extends ContextTest
         getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:c").expectedMessageCount(0);
 
-        String out = template.requestBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c", String.class);
+        String out = template.requestBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c",
+                String.class);
         assertEquals("Damn Forced", out);
 
         assertMockEndpointsSatisfied();

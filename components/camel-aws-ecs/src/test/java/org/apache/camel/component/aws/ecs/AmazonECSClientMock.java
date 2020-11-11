@@ -35,7 +35,7 @@ public class AmazonECSClientMock extends AbstractAmazonECS {
 
     public AmazonECSClientMock() {
     }
-    
+
     @Override
     public CreateClusterResult createCluster(CreateClusterRequest request) {
         CreateClusterResult res = new CreateClusterResult();
@@ -62,7 +62,7 @@ public class AmazonECSClientMock extends AbstractAmazonECS {
         cluster.setClusterName("Test");
         cluster.setStatus("ACTIVE");
         res.setClusters(Collections.singleton(cluster));
-        return res;        
+        return res;
     }
 
     @Override

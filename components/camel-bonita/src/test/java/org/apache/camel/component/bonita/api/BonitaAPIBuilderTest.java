@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.bonita.api;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BonitaAPIBuilderTest {
 
-    @Test(
-            expected = IllegalArgumentException.class)
+    @Test
     public void testNullBuilderInput() {
-        BonitaAPIBuilder.build(null);
+        assertThrows(IllegalArgumentException.class,
+                () -> BonitaAPIBuilder.build(null));
     }
 }

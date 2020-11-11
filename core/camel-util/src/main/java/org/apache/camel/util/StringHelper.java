@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Helper methods for working with Strings.
@@ -40,45 +41,59 @@ public final class StringHelper {
     /**
      * Ensures that <code>s</code> is friendly for a URL or file system.
      *
-     * @param s String to be sanitized.
-     * @return sanitized version of <code>s</code>.
+     * @param  s                    String to be sanitized.
+     * @return                      sanitized version of <code>s</code>.
      * @throws NullPointerException if <code>s</code> is <code>null</code>.
      */
     public static String sanitize(String s) {
         return s
-            .replace(':', '-')
-            .replace('_', '-')
-            .replace('.', '-')
-            .replace('/', '-')
-            .replace('\\', '-');
+                .replace(':', '-')
+                .replace('_', '-')
+                .replace('.', '-')
+                .replace('/', '-')
+                .replace('\\', '-');
     }
 
     /**
      * Remove carriage return and line feeds from a String, replacing them with an empty String.
-     * @param s String to be sanitized of carriage return / line feed characters
-     * @return sanitized version of <code>s</code>.
+     *
+     * @param  s                    String to be sanitized of carriage return / line feed characters
+     * @return                      sanitized version of <code>s</code>.
      * @throws NullPointerException if <code>s</code> is <code>null</code>.
      */
     public static String removeCRLF(String s) {
         return s
-            .replaceAll("\r", "")
-            .replaceAll("\n", "");
+                .replace("\r", "")
+                .replace("\n", "");
     }
 
     /**
      * Counts the number of times the given char is in the string
      *
-     * @param s  the string
-     * @param ch the char
-     * @return number of times char is located in the string
+     * @param  s  the string
+     * @param  ch the char
+     * @return    number of times char is located in the string
      */
     public static int countChar(String s, char ch) {
-        if (ObjectHelper.isEmpty(s)) {
+        return countChar(s, ch, -1);
+    }
+
+    /**
+     * Counts the number of times the given char is in the string
+     *
+     * @param  s   the string
+     * @param  ch  the char
+     * @param  end end index
+     * @return     number of times char is located in the string
+     */
+    public static int countChar(String s, char ch, int end) {
+        if (s == null || s.isEmpty()) {
             return 0;
         }
 
         int matches = 0;
-        for (int i = 0; i < s.length(); i++) {
+        int len = end < 0 ? s.length() : end;
+        for (int i = 0; i < len; i++) {
             char c = s.charAt(i);
             if (ch == c) {
                 matches++;
@@ -91,9 +106,9 @@ public final class StringHelper {
     /**
      * Limits the length of a string
      *
-     * @param s the string
-     * @param maxLength the maximum length of the returned string
-     * @return s if the length of s is less than maxLength or the first maxLength characters of s
+     * @param  s         the string
+     * @param  maxLength the maximum length of the returned string
+     * @return           s if the length of s is less than maxLength or the first maxLength characters of s
      */
     public static String limitLength(String s, int maxLength) {
         if (ObjectHelper.isEmpty(s)) {
@@ -105,8 +120,8 @@ public final class StringHelper {
     /**
      * Removes all quotes (single and double) from the string
      *
-     * @param s  the string
-     * @return the string without quotes (single and double)
+     * @param  s the string
+     * @return   the string without quotes (single and double)
      */
     public static String removeQuotes(String s) {
         if (ObjectHelper.isEmpty(s)) {
@@ -121,8 +136,8 @@ public final class StringHelper {
     /**
      * Removes all leading and ending quotes (single and double) from the string
      *
-     * @param s  the string
-     * @return the string without leading and ending quotes (single and double)
+     * @param  s the string
+     * @return   the string without leading and ending quotes (single and double)
      */
     public static String removeLeadingAndEndingQuotes(String s) {
         if (ObjectHelper.isEmpty(s)) {
@@ -144,8 +159,8 @@ public final class StringHelper {
     /**
      * Whether the string starts and ends with either single or double quotes.
      *
-     * @param s the string
-     * @return <tt>true</tt> if the string starts and ends with either single or double quotes.
+     * @param  s the string
+     * @return   <tt>true</tt> if the string starts and ends with either single or double quotes.
      */
     public static boolean isQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
@@ -165,8 +180,8 @@ public final class StringHelper {
     /**
      * Encodes the text into safe XML by replacing < > and & with XML tokens
      *
-     * @param text  the text
-     * @return the encoded text
+     * @param  text the text
+     * @return      the encoded text
      */
     public static String xmlEncode(String text) {
         if (text == null) {
@@ -182,8 +197,9 @@ public final class StringHelper {
 
     /**
      * Determines if the string has at least one letter in upper case
-     * @param text the text
-     * @return <tt>true</tt> if at least one letter is upper case, <tt>false</tt> otherwise
+     *
+     * @param  text the text
+     * @return      <tt>true</tt> if at least one letter is upper case, <tt>false</tt> otherwise
      */
     public static boolean hasUpperCase(String text) {
         if (text == null) {
@@ -220,9 +236,9 @@ public final class StringHelper {
     /**
      * Does the expression have the language start token?
      *
-     * @param expression the expression
-     * @param language the name of the language, such as simple
-     * @return <tt>true</tt> if the expression contains the start token, <tt>false</tt> otherwise
+     * @param  expression the expression
+     * @param  language   the name of the language, such as simple
+     * @return            <tt>true</tt> if the expression contains the start token, <tt>false</tt> otherwise
      */
     public static boolean hasStartToken(String expression, String language) {
         if (expression == null) {
@@ -246,13 +262,15 @@ public final class StringHelper {
      * <p/>
      * This implementation is not recursive, not does it check for tokens in the replacement string.
      *
-     * @param input  the input string
-     * @param from   the from string, must <b>not</b> be <tt>null</tt> or empty
-     * @param to     the replacement string, must <b>not</b> be empty
-     * @return the replaced string, or the input string if no replacement was needed
+     * @param  input                    the input string
+     * @param  from                     the from string, must <b>not</b> be <tt>null</tt> or empty
+     * @param  to                       the replacement string, must <b>not</b> be empty
+     * @return                          the replaced string, or the input string if no replacement was needed
      * @throws IllegalArgumentException if the input arguments is invalid
      */
     public static String replaceAll(String input, String from, String to) {
+        // TODO: Use String.replace instead of this method when using JDK11 as minimum (as its much faster in JDK 11 onwards)
+
         if (ObjectHelper.isEmpty(input)) {
             return input;
         }
@@ -294,10 +312,10 @@ public final class StringHelper {
     /**
      * Creates a json tuple with the given name/value pair.
      *
-     * @param name  the name
-     * @param value the value
-     * @param isMap whether the tuple should be map
-     * @return the json
+     * @param  name  the name
+     * @param  value the value
+     * @param  isMap whether the tuple should be map
+     * @return       the json
      */
     public static String toJson(String name, String value, boolean isMap) {
         if (isMap) {
@@ -310,9 +328,9 @@ public final class StringHelper {
     /**
      * Asserts whether the string is <b>not</b> empty.
      *
-     * @param value  the string to test
-     * @param name   the key that resolved the value
-     * @return the passed {@code value} as is
+     * @param  value                    the string to test
+     * @param  name                     the key that resolved the value
+     * @return                          the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
     public static String notEmpty(String value, String name) {
@@ -326,10 +344,11 @@ public final class StringHelper {
     /**
      * Asserts whether the string is <b>not</b> empty.
      *
-     * @param value  the string to test
-     * @param on     additional description to indicate where this problem occurred (appended as toString())
-     * @param name   the key that resolved the value
-     * @return the passed {@code value} as is
+     * @param  value                    the string to test
+     * @param  on                       additional description to indicate where this problem occurred (appended as
+     *                                  toString())
+     * @param  name                     the key that resolved the value
+     * @return                          the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
      */
     public static String notEmpty(String value, String name, Object on) {
@@ -341,7 +360,7 @@ public final class StringHelper {
 
         return value;
     }
-    
+
     public static String[] splitOnCharacter(String value, String needle, int count) {
         String[] rc = new String[count];
         rc[0] = value;
@@ -358,12 +377,11 @@ public final class StringHelper {
     }
 
     /**
-     * Removes any starting characters on the given text which match the given
-     * character
+     * Removes any starting characters on the given text which match the given character
      *
-     * @param text the string
-     * @param ch the initial characters to remove
-     * @return either the original string or the new substring
+     * @param  text the string
+     * @param  ch   the initial characters to remove
+     * @return      either the original string or the new substring
      */
     public static String removeStartingCharacters(String text, char ch) {
         int idx = 0;
@@ -379,8 +397,8 @@ public final class StringHelper {
     /**
      * Capitalize the string (upper case first character)
      *
-     * @param text  the string
-     * @return the string capitalized (upper case first character)
+     * @param  text the string
+     * @return      the string capitalized (upper case first character)
      */
     public static String capitalize(String text) {
         return capitalize(text, false);
@@ -389,9 +407,10 @@ public final class StringHelper {
     /**
      * Capitalize the string (upper case first character)
      *
-     * @param text  the string
-     * @param dashToCamelCase whether to also convert dash format into camel case (hello-great-world -> helloGreatWorld)
-     * @return the string capitalized (upper case first character)
+     * @param  text            the string
+     * @param  dashToCamelCase whether to also convert dash format into camel case (hello-great-world ->
+     *                         helloGreatWorld)
+     * @return                 the string capitalized (upper case first character)
      */
     public static String capitalize(String text, boolean dashToCamelCase) {
         if (dashToCamelCase) {
@@ -414,8 +433,8 @@ public final class StringHelper {
     /**
      * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
      *
-     * @param text  the string
-     * @return the string camel cased
+     * @param  text the string
+     * @return      the string camel cased
      */
     public static String dashToCamelCase(String text) {
         if (text == null) {
@@ -446,73 +465,150 @@ public final class StringHelper {
     /**
      * Returns the string after the given token
      *
-     * @param text  the text
-     * @param after the token
-     * @return the text after the token, or <tt>null</tt> if text does not contain the token
+     * @param  text  the text
+     * @param  after the token
+     * @return       the text after the token, or <tt>null</tt> if text does not contain the token
      */
     public static String after(String text, String after) {
-        if (!text.contains(after)) {
+        int pos = text.indexOf(after);
+        if (pos == -1) {
             return null;
         }
-        return text.substring(text.indexOf(after) + after.length());
+        return text.substring(pos + after.length());
+    }
+
+    /**
+     * Returns the string after the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  after        the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text after the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String after(String text, String after, String defaultValue) {
+        String answer = after(text, after);
+        return answer != null ? answer : defaultValue;
     }
 
     /**
      * Returns an object after the given token
      *
-     * @param text  the text
-     * @param after the token
-     * @param mapper a mapping function to convert the string after the token to type T
-     * @return an Optional describing the result of applying a mapping function to the text after the token.
+     * @param  text   the text
+     * @param  after  the token
+     * @param  mapper a mapping function to convert the string after the token to type T
+     * @return        an Optional describing the result of applying a mapping function to the text after the token.
      */
     public static <T> Optional<T> after(String text, String after, Function<String, T> mapper) {
         String result = after(text, after);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
+    }
+
+    /**
+     * Returns the string after the the last occurrence of the given token
+     *
+     * @param  text  the text
+     * @param  after the token
+     * @return       the text after the token, or <tt>null</tt> if text does not contain the token
+     */
+    public static String afterLast(String text, String after) {
+        int pos = text.lastIndexOf(after);
+        if (pos == -1) {
+            return null;
+        }
+        return text.substring(pos + after.length());
+    }
+
+    /**
+     * Returns the string after the the last occurrence of the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  after        the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text after the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String afterLast(String text, String after, String defaultValue) {
+        String answer = afterLast(text, after);
+        return answer != null ? answer : defaultValue;
     }
 
     /**
      * Returns the string before the given token
      *
-     * @param text the text
-     * @param before the token
-     * @return the text before the token, or <tt>null</tt> if text does not
-     *         contain the token
+     * @param  text   the text
+     * @param  before the token
+     * @return        the text before the token, or <tt>null</tt> if text does not contain the token
      */
     public static String before(String text, String before) {
-        if (!text.contains(before)) {
-            return null;
-        }
-        return text.substring(0, text.indexOf(before));
+        int pos = text.indexOf(before);
+        return pos == -1 ? null : text.substring(0, pos);
+    }
+
+    /**
+     * Returns the string before the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  before       the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text before the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String before(String text, String before, String defaultValue) {
+        String answer = before(text, before);
+        return answer != null ? answer : defaultValue;
     }
 
     /**
      * Returns an object before the given token
      *
-     * @param text  the text
-     * @param before the token
-     * @param mapper a mapping function to convert the string before the token to type T
-     * @return an Optional describing the result of applying a mapping function to the text before the token.
+     * @param  text   the text
+     * @param  before the token
+     * @param  mapper a mapping function to convert the string before the token to type T
+     * @return        an Optional describing the result of applying a mapping function to the text before the token.
      */
     public static <T> Optional<T> before(String text, String before, Function<String, T> mapper) {
         String result = before(text, before);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
     }
 
     /**
+     * Returns the string before the last occurrence of the given token
+     *
+     * @param  text   the text
+     * @param  before the token
+     * @return        the text before the token, or <tt>null</tt> if text does not contain the token
+     */
+    public static String beforeLast(String text, String before) {
+        int pos = text.lastIndexOf(before);
+        return pos == -1 ? null : text.substring(0, pos);
+    }
+
+    /**
+     * Returns the string before the last occurrence of the given token, or the default value
+     *
+     * @param  text         the text
+     * @param  before       the token
+     * @param  defaultValue the value to return if text does not contain the token
+     * @return              the text before the token, or the supplied defaultValue if text does not contain the token
+     */
+    public static String beforeLast(String text, String before, String defaultValue) {
+        String answer = beforeLast(text, before);
+        return answer != null ? answer : defaultValue;
+    }
+
+    /**
      * Returns the string between the given tokens
      *
-     * @param text  the text
-     * @param after the before token
-     * @param before the after token
-     * @return the text between the tokens, or <tt>null</tt> if text does not contain the tokens
+     * @param  text   the text
+     * @param  after  the before token
+     * @param  before the after token
+     * @return        the text between the tokens, or <tt>null</tt> if text does not contain the tokens
      */
     public static String between(String text, String after, String before) {
         text = after(text, after);
@@ -525,16 +621,16 @@ public final class StringHelper {
     /**
      * Returns an object between the given token
      *
-     * @param text  the text
-     * @param after the before token
-     * @param before the after token
-     * @param mapper a mapping function to convert the string between the token to type T
-     * @return an Optional describing the result of applying a mapping function to the text between the token.
+     * @param  text   the text
+     * @param  after  the before token
+     * @param  before the after token
+     * @param  mapper a mapping function to convert the string between the token to type T
+     * @return        an Optional describing the result of applying a mapping function to the text between the token.
      */
     public static <T> Optional<T> between(String text, String after, String before, Function<String, T> mapper) {
         String result = between(text, after, before);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -543,17 +639,16 @@ public final class StringHelper {
     /**
      * Returns the string between the most outer pair of tokens
      * <p/>
-     * The number of token pairs must be evenly, eg there must be same number of before and after tokens, otherwise <tt>null</tt> is returned
+     * The number of token pairs must be evenly, eg there must be same number of before and after tokens, otherwise
+     * <tt>null</tt> is returned
      * <p/>
-     * This implementation skips matching when the text is either single or double quoted.
-     * For example:
-     * <tt>${body.matches("foo('bar')")</tt>
-     * Will not match the parenthesis from the quoted text.
+     * This implementation skips matching when the text is either single or double quoted. For example:
+     * <tt>${body.matches("foo('bar')")</tt> Will not match the parenthesis from the quoted text.
      *
-     * @param text  the text
-     * @param after the before token
-     * @param before the after token
-     * @return the text between the outer most tokens, or <tt>null</tt> if text does not contain the tokens
+     * @param  text   the text
+     * @param  after  the before token
+     * @param  before the after token
+     * @return        the text between the outer most tokens, or <tt>null</tt> if text does not contain the tokens
      */
     public static String betweenOuterPair(String text, char before, char after) {
         if (text == null) {
@@ -606,16 +701,17 @@ public final class StringHelper {
     /**
      * Returns an object between the most outer pair of tokens
      *
-     * @param text  the text
-     * @param after the before token
-     * @param before the after token
-     * @param mapper a mapping function to convert the string between the most outer pair of tokens to type T
-     * @return an Optional describing the result of applying a mapping function to the text between the most outer pair of tokens.
+     * @param  text   the text
+     * @param  after  the before token
+     * @param  before the after token
+     * @param  mapper a mapping function to convert the string between the most outer pair of tokens to type T
+     * @return        an Optional describing the result of applying a mapping function to the text between the most
+     *                outer pair of tokens.
      */
     public static <T> Optional<T> betweenOuterPair(String text, char before, char after, Function<String, T> mapper) {
         String result = betweenOuterPair(text, before, after);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
@@ -646,11 +742,11 @@ public final class StringHelper {
     /**
      * Cleans the string to a pure Java identifier so we can use it for loading class names.
      * <p/>
-     * Especially from Spring DSL people can have \n \t or other characters that otherwise
-     * would result in ClassNotFoundException
+     * Especially from Spring DSL people can have \n \t or other characters that otherwise would result in
+     * ClassNotFoundException
      *
-     * @param name the class name
-     * @return normalized classname that can be load by a class loader.
+     * @param  name the class name
+     * @return      normalized classname that can be load by a class loader.
      */
     public static String normalizeClassName(String name) {
         StringBuilder sb = new StringBuilder(name.length());
@@ -665,9 +761,9 @@ public final class StringHelper {
     /**
      * Compares old and new text content and report back which lines are changed
      *
-     * @param oldText  the old text
-     * @param newText  the new text
-     * @return a list of line numbers that are changed in the new text
+     * @param  oldText the old text
+     * @param  newText the new text
+     * @return         a list of line numbers that are changed in the new text
      */
     public static List<Integer> changedLines(String oldText, String newText) {
         if (oldText == null || oldText.equals(newText)) {
@@ -693,17 +789,19 @@ public final class StringHelper {
     }
 
     /**
-     * Removes the leading and trailing whitespace and if the resulting
-     * string is empty returns {@code null}. Examples:
+     * Removes the leading and trailing whitespace and if the resulting string is empty returns {@code null}. Examples:
      * <p>
-     * Examples:
-     * <blockquote><pre>
+     * Examples: <blockquote>
+     *
+     * <pre>
      * trimToNull("abc") -> "abc"
      * trimToNull(" abc") -> "abc"
      * trimToNull(" abc ") -> "abc"
      * trimToNull(" ") -> null
      * trimToNull("") -> null
-     * </pre></blockquote>
+     * </pre>
+     *
+     * </blockquote>
      */
     public static String trimToNull(final String given) {
         if (given == null) {
@@ -718,19 +816,19 @@ public final class StringHelper {
 
         return trimmed;
     }
-    
+
     /**
      * Checks if the src string contains what
      *
-     * @param src  is the source string to be checked
-     * @param what is the string which will be looked up in the src argument 
-     * @return true/false
+     * @param  src  is the source string to be checked
+     * @param  what is the string which will be looked up in the src argument
+     * @return      true/false
      */
     public static boolean containsIgnoreCase(String src, String what) {
         if (src == null || what == null) {
             return false;
         }
-        
+
         final int length = what.length();
         if (length == 0) {
             return true; // Empty string is contained
@@ -757,10 +855,10 @@ public final class StringHelper {
     /**
      * Outputs the bytes in human readable format in units of KB,MB,GB etc.
      *
-     * @param locale The locale to apply during formatting. If l is {@code null} then no localization is applied.
-     * @param bytes number of bytes
-     * @return human readable output
-     * @see java.lang.String#format(Locale, String, Object...)
+     * @param  locale The locale to apply during formatting. If l is {@code null} then no localization is applied.
+     * @param  bytes  number of bytes
+     * @return        human readable output
+     * @see           java.lang.String#format(Locale, String, Object...)
      */
     public static String humanReadableBytes(Locale locale, long bytes) {
         int unit = 1024;
@@ -775,29 +873,24 @@ public final class StringHelper {
     /**
      * Outputs the bytes in human readable format in units of KB,MB,GB etc.
      *
-     * The locale always used is the one returned by {@link java.util.Locale#getDefault()}. 
+     * The locale always used is the one returned by {@link java.util.Locale#getDefault()}.
      *
-     * @param bytes number of bytes
-     * @return human readable output
-     * @see org.apache.camel.util.StringHelper#humanReadableBytes(Locale, long)
+     * @param  bytes number of bytes
+     * @return       human readable output
+     * @see          org.apache.camel.util.StringHelper#humanReadableBytes(Locale, long)
      */
     public static String humanReadableBytes(long bytes) {
         return humanReadableBytes(Locale.getDefault(), bytes);
     }
 
     /**
-     * Check for string pattern matching with a number of strategies in the
-     * following order:
+     * Check for string pattern matching with a number of strategies in the following order:
      *
-     * - equals
-     * - null pattern always matches
-     * - * always matches
-     * - Ant style matching
-     * - Regexp
+     * - equals - null pattern always matches - * always matches - Ant style matching - Regexp
      *
-     * @param pattern the pattern
-     * @param target the string to test
-     * @return true if target matches the pattern
+     * @param  pattern the pattern
+     * @param  target  the string to test
+     * @return         true if target matches the pattern
      */
     public static boolean matches(String pattern, String target) {
         if (Objects.equals(pattern, target)) {
@@ -822,7 +915,16 @@ public final class StringHelper {
         return m.matches();
     }
 
+    /**
+     * Converts the string from camel case into dash format (helloGreatWorld -> hello-great-world)
+     *
+     * @param  text the string
+     * @return      the string camel cased
+     */
     public static String camelCaseToDash(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
         StringBuilder answer = new StringBuilder();
 
         Character prev = null;
@@ -838,16 +940,73 @@ public final class StringHelper {
             if (ch == '-' || ch == '_') {
                 answer.append("-");
             } else if (Character.isUpperCase(ch) && prev != null && !Character.isUpperCase(prev)) {
-                answer.append("-").append(ch);
+                if (prev != '-' && prev != '_') {
+                    answer.append("-");
+                }
+                answer.append(ch);
             } else if (Character.isUpperCase(ch) && prev != null && next != null && Character.isLowerCase(next)) {
-                answer.append("-").append(ch);
+                if (prev != '-' && prev != '_') {
+                    answer.append("-");
+                }
+                answer.append(ch);
             } else {
                 answer.append(ch);
             }
             prev = ch;
         }
-        
-        return answer.toString().toLowerCase(Locale.US);
+
+        return answer.toString().toLowerCase(Locale.ENGLISH);
+    }
+
+    /**
+     * Does the string starts with the given prefix (ignore case).
+     *
+     * @param text   the string
+     * @param prefix the prefix
+     */
+    public static boolean startsWithIgnoreCase(String text, String prefix) {
+        if (text != null && prefix != null) {
+            return prefix.length() > text.length() ? false : text.regionMatches(true, 0, prefix, 0, prefix.length());
+        } else {
+            return text == null && prefix == null;
+        }
+    }
+
+    /**
+     * Converts the value to an enum constant value that is in the form of upper cased with underscore.
+     */
+    public static String asEnumConstantValue(String value) {
+        if (value == null || value.isEmpty()) {
+            return value;
+        }
+        value = StringHelper.camelCaseToDash(value);
+        // replace double dashes
+        value = value.replaceAll("-+", "-");
+        // replace dash with underscore and upper case
+        value = value.replace('-', '_').toUpperCase(Locale.ENGLISH);
+        return value;
+    }
+
+    /**
+     * Split the text on words, eg hello/world => becomes array with hello in index 0, and world in index 1.
+     */
+    public static String[] splitWords(String text) {
+        return text.split("[\\W]+");
+    }
+
+    /**
+     * Creates a stream from the given input sequence around matches of the regex
+     *
+     * @param  text  the input
+     * @param  regex the expression used to split the input
+     * @return       the stream of strings computed by splitting the input with the given regex
+     */
+    public static Stream<String> splitAsStream(CharSequence text, String regex) {
+        if (text == null || regex == null) {
+            return Stream.empty();
+        }
+
+        return Pattern.compile(regex).splitAsStream(text);
     }
 
 }

@@ -18,10 +18,10 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Test manually by inspecting logs")
+@Disabled("Test manually by inspecting logs")
 public class ShutdownStrategySuppressLoggingOnTimeoutTest extends ContextTestSupport {
 
     @Test

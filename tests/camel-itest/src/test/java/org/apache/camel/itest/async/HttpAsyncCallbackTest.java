@@ -25,14 +25,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
 
     private static final CountDownLatch LATCH = new CountDownLatch(3);
 
     @Test
-    public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
+    void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello Claus", "Hello Hadrian", "Hello Willem");
 
@@ -49,18 +51,18 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
         // END SNIPPET: e3
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should get 3 callbacks", LATCH.await(10, TimeUnit.SECONDS));
+        assertTrue(LATCH.await(10, TimeUnit.SECONDS), "Should get 3 callbacks");
 
         // assert that we got all the correct data in our callback
-        assertTrue("Claus is missing", callback.getData().contains("Hello Claus"));
-        assertTrue("Hadrian is missing", callback.getData().contains("Hello Hadrian"));
-        assertTrue("Willem is missing", callback.getData().contains("Hello Willem"));
+        assertTrue(callback.getData().contains("Hello Claus"), "Claus is missing");
+        assertTrue(callback.getData().contains("Hello Hadrian"), "Hadrian is missing");
+        assertTrue(callback.getData().contains("Hello Willem"), "Willem is missing");
     }
 
     // START SNIPPET: e2
     /**
-     * Our own callback that will gather all the responses.
-     * We extend the SynchronizationAdapter class as we then only need to override the onComplete method.
+     * Our own callback that will gather all the responses. We extend the SynchronizationAdapter class as we then only
+     * need to override the onComplete method.
      */
     private static class MyCallback extends SynchronizationAdapter {
 
@@ -72,7 +74,7 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
         @Override
         public void onComplete(Exchange exchange) {
             // this method is invoked when the exchange was a success and we can get the response
-            String body = exchange.getOut().getBody(String.class);
+            String body = exchange.getMessage().getBody(String.class);
             data.add(body);
 
             // the latch is used for testing purposes
@@ -86,17 +88,17 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
     // END SNIPPET: e2
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
                 // The mocks are here for unit test
                 // Simulate a slow http service (delaying a bit) we want to invoke async
                 from("jetty:http://0.0.0.0:" + getPort() + "/myservice")
-                    .delay(300)
-                    .transform(body().prepend("Hello "))
-                    .to("mock:result");
+                        .delay(300)
+                        .transform(body().prepend("Hello "))
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

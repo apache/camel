@@ -21,12 +21,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.activemq.AMQ2611Test.Consumer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AMQ2240Test {
 
@@ -34,7 +34,7 @@ public class AMQ2240Test {
 
     private CamelContext camelContext;
 
-    @After
+    @AfterEach
     public void destroyCamelContext() throws Exception {
         if (camelContext != null) {
             camelContext.stop();
@@ -46,8 +46,10 @@ public class AMQ2240Test {
     public void testBadVMTransportOptionsJMSPrefix() throws Exception {
 
         try {
-            final String vmUri = "vm://localhost?" + "jms.redeliveryPolicy.maximumRedeliveries=0&" + "jms.redeliveryPolicy.initialRedeliveryDelay=500&"
-                                 + "jms.useAsyncSend=false&jms.sendTimeout=ABC&" + "jms.maxXXXXReconnectAttempts=1&jms.timeout=3000";
+            final String vmUri
+                    = "vm://localhost?" + "jms.redeliveryPolicy.maximumRedeliveries=0&"
+                      + "jms.redeliveryPolicy.initialRedeliveryDelay=500&"
+                      + "jms.useAsyncSend=false&jms.sendTimeout=ABC&" + "jms.maxXXXXReconnectAttempts=1&jms.timeout=3000";
 
             LOG.info("creating context with bad URI: " + vmUri);
             ActiveMQComponent amq = ActiveMQComponent.activeMQComponent(vmUri);

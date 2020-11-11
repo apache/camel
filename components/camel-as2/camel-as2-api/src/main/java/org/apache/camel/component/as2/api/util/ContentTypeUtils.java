@@ -27,23 +27,23 @@ public final class ContentTypeUtils {
 
     public static boolean isEDIMessageContentType(ContentType ediMessageContentType) {
         switch (ediMessageContentType.getMimeType().toLowerCase()) {
-        case AS2MediaType.APPLICATION_EDIFACT:
-            return true;
-        case AS2MediaType.APPLICATION_EDI_X12:
-            return true;
-        case AS2MediaType.APPLICATION_EDI_CONSENT:
-            return true;
-        default:
-            return false;
+            case AS2MediaType.APPLICATION_EDIFACT:
+                return true;
+            case AS2MediaType.APPLICATION_EDI_X12:
+                return true;
+            case AS2MediaType.APPLICATION_EDI_CONSENT:
+                return true;
+            default:
+                return false;
         }
     }
 
     public static boolean isPkcs7SignatureType(ContentType pcks7SignatureType) {
         switch (pcks7SignatureType.getMimeType().toLowerCase()) {
-        case AS2MimeType.APPLICATION_PKCS7_SIGNATURE:
-            return true;
-        default:
-            return false;
+            case AS2MimeType.APPLICATION_PKCS7_SIGNATURE:
+                return true;
+            default:
+                return false;
         }
     }
 

@@ -16,38 +16,45 @@
  */
 package org.apache.camel.component.shiro.security;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.camel.util.IOHelper;
 import org.apache.shiro.crypto.CipherService;
 import org.apache.shiro.util.ByteSource;
 
 public final class ShiroSecurityHelper {
 
+    private static Pattern pattern = Pattern.compile("(\\d+):(.+)");
+
     private ShiroSecurityHelper() {
     }
 
-    public static ByteSource encrypt(ShiroSecurityToken securityToken, byte[] passPhrase, CipherService cipherService) throws Exception {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        ObjectOutput serialStream = new ObjectOutputStream(stream);
-        try {
-            serialStream.writeObject(securityToken);
-            return cipherService.encrypt(stream.toByteArray(), passPhrase);
-        } finally {
-            close(serialStream);
-            IOHelper.close(stream);
-        }
+    public static ByteSource encrypt(
+            ShiroSecurityToken securityToken, byte[] passPhrase, CipherService cipherService) {
+        byte[] data = serialize(securityToken);
+        return cipherService.encrypt(data, passPhrase);
     }
 
-    private static void close(ObjectOutput output) {
-        try {
-            output.close();
-        } catch (IOException e) {
-            // ignore
-        }
+    static byte[] serialize(ShiroSecurityToken token) {
+        StringBuilder sb = new StringBuilder().append(token.getUsername().length())
+                .append(":")
+                .append(token.getUsername())
+                .append(token.getPassword() != null ? token.getPassword() : "");
+        return sb.toString().getBytes();
     }
 
+    public static ShiroSecurityToken deserialize(byte[] data) {
+        String text = new String(data);
+
+        Matcher matcher = pattern.matcher(text);
+        if (!matcher.matches()) {
+            throw new IllegalStateException("Can not deserialize security token - token is probably corrupted.");
+        }
+        int length = Integer.parseInt(matcher.group(1));
+
+        String username = matcher.group(2).substring(0, length);
+        String password = matcher.group(2).substring(length);
+
+        return new ShiroSecurityToken(username, password);
+    }
 }

@@ -19,7 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DefaultCamelContextAllowUseOriginalMessageTrueTest extends ContextTestSupport {
 
@@ -47,7 +47,8 @@ public class DefaultCamelContextAllowUseOriginalMessageTrueTest extends ContextT
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").transform().simple("Bye ${body}").process(new OriginalMessageProcessor()).to("mock:result");
+                from("direct:start").transform().simple("Bye ${body}").process(new OriginalMessageProcessor())
+                        .to("mock:result");
             }
         };
     }

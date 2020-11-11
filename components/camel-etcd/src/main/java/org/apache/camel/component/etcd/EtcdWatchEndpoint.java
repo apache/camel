@@ -19,12 +19,18 @@ package org.apache.camel.component.etcd;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.UriEndpoint;
 
+/**
+ * Watch specific etcd keys or directories for changes.
+ */
+@UriEndpoint(firstVersion = "2.18.0", scheme = "etcd-watch", title = "Etcd Watch", consumerOnly = true,
+             syntax = "etcd-watch:path", label = "clustering,database")
 public class EtcdWatchEndpoint extends AbstractEtcdEndpoint {
 
     public EtcdWatchEndpoint(
-        String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
-        super(uri, component, configuration, namespace, path);
+                             String uri, AbstractEtcdComponent component, EtcdConfiguration configuration, String path) {
+        super(uri, component, configuration, path);
     }
 
     @Override
@@ -34,7 +40,7 @@ public class EtcdWatchEndpoint extends AbstractEtcdEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        EtcdWatchConsumer consumer = new EtcdWatchConsumer(this, processor, getConfiguration(), getNamespace(), getPath());
+        EtcdWatchConsumer consumer = new EtcdWatchConsumer(this, processor, getConfiguration(), getPath());
         configureConsumer(consumer);
         return consumer;
     }

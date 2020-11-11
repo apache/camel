@@ -24,13 +24,13 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class AtomEntrySortTest extends CamelTestSupport {
 
     @Test
-    public void testSortedEntries() throws Exception {
+    void testSortedEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:sorted");
         mock.expectsAscending(ExpressionBuilder.beanExpression("myBean?method=getPubDate"));
         mock.expectedMessageCount(10);
@@ -39,7 +39,7 @@ public class AtomEntrySortTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUnSortedEntries() throws Exception {
+    void testUnSortedEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unsorted");
         mock.expectsAscending(ExpressionBuilder.beanExpression("myBean?method=getPubDate"));
         mock.expectedMessageCount(10);
@@ -48,16 +48,17 @@ public class AtomEntrySortTest extends CamelTestSupport {
     }
 
     @Override
-    protected void bindToRegistry(Registry registry) throws Exception {
+    protected void bindToRegistry(Registry registry) {
         registry.bind("myBean", new MyBean());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("atom:file:src/test/data/unsortedfeed.atom?splitEntries=true&sortEntries=true&delay=50").to("mock:sorted");
-                from("atom:file:src/test/data/unsortedfeed.atom?splitEntries=true&sortEntries=false&delay=50").to("mock:unsorted");
+                from("atom:file:src/test/data/unsortedfeed.atom?splitEntries=true&sortEntries=false&delay=50")
+                        .to("mock:unsorted");
             }
         };
     }

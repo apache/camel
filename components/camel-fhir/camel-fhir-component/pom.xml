@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fhir-parent</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.7.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-fhir</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Fhir</name>
+    <name>Camel :: FHIR</name>
     <description>Camel FHIR HL7 support</description>
 
     <properties>
@@ -67,20 +67,17 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-fhir-api</artifactId>
-            <version>${project.version}</version>
-            <classifier>javadoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- These aren't needed for compilation but makes camel-fhir easier to use for third party projects/users e.g wildfly-camel -->
         <dependency>
             <groupId>ca.uhn.hapi.fhir</groupId>
             <artifactId>hapi-fhir-structures-r5</artifactId>
             <version>${hapi-fhir-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -103,14 +100,20 @@
 
         <!-- testing -->
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring-junit5</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -128,16 +131,6 @@
         </dependency>
 
         <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
@@ -163,7 +156,7 @@
                                 <api>
                                     <apiName>capabilities</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirCapabilities</proxyClass>
-                                    <fromSignatureFile>signatures/capabilities-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -171,7 +164,7 @@
                                 <api>
                                     <apiName>create</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirCreate</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>url</nullableOption>
                                         <nullableOption>preferReturn</nullableOption>
@@ -181,7 +174,7 @@
                                 <api>
                                     <apiName>delete</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirDelete</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -189,7 +182,7 @@
                                 <api>
                                     <apiName>history</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirHistory</proxyClass>
-                                    <fromSignatureFile>signatures/history-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>count</nullableOption>
                                         <nullableOption>cutoff</nullableOption>
@@ -200,7 +193,7 @@
                                 <api>
                                     <apiName>load-page</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirLoadPage</proxyClass>
-                                    <fromSignatureFile>signatures/load-page-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -208,7 +201,7 @@
                                 <api>
                                     <apiName>meta</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirMeta</proxyClass>
-                                    <fromSignatureFile>signatures/meta-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -216,7 +209,7 @@
                                 <api>
                                     <apiName>operation</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirOperation</proxyClass>
-                                    <fromSignatureFile>signatures/operation-sig-api.txt</fromSignatureFile>
+                                    <fromJavasource/>
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                         <nullableOption>parameters</nullableOption>
@@ -228,7 +221,7 @@
                                 <api>
                                     <apiName>patch</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirPatch</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>preferReturn</nullableOption>
                                         <nullableOption>extraParameters</nullableOption>
@@ -237,7 +230,7 @@
                                 <api>
                                     <apiName>read</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirRead</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>ifVersionMatches</nullableOption>
                                         <nullableOption>returnNull</nullableOption>
@@ -250,7 +243,7 @@
                                 <api>
                                     <apiName>search</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirSearch</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -258,7 +251,7 @@
                                 <api>
                                     <apiName>transaction</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirTransaction</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -266,7 +259,7 @@
                                 <api>
                                     <apiName>update</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirUpdate</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>id</nullableOption>
                                         <nullableOption>stringId</nullableOption>
@@ -277,7 +270,7 @@
                                 <api>
                                     <apiName>validate</apiName>
                                     <proxyClass>org.apache.camel.component.fhir.api.FhirValidate</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>extraParameters</nullableOption>
                                     </nullableOptions>
@@ -286,34 +279,27 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API signatures -->
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-fhir-api</artifactId>
+                        <version>${project.version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
-            <!-- add generated source and test source to build -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.10</version>
+                <!-- we need to generate additional configurer classes -->
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-generated-sources</id>
+                        <id>generate-configurer</id>
+                        <phase>process-classes</phase>
                         <goals>
-                            <goal>add-source</goal>
+                            <goal>generate-configurer</goal>
                         </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/camel-component</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add-generated-test-sources</id>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-test-sources/camel-component</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -334,20 +320,7 @@
             </plugins>
         </pluginManagement>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-api-component-maven-plugin</artifactId>
-                <configuration>
-                    <scheme>${schemeName}</scheme>
-                    <componentName>${componentName}</componentName>
-                    <componentPackage>${componentPackage}</componentPackage>
-                    <outPackage>${outPackage}</outPackage>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
+
     <profiles>
         <profile>
             <id>it-fhir</id>

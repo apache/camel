@@ -29,7 +29,8 @@ public class SplunkConfiguration {
 
     private SplunkConnectionFactory connectionFactory;
 
-    @UriPath(description = "Name has no purpose") @Metadata(required = true)
+    @UriPath(description = "Name has no purpose")
+    @Metadata(required = true)
     private String name;
     @UriParam(defaultValue = "https")
     private String scheme = Service.DEFAULT_SCHEME;
@@ -328,8 +329,8 @@ public class SplunkConfiguration {
     }
 
     /**
-     * Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection.
-     * Can be useful when running in application servers to avoid app. server https handling.
+     * Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection. Can be useful when
+     * running in application servers to avoid app. server https handling.
      */
     public void setUseSunHttpsHandler(boolean useSunHttpsHandler) {
         this.useSunHttpsHandler = useSunHttpsHandler;

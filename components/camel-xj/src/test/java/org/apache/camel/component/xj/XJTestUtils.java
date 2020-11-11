@@ -42,11 +42,12 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 final class XJTestUtils {
 
@@ -169,7 +170,7 @@ final class XJTestUtils {
                     if (toTest instanceof Comment) {
                         final Comment comment = (Comment) toTest;
                         final String text = comment.getNodeValue();
-                        
+
                         return text == null || !text.contains("License");
                     }
 
@@ -178,6 +179,6 @@ final class XJTestUtils {
                 .checkForIdentical()
                 .build();
 
-        Assert.assertFalse("\nExpected: " + expected + "\n\nGot: " + result + "\n\nDiff: " + diff.toString(), diff.hasDifferences());
+        assertFalse(diff.hasDifferences(), "\nExpected: " + expected + "\n\nGot: " + result + "\n\nDiff: " + diff.toString());
     }
 }

@@ -22,13 +22,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.redis.core.RedisTemplate;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public class RedisTestSupport extends CamelTestSupport {
 
     @Mock

@@ -19,6 +19,8 @@ package org.apache.camel.component.netty;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import io.netty.channel.ChannelHandler;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,15 +29,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * In this test we are checking that same netty endpoint can be safely called twice
- * in single route with reconnect. It requires for processing to be fully async otherwise
- * {@link io.netty.util.concurrent.BlockingOperationException} is thrown by netty.
+ * In this test we are checking that same netty endpoint can be safely called twice in single route with reconnect. It
+ * requires for processing to be fully async otherwise {@link io.netty.util.concurrent.BlockingOperationException} is
+ * thrown by netty.
  */
 public class NettyTCPChainedTest extends BaseNettyTest {
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
@@ -57,7 +61,12 @@ public class NettyTCPChainedTest extends BaseNettyTest {
         if (exchange.getException() != null) {
             throw new AssertionError(exchange.getException());
         }
-        Assert.assertFalse(exchange.isFailed());
+        assertFalse(exchange.isFailed());
+    }
+
+    @BindToRegistry("encoder")
+    public ChannelHandler getEncoder() throws Exception {
+        return ChannelHandlerFactories.newByteArrayEncoder("tcp");
     }
 
     @Test
@@ -74,11 +83,11 @@ public class NettyTCPChainedTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=false")
-                    .to("log:result")
-                    .to("mock:result");
+                from("netty:tcp://localhost:{{port}}?sync=false&encoders=#encoder")
+                        .to("log:result")
+                        .to("mock:result");
                 from("direct:nettyCall")
-                        .to("netty:tcp://localhost:{{port}}?sync=false&disconnect=true&workerCount=1");
+                        .to("netty:tcp://localhost:{{port}}?sync=false&disconnect=true&workerCount=1&encoders=#encoder");
                 from("direct:chainedCalls")
                         .to("direct:nettyCall")
                         .to("direct:nettyCall");

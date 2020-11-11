@@ -27,7 +27,8 @@ import static org.apache.camel.test.junit5.TestSupport.assertDirectoryEquals;
 public class FtpConsumerRelativeFileNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/target/filename-consumer?password=admin&recursive=true&sortBy=file:name";
+        return "ftp://admin@localhost:" + getPort()
+               + "/target/filename-consumer?password=admin&recursive=true&sortBy=file:name";
     }
 
     @Override
@@ -61,8 +62,10 @@ public class FtpConsumerRelativeFileNameTest extends FtpServerTestSupport {
         Thread.sleep(2000);
 
         // and expect name to contain target/filename-consumer-XXX.txt
-        assertDirectoryEquals("target/filename-consumer-bye.txt", mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME, String.class));
-        assertDirectoryEquals("target/filename-consumer-hello.txt", mock.getReceivedExchanges().get(1).getIn().getHeader(Exchange.FILE_NAME, String.class));
+        assertDirectoryEquals("target/filename-consumer-bye.txt",
+                mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME, String.class));
+        assertDirectoryEquals("target/filename-consumer-hello.txt",
+                mock.getReceivedExchanges().get(1).getIn().getHeader(Exchange.FILE_NAME, String.class));
     }
 
 }

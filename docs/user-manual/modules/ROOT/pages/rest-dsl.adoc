@@ -26,8 +26,6 @@ supports Swagger Java)
 supports Swagger Java)
 * xref:components::servlet-component.adoc[camel-servlet] (also
 supports Swagger Java)
-* xref:components::spark-rest-component.adoc[camel-spark-rest] (also
-supports Swagger Java)
 * xref:components::undertow-component.adoc[camel-undertow] (also
 supports Swagger Java)
 
@@ -153,7 +151,7 @@ with a slash ( / ) and the verb starts with a slash ( / ). But Apache
 Camel will take care of this and remove the duplicated slash.
 
 It is not required to use both base path and uri templates. You can omit
-the bast path and define the base path and uri template in the verbs
+the base path and define the base path and uri template in the verbs
 only. The example above can be defined as:
 
 [source,xml]
@@ -204,12 +202,12 @@ over xref:components::jms-component.adoc[JMS] where the queue name is dynamic de
   <get uri="/hello//{language}">
     <toD uri="jms:queue:hello-${header.language}"/>
   </get>
-<rest>
+</rest>
 ----
 
 See more details at Message Endpoint about
 the dynamic to, and what syntax it supports. By default it uses
-the xref:simple-language.adoc[Simple] language, but it has more power than so.
+the xref:components:languages:simple-language.adoc[Simple] language, but it has more power than so.
 
 == Embedding Camel routes
 
@@ -301,7 +299,7 @@ the needed data formats are included in the classpath. Notice that if
 for example `camel-jaxb` is not on the classpath, then XML binding is
 not enabled.
 
-|json |Binding to/from json is enabled, and requires a json capabile data
+|json |Binding to/from json is enabled, and requires a json capable data
 format on the classpath. By default Camel will use `json-jackson` as the
 data format. See the INFO box below for more details.
 
@@ -407,6 +405,17 @@ restConfiguration().component("netty-http").host("localhost").port(portNum).bind
 rest("/users/")
     .post().type(UserPojo.class).outType(CountryPojo.class)
         .to("direct:newUser");
+----
+
+== And in XML DSL
+
+[source,xml]
+----
+<rest uri="/users/">
+  <post type="UserPojo" outType="CountryPojo">
+    <to uri="direct:newUser"/>
+  </post>
+</rest>
 ----
 
 To specify input and/or output using an array, append `[]` to the end
@@ -622,16 +631,14 @@ You can configure properties on these levels.
 also configure these directly on the component.
 * endpoint - Is used set any option on the endpoint level. Many of the
 Camel components has many options you can set on endpoint level.
-* consumer - Is used to set any option on the consumer level. Some
-components has consumer options, which you can also configure from
-endpoint level by prefixing the option with "consumer." 
+* consumer - Is used to set any option on the consumer level.
 * data format - Is used to set any option on the data formats. For
 example to enable pretty print in the json data format.
 * cors headers - If cors is enabled, then custom CORS headers can be
 set. See below for the default values which are in used. If a custom
 header is set then that value takes precedence over the default value.
 
-You can set multiple options of the same level, so you can can for
+You can set multiple options of the same level, so you can for
 example configure 2 component options, and 3 endpoint options etc.
 
  
@@ -769,7 +776,7 @@ onException(JsonParseException.class)
     .setBody().constant("Invalid json data");
 ----
 
-== Query Parameter default Values
+== Query/Header Parameter default Values
 
 You can specify default values for parameters in the rest-dsl, such as
 the verbose parameter below:
@@ -790,6 +797,18 @@ the `/customers/id/orders` do not include a query parameter with
 key `verbose` then Camel will now include a header with key `verbose`
 and the value `false` because it was declared as the default value. This
 functionality is only applicable for query parameters.
+
+From *Camel 3.3* onwards request headers may also be defaulted in the same way.
+
+[source,java]
+----
+  rest("/customers/")
+      .get("/{id}").to("direct:customerDetail")
+      .get("/{id}/orders")
+        .param().name("indicator").type(RestParamType.header).defaultValue("disabled").description("Feature Enabled Indicator").endParam()
+          .to("direct:customerOrders")
+      .post("/neworder").to("direct:customerNewOrder");
+----
 
 
 == Client Request Validation

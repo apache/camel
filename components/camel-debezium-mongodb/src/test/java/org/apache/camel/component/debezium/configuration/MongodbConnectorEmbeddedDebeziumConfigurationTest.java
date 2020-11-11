@@ -22,14 +22,16 @@ import io.debezium.connector.mongodb.MongoDbConnector;
 import io.debezium.connector.mongodb.MongoDbConnectorConfig;
 import io.debezium.embedded.EmbeddedEngine;
 import org.apache.camel.component.debezium.DebeziumConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
-    public void testIfCreatesConfig() {
+    void testIfCreatesConfig() {
         final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = new MongoDbConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setMongodbUser("test_user");
@@ -46,7 +48,7 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testIfValidatesConfigurationCorrectly() {
+    void testIfValidatesConfigurationCorrectly() {
         final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = new MongoDbConnectorEmbeddedDebeziumConfiguration();
 
         configuration.setName("test_config");
@@ -64,7 +66,7 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testValidateConfigurationsForAllRequiredFields() {
+    void testValidateConfigurationsForAllRequiredFields() {
         final MongoDbConnectorEmbeddedDebeziumConfiguration configuration = new MongoDbConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setMongodbUser("test_db");

@@ -17,9 +17,10 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.HTTP_METHOD;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpCustomOptionsTest extends BaseNettyTest {
 
@@ -27,7 +28,8 @@ public class NettyHttpCustomOptionsTest extends BaseNettyTest {
 
     @Test
     public void shouldReturnCustomResponseForOptions() throws Exception {
-        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS", String.class);
+        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS",
+                String.class);
         assertEquals(expectedResponse, response);
     }
 

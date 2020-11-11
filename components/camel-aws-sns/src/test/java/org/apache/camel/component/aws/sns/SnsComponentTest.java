@@ -21,14 +21,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SnsComponentTest extends CamelTestSupport {
 
     @BindToRegistry("amazonSNSClient")
     AmazonSNSClientMock client = new AmazonSNSClientMock();
-    
+
     @Test
     public void sendInOnly() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -37,10 +39,10 @@ public class SnsComponentTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getIn().getHeader(SnsConstants.MESSAGE_ID));
     }
-    
+
     @Test
     public void sendInOut() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
@@ -49,8 +51,8 @@ public class SnsComponentTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
-        assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getOut().getHeader(SnsConstants.MESSAGE_ID));
+
+        assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getMessage().getHeader(SnsConstants.MESSAGE_ID));
     }
 
     @Override
@@ -59,7 +61,7 @@ public class SnsComponentTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&policy=XXX");
+                        .to("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&policy=XXX");
             }
         };
     }

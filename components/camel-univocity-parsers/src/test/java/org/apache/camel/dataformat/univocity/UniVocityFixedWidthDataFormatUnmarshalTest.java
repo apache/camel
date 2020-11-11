@@ -156,37 +156,32 @@ public final class UniVocityFixedWidthDataFormatUnmarshalTest extends CamelTestS
 
         // Default reading of fixed-width
         tests.put("default", new UniVocityFixedWidthDataFormat()
-                        .setFieldLengths(new int[]{3, 3, 5})
-        );
+                .setFieldLengths(new int[] { 3, 3, 5 }));
 
         // Reading fixed-width as Map
         tests.put("map", new UniVocityFixedWidthDataFormat()
-                        .setFieldLengths(new int[]{3, 3, 5})
-                        .setAsMap(true)
-                        .setHeaderExtractionEnabled(true)
-        );
+                .setFieldLengths(new int[] { 3, 3, 5 })
+                .setAsMap(true)
+                .setHeaderExtractionEnabled(true));
 
         // Reading fixed-width as Map with specific headers
         tests.put("mapWithHeaders", new UniVocityFixedWidthDataFormat()
-                        .setFieldLengths(new int[]{3, 3, 5})
-                        .setAsMap(true)
-                        .setHeaders(new String[]{"A", "B", "C"})
-        );
+                .setFieldLengths(new int[] { 3, 3, 5 })
+                .setAsMap(true)
+                .setHeaders(new String[] { "A", "B", "C" }));
 
         // Reading fixed-width using an iterator
         tests.put("lazy", new UniVocityFixedWidthDataFormat()
-                        .setFieldLengths(new int[]{3, 3, 5})
-                        .setLazyLoad(true)
-        );
+                .setFieldLengths(new int[] { 3, 3, 5 })
+                .setLazyLoad(true));
 
         // Reading fixed-width using advanced configuration
         tests.put("advanced", new UniVocityFixedWidthDataFormat()
-                        .setFieldLengths(new int[]{3, 3})
-                        .setNullValue("N/A")
-                        .setPadding('_')
-                        .setComment('!')
-                        .setSkipEmptyLines(true)
-        );
+                .setFieldLengths(new int[] { 3, 3 })
+                .setNullValue("N/A")
+                .setPadding('_')
+                .setComment('!')
+                .setSkipEmptyLines(true));
 
         return new RouteBuilder() {
             @Override

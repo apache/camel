@@ -21,9 +21,10 @@ import java.util.Map;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
 
@@ -34,7 +35,8 @@ public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
 
     protected ComponentVerifierExtension getExtension() {
         Component component = context().getComponent("salesforce");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+        ComponentVerifierExtension verifier
+                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
         return verifier;
     }
@@ -51,9 +53,10 @@ public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("userName", "userName");
         parameters.put("password", "password");
 
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
@@ -63,9 +66,10 @@ public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("clientSecret", "clientSecret");
         parameters.put("refreshToken", "refreshToken");
 
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
@@ -75,13 +79,17 @@ public class SalesforceComponentVerifierExtensionTest extends CamelTestSupport {
         parameters.put("clientSecret", "clientSecret");
         parameters.put("password", "password");
 
-        ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result
+                = getExtension().verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(3, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(3, result.getErrors().size());
 
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION, result.getErrors().get(0).getCode());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION, result.getErrors().get(1).getCode());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION, result.getErrors().get(2).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION,
+                result.getErrors().get(0).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION,
+                result.getErrors().get(1).getCode());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.ILLEGAL_PARAMETER_GROUP_COMBINATION,
+                result.getErrors().get(2).getCode());
     }
 }

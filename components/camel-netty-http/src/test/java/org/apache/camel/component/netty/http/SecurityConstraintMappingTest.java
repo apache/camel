@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SecurityConstraintMappingTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+public class SecurityConstraintMappingTest {
 
     @Test
     public void testDefault() {

@@ -26,9 +26,8 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 
 /**
- * An object representing the unit of work processing an {@link Exchange}
- * which allows the use of {@link Synchronization} hooks. This object might map one-to-one with
- * a transaction in JPA or Spring; or might not.
+ * An object representing the unit of work processing an {@link Exchange} which allows the use of
+ * {@link Synchronization} hooks. This object might map one-to-one with a transaction in JPA or Spring; or might not.
  */
 public interface UnitOfWork extends Service {
 
@@ -58,17 +57,17 @@ public interface UnitOfWork extends Service {
     /**
      * Checks if the passed synchronization hook is already part of this unit of work.
      *
-     * @param synchronization the hook
-     * @return <tt>true</tt>, if the passed synchronization is part of this unit of work, else <tt>false</tt>
+     * @param  synchronization the hook
+     * @return                 <tt>true</tt>, if the passed synchronization is part of this unit of work, else
+     *                         <tt>false</tt>
      */
     boolean containsSynchronization(Synchronization synchronization);
 
     /**
      * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
      * <p/>
-     * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
-     * is continued and routed in the async thread should do the on completion callbacks instead of the
-     * original synchronous thread.
+     * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that is continued and
+     * routed in the async thread should do the on completion callbacks instead of the original synchronous thread.
      *
      * @param target the target exchange
      */
@@ -77,9 +76,8 @@ public interface UnitOfWork extends Service {
     /**
      * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
      * <p/>
-     * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
-     * is continued and routed in the async thread should do the on completion callbacks instead of the
-     * original synchronous thread.
+     * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that is continued and
+     * routed in the async thread should do the on completion callbacks instead of the original synchronous thread.
      *
      * @param target the target exchange
      * @param filter optional filter to only handover if filter returns <tt>true</tt>
@@ -110,17 +108,11 @@ public interface UnitOfWork extends Service {
     void afterRoute(Exchange exchange, Route route);
 
     /**
-     * Returns the unique ID of this unit of work, lazily creating one if it does not yet have one
-     *
-     * @return the unique ID
-     */
-    String getId();
-
-    /**
      * Gets the original IN {@link Message} this Unit of Work was started with.
      * <p/>
-     * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
-     * is enabled. If its disabled an <tt>IllegalStateException</tt> is thrown.
+     * The original message is only returned if the option
+     * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If its disabled an
+     * <tt>IllegalStateException</tt> is thrown.
      *
      * @return the original IN {@link Message}, or <tt>null</tt> if using original message is disabled.
      */
@@ -136,8 +128,8 @@ public interface UnitOfWork extends Service {
     /**
      * Are we already transacted by the given transaction key?
      *
-     * @param key the transaction key
-     * @return <tt>true</tt> if already, <tt>false</tt> otherwise
+     * @param  key the transaction key
+     * @return     <tt>true</tt> if already, <tt>false</tt> otherwise
      */
     boolean isTransactedBy(Object key);
 
@@ -158,51 +150,56 @@ public interface UnitOfWork extends Service {
     void endTransactedBy(Object key);
 
     /**
-     * Gets the {@link RouteContext} that this {@link UnitOfWork} currently is being routed through.
+     * Gets the {@link Route} that this {@link UnitOfWork} currently is being routed through.
      * <p/>
-     * Notice that an {@link Exchange} can be routed through multiple routes and thus the
-     * {@link org.apache.camel.spi.RouteContext} can change over time.
+     * Notice that an {@link Exchange} can be routed through multiple routes and thus the {@link org.apache.camel.Route}
+     * can change over time.
      *
-     * @return the route context
-     * @see #pushRouteContext(RouteContext)
-     * @see #popRouteContext()
+     * @return the route, maybe be <tt>null</tt> if not routed through a route currently.
      */
-    RouteContext getRouteContext();
+    Route getRoute();
 
     /**
-     * Pushes the {@link RouteContext} that this {@link UnitOfWork} currently is being routed through.
+     * Pushes the {@link Route} that this {@link UnitOfWork} currently is being routed through.
      * <p/>
-     * Notice that an {@link Exchange} can be routed through multiple routes and thus the
-     * {@link org.apache.camel.spi.RouteContext} can change over time.
+     * Notice that an {@link Exchange} can be routed through multiple routes and thus the {@link org.apache.camel.Route}
+     * can change over time.
      *
-     * @param routeContext the route context
+     * @param route the route
      */
-    void pushRouteContext(RouteContext routeContext);
+    void pushRoute(Route route);
 
     /**
-     * When finished being routed under the current {@link org.apache.camel.spi.RouteContext}
-     * it should be removed.
+     * When finished being routed under the current {@link org.apache.camel.Route} it should be removed.
      *
-     * @return the route context or <tt>null</tt> if none existed
+     * @return the route or <tt>null</tt> if none existed
      */
-    RouteContext popRouteContext();
+    Route popRoute();
 
     /**
-     * Strategy for optional work to be execute before processing
+     * Whether the unit of work should call the before/after process methods or not.
+     */
+    boolean isBeforeAfterProcess();
+
+    /**
+     * Strategy for work to be execute before processing.
      * <p/>
-     * For example the MDCUnitOfWork leverages this
-     * to ensure MDC is handled correctly during routing exchanges using the
-     * asynchronous routing engine.
+     * For example the MDCUnitOfWork leverages this to ensure MDC is handled correctly during routing exchanges using
+     * the asynchronous routing engine.
+     * <p/>
+     * This requires {@link #isBeforeAfterProcess()} returns <tt>true</tt> to be enabled.
      *
-     * @param processor the processor to be executed
-     * @param exchange  the current exchange
-     * @param callback  the callback
-     * @return the callback to be used (can return a wrapped callback)
+     * @param  processor the processor to be executed
+     * @param  exchange  the current exchange
+     * @param  callback  the callback
+     * @return           the callback to be used (can return a wrapped callback)
      */
     AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback);
 
     /**
-     * Strategy for optional work to be executed after the processing
+     * Strategy for work to be executed after the processing
+     * <p/>
+     * This requires {@link #isBeforeAfterProcess()} returns <tt>true</tt> to be enabled.
      *
      * @param processor the processor executed
      * @param exchange  the current exchange
@@ -214,13 +211,12 @@ public interface UnitOfWork extends Service {
     /**
      * Create a child unit of work, which is associated to this unit of work as its parent.
      * <p/>
-     * This is often used when EIPs need to support child unit of works. For example a splitter,
-     * where the sub messages of the splitter all participate in the same sub unit of work.
-     * That sub unit of work then decides whether the Splitter (in general) is failed or a
-     * processed successfully.
+     * This is often used when EIPs need to support child unit of works. For example a splitter, where the sub messages
+     * of the splitter all participate in the same sub unit of work. That sub unit of work then decides whether the
+     * Splitter (in general) is failed or a processed successfully.
      *
-     * @param childExchange the child exchange
-     * @return the created child unit of work
+     * @param  childExchange the child exchange
+     * @return               the created child unit of work
      */
     UnitOfWork createChildUnitOfWork(Exchange childExchange);
 

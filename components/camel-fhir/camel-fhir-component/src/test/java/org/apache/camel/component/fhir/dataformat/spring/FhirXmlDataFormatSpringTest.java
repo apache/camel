@@ -22,29 +22,30 @@ import java.io.InputStreamReader;
 import ca.uhn.fhir.context.FhirContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.hl7.fhir.dstu3.model.Address;
 import org.hl7.fhir.dstu3.model.Base;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class FhirXmlDataFormatSpringTest extends CamelSpringTestSupport {
 
-    private static final String PATIENT =
-            "<Patient xmlns=\"http://hl7.org/fhir\">"
-                    + "<name><family value=\"Holmes\"/><given value=\"Sherlock\"/></name>"
-                    + "<address><line value=\"221b Baker St, Marylebone, London NW1 6XE, UK\"/></address>"
-                    + "</Patient>";
+    private static final String PATIENT = "<Patient xmlns=\"http://hl7.org/fhir\">"
+                                          + "<name><family value=\"Holmes\"/><given value=\"Sherlock\"/></name>"
+                                          + "<address><line value=\"221b Baker St, Marylebone, London NW1 6XE, UK\"/></address>"
+                                          + "</Patient>";
 
     private MockEndpoint mockEndpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         mockEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -60,7 +61,7 @@ public class FhirXmlDataFormatSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         Patient patient = (Patient) exchange.getIn().getBody();
-        assertTrue("Patients should be equal!", patient.equalsDeep(getPatient()));
+        assertTrue(patient.equalsDeep(getPatient()), "Patients should be equal!");
     }
 
     @Test
@@ -74,13 +75,15 @@ public class FhirXmlDataFormatSpringTest extends CamelSpringTestSupport {
 
         Exchange exchange = mockEndpoint.getExchanges().get(0);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-        final IBaseResource iBaseResource = FhirContext.forDstu3().newXmlParser().parseResource(new InputStreamReader(inputStream));
-        assertTrue("Patients should be equal!", patient.equalsDeep((Base) iBaseResource));
+        final IBaseResource iBaseResource
+                = FhirContext.forDstu3().newXmlParser().parseResource(new InputStreamReader(inputStream));
+        assertTrue(patient.equalsDeep((Base) iBaseResource), "Patients should be equal!");
     }
 
     private Patient getPatient() {
         Patient patient = new Patient();
-        patient.addName(new HumanName().addGiven("Sherlock").setFamily("Holmes")).addAddress(new Address().addLine("221b Baker St, Marylebone, London NW1 6XE, UK"));
+        patient.addName(new HumanName().addGiven("Sherlock").setFamily("Holmes"))
+                .addAddress(new Address().addLine("221b Baker St, Marylebone, London NW1 6XE, UK"));
         return patient;
     }
 

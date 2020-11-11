@@ -37,19 +37,21 @@ import java.util.Set;
  * Utility classes for generic type operations.
  */
 public final class GenericsUtil {
-    
+
     /*
      * Private constructor
      */
     private GenericsUtil() {
     }
-    
-    public static boolean satisfiesDependency(boolean isDelegateOrEvent, boolean isProducer, Type injectionPointType, Type beanType) {
+
+    public static boolean satisfiesDependency(
+            boolean isDelegateOrEvent, boolean isProducer, Type injectionPointType, Type beanType) {
         if (beanType instanceof TypeVariable || beanType instanceof WildcardType || beanType instanceof GenericArrayType) {
             return isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, beanType);
         } else {
-            Type injectionPointRawType = injectionPointType instanceof ParameterizedType ? ((ParameterizedType)injectionPointType).getRawType() : injectionPointType;
-            Type beanRawType = beanType instanceof ParameterizedType ? ((ParameterizedType)beanType).getRawType() : beanType;
+            Type injectionPointRawType = injectionPointType instanceof ParameterizedType
+                    ? ((ParameterizedType) injectionPointType).getRawType() : injectionPointType;
+            Type beanRawType = beanType instanceof ParameterizedType ? ((ParameterizedType) beanType).getRawType() : beanType;
 
             if (ClassUtil.isSame(injectionPointRawType, beanRawType)) {
                 return isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, beanType);
@@ -59,17 +61,19 @@ public final class GenericsUtil {
         return false;
     }
 
-    public static boolean satisfiesDependencyRaw(boolean isDelegateOrEvent, boolean isProducer, Type injectionPointType, Type beanType) {
+    public static boolean satisfiesDependencyRaw(
+            boolean isDelegateOrEvent, boolean isProducer, Type injectionPointType, Type beanType) {
         if (beanType instanceof TypeVariable || beanType instanceof WildcardType || beanType instanceof GenericArrayType) {
             return isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, beanType);
         } else {
-            Type injectionPointRawType = injectionPointType instanceof ParameterizedType ? ((ParameterizedType)injectionPointType).getRawType() : injectionPointType;
-            Type beanRawType = beanType instanceof ParameterizedType ? ((ParameterizedType)beanType).getRawType() : beanType;
+            Type injectionPointRawType = injectionPointType instanceof ParameterizedType
+                    ? ((ParameterizedType) injectionPointType).getRawType() : injectionPointType;
+            Type beanRawType = beanType instanceof ParameterizedType ? ((ParameterizedType) beanType).getRawType() : beanType;
 
             if (ClassUtil.isSame(injectionPointRawType, beanRawType)) {
                 return isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointRawType, beanRawType);
             } else {
-                Class bean = (Class)beanType;
+                Class bean = (Class) beanType;
                 if (bean.getSuperclass() != null && ClassUtil.isRawClassEquals(injectionPointType, bean.getSuperclass())) {
                     return true;
                 }
@@ -95,15 +99,16 @@ public final class GenericsUtil {
      */
     public static boolean isAssignableFrom(boolean isDelegateOrEvent, boolean isProducer, Type requiredType, Type beanType) {
         if (requiredType instanceof Class) {
-            return isAssignableFrom(isDelegateOrEvent, (Class<?>)requiredType, beanType);
+            return isAssignableFrom(isDelegateOrEvent, (Class<?>) requiredType, beanType);
         } else if (requiredType instanceof ParameterizedType) {
-            return isAssignableFrom(isDelegateOrEvent, isProducer, (ParameterizedType)requiredType, beanType);
+            return isAssignableFrom(isDelegateOrEvent, isProducer, (ParameterizedType) requiredType, beanType);
         } else if (requiredType instanceof TypeVariable) {
-            return isAssignableFrom(isDelegateOrEvent, (TypeVariable<?>)requiredType, beanType);
+            return isAssignableFrom(isDelegateOrEvent, (TypeVariable<?>) requiredType, beanType);
         } else if (requiredType instanceof GenericArrayType) {
-            return Class.class.isInstance(beanType) && Class.class.cast(beanType).isArray() && isAssignableFrom(isDelegateOrEvent, (GenericArrayType)requiredType, beanType);
+            return Class.class.isInstance(beanType) && Class.class.cast(beanType).isArray()
+                    && isAssignableFrom(isDelegateOrEvent, (GenericArrayType) requiredType, beanType);
         } else if (requiredType instanceof WildcardType) {
-            return isAssignableFrom(isDelegateOrEvent, (WildcardType)requiredType, beanType);
+            return isAssignableFrom(isDelegateOrEvent, (WildcardType) requiredType, beanType);
         } else {
             throw new IllegalArgumentException("Unsupported type " + requiredType.getClass());
         }
@@ -111,15 +116,15 @@ public final class GenericsUtil {
 
     private static boolean isAssignableFrom(boolean isDelegateOrEvent, Class<?> injectionPointType, Type beanType) {
         if (beanType instanceof Class) {
-            return isAssignableFrom(injectionPointType, (Class<?>)beanType);
+            return isAssignableFrom(injectionPointType, (Class<?>) beanType);
         } else if (beanType instanceof TypeVariable) {
-            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (TypeVariable<?>)beanType);
+            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (TypeVariable<?>) beanType);
         } else if (beanType instanceof ParameterizedType) {
-            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (ParameterizedType)beanType);
+            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (ParameterizedType) beanType);
         } else if (beanType instanceof GenericArrayType) {
-            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (GenericArrayType)beanType);
+            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (GenericArrayType) beanType);
         } else if (beanType instanceof WildcardType) {
-            return isAssignableFrom(isDelegateOrEvent, (Type)injectionPointType, (WildcardType)beanType);
+            return isAssignableFrom(isDelegateOrEvent, (Type) injectionPointType, (WildcardType) beanType);
         } else {
             throw new IllegalArgumentException("Unsupported type " + injectionPointType.getClass());
         }
@@ -139,12 +144,11 @@ public final class GenericsUtil {
     }
 
     /**
-     * CDI Spec. 5.2.4: "A parameterized bean type is considered assignable to a
-     * raw required type if the raw generics are identical and all type
-     * parameters of the bean type are either unbounded type variables or
-     * java.lang.Object."
+     * CDI Spec. 5.2.4: "A parameterized bean type is considered assignable to a raw required type if the raw generics
+     * are identical and all type parameters of the bean type are either unbounded type variables or java.lang.Object."
      */
-    private static boolean isAssignableFrom(boolean isDelegateOrEvent, Class<?> injectionPointType, ParameterizedType beanType) {
+    private static boolean isAssignableFrom(
+            boolean isDelegateOrEvent, Class<?> injectionPointType, ParameterizedType beanType) {
         if (beanType.getRawType() != injectionPointType) {
             return false; // raw generics don't match
         }
@@ -163,7 +167,7 @@ public final class GenericsUtil {
             if (!(typeArgument instanceof TypeVariable)) {
                 return false; // neither object nor type variable
             }
-            TypeVariable<?> typeVariable = (TypeVariable<?>)typeArgument;
+            TypeVariable<?> typeVariable = (TypeVariable<?>) typeArgument;
             for (Type bounds : typeVariable.getBounds()) {
                 if (bounds != Object.class) {
                     return false; // bound type variable
@@ -174,7 +178,8 @@ public final class GenericsUtil {
     }
 
     private static boolean isAssignableFrom(boolean isDelegateOrEvent, Class<?> injectionPointType, GenericArrayType beanType) {
-        return injectionPointType.isArray() && isAssignableFrom(isDelegateOrEvent, injectionPointType.getComponentType(), beanType.getGenericComponentType());
+        return injectionPointType.isArray() && isAssignableFrom(isDelegateOrEvent, injectionPointType.getComponentType(),
+                beanType.getGenericComponentType());
     }
 
     private static boolean isAssignableFrom(boolean isDelegateOrEvent, Type injectionPointType, WildcardType beanType) {
@@ -191,15 +196,16 @@ public final class GenericsUtil {
         return false;
     }
 
-    private static boolean isAssignableFrom(boolean isDelegateOrEvent, boolean isProducer, ParameterizedType injectionPointType, Type beanType) {
+    private static boolean isAssignableFrom(
+            boolean isDelegateOrEvent, boolean isProducer, ParameterizedType injectionPointType, Type beanType) {
         if (beanType instanceof Class) {
-            return isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, (Class<?>)beanType);
+            return isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, (Class<?>) beanType);
         } else if (beanType instanceof TypeVariable) {
-            return isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, (TypeVariable<?>)beanType);
+            return isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, (TypeVariable<?>) beanType);
         } else if (beanType instanceof ParameterizedType) {
-            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (ParameterizedType)beanType);
+            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (ParameterizedType) beanType);
         } else if (beanType instanceof WildcardType) {
-            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (WildcardType)beanType);
+            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (WildcardType) beanType);
         } else if (beanType instanceof GenericArrayType) {
             return false;
         } else {
@@ -207,7 +213,8 @@ public final class GenericsUtil {
         }
     }
 
-    private static boolean isAssignableFrom(boolean isDelegateOrEvent, boolean isProducer, ParameterizedType injectionPointType, Class<?> beanType) {
+    private static boolean isAssignableFrom(
+            boolean isDelegateOrEvent, boolean isProducer, ParameterizedType injectionPointType, Class<?> beanType) {
         Class<?> rawInjectionPointType = getRawType(injectionPointType);
         if (rawInjectionPointType.equals(beanType)) {
             if (isProducer) {
@@ -224,7 +231,8 @@ public final class GenericsUtil {
         if (!rawInjectionPointType.isAssignableFrom(beanType)) {
             return false;
         }
-        if (beanType.getSuperclass() != null && isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, beanType.getGenericSuperclass())) {
+        if (beanType.getSuperclass() != null
+                && isAssignableFrom(isDelegateOrEvent, isProducer, injectionPointType, beanType.getGenericSuperclass())) {
             return true;
         }
         for (Type genericInterface : beanType.getGenericInterfaces()) {
@@ -235,7 +243,8 @@ public final class GenericsUtil {
         return false;
     }
 
-    private static boolean isAssignableFrom(boolean isDelegateOrEvent, boolean isProducer, ParameterizedType injectionPointType, TypeVariable<?> beanType) {
+    private static boolean isAssignableFrom(
+            boolean isDelegateOrEvent, boolean isProducer, ParameterizedType injectionPointType, TypeVariable<?> beanType) {
         final Type[] types = beanType.getBounds();
         if (isNotBound(types)) {
             return true;
@@ -251,7 +260,8 @@ public final class GenericsUtil {
     /**
      * CDI Spec. 5.2.4
      */
-    private static boolean isAssignableFrom(boolean isDelegateOrEvent, ParameterizedType injectionPointType, ParameterizedType beanType) {
+    private static boolean isAssignableFrom(
+            boolean isDelegateOrEvent, ParameterizedType injectionPointType, ParameterizedType beanType) {
         if (injectionPointType.getRawType() != beanType.getRawType()) {
             return false;
         }
@@ -266,8 +276,10 @@ public final class GenericsUtil {
             // swap the params, see CDI-389
             // but this special rule does not apply to Delegate injection
             // points...
-            if (swapParams && (injectionPointTypeArgument instanceof Class || injectionPointTypeArgument instanceof TypeVariable) && beanTypeArgument instanceof TypeVariable) {
-                final Type[] bounds = ((TypeVariable<?>)beanTypeArgument).getBounds();
+            if (swapParams
+                    && (injectionPointTypeArgument instanceof Class || injectionPointTypeArgument instanceof TypeVariable)
+                    && beanTypeArgument instanceof TypeVariable) {
+                final Type[] bounds = ((TypeVariable<?>) beanTypeArgument).getBounds();
                 final boolean isNotBound = isNotBound(bounds);
                 if (!isNotBound) {
                     for (final Type upperBound : bounds) {
@@ -312,14 +324,15 @@ public final class GenericsUtil {
             return Class.class.cast(genericComponentType).isAssignableFrom(componentType);
         }
         if (ParameterizedType.class.isInstance(genericComponentType)) {
-            return isAssignableFrom(isDelegateOrEvent, false, ParameterizedType.class.cast(genericComponentType).getRawType(), componentType);
+            return isAssignableFrom(isDelegateOrEvent, false, ParameterizedType.class.cast(genericComponentType).getRawType(),
+                    componentType);
         }
         return isAssignableFrom(isDelegateOrEvent, false, genericComponentType, componentType);
     }
 
     private static boolean isAssignableFrom(boolean isDelegateOrEvent, WildcardType injectionPointType, Type beanType) {
         if (beanType instanceof TypeVariable) {
-            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (TypeVariable<?>)beanType);
+            return isAssignableFrom(isDelegateOrEvent, injectionPointType, (TypeVariable<?>) beanType);
         }
         for (Type bounds : injectionPointType.getLowerBounds()) {
             if (!isAssignableFrom(isDelegateOrEvent, false, beanType, bounds)) {
@@ -330,8 +343,9 @@ public final class GenericsUtil {
             Set<Type> beanTypeClosure = getTypeClosure(beanType);
             boolean isAssignable = false;
             for (Type beanSupertype : beanTypeClosure) {
-                if (isAssignableFrom(isDelegateOrEvent, false, bounds, beanSupertype) || (Class.class.isInstance(bounds) && ParameterizedType.class.isInstance(beanSupertype)
-                                                                                          && bounds == ParameterizedType.class.cast(beanSupertype).getRawType())) {
+                if (isAssignableFrom(isDelegateOrEvent, false, bounds, beanSupertype)
+                        || (Class.class.isInstance(bounds) && ParameterizedType.class.isInstance(beanSupertype)
+                                && bounds == ParameterizedType.class.cast(beanSupertype).getRawType())) {
                     isAssignable = true;
                     break;
                 }
@@ -346,10 +360,12 @@ public final class GenericsUtil {
     /**
      * CDI 1.1 Spec. 5.2.4, third bullet point
      */
-    private static boolean isAssignableFrom(boolean isDelegateOrEvent, WildcardType injectionPointType, TypeVariable<?> beanType) {
+    private static boolean isAssignableFrom(
+            boolean isDelegateOrEvent, WildcardType injectionPointType, TypeVariable<?> beanType) {
         for (Type upperBound : injectionPointType.getUpperBounds()) {
             for (Type bound : beanType.getBounds()) {
-                if (!isAssignableFrom(isDelegateOrEvent, false, upperBound, bound) && !isAssignableFrom(isDelegateOrEvent, false, bound, upperBound)) {
+                if (!isAssignableFrom(isDelegateOrEvent, false, upperBound, bound)
+                        && !isAssignableFrom(isDelegateOrEvent, false, bound, upperBound)) {
                     return false;
                 }
             }
@@ -365,8 +381,7 @@ public final class GenericsUtil {
     }
 
     /**
-     * @return <tt>true</tt>, if the specified type declaration contains an
-     *         unresolved type variable.
+     * @return <tt>true</tt>, if the specified type declaration contains an unresolved type variable.
      */
     public static boolean containsTypeVariable(Type type) {
         if (type instanceof Class) {
@@ -374,13 +389,13 @@ public final class GenericsUtil {
         } else if (type instanceof TypeVariable) {
             return true;
         } else if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType)type;
+            ParameterizedType parameterizedType = (ParameterizedType) type;
             return containTypeVariable(parameterizedType.getActualTypeArguments());
         } else if (type instanceof WildcardType) {
-            WildcardType wildcardType = (WildcardType)type;
+            WildcardType wildcardType = (WildcardType) type;
             return containTypeVariable(wildcardType.getUpperBounds()) || containTypeVariable(wildcardType.getLowerBounds());
         } else if (type instanceof GenericArrayType) {
-            GenericArrayType arrayType = (GenericArrayType)type;
+            GenericArrayType arrayType = (GenericArrayType) type;
             return containsTypeVariable(arrayType.getGenericComponentType());
         } else {
             throw new IllegalArgumentException("Unsupported type " + type.getClass().getName());
@@ -402,9 +417,8 @@ public final class GenericsUtil {
     }
 
     /**
-     * @param type to check
-     * @return {@code true} if the given type contains a {@link WildcardType}
-     *         {@code false} otherwise
+     * @param  type to check
+     * @return      {@code true} if the given type contains a {@link WildcardType} {@code false} otherwise
      */
     public static boolean containsWildcardType(Type type) {
         if (!(type instanceof ParameterizedType)) {
@@ -412,7 +426,7 @@ public final class GenericsUtil {
         }
 
         for (Type typeArgument : getParameterizedType(type).getActualTypeArguments()) {
-            if (ClassUtil.isParametrizedType(typeArgument)) {
+            if (ClassUtil.isParameterizedType(typeArgument)) {
                 if (containsWildcardType(typeArgument)) {
                     return true;
                 }
@@ -427,40 +441,37 @@ public final class GenericsUtil {
     }
 
     /**
-     * Resolves the actual type of the specified field for the type hierarchy
-     * specified by the given subclass
+     * Resolves the actual type of the specified field for the type hierarchy specified by the given subclass
      */
     public static Type resolveType(Class<?> subclass, Field field) {
         return resolveType(field.getGenericType(), subclass, newSeenList());
     }
 
     /**
-     * Resolves the actual return type of the specified method for the type
-     * hierarchy specified by the given subclass
+     * Resolves the actual return type of the specified method for the type hierarchy specified by the given subclass
      */
     public static Type resolveReturnType(Class<?> subclass, Method method) {
         return resolveType(method.getGenericReturnType(), subclass, newSeenList());
     }
 
     /**
-     * Resolves the actual parameter generics of the specified constructor for
-     * the type hierarchy specified by the given subclass
+     * Resolves the actual parameter generics of the specified constructor for the type hierarchy specified by the given
+     * subclass
      */
     public static Type[] resolveParameterTypes(Class<?> subclass, Constructor<?> constructor) {
         return resolveTypes(constructor.getGenericParameterTypes(), subclass);
     }
 
     /**
-     * Resolves the actual parameter generics of the specified method for the
-     * type hierarchy specified by the given subclass
+     * Resolves the actual parameter generics of the specified method for the type hierarchy specified by the given
+     * subclass
      */
     public static Type[] resolveParameterTypes(Class<?> subclass, Method method) {
         return resolveTypes(method.getGenericParameterTypes(), subclass);
     }
 
     /**
-     * Resolves the actual type of the specified type for the type hierarchy
-     * specified by the given subclass
+     * Resolves the actual type of the specified type for the type hierarchy specified by the given subclass
      */
     public static Type resolveType(Type type, Class<?> subclass, Member member) {
         return resolveType(type, subclass, newSeenList());
@@ -474,30 +485,31 @@ public final class GenericsUtil {
         if (type instanceof Class) {
             return type;
         } else if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType)type;
+            ParameterizedType parameterizedType = (ParameterizedType) type;
 
             Type[] resolvedTypeArguments;
             if (Enum.class.equals(parameterizedType.getRawType())) {
                 // Enums derive from themselves, which would create an infinite
                 // loop
                 // we directly escape the loop if we detect this.
-                resolvedTypeArguments = new Type[] {new OwbWildcardTypeImpl(new Type[] {Enum.class}, ClassUtil.NO_TYPES)};
+                resolvedTypeArguments = new Type[] { new OwbWildcardTypeImpl(new Type[] { Enum.class }, ClassUtil.NO_TYPES) };
             } else {
                 resolvedTypeArguments = resolveTypes(parameterizedType.getActualTypeArguments(), actualType, seen);
 
             }
 
-            return new OwbParametrizedTypeImpl(parameterizedType.getOwnerType(), parameterizedType.getRawType(), resolvedTypeArguments);
+            return new OwbParametrizedTypeImpl(
+                    parameterizedType.getOwnerType(), parameterizedType.getRawType(), resolvedTypeArguments);
         } else if (type instanceof TypeVariable) {
-            TypeVariable<?> variable = (TypeVariable<?>)type;
+            TypeVariable<?> variable = (TypeVariable<?>) type;
             return resolveTypeVariable(variable, actualType, seen);
         } else if (type instanceof WildcardType) {
-            WildcardType wildcardType = (WildcardType)type;
+            WildcardType wildcardType = (WildcardType) type;
             Type[] upperBounds = resolveTypes(wildcardType.getUpperBounds(), actualType, seen);
             Type[] lowerBounds = resolveTypes(wildcardType.getLowerBounds(), actualType, seen);
             return new OwbWildcardTypeImpl(upperBounds, lowerBounds);
         } else if (type instanceof GenericArrayType) {
-            GenericArrayType arrayType = (GenericArrayType)type;
+            GenericArrayType arrayType = (GenericArrayType) type;
             return createArrayType(resolveType(arrayType.getGenericComponentType(), actualType, seen));
         } else {
             throw new IllegalArgumentException("Unsupported type " + type.getClass().getName());
@@ -509,7 +521,7 @@ public final class GenericsUtil {
         for (int i = 0; i < types.length; i++) {
             final Type type = resolveType(types[i], actualType, seen);
             if (type != null) { // means a stackoverflow was avoided, just keep
-                              // what we have 
+                               // what we have
                 resolvedTypeArguments[i] = type;
             }
         }
@@ -546,8 +558,8 @@ public final class GenericsUtil {
      * }
      * </code>
      * <p>
-     * To get the type closure of T in the context of Bar (which is
-     * {Number.class, Object.class}), you have to call this method like
+     * To get the type closure of T in the context of Bar (which is {Number.class, Object.class}), you have to call this
+     * method like
      * </p>
      * <code>
      * GenericUtil.getTypeClosure(Foo.class.getDeclaredField("t").getType(), Bar.class, Foo.class);
@@ -564,17 +576,16 @@ public final class GenericsUtil {
      * }
      * </code>
      * <p>
-     * To get the type closure of Bar<T> in the context of Foo<Number> (which
-     * are besides Object.class the <tt>ParameterizedType</tt>s Bar<Number> and
-     * Foo<Number>), you have to call this method like
+     * To get the type closure of Bar<T> in the context of Foo<Number> (which are besides Object.class the
+     * <tt>ParameterizedType</tt>s Bar<Number> and Foo<Number>), you have to call this method like
      * </p>
      * <code>
      * GenericUtil.getTypeClosure(Foo.class, new TypeLiteral<Foo<Number>>() {}.getType(), Bar.class);
      * </code>
      *
-     * @param type the type to get the closure for
-     * @param actualType the context to bind type variables
-     * @return the type closure
+     * @param  type       the type to get the closure for
+     * @param  actualType the context to bind type variables
+     * @return            the type closure
      */
     public static Set<Type> getTypeClosure(Type type, Type actualType) {
         Class<?> rawType = getRawType(type);
@@ -616,7 +627,7 @@ public final class GenericsUtil {
 
     public static boolean hasTypeParameters(Type type) {
         if (type instanceof Class) {
-            Class<?> classType = (Class<?>)type;
+            Class<?> classType = (Class<?>) type;
             return classType.getTypeParameters().length > 0;
         }
         return false;
@@ -624,9 +635,9 @@ public final class GenericsUtil {
 
     public static ParameterizedType getParameterizedType(Type type) {
         if (type instanceof ParameterizedType) {
-            return (ParameterizedType)type;
+            return (ParameterizedType) type;
         } else if (type instanceof Class) {
-            Class<?> classType = (Class<?>)type;
+            Class<?> classType = (Class<?>) type;
             return new OwbParametrizedTypeImpl(classType.getDeclaringClass(), classType, classType.getTypeParameters());
         } else {
             throw new IllegalArgumentException(type.getClass().getSimpleName() + " is not supported");
@@ -639,20 +650,22 @@ public final class GenericsUtil {
 
     static <T> Class<T> getRawType(Type type, Type actualType) {
         if (type instanceof Class) {
-            return (Class<T>)type;
+            return (Class<T>) type;
         } else if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType)type;
+            ParameterizedType parameterizedType = (ParameterizedType) type;
             return getRawType(parameterizedType.getRawType(), actualType);
         } else if (type instanceof TypeVariable) {
-            TypeVariable<?> typeVariable = (TypeVariable<?>)type;
-            Type mostSpecificType = getMostSpecificType(getRawTypes(typeVariable.getBounds(), actualType), typeVariable.getBounds());
+            TypeVariable<?> typeVariable = (TypeVariable<?>) type;
+            Type mostSpecificType
+                    = getMostSpecificType(getRawTypes(typeVariable.getBounds(), actualType), typeVariable.getBounds());
             return getRawType(mostSpecificType, actualType);
         } else if (type instanceof WildcardType) {
-            WildcardType wildcardType = (WildcardType)type;
-            Type mostSpecificType = getMostSpecificType(getRawTypes(wildcardType.getUpperBounds(), actualType), wildcardType.getUpperBounds());
+            WildcardType wildcardType = (WildcardType) type;
+            Type mostSpecificType = getMostSpecificType(getRawTypes(wildcardType.getUpperBounds(), actualType),
+                    wildcardType.getUpperBounds());
             return getRawType(mostSpecificType, actualType);
         } else if (type instanceof GenericArrayType) {
-            GenericArrayType arrayType = (GenericArrayType)type;
+            GenericArrayType arrayType = (GenericArrayType) type;
             return getRawType(createArrayType(getRawType(arrayType.getGenericComponentType(), actualType)), actualType);
         } else {
             throw new IllegalArgumentException("Unsupported type " + type.getClass().getName());
@@ -712,16 +725,18 @@ public final class GenericsUtil {
                 return variable;
             } else if (genericSuperclass instanceof Class) {
                 // special handling for type erasure
-                Class<?> superclass = (Class<?>)genericSuperclass;
-                genericSuperclass = new OwbParametrizedTypeImpl(superclass.getDeclaringClass(), superclass, getRawTypes(superclass.getTypeParameters()));
+                Class<?> superclass = (Class<?>) genericSuperclass;
+                genericSuperclass = new OwbParametrizedTypeImpl(
+                        superclass.getDeclaringClass(), superclass, getRawTypes(superclass.getTypeParameters()));
             } else {
                 ParameterizedType genericSupertype = getParameterizedType(genericSuperclass);
                 Type[] typeArguments = resolveTypeArguments(getParameterizedType(actualType), genericSupertype);
-                genericSuperclass = new OwbParametrizedTypeImpl(genericSupertype.getOwnerType(), genericSupertype.getRawType(), typeArguments);
+                genericSuperclass = new OwbParametrizedTypeImpl(
+                        genericSupertype.getOwnerType(), genericSupertype.getRawType(), typeArguments);
             }
             Type resolvedType = resolveTypeVariable(variable, genericSuperclass, seen);
             if (resolvedType instanceof TypeVariable) {
-                TypeVariable<?> resolvedTypeVariable = (TypeVariable<?>)resolvedType;
+                TypeVariable<?> resolvedTypeVariable = (TypeVariable<?>) resolvedType;
                 TypeVariable<?>[] typeParameters = actualClass.getTypeParameters();
                 for (int i = 0; i < typeParameters.length; i++) {
                     if (typeParameters[i].getName().equals(resolvedTypeVariable.getName())) {
@@ -736,15 +751,17 @@ public final class GenericsUtil {
 
     private static Class<?> getDeclaringClass(GenericDeclaration declaration) {
         if (declaration instanceof Class) {
-            return (Class<?>)declaration;
+            return (Class<?>) declaration;
         } else if (declaration instanceof Member) {
-            return ((Member)declaration).getDeclaringClass();
+            return ((Member) declaration).getDeclaringClass();
         } else {
             throw new IllegalArgumentException("Unsupported type " + declaration.getClass());
         }
     }
 
-    private static Type resolveTypeVariable(TypeVariable<?> variable, GenericDeclaration declaration, ParameterizedType type, Collection<TypeVariable<?>> seen) {
+    private static Type resolveTypeVariable(
+            TypeVariable<?> variable, GenericDeclaration declaration, ParameterizedType type,
+            Collection<TypeVariable<?>> seen) {
         int index = getIndex(declaration, variable);
         if (declaration instanceof Class) {
             if (index >= 0) {
@@ -771,7 +788,7 @@ public final class GenericsUtil {
         Type[] typeParameters = declaration.getTypeParameters();
         for (int i = 0; i < typeParameters.length; i++) {
             if (typeParameters[i] instanceof TypeVariable) {
-                TypeVariable<?> variableArgument = (TypeVariable<?>)typeParameters[i];
+                TypeVariable<?> variableArgument = (TypeVariable<?>) typeParameters[i];
                 if (variableArgument.getName().equals(variable.getName())) {
                     return i;
                 }
@@ -784,7 +801,7 @@ public final class GenericsUtil {
         Type[] actualTypeArguments = type.getActualTypeArguments();
         for (int i = 0; i < actualTypeArguments.length; i++) {
             if (actualTypeArguments[i] instanceof TypeVariable) {
-                TypeVariable<?> variableArgument = (TypeVariable<?>)actualTypeArguments[i];
+                TypeVariable<?> variableArgument = (TypeVariable<?>) actualTypeArguments[i];
                 if (variableArgument.getName().equals(variable.getName())) {
                     return i;
                 }
@@ -831,7 +848,7 @@ public final class GenericsUtil {
 
     private static Type[] resolveTypeArguments(Class<?> subclass, Type supertype) {
         if (supertype instanceof ParameterizedType) {
-            ParameterizedType parameterizedSupertype = (ParameterizedType)supertype;
+            ParameterizedType parameterizedSupertype = (ParameterizedType) supertype;
             return resolveTypeArguments(subclass, parameterizedSupertype);
         } else {
             return subclass.getTypeParameters();
@@ -843,17 +860,19 @@ public final class GenericsUtil {
         if (!(genericSuperclass instanceof ParameterizedType)) {
             return subclass.getTypeParameters();
         }
-        ParameterizedType parameterizedSuperclass = (ParameterizedType)genericSuperclass;
+        ParameterizedType parameterizedSuperclass = (ParameterizedType) genericSuperclass;
         Type[] typeParameters = subclass.getTypeParameters();
         Type[] actualTypeArguments = parameterizedSupertype.getActualTypeArguments();
         return resolveTypeArguments(parameterizedSuperclass, typeParameters, actualTypeArguments);
     }
 
     private static Type[] resolveTypeArguments(ParameterizedType subtype, ParameterizedType parameterizedSupertype) {
-        return resolveTypeArguments(getParameterizedType(getRawType(subtype)), parameterizedSupertype.getActualTypeArguments(), subtype.getActualTypeArguments());
+        return resolveTypeArguments(getParameterizedType(getRawType(subtype)), parameterizedSupertype.getActualTypeArguments(),
+                subtype.getActualTypeArguments());
     }
 
-    private static Type[] resolveTypeArguments(ParameterizedType parameterizedType, Type[] typeParameters, Type[] actualTypeArguments) {
+    private static Type[] resolveTypeArguments(
+            ParameterizedType parameterizedType, Type[] typeParameters, Type[] actualTypeArguments) {
         Type[] resolvedTypeArguments = new Type[typeParameters.length];
         for (int i = 0; i < typeParameters.length; i++) {
             resolvedTypeArguments[i] = resolveTypeArgument(parameterizedType, typeParameters[i], actualTypeArguments);
@@ -861,9 +880,10 @@ public final class GenericsUtil {
         return resolvedTypeArguments;
     }
 
-    private static Type resolveTypeArgument(ParameterizedType parameterizedType, Type typeParameter, Type[] actualTypeArguments) {
+    private static Type resolveTypeArgument(
+            ParameterizedType parameterizedType, Type typeParameter, Type[] actualTypeArguments) {
         if (typeParameter instanceof TypeVariable) {
-            TypeVariable<?> variable = (TypeVariable<?>)typeParameter;
+            TypeVariable<?> variable = (TypeVariable<?>) typeParameter;
             int index = getIndex(parameterizedType, variable);
             if (index == -1) {
                 return typeParameter;
@@ -871,8 +891,9 @@ public final class GenericsUtil {
                 return actualTypeArguments[index];
             }
         } else if (typeParameter instanceof GenericArrayType) {
-            GenericArrayType array = (GenericArrayType)typeParameter;
-            return createArrayType(resolveTypeArgument(parameterizedType, array.getGenericComponentType(), actualTypeArguments));
+            GenericArrayType array = (GenericArrayType) typeParameter;
+            return createArrayType(
+                    resolveTypeArgument(parameterizedType, array.getGenericComponentType(), actualTypeArguments));
         } else {
             return typeParameter;
         }
@@ -880,7 +901,7 @@ public final class GenericsUtil {
 
     private static Type createArrayType(Type componentType) {
         if (componentType instanceof Class) {
-            return Array.newInstance((Class<?>)componentType, 0).getClass();
+            return Array.newInstance((Class<?>) componentType, 0).getClass();
         } else {
             return new OwbGenericArrayTypeImpl(componentType);
         }

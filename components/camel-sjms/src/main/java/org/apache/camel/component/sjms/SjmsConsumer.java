@@ -16,10 +16,20 @@
  */
 package org.apache.camel.component.sjms;
 
-import java.util.concurrent.ExecutorService;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.WeakHashMap;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Collectors;
 
 import javax.jms.Connection;
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
@@ -38,60 +48,22 @@ import org.apache.camel.component.sjms.tx.SessionBatchTransactionSynchronization
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.commons.pool.BasePoolableObjectFactory;
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.camel.util.backoff.BackOff;
+import org.apache.camel.util.backoff.BackOffTimer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The SjmsConsumer is the base class for the SJMS MessageListener pool.
  */
 public class SjmsConsumer extends DefaultConsumer {
 
-    protected GenericObjectPool<MessageConsumerResources> consumers;
-    private ExecutorService executor;
+    private static final Logger LOG = LoggerFactory.getLogger(SjmsConsumer.class);
+
+    private final Map<Connection, List<MessageConsumerResources>> consumers = new WeakHashMap<>();
+    private ScheduledExecutorService scheduler;
     private Future<?> asyncStart;
-
-    /**
-     * A pool of MessageConsumerResources created at the initialization of the associated consumer.
-     */
-    protected class MessageConsumerResourcesFactory extends BasePoolableObjectFactory<MessageConsumerResources> {
-
-        /**
-         * Creates a new MessageConsumerResources instance.
-         *
-         * @see org.apache.commons.pool.PoolableObjectFactory#makeObject()
-         */
-        @Override
-        public MessageConsumerResources makeObject() throws Exception {
-            return createConsumer();
-        }
-
-        /**
-         * Cleans up the MessageConsumerResources.
-         *
-         * @see org.apache.commons.pool.PoolableObjectFactory#destroyObject(java.lang.Object)
-         */
-        @Override
-        public void destroyObject(MessageConsumerResources model) throws Exception {
-            if (model != null) {
-                // First clean up our message consumer
-                if (model.getMessageConsumer() != null) {
-                    model.getMessageConsumer().close();
-                }
-
-                // If the resource has a 
-                if (model.getSession() != null) {
-                    if (model.getSession().getTransacted()) {
-                        try {
-                            model.getSession().rollback();
-                        } catch (Exception e) {
-                            // Do nothing. Just make sure we are cleaned up
-                        }
-                    }
-                    model.getSession().close();
-                }
-            }
-        }
-    }
+    private BackOffTimer.Task rescheduleTask;
 
     public SjmsConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -106,36 +78,61 @@ public class SjmsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
-        if (consumers == null) {
-            consumers = new GenericObjectPool<>(new MessageConsumerResourcesFactory());
-            consumers.setMaxActive(getConsumerCount());
-            consumers.setMaxIdle(getConsumerCount());
-            if (getEndpoint().isAsyncStartListener()) {
-                asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            fillConsumersPool();
-                        } catch (Throwable e) {
-                            log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+        this.scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultScheduledThreadPool(this,
+                "SjmsConsumer");
+        if (getEndpoint().isAsyncStartListener()) {
+            asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        fillConsumersPool();
+                    } catch (Throwable e) {
+                        LOG.warn("Error starting listener container on destination: " + getDestinationName()
+                                 + ". This exception will be ignored.",
+                                e);
+                        if (getEndpoint().isReconnectOnError()) {
+                            scheduleRefill(); //we should try to fill consumer pool on next time
                         }
                     }
+                }
 
-                    @Override
-                    public String toString() {
-                        return "AsyncStartListenerTask[" + getDestinationName() + "]";
-                    }
-                });
-            } else {
-                fillConsumersPool();
-            }
+                @Override
+                public String toString() {
+                    return "AsyncStartListenerTask[" + getDestinationName() + "]";
+                }
+            });
+        } else {
+            fillConsumersPool();
         }
     }
 
     private void fillConsumersPool() throws Exception {
-        while (consumers.getNumIdle() < consumers.getMaxIdle()) {
-            consumers.addObject();
+        synchronized (consumers) {
+            while (consumers.values().stream().collect(Collectors.summarizingInt(List::size)).getSum() < getConsumerCount()) {
+                addConsumer();
+            }
+        }
+    }
+
+    public void destroyObject(MessageConsumerResources model) {
+        try {
+            if (model.getMessageConsumer() != null) {
+                model.getMessageConsumer().close();
+            }
+
+            // If the resource has a
+            if (model.getSession() != null) {
+                if (model.getSession().getTransacted()) {
+                    try {
+                        model.getSession().rollback();
+                    } catch (Exception e) {
+                        // Do nothing. Just make sure we are cleaned up
+                    }
+                }
+                model.getSession().close();
+            }
+        } catch (JMSException ex) {
+            LOG.warn("Exception caught on closing consumer", ex);
         }
     }
 
@@ -145,64 +142,87 @@ public class SjmsConsumer extends DefaultConsumer {
         if (asyncStart != null && !asyncStart.isDone()) {
             asyncStart.cancel(true);
         }
-        if (consumers != null) {
-            if (getEndpoint().isAsyncStopListener()) {
-                getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            consumers.close();
-                            consumers = null;
-                        } catch (Throwable e) {
-                            log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+        if (rescheduleTask != null) {
+            rescheduleTask.cancel();
+        }
+        if (getEndpoint().isAsyncStopListener()) {
+            getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        synchronized (consumers) {
+                            consumers.values().stream().flatMap(Collection::stream).forEach(SjmsConsumer.this::destroyObject);
+                            consumers.clear();
                         }
+                    } catch (Throwable e) {
+                        LOG.warn("Error stopping listener container on destination: " + getDestinationName()
+                                 + ". This exception will be ignored.",
+                                e);
                     }
+                }
 
-                    @Override
-                    public String toString() {
-                        return "AsyncStopListenerTask[" + getDestinationName() + "]";
-                    }
-                });
-            } else {
-                consumers.close();
-                consumers = null;
+                @Override
+                public String toString() {
+                    return "AsyncStopListenerTask[" + getDestinationName() + "]";
+                }
+            });
+        } else {
+            synchronized (consumers) {
+                consumers.values().stream().flatMap(Collection::stream).forEach(SjmsConsumer.this::destroyObject);
+                consumers.clear();
             }
         }
-        if (this.executor != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(this.executor);
+        if (this.scheduler != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(this.scheduler);
         }
     }
 
     /**
-     * Creates a {@link MessageConsumerResources} with a dedicated
-     * {@link Session} required for transacted and InOut consumers.
+     * Creates a {@link MessageConsumerResources} with a dedicated {@link Session} required for transacted and InOut
+     * consumers.
      */
-    private MessageConsumerResources createConsumer() throws Exception {
+    private void addConsumer() throws Exception {
         MessageConsumerResources answer;
         ConnectionResource connectionResource = getOrCreateConnectionResource();
         Connection conn = connectionResource.borrowConnection();
         try {
-            Session session = conn.createSession(isTransacted(), isTransacted() ? Session.SESSION_TRANSACTED : Session.AUTO_ACKNOWLEDGE);
+            Session session = conn.createSession(isTransacted(),
+                    isTransacted() ? Session.SESSION_TRANSACTED : Session.AUTO_ACKNOWLEDGE);
             MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session, getEndpoint());
             MessageListener handler = createMessageHandler(session);
             messageConsumer.setMessageListener(handler);
 
+            if (getEndpoint().isReconnectOnError()) {
+                ExceptionListener exceptionListener = conn.getExceptionListener();
+                ReconnectExceptionListener reconnectExceptionListener = new ReconnectExceptionListener(conn);
+                if (exceptionListener == null) {
+                    exceptionListener = reconnectExceptionListener;
+                } else {
+                    exceptionListener = new AggregatedExceptionListener(exceptionListener, reconnectExceptionListener);
+                }
+                conn.setExceptionListener(exceptionListener);
+            }
             answer = new MessageConsumerResources(session, messageConsumer);
+            consumers.compute(conn, (key, oldValue) -> {
+                if (oldValue == null) {
+                    oldValue = new ArrayList<>();
+                }
+                oldValue.add(answer);
+                return oldValue;
+            });
         } catch (Exception e) {
-            log.error("Unable to create the MessageConsumer", e);
+            LOG.error("Unable to create the MessageConsumer", e);
             throw e;
         } finally {
             connectionResource.returnConnection(conn);
         }
-        return answer;
     }
-
 
     /**
      * Helper factory method used to create a MessageListener based on the MEP
      *
-     * @param session a session is only required if we are a transacted consumer
-     * @return the listener
+     * @param  session a session is only required if we are a transacted consumer
+     * @return         the listener
      */
     protected MessageListener createMessageHandler(Session session) {
 
@@ -218,7 +238,8 @@ public class SjmsConsumer extends DefaultConsumer {
         Synchronization synchronization;
         if (commitStrategy instanceof BatchTransactionCommitStrategy) {
             TimedTaskManager timedTaskManager = getEndpoint().getComponent().getTimedTaskManager();
-            synchronization = new SessionBatchTransactionSynchronization(timedTaskManager, session, commitStrategy, getTransactionBatchTimeout());
+            synchronization = new SessionBatchTransactionSynchronization(
+                    timedTaskManager, session, commitStrategy, getTransactionBatchTimeout());
         } else {
             synchronization = new SessionTransactionSynchronization(session, commitStrategy);
         }
@@ -226,15 +247,15 @@ public class SjmsConsumer extends DefaultConsumer {
         AbstractMessageHandler messageHandler;
         if (getEndpoint().getExchangePattern().equals(ExchangePattern.InOnly)) {
             if (isTransacted() || isSynchronous()) {
-                messageHandler = new InOnlyMessageHandler(getEndpoint(), executor, synchronization);
+                messageHandler = new InOnlyMessageHandler(getEndpoint(), scheduler, synchronization);
             } else {
-                messageHandler = new InOnlyMessageHandler(getEndpoint(), executor);
+                messageHandler = new InOnlyMessageHandler(getEndpoint(), scheduler);
             }
         } else {
             if (isTransacted() || isSynchronous()) {
-                messageHandler = new InOutMessageHandler(getEndpoint(), executor, synchronization);
+                messageHandler = new InOutMessageHandler(getEndpoint(), scheduler, synchronization);
             } else {
-                messageHandler = new InOutMessageHandler(getEndpoint(), executor);
+                messageHandler = new InOutMessageHandler(getEndpoint(), scheduler);
             }
         }
 
@@ -284,6 +305,7 @@ public class SjmsConsumer extends DefaultConsumer {
     public boolean isSharedJMSSession() {
         return getEndpoint().isSharedJMSSession();
     }
+
     /**
      * Use to determine whether or not to process exchanges synchronously.
      *
@@ -312,8 +334,7 @@ public class SjmsConsumer extends DefaultConsumer {
     }
 
     /**
-     * Flag set by the endpoint used by consumers and producers to determine if
-     * the consumer is a JMS Topic.
+     * Flag set by the endpoint used by consumers and producers to determine if the consumer is a JMS Topic.
      *
      * @return the topic true if consumer is a JMS Topic, default is false
      */
@@ -347,8 +368,7 @@ public class SjmsConsumer extends DefaultConsumer {
     }
 
     /**
-     * If transacted, returns the nubmer of messages to be processed before
-     * committing the transaction.
+     * If transacted, returns the nubmer of messages to be processed before committing the transaction.
      *
      * @return the transactionBatchCount
      */
@@ -365,4 +385,70 @@ public class SjmsConsumer extends DefaultConsumer {
         return getEndpoint().getTransactionBatchTimeout();
     }
 
+    private boolean refillPool(BackOffTimer.Task task) {
+        LOG.debug("Refill consumers pool task running");
+        try {
+            fillConsumersPool();
+            LOG.info("Refill consumers pool completed (attempt: {})", task.getCurrentAttempts());
+            return false;
+        } catch (Exception ex) {
+            LOG.warn(
+                    "Refill consumers pool failed (attempt: {}) due to: {}. Will try again in {} millis. (stacktrace in DEBUG level)",
+                    task.getCurrentAttempts(), ex.getMessage(), task.getCurrentDelay());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Refill consumers pool failed", ex);
+            }
+        }
+        return true;
+    }
+
+    private void scheduleRefill() {
+        if (rescheduleTask == null || rescheduleTask.getStatus() != BackOffTimer.Task.Status.Active) {
+            BackOff backOff = BackOff.builder().delay(getEndpoint().getReconnectBackOff()).build();
+            rescheduleTask = new BackOffTimer(scheduler).schedule(backOff, this::refillPool);
+        }
+    }
+
+    private final class ReconnectExceptionListener implements ExceptionListener {
+        private final WeakReference<Connection> connection;
+
+        private ReconnectExceptionListener(Connection connection) {
+            this.connection = new WeakReference<>(connection);
+        }
+
+        @Override
+        public void onException(JMSException exception) {
+            LOG.debug("Handling JMSException for reconnecting", exception);
+            Connection currentConnection = connection.get();
+            if (currentConnection != null) {
+                synchronized (consumers) {
+                    List<MessageConsumerResources> toClose = consumers.get(currentConnection);
+                    if (toClose != null) {
+                        toClose.forEach(SjmsConsumer.this::destroyObject);
+                    }
+                    consumers.remove(currentConnection);
+                }
+                scheduleRefill();
+            }
+        }
+
+        //hash and equals to prevent multiple instances for same connection
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            ReconnectExceptionListener that = (ReconnectExceptionListener) o;
+            return Objects.equals(connection.get(), that.connection.get());
+        }
+
+        @Override
+        public int hashCode() {
+            final Connection currentConnection = this.connection.get();
+            return currentConnection == null ? 0 : currentConnection.hashCode();
+        }
+    }
 }

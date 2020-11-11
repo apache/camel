@@ -22,16 +22,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IrcPrivmsgTest extends IrcIntegrationTestSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcPrivmsgTest.class);
+
     protected String expectedBody1 = "Message One";
     protected String expectedBody2 = "Message Two";
 
     protected String body1 = expectedBody1;
     protected String body2 = expectedBody2;
 
-    private boolean sentMessages;    
+    private boolean sentMessages;
 
     @Test
     public void testIrcPrivateMessages() throws Exception {
@@ -41,25 +46,23 @@ public class IrcPrivmsgTest extends IrcIntegrationTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
         }
-    }   
-    
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fromUri()).
-                        choice().
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("direct:mock").
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
+                from(fromUri()).choice().when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("direct:mock")
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
 
                 from("seda:consumerJoined")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            sendMessages();
-                        }
-                    });
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                sendMessages();
+                            }
+                        });
 
                 from("direct:mock").filter(e -> !e.getIn().getBody(String.class).contains("VERSION")).to(resultEndpoint);
             }

@@ -20,13 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.hbase.HBaseHelper;
 import org.apache.camel.component.hbase.model.HBaseCell;
 import org.apache.camel.component.hbase.model.HBaseRow;
-import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.CompareOperator;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.SingleColumnValueExcludeFilter;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 
 /**
- * A {@link FilterList} that contains multiple {@link SingleColumnValueExcludeFilter}s one per column that is part of the model.
+ * A {@link FilterList} that contains multiple {@link SingleColumnValueExcludeFilter}s one per column that is part of
+ * the model.
  */
 public class ModelAwareColumnMatchingFilter implements ModelAwareFilter<FilterList> {
     FilterList fl;
@@ -55,7 +56,8 @@ public class ModelAwareColumnMatchingFilter implements ModelAwareFilter<FilterLi
                     byte[] family = HBaseHelper.getHBaseFieldAsBytes(cell.getFamily());
                     byte[] qualifier = HBaseHelper.getHBaseFieldAsBytes(cell.getQualifier());
                     byte[] value = context.getTypeConverter().convertTo(byte[].class, cell.getValue());
-                    SingleColumnValueFilter columnValueFilter = new SingleColumnValueFilter(family, qualifier, CompareFilter.CompareOp.EQUAL, value);
+                    SingleColumnValueFilter columnValueFilter
+                            = new SingleColumnValueFilter(family, qualifier, CompareOperator.EQUAL, value);
                     fl.addFilter(columnValueFilter);
                 }
             }

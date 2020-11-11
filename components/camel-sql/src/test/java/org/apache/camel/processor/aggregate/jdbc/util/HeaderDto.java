@@ -22,7 +22,7 @@ public class HeaderDto implements Cloneable, Serializable {
     private String org;
     private String type;
     private int key;
-   
+
     public HeaderDto(String org, String type, int key) {
         this.org = org;
         this.type = type;
@@ -32,22 +32,27 @@ public class HeaderDto implements Cloneable, Serializable {
     public int getKey() {
         return key;
     }
+
     public void setKey(int key) {
         this.key = key;
     }
+
     public String getOrg() {
         return org;
     }
+
     public void setOrg(String org) {
         this.org = org;
     }
+
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
-    
+
     @Override
     public String toString() {
         return "HeaderDto [org=" + org + ", type=" + type + ", key=" + key + "]";

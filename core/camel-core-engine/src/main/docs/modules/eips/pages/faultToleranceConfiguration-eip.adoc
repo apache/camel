@@ -1,0 +1,29 @@
+[[faultToleranceConfiguration-eip]]
+= Fault Tolerance Configuration EIP
+:docTitle: Fault Tolerance Configuration
+:description: MicroProfile Fault Tolerance Circuit Breaker EIP configuration
+:since: 
+:supportLevel: Stable
+
+
+// eip options: START
+The Fault Tolerance Configuration EIP supports 13 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *circuitBreakerRef* | Refers to an existing io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use. |  | String
+| *delay* | Control how long the circuit breaker stays open. The default is 5 seconds. | 5s | String
+| *successThreshold* | Controls the number of trial calls which are allowed when the circuit breaker is half-open | 1 | Integer
+| *requestVolumeThreshold* | Controls the size of the rolling window used when the circuit breaker is closed | 20 | Integer
+| *failureRatio* | Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage. | 50 | Integer
+| *timeoutEnabled* | Whether timeout is enabled or not on the circuit breaker. Default is false. | false | Boolean
+| *timeoutDuration* | Configures the thread execution timeout. Default value is 1 second. | 1s | String
+| *timeoutPoolSize* | Configures the pool size of the thread pool when timeout is enabled. Default value is 10. | 10 | Integer
+| *timeoutScheduledExecutor{zwsp}ServiceRef* | References to a custom thread pool to use when timeout is enabled |  | String
+| *bulkheadEnabled* | Whether bulkhead is enabled or not on the circuit breaker. Default is false. | false | Boolean
+| *bulkheadMaxConcurrentCalls* | Configures the max amount of concurrent calls the bulkhead will support. | 10 | Integer
+| *bulkheadWaitingTaskQueue* | Configures the task queue size for holding waiting tasks to be processed by the bulkhead. | 10 | Integer
+| *bulkheadExecutorServiceRef* | References to a custom thread pool to use when bulkhead is enabled. |  | String
+|===
+// eip options: END

@@ -23,7 +23,9 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeProperties;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
 
@@ -60,8 +62,8 @@ public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // use a bean as the dynamic router
-                    .dynamicRouter(method(DynamicRouterExchangePropertiesTest.class, "slip"));
+                        // use a bean as the dynamic router
+                        .dynamicRouter(method(DynamicRouterExchangePropertiesTest.class, "slip"));
 
                 from("direct:foo").transform(constant("Bye World")).to("mock:foo");
             }
@@ -72,10 +74,9 @@ public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
     /**
      * Use this method to compute dynamic where we should route next.
      *
-     * @param body the message body
-     * @param properties the exchange properties where we can store state
-     *            between invocations
-     * @return endpoints to go, or <tt>null</tt> to indicate the end
+     * @param  body       the message body
+     * @param  properties the exchange properties where we can store state between invocations
+     * @return            endpoints to go, or <tt>null</tt> to indicate the end
      */
     public String slip(String body, @ExchangeProperties Map<String, Object> properties) {
         bodies.add(body);

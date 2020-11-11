@@ -44,10 +44,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The sjms-batch component is a specialized for highly performant, transactional batch consumption from a JMS queue.
+ * Highly performant and transactional batch consumption of messages from a JMS queue.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "sjms-batch", title = "Simple JMS Batch", syntax = "sjms-batch:destinationName",
-        label = "messaging", consumerOnly = true)
+             label = "messaging", consumerOnly = true)
 public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     public static final int DEFAULT_COMPLETION_SIZE = 200; // the default dispatch queue size in ActiveMQ
@@ -55,9 +55,11 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     private JmsBinding binding;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String destinationName;
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private AggregationStrategy aggregationStrategy;
     @UriParam(defaultValue = "1")
     private int consumerCount = 1;
@@ -93,8 +95,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     private boolean asyncStartListener;
     @UriParam(label = "advanced", defaultValue = "5000")
     private int recoveryInterval = 5000;
-    @UriParam(label = "advanced", defaultValue = "-1")
-    private int keepAliveDelay = -1;
+    @UriParam(label = "advanced", defaultValue = "5000")
+    private int keepAliveDelay = 5000;
 
     public SjmsBatchEndpoint() {
     }
@@ -104,8 +106,9 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
         DestinationNameParser parser = new DestinationNameParser();
         if (parser.isTopic(remaining)) {
-            throw new IllegalArgumentException("Only batch consumption from queues is supported. For topics you "
-                    + "should use a regular JMS consumer with an aggregator.");
+            throw new IllegalArgumentException(
+                    "Only batch consumption from queues is supported. For topics you "
+                                               + "should use a regular JMS consumer with an aggregator.");
         }
         this.destinationName = parser.getShortName(remaining);
     }
@@ -145,12 +148,13 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
      * Creates the {@link org.apache.camel.component.sjms.jms.JmsBinding} to use.
      */
     protected JmsBinding createBinding() {
-        return new JmsBinding(isMapJmsMessage(), isAllowNullBody(), getHeaderFilterStrategy(), getJmsKeyFormatStrategy(), getMessageCreatedStrategy());
+        return new JmsBinding(
+                isMapJmsMessage(), isAllowNullBody(), getHeaderFilterStrategy(), getJmsKeyFormatStrategy(),
+                getMessageCreatedStrategy());
     }
 
     /**
-     * Sets the binding used to convert from a Camel message to and from a JMS
-     * message
+     * Sets the binding used to convert from a Camel message to and from a JMS message
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
@@ -201,10 +205,10 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * The timeout in millis from receipt of the first first message when the batch will be completed.
-     * The batch may be empty if the timeout triggered and there was no messages in the batch.
-     * <br/>
-     * Notice you cannot use both completion timeout and completion interval at the same time, only one can be configured.
+     * The timeout in millis from receipt of the first first message when the batch will be completed. The batch may be
+     * empty if the timeout triggered and there was no messages in the batch. <br/>
+     * Notice you cannot use both completion timeout and completion interval at the same time, only one can be
+     * configured.
      */
     public void setCompletionTimeout(int completionTimeout) {
         this.completionTimeout = completionTimeout;
@@ -216,9 +220,9 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     /**
      * The completion interval in millis, which causes batches to be completed in a scheduled fixed rate every interval.
-     * The batch may be empty if the timeout triggered and there was no messages in the batch.
-     * <br/>
-     * Notice you cannot use both completion timeout and completion interval at the same time, only one can be configured.
+     * The batch may be empty if the timeout triggered and there was no messages in the batch. <br/>
+     * Notice you cannot use both completion timeout and completion interval at the same time, only one can be
+     * configured.
      */
     public void setCompletionInterval(int completionInterval) {
         this.completionInterval = completionInterval;
@@ -231,9 +235,9 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     /**
      * The completion predicate, which causes batches to be completed when the predicate evaluates as true.
      * <p/>
-     * The predicate can also be configured using the simple language using the string syntax.
-     * You may want to set the option eagerCheckCompletion to true to let the predicate match the incoming message,
-     * as otherwise it matches the aggregated message.
+     * The predicate can also be configured using the simple language using the string syntax. You may want to set the
+     * option eagerCheckCompletion to true to let the predicate match the incoming message, as otherwise it matches the
+     * aggregated message.
      */
     public void setCompletionPredicate(Predicate completionPredicate) {
         this.completionPredicate = completionPredicate;
@@ -249,8 +253,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * Use eager completion checking which means that the completionPredicate will use the incoming Exchange.
-     * As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange.
+     * Use eager completion checking which means that the completionPredicate will use the incoming Exchange. As opposed
+     * to without eager completion checking the completionPredicate will use the aggregated Exchange.
      */
     public void setEagerCheckCompletion(boolean eagerCheckCompletion) {
         this.eagerCheckCompletion = eagerCheckCompletion;
@@ -261,8 +265,9 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * If using completion timeout or interval, then the batch may be empty if the timeout triggered and there was no messages in the batch.
-     * If this option is <tt>true</tt> and the batch is empty then an empty message is added to the batch so an empty message is routed.
+     * If using completion timeout or interval, then the batch may be empty if the timeout triggered and there was no
+     * messages in the batch. If this option is <tt>true</tt> and the batch is empty then an empty message is added to
+     * the batch so an empty message is routed.
      */
     public void setSendEmptyMessageWhenIdle(boolean sendEmptyMessageWhenIdle) {
         this.sendEmptyMessageWhenIdle = sendEmptyMessageWhenIdle;
@@ -273,8 +278,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * The duration in milliseconds of each poll for messages.
-     * completionTimeOut will be used if it is shorter and a batch has started.
+     * The duration in milliseconds of each poll for messages. completionTimeOut will be used if it is shorter and a
+     * batch has started.
      */
     public void setPollDuration(int pollDuration) {
         this.pollDuration = pollDuration;
@@ -285,7 +290,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown.
+     * Whether to allow sending messages with no body. If this option is false and the message body is null, then an
+     * JMSException is thrown.
      */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
@@ -296,8 +302,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc.
-     * See section about how mapping works below for more details.
+     * Specifies whether Camel should auto map the received JMS message to a suited payload type, such as
+     * javax.jms.TextMessage to a String etc. See section about how mapping works below for more details.
      */
     public void setMapJmsMessage(boolean mapJmsMessage) {
         this.mapJmsMessage = mapJmsMessage;
@@ -308,8 +314,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt>
-     * objects when Camel is sending a JMS message.
+     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of
+     * <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.
      */
     public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;
@@ -323,12 +329,11 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification.
-     * Camel provides two implementations out of the box: default and passthrough.
-     * The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is.
-     * Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters.
-     * You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy
-     * and refer to it using the # notation.
+     * Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel
+     * provides two implementations out of the box: default and passthrough. The default strategy will safely marshal
+     * dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do
+     * not care whether JMS header keys contain illegal characters. You can provide your own implementation of the
+     * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.
      */
     public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
         this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
@@ -355,9 +360,9 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * Whether to include all JMSXxxx properties when mapping from JMS to Camel Message.
-     * Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc.
-     * Note: If you are using a custom headerFilterStrategy then this option does not apply.
+     * Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will
+     * include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy
+     * then this option does not apply.
      */
     public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
         this.includeAllJMSXProperties = includeAllJMSXProperties;
@@ -368,8 +373,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * If using the completionInterval option a background thread is created to trigger the completion interval.
-     * Set this option to provide a custom thread pool to be used rather than creating a new thread for every consumer.
+     * If using the completionInterval option a background thread is created to trigger the completion interval. Set
+     * this option to provide a custom thread pool to be used rather than creating a new thread for every consumer.
      */
     public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
         this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
@@ -380,13 +385,12 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * Whether to startup the consumer message listener asynchronously, when starting a route.
-     * For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying
-     * and/or failover. This will cause Camel to block while starting routes. By setting this option to true,
-     * you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread
-     * in asynchronous mode. If this option is used, then beware that if the connection could not be established,
-     * then an exception is logged at WARN level, and the consumer will not be able to receive messages;
-     * You can then restart the route to retry.
+     * Whether to startup the consumer message listener asynchronously, when starting a route. For example if a
+     * JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover.
+     * This will cause Camel to block while starting routes. By setting this option to true, you will let routes
+     * startup, while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this
+     * option is used, then beware that if the connection could not be established, then an exception is logged at WARN
+     * level, and the consumer will not be able to receive messages; You can then restart the route to retry.
      */
     public void setAsyncStartListener(boolean asyncStartListener) {
         this.asyncStartListener = asyncStartListener;
@@ -397,19 +401,20 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     /**
-     * Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds.
-     * The default is 5000 ms, that is, 5 seconds.
+     * Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds. The
+     * default is 5000 ms, that is, 5 seconds.
      */
     public void setRecoveryInterval(int recoveryInterval) {
         this.recoveryInterval = recoveryInterval;
     }
 
     /**
-     * The delay in millis between attempts to re-establish a valid session.
-     * If this is a positive value the SjmsBatchConsumer will attempt to create a new session if it sees an IllegalStateException
-     * during message consumption. This delay value allows you to pause between attempts to prevent spamming the logs.
-     * If this is a negative value (default is -1) then the SjmsBatchConsumer will behave as it always has before - that is
-     * it will bail out and the route will shut down if it sees an IllegalStateException.
+     * The delay in millis between attempts to re-establish a valid session. If this is a positive value the
+     * SjmsBatchConsumer will attempt to create a new session if it sees an Exception during message consumption. This
+     * delay value allows you to pause between attempts to prevent spamming the logs. If this is a negative value then
+     * the SjmsBatchConsumer will bail out and the consumer will not stop consuming new messages.
+     *
+     * The default is 5000 ms, that is, 5 seconds.
      */
     public void setKeepAliveDelay(int keepAliveDelay) {
         this.keepAliveDelay = keepAliveDelay;

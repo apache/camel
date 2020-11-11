@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -33,12 +33,12 @@ import static org.awaitility.Awaitility.await;
 
 @ContextConfiguration
 public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends SpringRunWithTestSupport {
-    
+
     @Produce("direct:startSimple")
     protected ProducerTemplate template;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/outBox");
         deleteDirectory("target/outBoxSimple");
@@ -51,8 +51,8 @@ public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends Spring
 
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertDirectoryExists("target/outBoxSimple/"));
     }
-    
-    @Ignore(value = "disabled because of https://jira.springsource.org/browse/SPR-7593")
+
+    @Disabled(value = "disabled because of https://jira.springsource.org/browse/SPR-7593")
     @Test
     @DirtiesContext
     public void replaceExpression() throws Exception {
@@ -66,5 +66,5 @@ public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends Spring
         String s = sdf.format(new Date());
         return "test-" + s + ".txt";
     }
-    
+
 }

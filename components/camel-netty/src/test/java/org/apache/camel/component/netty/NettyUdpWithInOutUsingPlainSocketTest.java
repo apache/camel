@@ -23,9 +23,12 @@ import java.net.InetAddress;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
     private static final Logger LOG = LoggerFactory.getLogger(NettyUdpWithInOutUsingPlainSocketTest.class);
@@ -70,7 +73,8 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
                         LOG.debug("Server got: " + s);
                         exchange.getOut().setBody("Hello " + s);
                         // just make the remote address is there
-                        assertNotNull("The remote address header should not be Null", exchange.getIn().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS));
+                        assertNotNull(exchange.getIn().getHeader(NettyConstants.NETTY_REMOTE_ADDRESS),
+                                "The remote address header should not be Null");
                     }
                 });
             }

@@ -34,7 +34,6 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 /**
  * Tests a chain made of a consumer and a producer to create a direct chat-bot.
  */
@@ -44,7 +43,8 @@ public class TelegramChatBotTest extends TelegramTestSupport {
     public void testChatBotResult() throws Exception {
 
         List<OutgoingTextMessage> msgs = Awaitility.await().atMost(5, TimeUnit.SECONDS)
-                .until(() -> getMockRoutes().getMock("sendMessage").getRecordedMessages(), rawMessages -> rawMessages.size() >= 2)
+                .until(() -> getMockRoutes().getMock("sendMessage").getRecordedMessages(),
+                        rawMessages -> rawMessages.size() >= 2)
                 .stream()
                 .map(message -> (OutgoingTextMessage) message)
                 .collect(Collectors.toList());
@@ -69,8 +69,8 @@ public class TelegramChatBotTest extends TelegramTestSupport {
     /**
      * This method simulates the second step of the chat-bot logic.
      *
-     * @param message the message coming from the telegram bot
-     * @return the reply, if any
+     * @param  message the message coming from the telegram bot
+     * @return         the reply, if any
      */
     public String chatBotProcess2(String message) {
         return "echo from the bot: " + message;
@@ -79,17 +79,17 @@ public class TelegramChatBotTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] {
-            getMockRoutes(),
-            new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
+                getMockRoutes(),
+                new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
 
-                    from("telegram:bots?authorizationToken=mock-token")
-                            .bean(TelegramChatBotTest.this, "chatBotProcess1")
-                            .bean(TelegramChatBotTest.this, "chatBotProcess2")
-                            .to("telegram:bots?authorizationToken=mock-token");
-                }
-            }};
+                        from("telegram:bots?authorizationToken=mock-token")
+                                .bean(TelegramChatBotTest.this, "chatBotProcess1")
+                                .bean(TelegramChatBotTest.this, "chatBotProcess2")
+                                .to("telegram:bots?authorizationToken=mock-token");
+                    }
+                } };
     }
 
     @Override

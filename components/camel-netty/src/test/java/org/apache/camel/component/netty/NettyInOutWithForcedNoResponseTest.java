@@ -18,7 +18,11 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
 
@@ -43,7 +47,7 @@ public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}")
-                    .choice()
+                        .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
                         .otherwise().transform(constant(null));
             }

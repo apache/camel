@@ -31,21 +31,25 @@ import com.google.api.services.gmail.model.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersThreadsApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Test class for {@link com.google.api.services.gmail.Gmail$Users$Threads}
- * APIs.
+ * Test class for {@link com.google.api.services.gmail.Gmail$Users$Threads} APIs.
  */
 public class GmailUsersThreadsIntegrationTest extends AbstractGoogleMailTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersThreadsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersThreadsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersThreadsApiMethod.class).getName();
 
     private Message createThreadedTestEmail(String previousThreadId) throws MessagingException, IOException {
-        com.google.api.services.gmail.model.Profile profile = requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);
+        com.google.api.services.gmail.model.Profile profile
+                = requestBody("google-mail://users/getProfile?inBody=userId", CURRENT_USERID);
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage mm = new MimeMessage(session);
@@ -84,9 +88,10 @@ public class GmailUsersThreadsIntegrationTest extends AbstractGoogleMailTestSupp
         headers.put("CamelGoogleMail.q", "subject:\"Hello from camel-google-mail\"");
 
         // using String message body for single parameter "userId"
-        com.google.api.services.gmail.model.ListThreadsResponse result = requestBodyAndHeaders("direct://LIST", CURRENT_USERID, headers);
+        com.google.api.services.gmail.model.ListThreadsResponse result
+                = requestBodyAndHeaders("direct://LIST", CURRENT_USERID, headers);
 
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         assertTrue(result.getThreads().size() > 0);
         LOG.debug("list: " + result);
 

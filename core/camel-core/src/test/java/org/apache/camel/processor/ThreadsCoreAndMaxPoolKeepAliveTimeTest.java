@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ThreadsCoreAndMaxPoolKeepAliveTimeTest extends ContextTestSupport {
 
@@ -39,9 +39,9 @@ public class ThreadsCoreAndMaxPoolKeepAliveTimeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // will use a a custom thread pool with 5 in core and 10 as
-                    // max
-                    .threads(5, 10).keepAliveTime(10).timeUnit(TimeUnit.SECONDS).to("mock:result");
+                        // will use a a custom thread pool with 5 in core and 10 as
+                        // max
+                        .threads(5, 10).keepAliveTime(10).timeUnit(TimeUnit.SECONDS).to("mock:result");
             }
         };
     }

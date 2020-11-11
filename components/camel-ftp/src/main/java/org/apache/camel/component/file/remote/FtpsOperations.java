@@ -36,7 +36,8 @@ public class FtpsOperations extends FtpOperations {
     }
 
     @Override
-    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean connect(RemoteFileConfiguration configuration, Exchange exchange)
+            throws GenericFileOperationFailedException {
         boolean answer = super.connect(configuration, exchange);
 
         FtpsConfiguration config = (FtpsConfiguration) configuration;
@@ -44,7 +45,8 @@ public class FtpsOperations extends FtpOperations {
             try {
                 String execProt = config.getExecProt();
                 Long execPbsz = config.getExecPbsz();
-                // use default values for prop and pbsz, unless told to not do so
+                // use default values for prop and pbsz, unless told to not do
+                // so
                 if (!config.isDisableSecureDataChannelDefaults()) {
                     if (ObjectHelper.isEmpty(execProt)) {
                         execProt = "P";
@@ -63,11 +65,11 @@ public class FtpsOperations extends FtpOperations {
                     getFtpClient().execPROT(execProt);
                 }
             } catch (SSLException e) {
-                throw new GenericFileOperationFailedException(client.getReplyCode(),
-                        client.getReplyString(), e.getMessage(), e);
+                throw new GenericFileOperationFailedException(
+                        client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             } catch (IOException e) {
-                throw new GenericFileOperationFailedException(client.getReplyCode(),
-                        client.getReplyString(), e.getMessage(), e);
+                throw new GenericFileOperationFailedException(
+                        client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             } finally {
                 if (exchange != null) {
                     // store client reply information after the operation

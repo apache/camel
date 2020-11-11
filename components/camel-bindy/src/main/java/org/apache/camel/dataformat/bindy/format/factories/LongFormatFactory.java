@@ -29,6 +29,7 @@ public class LongFormatFactory extends AbstractFormatFactory {
         supportedClasses.add(long.class);
         supportedClasses.add(Long.class);
     }
+
     @Override
     public boolean canBuild(FormattingOptions formattingOptions) {
         return super.canBuild(formattingOptions)
@@ -49,7 +50,7 @@ public class LongFormatFactory extends AbstractFormatFactory {
 
         @Override
         public Long parse(String string) throws Exception {
-            return new Long(string);
+            return Long.valueOf(string);
         }
 
     }

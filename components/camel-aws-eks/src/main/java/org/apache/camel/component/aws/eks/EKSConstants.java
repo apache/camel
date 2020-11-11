@@ -20,10 +20,10 @@ package org.apache.camel.component.aws.eks;
  * Constants used in Camel AWS EKS module
  */
 public interface EKSConstants {
-    String OPERATION                = "CamelAwsEKSOperation";
-    String MAX_RESULTS              = "CamelAwsEKSMaxResults";
-    String DESCRIPTION              = "CamelAwsEKSDescription";
-    String CLUSTER_NAME             = "CamelAwsEKSClusterName";
-    String ROLE_ARN                 = "CamelAwsEKSRoleARN";
-    String VPC_CONFIG               = "CamelAwsEKSVPCConfig";
+    String OPERATION = "CamelAwsEKSOperation";
+    String MAX_RESULTS = "CamelAwsEKSMaxResults";
+    String DESCRIPTION = "CamelAwsEKSDescription";
+    String CLUSTER_NAME = "CamelAwsEKSClusterName";
+    String ROLE_ARN = "CamelAwsEKSRoleARN";
+    String VPC_CONFIG = "CamelAwsEKSVPCConfig";
 }

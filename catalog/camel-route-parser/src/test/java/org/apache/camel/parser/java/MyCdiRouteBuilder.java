@@ -37,12 +37,12 @@ public class MyCdiRouteBuilder extends RouteBuilder {
     private Endpoint mynetty;
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from(inputEndpoint)
-            .log("I was here")
-            .to(loga)
-            .to(mynetty)
-            .to("mock:foo"
-                + "?retainFirst=1");
+                .log("I was here")
+                .to(loga)
+                .to(mynetty)
+                .to("mock:foo"
+                    + "?retainFirst=1");
     }
 }

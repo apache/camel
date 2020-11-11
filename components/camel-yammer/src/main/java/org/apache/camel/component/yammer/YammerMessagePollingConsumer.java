@@ -31,7 +31,8 @@ import org.apache.camel.util.ObjectHelper;
 public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
     private final YammerEndpoint endpoint;
     private final String apiUrl;
-    
+    private ApiRequestor requestor;
+
     public YammerMessagePollingConsumer(YammerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
@@ -42,38 +43,39 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
         apiUrl = getApiUrl();
     }
 
-    private String getApiUrl() throws Exception {    
+    private String getApiUrl() throws Exception {
         StringBuilder url = new StringBuilder();
-        
-        String function = endpoint.getConfig().getFunction();
-        switch (YammerFunctionType.fromUri(function)) {
-        case MESSAGES:
-            url.append(YammerConstants.YAMMER_BASE_API_URL);
-            url.append(function);
-            url.append(".json");
-            break;
-        case ALGO:
-        case FOLLOWING:
-        case MY_FEED:
-        case PRIVATE:
-        case SENT:
-        case RECEIVED:
-            url.append(YammerConstants.YAMMER_BASE_API_URL);
-            url.append("messages/");
-            url.append(function);
-            url.append(".json");
-            break;
-        default:
-            throw new Exception(String.format("%s is not a valid Yammer message function type.", function));
-        }        
-        
+
+        switch (endpoint.getConfig().getFunction()) {
+            case MESSAGES:
+                url.append(YammerConstants.YAMMER_BASE_API_URL);
+                url.append(endpoint.getConfig().getFunction().name().toLowerCase());
+                url.append(".json");
+                break;
+            case ALGO:
+            case FOLLOWING:
+            case MY_FEED:
+            case PRIVATE:
+            case SENT:
+            case RECEIVED:
+                url.append(YammerConstants.YAMMER_BASE_API_URL);
+                url.append("messages/");
+                url.append(endpoint.getConfig().getFunction().name().toLowerCase());
+                url.append(".json");
+                break;
+            default:
+                throw new Exception(
+                        String.format("%s is not a valid Yammer message function type.",
+                                endpoint.getConfig().getFunction().name()));
+        }
+
         StringBuilder args = new StringBuilder();
-        
+
         int limit = endpoint.getConfig().getLimit();
         if (limit > 0) {
             args.append("limit=");
             args.append(limit);
-        }        
+        }
 
         long olderThan = endpoint.getConfig().getOlderThan();
         if (olderThan > 0) {
@@ -82,43 +84,42 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
             }
             args.append("older_than=");
             args.append(olderThan);
-        }        
+        }
 
         long newerThan = endpoint.getConfig().getNewerThan();
         if (newerThan > 0) {
             if (args.length() > 0) {
                 args.append("&");
-            }            
+            }
             args.append("newer_than=");
             args.append(newerThan);
-        }        
-        
+        }
+
         String threaded = endpoint.getConfig().getThreaded();
-        if (ObjectHelper.isNotEmpty(threaded) 
+        if (ObjectHelper.isNotEmpty(threaded)
                 && ("true".equals(threaded) || "extended".equals(threaded))) {
             if (args.length() > 0) {
                 args.append("&");
-            }            
+            }
             args.append("threaded=");
             args.append(threaded);
-        }        
-        
+        }
+
         if (args.length() > 0) {
             url.append("?");
             url.append(args);
-        }            
-        
+        }
+
         return url.toString();
     }
 
-    
     @Override
     protected int poll() throws Exception {
         Exchange exchange = endpoint.createExchange();
 
         try {
-            String jsonBody = endpoint.getConfig().getRequestor(apiUrl).get();   
-            
+            String jsonBody = requestor.get();
+
             if (!endpoint.getConfig().isUseJson()) {
                 ObjectMapper jsonMapper = new ObjectMapper();
                 Messages messages = jsonMapper.readValue(jsonBody, Messages.class);
@@ -129,7 +130,7 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
 
             // send message to next processor in the route
             getProcessor().process(exchange);
-        
+
             return 1; // number of messages polled
         } finally {
             // log exception if an exception occurred and was not handled
@@ -139,5 +140,14 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
         }
     }
 
-
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (requestor == null) {
+            requestor = endpoint.getConfig().getRequestor();
+        }
+        if (requestor == null) {
+            requestor = new ScribeApiRequestor(apiUrl, endpoint.getConfig().getAccessToken());
+        }
+    }
 }

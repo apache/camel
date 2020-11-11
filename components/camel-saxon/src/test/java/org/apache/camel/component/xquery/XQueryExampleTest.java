@@ -17,8 +17,8 @@
 package org.apache.camel.component.xquery;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class XQueryExampleTest extends CamelSpringTestSupport {
@@ -30,7 +30,7 @@ public class XQueryExampleTest extends CamelSpringTestSupport {
                                     + "<lastName>Strachan</lastName></name><location><city>London</city></location></employee>");
 
         template.sendBody("direct:start", "<person user='James'><firstName>James</firstName>"
-                          + "<lastName>Strachan</lastName><city>London</city></person>");
+                                          + "<lastName>Strachan</lastName><city>London</city></person>");
 
         assertMockEndpointsSatisfied();
     }

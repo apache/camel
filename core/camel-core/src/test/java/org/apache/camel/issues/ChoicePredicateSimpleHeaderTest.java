@@ -18,7 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ChoicePredicateSimpleHeaderTest extends ContextTestSupport {
 
@@ -71,8 +71,9 @@ public class ChoicePredicateSimpleHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when().simple("${in.header.Action} == 'AAE'").to("mock:aae").when().simple("${in.header.Action} == 'PCA'").to("mock:pca").otherwise()
-                    .to("mock:error");
+                from("direct:start").choice().when().simple("${in.header.Action} == 'AAE'").to("mock:aae").when()
+                        .simple("${in.header.Action} == 'PCA'").to("mock:pca").otherwise()
+                        .to("mock:error");
             }
         };
     }

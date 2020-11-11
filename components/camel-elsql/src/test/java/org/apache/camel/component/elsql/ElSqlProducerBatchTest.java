@@ -23,9 +23,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sql.SqlConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -33,10 +33,11 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 public class ElSqlProducerBatchTest extends CamelTestSupport {
 
     @BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY)
+            .addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -44,7 +45,7 @@ public class ElSqlProducerBatchTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBatchMode() throws InterruptedException {
+    void testBatchMode() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header(SqlConstants.SQL_UPDATE_COUNT).isEqualTo(1);
@@ -60,7 +61,7 @@ public class ElSqlProducerBatchTest extends CamelTestSupport {
     }
 
     @Test
-    public void testNonBatchMode() throws InterruptedException {
+    void testNonBatchMode() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header(SqlConstants.SQL_UPDATE_COUNT).isEqualTo(1);
@@ -79,11 +80,12 @@ public class ElSqlProducerBatchTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:batch").to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource&batch=true").to("mock:result");
+                from("direct:batch").to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource&batch=true")
+                        .to("mock:result");
 
                 from("direct:nonBatch").to("elsql:insertProject:elsql/projects.elsql?dataSource=#dataSource").to("mock:result");
 

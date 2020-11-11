@@ -29,7 +29,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.processor.validation.DefaultValidationErrorHandler;
 import org.apache.camel.support.processor.validation.SchemaValidationException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
 
@@ -95,7 +97,8 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
             assertNotNull(e.getSchema());
             assertNotNull(e.getExchange());
 
-            assertTrue(e.getMessage().startsWith("Validation failed for: org.apache.camel.processor.validation.DefaultValidationErrorHandlerTest"));
+            assertTrue(e.getMessage().startsWith(
+                    "Validation failed for: org.apache.camel.processor.validation.DefaultValidationErrorHandlerTest"));
             assertTrue(e.getMessage().contains("fatal errors: ["));
             assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: cheese, Line : 13, Column : 17"));
             assertTrue(e.getMessage().contains("errors: ["));
@@ -125,7 +128,8 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
             assertNotNull(e.getSchema());
             assertNotNull(e.getExchange());
 
-            assertTrue(e.getMessage().startsWith("Validation failed for: org.apache.camel.processor.validation.DefaultValidationErrorHandlerTest"));
+            assertTrue(e.getMessage().startsWith(
+                    "Validation failed for: org.apache.camel.processor.validation.DefaultValidationErrorHandlerTest"));
             assertTrue(e.getMessage().contains("errors: ["));
             assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: foo, Line : 3, Column : 5"));
             assertTrue(e.getMessage().contains("org.xml.sax.SAXParseException: bar, Line : 9, Column : 12"));

@@ -21,7 +21,9 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -64,17 +66,17 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
                 context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
 
                 onException(Exception.class).handled(true)
-                    .redeliveryDelay(0)
-                    .maximumRedeliveries(4).logStackTrace(false)
-                    .setBody().constant("Error");
+                        .redeliveryDelay(0)
+                        .maximumRedeliveries(4).logStackTrace(false)
+                        .setBody().constant("Error");
 
                 from("direct:start")
-                    .to("mock:foo")
-                    .process(exchange -> {
-                        log.info("Invoking me");
+                        .to("mock:foo")
+                        .process(exchange -> {
+                            log.info("Invoking me");
 
-                        throw new IllegalArgumentException("Damn");
-                    }).id("myprocessor");
+                            throw new IllegalArgumentException("Damn");
+                        }).id("myprocessor");
             }
         };
     }

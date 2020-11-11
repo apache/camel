@@ -19,15 +19,17 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         try {
             super.setUp();
@@ -35,7 +37,8 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
         } catch (Exception e) {
             FailedToCreateRouteException fe = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             IllegalArgumentException ie = assertIsInstanceOf(IllegalArgumentException.class, fe.getCause());
-            assertTrue(ie.getMessage().startsWith("Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
+            assertTrue(ie.getMessage().startsWith(
+                    "Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
         }
     }
 

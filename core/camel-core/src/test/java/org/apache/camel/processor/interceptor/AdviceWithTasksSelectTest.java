@@ -17,10 +17,13 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Advice with match multiple ids test
@@ -29,7 +32,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
 
     @Test
     public void testSelectFirst() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should only match the first
@@ -51,7 +54,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
 
     @Test
     public void testSelectLast() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should only match the last
@@ -73,7 +76,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
 
     @Test
     public void testSelectIndexZero() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the first index (0 based)
@@ -95,7 +98,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
 
     @Test
     public void testSelectIndexOne() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the second index (0 based)
@@ -117,7 +120,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
 
     @Test
     public void testSelectIndexTwo() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the third index (0 based)
@@ -140,7 +143,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
     @Test
     public void testSelectIndexOutOfBounds() throws Exception {
         try {
-            RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+            AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     // should be out of bounds
@@ -149,13 +152,13 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
             });
             fail("Should hve thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().startsWith("There are no outputs which matches: gold* in the route"));
+            assertTrue(e.getMessage().startsWith("There are no outputs which matches: gold* in the route"), e.getMessage());
         }
     }
 
     @Test
     public void testSelectRangeZeroOne() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the first two (0-based)
@@ -177,7 +180,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
 
     @Test
     public void testSelectRangeOneTwo() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the 2nd and 3rd (0-based)
@@ -202,8 +205,9 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").log("Got ${body}").id("foo").to("mock:foo").id("gold-1").to("mock:bar").id("gold-2").to("mock:baz").id("gold-3").to("mock:result")
-                    .id("silver-1");
+                from("direct:start").log("Got ${body}").id("foo").to("mock:foo").id("gold-1").to("mock:bar").id("gold-2")
+                        .to("mock:baz").id("gold-3").to("mock:result")
+                        .id("silver-1");
             }
         };
     }

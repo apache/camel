@@ -17,7 +17,6 @@
 package org.apache.camel.api.management.mbean;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Represents a traced message by the {@link org.apache.camel.processor.interceptor.BacklogTracer}.
@@ -29,7 +28,7 @@ public interface BacklogTracerEventMessage extends Serializable {
 
     long getUid();
 
-    Date getTimestamp();
+    long getTimestamp();
 
     String getRouteId();
 
@@ -44,8 +43,8 @@ public interface BacklogTracerEventMessage extends Serializable {
      * <p/>
      * The <tt>timestamp</tt> tag is formatted in the format defined by {@link #TIMESTAMP_FORMAT}
      *
-     * @param indent number of spaces to indent
-     * @return xml representation of this event
+     * @param  indent number of spaces to indent
+     * @return        xml representation of this event
      */
     String toXml(int indent);
 

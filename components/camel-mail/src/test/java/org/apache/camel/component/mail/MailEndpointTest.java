@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.mail;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MailEndpointTest extends CamelTestSupport {
 
@@ -31,7 +35,7 @@ public class MailEndpointTest extends CamelTestSupport {
 
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
-        cfg.setProtocol("smtp");
+        cfg.configureProtocol("smtp");
         cfg.setHost("myhost");
         cfg.setUsername("james");
         cfg.setPassword("secret");
@@ -50,7 +54,7 @@ public class MailEndpointTest extends CamelTestSupport {
 
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
-        cfg.setProtocol("smtp");
+        cfg.configureProtocol("smtp");
         cfg.setHost("myhost");
         cfg.setUsername("james");
         cfg.setPassword("secret");
@@ -63,7 +67,7 @@ public class MailEndpointTest extends CamelTestSupport {
     public void testMailEndpointCtrEndpointConfig() throws Exception {
         MailConfiguration cfg = new MailConfiguration();
         cfg.setPort(21);
-        cfg.setProtocol("smtp");
+        cfg.configureProtocol("smtp");
         cfg.setHost("myhost");
         cfg.setUsername("james");
         cfg.setPassword("secret");
@@ -74,7 +78,7 @@ public class MailEndpointTest extends CamelTestSupport {
         assertNull(endpoint.getContentTypeResolver());
         assertNotNull(endpoint.getBinding());
         assertNotNull(endpoint.getHeaderFilterStrategy());
-        
+
         MyMailBinding myBnd = new MyMailBinding();
         endpoint.setBinding(myBnd);
         assertSame(myBnd, endpoint.getBinding());

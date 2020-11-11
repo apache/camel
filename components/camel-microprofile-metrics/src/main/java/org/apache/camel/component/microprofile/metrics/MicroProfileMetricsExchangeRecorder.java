@@ -73,7 +73,7 @@ public class MicroProfileMetricsExchangeRecorder {
                 failuresHandled.inc();
             }
 
-            if (exchange.isExternalRedelivered() != null && exchange.isExternalRedelivered()) {
+            if (exchange.isExternalRedelivered()) {
                 externalRedeliveries.inc();
             }
         } else {
@@ -83,51 +83,51 @@ public class MicroProfileMetricsExchangeRecorder {
 
     protected void configureMetrics(MetricRegistry metricRegistry, String metricName, Tag... tags) {
         Metadata exchangesCompletedMetadata = new MetadataBuilder()
-            .withName(metricName + EXCHANGES_COMPLETED_METRIC_NAME)
-            .withDisplayName(EXCHANGES_COMPLETED_DISPLAY_NAME)
-            .withDescription(EXCHANGES_COMPLETED_DESCRIPTION)
-            .withType(MetricType.COUNTER)
-            .build();
+                .withName(metricName + EXCHANGES_COMPLETED_METRIC_NAME)
+                .withDisplayName(EXCHANGES_COMPLETED_DISPLAY_NAME)
+                .withDescription(EXCHANGES_COMPLETED_DESCRIPTION)
+                .withType(MetricType.COUNTER)
+                .build();
         this.exchangesCompleted = metricRegistry.counter(exchangesCompletedMetadata, tags);
 
         Metadata exchangesFailedMetadata = new MetadataBuilder()
-            .withName(metricName + EXCHANGES_FAILED_METRIC_NAME)
-            .withDisplayName(EXCHANGES_FAILED_DISPLAY_NAME)
-            .withDescription(EXCHANGES_FAILED_DESCRIPTION)
-            .withType(MetricType.COUNTER)
-            .build();
+                .withName(metricName + EXCHANGES_FAILED_METRIC_NAME)
+                .withDisplayName(EXCHANGES_FAILED_DISPLAY_NAME)
+                .withDescription(EXCHANGES_FAILED_DESCRIPTION)
+                .withType(MetricType.COUNTER)
+                .build();
         this.exchangesFailed = metricRegistry.counter(exchangesFailedMetadata, tags);
 
         Metadata exchangesTotalMetadata = new MetadataBuilder()
-            .withName(metricName + EXCHANGES_TOTAL_METRIC_NAME)
-            .withDisplayName(EXCHANGES_TOTAL_DISPLAY_NAME)
-            .withDescription(EXCHANGES_TOTAL_DESCRIPTION)
-            .withType(MetricType.COUNTER)
-            .build();
+                .withName(metricName + EXCHANGES_TOTAL_METRIC_NAME)
+                .withDisplayName(EXCHANGES_TOTAL_DISPLAY_NAME)
+                .withDescription(EXCHANGES_TOTAL_DESCRIPTION)
+                .withType(MetricType.COUNTER)
+                .build();
         this.exchangesTotal = metricRegistry.counter(exchangesTotalMetadata, tags);
 
         Metadata exchangesInflightMetadata = new MetadataBuilder()
-            .withName(metricName + EXCHANGES_INFLIGHT_METRIC_NAME)
-            .withDisplayName(EXCHANGES_INFLIGHT_DISPLAY_NAME)
-            .withDescription(EXCHANGES_INFLIGHT_DESCRIPTION)
-            .withType(MetricType.GAUGE)
-            .build();
+                .withName(metricName + EXCHANGES_INFLIGHT_METRIC_NAME)
+                .withDisplayName(EXCHANGES_INFLIGHT_DISPLAY_NAME)
+                .withDescription(EXCHANGES_INFLIGHT_DESCRIPTION)
+                .withType(MetricType.GAUGE)
+                .build();
         this.exchangesInflight = metricRegistry.register(exchangesInflightMetadata, new AtomicIntegerGauge(), tags);
 
         Metadata externalRedeliveriesMetadata = new MetadataBuilder()
-            .withName(metricName + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME)
-            .withDisplayName(EXCHANGES_EXTERNAL_REDELIVERIES_DISPLAY_NAME)
-            .withDescription(EXCHANGES_EXTERNAL_REDELIVERIES_DESCRIPTION)
-            .withType(MetricType.COUNTER)
-            .build();
+                .withName(metricName + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME)
+                .withDisplayName(EXCHANGES_EXTERNAL_REDELIVERIES_DISPLAY_NAME)
+                .withDescription(EXCHANGES_EXTERNAL_REDELIVERIES_DESCRIPTION)
+                .withType(MetricType.COUNTER)
+                .build();
         this.externalRedeliveries = metricRegistry.counter(externalRedeliveriesMetadata, tags);
 
         Metadata failuresHandledMetadata = new MetadataBuilder()
-            .withName(metricName + EXCHANGES_FAILURES_HANDLED_METRIC_NAME)
-            .withDisplayName(EXCHANGES_FAILURES_HANDLED_DISPLAY_NAME)
-            .withDescription(EXCHANGES_FAILURES_HANDLED_DESCRIPTION)
-            .withType(MetricType.COUNTER)
-            .build();
+                .withName(metricName + EXCHANGES_FAILURES_HANDLED_METRIC_NAME)
+                .withDisplayName(EXCHANGES_FAILURES_HANDLED_DISPLAY_NAME)
+                .withDescription(EXCHANGES_FAILURES_HANDLED_DESCRIPTION)
+                .withType(MetricType.COUNTER)
+                .build();
         this.failuresHandled = metricRegistry.counter(failuresHandledMetadata, tags);
     }
 }

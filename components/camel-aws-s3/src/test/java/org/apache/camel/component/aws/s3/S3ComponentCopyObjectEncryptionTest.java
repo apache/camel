@@ -24,8 +24,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class S3ComponentCopyObjectEncryptionTest extends CamelTestSupport {
 
@@ -57,9 +60,9 @@ public class S3ComponentCopyObjectEncryptionTest extends CamelTestSupport {
     }
 
     private void assertResultExchange(Exchange resultExchange) {
-        assertEquals(resultExchange.getIn().getHeader(S3Constants.VERSION_ID), "11192828ahsh2723");
+        assertEquals("11192828ahsh2723", resultExchange.getIn().getHeader(S3Constants.VERSION_ID));
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
-        assertEquals(resultExchange.getIn().getHeader(S3Constants.E_TAG), "3a5c8b1ad448bca04584ecb55b836264");
+        assertEquals("3a5c8b1ad448bca04584ecb55b836264", resultExchange.getIn().getHeader(S3Constants.E_TAG));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_ENCODING));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_DISPOSITION));

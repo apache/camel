@@ -25,32 +25,17 @@
          http://camel.apache.org/schema/spring
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <bean id="hc-repo-routes" class="org.apache.camel.impl.health.RoutesHealthCheckRepository">
-    <property name="evaluators">
-      <list>
-        <bean class="org.apache.camel.impl.health.RoutePerformanceCounterEvaluators.ExchangesFailed">
-          <constructor-arg value="10"/>
-        </bean>
-        <bean class="org.apache.camel.impl.health.RoutePerformanceCounterEvaluators.LastProcessingTime">
-          <constructor-arg value="1000"/>
-          <constructor-arg value="1"/>
-        </bean>
-      </list>
-    </property>
-    <property name="routesEvaluators">
-      <map>
-        <entry key="route-1">
-          <list>
-            <bean class="org.apache.camel.impl.health.RoutePerformanceCounterEvaluators.ExchangesInflight">
-              <constructor-arg value="10"/>
-            </bean>
-          </list>
-        </entry>
-      </map>
-    </property>
-  </bean>
+  <bean id="hc-repo-routes" class="org.apache.camel.impl.health.RoutesHealthCheckRepository"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route id="foo">
+      <from uri="direct:start"/>
+      <to uri="mock:foo"/>
+    </route>
+    <route id="bar">
+      <from uri="direct:start2"/>
+      <to uri="mock:bar"/>
+    </route>
   </camelContext>
 
 </beans>

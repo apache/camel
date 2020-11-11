@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.bigquery;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -81,23 +82,23 @@ public class GoogleBigQueryConnectionFactory {
         GoogleCredential credential = null;
 
         if (!Strings.isNullOrEmpty(serviceAccount) && !Strings.isNullOrEmpty(serviceAccountKey)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Service Account and Key have been set explicitly. Initialising BigQuery using Service Account " + serviceAccount);
-            }
+            logger.debug("Service Account and Key have been set explicitly. Initialising BigQuery using Service Account {}",
+                    serviceAccount);
+
             credential = createFromAccountKeyPair(httpTransport);
         }
 
         if (credential == null && !Strings.isNullOrEmpty(credentialsFileLocation)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Key File Name has been set explicitly. Initialising BigQuery using Key File " + credentialsFileLocation);
-            }
+            logger.debug("Key File Name has been set explicitly. Initialising BigQuery using Key File {}",
+                    credentialsFileLocation);
+
             credential = createFromFile();
         }
 
         if (credential == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No explicit Service Account or Key File Name have been provided. Initialising BigQuery using defaults ");
-            }
+            logger.debug(
+                    "No explicit Service Account or Key File Name have been provided. Initialising BigQuery using defaults");
+
             credential = createDefault();
         }
 
@@ -113,14 +114,15 @@ public class GoogleBigQueryConnectionFactory {
     }
 
     private GoogleCredential createFromFile() throws Exception {
+        try (InputStream is = new FileInputStream(credentialsFileLocation)) {
+            GoogleCredential credential = GoogleCredential.fromStream(is);
 
-        GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(credentialsFileLocation));
+            if (credential.createScopedRequired()) {
+                credential = credential.createScoped(BigqueryScopes.all());
+            }
 
-        if (credential.createScopedRequired()) {
-            credential = credential.createScoped(BigqueryScopes.all());
+            return credential;
         }
-
-        return credential;
     }
 
     private GoogleCredential createDefault() throws Exception {
@@ -153,15 +155,15 @@ public class GoogleBigQueryConnectionFactory {
         PrivateKey privateKey;
         try {
             String privKeyPEM = serviceKeyPem.replace("-----BEGIN PRIVATE KEY-----", "")
-                                             .replace("-----END PRIVATE KEY-----", "")
-                                             .replace("\r", "")
-                                             .replace("\n", "");
+                    .replace("-----END PRIVATE KEY-----", "")
+                    .replace("\r", "")
+                    .replace("\n", "");
 
             byte[] encoded = Base64.decodeBase64(privKeyPEM);
 
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encoded);
             privateKey = KeyFactory.getInstance("RSA")
-                                   .generatePrivate(keySpec);
+                    .generatePrivate(keySpec);
         } catch (Exception e) {
             String error = "Constructing Private Key from PEM string failed: " + e.getMessage();
             logger.error(error, e);

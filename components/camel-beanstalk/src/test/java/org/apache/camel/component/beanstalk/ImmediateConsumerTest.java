@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.atLeast;
@@ -30,11 +32,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisabledOnOs(OS.WINDOWS)
 public class ImmediateConsumerTest extends BeanstalkMockTestSupport {
-    String testMessage = "hello, world";
+    final String testMessage = "hello, world";
     boolean shouldIdie;
 
-    Processor processor = new Processor() {
+    final Processor processor = new Processor() {
         @Override
         public void process(Exchange exchange) throws InterruptedException {
             if (shouldIdie) {
@@ -44,10 +47,7 @@ public class ImmediateConsumerTest extends BeanstalkMockTestSupport {
     };
 
     @Test
-    public void testDeleteOnSuccess() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+    void testDeleteOnSuccess() throws Exception {
 
         final Job jobMock = mock(Job.class);
         final long jobId = 111;
@@ -71,7 +71,7 @@ public class ImmediateConsumerTest extends BeanstalkMockTestSupport {
     }
 
     @Test
-    public void testDeleteOnFailure() throws Exception {
+    void testDeleteOnFailure() throws Exception {
         shouldIdie = true;
         final long jobId = 111;
         final byte[] payload = Helper.stringToBytes(testMessage);

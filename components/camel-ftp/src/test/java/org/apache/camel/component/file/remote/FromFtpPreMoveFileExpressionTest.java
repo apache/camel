@@ -36,7 +36,7 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&delay=5000"
-                + "&preMove=../inprogress/${file:name.noext}.bak";
+               + "&preMove=../inprogress/${file:name.noext}.bak";
     }
 
     @Override
@@ -56,7 +56,8 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
@@ -71,7 +72,7 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
         File file = new File(FTP_ROOT_DIR + "/movefile/hello.txt");
         assertTrue(file.exists(), "The file should exists");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

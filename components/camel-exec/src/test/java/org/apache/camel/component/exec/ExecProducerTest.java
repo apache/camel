@@ -17,6 +17,7 @@
 package org.apache.camel.component.exec;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,27 +27,27 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.exec.impl.ExecCommandExecutorMock;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_TIMEOUT;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_WORKING_DIR;
-import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test the functionality of {@link ExecProducer}
  */
-@ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
-public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+@ContextConfiguration(locations = { "exec-mock-executor-context.xml" })
+public class ExecProducerTest {
 
     @Produce("direct:input")
     private ProducerTemplate producerTemplate;
@@ -84,7 +85,7 @@ public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
     @Test
     @DirtiesContext
     public void testOverrideArgs() {
-        final String[] args = {"-version", "classpath:c:/program files/test/"};
+        final String[] args = { "-version", "classpath:c:/program files/test/" };
         producerTemplate.send(new Processor() {
 
             public void process(Exchange exchange) throws Exception {
@@ -115,21 +116,22 @@ public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
     @DirtiesContext
     public void testInputLines() throws IOException {
         // String must be convertible to InputStream
-        final String input = "line1" + LINE_SEPARATOR + "line2";
+        final String input = "line1" + System.lineSeparator() + "line2";
         producerTemplate.send(new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(input);
             }
         });
-        assertEquals(input, IOUtils.toString(execCommandExecutorMock.lastCommandResult.getCommand().getInput()));
+        assertEquals(input,
+                IOUtils.toString(execCommandExecutorMock.lastCommandResult.getCommand().getInput(), Charset.defaultCharset()));
     }
 
     @Test
     @DirtiesContext
     public void testInputLinesNotConvertibleToInputStream() throws IOException {
         // String must be convertible to InputStream
-        final Integer notConvertibleToInputStreamBody = new Integer(1);
+        final Integer notConvertibleToInputStreamBody = Integer.valueOf(1);
         Exchange e = producerTemplate.send(new Processor() {
 
             public void process(Exchange exchange) throws Exception {
@@ -140,7 +142,7 @@ public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
         assertNotNull(result);
         assertNull(result.getCommand().getInput());
     }
-    
+
     @Test
     @DirtiesContext
     public void testNullInBody() throws IOException {
@@ -194,7 +196,7 @@ public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
             }
         });
         // test the conversion
-        ExecResult result = exchange.getOut().getBody(ExecResult.class);
+        ExecResult result = exchange.getMessage().getBody(ExecResult.class);
         assertNotNull(result);
     }
 }

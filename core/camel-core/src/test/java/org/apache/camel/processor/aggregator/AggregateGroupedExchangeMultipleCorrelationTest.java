@@ -23,7 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -81,12 +83,12 @@ public class AggregateGroupedExchangeMultipleCorrelationTest extends ContextTest
                 // our route is aggregating from the direct queue and sending
                 // the response to the mock
                 from("direct:start")
-                    // aggregate all using the foo header and group the
-                    // exchanges so we get one single exchange containing all
-                    // the others
-                    .aggregate(header("foo"), new GroupedExchangeAggregationStrategy())
-                    // wait for 1 seconds to aggregate
-                    .completionTimeout(1000L).to("mock:result");
+                        // aggregate all using the foo header and group the
+                        // exchanges so we get one single exchange containing all
+                        // the others
+                        .aggregate(header("foo"), new GroupedExchangeAggregationStrategy())
+                        // wait for 1 seconds to aggregate
+                        .completionTimeout(1000L).to("mock:result");
                 // END SNIPPET: e1
             }
         };

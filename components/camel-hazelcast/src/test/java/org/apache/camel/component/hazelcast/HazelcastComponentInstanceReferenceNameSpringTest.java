@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HazelcastComponentInstanceReferenceNameSpringTest extends HazelcastCamelSpringTestSupport {
 
     private static final String TEST_VALUE = "TestValue";
     private static final String TEST_KEY = "TestKey";
-
 
     @Test
     public void testComparePutAndGet() {
@@ -41,8 +42,6 @@ public class HazelcastComponentInstanceReferenceNameSpringTest extends Hazelcast
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                "/META-INF/spring/test-camel-context-hazelcast-instance-name-reference.xml"
-        );
+                "/META-INF/spring/test-camel-context-hazelcast-instance-name-reference.xml");
     }
 }
-

@@ -36,10 +36,10 @@ import javax.mail.search.SearchTerm;
 import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * JavaMail specific converters.
@@ -56,8 +56,7 @@ public final class MailConverters {
     }
 
     /**
-     * Converts the given JavaMail message to a String body.
-     * Can return null.
+     * Converts the given JavaMail message to a String body. Can return null.
      */
     @Converter
     public static String toString(Message message) throws MessagingException, IOException {
@@ -76,8 +75,8 @@ public final class MailConverters {
     }
 
     /**
-     * Converts the given JavaMail multipart to a String body, where the content-type of the multipart
-     * must be text based (ie start with text). Can return null.
+     * Converts the given JavaMail multipart to a String body, where the content-type of the multipart must be text
+     * based (ie start with text). Can return null.
      */
     @Converter
     public static String toString(Multipart multipart) throws MessagingException, IOException {
@@ -89,10 +88,12 @@ public final class MailConverters {
                 if (multipart.getCount() < 1) {
                     break;
                 }
-                part = ((MimeMultipart)content).getBodyPart(0);
+                part = ((MimeMultipart) content).getBodyPart(0);
                 content = part.getContent();
             }
-            if (part.getContentType().toLowerCase().startsWith("text")) {
+            // Perform a case insensitive "startsWith" check that works for different locales
+            String prefix = "text";
+            if (part.getContentType().regionMatches(true, 0, prefix, 0, prefix.length())) {
                 return part.getContent().toString();
             }
         }
@@ -108,8 +109,8 @@ public final class MailConverters {
     }
 
     /**
-     * Converts the given JavaMail multipart to a InputStream body, where the content-type of the multipart
-     * must be text based (ie start with text). Can return null.
+     * Converts the given JavaMail multipart to a InputStream body, where the content-type of the multipart must be text
+     * based (ie start with text). Can return null.
      */
     @Converter
     public static InputStream toInputStream(Multipart multipart, Exchange exchange) throws IOException, MessagingException {
@@ -121,15 +122,16 @@ public final class MailConverters {
     }
 
     /**
-     * Converts a JavaMail multipart into a body of any type a String can be
-     * converted into. The content-type of the part must be text based.
+     * Converts a JavaMail multipart into a body of any type a String can be converted into. The content-type of the
+     * part must be text based.
      */
     @Converter(fallback = true)
-    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws MessagingException, IOException {
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry)
+            throws MessagingException, IOException {
         if (Multipart.class.isAssignableFrom(value.getClass())) {
             TypeConverter tc = registry.lookup(type, String.class);
             if (tc != null) {
-                String s = toString((Multipart)value);
+                String s = toString((Multipart) value);
                 if (s != null) {
                     return tc.convertTo(type, s);
                 }
@@ -143,7 +145,7 @@ public final class MailConverters {
      *
      * This should not be a @Converter method
      */
-    public static SearchTerm toSearchTerm(SimpleSearchTerm simple, TypeConverter typeConverter) throws ParseException, NoTypeConversionAvailableException {
+    public static SearchTerm toSearchTerm(SimpleSearchTerm simple) throws ParseException {
         SearchTermBuilder builder = new SearchTermBuilder();
         if (simple.isUnseen()) {
             builder = builder.unseen();
@@ -170,7 +172,7 @@ public final class MailConverters {
         if (simple.getFromSentDate() != null) {
             String s = simple.getFromSentDate();
             if (s.startsWith("now")) {
-                long offset = extractOffset(s, typeConverter);
+                long offset = extractOffset(s);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.GE.asNum(), true, offset));
             } else {
                 SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
@@ -181,7 +183,7 @@ public final class MailConverters {
         if (simple.getToSentDate() != null) {
             String s = simple.getToSentDate();
             if (s.startsWith("now")) {
-                long offset = extractOffset(s, typeConverter);
+                long offset = extractOffset(s);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.LE.asNum(), true, offset));
             } else {
                 SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
@@ -192,7 +194,7 @@ public final class MailConverters {
         if (simple.getFromReceivedDate() != null) {
             String s = simple.getFromReceivedDate();
             if (s.startsWith("now")) {
-                long offset = extractOffset(s, typeConverter);
+                long offset = extractOffset(s);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.GE.asNum(), false, offset));
             } else {
                 SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
@@ -203,7 +205,7 @@ public final class MailConverters {
         if (simple.getToReceivedDate() != null) {
             String s = simple.getToReceivedDate();
             if (s.startsWith("now")) {
-                long offset = extractOffset(s, typeConverter);
+                long offset = extractOffset(s);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.LE.asNum(), false, offset));
             } else {
                 SimpleDateFormat sdf = new SimpleDateFormat(NOW_DATE_FORMAT);
@@ -221,13 +223,13 @@ public final class MailConverters {
      */
     public static SortTerm[] toSortTerm(String sortTerm) {
         ArrayList<SortTerm> result = new ArrayList<>();
-        
+
         if (sortTerm == null) {
             return null;
         }
-        
+
         String[] sortTerms = sortTerm.split(",");
-        for (String key : sortTerms) {          
+        for (String key : sortTerms) {
             if ("arrival".equals(key)) {
                 result.add(SortTerm.ARRIVAL);
             } else if ("cc".equals(key)) {
@@ -246,14 +248,14 @@ public final class MailConverters {
                 result.add(SortTerm.TO);
             }
         }
-        if (result.size() > 0) {
+        if (!result.isEmpty()) {
             return result.toArray(new SortTerm[result.size()]);
         } else {
             return null;
         }
     }
-    
-    private static long extractOffset(String now, TypeConverter typeConverter) throws NoTypeConversionAvailableException {
+
+    private static long extractOffset(String now) {
         Matcher matcher = NOW_PATTERN.matcher(now);
         if (matcher.matches()) {
             String op = matcher.group(1);
@@ -261,7 +263,7 @@ public final class MailConverters {
 
             // convert remainder to a time millis (eg we have a String -> long converter that supports
             // syntax with hours, days, minutes: eg 5h30m for 5 hours and 30 minutes).
-            long offset = typeConverter.mandatoryConvertTo(long.class, remainder);
+            long offset = TimeUtils.toMilliSeconds(remainder);
 
             if ("+".equals(op)) {
                 return offset;

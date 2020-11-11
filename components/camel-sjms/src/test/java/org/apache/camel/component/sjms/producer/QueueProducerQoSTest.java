@@ -25,8 +25,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class QueueProducerQoSTest extends JmsTestSupport {
 
@@ -41,10 +44,11 @@ public class QueueProducerQoSTest extends JmsTestSupport {
 
     @Test
     public void testInOutQueueProducerTTL() throws Exception {
-        Assume.assumeFalse(externalAmq);
+        assumeFalse(externalAmq);
         mockExpiredAdvisory.expectedMessageCount(1);
 
-        String endpoint = String.format("sjms:queue:%s?ttl=1000&exchangePattern=InOut&responseTimeOut=500", TEST_INOUT_DESTINATION_NAME);
+        String endpoint = String.format("sjms:queue:%s?ttl=1000&exchangePattern=InOut&responseTimeOut=500",
+                TEST_INOUT_DESTINATION_NAME);
 
         try {
             template.requestBody(endpoint, "test message");
@@ -58,13 +62,13 @@ public class QueueProducerQoSTest extends JmsTestSupport {
         assertMockEndpointsSatisfied();
 
         DestinationViewMBean queue = getQueueMBean(TEST_INOUT_DESTINATION_NAME);
-        assertEquals("There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME,
-                0, queue.getQueueSize());
+        assertEquals(0, queue.getQueueSize(),
+                "There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME);
     }
 
     @Test
     public void testInOnlyQueueProducerTTL() throws Exception {
-        Assume.assumeFalse(externalAmq);
+        assumeFalse(externalAmq);
         mockExpiredAdvisory.expectedMessageCount(1);
 
         String endpoint = String.format("sjms:queue:%s?ttl=1000", TEST_INONLY_DESTINATION_NAME);
@@ -73,8 +77,8 @@ public class QueueProducerQoSTest extends JmsTestSupport {
         assertMockEndpointsSatisfied();
 
         DestinationViewMBean queue = getQueueMBean(TEST_INONLY_DESTINATION_NAME);
-        assertEquals("There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME,
-                0, queue.getQueueSize());
+        assertEquals(0, queue.getQueueSize(),
+                "There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME);
     }
 
     @Override

@@ -19,8 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
@@ -74,7 +74,7 @@ public class ChoiceTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -88,7 +88,8 @@ public class ChoiceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice().when().xpath("$foo = 'bar'").to("mock:x").when().xpath("$foo = 'cheese'").to("mock:y").otherwise().to("mock:z").end().to("mock:end");
+                from("direct:start").choice().when().xpath("$foo = 'bar'").to("mock:x").when().xpath("$foo = 'cheese'")
+                        .to("mock:y").otherwise().to("mock:z").end().to("mock:end");
             }
         };
     }

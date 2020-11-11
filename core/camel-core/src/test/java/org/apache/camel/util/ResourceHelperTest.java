@@ -33,7 +33,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.ResourceHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -45,7 +47,8 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:src/test/resources/log4j2.properties");
+        InputStream is
+                = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:src/test/resources/log4j2.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -64,7 +67,8 @@ public class ResourceHelperTest extends TestSupport {
         createDirectory("target/data/my space");
         FileUtil.copyFile(new File("src/test/resources/log4j2.properties"), new File("target/data/my space/log4j2.properties"));
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:target/data/my%20space/log4j2.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context,
+                "file:target/data/my%20space/log4j2.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
@@ -123,7 +127,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertEquals(text, "a");
+        assertEquals("a", text);
         is.close();
 
         context.stop();
@@ -142,7 +146,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertEquals(text, "a");
+        assertEquals("a", text);
         is.close();
 
         context.stop();
@@ -161,7 +165,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertEquals(text, "a");
+        assertEquals("a", text);
         is.close();
 
         context.stop();
@@ -207,7 +211,8 @@ public class ResourceHelperTest extends TestSupport {
             ResourceHelper.resolveMandatoryResourceAsInputStream(context, "classpath:notfound.txt");
             fail("Should not find file");
         } catch (FileNotFoundException e) {
-            assertEquals("Cannot find resource: classpath:notfound.txt in classpath for URI: classpath:notfound.txt", e.getMessage());
+            assertEquals("Cannot find resource: classpath:notfound.txt in classpath for URI: classpath:notfound.txt",
+                    e.getMessage());
         }
 
         context.stop();
@@ -218,7 +223,8 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(), "file:src/test/resources/log4j2.properties");
+        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(context.getClassResolver(),
+                "file:src/test/resources/log4j2.properties");
         assertNotNull(url);
 
         String text = context.getTypeConverter().convertTo(String.class, url);
@@ -320,6 +326,18 @@ public class ResourceHelperTest extends TestSupport {
     }
 
     @Test
+    public void testIsClasspath() throws Exception {
+        assertFalse(ResourceHelper.isClasspathUri("direct:foo"));
+        assertFalse(ResourceHelper.isClasspathUri("file:foo/bar.properties"));
+        assertFalse(ResourceHelper.isClasspathUri("http://camel.apache.org"));
+        assertFalse(ResourceHelper.isClasspathUri(""));
+        assertFalse(ResourceHelper.isClasspathUri(null));
+
+        assertTrue(ResourceHelper.isClasspathUri("classpath:foo/bar.properties"));
+        assertTrue(ResourceHelper.isClasspathUri("foo/bar.properties"));
+    }
+
+    @Test
     public void testGetScheme() throws Exception {
         assertEquals("file:", ResourceHelper.getScheme("file:myfile.txt"));
         assertEquals("classpath:", ResourceHelper.getScheme("classpath:myfile.txt"));
@@ -335,7 +353,8 @@ public class ResourceHelperTest extends TestSupport {
         params.put("bar", "yes");
 
         // should clear the map after usage
-        assertEquals("http://localhost:8080/data?foo=123&bar=yes", ResourceHelper.appendParameters("http://localhost:8080/data", params));
+        assertEquals("http://localhost:8080/data?foo=123&bar=yes",
+                ResourceHelper.appendParameters("http://localhost:8080/data", params));
         assertEquals(0, params.size());
     }
 

@@ -19,8 +19,8 @@ package org.apache.camel.test.spring;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.interceptor.BreakpointSupport;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.test.spring.junit5.ProvidesBreakpoint;
 import org.junit.jupiter.api.Test;
 
@@ -42,17 +42,17 @@ public class CamelSpringProvidesBreakpointTest
         assertNotNull(camelContext.getDebugger());
 
         start.sendBody("David");
-        
+
         assertNotNull(camelContext.getDebugger());
         assertNotNull(camelContext.getDebugger().getBreakpoints());
         assertEquals(1, camelContext.getDebugger().getBreakpoints().size());
-        
+
         assertTrue(camelContext.getDebugger().getBreakpoints().get(0) instanceof TestBreakpoint);
         assertTrue(((TestBreakpoint) camelContext.getDebugger().getBreakpoints().get(0)).isBreakpointHit());
     }
 
     private static final class TestBreakpoint extends BreakpointSupport {
-        
+
         private boolean breakpointHit;
 
         @Override

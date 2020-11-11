@@ -22,7 +22,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SetExchangePatternTest extends ContextTestSupport {
 
@@ -105,17 +108,18 @@ public class SetExchangePatternTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    protected void assertMessageReceivedWithPattern(String sendUri, ExchangePattern expectedPattern) throws InterruptedException {
+    protected void assertMessageReceivedWithPattern(String sendUri, ExchangePattern expectedPattern)
+            throws InterruptedException {
         ExchangePattern sendPattern;
         switch (expectedPattern) {
-        case InOut:
-            sendPattern = ExchangePattern.InOnly;
-            break;
-        case InOnly:
-            sendPattern = ExchangePattern.InOut;
-            break;
-        default:
-            sendPattern = ExchangePattern.InOnly;
+            case InOut:
+                sendPattern = ExchangePattern.InOnly;
+                break;
+            case InOnly:
+                sendPattern = ExchangePattern.InOut;
+                break;
+            default:
+                sendPattern = ExchangePattern.InOnly;
         }
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -126,7 +130,7 @@ public class SetExchangePatternTest extends ContextTestSupport {
         template.sendBodyAndHeader(sendUri, sendPattern, expectedBody, "foo", "bar");
         resultEndpoint.assertIsSatisfied();
         ExchangePattern actualPattern = resultEndpoint.getExchanges().get(0).getPattern();
-        assertEquals("received exchange pattern", actualPattern, expectedPattern);
+        assertEquals(actualPattern, expectedPattern, "received exchange pattern");
     }
 
     @Override
@@ -135,10 +139,10 @@ public class SetExchangePatternTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 // Send to an endpoint using InOut
-                from("direct:testInOut").inOut("mock:result");
+                from("direct:testInOut").to(ExchangePattern.InOut, "mock:result");
 
                 // Send to an endpoint using InOut
-                from("direct:testInOnly").inOnly("mock:result");
+                from("direct:testInOnly").to(ExchangePattern.InOnly, "mock:result");
 
                 // Set the exchange pattern to InOut, then send it from
                 // direct:inOnly to mock:result endpoint

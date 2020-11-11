@@ -123,7 +123,8 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
                         hits = 0L;
                     }
 
-                    CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "hits"}, new Object[]{url, hits});
+                    CompositeData data
+                            = new CompositeDataSupport(ct, new String[] { "url", "hits" }, new Object[] { url, hits });
                     answer.put(data);
                 }
             }

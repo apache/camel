@@ -21,8 +21,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Body;
 import org.apache.camel.Handler;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class JaxbErrorLogTest extends CamelTestSupport {
 
@@ -45,8 +45,8 @@ public class JaxbErrorLogTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:test")
-                    .bean(new FailingBean())
-                    .to("log:end", "mock:end");
+                        .bean(new FailingBean())
+                        .to("log:end", "mock:end");
             }
         };
     }

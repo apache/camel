@@ -21,7 +21,9 @@ import javax.xml.transform.TransformerConfigurationException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XsltRouteXsltWithErrorTest extends ContextTestSupport {
 

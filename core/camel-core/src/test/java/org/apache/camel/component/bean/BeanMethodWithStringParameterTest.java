@@ -19,8 +19,8 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -28,8 +28,8 @@ import org.junit.Test;
 public class BeanMethodWithStringParameterTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myBean", new MyBean());
         return jndi;
     }
@@ -67,7 +67,7 @@ public class BeanMethodWithStringParameterTest extends ContextTestSupport {
     public static final class MyBean {
 
         public static String doSomething(String name, int repeat) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < repeat; i++) {
                 sb.append(name);
             }

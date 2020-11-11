@@ -19,10 +19,17 @@ package org.apache.camel.itest.doc;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GroovyLanguageConfigurationAndDocumentationTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GroovyLanguageConfigurationAndDocumentationTest.class);
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -30,15 +37,15 @@ public class GroovyLanguageConfigurationAndDocumentationTest extends CamelTestSu
     }
 
     @Test
-    public void testLanguageJsonSchema() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String json = context.adapt(CatalogCamelContext.class).getLanguageParameterJsonSchema("groovy");
-        assertNotNull("Should have found some auto-generated JSON", json);
-        log.info(json);
+    void testLanguageJsonSchema() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String json = context.adapt(CatalogCamelContext.class).getLanguageParameterJsonSchema("groovy");
+            assertNotNull(json, "Should have found some auto-generated JSON");
+            LOG.info(json);
 
-        assertTrue(json.contains("\"name\": \"groovy\""));
-        assertTrue(json.contains("\"modelName\": \"groovy\""));
+            assertTrue(json.contains("\"name\": \"groovy\""));
+            assertTrue(json.contains("\"modelName\": \"groovy\""));
+        }
     }
 
 }
-

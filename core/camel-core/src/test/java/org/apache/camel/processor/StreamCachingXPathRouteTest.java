@@ -20,7 +20,7 @@ import java.io.ByteArrayInputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StreamCachingXPathRouteTest extends ContextTestSupport {
 
@@ -45,7 +45,8 @@ public class StreamCachingXPathRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setStreamCaching(true);
 
-                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo")).to("mock:dutch", "mock:german").otherwise().to("mock:french");
+                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo"))
+                        .to("mock:dutch", "mock:german").otherwise().to("mock:french");
             }
         };
     }

@@ -75,7 +75,7 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
         context.getRouteController().startRoute("myRoute");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         // and the out file should exists
         File out = new File("target/out/hello.txt");
@@ -95,8 +95,7 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).routeId("myRoute").noAutoStartup()
-                    .to("mock:result", "file://target/out");
+                from(getFtpUrl()).routeId("myRoute").noAutoStartup().to("mock:result", "file://target/out");
             }
         };
     }

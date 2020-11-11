@@ -19,13 +19,13 @@ package org.apache.camel.component.cxf.holder;
 import org.apache.camel.builder.RouteBuilder;
 
 public class CXFHolderRouteTest extends CxfHolderConsumerTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from(CXF_ENDPOINT_URI).wireTap("seda:tap").process(new MyProcessor());
-                
+
                 from("seda:tap").to("log:myEndpoint");
             }
         };

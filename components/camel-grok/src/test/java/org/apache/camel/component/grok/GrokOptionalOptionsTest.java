@@ -20,12 +20,19 @@ import java.util.List;
 import java.util.Map;
 
 import io.krakens.grok.api.exception.GrokException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrokOptionalOptionsTest extends CamelTestSupport {
     @Override
@@ -63,38 +70,35 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
     @SuppressWarnings("unchecked")
     public void testFlattened() throws Exception {
         Map<String, Object> flattenedFalse = template.requestBody("direct:flattenedFalse", "123 456", Map.class);
-        Assert.assertNotNull(flattenedFalse);
-        Assert.assertTrue(flattenedFalse.containsKey("i"));
-        Assert.assertTrue(flattenedFalse.get("i") instanceof List);
-        Assert.assertEquals("123", ((List)flattenedFalse.get("i")).get(0));
-        Assert.assertEquals("456", ((List)flattenedFalse.get("i")).get(1));
+        assertNotNull(flattenedFalse);
+        assertTrue(flattenedFalse.containsKey("i"));
+        assertTrue(flattenedFalse.get("i") instanceof List);
+        assertEquals("123", ((List) flattenedFalse.get("i")).get(0));
+        assertEquals("456", ((List) flattenedFalse.get("i")).get(1));
 
-        try {
-            template.requestBody("direct:flattenedTrue", "1 2");
-            Assert.fail("Should throw exception");
-        } catch (Exception e) {
-            Assert.assertNotNull(e.getCause());
-            Assert.assertTrue("Should throw GrokException", e.getCause() instanceof GrokException);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:flattenedTrue", "1 2"));
+        assertIsInstanceOf(GrokException.class, e.getCause());
     }
-
 
     @Test
     @SuppressWarnings("unchecked")
     public void testNamedOnly() throws Exception {
-        Map<String, Object> namedOnlyTrue = template.requestBody("direct:namedOnlyTrue", "https://github.com/apache/camel", Map.class);
-        Assert.assertNotNull(namedOnlyTrue);
-        Assert.assertEquals("https://github.com/apache/camel", namedOnlyTrue.get("website"));
-        Assert.assertFalse(namedOnlyTrue.containsKey("URIPROTO"));
-        Assert.assertFalse(namedOnlyTrue.containsKey("URIHOST"));
-        Assert.assertFalse(namedOnlyTrue.containsKey("URIPATHPARAM"));
+        Map<String, Object> namedOnlyTrue
+                = template.requestBody("direct:namedOnlyTrue", "https://github.com/apache/camel", Map.class);
+        assertNotNull(namedOnlyTrue);
+        assertEquals("https://github.com/apache/camel", namedOnlyTrue.get("website"));
+        assertFalse(namedOnlyTrue.containsKey("URIPROTO"));
+        assertFalse(namedOnlyTrue.containsKey("URIHOST"));
+        assertFalse(namedOnlyTrue.containsKey("URIPATHPARAM"));
 
-        Map<String, Object> namedOnlyFalse = template.requestBody("direct:namedOnlyFalse", "https://github.com/apache/camel", Map.class);
-        Assert.assertNotNull(namedOnlyFalse);
-        Assert.assertEquals("https://github.com/apache/camel", namedOnlyFalse.get("website"));
-        Assert.assertEquals("https", namedOnlyFalse.get("URIPROTO"));
-        Assert.assertEquals("github.com", namedOnlyFalse.get("URIHOST"));
-        Assert.assertEquals("/apache/camel", namedOnlyFalse.get("URIPATHPARAM"));
+        Map<String, Object> namedOnlyFalse
+                = template.requestBody("direct:namedOnlyFalse", "https://github.com/apache/camel", Map.class);
+        assertNotNull(namedOnlyFalse);
+        assertEquals("https://github.com/apache/camel", namedOnlyFalse.get("website"));
+        assertEquals("https", namedOnlyFalse.get("URIPROTO"));
+        assertEquals("github.com", namedOnlyFalse.get("URIHOST"));
+        assertEquals("/apache/camel", namedOnlyFalse.get("URIPATHPARAM"));
     }
 
     @Test
@@ -104,20 +108,20 @@ public class GrokOptionalOptionsTest extends CamelTestSupport {
                 "direct:allowMultipleMatchesPerLineTrue",
                 "1 2 \n 3",
                 List.class);
-        Assert.assertNotNull(allowMultipleMatchesPerLineTrue);
-        Assert.assertEquals(3, allowMultipleMatchesPerLineTrue.size());
-        Assert.assertEquals("1", allowMultipleMatchesPerLineTrue.get(0).get("i"));
-        Assert.assertEquals("2", allowMultipleMatchesPerLineTrue.get(1).get("i"));
-        Assert.assertEquals("3", allowMultipleMatchesPerLineTrue.get(2).get("i"));
+        assertNotNull(allowMultipleMatchesPerLineTrue);
+        assertEquals(3, allowMultipleMatchesPerLineTrue.size());
+        assertEquals("1", allowMultipleMatchesPerLineTrue.get(0).get("i"));
+        assertEquals("2", allowMultipleMatchesPerLineTrue.get(1).get("i"));
+        assertEquals("3", allowMultipleMatchesPerLineTrue.get(2).get("i"));
 
         List<Map<String, Object>> allowMultipleMatchesPerLineFalse = template.requestBody(
                 "direct:allowMultipleMatchesPerLineFalse",
                 "1 2 \n 3",
                 List.class);
-        Assert.assertNotNull(allowMultipleMatchesPerLineFalse);
-        Assert.assertEquals(2, allowMultipleMatchesPerLineFalse.size());
-        Assert.assertEquals("1", allowMultipleMatchesPerLineFalse.get(0).get("i"));
-        Assert.assertEquals("3", allowMultipleMatchesPerLineFalse.get(1).get("i"));
+        assertNotNull(allowMultipleMatchesPerLineFalse);
+        assertEquals(2, allowMultipleMatchesPerLineFalse.size());
+        assertEquals("1", allowMultipleMatchesPerLineFalse.get(0).get("i"));
+        assertEquals("3", allowMultipleMatchesPerLineFalse.get(1).get("i"));
 
     }
 }

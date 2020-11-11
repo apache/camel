@@ -22,9 +22,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java class for address complex type.
+ * <p>
+ * Java class for address complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="address">
@@ -41,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "address", propOrder = {"addressLine1", "addressLine2"})
+@XmlType(name = "address", propOrder = { "addressLine1", "addressLine2" })
 public class Address {
 
     @XmlElement(required = true)
@@ -51,10 +53,8 @@ public class Address {
     /**
      * Gets the value of the addressLine1 property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getAddressLine1() {
         return addressLine1;
@@ -63,10 +63,8 @@ public class Address {
     /**
      * Sets the value of the addressLine1 property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setAddressLine1(String value) {
         this.addressLine1 = value;
@@ -75,10 +73,8 @@ public class Address {
     /**
      * Gets the value of the addressLine2 property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getAddressLine2() {
         return addressLine2;
@@ -87,10 +83,8 @@ public class Address {
     /**
      * Sets the value of the addressLine2 property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setAddressLine2(String value) {
         this.addressLine2 = value;

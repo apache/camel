@@ -39,32 +39,38 @@ import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import org.glassfish.jersey.media.sse.EventInput;
 import org.glassfish.jersey.media.sse.InboundEvent;
 import org.glassfish.jersey.media.sse.SseFeature;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * check if soroush BOT Api work as expected
  */
-@Ignore("Need the token to work")
+@Disabled("Need the token to work")
 public class SoroushServiceTest {
     static String authorizationToken;
     static String receiverId;
     private static SoroushService soroushService;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         authorizationToken = System.getenv("soroushBotAuthorizationToken");
         receiverId = System.getenv("soroushBotReceiverId");
-        Assert.assertTrue("you need to define `soroushBotAuthorizationToken` and "
-                + "`soroushBotReceiverId` environment variable in order to do integration test ", authorizationToken != null && receiverId != null);
+        assertTrue(authorizationToken != null && receiverId != null,
+                "you need to define `soroushBotAuthorizationToken` and "
+                                                                     + "`soroushBotReceiverId` environment variable in order to do integration test ");
         soroushService = SoroushService.get();
         soroushService.setAlternativeUrl(null);
     }
 
     /**
-     * try to connect to soroush. if any problem occurs  an exception will throw and this test will fail.
+     * try to connect to soroush. if any problem occurs an exception will throw and this test will fail.
      */
     @Test
     public void connectToGetMessageEndPoint() {
@@ -73,19 +79,20 @@ public class SoroushServiceTest {
         WebTarget target = client.target(soroushService.generateUrl(authorizationToken, SoroushAction.getMessage, null));
         EventInput eventInput = target.request().get(EventInput.class);
         eventInput.setChunkType(MediaType.SERVER_SENT_EVENTS);
-        Assert.assertFalse(eventInput.isClosed());
+        assertFalse(eventInput.isClosed());
     }
 
     @Test
     public void canNotReadMessageDueToWrongAuthorizationToken() {
         Client client = ClientBuilder.newBuilder().register(SseFeature.class).build();
         client.property(ClientProperties.CONNECT_TIMEOUT, 2000);
-        WebTarget target = client.target(soroushService.generateUrl("bad_string" + authorizationToken, SoroushAction.getMessage, null));
+        WebTarget target
+                = client.target(soroushService.generateUrl("bad_string" + authorizationToken, SoroushAction.getMessage, null));
         EventInput eventInput = target.request().get(EventInput.class);
         eventInput.setChunkType(MediaType.SERVER_SENT_EVENTS);
-        Assert.assertFalse(eventInput.isClosed());
+        assertFalse(eventInput.isClosed());
         InboundEvent read = eventInput.read();
-        Assert.assertNull(read);
+        assertNull(read);
     }
 
     @Test
@@ -106,16 +113,18 @@ public class SoroushServiceTest {
         MultiPart multipart = new MultiPart();
         multipart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
         String fileData = "data";
-        multipart.bodyPart(new StreamDataBodyPart("file", new ByteArrayInputStream(fileData.getBytes()), null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+        multipart.bodyPart(new StreamDataBodyPart(
+                "file", new ByteArrayInputStream(fileData.getBytes()), null, MediaType.APPLICATION_OCTET_STREAM_TYPE));
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(multipart, multipart.getMediaType()));
         UploadFileResponse uploadFileResponse = soroushService.assertSuccessful(response, UploadFileResponse.class, null);
-        Assert.assertNotNull(uploadFileResponse.getFileUrl());
+        assertNotNull(uploadFileResponse.getFileUrl());
 
-        WebTarget downloadFileTarget = soroushService.createDownloadFileTarget(authorizationToken, uploadFileResponse.getFileUrl(), 2000);
+        WebTarget downloadFileTarget
+                = soroushService.createDownloadFileTarget(authorizationToken, uploadFileResponse.getFileUrl(), 2000);
         Response downloadResponse = downloadFileTarget.request().get();
         String remoteData = new String(IOUtils.readFully(downloadResponse.readEntity(InputStream.class), -1, false));
-        Assert.assertEquals("file contents are identical", fileData, remoteData);
+        assertEquals(fileData, remoteData, "file contents are identical");
 
     }
 }

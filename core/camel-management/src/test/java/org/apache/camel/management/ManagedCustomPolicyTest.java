@@ -24,10 +24,13 @@ import javax.management.ObjectName;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Policy;
-import org.apache.camel.spi.RouteContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedCustomPolicyTest extends ManagementTestSupport {
 
@@ -52,13 +55,13 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
         assertEquals(3, set.size());
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"foo\"");
-        assertTrue("Should be registered: foo",  mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered: foo");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"result\"");
-        assertTrue("Should be registered: result",  mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered: result");
 
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"bar\"");
-        assertTrue("Should be registered: bar",  mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered: bar");
     }
 
     @Override
@@ -68,12 +71,12 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 // custom policy but processors should be registered
                 from("direct:start").policy(new MyPolicy())
-                    .to("log:foo").id("foo")
-                    .to("mock:result").id("result");
+                        .to("log:foo").id("foo")
+                        .to("mock:result").id("result");
 
                 // no policy but processors should be registered
                 from("direct:bar")
-                    .to("log:bar").id("bar");
+                        .to("log:bar").id("bar");
             }
         };
     }
@@ -81,12 +84,12 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
     private final class MyPolicy implements Policy {
 
         @Override
-        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+        public void beforeWrap(Route route, NamedNode definition) {
             // noop
         }
 
         @Override
-        public Processor wrap(RouteContext routeContext, final Processor processor) {
+        public Processor wrap(Route route, final Processor processor) {
             return exchange -> {
                 counter.incrementAndGet();
                 processor.process(exchange);

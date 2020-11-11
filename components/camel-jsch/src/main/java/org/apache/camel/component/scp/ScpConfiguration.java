@@ -69,8 +69,8 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Sets the known_hosts file, so that the jsch endpoint can do host key verification.
-     * You can prefix with classpath: to load the file from classpath instead of file system.
+     * Sets the known_hosts file, so that the jsch endpoint can do host key verification. You can prefix with classpath:
+     * to load the file from classpath instead of file system.
      */
     public void setKnownHostsFile(String knownHostsFile) {
         this.knownHostsFile = knownHostsFile;
@@ -81,7 +81,8 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * If knownHostFile has not been explicit configured, then use the host file from System.getProperty("user.home") + "/.ssh/known_hosts"
+     * If knownHostFile has not been explicit configured, then use the host file from System.getProperty("user.home") +
+     * "/.ssh/known_hosts"
      */
     public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
         this.useUserKnownHostsFile = useUserKnownHostsFile;
@@ -92,20 +93,20 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file to that the endpoint can do private key verification.
-     * You can prefix with classpath: to load the file from classpath instead of file system.
+     * Set the private key file to that the endpoint can do private key verification. You can prefix with classpath: to
+     * load the file from classpath instead of file system.
      */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
-    }    
+    }
 
     public byte[] getPrivateKeyBytes() {
         return privateKeyBytes;
     }
 
     /**
-     * Set the private key bytes to that the endpoint can do private key verification.
-     * This must be used only if privateKeyFile wasn't set. Otherwise the file will have the priority.
+     * Set the private key bytes to that the endpoint can do private key verification. This must be used only if
+     * privateKeyFile wasn't set. Otherwise the file will have the priority.
      */
     public void setPrivateKeyBytes(byte[] privateKeyBytes) {
         this.privateKeyBytes = privateKeyBytes;
@@ -156,9 +157,10 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set a comma separated list of ciphers that will be used in order of preference.
-     * Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc.
-     * If not specified the default list from JSCH will be used.
+     * Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined
+     * by JCraft JSCH. Some examples include:
+     * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list
+     * from JSCH will be used.
      */
     public void setCiphers(String ciphers) {
         this.ciphers = ciphers;
@@ -169,9 +171,10 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set a comma separated list of authentications that will be used in order of preference.
-     * Possible authentication methods are defined by JCraft JSCH. Some examples include: gssapi-with-mic,publickey,keyboard-interactive,password
-     * If not specified the JSCH and/or system defaults will be used.
+     * Set a comma separated list of authentications that will be used in order of preference. Possible authentication
+     * methods are defined by JCraft JSCH. Some examples include:
+     * gssapi-with-mic,publickey,keyboard-interactive,password If not specified the JSCH and/or system defaults will be
+     * used.
      */
     public void setPreferredAuthentications(final String preferredAuthentications) {
         this.preferredAuthentications = preferredAuthentications;

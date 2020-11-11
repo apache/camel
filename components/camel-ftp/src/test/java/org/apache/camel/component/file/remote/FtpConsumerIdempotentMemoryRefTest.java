@@ -34,7 +34,7 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort()
-                + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&idempotentKey=${file:onlyname}&delete=true";
+               + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&idempotentKey=${file:onlyname}&delete=true";
     }
 
     @BindToRegistry("myRepo")
@@ -56,7 +56,7 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello E", "e.txt");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertEquals(5, repo.getCache().size());
         assertTrue(repo.contains("a.txt"));
@@ -78,18 +78,16 @@ public class FtpConsumerIdempotentMemoryRefTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello G", "g.txt");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         assertEquals(5, repo.getCache().size());
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl())
-                    .to("log:result")
-                    .to("mock:result");
+                from(getFtpUrl()).to("log:result").to("mock:result");
             }
         };
     }

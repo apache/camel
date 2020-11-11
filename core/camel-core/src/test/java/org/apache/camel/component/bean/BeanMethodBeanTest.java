@@ -19,7 +19,10 @@ package org.apache.camel.component.bean;
 import java.lang.reflect.Method;
 
 import org.apache.camel.TestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanMethodBeanTest extends TestSupport {
 

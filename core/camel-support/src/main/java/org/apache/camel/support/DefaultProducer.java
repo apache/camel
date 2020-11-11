@@ -21,11 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default implementation of {@link Producer} for implementation inheritance.
  */
 public abstract class DefaultProducer extends ServiceSupport implements Producer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultProducer.class);
 
     private transient String producerToString;
     private final Endpoint endpoint;
@@ -63,9 +67,9 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
     protected void doStart() throws Exception {
         // log at debug level for singletons, for prototype scoped log at trace level to not spam logs
         if (isSingleton()) {
-            log.debug("Starting producer: {}", this);
+            LOG.debug("Starting producer: {}", this);
         } else {
-            log.trace("Starting producer: {}", this);
+            LOG.trace("Starting producer: {}", this);
         }
     }
 
@@ -73,9 +77,9 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
     protected void doStop() throws Exception {
         // log at debug level for singletons, for prototype scoped log at trace level to not spam logs
         if (isSingleton()) {
-            log.debug("Stopping producer: {}", this);
+            LOG.debug("Stopping producer: {}", this);
         } else {
-            log.trace("Stopping producer: {}", this);
+            LOG.trace("Stopping producer: {}", this);
         }
     }
 }

@@ -33,11 +33,12 @@ import org.apache.camel.component.ignite.queue.IgniteQueueEndpoint;
 import org.apache.camel.component.ignite.queue.IgniteQueueOperation;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.configuration.CollectionConfiguration;
-import org.junit.After;
-import org.junit.Test;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
-import static com.google.common.truth.Truth.assert_;
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IgniteQueueTest extends AbstractIgniteTest {
 
     @Override
@@ -53,19 +54,19 @@ public class IgniteQueueTest extends AbstractIgniteTest {
     @Test
     public void testOperations() {
         boolean result = template.requestBody("ignite-queue:" + resourceUid + "?operation=ADD", "hello", boolean.class);
-        assert_().that(result).isTrue();
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains("hello")).isTrue();
+        Assertions.assertThat(result).isTrue();
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains("hello")).isTrue();
 
         result = template.requestBody("ignite-queue:" + resourceUid + "?operation=CONTAINS", "hello", boolean.class);
-        assert_().that(result).isTrue();
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains("hello")).isTrue();
+        Assertions.assertThat(result).isTrue();
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains("hello")).isTrue();
 
         result = template.requestBody("ignite-queue:" + resourceUid + "?operation=REMOVE", "hello", boolean.class);
-        assert_().that(result).isTrue();
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains("hello")).isFalse();
+        Assertions.assertThat(result).isTrue();
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains("hello")).isFalse();
 
         result = template.requestBody("ignite-queue:" + resourceUid + "?operation=CONTAINS", "hello", boolean.class);
-        assert_().that(result).isFalse();
+        Assertions.assertThat(result).isFalse();
     }
 
     @Test
@@ -77,8 +78,8 @@ public class IgniteQueueTest extends AbstractIgniteTest {
 
         // SIZE
         int size = template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(100);
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(100);
+        Assertions.assertThat(size).isEqualTo(100);
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(100);
 
         List<String> toRetain = Lists.newArrayList();
         for (int i = 0; i < 50; i++) {
@@ -86,32 +87,34 @@ public class IgniteQueueTest extends AbstractIgniteTest {
         }
 
         // RETAIN_ALL
-        boolean retained = template.requestBodyAndHeader("ignite-queue:" + resourceUid + "?operation=CLEAR", toRetain, IgniteConstants.IGNITE_QUEUE_OPERATION,
-                                                         IgniteQueueOperation.RETAIN_ALL, boolean.class);
-        assert_().that(retained).isTrue();
+        boolean retained = template.requestBodyAndHeader("ignite-queue:" + resourceUid + "?operation=CLEAR", toRetain,
+                IgniteConstants.IGNITE_QUEUE_OPERATION,
+                IgniteQueueOperation.RETAIN_ALL, boolean.class);
+        Assertions.assertThat(retained).isTrue();
 
         // SIZE
         size = template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(50);
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(50);
+        Assertions.assertThat(size).isEqualTo(50);
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(50);
 
         // ITERATOR
-        Iterator<String> iterator = template.requestBody("ignite-queue:" + resourceUid + "?operation=ITERATOR", "hello", Iterator.class);
-        assert_().that(Iterators.toArray(iterator, String.class)).asList().containsExactlyElementsIn(toRetain).inOrder();
+        Iterator<String> iterator
+                = template.requestBody("ignite-queue:" + resourceUid + "?operation=ITERATOR", "hello", Iterator.class);
+        Assertions.assertThat(Iterators.toArray(iterator, String.class)).containsExactlyElementsOf(toRetain);
 
         // ARRAY
         String[] array = template.requestBody("ignite-queue:" + resourceUid + "?operation=ARRAY", "hello", String[].class);
-        assert_().that(array).asList().containsExactlyElementsIn(toRetain).inOrder();
+        Assertions.assertThat(array).containsExactlyElementsOf(toRetain);
 
         // CLEAR
         Object result = template.requestBody("ignite-queue:" + resourceUid + "?operation=CLEAR", "hello", String.class);
-        assert_().that(result).isEqualTo("hello");
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(0);
+        Assertions.assertThat(result).isEqualTo("hello");
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(0);
 
         // SIZE
         size = template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(0);
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(0);
+        Assertions.assertThat(size).isEqualTo(0);
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(0);
     }
 
     @Test
@@ -121,12 +124,13 @@ public class IgniteQueueTest extends AbstractIgniteTest {
             template.requestBody("ignite-queue:" + resourceUid + "?operation=ADD", "hello" + i);
         }
 
-        boolean retained = template.requestBody("ignite-queue:" + resourceUid + "?operation=RETAIN_ALL", "hello10", boolean.class);
-        assert_().that(retained).isTrue();
+        boolean retained
+                = template.requestBody("ignite-queue:" + resourceUid + "?operation=RETAIN_ALL", "hello10", boolean.class);
+        Assertions.assertThat(retained).isTrue();
 
         // ARRAY
         String[] array = template.requestBody("ignite-queue:" + resourceUid + "?operation=ARRAY", "hello", String[].class);
-        assert_().that(array).asList().containsExactly("hello10");
+        Assertions.assertThat(array).containsExactly("hello10");
     }
 
     @Test
@@ -142,22 +146,24 @@ public class IgniteQueueTest extends AbstractIgniteTest {
 
         // Size must be 101, not 103.
         int size = template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(101);
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(101);
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains(toAdd)).isTrue();
+        Assertions.assertThat(size).isEqualTo(101);
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(101);
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains(toAdd)).isTrue();
 
         // Check whether the Set contains the Set.
-        boolean contains = template.requestBody("ignite-queue:" + resourceUid + "?operation=CONTAINS&treatCollectionsAsCacheObjects=true", toAdd, boolean.class);
-        assert_().that(contains).isTrue();
+        boolean contains = template.requestBody(
+                "ignite-queue:" + resourceUid + "?operation=CONTAINS&treatCollectionsAsCacheObjects=true", toAdd,
+                boolean.class);
+        Assertions.assertThat(contains).isTrue();
 
         // Delete the Set.
         template.requestBody("ignite-queue:" + resourceUid + "?operation=REMOVE&treatCollectionsAsCacheObjects=true", toAdd);
 
         // Size must be 100 again.
         size = template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE", "hello", int.class);
-        assert_().that(size).isEqualTo(100);
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(100);
-        assert_().that(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains(toAdd)).isFalse();
+        Assertions.assertThat(size).isEqualTo(100);
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).size()).isEqualTo(100);
+        Assertions.assertThat(ignite().queue(resourceUid, 0, new CollectionConfiguration()).contains(toAdd)).isFalse();
 
     }
 
@@ -168,11 +174,12 @@ public class IgniteQueueTest extends AbstractIgniteTest {
 
         context.getRegistry().bind("config", configuration);
 
-        IgniteQueueEndpoint igniteEndpoint = context.getEndpoint("ignite-queue:" + resourceUid + "?operation=ADD&configuration=#config", IgniteQueueEndpoint.class);
+        IgniteQueueEndpoint igniteEndpoint = context
+                .getEndpoint("ignite-queue:" + resourceUid + "?operation=ADD&configuration=#config", IgniteQueueEndpoint.class);
         template.requestBody(igniteEndpoint, "hello");
 
-        assert_().that(ignite().queue(resourceUid, 0, configuration).size()).isEqualTo(1);
-        assert_().that(igniteEndpoint.getConfiguration()).isEqualTo(configuration);
+        Assertions.assertThat(ignite().queue(resourceUid, 0, configuration).size()).isEqualTo(1);
+        Assertions.assertThat(igniteEndpoint.getConfiguration()).isEqualTo(configuration);
     }
 
     @Test
@@ -187,14 +194,18 @@ public class IgniteQueueTest extends AbstractIgniteTest {
 
         // NOTE: Unfortunately the behaviour of IgniteQueue doesn't adhere to
         // the overridden ADD method. It should return an Exception.
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=ADD&capacity=100", "hello101", boolean.class)).isFalse();
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=OFFER&capacity=100", "hello101", boolean.class)).isFalse();
+        Assertions.assertThat(
+                template.requestBody("ignite-queue:" + resourceUid + "?operation=ADD&capacity=100", "hello101", boolean.class))
+                .isFalse();
+        Assertions.assertThat(template.requestBody("ignite-queue:" + resourceUid + "?operation=OFFER&capacity=100", "hello101",
+                boolean.class)).isFalse();
 
         final CountDownLatch latch = new CountDownLatch(1);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=PUT&capacity=100", "hello101", boolean.class)).isFalse();
+                Assertions.assertThat(template.requestBody("ignite-queue:" + resourceUid + "?operation=PUT&capacity=100",
+                        "hello101", boolean.class)).isFalse();
                 latch.countDown();
             }
         });
@@ -202,27 +213,44 @@ public class IgniteQueueTest extends AbstractIgniteTest {
         t.start();
 
         // Wait 2 seconds and check that the thread was blocked.
-        assert_().that(latch.await(2000, TimeUnit.MILLISECONDS)).isFalse();
+        Assertions.assertThat(latch.await(2000, TimeUnit.MILLISECONDS)).isFalse();
         t.interrupt();
 
         // PEEK and ELEMENT.
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=PEEK&capacity=100", null, String.class)).isEqualTo("hello0");
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=ELEMENT&capacity=100", null, String.class)).isEqualTo("hello0");
+        Assertions.assertThat(
+                template.requestBody("ignite-queue:" + resourceUid + "?operation=PEEK&capacity=100", null, String.class))
+                .isEqualTo("hello0");
+        Assertions.assertThat(
+                template.requestBody("ignite-queue:" + resourceUid + "?operation=ELEMENT&capacity=100", null, String.class))
+                .isEqualTo("hello0");
 
         // TAKE.
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=TAKE&capacity=100", null, String.class)).isEqualTo("hello0");
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE&capacity=100", null, int.class)).isEqualTo(99);
+        Assertions.assertThat(
+                template.requestBody("ignite-queue:" + resourceUid + "?operation=TAKE&capacity=100", null, String.class))
+                .isEqualTo("hello0");
+        Assertions
+                .assertThat(
+                        template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE&capacity=100", null, int.class))
+                .isEqualTo(99);
 
         // Now drain.
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=DRAIN&capacity=100", null, String[].class)).asList().hasSize(99);
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE&capacity=100", null, int.class)).isEqualTo(0);
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=POLL&capacity=100", null, String.class)).isNull();
+        Assertions.assertThat(
+                template.requestBody("ignite-queue:" + resourceUid + "?operation=DRAIN&capacity=100", null, String[].class))
+                .hasSize(99);
+        Assertions
+                .assertThat(
+                        template.requestBody("ignite-queue:" + resourceUid + "?operation=SIZE&capacity=100", null, int.class))
+                .isEqualTo(0);
+        Assertions.assertThat(
+                template.requestBody("ignite-queue:" + resourceUid + "?operation=POLL&capacity=100", null, String.class))
+                .isNull();
 
         // TAKE.
         t = new Thread(new Runnable() {
             @Override
             public void run() {
-                assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=TAKE&capacity=100", null, String.class)).isEqualTo("hello102");
+                Assertions.assertThat(template.requestBody("ignite-queue:" + resourceUid + "?operation=TAKE&capacity=100", null,
+                        String.class)).isEqualTo("hello102");
                 latch.countDown();
             }
         });
@@ -230,27 +258,26 @@ public class IgniteQueueTest extends AbstractIgniteTest {
         t.start();
 
         // Element was returned.
-        assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=ADD&capacity=100", "hello102", boolean.class)).isTrue();
-        assert_().that(latch.await(1000, TimeUnit.MILLISECONDS)).isTrue();
+        Assertions.assertThat(
+                template.requestBody("ignite-queue:" + resourceUid + "?operation=ADD&capacity=100", "hello102", boolean.class))
+                .isTrue();
+        Assertions.assertThat(latch.await(1000, TimeUnit.MILLISECONDS)).isTrue();
 
         // POLL with a timeout.
-        assert_().that(Executors.newSingleThreadExecutor().submit(new Callable<Long>() {
+        Assertions.assertThat(Executors.newSingleThreadExecutor().submit(new Callable<Long>() {
             @Override
             public Long call() throws Exception {
                 Stopwatch sw = Stopwatch.createStarted();
-                assert_().that(template.requestBody("ignite-queue:" + resourceUid + "?operation=POLL&timeoutMillis=1000&capacity=100", null, String.class)).isNull();
+                Assertions.assertThat(template.requestBody(
+                        "ignite-queue:" + resourceUid + "?operation=POLL&timeoutMillis=1000&capacity=100", null, String.class))
+                        .isNull();
                 return sw.elapsed(TimeUnit.MILLISECONDS);
             }
-        }).get()).isAtLeast(1000L);
+        }).get()).isGreaterThanOrEqualTo(1000L);
 
     }
 
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
-
-    @After
+    @AfterEach
     public void deleteQueue() {
         ignite().queue(resourceUid, 0, null).close();
     }

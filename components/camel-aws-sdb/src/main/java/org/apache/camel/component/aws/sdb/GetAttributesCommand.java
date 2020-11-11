@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
 public class GetAttributesCommand extends AbstractSdbCommand {
-    
+
     public GetAttributesCommand(AmazonSimpleDB sdbClient, SdbConfiguration configuration, Exchange exchange) {
         super(sdbClient, configuration, exchange);
     }
@@ -33,16 +33,16 @@ public class GetAttributesCommand extends AbstractSdbCommand {
     @Override
     public void execute() {
         GetAttributesRequest request = new GetAttributesRequest()
-            .withDomainName(determineDomainName())
-            .withItemName(determineItemName())
-            .withConsistentRead(determineConsistentRead())
-            .withAttributeNames(determineAttributeNames());
+                .withDomainName(determineDomainName())
+                .withItemName(determineItemName())
+                .withConsistentRead(determineConsistentRead())
+                .withAttributeNames(determineAttributeNames());
         log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
-        
+
         GetAttributesResult result = this.sdbClient.getAttributes(request);
-        
+
         log.trace("Received result [{}]", result);
-        
+
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(SdbConstants.ATTRIBUTES, result.getAttributes());
     }
@@ -51,13 +51,8 @@ public class GetAttributesCommand extends AbstractSdbCommand {
     protected Collection<String> determineAttributeNames() {
         return exchange.getIn().getHeader(SdbConstants.ATTRIBUTE_NAMES, Collection.class);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 }

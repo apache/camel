@@ -27,7 +27,7 @@ public class TestPropertyInjectRouteBuilder extends RouteBuilder {
     @Override
     public void configure() {
         from("direct:start-override-route")
-            .transform(constant(propertyToOverride));
+                .transform(constant(propertyToOverride));
     }
 
 }

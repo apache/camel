@@ -19,9 +19,8 @@ package org.apache.camel.itest;
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
- * For test cases that use unique contexts, they can share the 
- * ports which will make things a bit faster as ports aren't opened
- * and closed all the time. 
+ * For test cases that use unique contexts, they can share the ports which will make things a bit faster as ports aren't
+ * opened and closed all the time.
  */
 public final class ITestSupport {
 
@@ -41,13 +40,13 @@ public final class ITestSupport {
 
     private ITestSupport() {
     }
-    
+
     public static int getPort(String name) {
         int port = AvailablePortFinder.getNextAvailable();
         System.setProperty(name, Integer.toString(port));
         return port;
     }
-    
+
     public static int getPort1() {
         return PORT1;
     }

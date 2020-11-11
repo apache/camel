@@ -16,14 +16,21 @@
  */
 package org.apache.camel.microprofile.health;
 
+import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.eclipse.microprofile.health.Readiness;
 
+/**
+ * Readiness checks
+ */
 @Readiness
 public class CamelMicroProfileReadinessCheck extends AbstractCamelMicroProfileHealthCheck {
 
-    @Override
-    String getHealthGroupFilterExclude() {
-        return AbstractCamelMicroProfileLivenessCheck.HEALTH_GROUP_LIVENESS;
+    public boolean isLiveness() {
+        return false;
+    }
+
+    protected boolean acceptHealthCheck(AbstractHealthCheck check) {
+        return check.isReadiness();
     }
 
     @Override

@@ -33,41 +33,41 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
-public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
-    protected static int port0 = CXFTestSupport.getPort1(); 
-    protected static int port1 = CXFTestSupport.getPort2(); 
+public class WSAddressingTest {
+    protected static int port0 = CXFTestSupport.getPort1();
+    protected static int port1 = CXFTestSupport.getPort2();
     protected static int port2 = CXFTestSupport.getPort3();
 
-    
-    
     @Autowired
     protected CamelContext context;
     protected ProducerTemplate template;
-    
+
     private Server serviceEndpoint;
-    
+
     protected String getServerAddress() {
         return "http://localhost:" + port1 + "/" + this.getClass().getSimpleName() + "/SoapContext/SoapPort";
     }
-    
+
     protected String getClientAddress() {
         return "http://localhost:" + port0 + "/" + this.getClass().getSimpleName() + "/SoapContext/SoapPort";
     }
-    
-    @Before
-    public void setUp() throws Exception {      
-        
+
+    @BeforeEach
+    public void setUp() throws Exception {
+
         template = context.createProducerTemplate();
         JaxWsServerFactoryBean svrBean = new JaxWsServerFactoryBean();
         svrBean.setAddress(getServerAddress());
@@ -83,8 +83,8 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
         serviceEndpoint = svrBean.create();
 
     }
-    
-    @After
+
+    @AfterEach
     public void tearDown() throws Exception {
         if (serviceEndpoint != null) {
             serviceEndpoint.stop();
@@ -93,7 +93,7 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testWSAddressing() throws Exception {
-        JaxWsProxyFactoryBean proxyFactory = new  JaxWsProxyFactoryBean();
+        JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(getClientAddress());
         clientBean.setServiceClass(Greeter.class);
@@ -106,36 +106,34 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
         proxyFactory.setBus(bf.createBus(cxfConfig));
         Greeter client = (Greeter) proxyFactory.create();
         String result = client.greetMe("world!");
-        assertEquals("Get a wrong response", "Hello world!", result);
+        assertEquals("Hello world!", result, "Get a wrong response");
     }
-    
+
     /**
      * @return
      */
     protected String getCxfServerConfig() {
         return "server.xml";
     }
-    
+
     /**
      * @return
      */
     protected String getCxfClientConfig() {
         return "client.xml";
     }
-    
+
     public static class RemoveRequestOutHeaderProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {
             List<?> headerList = (List<?>) exchange.getIn().getHeader(Header.HEADER_LIST);
-            assertNotNull("We should get the header list.", headerList);
-            assertEquals("Get a wrong size of header list.", 4, headerList.size());
+            assertNotNull(headerList, "We should get the header list.");
+            assertEquals(4, headerList.size(), "Get a wrong size of header list.");
             // we don't need send the soap headers to the client
             exchange.getIn().removeHeader(Header.HEADER_LIST);
         }
-        
+
     }
-    
-    
 
 }

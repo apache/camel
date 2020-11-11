@@ -21,9 +21,10 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Handler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -49,7 +50,8 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("/org/apache/camel/component/jms/tx/JMXTXUseOriginalBodyWithTXErrorHandlerTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "/org/apache/camel/component/jms/tx/JMXTXUseOriginalBodyWithTXErrorHandlerTest.xml");
     }
 
     @Override
@@ -85,12 +87,11 @@ public class JMXTXUseOriginalBodyWithTXErrorHandlerTest extends JMXTXUseOriginal
         }
     }
 
-
-    public static class TestRoutes extends SpringRouteBuilder {
+    public static class TestRoutes extends RouteBuilder {
 
         @Override
         public void configure() throws Exception {
-            errorHandler(transactionErrorHandler());
+            errorHandler(new TransactionErrorHandlerBuilder());
 
             onException(Exception.class)
                     .handled(true)

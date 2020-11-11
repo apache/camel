@@ -54,7 +54,6 @@ public class GoraConsumer extends ScheduledPollConsumer {
      */
     private boolean firstRun;
 
-
     /**
      * Consumer Constructor
      *
@@ -66,7 +65,8 @@ public class GoraConsumer extends ScheduledPollConsumer {
     public GoraConsumer(final Endpoint endpoint,
                         final Processor processor,
                         final GoraConfiguration configuration,
-                        final DataStore<Object, Persistent> dataStore) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+                        final DataStore<Object, Persistent> dataStore) throws ClassNotFoundException, NoSuchMethodException,
+                                                                       InvocationTargetException, IllegalAccessException {
 
         super(endpoint, processor);
         this.configuration = configuration;
@@ -88,8 +88,6 @@ public class GoraConsumer extends ScheduledPollConsumer {
         //proceed with query
         final Result result = query.execute();
 
-        log.trace("Processing exchange [{}]...", exchange);
-
         try {
             getProcessor().process(exchange);
         } finally {
@@ -101,4 +99,3 @@ public class GoraConsumer extends ScheduledPollConsumer {
         return Long.valueOf(result.getOffset()).intValue();
     }
 }
-

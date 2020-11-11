@@ -34,8 +34,12 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HL7ValidateTest extends CamelTestSupport {
 
@@ -53,12 +57,12 @@ public class HL7ValidateTest extends CamelTestSupport {
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(HL7Exception.class, e.getCause());
             assertIsInstanceOf(DataTypeException.class, e.getCause());
-            assertTrue("Should be a validation error message", e.getCause().getMessage().startsWith("ca.uhn.hl7v2.validation.ValidationException: Validation failed:"));
+            assertTrue(e.getCause().getMessage().startsWith("ca.uhn.hl7v2.validation.ValidationException: Validation failed:"),
+                    "Should be a validation error message");
         }
 
         assertMockEndpointsSatisfied();
     }
-        
 
     @Test
     public void testUnmarshalOk() throws Exception {
@@ -70,7 +74,7 @@ public class HL7ValidateTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testUnmarshalOkCustom() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
@@ -81,7 +85,7 @@ public class HL7ValidateTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testMarshalWithValidation() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
@@ -95,12 +99,13 @@ public class HL7ValidateTest extends CamelTestSupport {
             assertIsInstanceOf(HL7Exception.class, e.getCause());
             assertIsInstanceOf(ValidationException.class, e.getCause().getCause());
             System.out.println(e.getCause().getCause().getMessage());
-            assertTrue("Should be a validation error message", e.getCause().getCause().getMessage().startsWith("Validation failed:"));
+            assertTrue(e.getCause().getCause().getMessage().startsWith("Validation failed:"),
+                    "Should be a validation error message");
         }
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testMarshalWithoutValidation() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
@@ -111,7 +116,7 @@ public class HL7ValidateTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         HapiContext hapiContext = new DefaultHapiContext();
@@ -119,7 +124,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         Parser p = new GenericParser(hapiContext);
         hl7 = new HL7DataFormat();
         hl7.setParser(p);
-        
+
         /*
          * Let's start by adding a validation rule to the default validation
          * that disallows PID-2 to be empty.
@@ -135,10 +140,10 @@ public class HL7ValidateTest extends CamelTestSupport {
             }
         };
         ValidationContext customValidationContext = ValidationContextFactory.fromBuilder(builder);
-        
+
         HapiContext customContext = new DefaultHapiContext(customValidationContext);
         final Parser customParser = new GenericParser(customContext);
-        
+
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:unmarshalFailed").unmarshal().hl7().to("mock:unmarshal");
@@ -146,20 +151,25 @@ public class HL7ValidateTest extends CamelTestSupport {
                 from("direct:unmarshalOkCustom").unmarshal(hl7).to("mock:unmarshal");
                 from("direct:start1").marshal().hl7(customParser).to("mock:end");
                 from("direct:start2").marshal().hl7(true).to("mock:end");
-                
+
             }
         };
     }
 
     private static String createHL7AsString() {
         String line1 = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20080808093202||ORM^O01|0808080932027444985|P|2.4|||AL|NE|||";
-        String line2 = "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||";
+        String line2
+                = "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||";
         String line3 = "NTE|1||Free text for entering clinical details|";
         String line4 = "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|";
-        String line5 = "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||";
-        String line6 = "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||";
-        String line7 = "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||";
-        String line8 = "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||";
+        String line5
+                = "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||";
+        String line6
+                = "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||";
+        String line7
+                = "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||";
+        String line8
+                = "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||";
 
         StringBuilder body = new StringBuilder();
         body.append(line1);
@@ -179,7 +189,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         body.append(line8);
         return body.toString();
     }
-    
+
     private static Message createADT01Message() throws Exception {
         ADT_A01 adt = new ADT_A01();
         adt.initQuickstart("ADT", "A01", "P");
@@ -190,7 +200,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         pid.getPatientName(0).getGivenName().setValue("John");
         pid.getPhoneNumberBusiness(0).getPhoneNumber().setValue("333123456");
         pid.getPatientIdentifierList(0).getID().setValue("123456");
-       
+
         return adt;
     }
 

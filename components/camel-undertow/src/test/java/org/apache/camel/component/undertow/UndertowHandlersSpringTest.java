@@ -25,19 +25,19 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/HandlersSpringTest.xml"})
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations = { "/HandlersSpringTest.xml" })
 public class UndertowHandlersSpringTest {
 
     private Integer port;
@@ -48,13 +48,13 @@ public class UndertowHandlersSpringTest {
     @EndpointInject("mock:input")
     private MockEndpoint mockEndpoint;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpJaas() throws Exception {
         URL trustStoreUrl = UndertowHttpsSpringTest.class.getClassLoader().getResource("ssl/keystore.jks");
         System.setProperty("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownJaas() throws Exception {
         System.clearProperty("java.security.auth.login.config");
     }
@@ -64,28 +64,28 @@ public class UndertowHandlersSpringTest {
         mockEndpoint.expectedBodiesReceived("Hello World");
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2VjcmV0";
-        String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World", 
-                                                   "Authorization", auth, String.class);
+        String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World",
+                "Authorization", auth, String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void testBasicAuthConsumerWthWrongPassword() throws Exception {
         mockEndpoint.expectedBodiesReceived("Hello World");
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2Vjc";
         try {
-            String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World", 
-                                                   "Authorization", auth, String.class);
+            String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World",
+                    "Authorization", auth, String.class);
             fail("Should send back 401");
             assertEquals("Bye World", out);
 
             mockEndpoint.assertIsSatisfied();
-         
+
         } catch (CamelExecutionException e) {
-            org.apache.camel.http.common.HttpOperationFailedException cause = (HttpOperationFailedException)e.getCause();
+            HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
             assertEquals(401, cause.getStatusCode());
         }
 
@@ -101,4 +101,3 @@ public class UndertowHandlersSpringTest {
     }
 
 }
-

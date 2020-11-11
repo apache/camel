@@ -22,7 +22,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servicenow.model.Scorecard;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ServiceNowScorecardTest extends ServiceNowTestSupport {
     @Produce("direct:servicenow")
@@ -31,16 +33,15 @@ public class ServiceNowScorecardTest extends ServiceNowTestSupport {
     @Test
     public void testScorecard() throws Exception {
         List<Scorecard> scorecardList = template.requestBodyAndHeaders(
-            "direct:servicenow",
-            null,
-            kvBuilder()
-                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SCORECARDS)
-                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .put(ServiceNowConstants.ACTION_SUBJECT, ServiceNowConstants.ACTION_SUBJECT_PERFORMANCE_ANALYTICS)
-                .put(ServiceNowConstants.MODEL, Scorecard.class)
-                .build(),
-            List.class
-        );
+                "direct:servicenow",
+                null,
+                kvBuilder()
+                        .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SCORECARDS)
+                        .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                        .put(ServiceNowConstants.ACTION_SUBJECT, ServiceNowConstants.ACTION_SUBJECT_PERFORMANCE_ANALYTICS)
+                        .put(ServiceNowConstants.MODEL, Scorecard.class)
+                        .build(),
+                List.class);
 
         assertFalse(scorecardList.isEmpty());
     }
@@ -54,9 +55,9 @@ public class ServiceNowScorecardTest extends ServiceNowTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")
-                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
-                    .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
-                    .to("mock:servicenow");
+                        .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
+                        .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
+                        .to("mock:servicenow");
             }
         };
     }

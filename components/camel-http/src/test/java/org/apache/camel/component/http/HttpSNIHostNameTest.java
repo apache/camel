@@ -18,15 +18,16 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.http.common.HttpOperationFailedException;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Ignore("Ignored test because of external dependency.")
+@Disabled("Ignored test because of external dependency.")
 public class HttpSNIHostNameTest extends CamelSpringTestSupport {
 
     @Test
@@ -41,7 +42,7 @@ public class HttpSNIHostNameTest extends CamelSpringTestSupport {
             template.requestBody("direct:noSNI", null, String.class);
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
-            assertThat(cause.getStatusCode(), is(403));
+            assertEquals(403, cause.getStatusCode());
         }
     }
 
@@ -51,14 +52,12 @@ public class HttpSNIHostNameTest extends CamelSpringTestSupport {
             template.requestBody("direct:wrongSNI", null, String.class);
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
-            assertThat(cause.getStatusCode(), is(421));
+            assertEquals(421, cause.getStatusCode());
         }
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        ClassPathXmlApplicationContext ctx =
-                new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/http/CamelHttpContext.xml"});
-        return ctx;
+        return new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/component/http/CamelHttpContext.xml" });
     }
 }

@@ -19,27 +19,21 @@ package org.apache.camel.component.aws.lambda;
 import com.amazonaws.Protocol;
 import com.amazonaws.services.lambda.AWSLambda;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class LambdaConfiguration implements Cloneable {
 
-    @UriPath
-    @Metadata(required = true)
-    private String function;
-    @UriParam
-    @Metadata(required = true)
-    private LambdaOperations operation;
+    @UriParam(defaultValue = "invokeFunction")
+    private LambdaOperations operation = LambdaOperations.invokeFunction;
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam(label = "producer")
     private String region;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "proxy")
     private String proxyHost;
@@ -47,17 +41,8 @@ public class LambdaConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "advanced")
     private AWSLambda awsLambdaClient;
-
-    public String getFunction() {
-        return function;
-    }
-
-    /**
-     * Name of the Lambda function.
-     */
-    public void setFunction(String function) {
-        this.function = function;
-    }
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public AWSLambda getAwsLambdaClient() {
         return awsLambdaClient;
@@ -97,8 +82,8 @@ public class LambdaConfiguration implements Cloneable {
     }
 
     /**
-     * Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region
+     * (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -114,7 +99,7 @@ public class LambdaConfiguration implements Cloneable {
     public void setOperation(LambdaOperations operation) {
         this.operation = operation;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -147,14 +132,26 @@ public class LambdaConfiguration implements Cloneable {
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
-    
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
+
     // *************************************************
     //
     // *************************************************
 
     public LambdaConfiguration copy() {
         try {
-            return (LambdaConfiguration)super.clone();
+            return (LambdaConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

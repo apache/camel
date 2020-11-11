@@ -29,9 +29,14 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedTransformerRegistryTest.class);
@@ -61,7 +66,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
             }
         }
 
-        assertNotNull("Should have found TransformerRegistry", on);
+        assertNotNull(on, "Should have found TransformerRegistry");
 
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumCacheSize");
         assertEquals(1000, max.intValue());
@@ -79,16 +84,15 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         assertTrue(source.startsWith("TransformerRegistry"));
         assertTrue(source.endsWith("capacity: 1000"));
 
-        
         TabularData data = (TabularData) mbeanServer.invoke(on, "listTransformers", null, null);
         for (Object row : data.values()) {
-            CompositeData composite = (CompositeData)row;
-            String scheme = (String)composite.get("scheme");
-            String from = (String)composite.get("from");
-            String to = (String)composite.get("to");
-            String description = (String)composite.get("description");
-            boolean isStatic = (boolean)composite.get("static");
-            boolean isDynamic = (boolean)composite.get("dynamic");
+            CompositeData composite = (CompositeData) row;
+            String scheme = (String) composite.get("scheme");
+            String from = (String) composite.get("from");
+            String to = (String) composite.get("to");
+            String description = (String) composite.get("description");
+            boolean isStatic = (boolean) composite.get("static");
+            boolean isDynamic = (boolean) composite.get("dynamic");
             LOG.info("[{}][{}][{}][{}][{}][{}]", scheme, from, to, isStatic, isDynamic, description);
             if (description.startsWith("ProcessorTransformer")) {
                 assertEquals(null, scheme);
@@ -115,13 +119,13 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 transformer()
-                    .fromType("xml:foo")
-                    .toType("json:bar")
-                    .withUri("direct:transformer");
+                        .fromType("xml:foo")
+                        .toType("json:bar")
+                        .withUri("direct:transformer");
                 transformer()
-                    .scheme("custom")
-                    .withJava(MyTransformer.class);
-                
+                        .scheme("custom")
+                        .withJava(MyTransformer.class);
+
                 from("direct:start").to("mock:result");
             }
         };

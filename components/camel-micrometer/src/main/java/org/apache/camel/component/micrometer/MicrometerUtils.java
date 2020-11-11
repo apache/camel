@@ -32,19 +32,27 @@ public abstract class MicrometerUtils {
 
     public static Meter.Type getByName(String meterName) {
         switch (meterName) {
-        case "summary": return Meter.Type.DISTRIBUTION_SUMMARY;
-        case "counter": return Meter.Type.COUNTER;
-        case "timer": return Meter.Type.TIMER;
-        default: throw new RuntimeCamelException("Unsupported meter type " + meterName);
+            case "summary":
+                return Meter.Type.DISTRIBUTION_SUMMARY;
+            case "counter":
+                return Meter.Type.COUNTER;
+            case "timer":
+                return Meter.Type.TIMER;
+            default:
+                throw new RuntimeCamelException("Unsupported meter type " + meterName);
         }
     }
 
     public static String getName(Meter.Type type) {
         switch (type) {
-        case DISTRIBUTION_SUMMARY: return "summary";
-        case COUNTER: return "counter";
-        case TIMER: return "timer";
-        default: throw new RuntimeCamelException("Unsupported meter type " + type);
+            case DISTRIBUTION_SUMMARY:
+                return "summary";
+            case COUNTER:
+                return "counter";
+            case TIMER:
+                return "timer";
+            default:
+                throw new RuntimeCamelException("Unsupported meter type " + type);
         }
     }
 

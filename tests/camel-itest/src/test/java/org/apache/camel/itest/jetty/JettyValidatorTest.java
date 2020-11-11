@@ -21,48 +21,51 @@ import java.io.InputStream;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyValidatorTest extends CamelTestSupport {
 
     private int port;
 
     @Test
-    public void testValidRequest() throws Exception {
+    void testValidRequest() {
         InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
-        assertNotNull("the inputStream should not be null", inputStream);
+        assertNotNull(inputStream, "The inputStream should not be null");
 
         String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
 
-        assertEquals("The response should be ok", response, "<ok/>");
+        assertEquals("<ok/>", response, "The response should be ok");
     }
 
     @Test
-    public void testInvalidRequest() throws Exception {
+    void testInvalidRequest() {
         InputStream inputStream = this.getClass().getResourceAsStream("InvalidRequest.xml");
-        assertNotNull("the inputStream should not be null", inputStream);
+        assertNotNull(inputStream, "The inputStream should not be null");
 
         String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
-        assertEquals("The response should be error", response, "<error/>");
+        assertEquals("<error/>", response, "The response should be error");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                    .convertBodyTo(String.class)
-                    .to("log:in")
-                    .doTry()
+                        .convertBodyTo(String.class)
+                        .to("log:in")
+                        .doTry()
                         .to("validator:OptimizationRequest.xsd")
                         .transform(constant("<ok/>"))
-                    .doCatch(ValidationException.class)
+                        .doCatch(ValidationException.class)
                         .transform(constant("<error/>"))
-                    .end()
-                    .to("log:out");
+                        .end()
+                        .to("log:out");
             }
         };
     }

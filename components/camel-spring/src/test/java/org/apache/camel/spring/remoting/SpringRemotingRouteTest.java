@@ -19,13 +19,14 @@ package org.apache.camel.spring.remoting;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringRemotingRouteTest extends Assert {
-    
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class SpringRemotingRouteTest {
+
     @Test
     public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();

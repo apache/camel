@@ -18,11 +18,15 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
 
@@ -34,7 +38,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
             }
         });
 
-        assertEquals("CamsResponse", exchange.getOut().getHeader("Status"));
+        assertEquals("CamsResponse", exchange.getMessage().getHeader("Status"));
     }
 
     @Test
@@ -60,8 +64,8 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = new JndiRegistry(createJndiContext());
+    protected Registry createRegistry() throws Exception {
+        Registry registry = new DefaultRegistry();
 
         registry.bind("A", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -97,9 +101,11 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setTracing(true);
 
-                from("direct:start").doTry().to("A").setHeader("CamelJmsDestinationName", constant("queue:outQueue")).inOut("B").setHeader("Status", constant("CamsResponse"))
-                    .doCatch(ExchangeTimedOutException.class).setHeader("Status", constant("TimeOut")).doCatch(Exception.class).setHeader("Status", constant("ExceptionGeneral"))
-                    .end().to("C").transform(body());
+                from("direct:start").doTry().to("bean:A").setHeader("CamelJmsDestinationName", constant("queue:outQueue"))
+                        .to(ExchangePattern.InOut, "bean:B").setHeader("Status", constant("CamsResponse"))
+                        .doCatch(ExchangeTimedOutException.class).setHeader("Status", constant("TimeOut"))
+                        .doCatch(Exception.class).setHeader("Status", constant("ExceptionGeneral"))
+                        .end().to("bean:C").transform(body());
             }
         };
     }

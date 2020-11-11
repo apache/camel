@@ -24,7 +24,10 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ManagedRouteRemoveContextScopedErrorHandlerTest extends ManagementTestSupport {
 
@@ -47,32 +50,24 @@ public class ManagedRouteRemoveContextScopedErrorHandlerTest extends ManagementT
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
-
-        // and one context scoped error handler
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
-        assertEquals(1, set.size());
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+        assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
 
         // remove
         mbeanServer.invoke(on, "remove", null, null);
 
         // should not be registered anymore
         boolean registered = mbeanServer.isRegistered(on);
-        assertFalse("Route mbean should have been unregistered", registered);
+        assertFalse(registered, "Route mbean should have been unregistered");
 
         // and no more routes
-        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        Set set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());
-
-        // but still 1 context scoped error handler
-        set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
-        assertEquals(1, set.size());
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
@@ -89,7 +84,7 @@ public class ManagedRouteRemoveContextScopedErrorHandlerTest extends ManagementT
             public void configure() throws Exception {
                 // context scoped error handler
                 errorHandler(deadLetterChannel("mock:dead"));
-                
+
                 // which this route will use
                 from("seda:foo").to("mock:result");
             }

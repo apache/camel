@@ -30,20 +30,21 @@ import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
 import org.apache.camel.component.soroushbot.support.SoroushBotWS;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("CAMEL-13629 failing test")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+@Disabled("CAMEL-13629 failing test")
 public class ProducerDownloadFileWithoutThumbnailTest extends SoroushBotTestSupport {
 
     @EndpointInject("direct:soroush")
     org.apache.camel.Endpoint endpoint;
 
-
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         SoroushBotWS.clear();
@@ -81,8 +82,9 @@ public class ProducerDownloadFileWithoutThumbnailTest extends SoroushBotTestSupp
         mockEndpoint.setExpectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
         SoroushMessage mockedMessage = mockEndpoint.getExchanges().get(0).getIn().getBody(SoroushMessage.class);
-        Assert.assertEquals("download file successfully", new String(IOUtils.readFully(mockedMessage.getFile(), 1000, false)), fileContent);
-        Assert.assertEquals("download thumbnail successfully", mockedMessage.getThumbnail(), null);
+        assertEquals(new String(IOUtils.readFully(mockedMessage.getFile(), 1000, false)), fileContent,
+                "download file successfully");
+        assertNull(mockedMessage.getThumbnail(), "download thumbnail successfully");
     }
 
 }

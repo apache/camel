@@ -26,7 +26,7 @@ public class FromFtpSimpleRelativeMoveToAbsoluteTest extends FtpServerTestSuppor
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false"
-                + "&move=/movefile/.done&initialDelay=2500&delay=5000";
+               + "&move=/movefile/.done&initialDelay=2500&delay=5000";
     }
 
     @Override
@@ -46,7 +46,7 @@ public class FromFtpSimpleRelativeMoveToAbsoluteTest extends FtpServerTestSuppor
 
         mock.assertIsSatisfied();
     }
-    
+
     private void prepareFtpServer() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Bye", Exchange.FILE_NAME, "sub/bye.txt");

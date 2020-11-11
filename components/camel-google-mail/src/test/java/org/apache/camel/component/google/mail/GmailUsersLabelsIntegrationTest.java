@@ -23,9 +23,12 @@ import com.google.api.services.gmail.model.Label;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.mail.internal.GmailUsersLabelsApiMethod;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Labels} APIs.
@@ -34,7 +37,8 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
 
     private static final String CAMEL_TEST_LABEL = "CamelTestLabel";
     private static final Logger LOG = LoggerFactory.getLogger(GmailUsersLabelsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleMailApiCollection.getCollection().getApiName(GmailUsersLabelsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleMailApiCollection.getCollection().getApiName(GmailUsersLabelsApiMethod.class).getName();
 
     @Test
     public void testLabels() throws Exception {
@@ -46,13 +50,14 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
             Map<String, Object> headers = new HashMap<>();
             // parameter type is String
             headers.put("CamelGoogleMail.userId", CURRENT_USERID);
-            Label label = new Label().setName(CAMEL_TEST_LABEL).setMessageListVisibility("show").setLabelListVisibility("labelShow");
+            Label label = new Label().setName(CAMEL_TEST_LABEL).setMessageListVisibility("show")
+                    .setLabelListVisibility("labelShow");
             // parameter type is com.google.api.services.gmail.model.Label
             headers.put("CamelGoogleMail.content", label);
 
             com.google.api.services.gmail.model.Label result = requestBodyAndHeaders("direct://CREATE", null, headers);
 
-            assertNotNull("create result", result);
+            assertNotNull(result, "create result");
             labelId = result.getId();
         } else {
             labelId = getTestLabel(labels).getId();

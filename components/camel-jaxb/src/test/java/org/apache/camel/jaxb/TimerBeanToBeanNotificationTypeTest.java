@@ -17,8 +17,8 @@
 package org.apache.camel.jaxb;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -39,9 +39,9 @@ public class TimerBeanToBeanNotificationTypeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("timer:foo?delay=500&repeatCount=1")
-                    .log("Timer triggered")
-                    .bean(MyNotificationService.class, "createNotification")
-                    .bean(MyNotificationService.class, "sendNotification");
+                        .log("Timer triggered")
+                        .bean(MyNotificationService.class, "createNotification")
+                        .bean(MyNotificationService.class, "sendNotification");
             }
         };
     }

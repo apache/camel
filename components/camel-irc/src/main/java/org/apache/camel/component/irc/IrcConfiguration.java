@@ -19,7 +19,6 @@ package org.apache.camel.component.irc;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +31,6 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
 import org.schwering.irc.lib.ssl.SSLTrustManager;
@@ -44,18 +42,23 @@ public class IrcConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(IrcConfiguration.class);
 
     private boolean usingSSL;
-    private List<IrcChannel> channels = new ArrayList<>();
+    private List<IrcChannel> channelList = new ArrayList<>();
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String hostname;
     @UriPath
     private int port;
-    private int[] ports = {6667, 6668, 6669};
+    private int[] ports = { 6667, 6668, 6669 };
     @UriParam(label = "security", secret = true)
     private String password;
-    @UriParam
+    @UriParam(label = "common")
     private String nickname;
-    @UriParam
+    @UriParam(label = "common")
+    private String channels;
+    @UriParam(label = "common")
+    private String keys;
+    @UriParam(label = "common")
     private String realname;
     @UriParam(label = "security", secret = true)
     private String username;
@@ -86,7 +89,7 @@ public class IrcConfiguration implements Cloneable {
     private boolean onPrivmsg = true;
     @UriParam(defaultValue = "true")
     private boolean autoRejoin = true;
-    @UriParam
+    @UriParam(label = "common")
     private boolean namesOnJoin;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
@@ -98,11 +101,12 @@ public class IrcConfiguration implements Cloneable {
     public IrcConfiguration() {
     }
 
-    public IrcConfiguration(String hostname, String nickname, String displayname, List<IrcChannel> channels) {
+    public IrcConfiguration(String hostname, String nickname, String displayname, String channels) {
         this(hostname, null, null, nickname, displayname, channels);
     }
 
-    public IrcConfiguration(String hostname, String username, String password, String nickname, String displayname, List<IrcChannel> channels) {
+    public IrcConfiguration(String hostname, String username, String password, String nickname, String displayname,
+                            String channels) {
         this.channels = channels;
         this.hostname = hostname;
         this.username = username;
@@ -126,15 +130,15 @@ public class IrcConfiguration implements Cloneable {
     /*
      * Return space separated list of channel names without pwd
      */
-    public String getListOfChannels() {
+    public String getSpaceSeparatedChannelNames() {
         StringBuilder retval = new StringBuilder();
-        for (IrcChannel channel : channels) {
+        for (IrcChannel channel : channelList) {
             retval.append(retval.length() == 0 ? "" : " ").append(channel.getName());
         }
         return retval.toString();
     }
 
-    public void configure(String uriStr) throws URISyntaxException, UnsupportedEncodingException  {
+    public void configure(String uriStr) throws URISyntaxException, UnsupportedEncodingException {
         // fix provided URI and handle that we can use # to indicate the IRC room
         if (uriStr.startsWith("ircs")) {
             setUsingSSL(true);
@@ -158,7 +162,7 @@ public class IrcConfiguration implements Cloneable {
         String username = null;
         String password = null;
         if (userInfo != null) {
-            int colonIndex = userInfo.indexOf(":");
+            int colonIndex = userInfo.indexOf(':');
             if (colonIndex != -1) {
                 username = userInfo.substring(0, colonIndex);
                 password = userInfo.substring(colonIndex + 1);
@@ -166,12 +170,12 @@ public class IrcConfiguration implements Cloneable {
                 username = userInfo;
             }
         }
-        
+
         if (uri.getPort() != -1) {
-            setPorts(new int[] {uri.getPort()});
+            setPorts(new int[] { uri.getPort() });
             setPort(uri.getPort());
         }
-        
+
         setNickname(username);
         setUsername(username);
         setRealname(username);
@@ -184,22 +188,12 @@ public class IrcConfiguration implements Cloneable {
         }
     }
 
-    public void setChannel(String channel) {
-        channels.add(createChannel(channel));
+    public List<IrcChannel> getChannelList() {
+        return channelList;
     }
 
-    public void setChannel(List<String> channels) {
-        for (String ci : channels) {
-            this.channels.add(createChannel(ci));
-        }
-    }
-
-    public List<IrcChannel> getChannels() {
-        return channels;
-    }
-    
     public IrcChannel findChannel(String name) {
-        for (IrcChannel channel : channels) {
+        for (IrcChannel channel : channelList) {
             if (channel.getName().equals(name)) {
                 return channel;
             }
@@ -275,6 +269,54 @@ public class IrcConfiguration implements Cloneable {
     }
 
     /**
+     * Comma separated list of IRC channels.
+     */
+    public String getChannels() {
+        return channels;
+    }
+
+    public void setChannels(String channels) {
+        this.channels = channels;
+        createChannels();
+    }
+
+    /**
+     * Comma separated list of keys for channels.
+     */
+    public String getKeys() {
+        return keys;
+    }
+
+    public void setKeys(String keys) {
+        this.keys = keys;
+        createChannels();
+    }
+
+    private void createChannels() {
+        channelList.clear();
+
+        if (channels == null) {
+            return;
+        }
+
+        String[] chs = channels.split(",");
+        String[] ks = keys != null ? keys.split(",") : null;
+
+        int count = chs.length;
+        for (int i = 0; i < count; i++) {
+            String channel = chs[i].trim();
+            String key = ks != null && ks.length > i ? ks[i].trim() : null;
+            if (channel.startsWith("#") && !channel.startsWith("##")) {
+                channel = channel.substring(1);
+            }
+            if (key != null && !key.isEmpty()) {
+                channel += "!" + key;
+            }
+            channelList.add(createChannel(channel));
+        }
+    }
+
+    /**
      * The IRC server user name.
      */
     public void setUsername(String username) {
@@ -297,7 +339,8 @@ public class IrcConfiguration implements Cloneable {
     }
 
     /**
-     * Port number for the IRC chat server. If no port is configured then a default port of either 6667, 6668 or 6669 is used.
+     * Port number for the IRC chat server. If no port is configured then a default port of either 6667, 6668 or 6669 is
+     * used.
      */
     public void setPort(int port) {
         this.port = port;
@@ -309,6 +352,7 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Use persistent messages.
+     * 
      * @deprecated not in use
      */
     @Deprecated
@@ -436,16 +480,15 @@ public class IrcConfiguration implements Cloneable {
     public void setAutoRejoin(boolean autoRejoin) {
         this.autoRejoin = autoRejoin;
     }
-    
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
 
     /**
-     * Used for configuring security using SSL.
-     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
-     * This reference overrides any configured SSLContextParameters at the component level.
-     * Note that this setting overrides the trustManager option.
+     * Used for configuring security using SSL. Reference to a org.apache.camel.support.jsse.SSLContextParameters in the
+     * Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this
+     * setting overrides the trustManager option.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -464,6 +507,7 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Delay in milliseconds before sending commands after the connection is established.
+     * 
      * @param timeout timeout value in milliseconds
      */
     public void setCommandTimeout(long timeout) {
@@ -480,8 +524,8 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Sends <code>NAMES</code> command to channel after joining it.<br>
-     * {@link #onReply} has to be <code>true</code> in order to process the
-     * result which will have the header value <code>irc.num = '353'</code>.
+     * {@link #onReply} has to be <code>true</code> in order to process the result which will have the header value
+     * <code>irc.num = '353'</code>.
      */
     public void setNamesOnJoin(boolean namesOnJoin) {
         this.namesOnJoin = namesOnJoin;
@@ -490,131 +534,19 @@ public class IrcConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username
-                + "]";
+               + "]";
     }
-    
+
     private static IrcChannel createChannel(String channelInfo) {
         String[] pair = channelInfo.split("!");
         return new IrcChannel(pair[0], pair.length > 1 ? pair[1] : null);
     }
 
-    @Deprecated
     public static String sanitize(String uri) {
-        // may be removed in camel-3.0.0 
-        // make sure it's an URL first
-        int colon = uri.indexOf(':');
-        if (colon != -1 && uri.indexOf("://") != colon) {
-            uri = uri.substring(0, colon) + "://" + uri.substring(colon + 1);
-        }
-
-        try {
-            URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
-            String[] userInfo = u.getUserInfo() != null ? u.getUserInfo().split(":") : null;
-            String username = userInfo != null ? userInfo[0] : null;
-            String password = userInfo != null && userInfo.length > 1 ? userInfo[1] : null;
-
-            String path = URLDecoder.decode(u.getPath() != null ? u.getPath() : "", "UTF-8");
-            if (path.startsWith("/")) {
-                path = path.substring(1);
-            }
-            if (path.startsWith("#") && !path.startsWith("##")) {
-                path = path.substring(1);
-            }
-
-            Map<String, Object> parameters = URISupport.parseParameters(u);
-            String user = (String)parameters.get("username");
-            String nick = (String)parameters.get("nickname");
-            // not specified in authority
-            if (user != null) {
-                if (username == null) {
-                    username = user;
-                } else if (!username.equals(user)) {
-                    LOG.warn("Username specified twice in endpoint URI with different values. "
-                        + "The userInfo value ('{}') will be used, paramter ('{}') ignored", username, user);
-                }
-                parameters.remove("username");
-            }
-            if (nick != null) {
-                if (username == null) {
-                    username = nick;
-                }
-                if (username.equals(nick)) {
-                    parameters.remove("nickname");      // redundant
-                }
-            }
-            if (username == null) {
-                throw new RuntimeCamelException("IrcEndpoint URI with no user/nick specified is invalid");
-            }
-
-            String pwd = (String)parameters.get("password");
-            if (pwd != null) {
-                password = pwd;
-                parameters.remove("password");
-            }
-            
-            // Remove unneeded '#' channel prefixes per convention
-            // and replace ',' separators and merge channel and key using convention "channel!key"
-            List<String> cl = new ArrayList<>();
-            String channels = (String)parameters.get("channels");
-            String keys =  (String)parameters.get("keys");
-            keys = keys == null ? keys : keys + " ";    // if @keys ends with a ',' it will miss the last empty key after split(",")
-            if (channels != null) {
-                String[] chs = channels.split(",");
-                String[] ks = keys != null ? keys.split(",") : null;
-                parameters.remove("channels");
-                int count = chs.length;
-                if (ks != null) {
-                    parameters.remove("keys");
-                    if (!path.isEmpty()) {
-                        LOG.warn("Specifying a channel '{}' in the URI path is ambiguous"
-                            + " when @channels and @keys are provided and will be ignored", path);
-                        path = "";
-                    }
-                    if (ks.length != chs.length) {
-                        count = count < ks.length ? count : ks.length;
-                        LOG.warn("Different count of @channels and @keys. Only the first {} are used.", count);
-                    }
-                }
-                for (int i = 0; i < count; i++) {
-                    String channel = chs[i].trim();
-                    String key = ks != null ? ks[i].trim() : null;
-                    if (channel.startsWith("#") && !channel.startsWith("##")) {
-                        channel = channel.substring(1);
-                    }
-                    if (key != null && !key.isEmpty()) {
-                        channel += "!" + key;
-                    }
-                    cl.add(channel);
-                }
-            } else {
-                if (path.isEmpty()) {
-                    LOG.warn("No channel specified for the irc endpoint");
-                }
-                cl.add(path);
-            }
-            parameters.put("channel", cl);
-
-            StringBuilder sb = new StringBuilder();
-            sb.append(u.getScheme());
-            sb.append("://");
-            sb.append(username);
-            sb.append(password == null ? "" : ":" + password);
-            sb.append("@");
-            sb.append(u.getHost());
-            sb.append(u.getPort() == -1 ? "" : ":" + u.getPort());
-            // ignore the path we have it as a @channel now
-            String query = formatQuery(parameters);
-            if (!query.isEmpty()) {
-                sb.append("?");
-                sb.append(query);
-            }
-            // make things a bit more predictable
-            return sb.toString();
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
-        }
+        //symbol # has to be encoded. otherwise value after '#' won't be propagated into parameters
+        return uri.replace("#", "%23");
     }
-    
+
     private static String formatQuery(Map<String, Object> params) {
         if (params == null || params.size() == 0) {
             return "";
@@ -624,7 +556,7 @@ public class IrcConfiguration implements Cloneable {
             Object value = pair.getValue();
             // the value may be a list since the same key has multiple values
             if (value instanceof List) {
-                List<?> list = (List<?>)value;
+                List<?> list = (List<?>) value;
                 for (Object s : list) {
                     addQueryParameter(result, pair.getKey(), s);
                 }
@@ -634,7 +566,7 @@ public class IrcConfiguration implements Cloneable {
         }
         return result.toString();
     }
-    
+
     private static void addQueryParameter(StringBuilder sb, String key, Object value) {
         sb.append(sb.length() == 0 ? "" : "&");
         sb.append(key);

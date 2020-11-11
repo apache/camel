@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.properties;
 
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.StringHelper;
 
 /**
- * A {@link PropertiesFunction} that lookup the property value from
- * JVM system property.
+ * A {@link PropertiesFunction} that lookup the property value from JVM system property.
  */
 public class SysPropertiesFunction implements PropertiesFunction {
 

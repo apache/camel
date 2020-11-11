@@ -25,8 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BackpressureStrategyTest extends CamelTestSupport {
 
@@ -35,14 +38,15 @@ public class BackpressureStrategyTest extends CamelTestSupport {
 
         new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:gen?period=20&repeatCount=20")
                         .setBody().header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
 
-        Flowable<Integer> integers = Flowable.fromPublisher(CamelReactiveStreams.get(context).fromStream("integers", Integer.class));
+        Flowable<Integer> integers
+                = Flowable.fromPublisher(CamelReactiveStreams.get(context).fromStream("integers", Integer.class));
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         CountDownLatch latch = new CountDownLatch(1);
@@ -72,13 +76,12 @@ public class BackpressureStrategyTest extends CamelTestSupport {
 
         new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:gen?period=20&repeatCount=20")
                         .setBody().header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
-
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         final CountDownLatch latch = new CountDownLatch(1);
@@ -118,13 +121,12 @@ public class BackpressureStrategyTest extends CamelTestSupport {
 
         new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:gen?period=20&repeatCount=20")
                         .setBody().header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers");
             }
         }.addRoutesToCamelContext(context);
-
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         final CountDownLatch latch = new CountDownLatch(1);
@@ -160,13 +162,12 @@ public class BackpressureStrategyTest extends CamelTestSupport {
     public void testBackpressureDropStrategyInEndpoint() throws Exception {
         new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("timer:gen?period=20&repeatCount=20")
                         .setBody().header(Exchange.TIMER_COUNTER)
                         .to("reactive-streams:integers?backpressureStrategy=OLDEST");
             }
         }.addRoutesToCamelContext(context);
-
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         final CountDownLatch latch = new CountDownLatch(1);

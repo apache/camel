@@ -21,14 +21,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelNodeDetailsFactory;
 import org.apache.camel.parser.roaster.StatementFieldSource;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Block;
@@ -66,8 +65,9 @@ public final class CamelJavaTreeParserHelper {
 
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
-    public List<CamelNodeDetails> parseCamelRouteTree(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
-                                                      MethodSource<JavaClassSource> configureMethod) {
+    public List<CamelNodeDetails> parseCamelRouteTree(
+            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            MethodSource<JavaClassSource> configureMethod) {
 
         // find any from which is the start of the route
         CamelNodeDetailsFactory nodeFactory = CamelNodeDetailsFactory.newInstance();
@@ -182,40 +182,21 @@ public final class CamelJavaTreeParserHelper {
             rootMethodName = ((MethodInvocation) sub).getName().getIdentifier();
         } else if (sub instanceof SimpleName) {
             rootMethodName = ((SimpleName) sub).getIdentifier();
+        } else if (sub == null && exp instanceof MethodInvocation) {
+            rootMethodName = ((MethodInvocation) exp).getName().getIdentifier();
         }
-
         // a route starts either via from or route
         return "from".equals(rootMethodName) || "route".equals(rootMethodName);
     }
 
     private boolean hasOutput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelOutput(rows);
-    }
-
-    private static boolean isModelOutput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("output")) {
-                return "true".equals(row.get("output"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isOutput();
     }
 
     private boolean hasInput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelInput(rows);
-    }
-
-    private static boolean isModelInput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("input")) {
-                return "true".equals(row.get("input"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isInput();
     }
 
     private static CamelNodeDetails grandParent(CamelNodeDetails node, String parentName) {
@@ -229,9 +210,10 @@ public final class CamelJavaTreeParserHelper {
         }
     }
 
-    private void parseExpression(CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
-                                 JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
-                                 Expression exp, CamelNodeDetails node) {
+    private void parseExpression(
+            CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
+            JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
+            Expression exp, CamelNodeDetails node) {
         if (exp == null) {
             return;
         }
@@ -244,13 +226,15 @@ public final class CamelJavaTreeParserHelper {
         }
     }
 
-    private CamelNodeDetails doParseCamelModels(CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
-                                                JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
-                                                MethodInvocation mi, CamelNodeDetails node) {
+    private CamelNodeDetails doParseCamelModels(
+            CamelNodeDetailsFactory nodeFactory, String fullyQualifiedFileName,
+            JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
+            MethodInvocation mi, CamelNodeDetails node) {
         String name = mi.getName().getIdentifier();
 
         // special for Java DSL having some endXXX
-        boolean isEnd = "end".equals(name) || "endChoice".equals(name) || "endDoTry".equals(name) || "endHystrix".equals(name) || "endParent".equals(name) || "endRest".equals(name);
+        boolean isEnd = "end".equals(name) || "endChoice".equals(name) || "endDoTry".equals(name) || "endHystrix".equals(name)
+                || "endParent".equals(name) || "endRest".equals(name);
         boolean isRoute = "route".equals(name) || "from".equals(name) || "routeId".equals(name);
         // must be an eip model that has either input or output as we only want to track processors (also accept from)
         boolean isEip = camelCatalog.findModelNames().contains(name) && (hasInput(name) || hasOutput(name));
@@ -277,7 +261,7 @@ public final class CamelJavaTreeParserHelper {
             if ("routeId".equals(name)) {
                 // grab the route id
                 List args = mi.arguments();
-                if (args != null && args.size() > 0) {
+                if (args != null && !args.isEmpty()) {
                     // the first argument has the route id
                     Expression exp = (Expression) args.get(0);
                     String routeId = getLiteralValue(clazz, block, exp);
@@ -392,7 +376,8 @@ public final class CamelJavaTreeParserHelper {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
                     for (Annotation ann : field.getAnnotations()) {
-                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName()) || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
+                                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
                         if (valid) {
                             Expression exp = (Expression) ann.getInternal();
                             if (exp instanceof SingleMemberAnnotation) {
@@ -421,7 +406,7 @@ public final class CamelJavaTreeParserHelper {
                     if (expression instanceof MethodInvocation) {
                         MethodInvocation mi = (MethodInvocation) expression;
                         List args = mi.arguments();
-                        if (args != null && args.size() > 0) {
+                        if (args != null && !args.isEmpty()) {
                             // the first argument has the endpoint uri
                             expression = (Expression) args.get(0);
                             return getLiteralValue(clazz, block, expression);
@@ -453,11 +438,12 @@ public final class CamelJavaTreeParserHelper {
                 String val2 = getLiteralValue(clazz, block, ie.getRightOperand());
 
                 // if numeric then we plus the values, otherwise we string concat
-                boolean numeric = isNumericOperator(clazz, block, ie.getLeftOperand()) && isNumericOperator(clazz, block, ie.getRightOperand());
+                boolean numeric = isNumericOperator(clazz, block, ie.getLeftOperand())
+                        && isNumericOperator(clazz, block, ie.getRightOperand());
                 if (numeric) {
-                    Long num1 = val1 != null ? Long.valueOf(val1) : 0;
-                    Long num2 = val2 != null ? Long.valueOf(val2) : 0;
-                    answer = "" + (num1 + num2);
+                    long num1 = val1 != null ? Long.parseLong(val1) : 0;
+                    long num2 = val2 != null ? Long.parseLong(val2) : 0;
+                    answer = Long.toString(num1 + num2);
                 } else {
                     answer = (val1 != null ? val1 : "") + (val2 != null ? val2 : "");
                 }
@@ -469,9 +455,9 @@ public final class CamelJavaTreeParserHelper {
                         for (Object ext : extended) {
                             String val3 = getLiteralValue(clazz, block, (Expression) ext);
                             if (numeric) {
-                                Long num3 = val3 != null ? Long.valueOf(val3) : 0;
-                                Long num = Long.valueOf(answer);
-                                answer = "" + (num + num3);
+                                long num3 = val3 != null ? Long.parseLong(val3) : 0;
+                                long num = Long.parseLong(answer);
+                                answer = Long.toString(num + num3);
                             } else {
                                 answer += val3 != null ? val3 : "";
                             }

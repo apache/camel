@@ -17,21 +17,22 @@
 package org.apache.camel.component.google.sheets.server;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import com.consol.citrus.dsl.endpoint.CitrusEndpoints;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.InvocationInterceptor;
+import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.SocketUtils;
 
 import static org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServerAssert.assertThatGoogleApi;
 
-public class GoogleSheetsApiTestServerRule implements TestRule {
+public class GoogleSheetsApiTestServerRule implements InvocationInterceptor {
 
     public static final String SERVER_KEYSTORE = "googleapis.jks";
     public static final String SERVER_KEYSTORE_PASSWORD = "secret";
@@ -43,10 +44,14 @@ public class GoogleSheetsApiTestServerRule implements TestRule {
         try {
             Map<String, Object> testOptions = getTestOptions(optionFile);
 
-            googleApiTestServer = new GoogleSheetsApiTestServer.Builder(CitrusEndpoints.http().server().port(serverPort).timeout(15000).defaultStatus(HttpStatus.REQUEST_TIMEOUT)
-                .autoStart(true)).keyStorePath(new ClassPathResource(SERVER_KEYSTORE).getFile().toPath()).keyStorePassword(SERVER_KEYSTORE_PASSWORD).securePort(serverPort)
-                    .clientId(testOptions.get("clientId").toString()).clientSecret(testOptions.get("clientSecret").toString())
-                    .accessToken(testOptions.get("accessToken").toString()).refreshToken(testOptions.get("refreshToken").toString()).build();
+            googleApiTestServer = new GoogleSheetsApiTestServer.Builder(
+                    CitrusEndpoints.http().server().port(serverPort).timeout(15000).defaultStatus(HttpStatus.REQUEST_TIMEOUT)
+                            .autoStart(true)).keyStorePath(new ClassPathResource(SERVER_KEYSTORE).getFile().toPath())
+                                    .keyStorePassword(SERVER_KEYSTORE_PASSWORD).securePort(serverPort)
+                                    .clientId(testOptions.get("clientId").toString())
+                                    .clientSecret(testOptions.get("clientSecret").toString())
+                                    .accessToken(testOptions.get("accessToken").toString())
+                                    .refreshToken(testOptions.get("refreshToken").toString()).build();
 
             assertThatGoogleApi(googleApiTestServer).isRunning();
         } catch (Exception e) {
@@ -55,8 +60,16 @@ public class GoogleSheetsApiTestServerRule implements TestRule {
     }
 
     @Override
-    public Statement apply(Statement base, Description description) {
-        return new GoogleSheetsApiTestServerStatement(base);
+    public void interceptTestMethod(
+            Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext,
+            ExtensionContext extensionContext)
+            throws Throwable {
+        googleApiTestServer.init();
+        try {
+            invocation.proceed();
+        } finally {
+            googleApiTestServer.reset();
+        }
     }
 
     /**
@@ -74,27 +87,6 @@ public class GoogleSheetsApiTestServerRule implements TestRule {
         }
 
         return options;
-    }
-
-    /**
-     * Rule statement initializes and resets test server after each method.
-     */
-    private class GoogleSheetsApiTestServerStatement extends Statement {
-        private final Statement base;
-
-        GoogleSheetsApiTestServerStatement(Statement base) {
-            this.base = base;
-        }
-
-        @Override
-        public void evaluate() throws Throwable {
-            googleApiTestServer.init();
-            try {
-                base.evaluate();
-            } finally {
-                googleApiTestServer.reset();
-            }
-        }
     }
 
     public GoogleSheetsApiTestServer getGoogleApiTestServer() {

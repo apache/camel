@@ -23,9 +23,9 @@ import com.googlecode.jsendnsca.PassiveCheckSender;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -35,23 +35,24 @@ import static org.mockito.Mockito.verify;
 public class NagiosXorEncryptionTest extends CamelTestSupport {
     protected boolean canRun;
 
-    @Mock @BindToRegistry("mySender")
+    @Mock
+    @BindToRegistry("mySender")
     private PassiveCheckSender nagiosPassiveCheckSender = Mockito.mock(NagiosPassiveCheckSender.class);
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         canRun = true;
         super.setUp();
     }
-    
+
     @Test
     public void testSendToNagios() throws Exception {
         if (!canRun) {
             return;
         }
 
-        MessagePayload expectedPayload = new MessagePayload("localhost", Level.OK, context.getName(),  "Hello Nagios");
+        MessagePayload expectedPayload = new MessagePayload("localhost", Level.OK, context.getName(), "Hello Nagios");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.allMessages().body().isInstanceOf(String.class);

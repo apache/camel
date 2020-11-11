@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
 
@@ -41,17 +41,19 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setSpoolDirectory("target/camel/cache");
                 context.getStreamCachingStrategy().setSpoolThreshold(1L);
 
-                from("direct:start").multicast(new InternalAggregationStrategy()).to("direct:a", "direct:b").end().to("mock:result");
+                from("direct:start").multicast(new InternalAggregationStrategy()).to("direct:a", "direct:b").end()
+                        .to("mock:result");
 
-                from("direct:startNestedMultiCast").multicast(new InternalAggregationStrategy()).to("direct:start").end().to("mock:resultNested");
+                from("direct:startNestedMultiCast").multicast(new InternalAggregationStrategy()).to("direct:start").end()
+                        .to("mock:resultNested");
 
                 from("direct:a") //
-                    .process(new InputProcessorWithStreamCache(1)) //
-                    .to("mock:resulta");
+                        .process(new InputProcessorWithStreamCache(1)) //
+                        .to("mock:resulta");
 
                 from("direct:b") //
-                    .process(new InputProcessorWithStreamCache(2)) //
-                    .to("mock:resultb");
+                        .process(new InputProcessorWithStreamCache(2)) //
+                        .to("mock:resultb");
             }
         };
     }
@@ -89,7 +91,7 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
             String s = "Test Message " + number;
             cos.write(s.getBytes(Charset.forName("UTF-8")));
             cos.close();
-            InputStream is = (InputStream)cos.newStreamCache();
+            InputStream is = (InputStream) cos.newStreamCache();
             exchange.getMessage().setBody(is);
 
         }

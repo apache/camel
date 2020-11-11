@@ -40,15 +40,15 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
 
     @BindToRegistry("sf")
     private SocketFactory sf = new AuditingSocketFactory();
-    
+
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3"
-            + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
+               + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
     }
 
     @Test
     public void testConnectionLeak() throws Exception {
-        for (String filename : new String[] {"claus.txt", "grzegorz.txt"}) {
+        for (String filename : new String[] { "claus.txt", "grzegorz.txt" }) {
             try {
                 sendFile(getFtpUrl(), "Hello World", filename);
             } catch (Exception ignored) {
@@ -65,8 +65,8 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
     }
 
     /**
-     * {@link SocketFactory} which creates {@link Socket}s that expose statistics about {@link Socket#connect(SocketAddress)}/{@link Socket#close()}
-     * invocations
+     * {@link SocketFactory} which creates {@link Socket}s that expose statistics about
+     * {@link Socket#connect(SocketAddress)}/{@link Socket#close()} invocations
      */
     private class AuditingSocketFactory extends SocketFactory {
 
@@ -88,7 +88,7 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
         @Override
         public Socket createSocket() throws IOException {
             AuditingSocket socket = new AuditingSocket();
-            socketAudits.put(System.identityHashCode(socket), new boolean[] {false, false});
+            socketAudits.put(System.identityHashCode(socket), new boolean[] { false, false });
             return socket;
         }
 

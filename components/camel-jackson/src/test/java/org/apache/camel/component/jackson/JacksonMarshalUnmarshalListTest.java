@@ -20,8 +20,11 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
 
@@ -40,9 +43,9 @@ public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
         assertNotNull(list);
         assertEquals(2, list.size());
 
-        TestPojo pojo = (TestPojo)list.get(0);
+        TestPojo pojo = (TestPojo) list.get(0);
         assertEquals("Camel", pojo.getName());
-        pojo = (TestPojo)list.get(1);
+        pojo = (TestPojo) list.get(1);
         assertEquals("World", pojo.getName());
     }
 
@@ -61,7 +64,7 @@ public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
         assertNotNull(list);
         assertEquals(1, list.size());
 
-        TestPojo pojo = (TestPojo)list.get(0);
+        TestPojo pojo = (TestPojo) list.get(0);
         assertEquals("Camel", pojo.getName());
     }
 

@@ -21,7 +21,11 @@ import java.net.SocketTimeoutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for using http client SO timeout
@@ -61,8 +65,8 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/myservice")
-                    // but we wait for 2 sec before reply is sent back
-                    .delay(2000).transform().constant("Bye World").to("mock:result");
+                        // but we wait for 2 sec before reply is sent back
+                        .delay(2000).transform().constant("Bye World").to("mock:result");
             }
         };
     }

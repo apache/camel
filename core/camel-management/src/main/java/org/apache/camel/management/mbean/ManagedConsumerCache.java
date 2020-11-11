@@ -53,26 +53,6 @@ public class ManagedConsumerCache extends ManagedService implements ManagedConsu
     }
 
     @Override
-    public Long getHits() {
-        return consumerCache.getHits();
-    }
-
-    @Override
-    public Long getMisses() {
-        return consumerCache.getMisses();
-    }
-
-    @Override
-    public Long getEvicted() {
-        return consumerCache.getEvicted();
-    }
-
-    @Override
-    public void resetStatistics() {
-        consumerCache.resetCacheStatistics();
-    }
-
-    @Override
     public void purge() {
         consumerCache.purge();
     }

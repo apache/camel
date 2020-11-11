@@ -24,8 +24,10 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DirectoryCreateIssueTest extends ContextTestSupport {
 
@@ -33,7 +35,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
     private final String path = "target/data/a/b/c/d/e/f/g/h";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/a");
         super.setUp();
@@ -48,7 +50,8 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
                 for (int i = 0; i < numFiles; i++) {
                     destinations[i] = "direct:file" + i;
 
-                    from("direct:file" + i).setHeader(Exchange.FILE_NAME, constant("file" + i + ".txt")).to("file://" + path + "/?fileExist=Override&noop=true", "mock:result");
+                    from("direct:file" + i).setHeader(Exchange.FILE_NAME, constant("file" + i + ".txt"))
+                            .to("file://" + path + "/?fileExist=Override&noop=true", "mock:result");
                 }
 
                 from("seda:testFileCreatedAsDir").to(destinations);

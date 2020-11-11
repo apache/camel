@@ -30,13 +30,14 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.LoadablePropertiesSource;
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -50,10 +51,12 @@ import org.slf4j.LoggerFactory;
  * The properties component allows you to use property placeholders in Camel.
  */
 @ManagedResource(description = "Managed PropertiesComponent")
-public class PropertiesComponent extends ServiceSupport implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
+@JdkService(org.apache.camel.spi.PropertiesComponent.FACTORY)
+public class PropertiesComponent extends ServiceSupport
+        implements org.apache.camel.spi.PropertiesComponent, StaticService, CamelContextAware {
 
     /**
-     *  Never check system properties.
+     * Never check system properties.
      */
     public static final int SYSTEM_PROPERTIES_MODE_NEVER = 0;
 
@@ -63,16 +66,15 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
 
     /**
-     * Check system properties variables) first, before trying the specified properties.
-     * This allows system properties to override any other property source
-     * (environment variable and then system properties takes precedence).
+     * Check system properties variables) first, before trying the specified properties. This allows system properties
+     * to override any other property source (environment variable and then system properties takes precedence).
      * <p/>
      * This is the default.
      */
     public static final int SYSTEM_PROPERTIES_MODE_OVERRIDE = 2;
 
     /**
-     *  Never check OS environment variables.
+     * Never check OS environment variables.
      */
     public static final int ENVIRONMENT_VARIABLES_MODE_NEVER = 0;
 
@@ -84,15 +86,13 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     public static final int ENVIRONMENT_VARIABLES_MODE_FALLBACK = 1;
 
     /**
-     * Check OS environment variables first, before trying the specified properties.
-     * This allows environment variables to override any other property source
-     * (environment variable and then system properties takes precedence).
+     * Check OS environment variables first, before trying the specified properties. This allows environment variables
+     * to override any other property source (environment variable and then system properties takes precedence).
      */
     public static final int ENVIRONMENT_VARIABLES_MODE_OVERRIDE = 2;
 
     /**
-     * Key for stores special override properties that containers such as OSGi can store
-     * in the OSGi service registry
+     * Key for stores special override properties that containers such as OSGi can store in the OSGi service registry
      */
     public static final String OVERRIDE_PROPERTIES = PropertiesComponent.class.getName() + ".OverrideProperties";
 
@@ -110,17 +110,18 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     private boolean defaultFallbackEnabled = true;
     private Properties initialProperties;
     private Properties overrideProperties;
+    private final ThreadLocal<Properties> localProperties = new ThreadLocal<>();
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
     private int environmentVariableMode = ENVIRONMENT_VARIABLES_MODE_OVERRIDE;
     private boolean autoDiscoverPropertiesSources = true;
 
     public PropertiesComponent() {
         // include out of the box functions
-        addFunction(new EnvPropertiesFunction());
-        addFunction(new SysPropertiesFunction());
-        addFunction(new ServicePropertiesFunction());
-        addFunction(new ServiceHostPropertiesFunction());
-        addFunction(new ServicePortPropertiesFunction());
+        addPropertiesFunction(new EnvPropertiesFunction());
+        addPropertiesFunction(new SysPropertiesFunction());
+        addPropertiesFunction(new ServicePropertiesFunction());
+        addPropertiesFunction(new ServiceHostPropertiesFunction());
+        addPropertiesFunction(new ServicePortPropertiesFunction());
     }
 
     /**
@@ -156,8 +157,13 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
 
     @Override
     public Optional<String> resolveProperty(String key) {
-        String value = parseUri(key, propertiesLookup);
-        return Optional.of(value);
+        try {
+            String value = parseUri(key, propertiesLookup);
+            return Optional.of(value);
+        } catch (IllegalArgumentException e) {
+            // property not found
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -204,7 +210,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
 
         // use initial properties
         if (initialProperties != null) {
-            for (String name: initialProperties.stringPropertyNames()) {
+            for (String name : initialProperties.stringPropertyNames()) {
                 if (filter.test(name)) {
                     prop.put(name, initialProperties.get(name));
                 }
@@ -227,7 +233,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
 
         // use override properties
         if (overrideProperties != null) {
-            for (String name: overrideProperties.stringPropertyNames()) {
+            for (String name : overrideProperties.stringPropertyNames()) {
                 if (filter.test(name)) {
                     prop.put(name, overrideProperties.get(name));
                 }
@@ -246,7 +252,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
             uri = uri + SUFFIX_TOKEN;
         }
 
-        log.trace("Parsing uri {}", uri);
+        LOG.trace("Parsing uri {}", uri);
         return propertiesParser.parseUri(uri, properties, defaultFallbackEnabled);
     }
 
@@ -261,8 +267,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * A list of locations to load properties.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. This option will override any default locations and only use the
+     * locations from this option.
      */
     public void setLocations(List<PropertiesLocation> locations) {
         // reset locations
@@ -277,8 +283,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * A list of locations to load properties.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. This option will override any default locations and only use the
+     * locations from this option.
      */
     public void setLocations(String[] locationStrings) {
         List<PropertiesLocation> locations = new ArrayList<>();
@@ -292,8 +298,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * A list of locations to load properties.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. This option will override any default locations and only use the
+     * locations from this option.
      */
     public void setLocations(Collection<String> locationStrings) {
         List<PropertiesLocation> locations = new ArrayList<>();
@@ -326,8 +332,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to load properties. You can use comma to separate multiple locations. This option will
+     * override any default locations and only use the locations from this option.
      */
     @Override
     public void setLocation(String location) {
@@ -349,8 +355,8 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     /**
      * Encoding to use when loading properties file from the file system or classpath.
      * <p/>
-     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
-     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as
+     * documented by {@link java.util.Properties#load(java.io.InputStream)}
      */
     @Override
     public void setEncoding(String encoding) {
@@ -413,7 +419,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * @return a list of properties that take precedence and will use first, if a property exist (can't be null).
+     * @return a list of properties that take precedence and will use first, if a property exists (can't be null).
      */
     public Properties getOverrideProperties() {
         if (overrideProperties == null) {
@@ -424,12 +430,31 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * Sets a special list of override properties that take precedence
-     * and will use first, if a property exist.
+     * Sets a special list of override properties that take precedence and will use first, if a property exists.
      */
     @Override
     public void setOverrideProperties(Properties overrideProperties) {
         this.overrideProperties = overrideProperties;
+    }
+
+    /**
+     * Sets a special list of local properties (ie thread local) that take precedence and will use first, if a property
+     * exists.
+     */
+    @Override
+    public void setLocalProperties(Properties localProperties) {
+        if (localProperties != null) {
+            this.localProperties.set(localProperties);
+        } else {
+            this.localProperties.remove();
+        }
+    }
+
+    /**
+     * Gets a list of properties that are local for the current thread only (ie thread local)
+     */
+    public Properties getLocalProperties() {
+        return localProperties.get();
     }
 
     /**
@@ -440,14 +465,14 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     }
 
     /**
-     * Registers the {@link org.apache.camel.component.properties.PropertiesFunction} as a function to this component.
+     * Registers the {@link PropertiesFunction} as a function to this component.
      */
-    public void addFunction(PropertiesFunction function) {
+    public void addPropertiesFunction(PropertiesFunction function) {
         this.functions.put(function.getName(), function);
     }
 
     /**
-     * Is there a {@link org.apache.camel.component.properties.PropertiesFunction} with the given name?
+     * Is there a {@link PropertiesFunction} with the given name?
      */
     public boolean hasFunction(String name) {
         return functions.containsKey(name);
@@ -461,8 +486,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     /**
      * Sets the JVM system property mode (0 = never, 1 = fallback, 2 = override).
      *
-     * The default mode (override) is to use system properties if present,
-     * and override any existing properties.
+     * The default mode (override) is to use system properties if present, and override any existing properties.
      *
      * OS environment variable mode is checked before JVM system property mode
      *
@@ -482,8 +506,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     /**
      * Sets the OS environment variables mode (0 = never, 1 = fallback, 2 = override).
      *
-     * The default mode (override) is to use OS environment variables if present,
-     * and override any existing properties.
+     * The default mode (override) is to use OS environment variables if present, and override any existing properties.
      *
      * OS environment variable mode is checked before JVM system property mode
      *
@@ -511,10 +534,15 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
         if (propertiesSource instanceof CamelContextAware) {
             ((CamelContextAware) propertiesSource).setCamelContext(getCamelContext());
         }
-        sources.add(propertiesSource);
-        if (!this.isNew()) {
-            // if we have already initialized or started then we should also init the source
-            ServiceHelper.initService(propertiesSource);
+        synchronized (lock) {
+            sources.add(propertiesSource);
+            if (!isNew()) {
+                // if we have already initialized or started then we should also init the source
+                ServiceHelper.initService(propertiesSource);
+            }
+            if (isStarted()) {
+                ServiceHelper.startService(propertiesSource);
+            }
         }
     }
 
@@ -526,42 +554,7 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
     protected void doInit() throws Exception {
         super.doInit();
 
-        if (isAutoDiscoverPropertiesSources()) {
-            // discover any 3rd party properties sources
-            try {
-                for (PropertiesSource source : getCamelContext().getRegistry().findByType(PropertiesSource.class)) {
-                    addPropertiesSource(source);
-                    LOG.info("PropertiesComponent added custom PropertiesSource (registry): {}", source);
-                }
-
-                FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/");
-                Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
-                if (type != null) {
-                    Object obj = getCamelContext().getInjector().newInstance(type, false);
-                    if (obj instanceof PropertiesSource) {
-                        PropertiesSource ps = (PropertiesSource) obj;
-                        addPropertiesSource(ps);
-                        LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
-                    } else if (obj != null) {
-                        LOG.warn("PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: " + type.getName());
-                    }
-                }
-            } catch (NoFactoryAvailableException e) {
-                // ignore
-            } catch (Exception e) {
-                LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage() + ". This exception is ignored", e);
-            }
-        }
-
-        ServiceHelper.initService(sources);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
-
-        sources.sort(OrderedComparator.get());
-        ServiceHelper.startService(sources);
 
         if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
                 && systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
@@ -578,10 +571,53 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
         if (propertiesParser instanceof DefaultPropertiesParser) {
             ((DefaultPropertiesParser) propertiesParser).setPropertiesComponent(this);
         }
+
+        if (isAutoDiscoverPropertiesSources()) {
+            // discover any 3rd party properties sources
+            try {
+                for (PropertiesSource source : getCamelContext().getRegistry().findByType(PropertiesSource.class)) {
+                    addPropertiesSource(source);
+                    LOG.info("PropertiesComponent added custom PropertiesSource (registry): {}", source);
+                }
+
+                FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class)
+                        .getBootstrapFactoryFinder();
+                Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
+                if (type != null) {
+                    Object obj = getCamelContext().getInjector().newInstance(type, false);
+                    if (obj instanceof PropertiesSource) {
+                        PropertiesSource ps = (PropertiesSource) obj;
+                        addPropertiesSource(ps);
+                        LOG.info("PropertiesComponent added custom PropertiesSource (factory): {}", ps);
+                    } else if (obj != null) {
+                        LOG.warn(
+                                "PropertiesComponent cannot add custom PropertiesSource as the type is not a org.apache.camel.component.properties.PropertiesSource but: "
+                                 + type.getName());
+                    }
+                }
+            } catch (Exception e) {
+                LOG.debug("Error discovering and using custom PropertiesSource due to " + e.getMessage()
+                          + ". This exception is ignored",
+                        e);
+            }
+        }
+
+        sources.sort(OrderedComparator.get());
+        ServiceHelper.initService(sources);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(sources);
     }
 
     @Override
     protected void doStop() throws Exception {
+        ServiceHelper.stopService(sources);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(sources);
     }
 
@@ -594,27 +630,27 @@ public class PropertiesComponent extends ServiceSupport implements org.apache.ca
             addPropertiesSource(new ClasspathPropertiesSource(this, location));
         }
     }
+
     private List<PropertiesLocation> parseLocations(List<PropertiesLocation> locations) {
         List<PropertiesLocation> answer = new ArrayList<>();
 
         for (PropertiesLocation location : locations) {
-            log.trace("Parsing location: {}", location);
+            LOG.trace("Parsing location: {}", location);
 
             try {
                 String path = FilePathResolver.resolvePath(location.getPath());
-                log.debug("Parsed location: {}", path);
+                LOG.debug("Parsed location: {}", path);
                 if (ObjectHelper.isNotEmpty(path)) {
                     answer.add(new PropertiesLocation(
-                        location.getResolver(),
-                        path,
-                        location.isOptional())
-                    );
+                            location.getResolver(),
+                            path,
+                            location.isOptional()));
                 }
             } catch (IllegalArgumentException e) {
                 if (!ignoreMissingLocation && !location.isOptional()) {
                     throw e;
                 } else {
-                    log.debug("Ignored missing location: {}", location);
+                    LOG.debug("Ignored missing location: {}", location);
                 }
             }
         }

@@ -33,8 +33,10 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.xml.StreamSourceConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link StreamCacheConverter}
@@ -46,7 +48,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     private Exchange exchange;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         this.exchange = new DefaultExchange(context);
@@ -57,10 +59,11 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         context.start();
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
-        StreamCache streamCache = StreamSourceConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
+        StreamCache streamCache
+                = StreamSourceConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
         String message = exchange.getContext().getTypeConverter().convertTo(String.class, streamCache);
         assertNotNull(message);
-        assertEquals("The converted message is wrong", MESSAGE, message);
+        assertEquals(MESSAGE, message, "The converted message is wrong");
     }
 
     @Test
@@ -71,9 +74,9 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         StreamCache cache = StreamSourceConverter.convertToStreamCache(source, exchange);
         // assert re-readability of the cached StreamSource
         XmlConverter converter = new XmlConverter();
-        assertNotNull(converter.toString((Source)cache, null));
+        assertNotNull(converter.toString((Source) cache, null));
         cache.reset();
-        assertNotNull(converter.toString((Source)cache, null));
+        assertNotNull(converter.toString((Source) cache, null));
     }
 
     @Test
@@ -81,7 +84,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         context.start();
 
         InputStream is = getTestFileStream();
-        InputStream cache = (InputStream)StreamCacheConverter.convertToStreamCache(is, exchange);
+        InputStream cache = (InputStream) StreamCacheConverter.convertToStreamCache(is, exchange);
         // assert re-readability of the cached InputStream
         String data = IOConverter.toString(cache, null);
         cache.reset();
@@ -96,7 +99,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         context.start();
 
         InputStream is = getTestFileStream();
-        InputStream cache = (InputStream)StreamCacheConverter.convertToStreamCache(is, exchange);
+        InputStream cache = (InputStream) StreamCacheConverter.convertToStreamCache(is, exchange);
         assertNotNull(IOConverter.toString(cache, null));
         try {
             // since the stream is closed you delete the temp file
@@ -131,7 +134,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
 
     protected InputStream getTestFileStream() {
         InputStream answer = getClass().getClassLoader().getResourceAsStream(TEST_FILE);
-        assertNotNull("Should have found the file: " + TEST_FILE + " on the classpath", answer);
+        assertNotNull(answer, "Should have found the file: " + TEST_FILE + " on the classpath");
         return answer;
     }
 

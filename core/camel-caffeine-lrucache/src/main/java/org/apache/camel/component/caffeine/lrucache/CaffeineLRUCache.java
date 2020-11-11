@@ -39,10 +39,11 @@ import org.slf4j.LoggerFactory;
 /**
  * A cache that uses a near optional LRU Cache.
  * <p/>
- * The Cache is implemented by Caffeine which provides an <a href="https://github.com/ben-manes/caffeine/wiki/Efficiency">efficient cache</a>.
+ * The Cache is implemented by Caffeine which provides an
+ * <a href="https://github.com/ben-manes/caffeine/wiki/Efficiency">efficient cache</a>.
  * <p/>
- * If this cache stores {@link org.apache.camel.Service} then this implementation will on eviction
- * invoke the {@link org.apache.camel.Service#stop()} method, to auto-stop the service.
+ * If this cache stores {@link org.apache.camel.Service} then this implementation will on eviction invoke the
+ * {@link org.apache.camel.Service#stop()} method, to auto-stop the service.
  * <p/>
  * Use {@link LRUCacheFactory} to create a new instance (do not use the constructor).
  *
@@ -63,10 +64,9 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     private final Consumer<V> evict;
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified maximumCacheSize, and will stop on eviction.
      *
-     * @param maximumCacheSize the max capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public CaffeineLRUCache(int maximumCacheSize) {
@@ -74,11 +74,11 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified initial capacity, maximumCacheSize, and will stop on eviction.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize, and will
+     * stop on eviction.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public CaffeineLRUCache(int initialCapacity, int maximumCacheSize) {
@@ -87,12 +87,12 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified initial capacity, maximumCacheSize,load factor and ordering mode.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize,load factor
+     * and ordering mode.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
-     * @param stopOnEviction   whether to stop service on eviction.
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
+     * @param  stopOnEviction           whether to stop service on eviction.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public CaffeineLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
@@ -100,32 +100,33 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified initial capacity, maximumCacheSize,load factor and ordering mode.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize,load factor
+     * and ordering mode.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
-     * @param stopOnEviction   whether to stop service on eviction.
-     * @param soft             whether to use soft values a soft cache  (default is false)
-     * @param weak             whether to use weak keys/values as a weak cache  (default is false)
-     * @param syncListener     whether to use synchronous call for the eviction listener (default is false)
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
+     * @param  stopOnEviction           whether to stop service on eviction.
+     * @param  soft                     whether to use soft values a soft cache (default is false)
+     * @param  weak                     whether to use weak keys/values as a weak cache (default is false)
+     * @param  syncListener             whether to use synchronous call for the eviction listener (default is false)
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public CaffeineLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction,
                             boolean soft, boolean weak, boolean syncListener) {
-        this(initialCapacity, maximumCacheSize, stopOnEviction ? CaffeineLRUCache::doStop : CaffeineLRUCache::doNothing, soft, weak, syncListener);
+        this(initialCapacity, maximumCacheSize, stopOnEviction ? CaffeineLRUCache::doStop : CaffeineLRUCache::doNothing, soft,
+             weak, syncListener);
     }
 
     /**
-     * Constructs an empty <tt>LRUCache</tt> instance with the
-     * specified initial capacity, maximumCacheSize,load factor and ordering mode.
+     * Constructs an empty <tt>LRUCache</tt> instance with the specified initial capacity, maximumCacheSize,load factor
+     * and ordering mode.
      *
-     * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize the max capacity.
-     * @param evict            callback for evicted elements
-     * @param soft             whether to use soft values a soft cache  (default is false)
-     * @param weak             whether to use weak keys/values as a weak cache  (default is false)
-     * @param syncListener     whether to use synchronous call for the eviction listener (default is false)
+     * @param  initialCapacity          the initial capacity.
+     * @param  maximumCacheSize         the max capacity.
+     * @param  evict                    callback for evicted elements
+     * @param  soft                     whether to use soft values a soft cache (default is false)
+     * @param  weak                     whether to use weak keys/values as a weak cache (default is false)
+     * @param  syncListener             whether to use synchronous call for the eviction listener (default is false)
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public CaffeineLRUCache(int initialCapacity, int maximumCacheSize, Consumer<V> evict,

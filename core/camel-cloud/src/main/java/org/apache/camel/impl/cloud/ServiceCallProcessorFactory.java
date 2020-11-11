@@ -22,9 +22,12 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.cloud.ServiceChooser;
 import org.apache.camel.cloud.ServiceChooserAware;
 import org.apache.camel.cloud.ServiceDiscovery;
@@ -33,13 +36,12 @@ import org.apache.camel.cloud.ServiceExpressionFactory;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterAware;
 import org.apache.camel.cloud.ServiceLoadBalancer;
-import org.apache.camel.impl.engine.TypedProcessorFactory;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.TypedProcessorFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 import org.apache.camel.util.function.ThrowingHelper;
@@ -60,10 +62,10 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
     // *****************************
 
     @Override
-    public Processor doCreateProcessor(RouteContext routeContext, ServiceCallDefinition definition) throws Exception {
+    public Processor doCreateProcessor(Route route, ServiceCallDefinition definition) throws Exception {
         this.definition = definition;
 
-        final CamelContext camelContext = routeContext.getCamelContext();
+        final CamelContext camelContext = route.getCamelContext();
         final ServiceDiscovery serviceDiscovery = retrieveServiceDiscovery(camelContext);
         final ServiceFilter serviceFilter = retrieveServiceFilter(camelContext);
         final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);
@@ -75,13 +77,13 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         CamelContextAware.trySetCamelContext(loadBalancer, camelContext);
 
         if (loadBalancer instanceof ServiceDiscoveryAware) {
-            ((ServiceDiscoveryAware)loadBalancer).setServiceDiscovery(serviceDiscovery);
+            ((ServiceDiscoveryAware) loadBalancer).setServiceDiscovery(serviceDiscovery);
         }
         if (loadBalancer instanceof ServiceFilterAware) {
-            ((ServiceFilterAware)loadBalancer).setServiceFilter(serviceFilter);
+            ((ServiceFilterAware) loadBalancer).setServiceFilter(serviceFilter);
         }
         if (loadBalancer instanceof ServiceChooserAware) {
-            ((ServiceChooserAware)loadBalancer).setServiceChooser(serviceChooser);
+            ((ServiceChooserAware) loadBalancer).setServiceChooser(serviceChooser);
         }
 
         // The component is used to configure the default scheme to use (eg
@@ -122,11 +124,19 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
         // Service name is mandatory
         ObjectHelper.notNull(definition.getName(), "Service name");
 
-        endpointScheme = ThrowingHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallDefinitionConstants.DEFAULT_COMPONENT);
+        endpointScheme = ThrowingHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders,
+                () -> ServiceCallDefinitionConstants.DEFAULT_COMPONENT);
         endpointUri = ThrowingHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null);
+        ExchangePattern pattern = CamelContextHelper.parse(camelContext, ExchangePattern.class, definition.getPattern());
 
-        return new DefaultServiceCallProcessor(camelContext, camelContext.resolvePropertyPlaceholders(definition.getName()), endpointScheme, endpointUri, definition.getPattern(),
-                                               loadBalancer, retrieveExpression(camelContext, endpointScheme));
+        Expression expression = retrieveExpression(camelContext, endpointScheme);
+        if (expression instanceof ExpressionFactory) {
+            expression = ((ExpressionFactory) expression).createExpression(camelContext);
+        }
+        return new DefaultServiceCallProcessor(
+                camelContext, camelContext.resolvePropertyPlaceholders(definition.getName()), endpointScheme, endpointUri,
+                pattern,
+                loadBalancer, expression);
     }
 
     // *****************************
@@ -139,7 +149,8 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
         if (config == null) {
             // Or if it is in the registry
-            config = lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID, ServiceCallConfigurationDefinition.class);
+            config = lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID,
+                    ServiceCallConfigurationDefinition.class);
         }
 
         if (config == null) {
@@ -170,7 +181,9 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
     // ServiceDiscovery
     // ******************************************
 
-    private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+    private ServiceDiscovery retrieveServiceDiscovery(
+            CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function)
+            throws Exception {
         ServiceDiscovery answer = null;
 
         ServiceCallConfigurationDefinition config = function.apply(camelContext);
@@ -178,7 +191,8 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
             if (config.getServiceDiscoveryConfiguration() != null) {
                 answer = config.getServiceDiscoveryConfiguration().newInstance(camelContext);
             } else {
-                answer = retrieve(ServiceDiscovery.class, camelContext, config::getServiceDiscovery, config::getServiceDiscoveryRef);
+                answer = retrieve(ServiceDiscovery.class, camelContext, config::getServiceDiscovery,
+                        config::getServiceDiscoveryRef);
             }
         }
 
@@ -187,31 +201,37 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
     private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext) throws Exception {
         return Suppliers
-            .firstNotNull(() -> (definition.getServiceDiscoveryConfiguration() != null) ? definition.getServiceDiscoveryConfiguration().newInstance(camelContext) : null,
-                // Local configuration
-                () -> retrieve(ServiceDiscovery.class, camelContext, definition::getServiceDiscovery, definition::getServiceDiscoveryRef),
-                // Linked configuration
-                () -> retrieveServiceDiscovery(camelContext, this::retrieveConfig),
-                // Default configuration
-                () -> retrieveServiceDiscovery(camelContext, this::retrieveDefaultConfig),
-                // Check if there is a single instance in the registry
-                () -> findByType(camelContext, ServiceDiscovery.class),
-                // From registry
-                () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_DISCOVERY_ID, ServiceDiscovery.class))
-            .orElseGet(
-                // Default, that's s little ugly but a load balancer may
-                // live without
-                // (i.e. the Ribbon one) so let's delegate the null check
-                // to the actual
-                // impl.
-                () -> null);
+                .firstNotNull(
+                        () -> (definition.getServiceDiscoveryConfiguration() != null)
+                                ? definition.getServiceDiscoveryConfiguration().newInstance(camelContext) : null,
+                        // Local configuration
+                        () -> retrieve(ServiceDiscovery.class, camelContext, definition::getServiceDiscovery,
+                                definition::getServiceDiscoveryRef),
+                        // Linked configuration
+                        () -> retrieveServiceDiscovery(camelContext, this::retrieveConfig),
+                        // Default configuration
+                        () -> retrieveServiceDiscovery(camelContext, this::retrieveDefaultConfig),
+                        // Check if there is a single instance in the registry
+                        () -> findByType(camelContext, ServiceDiscovery.class),
+                        // From registry
+                        () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_DISCOVERY_ID,
+                                ServiceDiscovery.class))
+                .orElseGet(
+                        // Default, that's s little ugly but a load balancer may
+                        // live without
+                        // (i.e. the Ribbon one) so let's delegate the null check
+                        // to the actual
+                        // impl.
+                        () -> null);
     }
 
     // ******************************************
     // ServiceFilter
     // ******************************************
 
-    private ServiceFilter retrieveServiceFilter(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+    private ServiceFilter retrieveServiceFilter(
+            CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function)
+            throws Exception {
         ServiceFilter answer = null;
 
         ServiceCallConfigurationDefinition config = function.apply(camelContext);
@@ -238,28 +258,35 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
     }
 
     private ServiceFilter retrieveServiceFilter(CamelContext camelContext) throws Exception {
-        return Suppliers.firstNotNull(() -> (definition.getServiceFilterConfiguration() != null) ? definition.getServiceFilterConfiguration().newInstance(camelContext) : null,
-            // Local configuration
-            () -> retrieve(ServiceFilter.class, camelContext, definition::getServiceFilter, definition::getServiceFilterRef),
-            // Linked configuration
-            () -> retrieveServiceFilter(camelContext, this::retrieveConfig),
-            // Default configuration
-            () -> retrieveServiceFilter(camelContext, this::retrieveDefaultConfig),
-            // Check if there is a single instance in
-            // the registry
-            () -> findByType(camelContext, ServiceFilter.class),
-            // From registry
-            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class))
-            .orElseGet(
-            // Default
-            () -> new HealthyServiceFilter());
+        return Suppliers
+                .firstNotNull(
+                        () -> (definition.getServiceFilterConfiguration() != null)
+                                ? definition.getServiceFilterConfiguration().newInstance(camelContext) : null,
+                        // Local configuration
+                        () -> retrieve(ServiceFilter.class, camelContext, definition::getServiceFilter,
+                                definition::getServiceFilterRef),
+                        // Linked configuration
+                        () -> retrieveServiceFilter(camelContext, this::retrieveConfig),
+                        // Default configuration
+                        () -> retrieveServiceFilter(camelContext, this::retrieveDefaultConfig),
+                        // Check if there is a single instance in
+                        // the registry
+                        () -> findByType(camelContext, ServiceFilter.class),
+                        // From registry
+                        () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_FILTER_ID,
+                                ServiceFilter.class))
+                .orElseGet(
+                        // Default
+                        () -> new HealthyServiceFilter());
     }
 
     // ******************************************
     // ServiceChooser
     // ******************************************
 
-    private ServiceChooser retrieveServiceChooser(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+    private ServiceChooser retrieveServiceChooser(
+            CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function)
+            throws Exception {
         ServiceChooser answer = null;
 
         ServiceCallConfigurationDefinition config = function.apply(camelContext);
@@ -283,27 +310,30 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
     private ServiceChooser retrieveServiceChooser(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
-            // Local configuration
-            () -> retrieve(ServiceChooser.class, camelContext, definition::getServiceChooser, definition::getServiceChooserRef),
-            // Linked configuration
-            () -> retrieveServiceChooser(camelContext, this::retrieveConfig),
-            // Default configuration
-            () -> retrieveServiceChooser(camelContext, this::retrieveDefaultConfig),
-            // Check if there is a single instance in
-            // the registry
-            () -> findByType(camelContext, ServiceChooser.class),
-            // From registry
-            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class))
-            .orElseGet(
-            // Default
-            () -> new RoundRobinServiceChooser());
+                // Local configuration
+                () -> retrieve(ServiceChooser.class, camelContext, definition::getServiceChooser,
+                        definition::getServiceChooserRef),
+                // Linked configuration
+                () -> retrieveServiceChooser(camelContext, this::retrieveConfig),
+                // Default configuration
+                () -> retrieveServiceChooser(camelContext, this::retrieveDefaultConfig),
+                // Check if there is a single instance in
+                // the registry
+                () -> findByType(camelContext, ServiceChooser.class),
+                // From registry
+                () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class))
+                .orElseGet(
+                        // Default
+                        () -> new RoundRobinServiceChooser());
     }
 
     // ******************************************
     // LoadBalancer
     // ******************************************
 
-    private ServiceLoadBalancer retrieveLoadBalancer(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+    private ServiceLoadBalancer retrieveLoadBalancer(
+            CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function)
+            throws Exception {
         ServiceLoadBalancer answer = null;
 
         ServiceCallConfigurationDefinition config = function.apply(camelContext);
@@ -319,28 +349,35 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
     }
 
     private ServiceLoadBalancer retrieveLoadBalancer(CamelContext camelContext) throws Exception {
-        return Suppliers.firstNotNull(() -> (definition.getLoadBalancerConfiguration() != null) ? definition.getLoadBalancerConfiguration().newInstance(camelContext) : null,
-            // Local configuration
-            () -> retrieve(ServiceLoadBalancer.class, camelContext, definition::getLoadBalancer, definition::getLoadBalancerRef),
-            // Linked configuration
-            () -> retrieveLoadBalancer(camelContext, this::retrieveConfig),
-            // Default configuration
-            () -> retrieveLoadBalancer(camelContext, this::retrieveDefaultConfig),
-            // Check if there is a single instance in
-            // the registry
-            () -> findByType(camelContext, ServiceLoadBalancer.class),
-            // From registry
-            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_LOAD_BALANCER_ID, ServiceLoadBalancer.class))
-            .orElseGet(
-            // Default
-            () -> new DefaultServiceLoadBalancer());
+        return Suppliers
+                .firstNotNull(
+                        () -> (definition.getLoadBalancerConfiguration() != null)
+                                ? definition.getLoadBalancerConfiguration().newInstance(camelContext) : null,
+                        // Local configuration
+                        () -> retrieve(ServiceLoadBalancer.class, camelContext, definition::getLoadBalancer,
+                                definition::getLoadBalancerRef),
+                        // Linked configuration
+                        () -> retrieveLoadBalancer(camelContext, this::retrieveConfig),
+                        // Default configuration
+                        () -> retrieveLoadBalancer(camelContext, this::retrieveDefaultConfig),
+                        // Check if there is a single instance in
+                        // the registry
+                        () -> findByType(camelContext, ServiceLoadBalancer.class),
+                        // From registry
+                        () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_LOAD_BALANCER_ID,
+                                ServiceLoadBalancer.class))
+                .orElseGet(
+                        // Default
+                        () -> new DefaultServiceLoadBalancer());
     }
 
     // ******************************************
     // Expression
     // ******************************************
 
-    private Expression retrieveExpression(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+    private Expression retrieveExpression(
+            CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function)
+            throws Exception {
         Expression answer = null;
 
         ServiceCallConfigurationDefinition config = function.apply(camelContext);
@@ -357,22 +394,26 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
     private Expression retrieveExpression(CamelContext camelContext, String component) throws Exception {
         Optional<Expression> expression = Suppliers
-            .firstNotNull(() -> (definition.getExpressionConfiguration() != null) ? definition.getExpressionConfiguration().newInstance(camelContext) : null,
-                // Local configuration
-                () -> retrieve(Expression.class, camelContext, definition::getExpression, definition::getExpressionRef),
-                // Linked configuration
-                () -> retrieveExpression(camelContext, this::retrieveConfig),
-                // Default configuration
-                () -> retrieveExpression(camelContext, this::retrieveDefaultConfig),
-                // From registry
-                () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class));
+                .firstNotNull(
+                        () -> (definition.getExpressionConfiguration() != null)
+                                ? definition.getExpressionConfiguration().newInstance(camelContext) : null,
+                        // Local configuration
+                        () -> retrieve(Expression.class, camelContext, definition::getExpression, definition::getExpressionRef),
+                        // Linked configuration
+                        () -> retrieveExpression(camelContext, this::retrieveConfig),
+                        // Default configuration
+                        () -> retrieveExpression(camelContext, this::retrieveDefaultConfig),
+                        // From registry
+                        () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID,
+                                Expression.class));
 
         if (expression.isPresent()) {
             return expression.get();
         } else {
             String lookupName = component + "-service-expression";
             // First try to find the factory from the registry.
-            ServiceExpressionFactory factory = CamelContextHelper.lookup(camelContext, lookupName, ServiceExpressionFactory.class);
+            ServiceExpressionFactory factory
+                    = CamelContextHelper.lookup(camelContext, lookupName, ServiceExpressionFactory.class);
             if (factory != null) {
                 // If a factory is found in the registry do not re-configure it
                 // as
@@ -384,15 +425,18 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
                 try {
                     // Then use Service factory.
-                    type = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(lookupName).orElse(null);
+                    type = camelContext.adapt(ExtendedCamelContext.class)
+                            .getFactoryFinder(ServiceCallDefinitionConstants.RESOURCE_PATH).findClass(lookupName).orElse(null);
                 } catch (Exception e) {
                 }
 
                 if (ObjectHelper.isNotEmpty(type)) {
                     if (ServiceExpressionFactory.class.isAssignableFrom(type)) {
-                        factory = (ServiceExpressionFactory)camelContext.getInjector().newInstance(type, false);
+                        factory = (ServiceExpressionFactory) camelContext.getInjector().newInstance(type, false);
                     } else {
-                        throw new IllegalArgumentException("Resolving Expression: " + lookupName + " detected type conflict: Not a ServiceExpressionFactory implementation. Found: "
+                        throw new IllegalArgumentException(
+                                "Resolving Expression: " + lookupName
+                                                           + " detected type conflict: Not a ServiceExpressionFactory implementation. Found: "
                                                            + type.getName());
                     }
                 } else {
@@ -409,7 +453,8 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
     // Helpers
     // ************************************
 
-    private <T> T retrieve(Class<T> type, CamelContext camelContext, Supplier<T> instanceSupplier, Supplier<String> refSupplier) {
+    private <T> T retrieve(
+            Class<T> type, CamelContext camelContext, Supplier<T> instanceSupplier, Supplier<String> refSupplier) {
         T answer = null;
         if (instanceSupplier != null) {
             answer = instanceSupplier.get();

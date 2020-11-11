@@ -109,7 +109,8 @@ public interface RuntimeEndpointRegistry extends StaticService {
     List<String> getEndpointsPerRoute(String routeId, boolean includeInputs);
 
     /**
-     * Gets details about all the endpoint captured from the given route during runtime routing that are in-use of the routes.
+     * Gets details about all the endpoint captured from the given route during runtime routing that are in-use of the
+     * routes.
      */
     List<Statistic> getEndpointStatistics();
 

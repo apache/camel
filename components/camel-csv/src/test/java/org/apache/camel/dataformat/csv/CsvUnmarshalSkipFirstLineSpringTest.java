@@ -20,13 +20,14 @@ import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
- * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of
- * the <tt>skipFirstLine</tt> option.
+ * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of the <tt>skipFirstLine</tt> option.
  */
 public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport {
 
@@ -35,7 +36,7 @@ public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport 
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testCsvUnMarshal() throws Exception {
+    void testCsvUnMarshal() throws Exception {
         result.expectedMessageCount(1);
 
         // the first line contains the column names which we intend to skip
@@ -55,7 +56,7 @@ public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport 
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testCsvUnMarshalSingleLine() throws Exception {
+    void testCsvUnMarshalSingleLine() throws Exception {
         result.expectedMessageCount(1);
 
         // the first line contains a data row but as we set skipFirstLine
@@ -72,7 +73,7 @@ public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport 
     }
 
     @Test
-    public void testCsvUnMarshalNoLine() throws Exception {
+    void testCsvUnMarshalNoLine() throws Exception {
         result.expectedMessageCount(1);
 
         // the first and last line we intend to skip
@@ -86,6 +87,7 @@ public class CsvUnmarshalSkipFirstLineSpringTest extends CamelSpringTestSupport 
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalSkipFirstLineSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/dataformat/csv/CsvUnmarshalSkipFirstLineSpringTest-context.xml");
     }
 }

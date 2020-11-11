@@ -43,10 +43,10 @@ public class GenericFileConfiguration {
 
     public void setDirectory(String directory) {
         this.directory = needToNormalize()
-            // must normalize path to cater for Windows and other OS
-            ? FileUtil.normalizePath(directory)
-            // for the remote directory we don't need to do that
-            : directory;
+                // must normalize path to cater for Windows and other OS
+                ? FileUtil.normalizePath(directory)
+                // for the remote directory we don't need to do that
+                : directory;
 
         // endpoint directory must not be null
         if (this.directory == null) {

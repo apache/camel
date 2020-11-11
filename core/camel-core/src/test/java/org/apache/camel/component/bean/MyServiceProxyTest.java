@@ -21,7 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MyServiceProxyTest extends ContextTestSupport {
 
@@ -86,8 +89,8 @@ public class MyServiceProxyTest extends ContextTestSupport {
         in.id = 100;
         in.request = "Camel";
         MyResponse response = myService.call(in);
-        assertEquals("Get a wrong response id.", 100, response.id);
-        assertEquals("Get a wrong response", "Hi Camel", response.response);
+        assertEquals(100, response.id, "Get a wrong response id.");
+        assertEquals("Hi Camel", response.response, "Get a wrong response");
     }
 
     @Override
@@ -95,10 +98,14 @@ public class MyServiceProxyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(body().isEqualTo("Tiger in Action")).throwException(new MyApplicationException("No tigers", 9))
-                    .when(body().isEqualTo("Donkey in Action")).throwException(new RuntimeCamelException(new MyApplicationException("No donkeys", 8)))
-                    .when(body().isEqualTo("Elephant in Action")).throwException(new MyCustomException("Damn", new MyApplicationException("No elephants", 7)))
-                    .when(body().isEqualTo("Kaboom")).throwException(new IllegalArgumentException("Damn")).otherwise().transform(constant("Camel in Action"));
+                from("direct:start").choice().when(body().isEqualTo("Tiger in Action"))
+                        .throwException(new MyApplicationException("No tigers", 9))
+                        .when(body().isEqualTo("Donkey in Action"))
+                        .throwException(new RuntimeCamelException(new MyApplicationException("No donkeys", 8)))
+                        .when(body().isEqualTo("Elephant in Action"))
+                        .throwException(new MyCustomException("Damn", new MyApplicationException("No elephants", 7)))
+                        .when(body().isEqualTo("Kaboom")).throwException(new IllegalArgumentException("Damn")).otherwise()
+                        .transform(constant("Camel in Action"));
 
                 from("direct:request").process(new Processor() {
 

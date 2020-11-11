@@ -17,11 +17,11 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Based on user form issue
@@ -31,15 +31,16 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
     @Test
     public void testErrorHandlerAdvice() throws Exception {
         RouteDefinition foo = context.getRouteDefinition("foo");
-        RouteReifier.adviceWith(foo, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(foo, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().throwException(new IllegalAccessException("Forced"));
+                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint()
+                        .throwException(new IllegalAccessException("Forced"));
             }
         });
 
         RouteDefinition error = context.getRouteDefinition("error");
-        RouteReifier.adviceWith(error, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(error, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("file:*").skipSendToOriginalEndpoint().to("mock:file");
@@ -64,7 +65,8 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("direct:error").maximumRedeliveries(2).redeliveryDelay(0));
 
-                from("direct:error").routeId("error").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("mock:error").to("file:error");
+                from("direct:error").routeId("error").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("mock:error")
+                        .to("file:error");
 
                 from("timer://someTimer?delay=15000&fixedRate=true&period=5000").routeId("timer").to("log:level=INFO");
 

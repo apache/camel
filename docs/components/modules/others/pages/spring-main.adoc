@@ -1,0 +1,16 @@
+[[spring-main-other]]
+= Spring Main Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-spring-main/src/main/docs/spring-main.adoc
+:docTitle: Spring Main
+:artifactId: camel-spring-main
+:description: Camel Spring Main support
+:since: 3.2
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/spring-main.adoc[opts=optional]
+//Manually maintained attributes
+:group: Spring
+
+*Since Camel {since}*
+
+This module is used for running Spring standalone via a main class extended from `camel-main`.

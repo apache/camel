@@ -21,11 +21,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class MyRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("timer:foo")
-            .log("I was here")
-            .toD("log:a")
-            .wireTap("mock:tap")
-            .to("log:b");
+                .log("I was here")
+                .toD("log:a")
+                .wireTap("mock:tap")
+                .to("log:b");
     }
 }

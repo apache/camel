@@ -24,7 +24,10 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.MethodNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
 
@@ -43,7 +46,8 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
             RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e);
             MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, rce.getCause());
             assertEquals("getOther[xx", mnfe.getMethodName());
-            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, mnfe.getCause());
+            ExpressionIllegalSyntaxException cause
+                    = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, mnfe.getCause());
             assertEquals("Illegal syntax: getOther[xx", cause.getMessage());
             assertEquals("getOther[xx", cause.getExpression());
         }

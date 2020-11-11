@@ -33,35 +33,37 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic BigQuery Producer
  */
 public class GoogleBigQuerySQLProducer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleBigQuerySQLProducer.class);
+
     private final GoogleBigQuerySQLConfiguration configuration;
     private Bigquery bigquery;
     private String query;
     private Set<String> queryParameterNames;
 
-    public GoogleBigQuerySQLProducer(Bigquery bigquery, GoogleBigQuerySQLEndpoint endpoint, GoogleBigQuerySQLConfiguration configuration) {
+    public GoogleBigQuerySQLProducer(Bigquery bigquery, GoogleBigQuerySQLEndpoint endpoint,
+                                     GoogleBigQuerySQLConfiguration configuration) {
         super(endpoint);
         this.bigquery = bigquery;
         this.configuration = configuration;
     }
 
     /**
-     * Process the exchange The incoming exchange can be a grouped exchange in
-     * which case all the exchanges will be combined. The incoming can be
+     * Process the exchange The incoming exchange can be a grouped exchange in which case all the exchanges will be
+     * combined. The incoming can be
      * <ul>
-     * <li>A map where all map keys will map to field records. One map object
-     * maps to one bigquery row</li>
-     * <li>A list of maps. Each entry in the list will map to one bigquery
-     * row</li>
+     * <li>A map where all map keys will map to field records. One map object maps to one bigquery row</li>
+     * <li>A list of maps. Each entry in the list will map to one bigquery row</li>
      * </ul>
-     * The incoming message is expected to be a List of Maps The assumptions: -
-     * All incoming records go into the same table - Incoming records sorted by
-     * the timestamp
+     * The incoming message is expected to be a List of Maps The assumptions: - All incoming records go into the same
+     * table - Incoming records sorted by the timestamp
      */
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -69,7 +71,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         Map<String, Object> queryParameters = extractParameters(exchange);
         exchange.getMessage().setHeader(GoogleBigQueryConstants.TRANSLATED_QUERY, translatedQuery);
         Long affectedRows = executeSQL(translatedQuery, queryParameters);
-        log.debug("The query {} affected {} rows", query, affectedRows);
+        LOG.debug("The query {} affected {} rows", query, affectedRows);
         exchange.getMessage().setBody(affectedRows);
     }
 
@@ -80,8 +82,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
 
         setQueryParameters(queryParameters, apiQueryRequest);
 
-        if (log.isTraceEnabled()) {
-            log.trace("Sending query to bigquery standard sql: {}", translatedQuery);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Sending query to bigquery standard sql: {}", translatedQuery);
         }
 
         QueryResponse apiResponse = apiQuery.execute();
@@ -90,8 +92,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             throw new Exception("Query " + translatedQuery + " failed: " + apiResponse.getErrors());
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Result of query {} is {}", translatedQuery, apiResponse.toPrettyString());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Result of query {} is {}", translatedQuery, apiResponse.toPrettyString());
         }
         return apiResponse.getNumDmlAffectedRows();
     }
@@ -108,7 +110,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
             try {
                 headers.putAll(message.getBody(Map.class));
             } catch (ClassCastException e) {
-                e.printStackTrace();
+                LOG.warn("Unable to perform cast while extracting header parameters: {}", e.getMessage(), e);
             }
         }
 
@@ -116,7 +118,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         queryParameterNames.forEach(s -> {
             Object value = headers.get(s);
             if (value == null) {
-                throw new RuntimeExchangeException("SQL parameter with name '" + s + "' not found in the message headers", exchange);
+                throw new RuntimeExchangeException(
+                        "SQL parameter with name '" + s + "' not found in the message headers", exchange);
             }
 
             result.put(s, headers.get(s));
@@ -133,7 +136,8 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
         List<QueryParameter> list = new ArrayList<>();
         params.forEach((key, value) -> {
             QueryParameter param = new QueryParameter();
-            param.setName(key).setParameterType(new QueryParameterType().setType("STRING")).setParameterValue(new QueryParameterValue().setValue(value.toString()));
+            param.setName(key).setParameterType(new QueryParameterType().setType("STRING"))
+                    .setParameterValue(new QueryParameterValue().setValue(value.toString()));
             list.add(param);
         });
         apiQueryRequest.setQueryParameters(list);
@@ -141,7 +145,7 @@ public class GoogleBigQuerySQLProducer extends DefaultProducer {
 
     @Override
     public GoogleBigQuerySQLEndpoint getEndpoint() {
-        return (GoogleBigQuerySQLEndpoint)super.getEndpoint();
+        return (GoogleBigQuerySQLEndpoint) super.getEndpoint();
     }
 
     @Override

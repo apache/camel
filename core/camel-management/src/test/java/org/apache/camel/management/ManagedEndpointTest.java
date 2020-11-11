@@ -21,7 +21,9 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedEndpointTest extends ManagementTestSupport {
 
@@ -49,7 +51,7 @@ public class ManagedEndpointTest extends ManagementTestSupport {
                 Endpoint result = endpoint("mock:result");
 
                 from("seda:test")
-                    .to(result);
+                        .to(result);
             }
         };
     }

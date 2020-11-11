@@ -16,89 +16,85 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.io.IOException;
-import java.net.InetAddress;
+import java.net.HttpURLConnection;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchLocalContainerService;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpHost;
-import org.codelibs.elasticsearch.runner.ElasticsearchClusterRunner;
 import org.elasticsearch.client.RestClient;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
+import org.testcontainers.utility.Base58;
 
-import static org.codelibs.elasticsearch.runner.ElasticsearchClusterRunner.newConfigs;
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ElasticsearchBaseTest extends CamelTestSupport {
 
+    public static final String ELASTICSEARCH_IMAGE = "elasticsearch:7.8.0";
+    public static final int ELASTICSEARCH_DEFAULT_PORT = 9200;
+    public static final int ELASTICSEARCH_DEFAULT_TCP_PORT = 9300;
 
-    public static ElasticsearchClusterRunner runner;
-    public static String clusterName;
-    public static RestClient client;
+    @RegisterExtension
+    public static ElasticSearchLocalContainerService service;
 
-    protected static final int ES_BASE_TRANSPORT_PORT = AvailablePortFinder.getNextAvailable();
-    protected static final int ES_BASE_HTTP_PORT = AvailablePortFinder.getNextAvailable();
+    protected static String clusterName = "docker-cluster";
+    protected static RestClient restClient;
+    protected static RestHighLevelClient client;
 
-    @SuppressWarnings("resource")
-    @BeforeClass
-    public static void cleanupOnce() throws Exception {
-        deleteDirectory("target/testcluster/");
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchBaseTest.class);
 
-        clusterName = "es-cl-run-" + System.currentTimeMillis();
+    static {
+        service = new ElasticSearchLocalContainerService();
 
-        runner = new ElasticsearchClusterRunner();
-        runner.setMaxHttpPort(-1);
-        runner.setMaxTransportPort(-1);
-
-        // create ES nodes
-        runner.onBuild((number, settingsBuilder) -> {
-            settingsBuilder.put("http.cors.enabled", true);
-            settingsBuilder.put("http.cors.allow-origin", "*");
-        }).build(newConfigs()
-            .clusterName(clusterName)
-            .numOfNode(1)
-            .baseHttpPort(ES_BASE_HTTP_PORT - 1) // ElasticsearchClusterRunner add node id to port, so set it to ES_BASE_HTTP_PORT-1 to start node 1 exactly on ES_BASE_HTTP_PORT
-            .baseTransportPort(ES_BASE_TRANSPORT_PORT - 1) // ElasticsearchClusterRunner add node id to port, so set it to ES_BASE_TRANSPORT_PORT-1 to start node 1 exactly on ES_BASE_TRANSPORT_PORT
-            .basePath("target/testcluster/"));
-
-        // wait for green status
-        runner.ensureGreen();
-        client = RestClient.builder(new HttpHost(InetAddress.getByName("localhost"), ES_BASE_HTTP_PORT)).build();
-    }
-
-    @AfterClass
-    public static void teardownOnce() throws IOException {
-        if (client != null) {
-            client.close();
-        }
-        if (runner != null) {
-            runner.close();
-        }
+        service.getContainer()
+                .withNetworkAliases("elasticsearch-" + Base58.randomString(6))
+                .withEnv("discovery.type", "single-node")
+                .withExposedPorts(ELASTICSEARCH_DEFAULT_PORT, ELASTICSEARCH_DEFAULT_TCP_PORT)
+                .waitingFor(new HttpWaitStrategy()
+                        .forPort(ELASTICSEARCH_DEFAULT_PORT)
+                        .forStatusCodeMatching(response -> response == HttpURLConnection.HTTP_OK
+                                || response == HttpURLConnection.HTTP_UNAUTHORIZED)
+                        .withStartupTimeout(Duration.ofMinutes(2)));
     }
 
     @Override
-    public boolean isCreateCamelContextPerClass() {
-        // let's speed up the tests using the same context
-        return true;
+    protected void setupResources() throws Exception {
+        super.setupResources();
+        HttpHost host
+                = new HttpHost(service.getElasticSearchHost(), service.getPort());
+        client = new RestHighLevelClient(RestClient.builder(host));
+        restClient = client.getLowLevelClient();
+    }
+
+    @Override
+    protected void cleanupResources() throws Exception {
+        super.cleanupResources();
+        if (client != null) {
+            client.close();
+        }
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
         final ElasticsearchComponent elasticsearchComponent = new ElasticsearchComponent();
-        elasticsearchComponent.setHostAddresses("localhost:" + ES_BASE_HTTP_PORT);
+        elasticsearchComponent.setHostAddresses(service.getHttpHostAddress());
+
+        CamelContext context = super.createCamelContext();
         context.addComponent("elasticsearch-rest", elasticsearchComponent);
+
         return context;
     }
 
     /**
-     * As we don't delete the {@code target/data} folder for <b>each</b> test
-     * below (otherwise they would run much slower), we need to make sure
-     * there's no side effect of the same used data through creating unique
-     * indexes.
+     * As we don't delete the {@code target/data} folder for <b>each</b> test below (otherwise they would run much
+     * slower), we need to make sure there's no side effect of the same used data through creating unique indexes.
      */
     Map<String, String> createIndexedData(String... additionalPrefixes) {
         String prefix = createPrefix();
@@ -114,7 +110,7 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
 
         String key = prefix + "key";
         String value = prefix + "value";
-        log.info("Creating indexed data using the key/value pair {} => {}", key, value);
+        LOG.info("Creating indexed data using the key/value pair {} => {}", key, value);
 
         Map<String, String> map = new HashMap<>();
         map.put(key, value);
@@ -123,10 +119,10 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
 
     String createPrefix() {
         // make use of the test method name to avoid collision
-        return getTestMethodName().toLowerCase() + "-";
+        return getCurrentTestName().toLowerCase() + "-";
     }
-    
+
     RestClient getClient() {
-        return client;
+        return restClient;
     }
 }

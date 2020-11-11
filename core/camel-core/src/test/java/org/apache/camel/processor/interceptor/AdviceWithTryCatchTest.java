@@ -19,10 +19,10 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Advice with try catch
@@ -31,7 +31,7 @@ public class AdviceWithTryCatchTest extends ContextTestSupport {
 
     @Test
     public void testTryCatch() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveById("foo").replace().process(new Processor() {
@@ -57,7 +57,8 @@ public class AdviceWithTryCatchTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:before").doTry().to("mock:foo").id("foo").doCatch(Exception.class).to("mock:error").end().to("mock:after");
+                from("direct:start").to("mock:before").doTry().to("mock:foo").id("foo").doCatch(Exception.class)
+                        .to("mock:error").end().to("mock:after");
             }
         };
     }

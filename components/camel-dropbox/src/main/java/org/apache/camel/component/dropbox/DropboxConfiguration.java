@@ -31,10 +31,12 @@ import org.apache.camel.spi.UriPath;
 public class DropboxConfiguration {
 
     //specific dropbox operation for the component
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private DropboxOperation operation;
     //dropbox auth options
-    @UriParam @Metadata(required = true)
+    @UriParam
+    @Metadata(required = true)
     private String accessToken;
     //local path to put files
     @UriParam
@@ -93,8 +95,8 @@ public class DropboxConfiguration {
     }
 
     /**
-     * Optional folder or file to upload on Dropbox from the local filesystem.
-     * If this option has not been configured then the message body is used as the content to upload.
+     * Optional folder or file to upload on Dropbox from the local filesystem. If this option has not been configured
+     * then the message body is used as the content to upload.
      */
     public void setLocalPath(String localPath) {
         this.localPath = localPath;
@@ -127,7 +129,8 @@ public class DropboxConfiguration {
     }
 
     /**
-     * A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set, all files will be matched.
+     * A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If
+     * this option is not set, all files will be matched.
      */
     public void setQuery(String query) {
         this.query = query;
@@ -160,9 +163,8 @@ public class DropboxConfiguration {
     }
 
     /**
-     * Which mode to upload.
-     * in case of "add" the new file will be renamed if a file with the same name already exists on dropbox.
-     * in case of "force" if a file with the same name already exists on dropbox, this will be overwritten.
+     * Which mode to upload. in case of "add" the new file will be renamed if a file with the same name already exists
+     * on dropbox. in case of "force" if a file with the same name already exists on dropbox, this will be overwritten.
      */
     public void setUploadMode(DropboxUploadMode uploadMode) {
         this.uploadMode = uploadMode;

@@ -23,7 +23,9 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedRegisterRouteTest extends ManagementTestSupport {
 
@@ -42,7 +44,7 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         ObjectName on = set.iterator().next();
 
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertEquals(true, registered, "Should be registered");
 
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         // the route has this starting endpoint uri
@@ -63,17 +65,17 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // stop the route
         context.getRouteController().stopRoute(context.getRouteDefinitions().get(0).getId());
 
         registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertEquals(true, registered, "Should be registered");
 
         // should be stopped, eg its removed
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+        assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
     }
 
     @Override
@@ -82,7 +84,7 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute").routeGroup("myGroup").description("my cool route")
-                    .to("log:foo").to("mock:result");
+                        .to("log:foo").to("mock:result");
             }
         };
     }

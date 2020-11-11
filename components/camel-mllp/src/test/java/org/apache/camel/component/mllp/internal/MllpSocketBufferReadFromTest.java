@@ -20,21 +20,21 @@ import java.net.SocketTimeoutException;
 
 import org.apache.camel.test.stub.tcp.SocketInputStreamStub;
 import org.apache.camel.test.stub.tcp.SocketStub;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
     SocketStub socketStub;
     SocketInputStreamStub inputStreamStub;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -50,7 +50,7 @@ public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
     @Test
     public void testReadFromWithTimeoutExceptionOnInitialRead() throws Exception {
         inputStreamStub
-            .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
+                .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
 
         try {
             endpoint.setReceiveTimeout(500);
@@ -70,9 +70,9 @@ public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
     @Test
     public void testReadFromWithTimeoutException() throws Exception {
         inputStreamStub
-            .addPacket("FOO".getBytes())
-            .addPacket("BAR".getBytes())
-            .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
+                .addPacket("FOO".getBytes())
+                .addPacket("BAR".getBytes())
+                .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
 
         try {
             endpoint.setReceiveTimeout(500);

@@ -17,27 +17,12 @@
 package org.apache.camel.management;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
-        super.setUp();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
-        super.tearDown();
-    }
 
     @Test
     public void testShouldBeInstrumentedOk() throws Exception {
@@ -86,14 +71,14 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .onException(Exception.class)
+                        .onException(Exception.class)
                         .to("mock:error")
-                    .end()
-                    .delay(100)
-                    .choice()
+                        .end()
+                        .delay(100)
+                        .choice()
                         .when(body().isEqualTo("Kabom")).throwException(new IllegalArgumentException("Kabom"))
                         .otherwise().to("mock:result")
-                    .end();
+                        .end();
             }
         };
     }

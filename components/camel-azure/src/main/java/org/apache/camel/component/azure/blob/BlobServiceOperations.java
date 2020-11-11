@@ -32,21 +32,21 @@ public enum BlobServiceOperations {
     // Put a block blob content which either creates a new block blob 
     // or overwrites the existing block blob content
     updateBlockBlob,
-    
+
     // Upload a block blob content as a sequence of blob blocks first and then 
     // commit them to a blob. The commit can be executed later with the 
     // commitBlobBlockList operation if a message "CommitBlockListLater" 
     // property is enabled. Individual block blobs can be updated later.
     uploadBlobBlocks,
-    
+
     // Commit a sequence of blob blocks to the block list which was previously
     // uploaded to the blob service with the putBlockBlob operation with the commit
     // being delayed
     commitBlobBlockList,
-    
+
     // Get the block blob list,
     getBlobBlockList,
-    
+
     /*
      * Append blob operations
      */
@@ -54,11 +54,11 @@ public enum BlobServiceOperations {
     // Note the updateAppendBlob will also try to create an append blob first unless
     // a message "AppendBlobCreated" property is enabled
     createAppendBlob,
-    
+
     // Create an append block unless a message "AppendBlobCreated" property is enabled and no 
     // the identically named block already exists and append the new content to this blob.
     updateAppendBlob,
-    
+
     /**
      * Page Block operations
      */
@@ -66,18 +66,18 @@ public enum BlobServiceOperations {
     // Note the updatePageBlob will also try to create a page blob first unless
     // a message "PageBlobCreated" property is enabled
     createPageBlob,
-    
+
     // Create a page block unless a message "PageBlobCreated" property is enabled and no 
     // the identically named block already exists and set the content of this blob.
     updatePageBlob,
-    
+
     // Resize the page blob
     resizePageBlob,
-    
+
     // Clear the page blob
     clearPageBlob,
-    
+
     // Get the page blob page ranges
     getPageBlobRanges
-    
+
 }

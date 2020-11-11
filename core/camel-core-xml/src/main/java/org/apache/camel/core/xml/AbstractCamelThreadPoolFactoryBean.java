@@ -22,10 +22,8 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
-import org.apache.camel.model.TimeUnitAdapter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.CamelContextHelper;
@@ -47,9 +45,10 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @Metadata(description = "Sets the keep alive time for inactive threads")
     private String keepAliveTime;
     @XmlAttribute
-    @XmlJavaTypeAdapter(TimeUnitAdapter.class)
-    @Metadata(description = "Sets the time unit used for keep alive time", defaultValue = "SECONDS")
-    private TimeUnit timeUnit = TimeUnit.SECONDS;
+    @Metadata(description = "Sets the time unit used for keep alive time", defaultValue = "SECONDS",
+              javaType = "java.util.concurrent.TimeUnit",
+              enums = "NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
+    private String timeUnit = TimeUnit.SECONDS.name();
     @XmlAttribute
     @Metadata(description = "Sets the maximum number of tasks in the work queue. Use -1 for an unbounded queue")
     private String maxQueueSize;
@@ -57,8 +56,10 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @Metadata(description = "Sets whether to allow core threads to timeout")
     private String allowCoreThreadTimeOut;
     @XmlAttribute
-    @Metadata(description = "Sets the handler for tasks which cannot be executed by the thread pool.", defaultValue = "CallerRuns")
-    private ThreadPoolRejectedPolicy rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns;
+    @Metadata(description = "Sets the handler for tasks which cannot be executed by the thread pool.",
+              defaultValue = "CallerRuns", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
+              enums = "Abort,CallerRuns,DiscardOldest,Discard")
+    private String rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns.name();
     @XmlAttribute(required = true)
     @Metadata(description = "To use a custom thread name / pattern")
     private String threadName;
@@ -72,34 +73,33 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         if (size <= 0) {
             throw new IllegalArgumentException("PoolSize must be a positive number");
         }
-
         int max = size;
         if (maxPoolSize != null) {
             max = CamelContextHelper.parseInteger(getCamelContext(), maxPoolSize);
         }
-
         long keepAlive = 60;
         if (keepAliveTime != null) {
             keepAlive = CamelContextHelper.parseLong(getCamelContext(), keepAliveTime);
         }
-
         int queueSize = -1;
         if (maxQueueSize != null) {
             queueSize = CamelContextHelper.parseInteger(getCamelContext(), maxQueueSize);
         }
-
         boolean allow = false;
         if (allowCoreThreadTimeOut != null) {
             allow = CamelContextHelper.parseBoolean(getCamelContext(), allowCoreThreadTimeOut);
         }
+        TimeUnit tu = CamelContextHelper.parse(getCamelContext(), TimeUnit.class, timeUnit);
+        ThreadPoolRejectedPolicy tp
+                = CamelContextHelper.parse(getCamelContext(), ThreadPoolRejectedPolicy.class, rejectedPolicy);
 
         ThreadPoolProfile profile = new ThreadPoolProfileBuilder(getId())
                 .poolSize(size)
                 .maxPoolSize(max)
-                .keepAliveTime(keepAlive, timeUnit)
+                .keepAliveTime(keepAlive, tu)
                 .maxQueueSize(queueSize)
                 .allowCoreThreadTimeOut(allow)
-                .rejectedPolicy(rejectedPolicy)
+                .rejectedPolicy(tp)
                 .build();
 
         ExecutorService answer;
@@ -140,11 +140,11 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         this.keepAliveTime = keepAliveTime;
     }
 
-    public TimeUnit getTimeUnit() {
+    public String getTimeUnit() {
         return timeUnit;
     }
 
-    public void setTimeUnit(TimeUnit timeUnit) {
+    public void setTimeUnit(String timeUnit) {
         this.timeUnit = timeUnit;
     }
 
@@ -164,11 +164,11 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
     }
 
-    public ThreadPoolRejectedPolicy getRejectedPolicy() {
+    public String getRejectedPolicy() {
         return rejectedPolicy;
     }
 
-    public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+    public void setRejectedPolicy(String rejectedPolicy) {
         this.rejectedPolicy = rejectedPolicy;
     }
 

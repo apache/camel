@@ -17,9 +17,9 @@
 package org.apache.camel.test.junit5.patterns;
 
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ public class SimpleWeaveAddMockLastTest extends CamelTestSupport {
 
     @Test
     public void testWeaveAddMockLast() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 weaveAddLast().to("mock:result");

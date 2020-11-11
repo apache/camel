@@ -30,12 +30,24 @@ import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class CxfHeaderHelperTest extends Assert {
-    private DefaultCamelContext context = new DefaultCamelContext();
-    
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class CxfHeaderHelperTest {
+
+    private DefaultCamelContext context;
+
+    @BeforeEach
+    protected void setUp() throws Exception {
+        context = new DefaultCamelContext();
+        context.start();
+    }
+
     @Test
     public void testPropagateCamelToCxf() {
         Exchange exchange = new DefaultExchange(context);
@@ -53,9 +65,9 @@ public class CxfHeaderHelperTest extends Assert {
         exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
         exchange.getIn().setHeader(Client.RESPONSE_CONTEXT, responseContext);
         org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
-        
-        CxfHeaderHelper.propagateCamelToCxf(new DefaultHeaderFilterStrategy(), 
-                                            exchange.getIn().getHeaders(), cxfMessage, exchange);
+
+        CxfHeaderHelper.propagateCamelToCxf(new DefaultHeaderFilterStrategy(),
+                exchange.getIn().getHeaders(), cxfMessage, exchange);
 
         assertEquals("text/xml", cxfMessage.get(Message.CONTENT_TYPE));
         assertEquals("200", cxfMessage.get(Message.RESPONSE_CODE));
@@ -63,10 +75,10 @@ public class CxfHeaderHelperTest extends Assert {
         assertEquals(responseContext, cxfMessage.get(Client.RESPONSE_CONTEXT));
 
         assertNull(cxfMessage.get(Exchange.HTTP_RESPONSE_CODE));
-        
+
         // check the protocol headers
-        Map<String, List<String>> cxfHeaders = 
-            CastUtils.cast((Map<?, ?>)cxfMessage.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> cxfHeaders
+                = CastUtils.cast((Map<?, ?>) cxfMessage.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
         assertNotNull(cxfHeaders);
         assertTrue(cxfHeaders.size() == 7);
 
@@ -112,8 +124,8 @@ public class CxfHeaderHelperTest extends Assert {
         cxfMessage.put(Client.REQUEST_CONTEXT, requestContext);
         cxfMessage.put(Client.RESPONSE_CONTEXT, responseContext);
 
-        CxfHeaderHelper.propagateCxfToCamel(new DefaultHeaderFilterStrategy(), 
-                                            cxfMessage, exchange.getIn(), exchange);
+        CxfHeaderHelper.propagateCxfToCamel(new DefaultHeaderFilterStrategy(),
+                cxfMessage, exchange.getIn(), exchange);
 
         Map<String, Object> camelHeaders = exchange.getIn().getHeaders();
         assertEquals("urn:hello:world", camelHeaders.get("soapaction"));
@@ -135,21 +147,21 @@ public class CxfHeaderHelperTest extends Assert {
         assertNull(camelHeaders.get(Message.HTTP_REQUEST_METHOD));
         assertNull(camelHeaders.get(Message.PATH_INFO));
         assertNull(camelHeaders.get(Message.RESPONSE_CODE));
-    } 
+    }
 
     @Test
     public void testPropagateCxfToCamelWithMerged() {
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
-        
+
         org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
         Map<String, List<String>> cxfHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         cxfHeaders.put("myfruitheader", Arrays.asList("peach"));
         cxfHeaders.put("mybrewheader", Arrays.asList("cappuccino", "espresso"));
         cxfMessage.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, cxfHeaders);
 
-        CxfHeaderHelper.propagateCxfToCamel(new DefaultHeaderFilterStrategy(), 
-                                            cxfMessage, exchange.getIn(), exchange);
+        CxfHeaderHelper.propagateCxfToCamel(new DefaultHeaderFilterStrategy(),
+                cxfMessage, exchange.getIn(), exchange);
 
         Map<String, Object> camelHeaders = exchange.getIn().getHeaders();
         assertEquals("peach", camelHeaders.get("MyFruitHeader"));
@@ -158,14 +170,14 @@ public class CxfHeaderHelperTest extends Assert {
 
     private void verifyHeader(Map<String, List<String>> headers, String name, List<String> value) {
         List<String> values = headers.get(name);
-        assertTrue("The entry must be available", values != null && values.size() == ((List<?>)value).size());
-        assertEquals("The value must match", value, values);
+        assertTrue(values != null && values.size() == ((List<?>) value).size(), "The entry must be available");
+        assertEquals(value, values, "The value must match");
     }
 
     private void verifyHeader(Map<String, List<String>> headers, String name, String value) {
         List<String> values = headers.get(name);
-        assertTrue("The entry must be available", values != null && values.size() == 1);
-        assertEquals("The value must match", value, values.get(0));
+        assertTrue(values != null && values.size() == 1, "The entry must be available");
+        assertEquals(value, values.get(0), "The value must match");
     }
 
 }

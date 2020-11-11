@@ -16,21 +16,22 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.impl.engine.DefaultUuidGenerator;
+import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultUuidGeneratorTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
+public class DefaultUuidGeneratorTest {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUuidGeneratorTest.class);
 
     @Test
     public void testGenerateUUID() {
-        DefaultUuidGenerator uuidGenerator = new DefaultUuidGenerator();
+        UuidGenerator uuidGenerator = new DefaultUuidGenerator();
 
         String firstUUID = uuidGenerator.generateUuid();
         String secondUUID = uuidGenerator.generateUuid();
@@ -40,7 +41,7 @@ public class DefaultUuidGeneratorTest extends Assert {
 
     @Test
     public void testPerformance() {
-        DefaultUuidGenerator uuidGenerator = new DefaultUuidGenerator();
+        UuidGenerator uuidGenerator = new DefaultUuidGenerator();
         StopWatch watch = new StopWatch();
 
         LOG.info("First id: " + uuidGenerator.generateUuid());
@@ -50,13 +51,6 @@ public class DefaultUuidGeneratorTest extends Assert {
         LOG.info("Last id:  " + uuidGenerator.generateUuid());
 
         LOG.info("Took " + TimeUtils.printDuration(watch.taken()));
-    }
-
-    @Test
-    public void testSanitizeHostName() throws Exception {
-        assertEquals("somehost.lan", DefaultUuidGenerator.sanitizeHostName("somehost.lan"));
-        // include a UTF-8 char in the text \u0E08 is a Thai elephant
-        assertEquals("otherhost.lan", DefaultUuidGenerator.sanitizeHostName("other\u0E08host.lan"));
     }
 
 }

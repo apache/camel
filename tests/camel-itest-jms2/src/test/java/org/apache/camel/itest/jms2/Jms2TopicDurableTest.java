@@ -18,7 +18,7 @@ package org.apache.camel.itest.jms2;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Jms2TopicDurableTest extends BaseJms2TestSupport {
 
@@ -27,7 +27,7 @@ public class Jms2TopicDurableTest extends BaseJms2TestSupport {
     // use any of the JMS 2.0 APIs but it works on a JMS 2.0 broker as well
 
     @Test
-    public void testDurableTopic() throws Exception {
+    void testDurableTopic() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
@@ -43,17 +43,17 @@ public class Jms2TopicDurableTest extends BaseJms2TestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jms:topic:foo?clientId=123&durableSubscriptionName=one")
-                    .to("log:test.log.1?showBody=true")
-                    .to("mock:result");
+                        .to("log:test.log.1?showBody=true")
+                        .to("mock:result");
 
                 from("jms:topic:foo?clientId=456&durableSubscriptionName=two")
-                    .to("log:test.log.2?showBody=true")
-                    .to("mock:result2");
+                        .to("log:test.log.2?showBody=true")
+                        .to("mock:result2");
             }
         };
     }

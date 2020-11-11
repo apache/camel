@@ -23,10 +23,16 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hystrix.metrics.HystrixEventStreamService;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HystrixManagementTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HystrixManagementTest.class);
 
     private HystrixEventStreamService stream = new HystrixEventStreamService();
 
@@ -84,11 +90,11 @@ public class HystrixManagementTest extends CamelTestSupport {
         Thread.sleep(1000);
 
         String latest = stream.oldestMetricsAsJSon();
-        log.info("Oldest json stream: {}", latest);
+        LOG.info("Oldest json stream: {}", latest);
 
         Stream<String> jsons = stream.streamMetrics();
         jsons.forEach(s -> {
-            log.info("JSon: {}", s);
+            LOG.info("JSon: {}", s);
         });
     }
 
@@ -104,9 +110,9 @@ public class HystrixManagementTest extends CamelTestSupport {
 
                 from("direct:start").routeId("start")
                         .circuitBreaker().id("myHystrix")
-                            .to("direct:foo")
+                        .to("direct:foo")
                         .onFallback()
-                            .transform().constant("Fallback message")
+                        .transform().constant("Fallback message")
                         .end()
                         .to("mock:result");
 

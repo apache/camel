@@ -20,11 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
- * Unit test that tests that the header contains the absolute path to the
- * filename it used.
+ * Unit test that tests that the header contains the absolute path to the filename it used.
  */
 public class FileHeaderFileNameProducedTest extends ContextTestSupport {
 

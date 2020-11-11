@@ -48,29 +48,30 @@ public class IgniteIdGenProducer extends DefaultAsyncProducer {
 
         switch (idGenOperationFor(exchange)) {
 
-        case ADD_AND_GET:
-            out.setBody(atomicSeq.addAndGet(id));
-            break;
+            case ADD_AND_GET:
+                out.setBody(atomicSeq.addAndGet(id));
+                break;
 
-        case GET:
-            out.setBody(atomicSeq.get());
-            break;
+            case GET:
+                out.setBody(atomicSeq.get());
+                break;
 
-        case GET_AND_ADD:
-            out.setBody(atomicSeq.getAndAdd(id));
-            break;
+            case GET_AND_ADD:
+                out.setBody(atomicSeq.getAndAdd(id));
+                break;
 
-        case GET_AND_INCREMENT:
-            out.setBody(atomicSeq.getAndIncrement());
-            break;
+            case GET_AND_INCREMENT:
+                out.setBody(atomicSeq.getAndIncrement());
+                break;
 
-        case INCREMENT_AND_GET:
-            out.setBody(atomicSeq.incrementAndGet());
-            break;
-            
-        default:
-            exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite ID Generator producer."));
-            break;
+            case INCREMENT_AND_GET:
+                out.setBody(atomicSeq.incrementAndGet());
+                break;
+
+            default:
+                exchange.setException(
+                        new UnsupportedOperationException("Operation not supported by Ignite ID Generator producer."));
+                break;
         }
 
         callback.done(false);
@@ -78,7 +79,8 @@ public class IgniteIdGenProducer extends DefaultAsyncProducer {
     }
 
     private IgniteIdGenOperation idGenOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_IDGEN_OPERATION, endpoint.getOperation(), IgniteIdGenOperation.class);
+        return exchange.getIn().getHeader(IgniteConstants.IGNITE_IDGEN_OPERATION, endpoint.getOperation(),
+                IgniteIdGenOperation.class);
     }
 
 }

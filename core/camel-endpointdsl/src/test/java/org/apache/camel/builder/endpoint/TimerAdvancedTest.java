@@ -23,8 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.support.LoggingExceptionHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TimerAdvancedTest extends ContextTestSupport {
 
@@ -66,8 +67,8 @@ public class TimerAdvancedTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from(timer("foo").delay(-1).period(0).repeatCount(10).advanced().exceptionHandler(myErrorHandler))
-                    .noAutoStartup()
+                from(timer("foo").period(0).delay(-1).repeatCount(10).advanced().exceptionHandler(myErrorHandler))
+                        .noAutoStartup()
                         .to("mock:result")
                         .throwException(new IllegalArgumentException("Forced"));
             }

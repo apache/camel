@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -30,31 +30,27 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 /**
  * Represents the strategy used to figure out how to map a message exchange to a POJO method invocation
  */
-public class DefaultParameterMappingStrategy implements ParameterMappingStrategy {
-    private final Map<Class<?>, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<>();
+public final class DefaultParameterMappingStrategy implements ParameterMappingStrategy {
 
-    public DefaultParameterMappingStrategy() {
-        loadDefaultRegistry();
+    public static final DefaultParameterMappingStrategy INSTANCE = new DefaultParameterMappingStrategy();
+
+    private static final Map<Class<?>, Expression> MAP = new HashMap<>(6);
+
+    static {
+        MAP.put(Exchange.class, ExpressionBuilder.exchangeExpression());
+        MAP.put(Message.class, ExpressionBuilder.inMessageExpression());
+        MAP.put(Exception.class, ExpressionBuilder.exchangeExceptionExpression());
+        MAP.put(TypeConverter.class, ExpressionBuilder.typeConverterExpression());
+        MAP.put(Registry.class, ExpressionBuilder.registryExpression());
+        MAP.put(CamelContext.class, ExpressionBuilder.camelContextExpression());
+    };
+
+    private DefaultParameterMappingStrategy() {
     }
 
     @Override
     public Expression getDefaultParameterTypeExpression(Class<?> parameterType) {
-        return parameterTypeToExpressionMap.get(parameterType);
+        return MAP.get(parameterType);
     }
 
-    /**
-     * Adds a default parameter type mapping to an expression
-     */
-    public void addParameterMapping(Class<?> parameterType, Expression expression) {
-        parameterTypeToExpressionMap.put(parameterType, expression);
-    }
-
-    public void loadDefaultRegistry() {
-        addParameterMapping(Exchange.class, ExpressionBuilder.exchangeExpression());
-        addParameterMapping(Message.class, ExpressionBuilder.inMessageExpression());
-        addParameterMapping(Exception.class, ExpressionBuilder.exchangeExceptionExpression());
-        addParameterMapping(TypeConverter.class, ExpressionBuilder.typeConverterExpression());
-        addParameterMapping(Registry.class, ExpressionBuilder.registryExpression());
-        addParameterMapping(CamelContext.class, ExpressionBuilder.camelContextExpression());
-    }
 }

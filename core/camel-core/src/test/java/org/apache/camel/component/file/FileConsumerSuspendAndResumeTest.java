@@ -25,15 +25,18 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
 
     private MyPolicy myPolicy = new MyPolicy();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/suspended");
         super.setUp();
@@ -48,12 +51,12 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // the route is suspended by the policy so we should only receive one
         String[] files = new File("target/data/suspended/").list();
         assertNotNull(files);
-        assertEquals("The file should exists", 1, files.length);
+        assertEquals(1, files.length, "The file should exists");
 
         // reset mock
         oneExchangeDone.reset();
@@ -64,12 +67,12 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         myPolicy.resumeConsumer();
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // and the file is now deleted
         files = new File("target/data/suspended/").list();
         assertNotNull(files);
-        assertEquals("The file should exists", 0, files.length);
+        assertEquals(0, files.length, "The file should exists");
     }
 
     @Override
@@ -77,8 +80,9 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10").routePolicy(myPolicy).id("myRoute").convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file://target/data/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10")
+                        .routePolicy(myPolicy).id("myRoute").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,17 +37,22 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteEvents;
 import org.apache.ignite.cluster.ClusterGroup;
 import org.apache.ignite.events.EventType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The Ignite Events endpoint is one of camel-ignite endpoints which allows you to
- * <a href="https://apacheignite.readme.io/docs/events">receive events</a> from
- * the Ignite cluster by creating a local event listener.
- * This endpoint only supports consumers.
- * The Exchanges created by this consumer put the received Event object into the body of the IN message.
+ * <a href="https://apacheignite.readme.io/docs/events">Receive events</a> from an Ignite cluster by creating a local
+ * event listener.
+ *
+ * This endpoint only supports consumers. The Exchanges created by this consumer put the received Event object into the
+ * body of the IN message.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:endpointId", label = "nosql,cache,compute,messaging,data",
-    consumerOnly = true)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:endpointId",
+             category = { Category.MESSAGING, Category.EVENTBUS },
+             consumerOnly = true)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IgniteEventsEndpoint.class);
 
     @UriPath
     private String endpointId;
@@ -57,7 +63,8 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
     @UriParam(label = "consumer")
     private ClusterGroupExpression clusterGroupExpression;
 
-    public IgniteEventsEndpoint(String uri, String remaining, Map<String, Object> parameters, IgniteEventsComponent igniteComponent) {
+    public IgniteEventsEndpoint(String uri, String remaining, Map<String, Object> parameters,
+                                IgniteEventsComponent igniteComponent) {
         super(uri, igniteComponent);
     }
 
@@ -73,7 +80,7 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
         IgniteEventsConsumer consumer = new IgniteEventsConsumer(this, processor, events);
         configureConsumer(consumer);
 
-        log.info("Created Ignite Events consumer for event types: {}.", events);
+        LOG.info("Created Ignite Events consumer for event types: {}.", events);
 
         return consumer;
     }
@@ -82,11 +89,11 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
         Ignite ignite = ignite();
         IgniteEvents events;
         if (clusterGroupExpression == null) {
-            log.info("Ignite Events endpoint for event types {} using no Cluster Group.", this.events);
+            LOG.info("Ignite Events endpoint for event types {} using no Cluster Group.", this.events);
             events = ignite.events();
         } else {
             ClusterGroup group = clusterGroupExpression.getClusterGroup(ignite);
-            log.info("Ignite Events endpoint for event types {} using Cluster Group: {}.", this.events, group);
+            LOG.info("Ignite Events endpoint for event types {} using Cluster Group: {}.", this.events, group);
             events = ignite.events(group);
         }
         return events;
@@ -94,8 +101,6 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the endpoint ID (not used).
-     * 
-     * @return endpoint ID (not used)
      */
     public String getEndpointId() {
         return endpointId;
@@ -103,8 +108,6 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The endpoint ID (not used).
-     * 
-     * @param endpointId endpoint ID (not used)
      */
     public void setEndpointId(String endpointId) {
         this.endpointId = endpointId;

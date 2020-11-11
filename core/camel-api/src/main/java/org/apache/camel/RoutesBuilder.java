@@ -19,15 +19,14 @@ package org.apache.camel;
 /**
  * A routes builder is capable of building routes using the builder and model classes.
  * <p/>
- * Eventually the routes are added to a {@link org.apache.camel.CamelContext} where they
- * run inside.
+ * Eventually the routes are added to a {@link org.apache.camel.CamelContext} where they run inside.
  */
 public interface RoutesBuilder {
 
     /**
      * Adds the routes from this Route Builder to the CamelContext.
      *
-     * @param context the Camel context
+     * @param  context   the Camel context
      * @throws Exception is thrown if initialization of routes failed
      */
     void addRoutesToCamelContext(CamelContext context) throws Exception;

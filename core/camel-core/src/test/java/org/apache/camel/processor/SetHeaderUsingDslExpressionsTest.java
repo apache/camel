@@ -21,8 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     protected String body = "<person name='James' city='London'/>";
@@ -47,7 +47,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         public boolean equals(Object obj) {
             boolean result = false;
             if (obj instanceof MyValueClass) {
-                MyValueClass value = (MyValueClass)obj;
+                MyValueClass value = (MyValueClass) obj;
                 if (this.value1.equals(value.value1) && this.value2.equals(value.value2)) {
                     result = true;
                 }
@@ -63,7 +63,8 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 MyValueClass insteadValue = new MyValueClass("value1", "value2");
-                from("direct:start").setHeader("foo").constant("ABC").setHeader("value").constant(insteadValue).to("mock:result");
+                from("direct:start").setHeader("foo").constant("ABC").setHeader("value").constant(insteadValue)
+                        .to("mock:result");
             }
         });
 
@@ -157,7 +158,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.catalog;
 
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public class CamelCatalogCacheTest extends CamelCatalogTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void createCamelCatalog() {
         catalog = new DefaultCamelCatalog(true);
     }

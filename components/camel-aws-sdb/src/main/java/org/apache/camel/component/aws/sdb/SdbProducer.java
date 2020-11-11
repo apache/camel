@@ -22,13 +22,12 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 
 /**
- * A Producer which sends messages to the Amazon SimpleDB Service
- * <a href="http://aws.amazon.com/simpledb/">AWS SDB</a>
+ * A Producer which sends messages to the Amazon SimpleDB Service <a href="http://aws.amazon.com/simpledb/">AWS SDB</a>
  */
 public class SdbProducer extends DefaultProducer {
-    
+
     private transient String sdbProducerToString;
-    
+
     public SdbProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -36,35 +35,35 @@ public class SdbProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case BatchDeleteAttributes:
-            new BatchDeleteAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case BatchPutAttributes:
-            new BatchPutAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case DeleteAttributes:
-            new DeleteAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case DeleteDomain:
-            new DeleteDomainCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case DomainMetadata:
-            new DomainMetadataCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case GetAttributes:
-            new GetAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case ListDomains:
-            new ListDomainsCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case PutAttributes:
-            new PutAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
-            break;
-        case Select:
-            new SelectCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case BatchDeleteAttributes:
+                new BatchDeleteAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case BatchPutAttributes:
+                new BatchPutAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case DeleteAttributes:
+                new DeleteAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case DeleteDomain:
+                new DeleteDomainCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case DomainMetadata:
+                new DomainMetadataCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case GetAttributes:
+                new GetAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case ListDomains:
+                new ListDomainsCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case PutAttributes:
+                new PutAttributesCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
+                break;
+            case Select:
+                new SelectCommand(getEndpoint().getSdbClient(), getConfiguration(), exchange).execute();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 

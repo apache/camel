@@ -33,7 +33,7 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringXmlSignatureTest extends XmlSignatureTest {
@@ -44,7 +44,8 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA", 1024);
         return SpringCamelContext.springCamelContext(
-                new ClassPathXmlApplicationContext("/org/apache/camel/component/xmlsecurity/SpringXmlSignatureTests.xml"), true);
+                new ClassPathXmlApplicationContext("/org/apache/camel/component/xmlsecurity/SpringXmlSignatureTests.xml"),
+                true);
     }
 
     public static KeyAccessor getDsaKeyAccessor() {
@@ -77,36 +78,36 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
     XmlSignerEndpoint getDetachedSignerEndpoint() {
         XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context()
                 .getEndpoint(
-                        "xmlsecurity:sign:detached?keyAccessor=#accessorRsa&xpathsToIdAttributes=#xpathsToIdAttributes&"//
-                        + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false");
+                        "xmlsecurity-sign:detached?keyAccessor=#accessorRsa&xpathsToIdAttributes=#xpathsToIdAttributes&"//
+                             + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false");
         return endpoint;
     }
-    
+
     @Override
     XmlSignerEndpoint getSignatureEncpointForSignException() {
-        XmlSignerEndpoint endpoint = (XmlSignerEndpoint)context().getEndpoint(//
-            "xmlsecurity:sign:signexceptioninvalidkey?keyAccessor=#accessorRsa");
+        XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context().getEndpoint(//
+                "xmlsecurity-sign:signexceptioninvalidkey?keyAccessor=#accessorRsa");
         return endpoint;
     }
-    
+
     @Override
     String getVerifierEndpointURIEnveloped() {
-        return "xmlsecurity:verify:enveloped?keySelector=#selectorRsa";
+        return "xmlsecurity-verify:enveloped?keySelector=#selectorRsa";
     }
 
     @Override
     String getSignerEndpointURIEnveloped() {
-        return "xmlsecurity:sign:enveloped?keyAccessor=#accessorRsa&parentLocalName=root&parentNamespace=http://test/test";
+        return "xmlsecurity-sign:enveloped?keyAccessor=#accessorRsa&parentLocalName=root&parentNamespace=http://test/test";
     }
-    
+
     @Override
     String getVerifierEndpointURIEnveloping() {
-        return "xmlsecurity:verify:enveloping?keySelector=#selectorRsa";
+        return "xmlsecurity-verify:enveloping?keySelector=#selectorRsa";
     }
 
     @Override
     String getSignerEndpointURIEnveloping() {
-        return "xmlsecurity:sign:enveloping?keyAccessor=#accessorRsa";
+        return "xmlsecurity-sign:enveloping?keyAccessor=#accessorRsa";
     }
 
     @Test

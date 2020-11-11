@@ -26,12 +26,13 @@ import org.apache.camel.InOnly;
 import org.apache.camel.InOut;
 import org.apache.camel.Pattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BeanInfoTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class BeanInfoTest {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
 
     protected CamelContext camelContext = new DefaultCamelContext();
@@ -115,26 +116,26 @@ public class BeanInfoTest extends Assert {
     public void testImplementLevel2InterfaceMethodInPackagePrivateClass() {
         BeanInfo info = createBeanInfo(PackagePrivateClassImplementingLevel2InterfaceMethod.class);
         List<MethodInfo> mis = info.getMethods();
-        Assert.assertNotNull(mis);
-        Assert.assertEquals(1, mis.size());
+        assertNotNull(mis);
+        assertEquals(1, mis.size());
         MethodInfo mi = mis.get(0);
-        Assert.assertNotNull(mi);
+        assertNotNull(mi);
         Method m = mi.getMethod();
-        Assert.assertEquals("method", m.getName());
-        Assert.assertTrue(Modifier.isPublic(m.getDeclaringClass().getModifiers()));
+        assertEquals("method", m.getName());
+        assertTrue(Modifier.isPublic(m.getDeclaringClass().getModifiers()));
     }
 
     @Test
     public void testPublicClassImplementingInterfaceMethodBySuperPackagePrivateClass() {
         BeanInfo info = createBeanInfo(PublicClassImplementingBySuperPackagePrivateClass.class);
         List<MethodInfo> mis = info.getMethods();
-        Assert.assertNotNull(mis);
-        Assert.assertEquals(1, mis.size());
+        assertNotNull(mis);
+        assertEquals(1, mis.size());
         MethodInfo mi = mis.get(0);
-        Assert.assertNotNull(mi);
+        assertNotNull(mi);
         Method m = mi.getMethod();
-        Assert.assertEquals("method", m.getName());
-        Assert.assertTrue(Modifier.isPublic(m.getDeclaringClass().getModifiers()));
+        assertEquals("method", m.getName());
+        assertTrue(Modifier.isPublic(m.getDeclaringClass().getModifiers()));
     }
 
     protected BeanInfo createBeanInfo(Class<?> type) {
@@ -142,16 +143,17 @@ public class BeanInfoTest extends Assert {
         return info;
     }
 
-    protected void assertMethodPattern(BeanInfo info, String methodName, ExchangePattern expectedPattern) throws NoSuchMethodException {
+    protected void assertMethodPattern(BeanInfo info, String methodName, ExchangePattern expectedPattern)
+            throws NoSuchMethodException {
         Class<?> type = info.getType();
         Method method = type.getMethod(methodName);
-        assertNotNull("Could not find method: " + methodName, method);
+        assertNotNull(method, "Could not find method: " + methodName);
 
         MethodInfo methodInfo = info.getMethodInfo(method);
-        assertNotNull("Could not find methodInfo for: " + method, methodInfo);
+        assertNotNull(methodInfo, "Could not find methodInfo for: " + method);
 
         ExchangePattern actualPattern = methodInfo.getPattern();
-        assertEquals("Pattern for: " + method, expectedPattern, actualPattern);
+        assertEquals(expectedPattern, actualPattern, "Pattern for: " + method);
 
         LOG.info("Method: {} has pattern: {}", method, actualPattern);
     }
@@ -224,7 +226,8 @@ public class BeanInfoTest extends Assert {
         }
     }
 
-    public class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod implements IMethodInterface {
+    public class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod
+            implements IMethodInterface {
     }
 
 }

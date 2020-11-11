@@ -21,14 +21,18 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-@Ignore
+@Disabled
 public class PerformanceRouteTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PerformanceRouteTest.class);
 
     private int size = 200;
 
@@ -61,7 +65,7 @@ public class PerformanceRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         long delta = System.currentTimeMillis() - start;
-        log.info("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
+        LOG.info("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
     private boolean canRunOnThisPlatform() {
@@ -86,24 +90,24 @@ public class PerformanceRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:inbox?concurrentConsumers=10")
-                    .to("activemq:topic:audit")
-                    .choice()
+                        .to("activemq:topic:audit")
+                        .choice()
                         .when(header("type").isEqualTo("gold"))
-                            .to("direct:gold")
+                        .to("direct:gold")
                         .when(header("type").isEqualTo("silver"))
-                            .to("direct:silver")
+                        .to("direct:silver")
                         .otherwise()
-                            .to("direct:bronze")
+                        .to("direct:bronze")
                         .end();
 
                 from("direct:gold")
-                    .to("mock:gold");
+                        .to("mock:gold");
 
                 from("direct:silver")
-                    .to("mock:silver");
+                        .to("mock:silver");
 
                 from("direct:bronze")
-                    .to("mock:bronze");
+                        .to("mock:bronze");
 
                 from("activemq:topic:audit").to("mock:audit");
             }

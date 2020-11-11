@@ -33,13 +33,18 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PrinterProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PrinterProducer.class);
+
     private final PrinterConfiguration config;
     private PrinterOperations printerOperations;
     private PrintService printService;
     private String printer;
-    
+
     public PrinterProducer(Endpoint endpoint, PrinterConfiguration config) throws Exception {
         super(endpoint);
         this.config = config;
@@ -52,17 +57,17 @@ public class PrinterProducer extends DefaultProducer {
         String jobName = exchange.getIn().getHeader(PrinterEndpoint.JOB_NAME, "Camel: lpr", String.class);
         print(is, jobName);
     }
-    
-    private void print(InputStream body, String jobName) throws PrintException { 
+
+    private void print(InputStream body, String jobName) throws PrintException {
         if (printerOperations.getPrintService().isDocFlavorSupported(printerOperations.getFlavor())) {
             PrintDocument printDoc = new PrintDocument(body, printerOperations.getFlavor());
-            printerOperations.print(printDoc, config.isSendToPrinter(), config.getMimeType(), jobName); 
+            printerOperations.print(printDoc, config.isSendToPrinter(), config.getMimeType(), jobName);
         }
     }
 
     private DocFlavor assignDocFlavor() throws Exception {
-        return config.getDocFlavor();      
-    }    
+        return config.getDocFlavor();
+    }
 
     private PrintRequestAttributeSet assignPrintAttributes() throws PrintException {
         PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
@@ -77,20 +82,20 @@ public class PrinterProducer extends DefaultProducer {
 
         if (config.getMediaTray() != null) {
             MediaTray mediaTray = resolveMediaTray(config.getMediaTray());
-        
+
             if (mediaTray == null) {
                 throw new PrintException("mediatray not found " + config.getMediaTray());
             }
-            
+
             printRequestAttributeSet.add(mediaTray);
         }
-        
+
         return printRequestAttributeSet;
     }
-    
+
     private MediaTray resolveMediaTray(String tray) {
         Media medias[] = (Media[]) getPrintService().getSupportedAttributeValues(Media.class, null, null);
-        
+
         if (medias == null) {
             return null;
         } else {
@@ -109,13 +114,13 @@ public class PrinterProducer extends DefaultProducer {
             return null;
         }
     }
-    
+
     private PrintService assignPrintService() throws PrintException {
         PrintService printService;
-        
-        if ((config.getHostname().equalsIgnoreCase("localhost")) 
-            && (config.getPrintername().equalsIgnoreCase("default"))) {
-            printService = PrintServiceLookup.lookupDefaultPrintService();            
+
+        if ((config.getHostname().equalsIgnoreCase("localhost"))
+                && (config.getPrintername().equalsIgnoreCase("default"))) {
+            printService = PrintServiceLookup.lookupDefaultPrintService();
         } else {
             PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
             String name;
@@ -128,17 +133,19 @@ public class PrinterProducer extends DefaultProducer {
                     name = config.getPrinterPrefix() + name;
                 }
             }
-            log.debug("Using printer name: {}", name);
+            LOG.debug("Using printer name: {}", name);
             setPrinter(name);
             int position = findPrinter(services, printer);
             if (position < 0) {
-                throw new PrintException("No printer found with name: " + printer + ". Please verify that the host and printer are registered and reachable from this machine.");
-            }         
+                throw new PrintException(
+                        "No printer found with name: " + printer
+                                         + ". Please verify that the host and printer are registered and reachable from this machine.");
+            }
             printService = services[position];
         }
         return printService;
     }
-    
+
     private int findPrinter(PrintService[] services, String printer) {
         int position = -1;
         // align slashes so we match / or \
@@ -146,7 +153,7 @@ public class PrinterProducer extends DefaultProducer {
         printer = printer.replace('\\', '/');
         for (int i = 0; i < services.length; i++) {
             String printerName = services[i].getName();
-            log.debug("Printer service printer name: {}", printerName);
+            LOG.debug("Printer service printer name: {}", printerName);
             // align slashes so we match / or \
             printerName = printerName.toLowerCase(Locale.US);
             printerName = printerName.replace('\\', '/');
@@ -188,7 +195,7 @@ public class PrinterProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        if (printService ==  null) {
+        if (printService == null) {
             printService = assignPrintService();
         }
         ObjectHelper.notNull(printService, "PrintService", this);

@@ -27,13 +27,17 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.itest.ITestSupport;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Jms with JDBC idempotent consumer test.
@@ -50,7 +54,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -68,7 +72,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     }
 
     @Test
-    public void testJmsToJdbcJmsCommit() throws Exception {
+    void testJmsToJdbcJmsCommit() throws Exception {
         checkInitialState();
 
         // use a notify to know when the message is done
@@ -82,17 +86,18 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
         // assert mock and wait for the message to be done
         assertMockEndpointsSatisfied();
-        assertTrue("Should complete 1 message", notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime(), "Should complete 1 message");
 
         // check that there is a message in the database and JMS queue
-        assertEquals(new Integer(1), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(1),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         Object out = consumer.receiveBody("activemq2:queue:outbox", 3000);
         assertEquals("DONE-A", out);
     }
 
-    @Ignore("see the TODO below")
+    @Disabled("see the TODO below")
     @Test
-    public void testJmsToJdbcJmsRollbackAtA() throws Exception {
+    void testJmsToJdbcJmsRollbackAtA() throws Exception {
         checkInitialState();
 
         // use a notify to know that after 1+6 (1 original + 6 redelivery) attempts from AcitveMQ
@@ -113,19 +118,20 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
         // assert mock and wait for the message to be done
         assertMockEndpointsSatisfied();
-        assertTrue("Should complete 7 message", notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime(), "Should complete 7 message");
 
         // check that there is a message in the database and JMS queue
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
         assertEquals("A", consumer.receiveBody("activemq2:queue:ActiveMQ.DLQ", 3000));
     }
 
-    @Ignore("see the TODO below")
+    @Disabled("see the TODO below")
     @Test
-    public void testJmsToJdbcJmsRollbackAtB() throws Exception {
+    void testJmsToJdbcJmsRollbackAtB() throws Exception {
         checkInitialState();
 
         // use a notify to know that after 1+6 (1 original + 6 redelivery) attempts from AcitveMQ
@@ -146,10 +152,11 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
         // assert mock and wait for the message to be done
         assertMockEndpointsSatisfied();
-        assertTrue("Should complete 7 messages", notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
         // check that there is a message in the database and JMS queue
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
@@ -157,7 +164,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     }
 
     @Test
-    public void testFilterIdempotent() throws Exception {
+    void testFilterIdempotent() throws Exception {
         checkInitialState();
 
         // use a notify to know when the message is done
@@ -174,16 +181,17 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
         // assert mock and wait for the message to be done
         assertMockEndpointsSatisfied();
-        assertTrue("Should complete 3 messages", notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime(), "Should complete 3 messages");
 
         // check that there is two messages in the database and JMS queue
-        assertEquals(new Integer(2), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(2),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertEquals("DONE-D", consumer.receiveBody("activemq2:queue:outbox", 3000));
         assertEquals("DONE-E", consumer.receiveBody("activemq2:queue:outbox", 3000));
     }
 
     @Test
-    public void testRetryAfterException() throws Exception {
+    void testRetryAfterException() throws Exception {
         checkInitialState();
 
         final AtomicInteger counter = new AtomicInteger();
@@ -210,10 +218,11 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
         // assert mock and wait for the message to be done
         assertMockEndpointsSatisfied();
-        assertTrue("Should complete 4 messages", notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime(), "Should complete 4 messages");
 
         // check that there is two messages in the database and JMS queue
-        assertEquals(new Integer(3), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(3),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertEquals("DONE-D", consumer.receiveBody("activemq2:queue:outbox", 3000));
         assertEquals("DONE-E", consumer.receiveBody("activemq2:queue:outbox", 3000));
         assertEquals("DONE-F", consumer.receiveBody("activemq2:queue:outbox", 3000));
@@ -221,24 +230,26 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
     protected void checkInitialState() {
         // check there are no messages in the database and JMS queue
-        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(Integer.valueOf(0),
+                jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 2000));
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                IdempotentRepository repository = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
+            public void configure() {
+                IdempotentRepository repository
+                        = context.getRegistry().lookupByNameAndType("messageIdRepository", IdempotentRepository.class);
 
                 from("activemq2:queue:inbox")
-                    .transacted("required")
-                    .to("mock:a")
-                    .idempotentConsumer(header("uid"), repository)
-                    .to("mock:b")
-                    .transform(simple("DONE-${body}"))
-                    .to("activemq2:queue:outbox");
+                        .transacted("required")
+                        .to("mock:a")
+                        .idempotentConsumer(header("uid"), repository)
+                        .to("mock:b")
+                        .transform(simple("DONE-${body}"))
+                        .to("activemq2:queue:outbox");
             }
         };
     }

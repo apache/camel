@@ -20,15 +20,15 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CoAPPingTest extends CoAPTestSupport {
 
     @Produce("direct:start")
     protected ProducerTemplate sender;
-    
+
     @Test
-    public void testCoAP() throws Exception {
+    void testCoAP() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(true);
@@ -37,18 +37,14 @@ public class CoAPPingTest extends CoAPTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception { 
-                fromF("coap://localhost:%d/TestResource", PORT)
-                    .to("log:exch")
-                    .transform(body().convertTo(Boolean.class))
-                    .to("log:exch");
-                
-                from("direct:start")
-                    .toF("coap://localhost:%d/TestResource", PORT)
-                    .to("mock:result");
+            public void configure() {
+                fromF("coap://localhost:%d/TestResource", PORT).to("log:exch").transform(body().convertTo(Boolean.class))
+                        .to("log:exch");
+
+                from("direct:start").toF("coap://localhost:%d/TestResource", PORT).to("mock:result");
             }
         };
     }

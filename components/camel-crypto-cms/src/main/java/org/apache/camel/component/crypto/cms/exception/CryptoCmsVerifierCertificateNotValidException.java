@@ -17,8 +17,8 @@
 package org.apache.camel.component.crypto.cms.exception;
 
 /**
- * If the verifier tries to verify a signature with a certificate which is not
- * valid at the time given as the SignerInfo's signing time.
+ * If the verifier tries to verify a signature with a certificate which is not valid at the time given as the
+ * SignerInfo's signing time.
  */
 public class CryptoCmsVerifierCertificateNotValidException extends CryptoCmsSignatureException {
 

@@ -21,16 +21,15 @@ import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class KinesisFirehoseEndpointTest {
 
     @Mock
@@ -38,7 +37,7 @@ public class KinesisFirehoseEndpointTest {
 
     private CamelContext camelContext;
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.bind("firehoseClient", amazonKinesisFirehoseClient);
@@ -47,24 +46,24 @@ public class KinesisFirehoseEndpointTest {
 
     @Test
     public void allEndpointParams() throws Exception {
-        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint) camelContext.getEndpoint("aws-kinesis-firehose://some_stream_name"
-                + "?amazonKinesisFirehoseClient=#firehoseClient"
-        );
+        KinesisFirehoseEndpoint endpoint
+                = (KinesisFirehoseEndpoint) camelContext.getEndpoint("aws-kinesis-firehose://some_stream_name"
+                                                                     + "?amazonKinesisFirehoseClient=#firehoseClient");
         endpoint.start();
 
-        assertThat(endpoint.getClient(), is(amazonKinesisFirehoseClient));
-        assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
+        assertEquals(amazonKinesisFirehoseClient, endpoint.getClient());
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
     }
-    
+
     @Test
     public void allClientCreationParams() throws Exception {
-        KinesisFirehoseEndpoint endpoint = (KinesisFirehoseEndpoint) camelContext.getEndpoint("aws-kinesis-firehose://some_stream_name"
-                + "?accessKey=xxx&secretKey=yyy&region=us-east-1"
-        );
+        KinesisFirehoseEndpoint endpoint
+                = (KinesisFirehoseEndpoint) camelContext.getEndpoint("aws-kinesis-firehose://some_stream_name"
+                                                                     + "?accessKey=xxx&secretKey=yyy&region=us-east-1");
 
-        assertThat(endpoint.getConfiguration().getRegion(), is(Regions.US_EAST_1.getName()));
-        assertThat(endpoint.getConfiguration().getAccessKey(), is("xxx"));
-        assertThat(endpoint.getConfiguration().getSecretKey(), is("yyy"));
-        assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
+        assertEquals(Regions.US_EAST_1.getName(), endpoint.getConfiguration().getRegion());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
     }
 }

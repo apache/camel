@@ -27,6 +27,8 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.hystrix.metrics.servlet.HystrixEventStreamServlet;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * To gather hystrix metrics and offer the metrics over JMX and Java APIs.
@@ -35,10 +37,12 @@ import org.apache.camel.support.service.ServiceSupport;
  * provides such functionality.
  */
 @ManagedResource(description = "Managed Hystrix EventStreamService")
-public class HystrixEventStreamService extends ServiceSupport implements StaticService, HystrixMetricsPoller.MetricsAsJsonPollerListener {
+public class HystrixEventStreamService extends ServiceSupport
+        implements StaticService, HystrixMetricsPoller.MetricsAsJsonPollerListener {
 
     public static final int METRICS_QUEUE_SIZE = 1000;
 
+    private static final Logger LOG = LoggerFactory.getLogger(HystrixEventStreamService.class);
     private int delay = 500;
     private int queueSize = METRICS_QUEUE_SIZE;
     private HystrixMetricsPoller poller;
@@ -68,7 +72,7 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
     }
 
     /**
-     * Return a stream of the JSon metrics.
+     * Return a stream of the JSON metrics.
      */
     public Stream<String> streamMetrics() {
         if (queue != null) {
@@ -78,7 +82,7 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
         }
     }
 
-    @ManagedOperation(description = "Returns the oldest metrics as JSon format")
+    @ManagedOperation(description = "Returns the oldest metrics as JSON format")
     public String oldestMetricsAsJSon() {
         if (queue != null) {
             return queue.peek();
@@ -109,7 +113,7 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
 
     @Override
     protected void doStart() throws Exception {
-        log.info("Starting HystrixMetricsPoller with delay: {} and queue size: {}", delay, queueSize);
+        LOG.info("Starting HystrixMetricsPoller with delay: {} and queue size: {}", delay, queueSize);
         queue = new LinkedBlockingQueue<>(queueSize);
         poller = new HystrixMetricsPoller(this, delay);
         poller.start();
@@ -118,19 +122,19 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
     @Override
     protected void doStop() throws Exception {
         if (poller != null) {
-            log.info("Shutting down HystrixMetricsPoller");
+            LOG.info("Shutting down HystrixMetricsPoller");
             poller.shutdown();
         }
     }
 
     @Override
     public void handleJsonMetric(String json) {
-        log.debug("handleJsonMetric: {}", json);
+        LOG.debug("handleJsonMetric: {}", json);
 
         // ensure there is space on the queue by polling until at least single slot is free
         int drain = queue.size() - queueSize + 1;
         if (drain > 0) {
-            log.debug("Draining queue to make room: {}", drain);
+            LOG.debug("Draining queue to make room: {}", drain);
             for (int i = 0; i < drain; i++) {
                 queue.poll();
             }

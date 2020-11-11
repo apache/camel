@@ -23,9 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.rdf4j.model.Model;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Any23DataFormatDefaultTest extends CamelTestSupport {
 
@@ -34,13 +36,14 @@ public class Any23DataFormatDefaultTest extends CamelTestSupport {
     @Test
     public void test() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
+        String contenhtml = Any23TestSupport
+                .loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
         template.sendBody("direct:start", contenhtml);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
             Message in = exchange.getIn();
             Model resultingRDF = in.getBody(Model.class);
-            assertEquals(resultingRDF.size(), 28);
+            assertEquals(28, resultingRDF.size());
         }
     }
 

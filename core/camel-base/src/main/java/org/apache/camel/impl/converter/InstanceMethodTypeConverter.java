@@ -26,8 +26,8 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
- * A {@link TypeConverter} implementation which instantiates an object
- * so that an instance method can be used as a type converter
+ * A {@link TypeConverter} implementation which instantiates an object so that an instance method can be used as a type
+ * converter
  */
 public class InstanceMethodTypeConverter extends TypeConverterSupport {
     private final CachingInjector<?> injector;
@@ -35,7 +35,8 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
     private final boolean useExchange;
     private final boolean allowNull;
 
-    public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry, boolean allowNull) {
+    public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry,
+                                       boolean allowNull) {
         this.injector = injector;
         this.method = method;
         this.useExchange = method.getParameterCount() == 2;
@@ -60,8 +61,8 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
             throw new RuntimeCamelException("Could not instantiate an instance of: " + type.getCanonicalName());
         }
         return useExchange
-            ? (T)ObjectHelper.invokeMethod(method, instance, value, exchange) : (T) ObjectHelper
-                .invokeMethod(method, instance, value);
+                ? (T) ObjectHelper.invokeMethod(method, instance, value, exchange) : (T) ObjectHelper
+                        .invokeMethod(method, instance, value);
     }
 
 }

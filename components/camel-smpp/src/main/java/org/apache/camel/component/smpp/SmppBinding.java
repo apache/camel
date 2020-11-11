@@ -42,8 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Strategy used to convert between a Camel {@link Exchange} and
- * {@link SmppMessage} to and from a SMPP {@link Command}
+ * A Strategy used to convert between a Camel {@link Exchange} and {@link SmppMessage} to and from a SMPP
+ * {@link Command}
  */
 public class SmppBinding {
 
@@ -67,7 +67,7 @@ public class SmppBinding {
     public SmppCommand createSmppCommand(SMPPSession session, Exchange exchange) {
         SmppCommandType commandType = SmppCommandType.fromExchange(exchange);
         SmppCommand command = commandType.createCommand(session, configuration);
-        
+
         return command;
     }
 
@@ -104,7 +104,7 @@ public class SmppBinding {
 
             for (OptionalParameter optPara : oplist) {
                 if (OptionalParameter.Tag.MESSAGE_PAYLOAD.code() == optPara.tag && OctetString.class
-                    .isInstance(optPara)) {
+                        .isInstance(optPara)) {
                     messagePayload = ((OctetString) optPara).getValueAsString();
                     break;
                 }
@@ -153,7 +153,7 @@ public class SmppBinding {
                 if (SmppUtils.is8Bit(alphabet)) {
                     smppMessage.setBody(deliverSm.getShortMessage());
                 } else {
-                    smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(), configuration.getEncoding())));
+                    smppMessage.setBody(new String(deliverSm.getShortMessage(), configuration.getEncoding()));
                 }
             } else if (messagePayload != null) {
                 smppMessage.setBody(messagePayload);
@@ -189,11 +189,14 @@ public class SmppBinding {
                     } else if (org.jsmpp.bean.OptionalParameter.OctetString.class.isInstance(optPara)) {
                         optParams.put(valueOfTag.toString(), ((OctetString) optPara).getValueAsString());
                     } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
-                        optParams.put(valueOfTag.toString(), Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
+                        optParams.put(valueOfTag.toString(),
+                                Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
                     } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
-                        optParams.put(valueOfTag.toString(), Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
+                        optParams.put(valueOfTag.toString(),
+                                Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
                     } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
-                        optParams.put(valueOfTag.toString(), Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
+                        optParams.put(valueOfTag.toString(),
+                                Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
                     } else if (Null.class.isInstance(optPara)) {
                         optParams.put(valueOfTag.toString(), null);
                     }
@@ -218,11 +221,14 @@ public class SmppBinding {
             } else if (org.jsmpp.bean.OptionalParameter.OctetString.class.isInstance(optPara)) {
                 optParams.put(Short.valueOf(optPara.tag), ((OctetString) optPara).getValue());
             } else if (org.jsmpp.bean.OptionalParameter.Byte.class.isInstance(optPara)) {
-                optParams.put(Short.valueOf(optPara.tag), Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
+                optParams.put(Short.valueOf(optPara.tag),
+                        Byte.valueOf(((org.jsmpp.bean.OptionalParameter.Byte) optPara).getValue()));
             } else if (org.jsmpp.bean.OptionalParameter.Short.class.isInstance(optPara)) {
-                optParams.put(Short.valueOf(optPara.tag), Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
+                optParams.put(Short.valueOf(optPara.tag),
+                        Short.valueOf(((org.jsmpp.bean.OptionalParameter.Short) optPara).getValue()));
             } else if (org.jsmpp.bean.OptionalParameter.Int.class.isInstance(optPara)) {
-                optParams.put(Short.valueOf(optPara.tag), Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
+                optParams.put(Short.valueOf(optPara.tag),
+                        Integer.valueOf(((org.jsmpp.bean.OptionalParameter.Int) optPara).getValue()));
             } else if (Null.class.isInstance(optPara)) {
                 optParams.put(Short.valueOf(optPara.tag), null);
             }
@@ -251,7 +257,7 @@ public class SmppBinding {
 
         return smppMessage;
     }
-    
+
     /**
      * Returns the current date. Externalized for better test support.
      * 

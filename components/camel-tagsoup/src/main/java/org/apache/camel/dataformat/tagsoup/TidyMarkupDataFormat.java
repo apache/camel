@@ -50,10 +50,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Dataformat for TidyMarkup (aka Well formed HTML in XML form.. may or may not
- * be XHTML) This dataformat is intended to convert bad HTML from a site (or
- * file) into a well formed HTML document which can then be sent to XSLT or
- * xpath'ed on.
+ * Dataformat for TidyMarkup (aka Well formed HTML in XML form.. may or may not be XHTML) This dataformat is intended to
+ * convert bad HTML from a site (or file) into a well formed HTML document which can then be sent to XSLT or xpath'ed
+ * on.
  */
 @Dataformat("tidyMarkup")
 public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
@@ -117,8 +116,9 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
      */
     @Override
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-        throw new CamelException("Marshalling from Well Formed HTML to ugly HTML is not supported."
-                + " Only unmarshal is supported");
+        throw new CamelException(
+                "Marshalling from Well Formed HTML to ugly HTML is not supported."
+                                 + " Only unmarshal is supported");
     }
 
     /**
@@ -134,16 +134,17 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
         } else if (dataObjectType.isAssignableFrom(String.class)) {
             return asStringTidyMarkup(inputStream);
         } else {
-            throw new IllegalArgumentException("The return type [" + dataObjectType.getCanonicalName()
-                    + "] is unsupported");
+            throw new IllegalArgumentException(
+                    "The return type [" + dataObjectType.getCanonicalName()
+                                               + "] is unsupported");
         }
     }
 
     /**
      * Return the tidy markup as a string
      * 
-     * @param inputStream
-     * @return String of XML
+     * @param  inputStream
+     * @return                String of XML
      * @throws CamelException
      */
     public String asStringTidyMarkup(InputStream inputStream) throws CamelException {
@@ -170,9 +171,8 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
     /**
      * Return the HTML Markup as an {@link org.w3c.dom.Node}
      * 
-     * @param inputStream
-     *            The input Stream to convert
-     * @return org.w3c.dom.Node The HTML Markup as a DOM Node
+     * @param  inputStream    The input Stream to convert
+     * @return                org.w3c.dom.Node The HTML Markup as a DOM Node
      * @throws CamelException
      */
     public Node asNodeTidyMarkup(InputStream inputStream) throws CamelException {

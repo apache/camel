@@ -27,9 +27,13 @@ import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for Camel attachments and Mail attachments.
@@ -37,7 +41,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailAttachmentDuplicateNamesTest extends CamelTestSupport {
 
     @Test
-    public void testSendAndRecieveMailWithAttachmentsWithDuplicateNames() throws Exception {
+    public void testSendAndReceiveMailWithAttachmentsWithDuplicateNames() throws Exception {
         // clear mailbox
         Mailbox.clearAll();
 
@@ -72,16 +76,16 @@ public class MailAttachmentDuplicateNamesTest extends CamelTestSupport {
 
         // attachment
         Map<String, DataHandler> attachments = out.getIn(AttachmentMessage.class).getAttachments();
-        assertNotNull("Should have attachments", attachments);
+        assertNotNull(attachments, "Should have attachments");
         assertEquals(1, attachments.size());
 
         DataHandler handler = out.getIn(AttachmentMessage.class).getAttachment("logo.jpeg");
-        assertNotNull("The logo should be there", handler);
+        assertNotNull(handler, "The logo should be there");
 
         // content type should match
         boolean match1 = "image/jpeg; name=logo.jpeg".equals(handler.getContentType());
         boolean match2 = "application/octet-stream; name=logo.jpeg".equals(handler.getContentType());
-        assertTrue("Should match 1 or 2", match1 || match2);
+        assertTrue(match1 || match2, "Should match 1 or 2");
 
         producer.stop();
     }

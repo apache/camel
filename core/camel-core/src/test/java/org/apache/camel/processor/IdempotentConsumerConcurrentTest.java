@@ -24,13 +24,19 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Concurreny test for idempotent consumer
  */
 public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumerConcurrentTest.class);
+
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
@@ -44,7 +50,9 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .to("mock:result");
             }
         });
         context.start();
@@ -68,14 +76,16 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
-                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("messageId", String.class);
-                        if (id.equals("2")) {
-                            throw new IllegalArgumentException("Damm I cannot handle id 2");
-                        }
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damm I cannot handle id 2");
+                                }
+                            }
+                        }).to("mock:result");
             }
         });
         context.start();
@@ -99,14 +109,16 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("messageId", String.class);
-                        if (id.equals("2")) {
-                            throw new IllegalArgumentException("Damm I cannot handle id 2");
-                        }
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damm I cannot handle id 2");
+                                }
+                            }
+                        }).to("mock:result");
             }
         });
         context.start();
@@ -134,7 +146,9 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).delay(1).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .delay(1).to("mock:result");
             }
         });
         context.start();
@@ -156,7 +170,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
                             sendMessage("" + j, "multithreadedTest" + j);
                         }
                     } catch (Throwable e) {
-                        e.printStackTrace();
+                        LOG.error("Failed to send message: {}", e.getMessage(), e);
                         failedFlag[0] = true;
                     }
                 }
@@ -166,7 +180,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         for (int i = 0; i < threadCount; i++) {
             threads[i].join();
         }
-        assertFalse("At least one thread threw an exception", failedFlag[0]);
+        assertFalse(failedFlag[0], "At least one thread threw an exception");
 
         assertMockEndpointsSatisfied();
     }
@@ -183,7 +197,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

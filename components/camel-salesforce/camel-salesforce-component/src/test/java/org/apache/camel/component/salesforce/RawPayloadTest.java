@@ -29,19 +29,20 @@ import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Parameters;
+import org.apache.camel.test.junit5.params.Test;
 import org.eclipse.jetty.http.HttpHeader;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
-@Category(Standalone.class)
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Standalone
+@Parameterized
 public class RawPayloadTest extends AbstractSalesforceTestBase {
 
     @Parameter
@@ -82,7 +83,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
         context().addComponent("salesforce", component);
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutDownServer() throws IOException {
         // shutdown mock server
         if (server != null) {
@@ -90,7 +91,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
         }
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws IOException {
 
         // create mock server
@@ -100,10 +101,13 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
             @Override
             public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
                 if (recordedRequest.getPath().equals(OAUTH2_TOKEN_PATH)) {
-                    return new MockResponse().setResponseCode(200).setBody("{ \"access_token\": \"mock_token\", \"instance_url\": \"" + loginUrl + "\"}");
+                    return new MockResponse().setResponseCode(200)
+                            .setBody("{ \"access_token\": \"mock_token\", \"instance_url\": \"" + loginUrl + "\"}");
                 } else {
-                    return new MockResponse().setResponseCode(200).setHeader(HttpHeader.CONTENT_TYPE.toString(), recordedRequest.getHeader(HttpHeader.CONTENT_TYPE.toString()))
-                        .setBody("XML".equals(format) ? XML_RESPONSE : JSON_RESPONSE);
+                    return new MockResponse().setResponseCode(200)
+                            .setHeader(HttpHeader.CONTENT_TYPE.toString(),
+                                    recordedRequest.getHeader(HttpHeader.CONTENT_TYPE.toString()))
+                            .setBody("XML".equals(format) ? XML_RESPONSE : JSON_RESPONSE);
                 }
             }
         });
@@ -113,7 +117,7 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
         loginUrl = server.url("");
     }
 
-    @Before
+    @BeforeEach
     public void setupRequestResponse() {
         if (!format.equals(lastFormat)) {
             // expected response and test request
@@ -137,8 +141,8 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
     @Test
     public void testRestApi() throws Exception {
         final String responseBody = template().requestBodyAndHeaders(endpointUri, requestBody, headers, String.class);
-        assertNotNull("Null response for endpoint " + endpointUri, responseBody);
-        assertEquals("Unexpected response for endpoint " + endpointUri, expectedResponse, responseBody);
+        assertNotNull(responseBody, "Null response for endpoint " + endpointUri);
+        assertEquals(expectedResponse, responseBody, "Unexpected response for endpoint " + endpointUri);
     }
 
     @Override
@@ -159,63 +163,89 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
                 from("direct:getGlobalObjects").to("salesforce:getGlobalObjects?rawPayload=true&format=" + format);
 
                 // testGetBasicInfo
-                from("direct:getBasicInfo").to("salesforce:getBasicInfo?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
+                from("direct:getBasicInfo")
+                        .to("salesforce:getBasicInfo?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
 
                 // testGetDescription
-                from("direct:getDescription").to("salesforce:getDescription?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
+                from("direct:getDescription")
+                        .to("salesforce:getDescription?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
 
                 // testGetSObject
-                from("direct:getSObject").to("salesforce:getSObject?sObjectName=Merchandise__c&sObjectFields=Description__c,Price__c&rawPayload=true&format=" + format);
+                from("direct:getSObject").to(
+                        "salesforce:getSObject?sObjectName=Merchandise__c&sObjectFields=Description__c,Price__c&rawPayload=true&format="
+                                             + format);
 
                 // testCreateSObject
-                from("direct:createSObject").to("salesforce:createSObject?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
+                from("direct:createSObject")
+                        .to("salesforce:createSObject?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
 
                 // testUpdateSObject
-                from("direct:updateSObject").to("salesforce:updateSObject?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
+                from("direct:updateSObject")
+                        .to("salesforce:updateSObject?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
 
                 // testDeleteSObject
-                from("direct:deleteSObject").to("salesforce:deleteSObject?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
+                from("direct:deleteSObject")
+                        .to("salesforce:deleteSObject?sObjectName=Merchandise__c&rawPayload=true&format=" + format);
 
                 // testGetSObjectWithId
-                from("direct:getSObjectWithId").to("salesforce:getSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name&rawPayload=true&format=" + format);
+                from("direct:getSObjectWithId")
+                        .to("salesforce:getSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name&rawPayload=true&format="
+                            + format);
 
                 // testUpsertSObject
-                from("direct:upsertSObject").to("salesforce:upsertSObject?sObjectName=Line_Item__c&sObjectIdName=Name&rawPayload=true&format=" + format);
+                from("direct:upsertSObject")
+                        .to("salesforce:upsertSObject?sObjectName=Line_Item__c&sObjectIdName=Name&rawPayload=true&format="
+                            + format);
 
                 // testDeleteSObjectWithId
-                from("direct:deleteSObjectWithId").to("salesforce:deleteSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name&rawPayload=true&format=" + format);
+                from("direct:deleteSObjectWithId")
+                        .to("salesforce:deleteSObjectWithId?sObjectName=Line_Item__c&sObjectIdName=Name&rawPayload=true&format="
+                            + format);
 
                 // testGetBlobField
-                from("direct:getBlobField").to("salesforce:getBlobField?sObjectName=Document&sObjectBlobFieldName=Body&rawPayload=true&format=" + format);
+                from("direct:getBlobField")
+                        .to("salesforce:getBlobField?sObjectName=Document&sObjectBlobFieldName=Body&rawPayload=true&format="
+                            + format);
 
                 // testQuery
-                from("direct:query").to("salesforce:query?sObjectQuery=SELECT name from Line_Item__c&rawPayload=true&format=" + format);
+                from("direct:query")
+                        .to("salesforce:query?sObjectQuery=SELECT name from Line_Item__c&rawPayload=true&format=" + format);
 
                 // testQueryAll
-                from("direct:queryAll").to("salesforce:queryAll?sObjectQuery=SELECT name from Line_Item__c&rawPayload=true&format=" + format);
+                from("direct:queryAll")
+                        .to("salesforce:queryAll?sObjectQuery=SELECT name from Line_Item__c&rawPayload=true&format=" + format);
 
                 // testSearch
                 from("direct:search").to("salesforce:search?sObjectSearch=FIND {Wee}&rawPayload=true&format=" + format);
 
                 // testApexCall
-                from("direct:apexCallGet").to("salesforce:apexCall?apexMethod=GET&apexUrl=Merchandise/{id}&sObjectName=Merchandise__c&rawPayload=true&format=" + format);
+                from("direct:apexCallGet").to(
+                        "salesforce:apexCall?apexMethod=GET&apexUrl=Merchandise/{id}&sObjectName=Merchandise__c&rawPayload=true&format="
+                                              + format);
 
-                from("direct:apexCallGetWithId").to("salesforce:apexCall/Merchandise/?apexMethod=GET&id=dummyId&rawPayload=true&format=" + format);
+                from("direct:apexCallGetWithId")
+                        .to("salesforce:apexCall/Merchandise/?apexMethod=GET&id=dummyId&rawPayload=true&format=" + format);
 
-                from("direct:apexCallPatch").to("salesforce:apexCall/Merchandise/?rawPayload=true&format=" + format + "&apexMethod=PATCH");
+                from("direct:apexCallPatch")
+                        .to("salesforce:apexCall/Merchandise/?rawPayload=true&format=" + format + "&apexMethod=PATCH");
             }
         };
     }
 
     @Parameters(name = "format = {0}, endpoint = {1}")
     public static List<String[]> parameters() {
-        final String[] endpoints = {"direct:getVersions", "direct:getResources", "direct:getGlobalObjects", "direct:getBasicInfo", "direct:getDescription", "direct:getSObject",
-                                    "direct:createSObject", "direct:updateSObject", "direct:deleteSObject", "direct:getSObjectWithId", "direct:upsertSObject",
-                                    "direct:deleteSObjectWithId", "direct:getBlobField", "direct:query", "direct:queryAll", "direct:search", "direct:apexCallGet",
-                                    "direct:apexCallGetWithId", "direct:apexCallPatch"};
+        final String[] endpoints = {
+                "direct:getVersions", "direct:getResources", "direct:getGlobalObjects", "direct:getBasicInfo",
+                "direct:getDescription", "direct:getSObject",
+                "direct:createSObject", "direct:updateSObject", "direct:deleteSObject", "direct:getSObjectWithId",
+                "direct:upsertSObject",
+                "direct:deleteSObjectWithId", "direct:getBlobField", "direct:query", "direct:queryAll", "direct:search",
+                "direct:apexCallGet",
+                "direct:apexCallGetWithId", "direct:apexCallPatch" };
 
-        final String[] formats = {"XML", "JSON"};
+        final String[] formats = { "XML", "JSON" };
 
-        return Stream.of(formats).flatMap(f -> Stream.of(endpoints).map(e -> new String[] {f, e})).collect(Collectors.toList());
+        return Stream.of(formats).flatMap(f -> Stream.of(endpoints).map(e -> new String[] { f, e }))
+                .collect(Collectors.toList());
     }
 }

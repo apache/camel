@@ -20,7 +20,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedStatisticsWithSplitterTest extends ManagementTestSupport {
 
@@ -75,14 +77,14 @@ public class ManagedStatisticsWithSplitterTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("route-a")
-                    .to("log:foo").id("foo")
-                    .split(body().tokenize(","))
+                        .to("log:foo").id("foo")
+                        .split(body().tokenize(","))
                         .to("direct:split")
-                    .end()
-                    .to("mock:result").id("mock");
+                        .end()
+                        .to("mock:result").id("mock");
 
                 from("direct:split").routeId("route-b")
-                    .to("log:bar").id("bar");
+                        .to("log:bar").id("bar");
             }
         };
     }

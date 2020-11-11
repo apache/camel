@@ -28,8 +28,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class AtomixMapConsumerTest extends AtomixClientTestSupport {
     private static final String MAP_NAME = UUID.randomUUID().toString();
@@ -57,9 +57,11 @@ public class AtomixMapConsumerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        map.close();
+        if (map != null) {
+            map.close();
+        }
 
         super.tearDown();
     }
@@ -69,7 +71,7 @@ public class AtomixMapConsumerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Test
-    public void testEvents() throws Exception {
+    void testEvents() throws Exception {
         String key = context().getUuidGenerator().generateUuid();
         String put = context().getUuidGenerator().generateUuid();
         String upd = context().getUuidGenerator().generateUuid();
@@ -127,13 +129,13 @@ public class AtomixMapConsumerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 fromF("atomix-map:%s", MAP_NAME)
-                    .to("mock:result");
+                        .to("mock:result");
                 fromF("atomix-map:%s?key=%s", MAP_NAME, KEY_NAME)
-                    .to("mock:result-key");
+                        .to("mock:result-key");
             }
         };
     }

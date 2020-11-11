@@ -30,25 +30,29 @@ import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Test class for {@link org.apache.camel.component.fhir.api.FhirTransaction} APIs.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
+ * Test class for {@link org.apache.camel.component.fhir.api.FhirTransaction} APIs. The class source won't be generated
+ * again if the generator MOJO finds it under src/test/java.
  */
 public class FhirTransactionIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirTransactionIT.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirTransactionApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = FhirApiCollection.getCollection().getApiName(FhirTransactionApiMethod.class).getName();
 
     @Test
     public void testWithBundle() throws Exception {
         // using org.hl7.fhir.instance.model.api.IBaseBundle message body for single parameter "bundle"
         Bundle result = requestBody("direct://WITH_BUNDLE", createTransactionBundle());
 
-        assertNotNull("withBundle result", result);
+        assertNotNull(result, "withBundle result");
         assertTrue(result.getEntry().get(0).getResponse().getStatus().contains("Created"));
         LOG.debug("withBundle: " + result);
     }
@@ -61,7 +65,7 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         // using String message body for single parameter "sBundle"
         final String result = requestBody("direct://WITH_STRING_BUNDLE", stringBundle);
 
-        assertNotNull("withBundle result", result);
+        assertNotNull(result, "withBundle result");
         assertTrue(result.contains("Bundle"));
         LOG.debug("withBundle: " + result);
     }
@@ -77,7 +81,7 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         // using java.util.List message body for single parameter "resources"
         List<IBaseResource> result = requestBody("direct://WITH_RESOURCES", patients);
 
-        assertNotNull("withResources result", result);
+        assertNotNull(result, "withResources result");
         LOG.debug("withResources: " + result);
         assertTrue(result.size() == 2);
     }
@@ -95,7 +99,7 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         // using java.util.List message body for single parameter "resources"
         List<IBaseResource> result = requestBodyAndHeaders("direct://WITH_RESOURCES", patients, headers);
 
-        assertNotNull("withResources result", result);
+        assertNotNull(result, "withResources result");
         LOG.debug("withResources: " + result);
         assertTrue(result.size() == 2);
     }
@@ -106,15 +110,15 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
             public void configure() {
                 // test route for withBundle
                 from("direct://WITH_BUNDLE")
-                    .to("fhir://" + PATH_PREFIX + "/withBundle?inBody=bundle");
+                        .to("fhir://" + PATH_PREFIX + "/withBundle?inBody=bundle");
 
                 // test route for withBundle
                 from("direct://WITH_STRING_BUNDLE")
-                    .to("fhir://" + PATH_PREFIX + "/withBundle?inBody=stringBundle");
+                        .to("fhir://" + PATH_PREFIX + "/withBundle?inBody=stringBundle");
 
                 // test route for withResources
                 from("direct://WITH_RESOURCES")
-                    .to("fhir://" + PATH_PREFIX + "/withResources?inBody=resources");
+                        .to("fhir://" + PATH_PREFIX + "/withResources?inBody=resources");
 
             }
         };
@@ -124,9 +128,9 @@ public class FhirTransactionIT extends AbstractFhirTestSupport {
         Bundle input = new Bundle();
         input.setType(Bundle.BundleType.TRANSACTION);
         input.addEntry()
-            .setResource(new Patient().addName(new HumanName().addGiven("Art").setFamily("Tatum")))
-            .getRequest()
-            .setMethod(Bundle.HTTPVerb.POST);
+                .setResource(new Patient().addName(new HumanName().addGiven("Art").setFamily("Tatum")))
+                .getRequest()
+                .setMethod(Bundle.HTTPVerb.POST);
         return input;
     }
 

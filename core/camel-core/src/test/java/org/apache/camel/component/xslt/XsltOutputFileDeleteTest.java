@@ -22,7 +22,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  *
@@ -35,14 +37,15 @@ public class XsltOutputFileDeleteTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
-        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME, "target/data/xslt/xsltme.xml");
+        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,
+                "target/data/xslt/xsltme.xml");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // assert file deleted
         File file = new File("target/data/xslt/xsltme.xml");
-        assertFalse("File should be deleted", file.exists());
+        assertFalse(file.exists(), "File should be deleted");
     }
 
     @Override
@@ -50,7 +53,8 @@ public class XsltOutputFileDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("xslt:org/apache/camel/component/xslt/example.xsl?output=file&deleteOutputFile=true").to("mock:result");
+                from("direct:start").to("xslt:org/apache/camel/component/xslt/example.xsl?output=file&deleteOutputFile=true")
+                        .to("mock:result");
             }
         };
     }

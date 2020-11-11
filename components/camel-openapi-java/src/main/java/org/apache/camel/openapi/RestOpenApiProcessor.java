@@ -28,7 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class RestOpenApiProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestOpenApiProcessor.class);
@@ -39,7 +38,8 @@ public class RestOpenApiProcessor implements Processor {
     private final RestConfiguration configuration;
 
     @SuppressWarnings("unchecked")
-    public RestOpenApiProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters, RestConfiguration configuration) {
+    public RestOpenApiProcessor(String contextIdPattern, boolean contextIdListing, Map<String, Object> parameters,
+                                RestConfiguration configuration) {
         this.contextIdPattern = contextIdPattern;
         this.contextIdListing = contextIdListing;
         this.configuration = configuration;
@@ -83,10 +83,11 @@ public class RestOpenApiProcessor implements Processor {
         try {
             // render list of camel contexts as root
             if (contextIdListing && (ObjectHelper.isEmpty(route) || route.equals("/"))) {
-                support.renderCamelContexts(adapter, contextId, contextIdPattern, json, yaml, configuration);
+                support.renderCamelContexts(exchange.getContext(), adapter, contextId, contextIdPattern, json, yaml,
+                        configuration);
             } else {
                 String name;
-                if (ObjectHelper.isNotEmpty(route)) {
+                if (contextIdListing && ObjectHelper.isNotEmpty(route)) {
                     // first part is the camel context
                     if (route.startsWith("/")) {
                         route = route.substring(1);
@@ -99,6 +100,8 @@ public class RestOpenApiProcessor implements Processor {
                 } else {
                     // listing not enabled then get current camel context as the name
                     name = exchange.getContext().getName();
+                    // prevent route filtering
+                    route = "";
                 }
 
                 boolean match = true;
@@ -117,11 +120,11 @@ public class RestOpenApiProcessor implements Processor {
                     adapter.noContent();
                 } else {
                     support.renderResourceListing(exchange.getContext(), adapter, openApiConfig, name, route, json, yaml,
-                        exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
+                            exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error rendering OpenApi API due " + e.getMessage(), e);
+            LOG.warn("Error rendering OpenApi API due {}", e.getMessage(), e);
         }
     }
 

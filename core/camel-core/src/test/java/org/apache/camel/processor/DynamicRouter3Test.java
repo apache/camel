@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DynamicRouter3Test extends ContextTestSupport {
 
@@ -41,8 +41,8 @@ public class DynamicRouter3Test extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // use a bean as the dynamic router
-                    .dynamicRouter().method(DynamicRouter3Test.class, "slip");
+                        // use a bean as the dynamic router
+                        .dynamicRouter().method(DynamicRouter3Test.class, "slip");
             }
         };
     }

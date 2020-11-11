@@ -22,13 +22,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileProducerFileExistAppendTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/file");
         super.setUp();
@@ -58,8 +58,10 @@ public class FileProducerFileExistAppendTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/file", "Row 2\n", Exchange.FILE_NAME, "test2.txt");
 
         // Append test files to the target one
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Append", new File("target/data/file/test1.txt"), Exchange.FILE_NAME, "out.txt");
-        template.sendBodyAndHeader("file://target/data/file?fileExist=Append", new File("target/data/file/test2.txt"), Exchange.FILE_NAME, "out.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Append", new File("target/data/file/test1.txt"),
+                Exchange.FILE_NAME, "out.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Append", new File("target/data/file/test2.txt"),
+                Exchange.FILE_NAME, "out.txt");
 
         mock.expectedFileExists("target/data/file/out.txt", "Row 1\nRow 2\n");
 
@@ -74,7 +76,8 @@ public class FileProducerFileExistAppendTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file?noop=true&initialDelay=0&delay=10").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/file?noop=true&initialDelay=0&delay=10").noAutoStartup().convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

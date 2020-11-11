@@ -1,8 +1,15 @@
 [[properties-component]]
 = Properties Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: core/camel-base/src/main/docs/properties-component.adoc
+//Written by hand, not generated.
+:docTitle: Properties
+:artifactId: camel-base
+:description: The properties component is used for property placeholders in your Camel application, such as endpoint URIs.
+:since: 2.3
+:supportLevel: Stable
 
-*Since Camel 2.3*
+*Since Camel {since}*
 
 The properties component is used for property placeholders in your Camel application, such as endpoint URIs.
 It is *not* a regular Camel component with producer and consumer for routing messages. However for historical
@@ -44,7 +51,7 @@ This works much like you would do if using Spring's
 `<property-placeholder>` tag. However Spring have a limitation which
 prevents 3rd party frameworks to leverage Spring property placeholders
 to the fullest. See more at
-xref:manual::faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
+xref:manual:faq:how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
 I use Spring Property Placeholder with Camel XML].
 
 [TIP]
@@ -69,7 +76,7 @@ property component.
 
 == Syntax
 
-The syntax to use Camel's property placeholder is to use `{\{key\}}` for
+The syntax to use Camel's property placeholder is to use `{\{key}}` for
 example `{{file.uri}}` where `file.uri` is the property key.
 
 You can use property placeholders in parts of the endpoint URI's which
@@ -79,12 +86,15 @@ You can specify a default value to use if
 a property with the key does not exists, eg `file.url:/some/path` where
 the default value is the text after the colon (eg /some/path).
 
-NOTE: Do not use colon in the property key. The colon is used as a separator
+[NOTE]
+====
+Do not use colon in the property key. The colon is used as a separator
 token when you are providing a default value.
+====
 
 == Defining location
 
-The properties component need to know a location(s) where to resolve the
+The properties component needs to know a location(s) where to resolve the
 properties. You can define 1 to many locations. If you define the
 location in a single String property you can separate multiple locations
 with comma such as:
@@ -128,9 +138,12 @@ location=file:${env:APP_HOME}/etc/foo.properties
 
 Where `APP_HOME` is an OS environment.
 
-NOTE: Some OS'es (such as Linux) do not support dashes in environment variable names,
+[NOTE]
+====
+Some OS'es (such as Linux) do not support dashes in environment variable names,
 so here we are using `APP_HOME`. But if you specify `APP-HOME` then Camel 3 will automatic lookup
 the value as `APP_HOME` (with underscore) as fallback.
+====
 
 You can have multiple placeholders in the same location, such as:
 
@@ -282,9 +295,9 @@ ProducerTemplate for example:
 template.sendBody("{{cool.start}}", "Hello World");
 ----
 
-== Example with xref:manual::simple-language.adoc[Simple] language
+== Example with xref:languages:simple-language.adoc[Simple] language
 
-The xref:manual::simple-language.adoc[Simple] language now also support using property
+The xref:languages:simple-language.adoc[Simple] language now also support using property
 placeholders, for example in the route below:
 
 [source,java]
@@ -306,8 +319,38 @@ and the others.
 
 The example below has property placeholder in the `<jmxAgent>` tag:
 
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <propertyPlaceholder id="properties" location="org/apache/camel/spring/jmx.properties"/>
+    <!-- we can use property placeholders when we define the JMX agent -->
+    <jmxAgent id="agent" disabled="{{myjmx.disabled}}"
+              usePlatformMBeanServer="{{myjmx.usePlatform}}"
+              statisticsLevel="RoutesOnly" useHostIPAddress="true"/>
+    <route id="foo" autoStartup="false">
+        <from uri="seda:start"/>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+----
+
 You can also define property placeholders in the various attributes on
 the `<camelContext>` tag such as `trace` as shown here:
+
+[source,xml]
+----
+<camelContext trace="{{foo.trace}}" xmlns="http://camel.apache.org/schema/spring">
+    <propertyPlaceholder id="properties" location="org/apache/camel/spring/processor/myprop.properties"/>
+    <template id="camelTemplate" defaultEndpoint="{{foo.cool}}"/>
+    <route>
+        <from uri="direct:start"/>
+        <setHeader name="{{foo.header}}">
+            <simple>${in.body} World!</simple>
+        </setHeader>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+----
 
 == Using JVM system properties or Environment variables as override or fallback values
 
@@ -451,11 +494,48 @@ Each location is separated by comma.
 When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties directly in the XML file as shown below:
 
+[source,xml]
+----
+<!-- blueprint property placeholders -->
+<cm:property-placeholder persistent-id="my-placeholders" update-strategy="reload">
+  <cm:default-properties>
+    <cm:property name="greeting" value="Hello"/>
+    <cm:property name="destination" value="mock:result"/>
+  </cm:default-properties>
+</cm:property-placeholder>
+
+<!-- a bean that uses a blueprint property placeholder -->
+<bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
+  <property name="say" value="${greeting}"/>
+</bean>
+
+<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+  <route>
+    <from uri="direct:start"/>
+    <bean ref="myCoolBean" method="saySomething"/>
+    <to uri="{{destination}}"/>
+  </route>
+
+</camelContext>
+----
+
 Notice that we have a `<bean>` which refers to one of the properties. And
 in the Camel route we refer to the other using the `{{` and `}}` notation.
 
 Now if you want to override these Blueprint properties from an unit
 test, you can do this as shown below:
+
+[source,java]
+----
+protected String useOverridePropertiesWithConfigAdmin(Dictionary props) {
+    // add the properties we want to override
+    props.put("greeting", "Bye");
+
+    // return the PID of the config-admin we are using in the blueprint xml file
+    return "my-placeholders";
+}
+----
 
 To do this we override and implement the
 `useOverridePropertiesWithConfigAdmin` method. We can then put the
@@ -479,6 +559,16 @@ as `etc/stuff.cfg`.
 Now if you want to unit test this blueprint XML file, then you can
 override the `loadConfigAdminConfigurationFile` and tell Camel which
 file to load as shown below:
+
+[source,java]
+----
+@Override
+protected String[] loadConfigAdminConfigurationFile() {
+    // String[0] = tell Camel the path of the .cfg file to use for OSGi ConfigAdmin in the blueprint XML file
+    // String[1] = tell Camel the persistence-id of the cm:property-placeholder in the blueprint XML file
+    return new String[]{"src/test/resources/etc/stuff.cfg", "stuff"};
+}
+----
 
 Notice that this method requires to return a `String[]` with 2 values. The
 1st value is the path for the configuration file to load.
@@ -541,7 +631,7 @@ placeholder notation with `{{` and `}}`.
 == Clashing Spring property placeholders with Camels Simple language
 
 Take notice when using Spring bridging placeholder then the spring `${ }`
-syntax clashes with the xref:manual::simple-language.adoc[Simple] in Camel, and therefore
+syntax clashes with the xref:languages:simple-language.adoc[Simple] in Camel, and therefore
 take care. For example:
 
 [source,xml]
@@ -552,7 +642,7 @@ take care. For example:
 ----
 
 clashes with Spring property placeholders, and you should use `$simple{ }`
-to indicate using the xref:manual::simple-language.adoc[Simple] language in Camel.
+to indicate using the xref:languages:simple-language.adoc[Simple] language in Camel.
 
 [source,xml]
 ----
@@ -663,7 +753,6 @@ can easily be used as shown below:
 [source,xml]
 ----
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
     <route>
       <from uri="direct:start"/>
       <to uri="{`{env:SOMENAME}`}"/>
@@ -679,7 +768,6 @@ is a `log:foo` and `log:bar` value.
 [source,xml]
 ----
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-
     <route>
       <from uri="direct:start"/>
       <to uri="{`{env:SOMENAME:log:foo}`}"/>
@@ -687,8 +775,6 @@ is a `log:foo` and `log:bar` value.
     </route>
   </camelContext>
 ----
-
- 
 
 The service function is for looking up a service which is defined using
 OS environment variables using the service naming idiom, to refer to a
@@ -760,7 +846,10 @@ placeholder. This is best illustrated in the example code below
 </camelContext>
 ----
 
-NOTE: The location attribute (on propertyPlaceholder tag) is not mandatory
+[NOTE]
+====
+The location attribute (on propertyPlaceholder tag) is not mandatory
+====
 
 Here we have a Camel XML route where we have defined the
 `<propertyPlaceholder>` to use a custom function, which we refer to be the
@@ -800,7 +889,7 @@ To register a custom function from Java code is as shown below:
 PropertiesComponent pc = (org.apache.camel.componennt.properties.PropertiesComponent) context.getPropertiesComponent();
 pc.addFunction(new MyBeerFunction());
 ----
- 
+
 
 == Using 3rd-party properties sources
 

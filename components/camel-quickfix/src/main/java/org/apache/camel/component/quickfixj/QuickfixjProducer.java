@@ -21,6 +21,8 @@ import java.util.concurrent.Callable;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.Message;
 import quickfix.MessageUtils;
 import quickfix.Session;
@@ -29,7 +31,9 @@ import quickfix.SessionID;
 public class QuickfixjProducer extends DefaultProducer {
     public static final String CORRELATION_TIMEOUT_KEY = "CorrelationTimeout";
     public static final String CORRELATION_CRITERIA_KEY = "CorrelationCriteria";
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjProducer.class);
+
     public QuickfixjProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -51,7 +55,7 @@ public class QuickfixjProducer extends DefaultProducer {
 
     void sendMessage(Exchange exchange, org.apache.camel.Message camelMessage) throws Exception {
         Message message = camelMessage.getBody(Message.class);
-        log.debug("Sending FIX message: {}", message);
+        LOG.debug("Sending FIX message: {}", message);
 
         SessionID messageSessionID = getEndpoint().getSessionID();
         if (messageSessionID == null) {

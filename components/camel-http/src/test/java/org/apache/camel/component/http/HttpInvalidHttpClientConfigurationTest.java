@@ -20,18 +20,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.POST;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test of invalid configuration
  */
 public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         try {
@@ -44,7 +47,7 @@ public class HttpInvalidHttpClientConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testInvalidHostConfiguration() {
+    public void testInvalidHostConfiguration() throws Exception {
         // dummy
     }
 

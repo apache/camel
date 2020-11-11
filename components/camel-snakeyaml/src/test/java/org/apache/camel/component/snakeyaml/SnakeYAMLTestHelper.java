@@ -25,8 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.snakeyaml.model.TestPojo;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public final class SnakeYAMLTestHelper {
 
@@ -68,7 +68,8 @@ public final class SnakeYAMLTestHelper {
     }
 
     public static void marshalAndUnmarshal(
-            CamelContext context, Object body, String mockName, String directIn, String directBack, String expected) throws Exception {
+            CamelContext context, Object body, String mockName, String directIn, String directBack, String expected)
+            throws Exception {
 
         MockEndpoint mock = context.getEndpoint(mockName, MockEndpoint.class);
         assertNotNull(mock);
@@ -83,7 +84,6 @@ public final class SnakeYAMLTestHelper {
         assertEquals(expected, result.trim());
 
         template.sendBody(directBack, result);
-
 
         mock.assertIsSatisfied();
     }

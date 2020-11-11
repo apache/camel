@@ -18,21 +18,24 @@ package org.apache.camel.util;
 
 import java.io.File;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class FileUtilTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class FileUtilTest {
 
     @Test
     public void testNormalizePath() {
         if (FileUtil.isWindows()) {
             assertEquals("foo\\bar", FileUtil.normalizePath("foo/bar"));
             assertEquals("foo\\bar\\baz", FileUtil.normalizePath("foo/bar\\baz"));
-            assertEquals("movefile\\sub\\sub2\\.done\\goodday.txt", FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
+            assertEquals("movefile\\sub\\sub2\\.done\\goodday.txt",
+                    FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
         } else {
             assertEquals("foo/bar", FileUtil.normalizePath("foo/bar"));
             assertEquals("foo/bar/baz", FileUtil.normalizePath("foo/bar\\baz"));
-            assertEquals("movefile/sub/sub2/.done/goodday.txt", FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
+            assertEquals("movefile/sub/sub2/.done/goodday.txt",
+                    FileUtil.normalizePath("movefile/sub/sub2\\.done\\goodday.txt"));
         }
     }
 
@@ -221,21 +224,21 @@ public class FileUtilTest extends Assert {
     public void testDefaultTempFileSuffixAndPrefix() throws Exception {
         File tmp = FileUtil.createTempFile("tmp-", ".tmp", new File("target/tmp"));
         assertNotNull(tmp);
-        assertTrue("Should be a file", tmp.isFile());
+        assertTrue(tmp.isFile(), "Should be a file");
     }
 
     @Test
     public void testDefaultTempFile() throws Exception {
         File tmp = FileUtil.createTempFile(null, null, new File("target/tmp"));
         assertNotNull(tmp);
-        assertTrue("Should be a file", tmp.isFile());
+        assertTrue(tmp.isFile(), "Should be a file");
     }
 
     @Test
     public void testDefaultTempFileParent() throws Exception {
         File tmp = FileUtil.createTempFile(null, null, new File("target"));
         assertNotNull(tmp);
-        assertTrue("Should be a file", tmp.isFile());
+        assertTrue(tmp.isFile(), "Should be a file");
     }
 
     @Test
@@ -245,8 +248,8 @@ public class FileUtilTest extends Assert {
             FileUtil.deleteFile(file);
         }
 
-        assertFalse("File should not exist " + file, file.exists());
-        assertTrue("A new file should be created " + file, FileUtil.createNewFile(file));
+        assertFalse(file.exists(), "File should not exist " + file);
+        assertTrue(FileUtil.createNewFile(file), "A new file should be created " + file);
     }
 
     @Test
@@ -258,7 +261,14 @@ public class FileUtilTest extends Assert {
 
         File target = new File("target/bar.txt");
         FileUtil.renameFileUsingCopy(file, target);
-        assertTrue("File not copied", target.exists());
-        assertFalse("File not deleted", file.exists());
+        assertTrue(target.exists(), "File not copied");
+        assertFalse(file.exists(), "File not deleted");
+    }
+
+    @Test
+    public void testCompactHttpPath() {
+        String in = "http://foo.com/apps/func/schemas/part/myap/dummy-schema.xsd";
+        String out = FileUtil.compactPath(in, "/");
+        assertEquals(in, out);
     }
 }

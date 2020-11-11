@@ -59,7 +59,6 @@ public enum $enumName implements ApiMethod {
         arg("$arg.Name", $helper.getType($arg.Type))#end)#if ( $foreach.hasNext ),$newLine#else;#end
 #end
 
-    $newLine
     private final ApiMethod apiMethod;
 
     private ${enumName}(Class<?> resultType, String name, ApiMethodArg... args) {

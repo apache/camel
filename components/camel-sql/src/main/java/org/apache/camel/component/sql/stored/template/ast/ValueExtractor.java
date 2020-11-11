@@ -19,9 +19,8 @@ package org.apache.camel.component.sql.stored.template.ast;
 import org.apache.camel.Exchange;
 
 /**
- * ValueExtractotr extracts value from Exchange and Container object.
- * Usually each input parameter has one extractor which extracts
- * parameter value from input "map" to be sent into db.
+ * ValueExtractotr extracts value from Exchange and Container object. Usually each input parameter has one extractor
+ * which extracts parameter value from input "map" to be sent into db.
  */
 public interface ValueExtractor {
 

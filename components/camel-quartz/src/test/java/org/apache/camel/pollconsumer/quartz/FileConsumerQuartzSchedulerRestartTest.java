@@ -18,14 +18,16 @@ package org.apache.camel.pollconsumer.quartz;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/file/quartz");
         super.setUp();
@@ -53,7 +55,7 @@ public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/file/quartz?scheduler=quartz&scheduler.cron=0/2+*+*+*+*+?&scheduler.triggerGroup=myGroup&scheduler.triggerId=myId")
-                    .routeId("foo").noAutoStartup()
+                        .routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         };

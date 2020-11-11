@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "reactor",
+    "title": "Reactor",
+    "description": "Reactor based back-end for Camel's reactive streams component",
+    "deprecated": false,
+    "firstVersion": "2.20.0",
+    "label": "reactive,streams",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-reactor",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

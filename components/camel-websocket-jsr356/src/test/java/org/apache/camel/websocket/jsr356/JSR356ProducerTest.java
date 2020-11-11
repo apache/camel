@@ -16,51 +16,51 @@
  */
 package org.apache.camel.websocket.jsr356;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.context.Dependent;
 import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.meecrowave.Meecrowave;
-import org.apache.meecrowave.junit.MeecrowaveRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.apache.meecrowave.junit5.MeecrowaveConfig;
+import org.apache.meecrowave.testing.ConfigurationInject;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Disabled("TODO: Does not work with some deployment error in embedded JEE server")
+@MeecrowaveConfig(scanningPackageIncludes = "org.apache.camel.websocket.jsr356.JSR356ProducerTest$")
 public class JSR356ProducerTest extends CamelTestSupport {
-    @Rule
-    public final MeecrowaveRule servlet = new MeecrowaveRule(new Meecrowave.Builder() {
-        {
-            randomHttpPort();
-            setScanningPackageIncludes("org.apache.camel.websocket.jsr356.JSR356ProducerTest$"); 
-        }
-    }, "");
 
-    @Rule
-    public final TestName testName = new TestName();
+    private static LinkedBlockingQueue<String> messages = new LinkedBlockingQueue<>();
+
+    @ConfigurationInject
+    protected Meecrowave.Builder configuration;
+
+    protected String testMethodName;
 
     @Produce("direct:ensureServerModeSendsProperly")
     private ProducerTemplate serverProducer;
 
-    @Ignore
+    @Override
+    public void beforeEach(ExtensionContext context) throws Exception {
+        super.beforeEach(context);
+        testMethodName = context.getRequiredTestMethod().getName();
+    }
+
     @Test
     public void ensureServerModeSendsProperly() throws Exception {
-        final String body = getClass().getName() + "#" + testName.getMethodName();
+        final String body = getClass().getName() + "#" + testMethodName;
         serverProducer.sendBody(body);
-        ExistingServerEndpoint.self.latch.await();
-        assertEquals(singletonList(body), ExistingServerEndpoint.self.messages);
+        assertEquals(body, messages.poll(10, TimeUnit.SECONDS));
     }
 
     @Override
@@ -68,7 +68,8 @@ public class JSR356ProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:ensureServerModeSendsProperly").id("camel_consumer_acts_as_client").convertBodyTo(String.class)
-                    .to("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver");
+                        .to("websocket-jsr356://ws://localhost:" + configuration.getHttpPort()
+                            + "/existingserver?sessionCount=5");
             }
         };
     }
@@ -76,20 +77,9 @@ public class JSR356ProducerTest extends CamelTestSupport {
     @Dependent
     @ServerEndpoint("/existingserver")
     public static class ExistingServerEndpoint {
-        private static ExistingServerEndpoint self;
-
-        private final Collection<String> messages = new ArrayList<>();
-        private final CountDownLatch latch = new CountDownLatch(1);
-
-        @OnOpen
-        public void onOpen(final Session session) {
-            self = this;
-        }
-
         @OnMessage
-        public synchronized void onMessage(final String message) {
+        public void onMessage(final String message) {
             messages.add(message);
-            latch.countDown();
         }
     }
 }

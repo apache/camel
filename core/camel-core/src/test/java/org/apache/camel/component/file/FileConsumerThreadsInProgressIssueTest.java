@@ -25,7 +25,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
 
@@ -39,8 +41,9 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/manyfiles?sortBy=file:name&delay=10&synchronous=false").routeId("myRoute").noAutoStartup().threads(1, 10).maxQueueSize(0)
-                    .convertBodyTo(String.class).process(processor).to("log:done", "mock:done");
+                from("file:target/data/manyfiles?sortBy=file:name&delay=10&synchronous=false").routeId("myRoute")
+                        .noAutoStartup().threads(1, 10).maxQueueSize(0)
+                        .convertBodyTo(String.class).process(processor).to("log:done", "mock:done");
             }
         };
     }
@@ -74,7 +77,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
             }
         }
 
-        assertEquals("Should not contain duplicates", 0, found);
+        assertEquals(0, found, "Should not contain duplicates");
     }
 
     private static void createManyFiles(int number) throws Exception {

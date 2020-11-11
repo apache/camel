@@ -20,7 +20,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -33,7 +35,7 @@ public class ProxyBuilderTest extends ContextTestSupport {
 
         Future<String> future = foo.sayHello("Camel");
         assertNotNull(future);
-        assertFalse("Should not be done", future.isDone());
+        assertFalse(future.isDone(), "Should not be done");
 
         assertEquals("Hello Camel", future.get(5, TimeUnit.SECONDS));
     }

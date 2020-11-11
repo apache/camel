@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test that file consumer will exclude pre and postfixes
@@ -52,7 +52,8 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/exclude/?initialDelay=0&delay=10&exclude=^secret.*|.*xml$").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/exclude/?initialDelay=0&delay=10&exclude=^secret.*|.*xml$").convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

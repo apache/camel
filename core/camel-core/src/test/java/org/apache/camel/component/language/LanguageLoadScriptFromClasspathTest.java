@@ -18,7 +18,7 @@ package org.apache.camel.component.language;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LanguageLoadScriptFromClasspathTest extends ContextTestSupport {
 
@@ -38,8 +38,9 @@ public class LanguageLoadScriptFromClasspathTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // load the script from the classpath
-                    .to("language:simple:classpath:org/apache/camel/component/language/mysimplescript.txt").to("mock:result");
+                        // load the script from the classpath
+                        .to("language:simple:classpath:org/apache/camel/component/language/mysimplescript.txt")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

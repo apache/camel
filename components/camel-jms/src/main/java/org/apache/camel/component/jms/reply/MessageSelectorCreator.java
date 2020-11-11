@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.TimeoutMap.Listener.Type.*;
 
 /**
- * A creator which can build the JMS message selector query string to use
- * with a shared reply-to queue, so we can select the correct messages we expect as replies.
+ * A creator which can build the JMS message selector query string to use with a shared reply-to queue, so we can select
+ * the correct messages we expect as replies.
  */
 public class MessageSelectorCreator {
     protected static final Logger LOG = LoggerFactory.getLogger(MessageSelectorCreator.class);
@@ -43,7 +43,6 @@ public class MessageSelectorCreator {
         // must support concurrent access
         this.correlationIds = new ConcurrentSkipListSet<>();
     }
-
 
     public synchronized String get() {
         if (!dirty) {

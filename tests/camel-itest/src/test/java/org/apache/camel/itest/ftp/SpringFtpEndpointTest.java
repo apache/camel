@@ -16,39 +16,28 @@
  */
 package org.apache.camel.itest.ftp;
 
-import java.io.File;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.itest.utils.extensions.FtpServiceExtension;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.ftpserver.FtpServer;
-import org.apache.ftpserver.FtpServerFactory;
-import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
-import org.apache.ftpserver.ftplet.UserManager;
-import org.apache.ftpserver.listener.ListenerFactory;
-import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
-import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * Unit testing FTP configured using spring bean
  */
+@CamelSpringTest
 @ContextConfiguration
-public class SpringFtpEndpointTest extends AbstractJUnit4SpringContextTests {
-    private static int ftpPort = AvailablePortFinder.getNextAvailable();
-    static {
-        //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts 
-        System.setProperty("SpringFtpEndpointTest.ftpPort", Integer.toString(ftpPort));
-    }
+public class SpringFtpEndpointTest {
+    @RegisterExtension
+    public static FtpServiceExtension ftpServiceExtension = new FtpServiceExtension("SpringFtpEndpointTest.ftpPort");
+
     protected FtpServer ftpServer;
 
     @Autowired
@@ -61,43 +50,11 @@ public class SpringFtpEndpointTest extends AbstractJUnit4SpringContextTests {
     protected MockEndpoint result;
 
     @Test
-    public void testFtpEndpointAsSpringBean() throws Exception {
+    void testFtpEndpointAsSpringBean() throws Exception {
         result.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader(inputFTP, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         result.assertIsSatisfied();
     }
-
-    @Before
-    public void setUp() throws Exception {
-        initFtpServer();
-        ftpServer.start();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        ftpServer.stop();
-        ftpServer = null;
-    }
-
-    protected void initFtpServer() throws Exception {
-        FtpServerFactory serverFactory = new FtpServerFactory();
-
-        // setup user management to read our users.properties and use clear text passwords
-        File file = new File("src/test/resources/users.properties");
-        UserManager uman = new PropertiesUserManager(new ClearTextPasswordEncryptor(), file, "admin");
-        serverFactory.setUserManager(uman);
-
-        NativeFileSystemFactory fsf = new NativeFileSystemFactory();
-        fsf.setCreateHome(true);
-        serverFactory.setFileSystem(fsf);
-
-        ListenerFactory factory = new ListenerFactory();
-        factory.setPort(ftpPort);
-        serverFactory.addListener("default", factory.createListener());
-
-        ftpServer = serverFactory.createServer();
-    }
-
 }

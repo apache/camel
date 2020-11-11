@@ -30,30 +30,28 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/org/apache/camel/component/jetty/jetty-https.xml"})
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations = { "/org/apache/camel/component/jetty/jetty-https.xml" })
 public class SpringHttpsRouteTest {
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
     protected Properties originalValues = new Properties();
-    protected transient Logger log = LoggerFactory.getLogger(TestSupport.class);
+    protected transient Logger log = LoggerFactory.getLogger(SpringHttpsRouteTest.class);
 
     @EndpointInject("mock:a")
     MockEndpoint mockEndpoint;
@@ -63,7 +61,7 @@ public class SpringHttpsRouteTest {
 
     private Integer port;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // ensure jsse clients can validate the self signed dummy localhost
         // cert,
@@ -72,7 +70,7 @@ public class SpringHttpsRouteTest {
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.getPath());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         restoreSystemProperties();
     }
@@ -86,9 +84,9 @@ public class SpringHttpsRouteTest {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.clearProperty((String)key);
+                System.clearProperty((String) key);
             } else {
-                System.setProperty((String)key, (String)value);
+                System.setProperty((String) key, (String) value);
             }
         }
     }
@@ -103,16 +101,16 @@ public class SpringHttpsRouteTest {
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        Assert.assertNotNull("exchange", exchange);
+        assertNotNull(exchange, "exchange");
 
         Message in = exchange.getIn();
-        assertNotNull("in", in);
+        assertNotNull(in, "in");
 
         Map<String, Object> headers = in.getHeaders();
 
         log.info("Headers: " + headers);
 
-        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
+        assertTrue(headers.size() > 0, "Should be more than one header but was: " + headers);
     }
 
     @Test
@@ -123,7 +121,7 @@ public class SpringHttpsRouteTest {
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }
-        assertTrue("mock endpoint was not called", mockEndpoint.getExchanges().isEmpty());
+        assertTrue(mockEndpoint.getExchanges().isEmpty(), "mock endpoint was not called");
     }
 
     public Integer getPort() {

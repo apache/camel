@@ -19,7 +19,10 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FromHasNoOutputRouteTest extends ContextTestSupport {
 
@@ -44,7 +47,8 @@ public class FromHasNoOutputRouteTest extends ContextTestSupport {
             FailedToCreateRouteException failed = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             assertEquals("route1", failed.getRouteId());
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Route route1 has no output processors. You need to add outputs to the route such as to(\"log:foo\").", cause.getMessage());
+            assertEquals("Route route1 has no output processors. You need to add outputs to the route such as to(\"log:foo\").",
+                    cause.getMessage());
         }
     }
 

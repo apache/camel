@@ -20,17 +20,19 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.params.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
-public class LevelDBAggregationRepositoryTest extends CamelTestSupport {
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class LevelDBAggregationRepositoryTest extends LevelDBTestSupport {
 
     private LevelDBFile levelDBFile;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
@@ -41,7 +43,7 @@ public class LevelDBAggregationRepositoryTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         levelDBFile.stop();
         super.tearDown();
@@ -49,7 +51,7 @@ public class LevelDBAggregationRepositoryTest extends CamelTestSupport {
 
     @Test
     public void testOperations() {
-        LevelDBAggregationRepository repo = new LevelDBAggregationRepository();
+        LevelDBAggregationRepository repo = getRepo();
         repo.setLevelDBFile(levelDBFile);
         repo.setRepositoryName("repo1");
         repo.setReturnOldExchange(true);

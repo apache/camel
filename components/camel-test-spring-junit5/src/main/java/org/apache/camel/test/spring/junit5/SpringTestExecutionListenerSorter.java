@@ -21,11 +21,9 @@ import org.springframework.core.Ordered;
 /**
  * This class centralizes the order of execution of spring test execution listeners:
  * <ol>
- *  <li>{@link CamelSpringTestContextLoaderTestExecutionListener}</li>
- *  <li>{@link DisableJmxTestExecutionListener}</li>
- *  <li>{@link CamelSpringBootExecutionListener}</li>
- *  <li>{@link StopWatchTestExecutionListener}</li>
- *  <li>Spring default listeners</li>
+ * <li>{@link CamelSpringTestContextLoaderTestExecutionListener}</li>
+ * <li>{@link StopWatchTestExecutionListener}</li>
+ * <li>Spring default listeners</li>
  * </ol>
  */
 public final class SpringTestExecutionListenerSorter {
@@ -38,8 +36,6 @@ public final class SpringTestExecutionListenerSorter {
             return Ordered.HIGHEST_PRECEDENCE + 4000;
         } else if (clazz == CamelSpringBootExecutionListener.class) {
             return Ordered.HIGHEST_PRECEDENCE + 3000;
-        } else if (clazz == DisableJmxTestExecutionListener.class) {
-            return Ordered.HIGHEST_PRECEDENCE + 2000;
         } else if (clazz == CamelSpringTestContextLoaderTestExecutionListener.class) {
             return Ordered.HIGHEST_PRECEDENCE + 1000;
         }

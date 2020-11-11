@@ -35,16 +35,21 @@ public enum ServiceNowParams implements ServiceNowParam {
     SYSPARM_TYPE("sysparm_type", "CamelServiceNowType", String.class),
     SYSPARM_CATALOG("sysparm_catalog", "CamelServiceNowCatalog", String.class),
     SYSPARM_QUERY("sysparm_query", "CamelServiceNowQuery", String.class),
-    SYSPARM_DISPLAY_VALUE("sysparm_display_value", "CamelServiceNowDisplayValue", String.class, ServiceNowConfiguration::getDisplayValue),
-    SYSPARM_INPUT_DISPLAY_VALUE("sysparm_input_display_value", "CamelServiceNowInputDisplayValue", Boolean.class, ServiceNowConfiguration::getInputDisplayValue),
-    SYSPARM_EXCLUDE_REFERENCE_LINK("sysparm_exclude_reference_link", "CamelServiceNowExcludeReferenceLink", Boolean.class, ServiceNowConfiguration::getExcludeReferenceLink),
+    SYSPARM_DISPLAY_VALUE("sysparm_display_value", "CamelServiceNowDisplayValue", String.class,
+                          ServiceNowConfiguration::getDisplayValue),
+    SYSPARM_INPUT_DISPLAY_VALUE("sysparm_input_display_value", "CamelServiceNowInputDisplayValue", Boolean.class,
+                                ServiceNowConfiguration::getInputDisplayValue),
+    SYSPARM_EXCLUDE_REFERENCE_LINK("sysparm_exclude_reference_link", "CamelServiceNowExcludeReferenceLink", Boolean.class,
+                                   ServiceNowConfiguration::getExcludeReferenceLink),
     SYSPARM_FIELDS("sysparm_fields", "CamelServiceNowFields", String.class),
     SYSPARM_LIMIT("sysparm_limit", "CamelServiceNowLimit", Integer.class),
     SYSPARM_TEXT("sysparm_text", "CamelServiceNowText", String.class),
     SYSPARM_OFFSET("sysparm_offset", "CamelServiceNowOffset", Integer.class),
     SYSPARM_VIEW("sysparm_view", "CamelServiceNowView", String.class),
-    SYSPARM_SUPPRESS_AUTO_SYS_FIELD("sysparm_suppress_auto_sys_field", "CamelServiceNowSuppressAutoSysField", Boolean.class, ServiceNowConfiguration::getSuppressAutoSysField),
-    SYSPARM_SUPPRESS_PAGINATION_HEADER("sysparm_suppress_pagination_header", "CamelServiceNowSuppressPaginationHeader", Boolean.class, ServiceNowConfiguration::getSuppressPaginationHeader),
+    SYSPARM_SUPPRESS_AUTO_SYS_FIELD("sysparm_suppress_auto_sys_field", "CamelServiceNowSuppressAutoSysField", Boolean.class,
+                                    ServiceNowConfiguration::getSuppressAutoSysField),
+    SYSPARM_SUPPRESS_PAGINATION_HEADER("sysparm_suppress_pagination_header", "CamelServiceNowSuppressPaginationHeader",
+                                       Boolean.class, ServiceNowConfiguration::getSuppressPaginationHeader),
     SYSPARM_MIN_FIELDS("sysparm_min_fields", "CamelServiceNowMinFields", String.class),
     SYSPARM_MAX_FIELDS("sysparm_max_fields", "CamelServiceNowMaxFields", String.class),
     SYSPARM_SUM_FIELDS("sysparm_sum_fields", "CamelServiceNowSumFields", String.class),
@@ -55,11 +60,16 @@ public enum ServiceNowParams implements ServiceNowParam {
     SYSPARM_HAVING("sysparm_having", "CamelServiceNowHaving", String.class),
     SYSPARM_UUID("sysparm_uuid", "CamelServiceNowUUID", String.class),
     SYSPARM_BREAKDOWN("sysparm_breakdown", "CamelServiceNowBreakdown", String.class),
-    SYSPARM_INCLUDE_SCORES("sysparm_include_scores", "CamelServiceNowIncludeScores", Boolean.class, ServiceNowConfiguration::getIncludeScores),
-    SYSPARM_INCLUDE_SCORE_NOTES("sysparm_include_score_notes", "CamelServiceNowIncludeScoreNotes", Boolean.class, ServiceNowConfiguration::getIncludeScoreNotes),
-    SYSPARM_INCLUDE_AGGREGATES("sysparm_include_aggregates", "CamelServiceNowIncludeAggregates", Boolean.class, ServiceNowConfiguration::getIncludeAggregates),
-    SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS("sysparm_include_available_breakdowns", "CamelServiceNowIncludeAvailableBreakdowns", Boolean.class, ServiceNowConfiguration::getIncludeAvailableBreakdowns),
-    SYSPARM_INCLUDE_AVAILABLE_AGGREGATES("sysparm_include_available_aggregates", "CamelServiceNowIncludeAvailableAggregates", Boolean.class, ServiceNowConfiguration::getIncludeAvailableAggregates),
+    SYSPARM_INCLUDE_SCORES("sysparm_include_scores", "CamelServiceNowIncludeScores", Boolean.class,
+                           ServiceNowConfiguration::getIncludeScores),
+    SYSPARM_INCLUDE_SCORE_NOTES("sysparm_include_score_notes", "CamelServiceNowIncludeScoreNotes", Boolean.class,
+                                ServiceNowConfiguration::getIncludeScoreNotes),
+    SYSPARM_INCLUDE_AGGREGATES("sysparm_include_aggregates", "CamelServiceNowIncludeAggregates", Boolean.class,
+                               ServiceNowConfiguration::getIncludeAggregates),
+    SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS("sysparm_include_available_breakdowns", "CamelServiceNowIncludeAvailableBreakdowns",
+                                         Boolean.class, ServiceNowConfiguration::getIncludeAvailableBreakdowns),
+    SYSPARM_INCLUDE_AVAILABLE_AGGREGATES("sysparm_include_available_aggregates", "CamelServiceNowIncludeAvailableAggregates",
+                                         Boolean.class, ServiceNowConfiguration::getIncludeAvailableAggregates),
     SYSPARM_FAVORITES("sysparm_favorites", "CamelServiceNowFavorites", Boolean.class, ServiceNowConfiguration::getFavorites),
     SYSPARM_KEY("sysparm_key", "CamelServiceNowKey", Boolean.class, ServiceNowConfiguration::getKey),
     SYSPARM_TARGET("sysparm_target", "CamelServiceNowTarget", Boolean.class, ServiceNowConfiguration::getTarget),
@@ -73,7 +83,8 @@ public enum ServiceNowParams implements ServiceNowParam {
     SYSPARM_ELEMENTS_FILTER("sysparm_elements_filter", "CamelServiceNowElementsFilter", String.class),
     SYSPARM_BREAKDOWN_RELATION("sysparm_breakdown_relation", "CamelServiceNowBreakdownRelation", String.class),
     SYSPARM_DATA_SOURCE("sysparm_data_source", "CamelServiceNowDataSource", String.class),
-    SYSPARM_TOP_LEVEL_ONLY("sysparm_top_level_only", "CamelServiceNowTopLevelOnly", Boolean.class, ServiceNowConfiguration::getTopLevelOnly);
+    SYSPARM_TOP_LEVEL_ONLY("sysparm_top_level_only", "CamelServiceNowTopLevelOnly", Boolean.class,
+                           ServiceNowConfiguration::getTopLevelOnly);
 
     private final String id;
     private final String header;
@@ -91,8 +102,8 @@ public enum ServiceNowParams implements ServiceNowParam {
 
         this.id = id;
         this.header = header.startsWith(ServiceNowConstants.CAMEL_HEADER_PREFIX)
-            ? header
-            : ServiceNowConstants.CAMEL_HEADER_PREFIX + StringHelper.capitalize(header);
+                ? header
+                : ServiceNowConstants.CAMEL_HEADER_PREFIX + StringHelper.capitalize(header);
 
         this.type = type;
         this.defaultValueSupplier = defaultValueSupplier;

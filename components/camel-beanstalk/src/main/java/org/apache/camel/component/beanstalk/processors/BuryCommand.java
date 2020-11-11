@@ -34,7 +34,7 @@ public class BuryCommand extends DefaultCommand {
 
     @Override
     public void act(final Client client, final Exchange exchange) throws NoSuchHeaderException {
-        final Long jobId = BeanstalkExchangeHelper.getJobID(exchange);
+        final long jobId = BeanstalkExchangeHelper.getJobID(exchange);
         final long priority = BeanstalkExchangeHelper.getPriority(endpoint, exchange.getIn());
         final boolean result = client.bury(jobId, priority);
 

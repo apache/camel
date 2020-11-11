@@ -22,8 +22,7 @@ import java.util.StringTokenizer;
 
 /**
  * Utility class for parsing, used by the Camel Exec component.<br>
- * Note: the class should be dropped, when the commons-exec library
- * implements similar functionality.
+ * Note: the class should be dropped, when the commons-exec library implements similar functionality.
  */
 public final class ExecParseUtils {
 
@@ -35,20 +34,15 @@ public final class ExecParseUtils {
     }
 
     /**
-     * Splits the input line string by {@link #WHITESPACE}. Supports quoting the
-     * white-spaces with a {@link #QUOTE_CHAR}. A quote itself can also be
-     * enclosed within #{@link #QUOTE_CHAR}#{@link #QUOTE_CHAR}. More than two
-     * double-quotes in a sequence is not allowed. Nested quotes are not
-     * allowed.<br>
-     * E.g. The string
-     * <code>"arg 1"  arg2<code> will return the tokens <code>arg 1</code>,
-     * <code>arg2</code><br>
-     * The string
-     * <code>""arg 1""  "arg2" arg 3<code> will return the tokens <code>"arg 1"</code>
-     * , <code>arg2</code>,<code>arg</code> and <code>3</code> <br>
+     * Splits the input line string by {@link #WHITESPACE}. Supports quoting the white-spaces with a
+     * {@link #QUOTE_CHAR}. A quote itself can also be enclosed within #{@link #QUOTE_CHAR}#{@link #QUOTE_CHAR}. More
+     * than two double-quotes in a sequence is not allowed. Nested quotes are not allowed.<br>
+     * E.g. The string <code>"arg 1"  arg2<code> will return the tokens <code>arg 1</code>, <code>arg2</code><br>
+     * The string <code>""arg 1""  "arg2" arg 3<code> will return the tokens <code>"arg 1"</code> ,
+     * <code>arg2</code>,<code>arg</code> and <code>3</code> <br>
      * 
-     * @param input the input to split.
-     * @return a not-null list of tokens
+     * @param  input the input to split.
+     * @return       a not-null list of tokens
      */
     public static List<String> splitToWhiteSpaceSeparatedTokens(String input) {
         if (input == null) {
@@ -93,8 +87,8 @@ public final class ExecParseUtils {
     /**
      * Tests if the input is enclosed within {@link #QUOTE_CHAR} characters
      * 
-     * @param input a not null String
-     * @return true if the regular expression is matched
+     * @param  input a not null String
+     * @return       true if the regular expression is matched
      */
     protected static boolean isSingleQuoted(String input) {
         if (input == null || input.trim().length() == 0) {
@@ -106,8 +100,8 @@ public final class ExecParseUtils {
     /**
      * Tests if the input is enclosed within a double-{@link #QUOTE_CHAR} string
      * 
-     * @param input a not null String
-     * @return true if the regular expression is matched
+     * @param  input a not null String
+     * @return       true if the regular expression is matched
      */
     protected static boolean isDoubleQuoted(String input) {
         if (input == null || input.trim().length() == 0) {

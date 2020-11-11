@@ -27,7 +27,7 @@
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
     
     <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
         <property name="acceptMessagesWhileStopping" value="true"/>
     </bean>
 
@@ -35,13 +35,13 @@
 
         <!-- defer shutdown to route the in progress exchanges -->
         <route shutdownRoute="Defer">
-            <from uri="jetty:http://localhost:{{JettyJmsShutdownTest.port}}/test"/>
-            <to uri="jms:queue:foo"/>
+            <from uri="jetty:http://localhost:{{JettyJmsShutdownTest.port}}/JettyJmsShutdownTest"/>
+            <to uri="jms:queue:JettyJmsShutdownTest"/>
         </route>
 
         <!-- also defer this as we defer the other route -->
         <route shutdownRoute="Defer">
-            <from uri="jms:queue:foo?concurrentConsumers=5"/>
+            <from uri="jms:queue:JettyJmsShutdownTest?concurrentConsumers=5"/>
             <delay>
                 <constant>5000</constant>
             </delay>

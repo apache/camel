@@ -36,11 +36,15 @@ import org.apache.camel.component.file.watch.utils.PathUtils;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The file-watch consumer.
  */
 public class FileWatchConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FileWatchConsumer.class);
 
     private ExecutorService watchDirExecutorService;
     private ExecutorService pollExecutorService;
@@ -58,7 +62,7 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         antPathMatcher = new AntPathMatcher();
-        baseDirectory = Paths.get(getEndpoint().getPath());
+        baseDirectory = Paths.get(getEndpoint().getPath()).toAbsolutePath();
     }
 
     @Override
@@ -74,13 +78,14 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         if (!Files.isDirectory(baseDirectory)) {
-            throw new IllegalArgumentException(String.format("Parameter path must be directory, %s given", baseDirectory.toString()));
+            throw new IllegalArgumentException(
+                    String.format("Parameter path must be directory, %s given", baseDirectory.toString()));
         }
 
         DirectoryWatcher.Builder watcherBuilder = DirectoryWatcher.builder()
-            .path(this.baseDirectory)
-            .logger(log)
-            .listener(new FileWatchDirectoryChangeListener());
+                .path(this.baseDirectory)
+                .logger(LOG)
+                .listener(new FileWatchDirectoryChangeListener());
 
         if (!System.getProperty("os.name").toLowerCase().contains("mac")) {
             // If not macOS, use FileSystem WatchService. io.methvin.watcher uses by default WatchService associated to default FileSystem.
@@ -97,9 +102,9 @@ public class FileWatchConsumer extends DefaultConsumer {
         this.watcher = watcherBuilder.build();
 
         watchDirExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
-            .newFixedThreadPool(this, "CamelFileWatchService", getEndpoint().getPollThreads());
+                .newFixedThreadPool(this, "CamelFileWatchService", getEndpoint().getPollThreads());
         pollExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
-            .newFixedThreadPool(this, "CamelFileWatchPoll", getEndpoint().getConcurrentConsumers());
+                .newFixedThreadPool(this, "CamelFileWatchPoll", getEndpoint().getConcurrentConsumers());
 
         for (int i = 0; i < getEndpoint().getPollThreads(); i++) {
             this.watcher.watchAsync(watchDirExecutorService);
@@ -138,7 +143,7 @@ public class FileWatchConsumer extends DefaultConsumer {
         File file = event.getEventPath().toFile();
         Message message = exchange.getIn();
         message.setBody(file);
-        message.setHeader(FileWatchComponent.EVENT_TYPE_HEADER, event.getEventType());
+        message.setHeader(FileWatchComponent.EVENT_TYPE_HEADER, event.getEventType().name());
         message.setHeader(Exchange.FILE_NAME_ONLY, event.getEventPath().getFileName().toString());
         message.setHeader("CamelFileAbsolute", true);
 
@@ -172,7 +177,8 @@ public class FileWatchConsumer extends DefaultConsumer {
                     return false;
                 }
             } catch (IOException e) {
-                log.warn(String.format("Exception occurred during executing filter. Filtering file %s out.", fileEvent.getEventPath()), e);
+                LOG.warn(String.format("Exception occurred during executing filter. Filtering file %s out.",
+                        fileEvent.getEventPath()), e);
                 return false;
             }
         }
@@ -183,8 +189,8 @@ public class FileWatchConsumer extends DefaultConsumer {
         }
 
         return antPathMatcher.match(
-            getEndpoint().getAntInclude(),
-            PathUtils.normalizeToString(baseDirectory.relativize(fileEvent.getEventPath())) // match against relativized path
+                getEndpoint().getAntInclude(),
+                PathUtils.normalizeToString(baseDirectory.relativize(fileEvent.getEventPath())) // match against relativized path
         );
     }
 
@@ -197,7 +203,7 @@ public class FileWatchConsumer extends DefaultConsumer {
         @Override
         public void onEvent(DirectoryChangeEvent directoryChangeEvent) {
             if (directoryChangeEvent.eventType() == DirectoryChangeEvent.EventType.OVERFLOW) {
-                log.warn("OVERFLOW occurred, some events may be lost. Consider increasing of option 'pollThreads'");
+                LOG.warn("OVERFLOW occurred, some events may be lost. Consider increasing of option 'pollThreads'");
                 return;
             }
             FileEvent fileEvent = new FileEvent(directoryChangeEvent);

@@ -19,8 +19,7 @@ package org.apache.camel.spring;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,7 +210,7 @@ public abstract class StartupShutdownOrderBaseTest {
     public void camelContextShouldBeStartedLastAndStoppedFirst() {
         final ConfigurableApplicationContext context = createContext();
 
-        final ServiceSupport camelContext = (ServiceSupport) context.getBean(CamelContext.class);
+        final CamelContext camelContext = context.getBean(CamelContext.class);
         final Map<String, TestState> testStates = context.getBeansOfType(TestState.class);
 
         assertThat(camelContext.isStarted()).as("Camel context should be started").isTrue();
@@ -224,8 +223,8 @@ public abstract class StartupShutdownOrderBaseTest {
 
     abstract ConfigurableApplicationContext createContext();
 
-    static ServiceSupport camel(final ApplicationContext context) {
-        return (ServiceSupport) context.getBean(CamelContext.class);
+    static CamelContext camel(final ApplicationContext context) {
+        return context.getBean(CamelContext.class);
     }
 
     static boolean camelIsStarted(final ApplicationContext context) {

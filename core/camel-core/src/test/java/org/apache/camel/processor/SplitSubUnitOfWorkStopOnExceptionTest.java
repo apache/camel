@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -58,7 +60,8 @@ public class SplitSubUnitOfWorkStopOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(4, counter); // 1 first + 3 redeliveries
+        // 1 first + 3 redeliveries
+        assertEquals(4, counter);
     }
 
     @Override
@@ -68,7 +71,8 @@ public class SplitSubUnitOfWorkStopOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start").to("mock:a").split(body().tokenize(",")).shareUnitOfWork().stopOnException().to("mock:b").to("direct:line").end().to("mock:result");
+                from("direct:start").to("mock:a").split(body().tokenize(",")).shareUnitOfWork().stopOnException().to("mock:b")
+                        .to("direct:line").end().to("mock:result");
 
                 from("direct:line").to("log:line").process(new MyProcessor()).to("mock:line");
             }

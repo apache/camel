@@ -83,14 +83,14 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
             l = null;
         } else {
             switch (limit) {
-            case Committed:
-                l = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Committed;
-                break;
-            case Max:
-                l = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Max;
-                break;
-            default:
-                throw new IllegalStateException();
+                case Committed:
+                    l = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Committed;
+                    break;
+                case Max:
+                    l = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Max;
+                    break;
+                default:
+                    throw new IllegalStateException();
             }
         }
         streamCachingStrategy.setSpoolUsedHeapMemoryLimit(l);
@@ -103,12 +103,12 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
             return null;
         } else {
             switch (l) {
-            case Committed:
-                return SpoolUsedHeapMemoryLimit.Committed;
-            case Max:
-                return SpoolUsedHeapMemoryLimit.Max;
-            default:
-                throw new IllegalStateException();
+                case Committed:
+                    return SpoolUsedHeapMemoryLimit.Committed;
+                case Max:
+                    return SpoolUsedHeapMemoryLimit.Max;
+                default:
+                    throw new IllegalStateException();
             }
         }
     }

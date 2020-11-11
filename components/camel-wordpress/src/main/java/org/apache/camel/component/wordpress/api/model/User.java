@@ -207,7 +207,8 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return toStringHelper(this).addValue(this.id).addValue(this.username).addValue(this.email).addValue(this.name).toString();
+        return toStringHelper(this).addValue(this.id).addValue(this.username).addValue(this.email).addValue(this.name)
+                .toString();
     }
 
 }

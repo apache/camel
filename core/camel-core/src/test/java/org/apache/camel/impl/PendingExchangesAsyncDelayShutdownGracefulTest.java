@@ -19,7 +19,9 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PendingExchangesAsyncDelayShutdownGracefulTest extends ContextTestSupport {
 
@@ -40,7 +42,7 @@ public class PendingExchangesAsyncDelayShutdownGracefulTest extends ContextTestS
 
         context.stop();
 
-        assertEquals("Expecting all messages", 5, result.getReceivedCounter());
+        assertEquals(5, result.getReceivedCounter(), "Expecting all messages");
     }
 
     @Override

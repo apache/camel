@@ -21,8 +21,8 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -31,7 +31,7 @@ public class JmsQosRouteTest extends CamelTestSupport {
 
     @Test
     public void testJmsRoutePreserveQos() throws Exception {
-        
+
         MockEndpoint preserveEndpoint1 = context.getEndpoint("mock:preserve-1", MockEndpoint.class);
         preserveEndpoint1.expectedMessageCount(1);
         preserveEndpoint1.message(0).header("JMSPriority").isEqualTo(1);
@@ -48,7 +48,7 @@ public class JmsQosRouteTest extends CamelTestSupport {
 
     @Test
     public void testJmsRouteNormalQos() throws Exception {
-        
+
         MockEndpoint regularEndpoint1 = context.getEndpoint("mock:regular-1", MockEndpoint.class);
         regularEndpoint1.expectedMessageCount(1);
         regularEndpoint1.message(0).header("JMSPriority").isEqualTo(4);
@@ -77,7 +77,7 @@ public class JmsQosRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                
+
                 // Messages should arrive at mock:preserve with their priorities preserved.
                 from(componentName + ":queue:p1").to(componentName + ":queue:preserve-1?preserveMessageQos=true");
                 from(componentName + ":queue:preserve-1").to("mock:preserve-1");

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Route;
@@ -68,8 +68,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     public HazelcastRoutePolicy(HazelcastInstance instance, boolean managedInstance) {
         this.instance = instance;
         this.managedInstance = managedInstance;
-        this.suspendedRoutes =  new HashSet<>();
-        this.leader = new AtomicBoolean(false);
+        this.suspendedRoutes = new HashSet<>();
+        this.leader = new AtomicBoolean();
         this.lockMapName = null;
         this.lockKey = null;
         this.lockValue = null;
@@ -150,17 +150,17 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     protected void setLeader(boolean isLeader) {
         if (isLeader && leader.compareAndSet(false, isLeader)) {
             LOGGER.info("Leadership taken (map={}, key={}, val={})",
-                lockMapName,
-                lockKey,
-                lockValue);
+                    lockMapName,
+                    lockKey,
+                    lockValue);
 
             startAllStoppedConsumers();
         } else {
             if (!leader.getAndSet(isLeader) && isLeader) {
                 LOGGER.info("Leadership lost (map={}, key={} val={})",
-                    lockMapName,
-                    lockKey,
-                    lockValue);
+                        lockMapName,
+                        lockKey,
+                        lockValue);
             }
         }
     }
@@ -302,12 +302,11 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
                     Thread.sleep(Long.MAX_VALUE);
                 } else {
                     LOGGER.debug("Failed to acquire lock (map={}, key={}, val={}) after {} {}",
-                        lockMapName,
-                        lockKey,
-                        lockValue,
-                        tryLockTimeout,
-                        tryLockTimeoutUnit.name()
-                    );
+                            lockMapName,
+                            lockKey,
+                            lockValue,
+                            tryLockTimeout,
+                            tryLockTimeoutUnit.name());
                 }
             } catch (InterruptedException e) {
                 // ignore

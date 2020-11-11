@@ -22,12 +22,14 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.velocity.VelocityContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VelocityTest extends CamelTestSupport {
-    
+
     @Test
     public void testVelocityLetter() throws Exception {
         Exchange exchange = template.request("direct:a", new Processor() {
@@ -39,10 +41,10 @@ public class VelocityTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getOut().getBody());
-        assertEquals("Christian", exchange.getOut().getHeader("name"));
+        assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getMessage().getBody());
+        assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
-    
+
     @Test
     public void testVelocityContext() throws Exception {
         Exchange exchange = template.request("direct:a", new Processor() {
@@ -62,8 +64,8 @@ public class VelocityTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getOut().getBody());
-        assertEquals("Christian", exchange.getOut().getHeader("name"));
+        assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getMessage().getBody());
+        assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
     @Override
@@ -71,8 +73,8 @@ public class VelocityTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").
-                        to("velocity:org/apache/camel/component/velocity/example.vm");
+                from("direct:a").to(
+                        "velocity:org/apache/camel/component/velocity/example.vm?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };

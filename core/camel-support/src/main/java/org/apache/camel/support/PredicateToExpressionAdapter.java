@@ -45,7 +45,10 @@ public final class PredicateToExpressionAdapter implements Expression {
      * Converts the given predicate into an {@link org.apache.camel.Expression}
      */
     public static Expression toExpression(final Predicate predicate) {
+        if (predicate instanceof Expression) {
+            return (Expression) predicate;
+        }
         return new PredicateToExpressionAdapter(predicate);
     }
-    
+
 }

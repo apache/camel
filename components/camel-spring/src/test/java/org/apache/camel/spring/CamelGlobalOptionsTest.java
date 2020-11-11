@@ -16,9 +16,11 @@
  */
 package org.apache.camel.spring;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelGlobalOptionsTest extends SpringTestSupport {
 

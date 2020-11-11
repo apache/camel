@@ -30,40 +30,40 @@ public interface Tracer extends StaticService {
     /**
      * Whether or not to trace the given processor definition.
      *
-     * @param definition the processor definition
-     * @return <tt>true</tt> to trace, <tt>false</tt> to skip tracing
+     * @param  definition the processor definition
+     * @return            <tt>true</tt> to trace, <tt>false</tt> to skip tracing
      */
     boolean shouldTrace(NamedNode definition);
 
     /**
      * Trace before the route (eg input to route)
      *
-     * @param route     the route
-     * @param exchange  the exchange
+     * @param route    the route
+     * @param exchange the exchange
      */
     void traceBeforeRoute(NamedRoute route, Exchange exchange);
 
     /**
      * Trace before the given node
      *
-     * @param node      the node EIP
-     * @param exchange  the exchange
+     * @param node     the node EIP
+     * @param exchange the exchange
      */
     void traceBeforeNode(NamedNode node, Exchange exchange);
 
     /**
      * Trace after the given node
      *
-     * @param node      the node EIP
-     * @param exchange  the exchange
+     * @param node     the node EIP
+     * @param exchange the exchange
      */
     void traceAfterNode(NamedNode node, Exchange exchange);
 
     /**
      * Trace after the route (eg output from route)
      *
-     * @param route     the route
-     * @param exchange  the exchange
+     * @param route    the route
+     * @param exchange the exchange
      */
     void traceAfterRoute(Route route, Exchange exchange);
 
@@ -88,18 +88,14 @@ public interface Tracer extends StaticService {
     void setEnabled(boolean enabled);
 
     /**
-     * Tracing pattern to match which node EIPs to trace.
-     * For example to match all To EIP nodes, use to*.
-     * The pattern matches by node and route id's
-     * Multiple patterns can be separated by comma.
+     * Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern
+     * matches by node and route id's Multiple patterns can be separated by comma.
      */
     String getTracePattern();
 
     /**
-     * Tracing pattern to match which node EIPs to trace.
-     * For example to match all To EIP nodes, use to*.
-     * The pattern matches by node and route id's
-     * Multiple patterns can be separated by comma.
+     * Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to*. The pattern
+     * matches by node and route id's Multiple patterns can be separated by comma.
      */
     void setTracePattern(String tracePattern);
 

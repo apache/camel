@@ -26,13 +26,14 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * The new Async API version of doing async routing based on the old
- * AsyncProcessor API In the old SedaAsyncProcessorTest a seda endpoint was
- * needed to really turn it into async. This is not needed by the new API so we
- * send it using direct instead.
+ * The new Async API version of doing async routing based on the old AsyncProcessor API In the old
+ * SedaAsyncProcessorTest a seda endpoint was needed to really turn it into async. This is not needed by the new API so
+ * we send it using direct instead.
  */
 public class SedaAsyncProducerTest extends ContextTestSupport {
 
@@ -51,7 +52,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Send should occur before processor", "sendprocess", route);
+        assertEquals("sendprocess", route, "Send should occur before processor");
 
         // and get the response with the future handle
         String response = future.get();
@@ -75,7 +76,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Send should occur before processor", "processsend", route);
+        assertEquals("processsend", route, "Send should occur before processor");
 
         String response = exchange.getMessage().getBody(String.class);
         assertEquals("Bye World", response);

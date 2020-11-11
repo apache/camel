@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test XPath DSL with the ability to apply XPath on a header
@@ -32,7 +32,8 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
         mock.expectedBodiesReceived("body");
         mock.expectedHeaderReceived("cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
-        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
+        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails",
+                "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
         mock.assertIsSatisfied();
     }
@@ -43,7 +44,8 @@ public class XPathHeaderNameResultTypeAndNamespaceTest extends ContextTestSuppor
             public void configure() throws Exception {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
-                from("direct:in").choice().when().xpath("/c:number = 55", Integer.class, ns, "cheeseDetails").to("mock:55").otherwise().to("mock:other").end();
+                from("direct:in").choice().when().xpath("/c:number = 55", Integer.class, ns, "cheeseDetails").to("mock:55")
+                        .otherwise().to("mock:other").end();
             }
         };
     }

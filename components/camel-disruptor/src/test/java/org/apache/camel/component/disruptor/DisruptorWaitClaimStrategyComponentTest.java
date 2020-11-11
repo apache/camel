@@ -17,61 +17,54 @@
 package org.apache.camel.component.disruptor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Tests the WaitStrategy and ClaimStrategy configuration of the disruptor component
  */
-@RunWith(value = Parameterized.class)
 public class DisruptorWaitClaimStrategyComponentTest extends CamelTestSupport {
     private static final Integer VALUE = Integer.valueOf(42);
-    
-    @EndpointInject("mock:result")
-    protected MockEndpoint resultEndpoint;
+    private static final List<String> DISRUPTOR_URIS = new ArrayList<>();
+    private static final List<String> MOCK_URIS = new ArrayList<>();
 
     @Produce
     protected ProducerTemplate template;
 
-
-    private final String producerType;
-    private final String waitStrategy;
-    private String disruptorUri;
-
-    public DisruptorWaitClaimStrategyComponentTest(final String waitStrategy, final String producerType) {
-
-        this.waitStrategy = waitStrategy;
-        this.producerType = producerType;
-    }
-
-    @Parameters
-    public static Collection<String[]> strategies() {
-        final List<String[]> strategies = new ArrayList<>();
-
+    @BeforeAll
+    public static void initDisruptorUris() {
         for (final DisruptorWaitStrategy waitStrategy : DisruptorWaitStrategy.values()) {
             for (final DisruptorProducerType producerType : DisruptorProducerType.values()) {
-                strategies.add(new String[] {waitStrategy.name(), producerType.name()});
+                String disruptorUri = "disruptor:test?waitStrategy=" + waitStrategy + "&producerType=" + producerType;
+                DISRUPTOR_URIS.add(disruptorUri);
+                MOCK_URIS.add("mock:result-" + waitStrategy + "-" + producerType);
             }
         }
-
-        return strategies;
     }
 
+    public static List<Arguments> getTestArguments() {
+        List<Arguments> arguments = new ArrayList<Arguments>();
+        for (int i = 0; i < DISRUPTOR_URIS.size(); i++) {
+            arguments.add(Arguments.of(DISRUPTOR_URIS.get(i), MOCK_URIS.get(i)));
+        }
+        return arguments;
+    }
 
-    @Test
-    public void testProduce() throws InterruptedException {
+    @ParameterizedTest
+    @MethodSource("getTestArguments")
+    void testProduce(String disruptorUri, String mockUri) throws InterruptedException {
+
+        MockEndpoint resultEndpoint = context.getEndpoint(mockUri, MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(VALUE);
         resultEndpoint.setExpectedMessageCount(1);
 
@@ -81,16 +74,14 @@ public class DisruptorWaitClaimStrategyComponentTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-
-        disruptorUri = "disruptor:test?waitStrategy=" + waitStrategy + "&producerType=" + producerType;
-
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from(disruptorUri).to("mock:result");
+            public void configure() {
+                for (int i = 0; i < DISRUPTOR_URIS.size(); i++) {
+                    from(DISRUPTOR_URIS.get(i)).to(MOCK_URIS.get(i));
+                }
             }
         };
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.scan;
 
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import org.apache.camel.spi.PackageScanFilter;
  */
 public class AssignableToPackageScanFilter implements PackageScanFilter {
     private final Set<Class<?>> parents = new HashSet<>();
+    private boolean includeAbstract;
 
     public AssignableToPackageScanFilter() {
     }
@@ -42,12 +44,28 @@ public class AssignableToPackageScanFilter implements PackageScanFilter {
         parents.add(parentType);
     }
 
+    public boolean isIncludeAbstract() {
+        return includeAbstract;
+    }
+
+    /**
+     * Whether to include abstract classes.
+     */
+    public void setIncludeAbstract(boolean includeAbstract) {
+        this.includeAbstract = includeAbstract;
+    }
+
     @Override
     public boolean matches(Class<?> type) {
-        if (parents != null && parents.size() > 0) {
+        if (!parents.isEmpty()) {
             for (Class<?> parent : parents) {
                 if (parent.isAssignableFrom(type)) {
-                    return true;
+                    if (includeAbstract) {
+                        return true;
+                    } else {
+                        // skip abstract classes
+                        return !Modifier.isAbstract(type.getModifiers());
+                    }
                 }
             }
         }

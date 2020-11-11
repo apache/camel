@@ -25,13 +25,13 @@ import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult.Result;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApprovalResultTest {
 
@@ -72,24 +72,25 @@ public class ApprovalResultTest {
                         + "<newWorkitemIds>04i0Y000000L0fkQAC</newWorkitemIds>"//
                         + "<success>true</success>"//
                         + "</ProcessApprovalResult>"//
-                        + "</ProcessApprovalResult>", results);
+                        + "</ProcessApprovalResult>",
+                results);
 
         assertResponseReadCorrectly(results);
     }
 
     private static void assertResponseReadCorrectly(final ApprovalResult results) {
         final Iterator<Result> resultsIterator = results.iterator();
-        assertTrue("Should deserialize one approval result result", resultsIterator.hasNext());
+        assertTrue(resultsIterator.hasNext(), "Should deserialize one approval result result");
 
         final ApprovalResult.Result result = resultsIterator.next();
 
         assertThat("Should deserialize actorIds", result.getActorIds(), hasItems("0050Y000000u5NOQAY"));
-        assertEquals("Should deserialize entityId", "0010Y000005BYrZQAW", result.getEntityId());
-        assertEquals("Should deserialize instanceId", "04g0Y000000PL53QAG", result.getInstanceId());
-        assertEquals("Should deserialize instanceStatus", "Pending", result.getInstanceStatus());
+        assertEquals("0010Y000005BYrZQAW", result.getEntityId(), "Should deserialize entityId");
+        assertEquals("04g0Y000000PL53QAG", result.getInstanceId(), "Should deserialize instanceId");
+        assertEquals("Pending", result.getInstanceStatus(), "Should deserialize instanceStatus");
         assertThat("Should deserialize newWorkitemIds", result.getNewWorkitemIds(), hasItems("04i0Y000000L0fkQAC"));
-        assertTrue("Should deserialize success", result.isSuccess());
+        assertTrue(result.isSuccess(), "Should deserialize success");
 
-        assertFalse("Should be no more results", resultsIterator.hasNext());
+        assertFalse(resultsIterator.hasNext(), "Should be no more results");
     }
 }

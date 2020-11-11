@@ -21,7 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OnExceptionProcessIssueTest extends ContextTestSupport {
 
@@ -42,13 +45,14 @@ public class OnExceptionProcessIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).useOriginalMessage().handled(true).setHeader("foo", constant("bar")).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message in = exchange.getIn();
-                        Exception ex = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-                        in.setBody("ERROR: " + ex.getMessage() + " for message: " + in.getBody());
-                    }
-                });
+                onException(Exception.class).useOriginalMessage().handled(true).setHeader("foo", constant("bar"))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Message in = exchange.getIn();
+                                Exception ex = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                                in.setBody("ERROR: " + ex.getMessage() + " for message: " + in.getBody());
+                            }
+                        });
 
                 from("direct:start").transform(constant("Bye World")).throwException(new IllegalArgumentException("Damn"));
             }

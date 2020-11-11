@@ -19,15 +19,17 @@ package org.apache.camel.spring.scan;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.core.xml.PatternBasedPackageScanFilter;
+import org.junit.jupiter.api.BeforeEach;
 
-public abstract class ScanTestSupport extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public abstract class ScanTestSupport {
 
     protected PatternBasedPackageScanFilter filter;
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         filter = new PatternBasedPackageScanFilter();
     }
@@ -42,10 +44,10 @@ public abstract class ScanTestSupport extends TestCase {
 
     protected void validateMatchingSetContains(Set<Class<?>> scannedClasses, Set<Class<?>> matchingClasses) {
         Set<Class<?>> matching = getMatchingClasses(scannedClasses, filter);
-        assertEquals("Incorrect number of classes matched", matchingClasses.size(), matching.size());
+        assertEquals(matchingClasses.size(), matching.size(), "Incorrect number of classes matched");
 
         for (Class<?> expected : matchingClasses) {
-            assertTrue("Expected matching class '" + expected + "' is not present", matching.contains(expected));
+            assertTrue(matching.contains(expected), "Expected matching class '" + expected + "' is not present");
         }
     }
 

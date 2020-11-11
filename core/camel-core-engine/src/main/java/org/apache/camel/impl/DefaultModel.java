@@ -23,43 +23,49 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.FailedToStartRouteException;
-import org.apache.camel.Route;
-import org.apache.camel.impl.engine.AbstractCamelContext;
-import org.apache.camel.impl.engine.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RouteFilters;
+import org.apache.camel.model.RouteTemplateDefinition;
+import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.util.AntPathMatcher;
 
 public class DefaultModel implements Model {
 
     private final CamelContext camelContext;
 
+    private ModelReifierFactory modelReifierFactory = new DefaultModelReifierFactory();
+    private final List<ModelLifecycleStrategy> modelLifecycleStrategies = new ArrayList<>();
     private final List<RouteDefinition> routeDefinitions = new ArrayList<>();
+    private final List<RouteTemplateDefinition> routeTemplateDefinitions = new ArrayList<>();
     private final List<RestDefinition> restDefinitions = new ArrayList<>();
+    private final Map<String, RouteTemplateDefinition.Converter> routeTemplateConverters = new ConcurrentHashMap<>();
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private List<TransformerDefinition> transformers = new ArrayList<>();
     private List<ValidatorDefinition> validators = new ArrayList<>();
-    private Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
-    private Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
-    private Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, ServiceCallConfigurationDefinition> serviceCallConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, HystrixConfigurationDefinition> hystrixConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, Resilience4jConfigurationDefinition> resilience4jConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, FaultToleranceConfigurationDefinition> faultToleranceConfigurations = new ConcurrentHashMap<>();
     private Function<RouteDefinition, Boolean> routeFilter;
 
     public DefaultModel(CamelContext camelContext) {
@@ -68,6 +74,16 @@ public class DefaultModel implements Model {
 
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    @Override
+    public void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
+        this.modelLifecycleStrategies.add(modelLifecycleStrategy);
+    }
+
+    @Override
+    public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
+        return modelLifecycleStrategies;
     }
 
     @Override
@@ -83,9 +99,12 @@ public class DefaultModel implements Model {
         });
 
         removeRouteDefinitions(list);
-        this.routeDefinitions.addAll(list);
+        list.forEach(r -> {
+            modelLifecycleStrategies.forEach(s -> s.onAddRouteDefinition(r));
+            this.routeDefinitions.add(r);
+        });
         if (shouldStartRoutes()) {
-            startRouteDefinitions(list);
+            getCamelContext().adapt(ModelCamelContext.class).startRouteDefinitions(list);
         }
     }
 
@@ -111,6 +130,9 @@ public class DefaultModel implements Model {
             camelContext.removeRoute(id);
             toBeRemoved = getRouteDefinition(id);
         }
+        for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
+            s.onRemoveRouteDefinition(toBeRemoved);
+        }
         this.routeDefinitions.remove(toBeRemoved);
     }
 
@@ -130,12 +152,132 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    public List<RouteTemplateDefinition> getRouteTemplateDefinitions() {
+        return routeTemplateDefinitions;
+    }
+
+    @Override
+    public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
+        for (RouteTemplateDefinition route : routeTemplateDefinitions) {
+            if (route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
+                return route;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        if (routeTemplateDefinitions == null || routeTemplateDefinitions.isEmpty()) {
+            return;
+        }
+        routeTemplateDefinitions.forEach(r -> {
+            modelLifecycleStrategies.forEach(s -> s.onAddRouteTemplateDefinition(r));
+            this.routeTemplateDefinitions.add(r);
+        });
+    }
+
+    @Override
+    public void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        addRouteTemplateDefinitions(Collections.singletonList(routeTemplateDefinition));
+    }
+
+    @Override
+    public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        for (RouteTemplateDefinition r : routeTemplateDefinitions) {
+            removeRouteTemplateDefinition(r);
+        }
+    }
+
+    @Override
+    public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
+            s.onRemoveRouteTemplateDefinition(routeTemplateDefinition);
+        }
+        routeTemplateDefinitions.remove(routeTemplateDefinition);
+    }
+
+    @Override
+    public void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter) {
+        routeTemplateConverters.put(templateIdPattern, converter);
+    }
+
+    @Override
+    public String addRouteFromTemplate(final String routeId, final String routeTemplateId, final Map<String, Object> parameters)
+            throws Exception {
+        RouteTemplateDefinition target = null;
+        for (RouteTemplateDefinition def : routeTemplateDefinitions) {
+            if (routeTemplateId.equals(def.getId())) {
+                target = def;
+                break;
+            }
+        }
+        if (target == null) {
+            throw new IllegalArgumentException("Cannot find RouteTemplate with id " + routeTemplateId);
+        }
+
+        final Map<String, Object> prop = new HashMap<>();
+        // include default values first from the template (and validate that we have inputs for all required parameters)
+        if (target.getTemplateParameters() != null) {
+            StringJoiner templatesBuilder = new StringJoiner(", ");
+
+            for (RouteTemplateParameterDefinition temp : target.getTemplateParameters()) {
+                if (temp.getDefaultValue() != null) {
+                    prop.put(temp.getName(), temp.getDefaultValue());
+                } else {
+                    // this is a required parameter do we have that as input
+                    if (!parameters.containsKey(temp.getName())) {
+                        templatesBuilder.add(temp.getName());
+                    }
+                }
+            }
+            if (templatesBuilder.length() > 0) {
+                throw new IllegalArgumentException(
+                        "Route template " + routeTemplateId + " the following mandatory parameters must be provided: "
+                                                   + templatesBuilder.toString());
+            }
+        }
+
+        // then override with user parameters
+        if (parameters != null) {
+            prop.putAll(parameters);
+        }
+
+        RouteTemplateDefinition.Converter converter = RouteTemplateDefinition.Converter.DEFAULT_CONVERTER;
+
+        for (Map.Entry<String, RouteTemplateDefinition.Converter> entry : routeTemplateConverters.entrySet()) {
+            final String key = entry.getKey();
+            final String templateId = target.getId();
+
+            if ("*".equals(key) || templateId.equals(key)) {
+                converter = entry.getValue();
+                break;
+            } else if (AntPathMatcher.INSTANCE.match(key, templateId)) {
+                converter = entry.getValue();
+                break;
+            } else if (templateId.matches(key)) {
+                converter = entry.getValue();
+                break;
+            }
+        }
+
+        RouteDefinition def = converter.apply(target, prop);
+        if (routeId != null) {
+            def.setId(routeId);
+        }
+        def.setTemplateParameters(prop);
+        addRouteDefinition(def);
+        return def.getId();
+    }
+
+    @Override
     public synchronized List<RestDefinition> getRestDefinitions() {
         return restDefinitions;
     }
 
     @Override
-    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
+    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes)
+            throws Exception {
         if (restDefinitions == null || restDefinitions.isEmpty()) {
             return;
         }
@@ -235,6 +377,34 @@ public class DefaultModel implements Model {
     }
 
     @Override
+    public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id) {
+        if (id == null) {
+            id = "";
+        }
+
+        return faultToleranceConfigurations.get(id);
+    }
+
+    @Override
+    public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
+        faultToleranceConfigurations.put("", configuration);
+    }
+
+    @Override
+    public void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> configurations) {
+        if (configurations != null) {
+            for (FaultToleranceConfigurationDefinition configuration : configurations) {
+                faultToleranceConfigurations.put(configuration.getId(), configuration);
+            }
+        }
+    }
+
+    @Override
+    public void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration) {
+        faultToleranceConfigurations.put(id, configuration);
+    }
+
+    @Override
     public DataFormatDefinition resolveDataFormatDefinition(String name) {
         // lookup type and create the data format from it
         DataFormatDefinition type = lookup(camelContext, name, DataFormatDefinition.class);
@@ -244,12 +414,14 @@ public class DefaultModel implements Model {
         return type;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public ProcessorDefinition getProcessorDefinition(String id) {
+    public ProcessorDefinition<?> getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
-            Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+            Iterator<ProcessorDefinition> it
+                    = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
             while (it.hasNext()) {
-                ProcessorDefinition proc = it.next();
+                ProcessorDefinition<?> proc = it.next();
                 if (id.equals(proc.getId())) {
                     return proc;
                 }
@@ -259,17 +431,12 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type) {
-        ProcessorDefinition answer = getProcessorDefinition(id);
+    public <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type) {
+        ProcessorDefinition<?> answer = getProcessorDefinition(id);
         if (answer != null) {
             return type.cast(answer);
         }
         return null;
-    }
-
-    @Override
-    public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
-        this.dataFormats = dataFormats;
     }
 
     @Override
@@ -278,8 +445,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void setTransformers(List<TransformerDefinition> transformers) {
-        this.transformers = transformers;
+    public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
+        this.dataFormats = dataFormats;
     }
 
     @Override
@@ -288,8 +455,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void setValidators(List<ValidatorDefinition> validators) {
-        this.validators = validators;
+    public void setTransformers(List<TransformerDefinition> transformers) {
+        this.transformers = transformers;
     }
 
     @Override
@@ -298,8 +465,8 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public void startRouteDefinitions() throws Exception {
-        startRouteDefinitions(routeDefinitions);
+    public void setValidators(List<ValidatorDefinition> validators) {
+        this.validators = validators;
     }
 
     @Override
@@ -317,49 +484,14 @@ public class DefaultModel implements Model {
         this.routeFilter = routeFilter;
     }
 
-    protected void startRouteDefinitions(Collection<RouteDefinition> list) throws Exception {
-        if (list != null) {
-            for (RouteDefinition route : list) {
-                startRoute(route);
-            }
-        }
+    @Override
+    public ModelReifierFactory getModelReifierFactory() {
+        return modelReifierFactory;
     }
 
-    public void startRoute(RouteDefinition routeDefinition) throws Exception {
-        prepare(routeDefinition);
-        start(routeDefinition);
-    }
-
-    protected void prepare(RouteDefinition routeDefinition) throws Exception {
-        // assign ids to the routes and validate that the id's is all unique
-        RouteDefinitionHelper.forceAssignIds(camelContext, routeDefinitions);
-        String duplicate = RouteDefinitionHelper.validateUniqueIds(routeDefinition, routeDefinitions);
-        if (duplicate != null) {
-            throw new FailedToStartRouteException(routeDefinition.getId(), "duplicate id detected: " + duplicate + ". Please correct ids to be unique among all your routes.");
-        }
-
-        // must ensure route is prepared, before we can start it
-        if (!routeDefinition.isPrepared()) {
-            RouteDefinitionHelper.prepareRoute(camelContext, routeDefinition);
-            routeDefinition.markPrepared();
-        }
-    }
-
-    protected void start(RouteDefinition routeDefinition) throws Exception {
-        // indicate we are staring the route using this thread so
-        // we are able to query this if needed
-        AbstractCamelContext mcc = camelContext.adapt(AbstractCamelContext.class);
-        mcc.setStartingRoutes(true);
-        try {
-            String id = routeDefinition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
-            RouteContext routeContext = new DefaultRouteContext(camelContext, routeDefinition, id);
-            Route route = new RouteReifier(routeDefinition).createRoute(camelContext, routeContext);
-            RouteService routeService = new RouteService(route);
-            mcc.startRouteService(routeService, true);
-        } finally {
-            // we are done staring routes
-            mcc.setStartingRoutes(false);
-        }
+    @Override
+    public void setModelReifierFactory(ModelReifierFactory modelReifierFactory) {
+        this.modelReifierFactory = modelReifierFactory;
     }
 
     /**
@@ -369,7 +501,7 @@ public class DefaultModel implements Model {
         return camelContext.isStarted() && !camelContext.isStarting();
     }
 
-    protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
+    private static <T> T lookup(CamelContext context, String ref, Class<T> type) {
         try {
             return context.getRegistry().lookupByNameAndType(ref, type);
         } catch (Exception e) {

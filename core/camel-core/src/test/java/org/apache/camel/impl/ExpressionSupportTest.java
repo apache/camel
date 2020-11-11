@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExpressionSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExpressionSupportTest extends ContextTestSupport {
 
@@ -38,7 +41,7 @@ public class ExpressionSupportTest extends ContextTestSupport {
             if ("Kabom".equals(in)) {
                 return null;
             }
-            return (T)in;
+            return (T) in;
         }
     }
 

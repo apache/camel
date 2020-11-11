@@ -35,9 +35,11 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the effect of redelivery in association with netty component.
@@ -97,7 +99,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         alive = false;
@@ -135,7 +137,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         // Override the error handler executor service such that we can track the tasks created
-        CamelContext context = new DefaultCamelContext(createRegistry()) {
+        CamelContext context = new DefaultCamelContext(createCamelRegistry()) {
             @Override
             public ScheduledExecutorService getErrorHandlerExecutorService() {
                 return getScheduledExecutorService();
@@ -188,7 +190,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     }
 
     private static <T> T newProxy(Class<T> interfaceType, InvocationHandler handler) {
-        Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[]{interfaceType}, handler);
+        Object object = Proxy.newProxyInstance(interfaceType.getClassLoader(), new Class<?>[] { interfaceType }, handler);
         return interfaceType.cast(object);
     }
 

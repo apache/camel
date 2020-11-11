@@ -22,13 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RefFileEndpointTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/foo");
         super.setUp();
@@ -42,7 +44,7 @@ public class RefFileEndpointTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        FileConsumer consumer = (FileConsumer)context.getRoute("foo").getConsumer();
+        FileConsumer consumer = (FileConsumer) context.getRoute("foo").getConsumer();
         assertEquals(3000, consumer.getDelay());
         assertEquals(250, consumer.getInitialDelay());
     }

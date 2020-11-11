@@ -28,12 +28,15 @@ import javax.sql.DataSource;
 import com.opengamma.elsql.ElSql;
 import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.sql.ResultSetIterator;
 import org.apache.camel.component.sql.ResultSetIteratorCompletion;
 import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.component.sql.SqlOutputType;
 import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -50,6 +53,8 @@ import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
 
 public class ElsqlProducer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ElsqlProducer.class);
+
     private final ElSql elSql;
     private final String elSqlName;
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -57,8 +62,10 @@ public class ElsqlProducer extends DefaultProducer {
     private final SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
     private final boolean batch;
 
-    public ElsqlProducer(final ElsqlEndpoint endpoint, final ElSql elSql, final String elSqlName, final NamedParameterJdbcTemplate jdbcTemplate, 
-                         final DataSource dataSource, final SqlPrepareStatementStrategy sqlPrepareStatementStrategy, final boolean batch) {
+    public ElsqlProducer(final ElsqlEndpoint endpoint, final ElSql elSql, final String elSqlName,
+                         final NamedParameterJdbcTemplate jdbcTemplate,
+                         final DataSource dataSource, final SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
+                         final boolean batch) {
         super(endpoint);
         this.elSql = elSql;
         this.elSqlName = elSqlName;
@@ -79,7 +86,7 @@ public class ElsqlProducer extends DefaultProducer {
 
         final SqlParameterSource param = new ElsqlSqlMapSource(exchange, data);
         final String sql = elSql.getSql(elSqlName, new SpringSqlParams(param));
-        log.debug("ElsqlProducer @{} using sql: {}", elSqlName, sql);
+        LOG.debug("ElsqlProducer @{} using sql: {}", elSqlName, sql);
 
         // special for processing stream list (batch not supported)
         final SqlOutputType outputType = getEndpoint().getOutputType();
@@ -88,23 +95,25 @@ public class ElsqlProducer extends DefaultProducer {
             return;
         }
 
-        log.trace("jdbcTemplate.execute: {}", sql);
+        LOG.trace("jdbcTemplate.execute: {}", sql);
         jdbcTemplate.execute(sql, param, new PreparedStatementCallback<Object>() {
             @Override
             public Object doInPreparedStatement(final PreparedStatement ps) throws SQLException, DataAccessException {
                 ResultSet rs = null;
                 try {
                     boolean isResultSet = false;
-                     
+
                     final int expected = ps.getParameterMetaData().getParameterCount();
-                     
+
                     if (expected > 0 && batch) {
-                        final String sqlForDefaultPreparedStamentStrategy =  sql.replaceAll(":", ":\\?");
-                        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(sqlForDefaultPreparedStamentStrategy, getEndpoint().isAllowNamedParameters(), exchange);
+                        final String sqlForDefaultPreparedStamentStrategy = sql.replace(":", ":?");
+                        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(
+                                sqlForDefaultPreparedStamentStrategy, getEndpoint().isAllowNamedParameters(), exchange);
                         final Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
                         while (iterator != null && iterator.hasNext()) {
                             final Object value = iterator.next();
-                            final Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(sqlForDefaultPreparedStamentStrategy, preparedQuery, expected, exchange, value);
+                            final Iterator<?> i = sqlPrepareStatementStrategy.createPopulateIterator(
+                                    sqlForDefaultPreparedStamentStrategy, preparedQuery, expected, exchange, value);
                             sqlPrepareStatementStrategy.populateStatement(ps, i, expected);
                             ps.addBatch();
                         }
@@ -127,7 +136,7 @@ public class ElsqlProducer extends DefaultProducer {
                             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
 
                             final SqlOutputType outputType = getEndpoint().getOutputType();
-                            log.trace("Got result list from query: {}, outputType={}", rs, outputType);
+                            LOG.trace("Got result list from query: {}, outputType={}", rs, outputType);
                             if (outputType == SqlOutputType.SelectList) {
                                 final List<?> data = getEndpoint().queryForList(rs, true);
                                 // for noop=true we still want to enrich with the row count header
@@ -165,21 +174,22 @@ public class ElsqlProducer extends DefaultProducer {
                                 throw new IllegalArgumentException("Invalid outputType=" + outputType);
                             }
                         } else {
-                             // if we are here, there isResultSet is false. This can happen only if we are doing an update operation or there is no result.
-                             // we can simply add the updateCount in this case.
+                            // if we are here, there isResultSet is false. This can happen only if we are doing an update operation or there is no result.
+                            // we can simply add the updateCount in this case.
                             exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                         }
                     }
-                    } finally {
-                        closeResultSet(rs);
-                    }
+                } finally {
+                    closeResultSet(rs);
+                }
 
                 return null;
             }
         });
     }
 
-    protected void processStreamList(final Exchange exchange, final String sql, final SqlParameterSource param) throws Exception {
+    protected void processStreamList(final Exchange exchange, final String sql, final SqlParameterSource param)
+            throws Exception {
         // spring JDBC to parse the SQL and build the prepared statement creator
         // this is what NamedJdbcTemplate does internally
         final ParsedSql parsedSql = NamedParameterUtils.parseSqlStatement(sql);
@@ -192,8 +202,10 @@ public class ElsqlProducer extends DefaultProducer {
         processStreamList(exchange, statementCreator, sqlToUse);
     }
 
-    protected void processStreamList(final Exchange exchange, final PreparedStatementCreator statementCreator, final String preparedQuery) throws Exception {
-        log.trace("processStreamList: {}", preparedQuery);
+    protected void processStreamList(
+            final Exchange exchange, final PreparedStatementCreator statementCreator, final String preparedQuery)
+            throws Exception {
+        LOG.trace("processStreamList: {}", preparedQuery);
 
         // do not use the jdbcTemplate as it will auto-close connection/ps/rs when exiting the execute method
         // and we need to keep the connection alive while routing and close it when the Exchange is done being routed
@@ -219,7 +231,7 @@ public class ElsqlProducer extends DefaultProducer {
                 }
                 // we do not know the row count so we cannot set a ROW_COUNT header
                 // defer closing the iterator when the exchange is complete
-                exchange.addOnCompletion(new ResultSetIteratorCompletion(iterator));
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new ResultSetIteratorCompletion(iterator));
             }
         } catch (final Exception e) {
             // in case of exception then close all this before rethrow

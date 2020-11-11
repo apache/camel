@@ -21,15 +21,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainIoCNewRouteBuilderComplexTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class MainIoCNewRouteBuilderComplexTest {
 
     @Test
     public void testMainIoC() throws Exception {
         Main main = new Main();
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

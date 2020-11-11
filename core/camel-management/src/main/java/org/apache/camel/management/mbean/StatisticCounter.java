@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class StatisticCounter extends Statistic {
 
-    private final AtomicLong value = new AtomicLong(0);
+    private final AtomicLong value = new AtomicLong();
 
     @Override
     public void updateValue(long newValue) {

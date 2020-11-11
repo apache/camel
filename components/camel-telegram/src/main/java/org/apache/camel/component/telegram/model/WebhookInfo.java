@@ -70,9 +70,9 @@ public class WebhookInfo {
     @Override
     public String toString() {
         return "WebhookInfo{"
-                + "url='" + url + '\''
-                + ", maxConnections=" + maxConnections
-                + ", allowedUpdates=" + allowedUpdates
-                + '}';
+               + "url='" + url + '\''
+               + ", maxConnections=" + maxConnections
+               + ", allowedUpdates=" + allowedUpdates
+               + '}';
     }
 }

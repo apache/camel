@@ -28,7 +28,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringConsulDefaultServiceCallRouteTest extends SpringConsulServiceCallRouteTest {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/consul/cloud/SpringConsulDefaultServiceCallRouteTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/consul/cloud/SpringConsulDefaultServiceCallRouteTest.xml");
     }
 
     @Test

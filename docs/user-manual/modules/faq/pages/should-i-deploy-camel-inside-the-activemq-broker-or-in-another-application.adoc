@@ -1,0 +1,32 @@
+[[ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication-ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication]]
+= Should I deploy Camel inside the ActiveMQ broker or in another application
+
+Whether you deploy the
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+inside the ActiveMQ Broker or in a separate application
+depends on your requirements.
+
+[[ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication-AdvantagesofdeployingEIPinsidethebroker]]
+== Advantages of deploying EIP inside the broker
+
+* It is a single JVM so less moving parts and you're less likely to forget
+to deploy something.
+* If you are doing things like polling resources such as files,
+databases and bridging them to queues or topics then its usually more
+efficient to host in the broker; as there's less contention and there's
+no network communication between the EIP rules and the message broker as
+its all in the same JVM (so you can use the xref:components::vm-component.adoc[VM Transport]
+to avoid network overhead.
+
+[[ShouldIdeployCamelinsidetheActiveMQbrokerorinanotherapplication-AdvantagesofdeployingEIPinsideaseparateapplication]]
+== Advantages of deploying EIP inside a separate application
+
+* It is easier to deploy loads of JVMs containing the EIP routing rules to
+get better load balancing.
+* You can easily change your routing rules then stop/restart
+applications without having to restart your broker. Having said that
+since ActiveMQ supports it's not such a big deal to bounce the Broker now and again
+to refresh routing rules. Note that at some point
+https://issues.apache.org/activemq/browse/CAMEL-234[Camel will support auto-reload of routing rules on the fly without having to stop and reload the JVM]
+so one day this won't be such a big benefit.
+

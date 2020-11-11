@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -28,9 +28,8 @@ public class TransactionInterceptSendToEndpointTest extends CamelSpringTestSuppo
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/TransactionInterceptSendToEndpointTest.xml");
+                "/org/apache/camel/component/jms/tx/TransactionInterceptSendToEndpointTest.xml");
     }
-
 
     @Test
     public void testIntercepted() throws Exception {

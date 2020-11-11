@@ -23,9 +23,13 @@ import com.google.api.services.drive.model.File;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveChildrenApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for {@link com.google.api.services.drive.Drive$Children} APIs.
@@ -33,18 +37,19 @@ import org.slf4j.LoggerFactory;
 public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveChildrenIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveChildrenApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveChildrenApiMethod.class).getName();
     private static final String ROOT_FOLDER = "root";
 
     @Test
     public void testUploadFileToFolder() throws Exception {
         File folder = uploadTestFolder();
         File file = uploadTestFile();
-        
+
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.folderId", folder.getId());
-        
+
         com.google.api.services.drive.model.ChildReference child = new com.google.api.services.drive.model.ChildReference();
         child.setId(file.getId());
         // parameter type is com.google.api.services.drive.model.ChildReference
@@ -53,11 +58,12 @@ public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport
         requestBodyAndHeaders("direct://INSERT", null, headers);
 
         final com.google.api.services.drive.model.ChildList result = requestBody("direct://LIST", folder.getId());
-        assertNotNull("insert result", result);
+        assertNotNull(result, "insert result");
         LOG.debug("insert: " + result);
         headers.put("CamelGoogleDrive.childId", child.getId());
-        com.google.api.services.drive.model.ChildReference childReference = requestBodyAndHeaders("direct://GET", null, headers);
-        assertNotNull("inserted child", childReference);
+        com.google.api.services.drive.model.ChildReference childReference
+                = requestBodyAndHeaders("direct://GET", null, headers);
+        assertNotNull(childReference, "inserted child");
         requestBodyAndHeaders("direct://DELETE", null, headers);
         try {
             childReference = requestBodyAndHeaders("direct://GET", null, headers);
@@ -65,64 +71,65 @@ public class DriveChildrenIntegrationTest extends AbstractGoogleDriveTestSupport
         } catch (Exception ex) {
             assertTrue(ex.getCause().getCause() instanceof com.google.api.client.googleapis.json.GoogleJsonResponseException);
         }
-        
+
     }
-    
+
     @Test
     public void testUploadFileToRootFolder() throws Exception {
         File file = uploadTestFile();
-        
+
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.folderId", ROOT_FOLDER);
-        
+
         com.google.api.services.drive.model.ChildReference child = new com.google.api.services.drive.model.ChildReference();
         child.setId(file.getId());
         // parameter type is com.google.api.services.drive.model.ChildReference
         headers.put("CamelGoogleDrive.content", child);
 
         requestBodyAndHeaders("direct://INSERT", null, headers);
-      
+
         headers.put("CamelGoogleDrive.childId", child.getId());
-        com.google.api.services.drive.model.ChildReference childReference = requestBodyAndHeaders("direct://GET-BODY", child.getId(), headers);
-        assertNotNull("inserted child", childReference);
+        com.google.api.services.drive.model.ChildReference childReference
+                = requestBodyAndHeaders("direct://GET-BODY", child.getId(), headers);
+        assertNotNull(childReference, "inserted child");
         requestBodyAndHeaders("direct://DELETE", null, headers);
         try {
-            childReference = requestBodyAndHeaders("direct://GET-BODY", child.getId(), headers, com.google.api.services.drive.model.ChildReference.class);
+            childReference = requestBodyAndHeaders("direct://GET-BODY", child.getId(), headers,
+                    com.google.api.services.drive.model.ChildReference.class);
             fail("can't fetch a child that already get deleted");
         } catch (Exception ex) {
             assertTrue(ex.getCause().getCause() instanceof com.google.api.client.googleapis.json.GoogleJsonResponseException);
         }
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 //set proxy if necessary
-               
+
                 //this.getContext().getGlobalOptions().put("http.proxyHost", "...");
                 //this.getContext().getGlobalOptions().put("http.proxyPort", "...");
                 // test route for delete
                 from("direct://DELETE")
-                    .to("google-drive://" + PATH_PREFIX + "/delete");
+                        .to("google-drive://" + PATH_PREFIX + "/delete");
 
                 // test route for get
                 from("direct://GET")
-                    .to("google-drive://" + PATH_PREFIX + "/get");
-                
-             // test route for get with body
+                        .to("google-drive://" + PATH_PREFIX + "/get");
+
+                // test route for get with body
                 from("direct://GET-BODY")
-                    .to("google-drive://" + PATH_PREFIX + "/get?inBody=childId");
+                        .to("google-drive://" + PATH_PREFIX + "/get?inBody=childId");
 
                 // test route for insert
                 from("direct://INSERT")
-                    .to("google-drive://" + PATH_PREFIX + "/insert");
+                        .to("google-drive://" + PATH_PREFIX + "/insert");
 
                 // test route for list
                 from("direct://LIST")
-                    .to("google-drive://" + PATH_PREFIX + "/list?inBody=folderId");
+                        .to("google-drive://" + PATH_PREFIX + "/list?inBody=folderId");
 
             }
         };

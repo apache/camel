@@ -17,9 +17,10 @@
 package org.apache.camel.http.common;
 
 import org.apache.camel.Exchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpRestHeaderFilterStrategyTest {
 
@@ -27,13 +28,14 @@ public class HttpRestHeaderFilterStrategyTest {
 
     @Test
     public void shouldDecideOnApplingHeaderFilterToTemplateTokens() {
-        final HttpRestHeaderFilterStrategy strategy = new HttpRestHeaderFilterStrategy("{uriToken1}{uriToken2}",
-            "q1=%7BqueryToken1%7D%26q2=%7BqueryToken2%7D%26");
+        final HttpRestHeaderFilterStrategy strategy = new HttpRestHeaderFilterStrategy(
+                "{uriToken1}{uriToken2}",
+                "q1=%7BqueryToken1%7D%26q2=%7BqueryToken2%7D%26");
 
-        assertThat(strategy.applyFilterToCamelHeaders("uriToken1", "value", NOT_USED)).isTrue();
-        assertThat(strategy.applyFilterToCamelHeaders("uriToken2", "value", NOT_USED)).isTrue();
-        assertThat(strategy.applyFilterToCamelHeaders("queryToken1", "value", NOT_USED)).isTrue();
-        assertThat(strategy.applyFilterToCamelHeaders("queryToken2", "value", NOT_USED)).isTrue();
-        assertThat(strategy.applyFilterToCamelHeaders("unknown", "value", NOT_USED)).isFalse();
+        assertTrue(strategy.applyFilterToCamelHeaders("uriToken1", "value", NOT_USED));
+        assertTrue(strategy.applyFilterToCamelHeaders("uriToken2", "value", NOT_USED));
+        assertTrue(strategy.applyFilterToCamelHeaders("queryToken1", "value", NOT_USED));
+        assertTrue(strategy.applyFilterToCamelHeaders("queryToken2", "value", NOT_USED));
+        assertFalse(strategy.applyFilterToCamelHeaders("unknown", "value", NOT_USED));
     }
 }

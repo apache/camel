@@ -36,14 +36,14 @@ public final class PulsarUtils {
             Consumer<byte[]> consumer = consumers.poll();
             if (consumer != null) {
                 try {
-                    consumer.unsubscribe();
                     consumer.close();
                 } catch (Exception e) {
                     // ignore during stopping
                     if (e instanceof PulsarClientException.AlreadyClosedException) {
                         // ignore
                     } else {
-                        LOG.debug("Error stopping consumer: " + consumer + " due to " + e.getMessage() + ". This exception is ignored", e);
+                        LOG.debug("Error stopping consumer: {} due to {}. This exception is ignored", consumer,
+                                e.getMessage(), e);
                     }
                 }
             }

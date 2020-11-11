@@ -19,12 +19,16 @@ package org.apache.camel.component.kubernetes;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KubernetesTestSupport extends CamelTestSupport {
 
     protected String authToken;
     protected String host;
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     // The Camel-Kubernetes tests are based on vagrant fabric8-image
     // https://github.com/fabric8io/fabric8-installer/tree/master/vagrant/openshift
@@ -32,6 +36,7 @@ public class KubernetesTestSupport extends CamelTestSupport {
     // Openshift/Kubernetes installed
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         // INSERT credentials and host here
         authToken = "";

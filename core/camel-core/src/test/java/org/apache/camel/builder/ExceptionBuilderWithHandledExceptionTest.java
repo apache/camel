@@ -24,7 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to test exception configuration
@@ -71,7 +74,8 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
             template.sendBodyAndHeader("direct:a", "Hello IOE", "foo", "something that does not match");
             fail("Should have thrown a IOException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IOException);
+            boolean b = e.getCause() instanceof IOException;
+            assertTrue(b);
             // expected, failure is not handled because predicate doesn't match
         }
 
@@ -85,11 +89,13 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // START SNIPPET: exceptionBuilder1
-                onException(NullPointerException.class).maximumRedeliveries(0).handled(true).setHeader(MESSAGE_INFO, constant("Handled exchange with NullPointerException"))
-                    .to(ERROR_QUEUE);
+                onException(NullPointerException.class).maximumRedeliveries(0).handled(true)
+                        .setHeader(MESSAGE_INFO, constant("Handled exchange with NullPointerException"))
+                        .to(ERROR_QUEUE);
 
-                onException(IOException.class).maximumRedeliveries(0).handled(header("foo").isEqualTo("bar")).setHeader(MESSAGE_INFO, constant("Handled exchange with IOException"))
-                    .to(ERROR_QUEUE);
+                onException(IOException.class).maximumRedeliveries(0).handled(header("foo").isEqualTo("bar"))
+                        .setHeader(MESSAGE_INFO, constant("Handled exchange with IOException"))
+                        .to(ERROR_QUEUE);
                 // END SNIPPET: exceptionBuilder1
 
                 from("direct:a").process(new Processor() {

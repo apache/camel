@@ -28,42 +28,46 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends CamelTestSupport {
     static final int RECEIVE_TIMEOUT = 1000;
     static final int READ_TIMEOUT = 500;
 
-    static final String TEST_MESSAGE =
-        "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + '\r'
-            + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||" + '\r'
-            + "NTE|1||Free text for entering clinical details|" + '\r'
-            + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
-            + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||" + '\r'
-            + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + '\r'
-            + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + '\r'
-            + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||" + '\r'
-            + '\n';
+    static final String TEST_MESSAGE
+            = "MSH|^~\\&|REQUESTING|ICE|INHOUSE|RTH00|20161206193919||ORM^O01|00001|D|2.3|||||||" + '\r'
+              + "PID|1||ICE999999^^^ICE^ICE||Testpatient^Testy^^^Mr||19740401|M|||123 Barrel Drive^^^^SW18 4RT|||||2||||||||||||||"
+              + '\r'
+              + "NTE|1||Free text for entering clinical details|" + '\r'
+              + "PV1|1||^^^^^^^^Admin Location|||||||||||||||NHS|" + '\r'
+              + "ORC|NW|213||175|REQ||||20080808093202|ahsl^^Administrator||G999999^TestDoctor^GPtests^^^^^^NAT|^^^^^^^^Admin Location | 819600|200808080932||RTH00||ahsl^^Administrator||"
+              + '\r'
+              + "OBR|1|213||CCOR^Serum Cortisol ^ JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+              + '\r'
+              + "OBR|2|213||GCU^Serum Copper ^ JRH06 |||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+              + '\r'
+              + "OBR|3|213||THYG^Serum Thyroglobulin ^JRH06|||200808080932||0.100||||||^|G999999^TestDoctor^GPtests^^^^^^NAT|819600|ADM162||||||820|||^^^^^R||||||||"
+              + '\r'
+              + '\n';
 
-    static final String EXPECTED_AA =
-        "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
-            + "MSA|AA|00001|" + '\r'
-            + '\n';
+    static final String EXPECTED_AA = "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
+                                      + "MSA|AA|00001|" + '\r'
+                                      + '\n';
 
-    static final String EXPECTED_AR =
-        "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
-            + "MSA|AR|00001|" + '\r'
-            + '\n';
+    static final String EXPECTED_AR = "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
+                                      + "MSA|AR|00001|" + '\r'
+                                      + '\n';
 
-    static final String EXPECTED_AE =
-        "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
-            + "MSA|AE|00001|" + '\r'
-            + '\n';
+    static final String EXPECTED_AE = "MSH|^~\\&|INHOUSE|RTH00|REQUESTING|ICE|20161206193919||ACK^O01|00001|D|2.3|||||||" + '\r'
+                                      + "MSA|AE|00001|" + '\r'
+                                      + '\n';
 
-    @Rule
+    @RegisterExtension
     public MllpServerResource mllpServer = new MllpServerResource("localhost", AvailablePortFinder.getNextAvailable());
 
     @EndpointInject("direct://source")
@@ -88,7 +92,6 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     @EndpointInject("mock://failed")
     protected MockEndpoint failed;
 
-
     protected int expectedAACount;
     protected int expectedAECount;
     protected int expectedARCount;
@@ -101,9 +104,8 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     protected int expectedFailedCount;
 
     abstract boolean requireEndOfData();
+
     abstract boolean validatePayload();
-
-
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -122,41 +124,42 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
             public void configure() {
                 onException(MllpApplicationRejectAcknowledgementException.class)
-                    .handled(true)
-                    .to(ar)
-                    .log(LoggingLevel.ERROR, routeId, "AR Acknowledgement");
+                        .handled(true)
+                        .to(ar)
+                        .log(LoggingLevel.ERROR, routeId, "AR Acknowledgement");
 
                 onException(MllpApplicationErrorAcknowledgementException.class)
-                    .handled(true)
-                    .to(ae)
-                    .log(LoggingLevel.ERROR, routeId, "AE Acknowledgement");
+                        .handled(true)
+                        .to(ae)
+                        .log(LoggingLevel.ERROR, routeId, "AE Acknowledgement");
 
                 onException(MllpAcknowledgementReceiveException.class)
-                    .handled(true)
-                    .to(ackReceiveError)
-                    .log(LoggingLevel.ERROR, routeId, "Acknowledgement Receive failed");
+                        .handled(true)
+                        .to(ackReceiveError)
+                        .log(LoggingLevel.ERROR, routeId, "Acknowledgement Receive failed");
 
                 onException(MllpAcknowledgementTimeoutException.class)
-                    .handled(true)
-                    .to(ackTimeoutError)
-                    .log(LoggingLevel.ERROR, routeId, "Acknowledgement Receive timeout");
+                        .handled(true)
+                        .to(ackTimeoutError)
+                        .log(LoggingLevel.ERROR, routeId, "Acknowledgement Receive timeout");
 
                 onException(MllpInvalidAcknowledgementException.class)
-                    .handled(true)
-                    .to(invalid)
-                    .log(LoggingLevel.ERROR, routeId, "Invalid Acknowledgement");
+                        .handled(true)
+                        .to(invalid)
+                        .log(LoggingLevel.ERROR, routeId, "Invalid Acknowledgement");
 
                 onCompletion()
-                    .onFailureOnly()
-                    .to(failed)
-                    .log(LoggingLevel.DEBUG, routeId, "Exchange failed");
+                        .onFailureOnly()
+                        .to(failed)
+                        .log(LoggingLevel.DEBUG, routeId, "Exchange failed");
 
                 from(source.getDefaultEndpoint()).routeId(routeId)
-                    .log(LoggingLevel.INFO, routeId, "Sending Message")
-                    .toF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&validatePayload=%b&requireEndOfData=%b", mllpServer.getListenHost(), mllpServer.getListenPort(),
-                        RECEIVE_TIMEOUT, READ_TIMEOUT, validatePayload(), requireEndOfData())
-                    .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
-                    .to(aa);
+                        .log(LoggingLevel.INFO, routeId, "Sending Message")
+                        .toF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&validatePayload=%b&requireEndOfData=%b",
+                                mllpServer.getListenHost(), mllpServer.getListenPort(),
+                                RECEIVE_TIMEOUT, READ_TIMEOUT, validatePayload(), requireEndOfData())
+                        .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
+                        .to(aa);
             }
         };
     }
@@ -187,7 +190,6 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
     }
 
-
     @Test
     public void testSendMultipleMessagesWithEndOfDataByte() throws Exception {
         expectedAACount = 5;
@@ -201,7 +203,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < expectedAACount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -216,7 +218,6 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
     }
 
-
     @Test
     public abstract void testSendMultipleMessagesWithoutEndOfDataByte() throws Exception;
 
@@ -230,10 +231,9 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < expectedAACount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
-
 
     protected void runSendMultipleMessagesWithoutEndOfDataByte(MockEndpoint expectedEndpoint) throws Exception {
         int messageCount = 3;
@@ -251,7 +251,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < messageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -272,13 +272,13 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
         mllpServer.disableResponse();
 
         source.sendBody(Hl7TestMessageGenerator.generateMessage(1));
-        assertTrue("Messege 1 not completed", complete[0].matches(1, TimeUnit.SECONDS));
+        assertTrue(complete[0].matches(1, TimeUnit.SECONDS), "Message 0 not completed");
 
         mllpServer.enableResponse();
 
         for (int i = 1; i < sendMessageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -300,7 +300,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < sendMessageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -344,7 +344,6 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
         source.sendBody(TEST_MESSAGE);
     }
 
-
     @Test
     public abstract void testEmptyAcknowledgement() throws Exception;
 
@@ -357,7 +356,6 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         source.sendBody(TEST_MESSAGE);
     }
-
 
     @Test
     public abstract void testInvalidAcknowledgement() throws Exception;
@@ -381,7 +379,8 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     public abstract void testMissingEndOfDataByte() throws Exception;
 
     /**
-     * NOTE:  Set expectation variables BEFORE calling this method.
+     * NOTE: Set expectation variables BEFORE calling this method.
+     * 
      * @throws Exception
      */
     protected void runMissingEndOfDataByte() throws Exception {
@@ -398,10 +397,9 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < sendMessageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
-
 
     @Test
     public void testAcknowledgementReceiveTimeout() throws Exception {
@@ -425,9 +423,6 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
         source.sendBody(Hl7TestMessageGenerator.generateMessage());
     }
 
-
-
-
     @Test
     public void testMissingEndOfBlockByte() throws Exception {
         int sendMessageCount = 3;
@@ -446,10 +441,9 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < sendMessageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
-
 
     @Test
     public abstract void testSendMultipleMessagesWithoutSomeEndOfDataByte() throws Exception;
@@ -468,7 +462,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
         for (int i = 0; i < messageCount; ++i) {
             source.sendBody(Hl7TestMessageGenerator.generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
+            assertTrue(complete[i].matches(1, TimeUnit.SECONDS), "Message " + i + " not completed");
         }
     }
 
@@ -476,7 +470,8 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     public abstract void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception;
 
     /**
-     * NOTE:  Set expectation variables BEFORE calling this method.
+     * NOTE: Set expectation variables BEFORE calling this method.
+     * 
      * @throws Exception
      */
     public void runInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {
@@ -492,9 +487,9 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
     @Test
     public abstract void testInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() throws Exception;
 
-
     /**
-     * NOTE:  Set expectation variables BEFORE calling this method.
+     * NOTE: Set expectation variables BEFORE calling this method.
+     * 
      * @throws Exception
      */
     protected void runInvalidAcknowledgementContainingEmbeddedEndOfBlockByte() throws Exception {

@@ -22,11 +22,13 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ResequencerEngineTest extends TestSupport {
 
@@ -37,12 +39,12 @@ public class ResequencerEngineTest extends TestSupport {
     private SequenceBuffer<Integer> buffer;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (runner != null) {
             runner.cancel();
@@ -57,8 +59,8 @@ public class ResequencerEngineTest extends TestSupport {
         initResequencer(500, 10);
         resequencer.insert(4);
         assertNull(buffer.poll(250));
-        assertEquals((Integer)4, buffer.take());
-        assertEquals((Integer)4, resequencer.getLastDelivered());
+        assertEquals((Object) (Integer) 4, (Object) buffer.take());
+        assertEquals((Object) (Integer) 4, (Object) resequencer.getLastDelivered());
     }
 
     @Test
@@ -67,8 +69,8 @@ public class ResequencerEngineTest extends TestSupport {
         resequencer.setLastDelivered(2);
         resequencer.insert(4);
         assertNull(buffer.poll(250));
-        assertEquals((Integer)4, buffer.take());
-        assertEquals((Integer)4, resequencer.getLastDelivered());
+        assertEquals((Object) (Integer) 4, (Object) buffer.take());
+        assertEquals((Object) (Integer) 4, (Object) resequencer.getLastDelivered());
     }
 
     @Test
@@ -76,8 +78,8 @@ public class ResequencerEngineTest extends TestSupport {
         initResequencer(500, 10);
         resequencer.setLastDelivered(3);
         resequencer.insert(4);
-        assertEquals((Integer)4, buffer.poll(250));
-        assertEquals((Integer)4, resequencer.getLastDelivered());
+        assertEquals((Object) (Integer) 4, (Object) buffer.poll(250));
+        assertEquals((Object) (Integer) 4, (Object) resequencer.getLastDelivered());
     }
 
     @Test
@@ -86,9 +88,9 @@ public class ResequencerEngineTest extends TestSupport {
         resequencer.setLastDelivered(2);
         resequencer.insert(4);
         resequencer.insert(3);
-        assertEquals((Integer)3, buffer.poll(250));
-        assertEquals((Integer)4, buffer.poll(250));
-        assertEquals((Integer)4, resequencer.getLastDelivered());
+        assertEquals((Object) (Integer) 3, (Object) buffer.poll(250));
+        assertEquals((Object) (Integer) 4, (Object) buffer.poll(250));
+        assertEquals((Object) (Integer) 4, (Object) resequencer.getLastDelivered());
     }
 
     @Test

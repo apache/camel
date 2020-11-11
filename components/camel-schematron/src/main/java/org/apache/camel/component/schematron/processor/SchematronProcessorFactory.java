@@ -46,8 +46,8 @@ public final class SchematronProcessorFactory {
     /**
      * Creates an instance of SchematronEngine
      *
-     * @param rules the given schematron rules
-     * @return an instance of SchematronEngine
+     * @param  rules the given schematron rules
+     * @return       an instance of SchematronEngine
      */
     public static SchematronProcessor newSchematronEngine(final Templates rules) {
         try {
@@ -61,7 +61,7 @@ public final class SchematronProcessorFactory {
     /**
      * Gets XMLReader.
      *
-     * @return instance of XMLReader
+     * @return                              instance of XMLReader
      * @throws ParserConfigurationException
      * @throws SAXException
      */
@@ -81,6 +81,5 @@ public final class SchematronProcessorFactory {
         XMLReader reader = parser.getXMLReader();
         return reader;
     }
-
 
 }

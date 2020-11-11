@@ -30,16 +30,16 @@ import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.DefaultSecurityPolicy;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore("Run this test manually")
+@Disabled("Run this test manually")
 public class CometdProducerConsumerInteractiveAuthenticatedMain {
 
     private static final String URI = "cometd://127.0.0.1:9091/channel/test?baseResource=file:./src/test/resources/webapp&"
-            + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+                                      + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private static final String URIS = "cometds://127.0.0.1:9443/channel/test?baseResource=file:./src/test/resources/webapp&"
-            + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+                                       + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private CamelContext context;
 
@@ -68,7 +68,8 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
                 component2.setSecurityPolicy(bayeuxAuthenticator);
                 component2.addExtension(bayeuxAuthenticator);
 
-                URI keyStoreUrl = CometdProducerConsumerInteractiveAuthenticatedMain.class.getResource("/jsse/localhost.p12").toURI();
+                URI keyStoreUrl
+                        = CometdProducerConsumerInteractiveAuthenticatedMain.class.getResource("/jsse/localhost.p12").toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
 
                 from("stream:in").to(URI).to(URIS);
@@ -79,7 +80,8 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
     /**
      * Custom SecurityPolicy, see http://cometd.org/documentation/howtos/authentication for details
      */
-    public static final class BayeuxAuthenticator extends DefaultSecurityPolicy implements BayeuxServer.Extension, ServerSession.RemoveListener {
+    public static final class BayeuxAuthenticator extends DefaultSecurityPolicy
+            implements BayeuxServer.Extension, ServerSession.RemoveListener {
 
         private String user = "changeit";
         private String pwd = "changeit";

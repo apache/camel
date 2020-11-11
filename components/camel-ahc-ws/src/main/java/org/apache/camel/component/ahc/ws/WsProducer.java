@@ -23,13 +23,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.asynchttpclient.ws.WebSocket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class WsProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WsProducer.class);
+
     private static final int DEFAULT_STREAM_BUFFER_SIZE = 127;
-    
+
     private int streamBufferSize = DEFAULT_STREAM_BUFFER_SIZE;
 
     public WsProducer(WsEndpoint endpoint) {
@@ -46,20 +51,20 @@ public class WsProducer extends DefaultProducer {
         Message in = exchange.getIn();
         Object message = in.getBody();
         if (message != null) {
-            log.debug("Sending out {}", message);
+            LOG.debug("Sending out {}", message);
             if (message instanceof String) {
-                sendMessage(getWebSocket(), (String)message, getEndpoint().isUseStreaming());
+                sendMessage(getWebSocket(), (String) message, getEndpoint().isUseStreaming());
             } else if (message instanceof byte[]) {
-                sendMessage(getWebSocket(), (byte[])message, getEndpoint().isUseStreaming());
+                sendMessage(getWebSocket(), (byte[]) message, getEndpoint().isUseStreaming());
             } else if (message instanceof InputStream) {
-                sendStreamMessage(getWebSocket(), (InputStream)message);
+                sendStreamMessage(getWebSocket(), (InputStream) message);
             } else {
                 //TODO provide other binding option, for now use the converted string
                 getWebSocket().sendTextFrame(in.getMandatoryBody(String.class));
             }
         }
     }
-    
+
     private void sendMessage(WebSocket webSocket, String msg, boolean streaming) {
         if (streaming) {
             int p = 0;
@@ -76,7 +81,7 @@ public class WsProducer extends DefaultProducer {
             webSocket.sendTextFrame(msg);
         }
     }
-    
+
     private void sendMessage(WebSocket webSocket, byte[] msg, boolean streaming) {
         if (streaming) {
             int p = 0;
@@ -130,7 +135,7 @@ public class WsProducer extends DefaultProducer {
             in.close();
         }
     }
-    
+
     private WebSocket getWebSocket() throws Exception {
         return getEndpoint().getWebSocket();
     }

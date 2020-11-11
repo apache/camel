@@ -29,22 +29,24 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.exec.OS;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Test to duplicate issues with Camel's exec command in Java 8 on Unix
- * This issue appears to be caused by a race condition, so this test does not always fail
+ * Test to duplicate issues with Camel's exec command in Java 8 on Unix This issue appears to be caused by a race
+ * condition, so this test does not always fail
  */
-public class ExecJava8IssueTest extends Assert {
+public class ExecJava8IssueTest {
 
     private File tempDir;
     private final String tempDirName = name();
     private final String tempFileName = name();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         tempDir = new File("target", tempDirName);
         if (!(tempDir.mkdir())) {
@@ -52,7 +54,7 @@ public class ExecJava8IssueTest extends Assert {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         FileUtils.deleteDirectory(tempDir);
     }
@@ -103,11 +105,11 @@ public class ExecJava8IssueTest extends Assert {
      * Creates a script which will append " world" to a file
      */
     private void writeScript(File script) throws IOException {
-        try (FileWriter fw = new FileWriter(script); 
-            PrintWriter pw = new PrintWriter(fw);) {
+        try (FileWriter fw = new FileWriter(script);
+             PrintWriter pw = new PrintWriter(fw);) {
             String s = "echo \" world\" >> $1";
             pw.print(s);
-        } 
+        }
     }
 
     /**

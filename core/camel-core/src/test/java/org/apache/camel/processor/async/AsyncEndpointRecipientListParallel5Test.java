@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class AsyncEndpointRecipientListParallel5Test extends ContextTestSupport {
 
@@ -38,7 +41,7 @@ public class AsyncEndpointRecipientListParallel5Test extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        assertNotEquals("Should use different threads", beforeThreadName, afterThreadName);
+        assertNotEquals(beforeThreadName, afterThreadName, "Should use different threads");
     }
 
     @Override
@@ -52,11 +55,12 @@ public class AsyncEndpointRecipientListParallel5Test extends ContextTestSupport 
                     public void process(Exchange exchange) throws Exception {
                         beforeThreadName = Thread.currentThread().getName();
                     }
-                }).recipientList(constant("async:hi:camel,async:hi:world,direct:foo")).parallelProcessing().process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("log:after").to("mock:after").to("mock:result");
+                }).recipientList(constant("async:hi:camel,async:hi:world,direct:foo")).parallelProcessing()
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").to("mock:result");
 
                 from("direct:foo").transform(constant("Bye Camel")).to("mock:foo");
             }

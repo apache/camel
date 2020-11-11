@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
@@ -29,84 +29,90 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  */
 @ContextConfiguration
-public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+public class CxfMtomPOJOProducerTest {
+
     static int port = CXFTestSupport.getPort1();
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomPOJOProducerTest.class);
+
     @Autowired
     protected CamelContext context;
     private Endpoint endpoint;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         endpoint = Endpoint.publish("http://localhost:" + port + "/CxfMtomPOJOProducerTest/jaxws-mtom/hello", getImpl());
-        SOAPBinding binding = (SOAPBinding)endpoint.getBinding();
+        SOAPBinding binding = (SOAPBinding) endpoint.getBinding();
         binding.setMTOMEnabled(true);
-        
+
     }
-    
-    @After
+
+    @AfterEach
     public void tearDown() throws Exception {
         if (endpoint != null) {
             endpoint.stop();
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testInvokingServiceFromCxfProducer() throws Exception {
-        if (MtomTestHelper.isAwtHeadless(logger, null)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 
         final Holder<byte[]> photo = new Holder<>(MtomTestHelper.REQ_PHOTO_DATA);
         final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
-        
+
         Exchange exchange = context.createProducerTemplate().send("direct://testEndpoint", new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(new Object[] {photo, image});
-                
+                exchange.getIn().setBody(new Object[] { photo, image });
+
             }
-            
+
         });
-        
-        assertEquals("The attachement size should be 2 ", 2, exchange.getOut(AttachmentMessage.class).getAttachments().size());
-        
-        Object[] result = exchange.getOut().getBody(Object[].class);
+
+        assertEquals(2, exchange.getOut(AttachmentMessage.class).getAttachments().size(), "The attachement size should be 2");
+
+        Object[] result = exchange.getMessage().getBody(Object[].class);
         Holder<byte[]> photo1 = (Holder<byte[]>) result[1];
-        MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA,  photo1.value);      
+        assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, photo1.value);
         Holder<Image> image1 = (Holder<Image>) result[2];
-        Assert.assertNotNull(image1.value);
+        assertNotNull(image1.value);
         if (image.value instanceof BufferedImage) {
-            Assert.assertEquals(560, ((BufferedImage)image1.value).getWidth());
-            Assert.assertEquals(300, ((BufferedImage)image1.value).getHeight());            
+            assertEquals(560, ((BufferedImage) image1.value).getWidth());
+            assertEquals(300, ((BufferedImage) image1.value).getHeight());
         }
-        
+
     }
-    
+
     private Image getImage(String name) throws Exception {
         return ImageIO.read(getClass().getResource(name));
     }
-    
-    
+
     protected Object getImpl() {
         return new HelloImpl();
     }
-    
 
 }

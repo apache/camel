@@ -25,13 +25,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/managed");
         super.setUp();
@@ -56,7 +58,7 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         String id = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("foo", id);
@@ -68,7 +70,7 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
         mbeanServer.invoke(on, "stop", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+        assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
 
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
@@ -88,7 +90,7 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
         mbeanServer.invoke(on, "start", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // this time the file is consumed
         mock.assertIsSatisfied();
@@ -106,9 +108,10 @@ public class ManagedRouteStopAndStartTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/managed?initialDelay=0&delay=10").routeId("foo").routeDescription("This is the foo route")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file://target/data/managed?initialDelay=0&delay=10").routeId("foo")
+                        .routeDescription("This is the foo route")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

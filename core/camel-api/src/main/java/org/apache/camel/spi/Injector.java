@@ -17,45 +17,45 @@
 package org.apache.camel.spi;
 
 /**
- * A pluggable strategy for creating and possibly dependency injecting objects
- * which could be implemented using straight forward reflection or using Spring
- * or CDI to perform dependency injection.
+ * A pluggable strategy for creating and possibly dependency injecting objects which could be implemented using straight
+ * forward reflection or using Spring or CDI to perform dependency injection.
  */
 public interface Injector {
 
     /**
-     * Instantiates a new instance of the given type; possibly injecting values
-     * into the object in the process (bean post processing)
+     * Instantiates a new instance of the given type; possibly injecting values into the object in the process (bean
+     * post processing)
      * 
-     * @param type the type of object to create
-     * @return a newly created instance
+     * @param  type the type of object to create
+     * @return      a newly created instance
      */
     <T> T newInstance(Class<T> type);
 
     /**
-     * Instantiates a new instance of the given type by using the factory method
-     * (this will not perform bean post processing)
+     * Instantiates a new instance of the given type by using the factory method (this will not perform bean post
+     * processing)
      *
-     * @param type the type of object to create
-     * @param factoryMethod to create the new instance via factory method which must be public static and return the type
-     * @return a newly created instance
+     * @param  type          the type of object to create
+     * @param  factoryMethod to create the new instance via factory method which must be public static and return the
+     *                       type
+     * @return               a newly created instance
      */
     <T> T newInstance(Class<T> type, String factoryMethod);
 
     /**
-     * Instantiates a new instance of the given type; possibly injecting values
-     * into the object in the process (bean post processing if enabled)
+     * Instantiates a new instance of the given type; possibly injecting values into the object in the process (bean
+     * post processing if enabled)
      *
-     * @param type the type of object to create
-     * @param postProcessBean whether to post process the bean
-     * @return a newly created instance
+     * @param  type            the type of object to create
+     * @param  postProcessBean whether to post process the bean
+     * @return                 a newly created instance
      */
     <T> T newInstance(Class<T> type, boolean postProcessBean);
 
     /**
-     * Whether the injector supports creating new instances using auto-wiring.
-     * If this is possible then bean instances is attempt first to be created this way
-     * and if not, then the bean can only be created if there is a public no-arg constructor.
+     * Whether the injector supports creating new instances using auto-wiring. If this is possible then bean instances
+     * is attempt first to be created this way and if not, then the bean can only be created if there is a public no-arg
+     * constructor.
      */
     boolean supportsAutoWiring();
 

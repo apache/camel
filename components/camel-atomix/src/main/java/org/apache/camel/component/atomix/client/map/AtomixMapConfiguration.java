@@ -27,7 +27,7 @@ public final class AtomixMapConfiguration extends AtomixClientConfiguration {
     private AtomixMap.Action defaultAction = AtomixMap.Action.PUT;
     @UriParam
     private Object key;
-    @UriParam
+    @UriParam(javaType = "java.time.Duration")
     private long ttl;
 
     // ****************************************
@@ -50,8 +50,7 @@ public final class AtomixMapConfiguration extends AtomixClientConfiguration {
     }
 
     /**
-     * The key to use if none is set in the header or to listen for events for
-     * a specific key.
+     * The key to use if none is set in the header or to listen for events for a specific key.
      */
     public void setKey(Object defaultKey) {
         this.key = defaultKey;

@@ -19,7 +19,8 @@ package org.apache.camel.component.quartz;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,6 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedStartupListener;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
@@ -42,20 +44,30 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * This component will hold a Quartz Scheduler that will provide scheduled timer based
- * endpoint that generate a QuartzMessage to a route. Currently it support Cron and Simple trigger scheduling type.
+ * This component will hold a Quartz Scheduler that will provide scheduled timer based endpoint that generate a
+ * QuartzMessage to a route. Currently it support Cron and Simple trigger scheduling type.
  */
 @Component("quartz")
 public class QuartzComponent extends DefaultComponent implements ExtendedStartupListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
+
+    private final List<SchedulerInitTask> schedulerInitTasks = new ArrayList<>();
+    private volatile boolean schedulerInitTasksDone;
 
     @Metadata(label = "advanced")
     private Scheduler scheduler;
     @Metadata(label = "advanced")
     private SchedulerFactory schedulerFactory;
+    @Metadata
     private String propertiesRef;
+    @Metadata
     private Map properties;
+    @Metadata
     private String propertiesFile;
     @Metadata(label = "scheduler")
     private int startDelayedSeconds;
@@ -65,6 +77,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     private boolean interruptJobsOnShutdown;
     @Metadata(defaultValue = "true")
     private boolean enableJmx = true;
+    @Metadata
     private boolean prefixJobNameWithEndpointId;
     @Metadata(defaultValue = "true")
     private boolean prefixInstanceName = true;
@@ -131,7 +144,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
-     * References to an existing {@link Properties} or {@link Map} to lookup in the registry to use for configuring quartz.
+     * References to an existing {@link Properties} or {@link Map} to lookup in the registry to use for configuring
+     * quartz.
      */
     public void setPropertiesRef(String propertiesRef) {
         this.propertiesRef = propertiesRef;
@@ -166,8 +180,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     /**
      * Whether to prefix the Quartz Scheduler instance name with the CamelContext name.
      * <p/>
-     * This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default.
-     * You can set this option to <tt>false</tt> to reuse Quartz scheduler instances between multiple CamelContext's.
+     * This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can
+     * set this option to <tt>false</tt> to reuse Quartz scheduler instances between multiple CamelContext's.
      */
     public void setPrefixInstanceName(boolean prefixInstanceName) {
         this.prefixInstanceName = prefixInstanceName;
@@ -178,16 +192,20 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
-     * Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs.
-     * If this is enabled then any running jobs can fail due to being interrupted.
+     * Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any
+     * running jobs. If this is enabled then any running jobs can fail due to being interrupted.
      */
     public void setInterruptJobsOnShutdown(boolean interruptJobsOnShutdown) {
         this.interruptJobsOnShutdown = interruptJobsOnShutdown;
     }
 
-    public SchedulerFactory getSchedulerFactory() throws SchedulerException {
+    public SchedulerFactory getSchedulerFactory() {
         if (schedulerFactory == null) {
-            schedulerFactory = createSchedulerFactory();
+            try {
+                schedulerFactory = createSchedulerFactory();
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            }
         }
         return schedulerFactory;
     }
@@ -215,7 +233,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
-                log.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
+                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
             }
 
             answer = new StdSchedulerFactory(prop);
@@ -233,7 +251,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             try {
                 prop.load(is);
             } catch (IOException e) {
-                throw new SchedulerException("Error loading Quartz properties file from classpath: org/quartz/quartz.properties", e);
+                throw new SchedulerException(
+                        "Error loading Quartz properties file from classpath: org/quartz/quartz.properties", e);
             } finally {
                 IOHelper.close(is);
             }
@@ -256,15 +275,15 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
-                log.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
+                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
             }
 
             answer = new StdSchedulerFactory(prop);
         }
 
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             String name = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
-            log.debug("Creating SchedulerFactory: {} with properties: {}", name, prop);
+            LOG.debug("Creating SchedulerFactory: {} with properties: {}", name, prop);
         }
         return answer;
     }
@@ -303,7 +322,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             answer.putAll(map);
         }
         if (answer == null && getPropertiesFile() != null) {
-            log.info("Loading Quartz properties file from: {}", getPropertiesFile());
+            LOG.info("Loading Quartz properties file from: {}", getPropertiesFile());
             InputStream is = null;
             try {
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
@@ -330,6 +349,23 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     /**
+     * Adds a task to be executed as part of initializing and starting the scheduler; or executes the task if the
+     * scheduler has already been started.
+     */
+    public void addScheduleInitTask(SchedulerInitTask task) {
+        if (schedulerInitTasksDone) {
+            // task already done then run task now
+            try {
+                task.initializeTask(scheduler);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        } else {
+            this.schedulerInitTasks.add(task);
+        }
+    }
+
+    /**
      * To use the custom configured Quartz scheduler, instead of creating a new Scheduler.
      */
     public void setScheduler(Scheduler scheduler) {
@@ -342,8 +378,8 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         Integer startDelayedSeconds = getAndRemoveParameter(parameters, "startDelayedSeconds", Integer.class);
         if (startDelayedSeconds != null) {
             if (this.startDelayedSeconds != 0 && !(this.startDelayedSeconds == startDelayedSeconds)) {
-                log.warn("A Quartz job is already configured with a different 'startDelayedSeconds' configuration! "
-                        + "All Quartz jobs must share the same 'startDelayedSeconds' configuration! Cannot apply the 'startDelayedSeconds' configuration!");
+                LOG.warn("A Quartz job is already configured with a different 'startDelayedSeconds' configuration! "
+                         + "All Quartz jobs must share the same 'startDelayedSeconds' configuration! Cannot apply the 'startDelayedSeconds' configuration!");
             } else {
                 this.startDelayedSeconds = startDelayedSeconds;
             }
@@ -378,6 +414,14 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         if (prefixJobNameWithEndpointId != null) {
             result.setPrefixJobNameWithEndpointId(prefixJobNameWithEndpointId);
         }
+        // special for cron where we replace + as space
+        String cron = getAndRemoveParameter(parameters, "cron", String.class);
+        if (cron != null) {
+            // replace + as space
+            cron = cron.replace('+', ' ');
+            result.setCron(cron);
+        }
+        setProperties(result, parameters);
         return result;
     }
 
@@ -424,7 +468,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
     }
 
     private void createAndInitScheduler() throws SchedulerException {
-        log.info("Create and initializing scheduler.");
+        LOG.info("Create and initializing scheduler.");
         scheduler = createScheduler();
 
         SchedulerContext quartzContext = storeCamelContextInQuartzContext();
@@ -433,7 +477,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         // that has not completed yet, and the last one with job counts to zero will eventually shutdown.
         AtomicInteger number = (AtomicInteger) quartzContext.get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
         if (number == null) {
-            number = new AtomicInteger(0);
+            number = new AtomicInteger();
             quartzContext.put(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT, number);
         }
     }
@@ -442,7 +486,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         // Store CamelContext into QuartzContext space
         SchedulerContext quartzContext = scheduler.getContext();
         String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
-        log.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
+        LOG.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
         quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
         return quartzContext;
     }
@@ -457,15 +501,16 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
 
         if (scheduler != null) {
             if (isInterruptJobsOnShutdown()) {
-                log.info("Shutting down scheduler. (will interrupts jobs to shutdown quicker.)");
+                LOG.info("Shutting down scheduler. (will interrupts jobs to shutdown quicker.)");
                 scheduler.shutdown(false);
                 scheduler = null;
             } else {
                 AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
                 if (number != null && number.get() > 0) {
-                    log.info("Cannot shutdown scheduler: " + scheduler.getSchedulerName() + " as there are still " + number.get() + " jobs registered.");
+                    LOG.info("Cannot shutdown scheduler: {} as there are still {} jobs registered.",
+                            scheduler.getSchedulerName(), number.get());
                 } else {
-                    log.info("Shutting down scheduler. (will wait for all jobs to complete first.)");
+                    LOG.info("Shutting down scheduler. (will wait for all jobs to complete first.)");
                     scheduler.shutdown(true);
                     scheduler = null;
                 }
@@ -497,22 +542,30 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             storeCamelContextInQuartzContext();
         }
 
+        // initialize scheduler tasks
+        for (SchedulerInitTask task : schedulerInitTasks) {
+            task.initializeTask(scheduler);
+        }
+        // cleanup tasks as they need only to be triggered once
+        schedulerInitTasks.clear();
+        schedulerInitTasksDone = true;
+
         // Now scheduler is ready, let see how we should start it.
         if (!autoStartScheduler) {
-            log.info("Not starting scheduler because autoStartScheduler is set to false.");
+            LOG.info("Not starting scheduler because autoStartScheduler is set to false.");
         } else {
             if (startDelayedSeconds > 0) {
                 if (scheduler.isStarted()) {
-                    log.warn("The scheduler has already started. Cannot apply the 'startDelayedSeconds' configuration!");
+                    LOG.warn("The scheduler has already started. Cannot apply the 'startDelayedSeconds' configuration!");
                 } else {
-                    log.info("Starting scheduler with startDelayedSeconds={}", startDelayedSeconds);
+                    LOG.info("Starting scheduler with startDelayedSeconds={}", startDelayedSeconds);
                     scheduler.startDelayed(startDelayedSeconds);
                 }
             } else {
                 if (scheduler.isStarted()) {
-                    log.info("The scheduler has already been started.");
+                    LOG.info("The scheduler has already been started.");
                 } else {
-                    log.info("Starting scheduler.");
+                    LOG.info("Starting scheduler.");
                     scheduler.start();
                 }
             }

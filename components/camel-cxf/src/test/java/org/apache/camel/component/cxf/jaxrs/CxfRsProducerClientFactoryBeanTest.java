@@ -24,25 +24,27 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class CxfRsProducerClientFactoryBeanTest extends Assert {
+public class CxfRsProducerClientFactoryBeanTest {
 
     private CamelContext context;
     private AbstractApplicationContext applicationContext;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext(
-            "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryBeanTest.xml");
+                "org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryBeanTest.xml");
         context = SpringCamelContext.springCamelContext(applicationContext, false);
         context.start();
     }
@@ -50,7 +52,7 @@ public class CxfRsProducerClientFactoryBeanTest extends Assert {
     @Test
     public void testProducerInOutInterceptors() throws Exception {
         CxfRsEndpoint e = context.getEndpoint(
-            "cxfrs://bean://rsClientHttpInterceptors", CxfRsEndpoint.class);
+                "cxfrs://bean://rsClientHttpInterceptors", CxfRsEndpoint.class);
         CxfRsProducer p = new CxfRsProducer(e);
         CxfRsProducer.ClientFactoryBeanCache cache = p.getClientFactoryBeanCache();
         JAXRSClientFactoryBean bean = cache.get("http://localhost:8080/CxfRsProducerClientFactoryBeanInterceptors/");
@@ -62,7 +64,7 @@ public class CxfRsProducerClientFactoryBeanTest extends Assert {
         assertTrue(outs.get(0) instanceof LoggingOutInterceptor);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (context != null) {
             context.stop();

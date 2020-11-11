@@ -28,10 +28,16 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUndertowTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest.class);
 
     @Test
     public void testWSHttpCallEcho() throws Exception {
@@ -48,7 +54,7 @@ public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUn
                             @Override
                             public void onTextFrame(String message, boolean finalFragment, int rsv) {
                                 received.add(message);
-                                log.info("received --> " + message);
+                                LOG.info("received --> " + message);
                                 latch.countDown();
                             }
 
@@ -62,9 +68,10 @@ public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUn
 
                             @Override
                             public void onError(Throwable t) {
-                                t.printStackTrace();
+                                LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                             }
-                        }).build()).get();
+                        }).build())
+                .get();
 
         websocket.sendTextFrame("Beer");
         assertTrue(latch.await(10, TimeUnit.SECONDS));
@@ -85,7 +92,7 @@ public class UndertowWsTwoRoutesToSameEndpointSendToAllHeaderTest extends BaseUn
             public void configure() {
 
                 final int port = getPort();
-                from("undertow:ws://localhost:" + port  + "/bar")
+                from("undertow:ws://localhost:" + port + "/bar")
                         .log(">>> Message received from BAR WebSocket Client : ${body}")
                         .transform().simple("The bar has ${body}")
                         .to("undertow:ws://localhost:" + port + "/bar");

@@ -62,7 +62,7 @@ public class TradeExecutorComponent extends DefaultComponent {
     public TradeExecutorComponent() {
         this(Executors.newCachedThreadPool(new TradeExecutorThreadFactory()));
     }
-    
+
     private static class TradeExecutorThreadFactory implements ThreadFactory {
         @Override
         public Thread newThread(Runnable r) {
@@ -71,7 +71,7 @@ public class TradeExecutorComponent extends DefaultComponent {
             return thread;
         }
     }
-    
+
     public TradeExecutorComponent(Executor executor) {
         this.executor = executor;
     }
@@ -92,7 +92,7 @@ public class TradeExecutorComponent extends DefaultComponent {
     private class TradeExecutorEndpoint extends DefaultEndpoint {
         private final TradeExecutor tradeExecutor;
         private List<Processor> processors = new CopyOnWriteArrayList<>();
-        
+
         TradeExecutorEndpoint(String uri, TradeExecutor tradeExecutor) {
             super(uri, TradeExecutorComponent.this);
             this.tradeExecutor = tradeExecutor;
@@ -107,11 +107,11 @@ public class TradeExecutorComponent extends DefaultComponent {
                     setOptionalField(header, sessionID, TargetCompID.FIELD, sessionID.getSenderCompID());
                     setOptionalField(header, sessionID, TargetSubID.FIELD, sessionID.getSenderSubID());
                     setOptionalField(header, sessionID, TargetLocationID.FIELD, sessionID.getSenderLocationID());
-                    
+
                     Exchange exchange = QuickfixjConverters.toExchange(
-                        TradeExecutorEndpoint.this, sessionID, message, 
-                        QuickfixjEventCategory.AppMessageReceived);
-                    
+                            TradeExecutorEndpoint.this, sessionID, message,
+                            QuickfixjEventCategory.AppMessageReceived);
+
                     for (Processor processor : processors) {
                         processor.process(exchange);
                     }
@@ -136,7 +136,7 @@ public class TradeExecutorComponent extends DefaultComponent {
                             try {
                                 tradeExecutor.execute(exchange.getIn().getMandatoryBody(Message.class));
                             } catch (Exception e) {
-                                log.error("Error during trade execution", e);
+                                LOG.error("Error during trade execution", e);
                             }
                         }
                     });
@@ -151,10 +151,10 @@ public class TradeExecutorComponent extends DefaultComponent {
                 protected void doStart() throws Exception {
                     processors.add(getProcessor());
                 }
-                
+
                 @Override
                 protected void doStop() throws Exception {
-                    processors.remove(getProcessor());                   
+                    processors.remove(getProcessor());
                 }
             };
         }
@@ -162,6 +162,6 @@ public class TradeExecutorComponent extends DefaultComponent {
         @Override
         public boolean isSingleton() {
             return false;
-        }        
+        }
     }
 }

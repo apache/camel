@@ -21,8 +21,10 @@ import java.util.List;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport {
 
@@ -33,7 +35,7 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
     private MockEndpoint result2;
 
     @Test
-    public void testCsvUnMarshal() throws Exception {
+    void testCsvUnMarshal() throws Exception {
         result.expectedMessageCount(1);
         result2.expectedMessageCount(1);
         sendAndVerify("|", result);
@@ -46,7 +48,8 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
     }
 
     private void sendAndVerify(String delimiter, MockEndpoint mock) throws InterruptedException {
-        template.sendBody("direct:start", "123" + delimiter + "Camel in Action" + delimiter + "1\n124" + delimiter + "ActiveMQ in Action" + delimiter + "2");
+        template.sendBody("direct:start", "123" + delimiter + "Camel in Action" + delimiter + "1\n124" + delimiter
+                                          + "ActiveMQ in Action" + delimiter + "2");
 
         assertMockEndpointsSatisfied();
 
@@ -62,10 +65,10 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 CsvDataFormat csv = new CsvDataFormat().setDelimiter('|');
                 CsvDataFormat csv2 = new CsvDataFormat().setDelimiter(';');
 

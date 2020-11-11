@@ -36,14 +36,20 @@ import javax.naming.ldap.PagedResultsResponseControl;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LdapProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LdapProducer.class);
+
     private String remaining;
     private SearchControls searchControls;
     private String searchBase;
     private Integer pageSize;
 
-    public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize, String returnedAttributes) throws Exception {
+    public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope, Integer pageSize,
+                        String returnedAttributes) throws Exception {
         super(endpoint);
 
         this.remaining = remaining;
@@ -54,13 +60,12 @@ public class LdapProducer extends DefaultProducer {
         this.searchControls.setSearchScope(scope);
         if (returnedAttributes != null) {
             String returnedAtts[] = returnedAttributes.split(",");
-            if (log.isDebugEnabled()) {
-                log.debug("Setting returning Attributes to searchControls: {}", Arrays.toString(returnedAtts));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Setting returning Attributes to searchControls: {}", Arrays.toString(returnedAtts));
             }
             searchControls.setReturningAttributes(returnedAtts);
         }
     }
-
 
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -74,7 +79,8 @@ public class LdapProducer extends DefaultProducer {
                 data = simpleSearch(dirContext, filter);
             } else {
                 if (!(dirContext instanceof LdapContext)) {
-                    throw new IllegalArgumentException("When using attribute 'pageSize' for a ldap endpoint, you must provide a LdapContext (subclass of DirContext)");
+                    throw new IllegalArgumentException(
+                            "When using attribute 'pageSize' for a ldap endpoint, you must provide a LdapContext (subclass of DirContext)");
                 }
                 data = pagedSearch((LdapContext) dirContext, filter);
             }
@@ -107,7 +113,8 @@ public class LdapProducer extends DefaultProducer {
         } else if (context instanceof DirContext) {
             answer = (DirContext) context;
         } else if (context != null) {
-            String msg = "Found bean: " + remaining + " in Registry of type: " + context.getClass().getName() + " expected type was: " + DirContext.class.getName();
+            String msg = "Found bean: " + remaining + " in Registry of type: " + context.getClass().getName()
+                         + " expected type was: " + DirContext.class.getName();
             throw new NoSuchBeanException(msg);
         }
         return answer;
@@ -125,18 +132,18 @@ public class LdapProducer extends DefaultProducer {
     private List<SearchResult> pagedSearch(LdapContext ldapContext, String searchFilter) throws Exception {
         List<SearchResult> data = new ArrayList<>();
 
-        log.trace("Using paged ldap search, pageSize={}", pageSize);
+        LOG.trace("Using paged ldap search, pageSize={}", pageSize);
 
-        Control[] requestControls = new Control[]{new PagedResultsControl(pageSize, Control.CRITICAL)};
+        Control[] requestControls = new Control[] { new PagedResultsControl(pageSize, Control.CRITICAL) };
         ldapContext.setRequestControls(requestControls);
         do {
             List<SearchResult> pageResult = simpleSearch(ldapContext, searchFilter);
             data.addAll(pageResult);
-            log.trace("Page returned {} entries", pageResult.size());
+            LOG.trace("Page returned {} entries", pageResult.size());
         } while (prepareNextPage(ldapContext));
 
-        if (log.isDebugEnabled()) {
-            log.debug("Found a total of {} entries for ldap filter {}", data.size(), searchFilter);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found a total of {} entries for ldap filter {}", data.size(), searchFilter);
         }
 
         return data;
@@ -158,7 +165,7 @@ public class LdapProducer extends DefaultProducer {
         if (cookie == null) {
             return false;
         } else {
-            ldapContext.setRequestControls(new Control[]{new PagedResultsControl(pageSize, cookie, Control.CRITICAL)});
+            ldapContext.setRequestControls(new Control[] { new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
             return true;
         }
     }

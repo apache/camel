@@ -23,14 +23,12 @@ import org.apache.camel.Converter;
 public class ActiveMQConverter {
 
     /**
-     * Converts a URL in ActiveMQ syntax to a destination such as to support
-     * "queue://foo.bar" or 'topic://bar.whatnot". Things default to queues if
-     * no scheme. This allows ActiveMQ destinations to be passed around as
-     * Strings and converted back again.
+     * Converts a URL in ActiveMQ syntax to a destination such as to support "queue://foo.bar" or 'topic://bar.whatnot".
+     * Things default to queues if no scheme. This allows ActiveMQ destinations to be passed around as Strings and
+     * converted back again.
      *
-     * @param name is the name of the queue or the full URI using prefixes
-     *            queue:// or topic://
-     * @return the ActiveMQ destination
+     * @param  name is the name of the queue or the full URI using prefixes queue:// or topic://
+     * @return      the ActiveMQ destination
      */
     @Converter
     public ActiveMQDestination toDestination(String name) {

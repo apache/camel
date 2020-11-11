@@ -22,12 +22,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 /**
- * Integration test that verifies the ability of SJMS to correctly process
- * synchronous InOut exchanges from both the Producer and Consumer perspective
- * using a namedReplyTo destination.
+ * Integration test that verifies the ability of SJMS to correctly process synchronous InOut exchanges from both the
+ * Producer and Consumer perspective using a namedReplyTo destination.
  */
 public class SyncJmsInOutIT extends JmsTestSupport {
 
@@ -56,12 +57,12 @@ public class SyncJmsInOutIT extends JmsTestSupport {
             public void configure() throws Exception {
 
                 from("seda:start")
-                    .to("sjms:queue:in.foo?namedReplyTo=out.bar&exchangePattern=InOut")
-                    .to("mock:result");
+                        .to("sjms:queue:in.foo?namedReplyTo=out.bar&exchangePattern=InOut")
+                        .to("mock:result");
 
                 from("sjms:queue:in.foo?exchangePattern=InOut")
-                    .log("Using ${threadName} to process ${body}")
-                    .transform(body().prepend("Bye "));
+                        .log("Using ${threadName} to process ${body}")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

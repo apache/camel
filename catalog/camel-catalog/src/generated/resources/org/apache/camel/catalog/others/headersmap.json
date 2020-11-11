@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "headersmap",
+    "title": "Headersmap",
+    "description": "Fast case-insensitive headers map implementation",
+    "deprecated": false,
+    "firstVersion": "2.20.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-headersmap",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

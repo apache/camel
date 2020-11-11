@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.jdbc.PGDriver;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,28 +32,35 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
+ * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
  * <p/>
  * This requires using PostgreSQL 8.3 or newer.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event", syntax = "pgevent:host:port/database/channel",
-    label = "database,sql")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event",
+             syntax = "pgevent:host:port/database/channel",
+             category = { Category.DATABASE, Category.SQL })
 public class PgEventEndpoint extends DefaultEndpoint {
 
-    private static final String FORMAT1 = "^pgevent://([^:]*):(\\d+)/(\\w+)/(\\w+).*$";
-    private static final String FORMAT2 = "^pgevent://([^:]+)/(\\w+)/(\\w+).*$";
-    private static final String FORMAT3 = "^pgevent:///(\\w+)/(\\w+).*$";
-    private static final String FORMAT4 = "^pgevent:(\\w+)/(\\w+)/(\\w+).*$";
+    private static final Logger LOG = LoggerFactory.getLogger(PgEventEndpoint.class);
+
+    private static final String FORMAT1 = "^pgevent://([^:]*):(\\d+)/(.+)/(\\w+).*$";
+    private static final String FORMAT2 = "^pgevent://([^:]+)/(.+)/(\\w+).*$";
+    private static final String FORMAT3 = "^pgevent:///(.+)/(\\w+).*$";
+    private static final String FORMAT4 = "^pgevent:(.+)/(\\w+)/(\\w+).*$";
 
     @UriPath(defaultValue = "localhost")
     private String host = "localhost";
     @UriPath(defaultValue = "5432")
     private Integer port = 5432;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String database;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String channel;
     @UriParam(defaultValue = "postgres", label = "security", secret = true)
     private String user = "postgres";
@@ -65,7 +73,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
 
     private PGConnection dbConnection;
 
-    public PgEventEndpoint(String uri, PgEventComponent component)  {
+    public PgEventEndpoint(String uri, PgEventComponent component) {
         super(uri, component);
         this.uri = uri;
         parseUri();
@@ -86,7 +94,9 @@ public class PgEventEndpoint extends DefaultEndpoint {
             // ensure we can load the class
             ClassResolver classResolver = getCamelContext().getClassResolver();
             classResolver.resolveMandatoryClass(PGDriver.class.getName(), PgEventComponent.class.getClassLoader());
-            conn = (PGConnection) DriverManager.getConnection("jdbc:pgsql://" + this.getHost() + ":" + this.getPort() + "/" + this.getDatabase(), this.getUser(), this.getPass());
+            conn = (PGConnection) DriverManager.getConnection(
+                    "jdbc:pgsql://" + this.getHost() + ":" + this.getPort() + "/" + this.getDatabase(), this.getUser(),
+                    this.getPass());
         }
         return conn;
     }
@@ -97,30 +107,30 @@ public class PgEventEndpoint extends DefaultEndpoint {
      * @throws IllegalArgumentException if there is an error in the parameters
      */
     protected final void parseUri() throws IllegalArgumentException {
-        log.info("URI: {}", uri);
+        LOG.debug("URI: {}", uri);
         if (uri.matches(FORMAT1)) {
-            log.info("FORMAT1");
+            LOG.trace("FORMAT1");
             String[] parts = uri.replaceFirst(FORMAT1, "$1:$2:$3:$4").split(":");
             host = parts[0];
             port = Integer.parseInt(parts[1]);
             database = parts[2];
             channel = parts[3];
         } else if (uri.matches(FORMAT2)) {
-            log.info("FORMAT2");
+            LOG.trace("FORMAT2");
             String[] parts = uri.replaceFirst(FORMAT2, "$1:$2:$3").split(":");
             host = parts[0];
             port = 5432;
             database = parts[1];
             channel = parts[2];
         } else if (uri.matches(FORMAT3)) {
-            log.info("FORMAT3");
+            LOG.trace("FORMAT3");
             String[] parts = uri.replaceFirst(FORMAT3, "$1:$2").split(":");
             host = "localhost";
             port = 5432;
             database = parts[0];
             channel = parts[1];
         } else if (uri.matches(FORMAT4)) {
-            log.info("FORMAT4");
+            LOG.trace("FORMAT4");
             String[] parts = uri.replaceFirst(FORMAT4, "$1:$2").split(":");
             database = parts[0];
             channel = parts[1];
@@ -141,8 +151,9 @@ public class PgEventEndpoint extends DefaultEndpoint {
         }
 
         if (datasource == null && user == null) {
-            throw new IllegalArgumentException("A required parameter was "
-                    + "not set when creating this Endpoint (pgUser or pgDataSource)");
+            throw new IllegalArgumentException(
+                    "A required parameter was "
+                                               + "not set when creating this Endpoint (pgUser or pgDataSource)");
         }
     }
 
@@ -181,7 +192,8 @@ public class PgEventEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The database name
+     * The database name. The database name can take any characters because it is sent as a quoted identifier. It is
+     * part of the endpoint URI, so diacritical marks and non-Latin letters have to be URL encoded.
      */
     public void setDatabase(String database) {
         this.database = database;

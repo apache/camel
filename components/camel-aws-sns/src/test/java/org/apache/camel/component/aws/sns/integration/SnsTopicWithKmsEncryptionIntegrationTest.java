@@ -21,13 +21,15 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.sns.SnsConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SnsTopicWithKmsEncryptionIntegrationTest extends CamelTestSupport {
-    
+
     @Test
     public void sendInOnly() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -36,10 +38,10 @@ public class SnsTopicWithKmsEncryptionIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertNotNull(exchange.getIn().getHeader(SnsConstants.MESSAGE_ID));
     }
-    
+
     @Test
     public void sendInOut() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
@@ -48,17 +50,17 @@ public class SnsTopicWithKmsEncryptionIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
-        assertNotNull(exchange.getOut().getHeader(SnsConstants.MESSAGE_ID));
+
+        assertNotNull(exchange.getMessage().getHeader(SnsConstants.MESSAGE_ID));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("aws-sns://MyNewTopic1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&subject=The+subject+message&serverSideEncryptionEnabled=true&kmsMasterKeyId=RAW(xxx)");
+                        .to("aws-sns://MyNewTopic1?accessKey=RAW(xxxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&subject=The+subject+message&serverSideEncryptionEnabled=true&kmsMasterKeyId=RAW(xxx)");
             }
         };
     }

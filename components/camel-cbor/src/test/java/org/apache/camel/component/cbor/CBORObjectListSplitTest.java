@@ -23,20 +23,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 public class CBORObjectListSplitTest extends CamelTestSupport {
     @Test
-    public void testCBOR() throws InterruptedException, JsonProcessingException {
+    void testCBOR() throws InterruptedException, JsonProcessingException {
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedMessagesMatches(body().isInstanceOf(DummyObject.class));
-        
+
         DummyObject d1 = new DummyObject();
         d1.setDummy("value1");
         DummyObject d2 = new DummyObject();
         d2.setDummy("value2");
-        
+
         List<DummyObject> list = new ArrayList<>();
         list.add(d1);
         list.add(d2);
@@ -50,10 +52,10 @@ public class CBORObjectListSplitTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // you can specify the pojo class type for unmarshal the jason file
                 CBORDataFormat format = new CBORDataFormat();
                 format.useList();
@@ -62,7 +64,7 @@ public class CBORObjectListSplitTest extends CamelTestSupport {
             }
         };
     }
-    
+
     public static class DummyObject {
 
         private String dummy;

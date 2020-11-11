@@ -19,8 +19,8 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
-import org.junit.Test;
+import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -47,8 +47,9 @@ public class ThreadsDoTryCatchInterceptSendToAllEndpointIssueTest extends Contex
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").threads().doTry().to("log:try").throwException(new IllegalArgumentException("Forced")).doCatch(Exception.class).to("log:catch").choice()
-                    .when(body().contains("World")).to("log:world").stop().otherwise().to("log:other").stop().end().end();
+                from("direct:start").threads().doTry().to("log:try").throwException(new IllegalArgumentException("Forced"))
+                        .doCatch(Exception.class).to("log:catch").choice()
+                        .when(body().contains("World")).to("log:world").stop().otherwise().to("log:other").stop().end().end();
             }
         };
     }

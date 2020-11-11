@@ -36,15 +36,16 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class CxfMessageHelperTest extends Assert {
-    private static final String REQUEST_STRING =
-        "<testMethod xmlns=\"http://camel.apache.org/testService\"/>";
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class CxfMessageHelperTest {
+    private static final String REQUEST_STRING = "<testMethod xmlns=\"http://camel.apache.org/testService\"/>";
     private DefaultCamelContext context = new DefaultCamelContext();
 
-    
     // setup the default context for testing
     @Test
     public void testGetCxfInMessage() throws Exception {
@@ -56,8 +57,8 @@ public class CxfMessageHelperTest extends Assert {
                 headerFilterStrategy, exchange, false);
         // test message
         InputStream is = message.getContent(InputStream.class);
-        assertNotNull("The input stream should not be null", is);
-        assertEquals("Don't get the right message", toString(is), "hello world");
+        assertNotNull(is, "The input stream should not be null");
+        assertEquals("hello world", toString(is), "Don't get the right message");
 
         // DOMSource
         URL request = this.getClass().getResource("RequestBody.xml");
@@ -68,15 +69,15 @@ public class CxfMessageHelperTest extends Assert {
         exchange.getIn().setBody(source);
         message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
         is = message.getContent(InputStream.class);
-        assertNotNull("The input stream should not be null", is);
-        assertEquals("Don't get the right message", toString(is), REQUEST_STRING);
+        assertNotNull(is, "The input stream should not be null");
+        assertEquals(REQUEST_STRING, toString(is), "Don't get the right message");
 
         // File
         exchange.getIn().setBody(requestFile);
         message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
         is = message.getContent(InputStream.class);
-        assertNotNull("The input stream should not be null", is);
-        assertEquals("Don't get the right message", toString(is), REQUEST_STRING);
+        assertNotNull(is, "The input stream should not be null");
+        assertEquals(REQUEST_STRING, toString(is), "Don't get the right message");
 
         // transport header's case insensitiveness
         // String
@@ -84,12 +85,12 @@ public class CxfMessageHelperTest extends Assert {
         exchange.getIn().setHeader("soapAction", "urn:hello:world");
         message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
         // test message
-        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
-        
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>) message.get(Message.PROTOCOL_HEADERS));
+
         // verify there is no duplicate
-        assertNotNull("The headers must be present", headers);
-        assertTrue("There must be one header entry", headers.size() == 1);
-        
+        assertNotNull(headers, "The headers must be present");
+        assertTrue(headers.size() == 1, "There must be one header entry");
+
         // verify the soapaction can be retrieved in case-insensitive ways
         verifyHeader(headers, "soapaction", "urn:hello:world");
         verifyHeader(headers, "SoapAction", "urn:hello:world");
@@ -98,8 +99,8 @@ public class CxfMessageHelperTest extends Assert {
 
     private void verifyHeader(Map<String, List<String>> headers, String name, String value) {
         List<String> values = headers.get(name);
-        assertTrue("The entry must be available", values != null && values.size() == 1);
-        assertEquals("The value must match", values.get(0), value);
+        assertTrue(values != null && values.size() == 1, "The entry must be available");
+        assertEquals(values.get(0), value, "The value must match");
     }
 
     private String toString(InputStream is) throws IOException {

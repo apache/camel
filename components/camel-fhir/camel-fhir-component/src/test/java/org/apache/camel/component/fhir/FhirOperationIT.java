@@ -24,13 +24,15 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirOperationApiMethod;
 import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.IdType;
-import org.hl7.fhir.dstu3.model.IntegerType;
 import org.hl7.fhir.dstu3.model.Parameters;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link org.apache.camel.component.fhir.api.FhirOperation} APIs.
@@ -38,7 +40,8 @@ import org.slf4j.LoggerFactory;
 public class FhirOperationIT extends AbstractFhirTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FhirOperationIntegrationTest.class);
-    private static final String PATH_PREFIX = FhirApiCollection.getCollection().getApiName(FhirOperationApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = FhirApiCollection.getCollection().getApiName(FhirOperationApiMethod.class).getName();
 
     @Test
     public void testOnInstance() throws Exception {
@@ -60,9 +63,9 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
         final Parameters result = requestBodyAndHeaders("direct://ON_INSTANCE", null, headers);
 
         LOG.debug("onInstance: " + result);
-        assertNotNull("onInstance result", result);
+        assertNotNull(result, "onInstance result");
         Bundle bundle = (Bundle) result.getParameter().get(0).getResource();
-        assertNotNull("onInstance result", bundle);
+        assertNotNull(bundle, "onInstance result");
         IdType id = bundle.getEntry().get(0).getResource().getIdElement().toUnqualifiedVersionless();
         assertEquals(patient.getIdElement().toUnqualifiedVersionless(), id);
     }
@@ -87,9 +90,9 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
         final Parameters result = requestBodyAndHeaders("direct://ON_INSTANCE_VERSION", null, headers);
 
         LOG.debug("onInstance: " + result);
-        assertNotNull("onInstance result", result);
+        assertNotNull(result, "onInstance result");
         Bundle bundle = (Bundle) result.getParameter().get(0).getResource();
-        assertNotNull("onInstance result", bundle);
+        assertNotNull(bundle, "onInstance result");
         IdType id = bundle.getEntry().get(0).getResource().getIdElement().toUnqualifiedVersionless();
         assertEquals(patient.getIdElement().toUnqualifiedVersionless(), id);
     }
@@ -110,7 +113,7 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
         headers.put("CamelFhir.extraParameters", null);
 
         final Parameters result = requestBodyAndHeaders("direct://ON_SERVER", null, headers);
-        assertNotNull("onServer result", result);
+        assertNotNull(result, "onServer result");
     }
 
     @Test
@@ -132,12 +135,12 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
 
         final org.hl7.fhir.instance.model.api.IBaseResource result = requestBodyAndHeaders("direct://ON_TYPE", null, headers);
 
-        assertNotNull("onType result", result);
+        assertNotNull(result, "onType result");
         LOG.debug("onType: " + result);
     }
 
-    @Ignore("Not implemented yet in HAPI FHIR server side, see"
-    + " https://github.com/jamesagnew/hapi-fhir/blob/master/hapi-fhir-jpaserver-base/src/main/java/ca/uhn/fhir/jpa/dao/dstu3/FhirResourceDaoMessageHeaderDstu3.java#L33")
+    @Disabled("Not implemented yet in HAPI FHIR server side, see"
+              + " https://github.com/jamesagnew/hapi-fhir/blob/master/hapi-fhir-jpaserver-base/src/main/java/ca/uhn/fhir/jpa/dao/dstu3/FhirResourceDaoMessageHeaderDstu3.java#L33")
     @Test
     public void testProcessMessage() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -151,9 +154,10 @@ public class FhirOperationIT extends AbstractFhirTestSupport {
         // parameter type is java.util.Map
         headers.put("CamelFhir.extraParameters", null);
 
-        final org.hl7.fhir.instance.model.api.IBaseBundle result = requestBodyAndHeaders("direct://PROCESS_MESSAGE", null, headers);
+        final org.hl7.fhir.instance.model.api.IBaseBundle result
+                = requestBodyAndHeaders("direct://PROCESS_MESSAGE", null, headers);
 
-        assertNotNull("processMessage result", result);
+        assertNotNull(result, "processMessage result");
         LOG.debug("processMessage: " + result);
     }
 

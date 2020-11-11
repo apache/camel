@@ -19,7 +19,7 @@ package org.apache.camel.model;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ProcessDefinitionSetBodyTest extends ContextTestSupport {
 
@@ -43,7 +43,7 @@ public class ProcessDefinitionSetBodyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setBody(exchange -> FUNCTION_MESSAGE).to("mock:functionOutput").to("mock:output");
+                        .setBody(exchange -> FUNCTION_MESSAGE).to("mock:functionOutput").to("mock:output");
             }
         };
     }

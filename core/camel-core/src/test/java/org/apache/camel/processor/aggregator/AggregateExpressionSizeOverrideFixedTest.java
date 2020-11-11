@@ -23,7 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateExpressionSizeOverrideFixedTest extends ContextTestSupport {
 
@@ -48,7 +48,8 @@ public class AggregateExpressionSizeOverrideFixedTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).completionSize(header("mySize")).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2)
+                        .completionSize(header("mySize")).to("mock:aggregated");
             }
         };
     }

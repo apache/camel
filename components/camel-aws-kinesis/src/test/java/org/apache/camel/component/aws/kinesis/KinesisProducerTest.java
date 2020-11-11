@@ -22,22 +22,21 @@ import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.PutRecordRequest;
 import com.amazonaws.services.kinesis.model.PutRecordResult;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class KinesisProducerTest {
     private static final String SHARD_ID = "SHARD145";
     private static final String SEQUENCE_NUMBER = "SEQ123";
@@ -58,22 +57,21 @@ public class KinesisProducerTest {
     private Message inMessage;
     @Mock
     private PutRecordResult putRecordResult;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    @Mock(lenient = true, answer = Answers.RETURNS_DEEP_STUBS)
     private Exchange exchange;
 
     private KinesisProducer kinesisProducer;
-    @Before
+
+    @BeforeEach
     public void setup() throws Exception {
         when(kinesisEndpoint.getClient()).thenReturn(kinesisClient);
         when(kinesisEndpoint.getConfiguration()).thenReturn(kinesisConfiguration);
         when(kinesisEndpoint.getConfiguration().getStreamName()).thenReturn(STREAM_NAME);
 
-        when(exchange.getOut()).thenReturn(outMessage);
-        when(exchange.getIn()).thenReturn(inMessage);
-        when(exchange.getPattern()).thenReturn(ExchangePattern.InOut);
+        when(exchange.getMessage()).thenReturn(inMessage);
 
-        when(inMessage.getBody(ByteBuffer.class)).thenReturn(SAMPLE_BUFFER);
-        when(inMessage.getHeader(KinesisConstants.PARTITION_KEY)).thenReturn(PARTITION_KEY);
+        when(exchange.getIn().getBody(ByteBuffer.class)).thenReturn(SAMPLE_BUFFER);
+        when(exchange.getIn().getHeader(KinesisConstants.PARTITION_KEY)).thenReturn(PARTITION_KEY);
 
         when(putRecordResult.getSequenceNumber()).thenReturn(SEQUENCE_NUMBER);
         when(putRecordResult.getShardId()).thenReturn(SHARD_ID);
@@ -100,7 +98,7 @@ public class KinesisProducerTest {
     @Test
     public void shouldHaveProperHeadersWhenSending() throws Exception {
         String seqNoForOrdering = "1851";
-        when(inMessage.getHeader(KinesisConstants.SEQUENCE_NUMBER)).thenReturn(seqNoForOrdering);
+        when(exchange.getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER)).thenReturn(seqNoForOrdering);
 
         kinesisProducer.process(exchange);
 
@@ -110,7 +108,7 @@ public class KinesisProducerTest {
 
         assertEquals(PARTITION_KEY, request.getPartitionKey());
         assertEquals(seqNoForOrdering, request.getSequenceNumberForOrdering());
-        verify(outMessage).setHeader(KinesisConstants.SEQUENCE_NUMBER, SEQUENCE_NUMBER);
-        verify(outMessage).setHeader(KinesisConstants.SHARD_ID, SHARD_ID);
+        verify(inMessage).setHeader(KinesisConstants.SEQUENCE_NUMBER, SEQUENCE_NUMBER);
+        verify(inMessage).setHeader(KinesisConstants.SHARD_ID, SHARD_ID);
     }
 }

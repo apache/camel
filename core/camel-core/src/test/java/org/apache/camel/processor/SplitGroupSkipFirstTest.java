@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -50,9 +50,9 @@ public class SplitGroupSkipFirstTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // split by new line and group by 3, and skip the very first
-                    // element
-                    .split().tokenize("\n", 3, true).streaming().to("mock:group");
+                        // split by new line and group by 3, and skip the very first
+                        // element
+                        .split().tokenize("\n", 3, true).streaming().to("mock:group");
                 // END SNIPPET: e1
             }
         };

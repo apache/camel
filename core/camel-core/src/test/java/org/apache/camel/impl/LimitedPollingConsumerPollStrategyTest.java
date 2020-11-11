@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.engine.LimitedPollingConsumerPollStrategy;
 import org.apache.camel.support.service.ServiceHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
 
@@ -40,11 +42,11 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.start();
 
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should be suspended", consumer.isSuspended());
+        assertTrue(consumer.isSuspended(), "Should be suspended");
 
         consumer.stop();
     }
@@ -63,9 +65,9 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.start();
 
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should be suspended", consumer.isSuspended());
+        assertTrue(consumer.isSuspended(), "Should be suspended");
 
         consumer.stop();
     }
@@ -84,16 +86,16 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.start();
 
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
 
         // now force success
         consumer.setExceptionToThrowOnPoll(null);
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
 
         consumer.stop();
     }
@@ -113,25 +115,25 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
 
         // fail 2 times
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
 
         // now force success 2 times
         consumer.setExceptionToThrowOnPoll(null);
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
 
         // now fail again, after hitting limit at 3
         consumer.setExceptionToThrowOnPoll(expectedException);
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should be suspended", consumer.isSuspended());
+        assertTrue(consumer.isSuspended(), "Should be suspended");
 
         consumer.stop();
     }
@@ -155,16 +157,16 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
 
         consumer.run();
         consumer2.run();
-        assertTrue("Should still be started", consumer.isStarted());
-        assertTrue("Should still be started", consumer2.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
+        assertTrue(consumer2.isStarted(), "Should still be started");
         consumer.run();
         consumer2.run();
-        assertTrue("Should still be started", consumer.isStarted());
-        assertTrue("Should still be started", consumer2.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
+        assertTrue(consumer2.isStarted(), "Should still be started");
         consumer.run();
         consumer2.run();
-        assertTrue("Should be suspended", consumer.isSuspended());
-        assertTrue("Should still be started", consumer2.isStarted());
+        assertTrue(consumer.isSuspended(), "Should be suspended");
+        assertTrue(consumer2.isStarted(), "Should still be started");
 
         consumer.stop();
         consumer2.stop();
@@ -184,34 +186,34 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         consumer.start();
 
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should be suspended", consumer.isSuspended());
+        assertTrue(consumer.isSuspended(), "Should be suspended");
 
         // now start the consumer again
         ServiceHelper.resumeService(consumer);
 
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should be suspended", consumer.isSuspended());
+        assertTrue(consumer.isSuspended(), "Should be suspended");
 
         // now start the consumer again
         ServiceHelper.resumeService(consumer);
         // and let it succeed
         consumer.setExceptionToThrowOnPoll(null);
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
         consumer.run();
-        assertTrue("Should still be started", consumer.isStarted());
+        assertTrue(consumer.isStarted(), "Should still be started");
 
         consumer.stop();
     }

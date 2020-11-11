@@ -20,42 +20,46 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CamelSpringTest
 @ContextConfiguration
-public class JettyJmsTwowayTest extends AbstractJUnit4SpringContextTests {
-    
+public class JettyJmsTwowayTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     private static int port = AvailablePortFinder.getNextAvailable();
-    private static final String URL = "http://localhost:" + port + "/test";
+    private static final String URL = "http://localhost:" + port + "/JettyJmsTwowayTest";
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
         System.setProperty("JettyJmsTwowayTest.port", Integer.toString(port));
     }
 
-
     @Autowired
     protected CamelContext camelContext;
 
     @Test
-    public void testSendingRequest() throws Exception {
-        assertNotNull("the camelContext should not be null", camelContext);
+    void testSendingRequest() {
+        assertNotNull(camelContext, "The camelContext should not be null");
         ProducerTemplate template = camelContext.createProducerTemplate();
         Exchange exchange = template.send(URL, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody("<hello>Willem</hello>");
                 exchange.getIn().setHeader("Operation", "greetMe");
             }
 
         });
-        assertEquals("get result ", "<response><hello>Willem</hello></response>", exchange.getOut().getBody(String.class));
+        assertEquals("<response><hello>Willem</hello></response>", exchange.getMessage().getBody(String.class));
         template.stop();
     }
 }

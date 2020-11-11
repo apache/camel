@@ -20,21 +20,21 @@ import javax.xml.namespace.QName;
 
 import com.example.customerservice.GetCustomersByName;
 import org.apache.camel.dataformat.soap.name.QNameStrategy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QNameStrategyTest {
-    
+
     /**
-     * The strategy should always produce the QName that
-     * it was given on the constructor
+     * The strategy should always produce the QName that it was given on the constructor
      */
     @Test
     public void testQName() {
         QName elementName = new QName("http://my.name.org", "myElement");
         QNameStrategy strategy = new QNameStrategy(elementName);
-        
+
         QName actualElementName = strategy.findQNameForSoapActionOrType(null, GetCustomersByName.class);
-        Assert.assertEquals(elementName, actualElementName);
+        assertEquals(elementName, actualElementName);
     }
 }

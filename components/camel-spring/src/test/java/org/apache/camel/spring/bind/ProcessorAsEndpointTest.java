@@ -18,13 +18,15 @@ package org.apache.camel.spring.bind;
 
 import java.util.List;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ProcessorAsEndpointTest extends SpringTestSupport {
     protected Object body = "<hello>world!</hello>";
@@ -33,10 +35,10 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
     public void testSendingToProcessorEndpoint() throws Exception {
         ProcessorStub processor = getMandatoryBean(ProcessorStub.class, "myProcessor");
 
-        template.sendBody("myProcessor", body);
+        template.sendBody("bean:myProcessor", body);
 
         List<Exchange> list = processor.getExchanges();
-        assertEquals("Received exchange list: " + list, 1, list.size());
+        assertEquals(1, list.size(), "Received exchange list: " + list);
 
         log.debug("Found exchanges: " + list);
     }
@@ -44,8 +46,6 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
     @Test
     public void testSendingToNonExistentEndpoint() throws Exception {
         String uri = "unknownEndpoint";
-        Endpoint endpoint = context.getEndpoint(uri);
-        assertNull("Should not have found an endpoint! Was: " + endpoint, endpoint);
         try {
             template.sendBody(uri, body);
             fail("We should have failed as this is a bad endpoint URI");

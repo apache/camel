@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JdbcAggregateRecoverWithSedaTest extends AbstractJdbcAggregationTestSupport {
 
@@ -72,7 +72,7 @@ public class JdbcAggregateRecoverWithSedaTest extends AbstractJdbcAggregationTes
                 // which confirms the exchange when its complete.
                 from("seda:foo")
                         .delay(1000)
-                                // simulate errors the first two times
+                        // simulate errors the first two times
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 int count = counter.incrementAndGet();

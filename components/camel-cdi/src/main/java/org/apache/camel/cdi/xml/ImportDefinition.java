@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * The &lt;import&gt; tag element.
  *
-*/
+ */
 @XmlRootElement(name = "import")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ImportDefinition {

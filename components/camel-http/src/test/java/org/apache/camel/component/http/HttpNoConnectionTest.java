@@ -20,34 +20,39 @@ import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.http.common.HttpMethods.GET;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpNoConnectionTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    private String endpointUrl;
+
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/search", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
+
+        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -59,9 +64,7 @@ public class HttpNoConnectionTest extends BaseHttpTest {
 
     @Test
     public void httpConnectionOk() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request(endpointUrl + "/search", exchange1 -> {
         });
 
         assertExchange(exchange);
@@ -69,14 +72,14 @@ public class HttpNoConnectionTest extends BaseHttpTest {
 
     @Test
     public void httpConnectionNotOk() throws Exception {
-        String url = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/search";
+        String url = endpointUrl + "/search";
         // stop server so there are no connection
         localServer.stop();
         localServer.awaitTermination(1000, TimeUnit.MILLISECONDS);
 
         Exchange reply = template.request(url, null);
         Exception e = reply.getException();
-        assertNotNull("Should have thrown an exception", e);
+        assertNotNull(e, "Should have thrown an exception");
         ConnectException cause = assertIsInstanceOf(ConnectException.class, e);
         assertTrue(cause.getMessage().contains("failed"));
     }

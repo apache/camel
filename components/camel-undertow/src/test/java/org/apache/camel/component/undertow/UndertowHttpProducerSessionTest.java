@@ -21,23 +21,23 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
-import org.apache.camel.http.common.cookie.InstanceCookieHandler;
+import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
+import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class UndertowHttpProducerSessionTest extends CamelTestSupport {
     private static volatile int port;
-    
+
     @BindToRegistry("instanceCookieHandler")
     private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
-    
+
     @BindToRegistry("exchangeCookieHandler")
     private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
     }
@@ -81,37 +81,38 @@ public class UndertowHttpProducerSessionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("undertow:" + getTestServerEndpointSessionUrl())
-                    .to("undertow:" + getTestServerEndpointSessionUrl())
-                    .to("mock:result");
+                        .to("undertow:" + getTestServerEndpointSessionUrl())
+                        .to("undertow:" + getTestServerEndpointSessionUrl())
+                        .to("mock:result");
 
                 from("direct:instance")
-                    .to("undertow:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
-                    .to("undertow:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
-                    .to("mock:result");
+                        .to("undertow:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
+                        .to("undertow:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
+                        .to("mock:result");
 
                 from("direct:exchange")
-                    .to("undertow:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
-                    .to("undertow:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
-                    .to("mock:result");
+                        .to("undertow:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
+                        .to("undertow:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
+                        .to("mock:result");
 
                 from(getTestServerEndpointSessionUri())
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            Message message = exchange.getIn();
-                            String body = message.getBody(String.class);
-                            // Undertow servers do not support sessions or
-                            // cookies, so we fake them
-                            if (message.getHeader("Cookie") != null && message.getHeader("Cookie", String.class).contains("JSESSIONID")) {
-                                message.setBody("Old " + body);
-                            } else {
-                                message.setHeader("Set-Cookie", "JSESSIONID=nxojb3aum8i5100j6lyvxdpn6;Path=/");
-                                message.setHeader("Expires", "Thu, 01 Jan 1970 00:00:00 GMT");
-                                message.setBody("New " + body);
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                Message message = exchange.getIn();
+                                String body = message.getBody(String.class);
+                                // Undertow servers do not support sessions or
+                                // cookies, so we fake them
+                                if (message.getHeader("Cookie") != null
+                                        && message.getHeader("Cookie", String.class).contains("JSESSIONID")) {
+                                    message.setBody("Old " + body);
+                                } else {
+                                    message.setHeader("Set-Cookie", "JSESSIONID=nxojb3aum8i5100j6lyvxdpn6;Path=/");
+                                    message.setHeader("Expires", "Thu, 01 Jan 1970 00:00:00 GMT");
+                                    message.setBody("New " + body);
+                                }
                             }
-                        }
-                    });
+                        });
             }
         };
     }

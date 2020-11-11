@@ -19,18 +19,18 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpHeaderFilterStrategyTest {
 
     private NettyHttpHeaderFilterStrategy filter;
     private Exchange exchange;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         filter = new NettyHttpHeaderFilterStrategy();
         exchange = new DefaultExchange(new DefaultCamelContext());

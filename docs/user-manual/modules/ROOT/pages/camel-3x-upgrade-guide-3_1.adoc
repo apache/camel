@@ -1,0 +1,559 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.0 to 3.1
+
+=== camel-ahc, camel-netty-http, camel-undertow
+
+These Camel components now no longer have dependency on Javax Servlet.
+
+=== camel-undertow
+
+The exception class `HttpOperationFailedException` is now from package `org.apache.camel.http.base` instead of `org.apache.camel.http.common`.
+The Camel undertow producer throws this exception.
+
+=== came-bean
+
+The bean component has been changed to behave as singleton scoped by default.
+This means that the bean is created or looked up once and reused.
+
+The option `cache` has been deprecated in favour of the new `scope` option that by default is `Singleton`. You can set this to `Prototype` to use the old behaviour.
+
+[NOTE]
+====
+Setting this to Prototype will let Camel create/lookup a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which has their own settings for setting bean scopes.
+====
+
+=== camel-etcd
+
+The `camel-etcd` component has changed its endpoint syntax from `etcd:action/path` to
+`etcd-keys:path`, `etcd-stats:path`, or `etcd-watch:path`.
+
+For example before
+
+[source,text]
+----
+etcd:stats/leader
+----
+
+Should be changed to
+----
+etcd-stats:leader
+----
+
+This change was needed as the 3 actions could not share the same component/endpoint and had to be separated.
+
+=== camel-ftp
+
+ The stepwise functionality (stepwise=true) is not supported for stream download (treamDownload=true).
+
+=== camel-irc
+
+The `camel-irc` component has changed its endpoint syntax and removed option #room as a part of the url path. Allowed syntax is:
+
+[source,text]
+----
+irc:nick@host[:port]?[options]
+----
+
+=== camel-milo
+
+The `camel-milo` client component has changed its endpoint syntax from `milo-client:tcp` to `milo-client:opc.tcp`.
+For example before
+
+[source,text]
+----
+milo-client:tcp://foo:bar@localhost:1234
+----
+
+Should be changed to
+----
+milo-client:opc.tcp://foo:bar@localhost:1234
+----
+
+The `camel-milo` server component requires Java 9 at runtime.
+Property `strictEndpointUrlsEnabled` is no longer supported.
+Properties`hostName` and `serverName` are replaced by `path`.
+To successfully use certificates for secured communication, JCE Jurisdiction Policy File Default
+has to be *Unlimited* (which is by default since Java 9+).
+
+=== camel-nats
+
+The `camel-nats` component has changed its endpoint syntax from `nats:servers` to `nats:topic`.
+For example before
+
+[source,text]
+----
+nats:myserver:4222?topic=myTopic
+----
+
+Should be changed to
+----
+nats:myTopic?servers=myserver:4222
+----
+
+This change is motivated by allowing to configure servers on component level,
+and also for Spring Boot auto-configuration etc.
+
+=== camel-nsq
+
+The `camel-nsq` component has changed its endpoint syntax from `nsq:servers` to `nsq:topic`.
+For example before
+
+[source,text]
+----
+nsq:myserver:4161/myTopic
+----
+
+Should be changed to
+----
+nsq:myTopic?servers=myserver:4161
+----
+
+This change is motivated by allowing to configure servers on component level,
+and also for Spring Boot auto-configuration etc.
+
+=== camel-ipfs
+
+The `camel-ipfs` component has changed its endpoint syntax from `nsq:host:port/command` to `ipfs:command`.
+The host and port is now configured on the component level instead.
+
+For example before
+
+[source,text]
+----
+ipfs:127.0.0.1:5001/add
+----
+
+Should be changed to
+----
+ipfs:add
+----
+
+=== camel-xmlsecurity
+
+The `camel-xmlsecurity` component has changed its endpoint syntax from `xmlsecurity:command/name` to
+`xmlsecurity-sign:name`, `xmlsecurity-verify:name`.
+
+For example before
+
+[source,text]
+----
+xmlsecurity:verify/foo
+----
+
+Should be changed to
+----
+xmlsecurity-verify:foo
+----
+
+This change was needed as the 2 commands could not share the same component/endpoint and had to be separated.
+
+=== spi-annotations
+
+The `spi-annotations` JAR is mandatory but was mistakenly defined as optional scope. The content of this JAR
+is now embedded directly into `camel-api` JAR so end users does not have to include or depend on `spi-annotations` JAR anymore.
+
+=== camel-core-engine and camel-jaxp
+
+XML and JAXB has been moved out of camel-base and camel-core-engine.
+
+The module camel-jaxp has been renamed to camel-xml-jaxp.
+
+The camel-xml-jaxp JAR has XML parsers and type converters.
+The camel-xml-jaxb has support for loading XML DSL routes using JAXB.
+An alternative is to use the new camel-xml-io for loading XML routes which is more light-weight and faster than JAXB.
+
+=== JAXB is now optional
+
+JAXB is now optional in Camel and only needed when using XML routes with the `camel-xml-jaxb` JAR
+for loading and parsing the routes with JAXB. There is an alternative implementation with `camel-xml-io` (see above).
+
+This means that `jaxb-core` and `jaxb-impl` JARs no longer are needed on the classpath and as such has been removed
+as dependency in the various Camel `pom.xml` files.
+
+There are a number of components that uses JAXB such as `camel-spring`, `camel-blueprint`, `camel-cdi` for their support
+of using XML for beans and Camel XML routes. And a few components such as `camel-soap` etc.
+
+But at general then Camel is now lighter in classpath dependency by not requiring to have JAXB present.
+
+=== Package scanning @TypeConverter
+
+Camel has now been configured to not package scan for custom `@Converter` classes on startup.
+Type converters are now loaded and registered in faster way via source code generated loader classes
+by having `@Converter(loader = true)` specified. If you have custom converters and have not migrated to use
+source code generated loaders, you can enable package scanning by setting
+
+[source,java]
+----
+camelContext.setLoadTypeConverters(true);
+----
+
+And in XML:
+[source,xml]
+----
+<camelContext loadTypeConverters="true">
+...
+</camelContext>
+----
+
+And in Spring Boot `application.properties`:
+[source,properties]
+----
+camel.loadTypeConverters=true
+----
+
+=== Graceful Shutdown Timeout
+
+When shutting down Camel, then the default timeout has changed from 300 seconds (5 minutes) to 45 seconds.
+The 45 seconds was chosen as 30 seconds is a common timeout to use for remote protocols, so we wanted to give
+Camel a bit more time, and hence added 15 seconds so the default is 45 seconds.
+
+=== Message History
+
+The message history is now default disabled (due to optimize core for lower footprint out of the box).
+See the xref:{eip-vc}:eips:message-history.adoc[Message History] documentation for how to enabled message history.
+
+=== Inflight Repository
+
+The inflight repository now does no longer allow browsing each individual exchange (due to optimize core for lower footprint out of the box).
+To enable browsing then you can turn this on via:
+
+[source,java]
+----
+    context.getInflightRepository().setInflightBrowseEnabled(true);
+----
+
+And in XML DSL:
+
+[source,xml]
+----
+<camelContext inflightRepositoryBrowseEnabled="true">
+
+</camelContext>
+----
+
+=== Component Extension Verifier
+
+When using component verifier (`org.apache.camel.component.extension.ComponentVerifierExtension`) then you
+would know need to add `camel-core-catalog` to the classpath to make this useable. If the JAR is missing,
+there will be an exception stating that `RuntimeCamelCatalog` is not found and that this JAR should be added.
+
+=== ManagedRuntimeCatalog
+
+The `ManagedRuntimeCatalog` JMX MBean is removed and no longer available.
+
+=== Spring Boot JMX
+
+The `camel-management` dependency of `camel-spring-boot` was removed as Spring Boot 2.2+ disables JMX by default.
+
+To continue using JMX with Camel Spring Boot add the following dependency:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-management</artifactId>
+</dependency>
+----
+
+=== Custom components
+
+Camel now uses Camel Package Maven Plugin instead of `camel-apt` APT compiler to generate component meta data.
+
+Custom components should then change in the pom.xml from:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>apt</artifactId>
+  <scope>provided</scope>
+</dependency>
+----
+
+To the following:
+
+[source,xml]
+----
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${camel-version}</version>
+        <executions>
+          <execution>
+            <id>generate</id>
+            <goals>
+              <goal>generate-component</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>add-source</goal>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>src/generated/java</source>
+              </sources>
+              <resources>
+                <resource>
+                  <directory>src/generated/resources</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+      Recompile source after generated loader classes have been created.
+      The maven-compiler-plugin must be defined in the POM after the
+      camel-package-maven-plugin so recompile runs after generated
+      sources have been created.
+
+      Adjust configuration for the JDK version your project uses.
+      -->
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+          <configuration>
+              <source>1.11</source>
+              <target>1.11</target>
+          </configuration>
+          <executions>
+              <execution>
+                  <id>recompile</id>
+                  <goals>
+                      <goal>compile</goal>
+                  </goals>
+                  <phase>process-classes</phase>
+              </execution>
+          </executions>
+      </plugin>
+----
+
+=== API changes
+
+==== log changed to private static LOG
+
+The `ServiceSupport` class has changed its logging from instance to static, which means any inherited class that
+uses `log` would need to change the code to compile. This may happen in custom Camel components.
+
+Before you may have:
+
+[source,java]
+----
+    log.debug("Sending message to foobar service: {}", messageId);
+----
+
+You then need to migrate the logging to also be static:
+
+[source,java]
+----
+    private static final Logger LOG = LoggerFactory.getLogger(FooBarProducer.class);
+
+    LOG.debug("Sending message to foobar service: {}", messageId);
+----
+
+==== Exchange
+
+The `Exchange` API has been modified slightly as part of an optimization effort.
+The return value of `getCreated` was changed from `java.util.Date` to `long` which is the time millis.
+The `Exchange.CREATED_TIMESTAMP` is no longer stored as exchange property, but you should use the `getCreated` method on `Exchange`.
+The return value of `isExternalRedelivered` was changed from `Boolean` to `boolean`.
+
+Some of the advanced and API for component developers on `Exchange` has been moved to an extended interface `ExtendedExchange`.
+The following methods have been moved:
+
+- setFromEndpoint
+- setFromRouteId
+- setUnitOfWork
+- addOnCompletion
+- containsOnCompletion
+- handoverCompletions
+
+You can use these methods by adapting to the extended exchange as shown below:
+
+[source,java]
+----
+exchange.adapt(ExtendedExchange.class).addOnCompletion(...);
+----
+
+==== Message
+
+The message ID will now default to use the same id as Exchange ID as messages are associated with the exchange
+and using different IDs does not offer much value. Another reason is to optimize for performance to avoid generating new IDs.
+A few Camel components do provide their own message IDs such as the JMS components.
+
+==== UnitOfWork
+
+Advanced Camel users whom implement a custom `UnitOfWork` should implement the new `isBeforeAfterProcess()' method and return true or false,
+whether Camel should invoke the before and after processor methods.
+
+The method `getId` has been removed.
+
+==== Cookies
+
+Cookies from `camel-http-common` has been moved into a new `camel-http-base` JAR.
+The package `org.apache.camel.http.common.cookie` is renamed to `org.apache.camel.http.base.cookie`.
+
+==== Exchange.ROUTE_STOP
+
+To signal an `Exchange` to stop continue routing has changed from setting the exchange property `Exchange.ROUTE_STOP` to true.
+Instead you should now use the `setRouteStop` method on the `Exchange` API.
+
+[source,java]
+----
+    exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+----
+
+Should now be:
+[source,java]
+----
+    exchange.setRouteStop(true);
+----
+
+==== Exchange.ROLLBACK_ONLY and Exchange.ROLLBACK_ONLY_LAST
+
+To signal an `Exchange` to rollback a transaction has changed from setting the exchange property `Exchange.ROLLBACK_ONLY` to true.
+Instead you should now use the `setRollbackOnly` method on the `Exchange` API (the same for rollback only last).
+
+[source,java]
+----
+    exchange.setProperty(Exchange.ROLLBACK_ONLY, Boolean.TRUE);
+----
+
+Should now be:
+
+[source,java]
+----
+    exchange.setRollbackOnly(true);
+----
+
+==== Exchange.ERRORHANDLER_HANDLED
+
+The exchange property `Exchange.ERRORHANDLER_HANDLED` was used to indicate that the error handling mechanism for a given exchange
+had completed.  This property sometimes had to be conveyed by aggregation strategies, so instead of
+
+[source,java]
+----
+    oldExchange.getProperties().put(
+            Exchange.ERRORHANDLER_HANDLED,
+            newExchange.getProperties().get(Exchange.ERRORHANDLER_HANDLED));
+----
+
+one should now use:
+
+[source,java]
+----
+    Boolean handled = newExchange.adapt(ExtendedExchange.class)
+            .getErrorHandlerHandled();
+    oldExchange.adapt(ExtendedExchange.class)
+            .setErrorHandlerHandled(handled);
+----
+
+==== ModelHelper removed
+
+The class `org.apache.camel.model.ModelHelper` has been removed. Instead you can use its functionality from `ExtendedCamelContext` by
+the `getModelToXMLDumper` and `getXMLRoutesDefinitionLoader` methods which has APIs similar to `ModelHelper`.
+
+==== JsonSchemaHelper removed
+
+The class `org.apache.camel.tooling.util.JSonSchemaHelper` has been removed. Instead you can use utils coming from camel-util-json
+and the class `org.apache.camel.tooling.util.PackageHelper`
+
+==== camel-xml-jaxp
+
+The class `org.apache.camel.processor.validation.PredicateValidatingProcessor` has moved from `camel-xml-jaxp` JAR
+to `camel-support` JAR and renamed to `org.apache.camel.support.processor.PredicateValidatingProcessor`.
+
+==== Java DSL
+
+The Java DSL has been revisited and the following methods have been removed:
+
+* ExpressionClause::body(Supplier<Object>)
+* MulticastDefinition::onPrepare(Supplier<Processor>)
+* ProcessorDefinition::process(Supplier<Processor>)
+* ProcessorDefinition::setBody(Supplier<Result>)
+* RecipientListDefinition::onPrepare(Supplier<Processor>)
+* SplitDefinition::onPrepare(Supplier<Processor>)
+* WireTapDefinition::newExchange(Supplier<Processor>)
+* WireTapDefinition::onPrepare(Supplier<Processor>)
+
+This change is motivated by the need to remove method ambiguity for untyped languages such as Groovy and JavaScript, for more info see https://issues.apache.org/jira/browse/CAMEL-14300
+
+==== CamelContext
+
+Some unused methods have been removed from `CamelContext` which were not part of the public API. The following methods have been removed:
+
+* getProducerServicePool
+* setProducerServicePool
+* getPollingConsumerServicePool
+* setPollingConsumerServicePool
+
+==== Internal API changes
+
+Removed the method `getProcessors` from `Pipeline` as you should use the `next` method instead to access a read-only view of the processors.
+
+==== @Experimental
+
+The `@Experimental` annotation is moved from `meta-annotations` JAR to `camel-api`
+and moved from package `org.apache.camel.meta` to `org.apache.camel`.
+And the meta-annotations has been removed.
+
+==== Property Placeholders
+
+The support for out-of-band property placeholders has been removed.
+This means that XML that were using the `http://camel.apache.org/schema/placeholder`
+namespace and that the java builders using the `.placeholder(key, value).` have to
+be modified.
+
+[source,java]
+----
+    from("direct:start")
+        .multicast()
+        .placeholder("stopOnException", "stop")
+        .to("mock:a")
+----
+should be rewritten as:
+[source,java]
+----
+    from("direct:start")
+        .multicast()
+        .stopOnException("{{stop}}")
+        .to("mock:a")
+----
+
+and
+[source,xml]
+----
+   <route>
+        <from uri="direct:start"/>
+        <multicast prop:stopOnException="stop">
+            <to uri="mock:a"/>
+        </multicast>
+    </route>
+----
+should be rewritten as:
+[source,xml]
+----
+   <route>
+        <from uri="direct:start"/>
+        <multicast stopOnException="{{stop}}">
+            <to uri="mock:a"/>
+        </multicast>
+    </route>
+----
+

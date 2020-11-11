@@ -16,13 +16,15 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -32,18 +34,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Constants;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.AbstractLobCreatingPreparedStatementCallback;
-import org.springframework.jdbc.core.support.AbstractLobStreamingResultSetExtractor;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.jdbc.support.lob.LobHandler;
@@ -54,25 +55,28 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.FileCopyUtils;
 
 /**
- * JDBC based {@link org.apache.camel.spi.AggregationRepository}
- * JdbcAggregationRepository will only preserve any Serializable compatible
- * data types. If a data type is not such a type its dropped and a WARN is
- * logged. And it only persists the Message body and the Message headers.
- * The Exchange properties are not persisted.
+ * JDBC based {@link org.apache.camel.spi.AggregationRepository} JdbcAggregationRepository will only preserve any
+ * Serializable compatible data types. If a data type is not such a type its dropped and a WARN is logged. And it only
+ * persists the Message body and the Message headers. The Exchange properties are not persisted.
  */
-public class JdbcAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
+public class JdbcAggregationRepository extends ServiceSupport
+        implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
 
     protected static final String EXCHANGE = "exchange";
     protected static final String ID = "id";
     protected static final String BODY = "body";
 
+    // optimistic locking: version identifier needed to avoid the lost update problem
+    private static final String VERSION = "version";
+    private static final String VERSION_PROPERTY = "CamelOptimisticLockVersion";
+
     private static final Logger LOG = LoggerFactory.getLogger(JdbcAggregationRepository.class);
     private static final Constants PROPAGATION_CONSTANTS = new Constants(TransactionDefinition.class);
 
-    private JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper = new DefaultJdbcOptimisticLockingExceptionMapper();
+    private JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper
+            = new DefaultJdbcOptimisticLockingExceptionMapper();
     private PlatformTransactionManager transactionManager;
     private DataSource dataSource;
     private TransactionTemplate transactionTemplate;
@@ -100,7 +104,8 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     /**
      * Creates an aggregation repository with the three mandatory parameters
      */
-    public JdbcAggregationRepository(PlatformTransactionManager transactionManager, String repositoryName, DataSource dataSource) {
+    public JdbcAggregationRepository(PlatformTransactionManager transactionManager, String repositoryName,
+                                     DataSource dataSource) {
         this.setRepositoryName(repositoryName);
         this.setTransactionManager(transactionManager);
         this.setDataSource(dataSource);
@@ -127,8 +132,10 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     @Override
-    public Exchange add(final CamelContext camelContext, final String correlationId,
-                        final Exchange oldExchange, final Exchange newExchange) throws OptimisticLockingException {
+    public Exchange add(
+            final CamelContext camelContext, final String correlationId,
+            final Exchange oldExchange, final Exchange newExchange)
+            throws OptimisticLockingException {
 
         try {
             return add(camelContext, correlationId, newExchange);
@@ -150,10 +157,10 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                 final String key = correlationId;
 
                 try {
-                    LOG.debug("Adding exchange with key: [{}]", key);
+                    LOG.debug("Adding exchange with key {}", key);
 
                     boolean present = jdbcTemplate.queryForObject(
-                            "SELECT COUNT(*) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", Integer.class, key) != 0;
+                            "SELECT COUNT(1) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", Integer.class, key) != 0;
 
                     // Recover existing exchange with that ID
                     if (isReturnOldExchange() && present) {
@@ -161,9 +168,12 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                     }
 
                     if (present) {
-                        update(camelContext, correlationId, exchange, getRepositoryName());
+                        long version = exchange.getProperty(VERSION_PROPERTY, Long.class);
+                        LOG.debug("Updating record with key {} and version {}", key, version);
+                        update(camelContext, correlationId, exchange, getRepositoryName(), version);
                     } else {
-                        insert(camelContext, correlationId, exchange, getRepositoryName());
+                        LOG.debug("Inserting record with key {}", key);
+                        insert(camelContext, correlationId, exchange, getRepositoryName(), 1L);
                     }
 
                 } catch (Exception e) {
@@ -176,18 +186,23 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * Updates the current exchange details in the given repository table
+     * Updates the current exchange details in the given repository table.
      *
-     * @param camelContext   the current CamelContext
-     * @param key            the correlation key
-     * @param exchange       the aggregated exchange
-     * @param repositoryName The name of the table
+     * @param camelContext   Current CamelContext
+     * @param key            Correlation key
+     * @param exchange       Aggregated exchange
+     * @param repositoryName Table's name
+     * @param version        Version identifier
      */
-    protected void update(final CamelContext camelContext, final String key, final Exchange exchange, String repositoryName) throws Exception {
+    protected void update(
+            final CamelContext camelContext, final String key, final Exchange exchange, String repositoryName, Long version)
+            throws Exception {
         StringBuilder queryBuilder = new StringBuilder()
                 .append("UPDATE ").append(repositoryName)
                 .append(" SET ")
-                .append(EXCHANGE).append(" = ?");
+                .append(EXCHANGE).append(" = ?")
+                .append(", ")
+                .append(VERSION).append(" = ?");
         if (storeBodyAsText) {
             queryBuilder.append(", ").append(BODY).append(" = ?");
         }
@@ -198,29 +213,35 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
             }
         }
 
-        queryBuilder.append(" WHERE ").append(ID).append(" = ?");
+        queryBuilder.append(" WHERE ")
+                .append(ID).append(" = ?")
+                .append(" AND ")
+                .append(VERSION).append(" = ?");
 
         String sql = queryBuilder.toString();
-        insertAndUpdateHelper(camelContext, key, exchange, sql, false);
+        updateHelper(camelContext, key, exchange, sql, version);
     }
 
     /**
-     * Inserts a new record into the given repository table.
-     * note : the exchange properties are NOT persisted.
+     * Inserts a new record into the given repository table. Note: the exchange properties are NOT persisted.
      *
-     * @param camelContext   the current CamelContext
-     * @param correlationId  the correlation key
-     * @param exchange       the aggregated exchange to insert. The headers will be persisted but not the properties.
-     * @param repositoryName The name of the table
+     * @param camelContext   Current CamelContext
+     * @param correlationId  Correlation key
+     * @param exchange       Aggregated exchange to insert
+     * @param repositoryName Table's name
+     * @param version        Version identifier
      */
-    protected void insert(final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName) throws Exception {
-        // The default totalParameterIndex is 2 for ID and Exchange. Depending on logic this will be increased
-        int totalParameterIndex = 2;
+    protected void insert(
+            final CamelContext camelContext, final String correlationId, final Exchange exchange, String repositoryName,
+            Long version)
+            throws Exception {
+        // The default totalParameterIndex is 3 for ID, Exchange and version. Depending on logic this will be increased.
+        int totalParameterIndex = 3;
         StringBuilder queryBuilder = new StringBuilder()
                 .append("INSERT INTO ").append(repositoryName)
-                .append('(')
-                .append(EXCHANGE).append(", ")
-                .append(ID);
+                .append('(').append(EXCHANGE)
+                .append(", ").append(ID)
+                .append(", ").append(VERSION);
 
         if (storeBodyAsText) {
             queryBuilder.append(", ").append(BODY);
@@ -243,20 +264,21 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
 
         String sql = queryBuilder.toString();
 
-        insertAndUpdateHelper(camelContext, correlationId, exchange, sql, true);
+        insertHelper(camelContext, correlationId, exchange, sql, version);
     }
 
-    protected int insertAndUpdateHelper(final CamelContext camelContext, final String key, final Exchange exchange, String sql, final boolean idComesFirst) throws Exception {
+    protected int insertHelper(
+            final CamelContext camelContext, final String key, final Exchange exchange, String sql, final Long version)
+            throws Exception {
         final byte[] data = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
-        Integer updateCount = jdbcTemplate.execute(sql,
+        Integer insertCount = jdbcTemplate.execute(sql,
                 new AbstractLobCreatingPreparedStatementCallback(getLobHandler()) {
                     @Override
                     protected void setValues(PreparedStatement ps, LobCreator lobCreator) throws SQLException {
                         int totalParameterIndex = 0;
                         lobCreator.setBlobAsBytes(ps, ++totalParameterIndex, data);
-                        if (idComesFirst) {
-                            ps.setString(++totalParameterIndex, key);
-                        }
+                        ps.setString(++totalParameterIndex, key);
+                        ps.setLong(++totalParameterIndex, version);
                         if (storeBodyAsText) {
                             ps.setString(++totalParameterIndex, exchange.getIn().getBody(String.class));
                         }
@@ -266,21 +288,48 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                                 ps.setString(++totalParameterIndex, headerValue);
                             }
                         }
-                        if (!idComesFirst) {
-                            ps.setString(++totalParameterIndex, key);
-                        }
                     }
                 });
-        return updateCount == null ? 0 : updateCount;
+        return insertCount == null ? 0 : insertCount;
+    }
+
+    protected int updateHelper(
+            final CamelContext camelContext, final String key, final Exchange exchange, String sql, final Long version)
+            throws Exception {
+        final byte[] data = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
+        Integer updateCount = jdbcTemplate.execute(sql,
+                new AbstractLobCreatingPreparedStatementCallback(getLobHandler()) {
+                    @Override
+                    protected void setValues(PreparedStatement ps, LobCreator lobCreator) throws SQLException {
+                        int totalParameterIndex = 0;
+                        lobCreator.setBlobAsBytes(ps, ++totalParameterIndex, data);
+                        ps.setLong(++totalParameterIndex, version + 1);
+                        if (storeBodyAsText) {
+                            ps.setString(++totalParameterIndex, exchange.getIn().getBody(String.class));
+                        }
+                        if (hasHeadersToStoreAsText()) {
+                            for (String headerName : headersToStoreAsText) {
+                                String headerValue = exchange.getIn().getHeader(headerName, String.class);
+                                ps.setString(++totalParameterIndex, headerValue);
+                            }
+                        }
+                        ps.setString(++totalParameterIndex, key);
+                        ps.setLong(++totalParameterIndex, version);
+                    }
+                });
+        if (updateCount == 1) {
+            return updateCount;
+        } else {
+            // Found stale version while updating record
+            throw new OptimisticLockingException();
+        }
     }
 
     @Override
     public Exchange get(final CamelContext camelContext, final String correlationId) {
         final String key = correlationId;
         Exchange result = get(key, getRepositoryName(), camelContext);
-
-        LOG.debug("Getting key  [{}] -> {}", key, result);
-
+        LOG.debug("Getting key {} -> {}", key, result);
         return result;
     }
 
@@ -288,15 +337,24 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return transactionTemplateReadOnly.execute(new TransactionCallback<Exchange>() {
             public Exchange doInTransaction(TransactionStatus status) {
                 try {
-                    String sql = "SELECT " + EXCHANGE + " FROM " + repositoryName + " WHERE " + ID + " = ?";
-                    ByteArrayOutputStream bis = new ByteArrayOutputStream();
-                    jdbcTemplate.query(sql, new Object[] {key}, new AbstractLobStreamingResultSetExtractor<Object>() {
-                        @Override
-                        protected void streamData(ResultSet rs) throws SQLException, IOException, DataAccessException {
-                            FileCopyUtils.copy(getLobHandler().getBlobAsBinaryStream(rs, EXCHANGE), bis);
-                        }
-                    });
-                    return codec.unmarshallExchange(camelContext, bis.toByteArray());
+
+                    Map<String, Object> columns = jdbcTemplate.queryForMap(
+                            String.format("SELECT %1$s, %2$s FROM %3$s WHERE %4$s=?", EXCHANGE, VERSION, repositoryName, ID),
+                            new Object[] { key }, new int[] { Types.VARCHAR });
+
+                    byte[] marshalledExchange = (byte[]) columns.get(EXCHANGE);
+                    long version;
+                    Object versionObj = columns.get(VERSION);
+                    if (versionObj instanceof BigDecimal) {
+                        version = ((BigDecimal) versionObj).longValue();
+                    } else {
+                        version = (long) versionObj;
+                    }
+
+                    Exchange result = codec.unmarshallExchange(camelContext, marshalledExchange);
+                    result.setProperty(VERSION_PROPERTY, version);
+                    return result;
+
                 } catch (EmptyResultDataAccessException ex) {
                     return null;
                 } catch (IOException ex) {
@@ -316,12 +374,14 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 final String key = correlationId;
                 final String confirmKey = exchange.getExchangeId();
+                final long version = exchange.getProperty(VERSION_PROPERTY, Long.class);
                 try {
-                    LOG.debug("Removing key [{}]", key);
+                    LOG.debug("Removing key {}", key);
 
-                    jdbcTemplate.update("DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ?", key);
+                    jdbcTemplate.update("DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ? AND " + VERSION + " = ?",
+                            key, version);
 
-                    insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted());
+                    insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version);
 
                 } catch (Exception e) {
                     throw new RuntimeException("Error removing key " + key + " from repository " + repositoryName, e);
@@ -334,11 +394,11 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     public void confirm(final CamelContext camelContext, final String exchangeId) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                LOG.debug("Confirming exchangeId [{}]", exchangeId);
+                LOG.debug("Confirming exchangeId {}", exchangeId);
                 final String confirmKey = exchangeId;
 
                 jdbcTemplate.update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?",
-                        new Object[]{confirmKey});
+                        new Object[] { confirmKey });
 
             }
         });
@@ -357,8 +417,8 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     /**
      * Returns the keys in the given repository
      *
-     * @param repositoryName The name of the table
-     * @return Set of keys in the given repository name
+     * @param  repositoryName The name of the table
+     * @return                Set of keys in the given repository name
      */
     protected Set<String> getKeys(final String repositoryName) {
         return transactionTemplateReadOnly.execute(new TransactionCallback<LinkedHashSet<String>>() {
@@ -367,7 +427,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                         new RowMapper<String>() {
                             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                                 String id = rs.getString(ID);
-                                LOG.trace("getKey [{}]", id);
+                                LOG.trace("getKey {}", id);
                                 return id;
                             }
                         });
@@ -380,15 +440,13 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     public Exchange recover(CamelContext camelContext, String exchangeId) {
         final String key = exchangeId;
         Exchange answer = get(key, getRepositoryNameCompleted(), camelContext);
-
-        LOG.debug("Recovering exchangeId [{}] -> {}", key, answer);
-
+        LOG.debug("Recovering exchangeId {} -> {}", key, answer);
         return answer;
     }
 
     /**
-     *  If recovery is enabled then a background task is run every x'th time to scan for failed exchanges to recover
-     *  and resubmit. By default this interval is 5000 millis.
+     * If recovery is enabled then a background task is run every x'th time to scan for failed exchanges to recover and
+     * resubmit. By default this interval is 5000 millis.
      */
     @Override
     public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
@@ -411,8 +469,8 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * Whether or not recovery is enabled. This option is by default true. When enabled the Camel
-     * Aggregator automatic recover failed aggregated exchange and have them resubmitted.
+     * Whether or not recovery is enabled. This option is by default true. When enabled the Camel Aggregator automatic
+     * recover failed aggregated exchange and have them resubmitted.
      */
     @Override
     public void setUseRecovery(boolean useRecovery) {
@@ -435,9 +493,9 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * An endpoint uri for a Dead Letter Channel where exhausted recovered Exchanges will be
-     * moved. If this option is used then the maximumRedeliveries option must also be provided.
-     * Important note : if the deadletter route throws an exception, it will be send again to DLQ until it succeed !
+     * An endpoint uri for a Dead Letter Channel where exhausted recovered Exchanges will be moved. If this option is
+     * used then the maximumRedeliveries option must also be provided. Important note : if the deadletter route throws
+     * an exception, it will be send again to DLQ until it succeed !
      */
     @Override
     public void setDeadLetterUri(String deadLetterUri) {
@@ -449,8 +507,8 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * Whether the get operation should return the old existing Exchange if any existed.
-     * By default this option is false to optimize as we do not need the old exchange when aggregating.
+     * Whether the get operation should return the old existing Exchange if any existed. By default this option is false
+     * to optimize as we do not need the old exchange when aggregating.
      */
     public void setReturnOldExchange(boolean returnOldExchange) {
         this.returnOldExchange = returnOldExchange;
@@ -469,8 +527,8 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * Allows to store headers as String which is human readable. By default this option is disabled,
-     * storing the headers in binary format.
+     * Allows to store headers as String which is human readable. By default this option is disabled, storing the
+     * headers in binary format.
      *
      * @param headersToStoreAsText the list of headers to store as String
      */
@@ -483,8 +541,8 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * Whether to store the message body as String which is human readable.
-     * By default this option is false storing the body in binary format.
+     * Whether to store the message body as String which is human readable. By default this option is false storing the
+     * body in binary format.
      */
     public void setStoreBodyAsText(boolean storeBodyAsText) {
         this.storeBodyAsText = storeBodyAsText;
@@ -503,17 +561,18 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     /**
-     * Sets propagation behavior to use with spring transaction templates which are used for database access.
-     * The default is TransactionDefinition.PROPAGATION_REQUIRED.
+     * Sets propagation behavior to use with spring transaction templates which are used for database access. The
+     * default is TransactionDefinition.PROPAGATION_REQUIRED.
      */
     public void setPropagationBehavior(int propagationBehavior) {
         this.propagationBehavior = propagationBehavior;
     }
 
     /**
-     * Sets propagation behavior to use with spring transaction templates which are used for database access.
-     * The default is TransactionDefinition.PROPAGATION_REQUIRED. This setter accepts names of the constants, like
+     * Sets propagation behavior to use with spring transaction templates which are used for database access. The
+     * default is TransactionDefinition.PROPAGATION_REQUIRED. This setter accepts names of the constants, like
      * "PROPAGATION_REQUIRED".
+     * 
      * @param propagationBehaviorName
      */
     public void setPropagationBehaviorName(String propagationBehaviorName) {
@@ -538,7 +597,8 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         return jdbcOptimisticLockingExceptionMapper;
     }
 
-    public void setJdbcOptimisticLockingExceptionMapper(JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper) {
+    public void setJdbcOptimisticLockingExceptionMapper(
+            JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper) {
         this.jdbcOptimisticLockingExceptionMapper = jdbcOptimisticLockingExceptionMapper;
     }
 
@@ -551,7 +611,9 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         ObjectHelper.notNull(repositoryName, "RepositoryName");
         ObjectHelper.notNull(transactionManager, "TransactionManager");
         ObjectHelper.notNull(dataSource, "DataSource");
@@ -562,20 +624,29 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         transactionTemplateReadOnly = new TransactionTemplate(transactionManager);
         transactionTemplateReadOnly.setPropagationBehavior(propagationBehavior);
         transactionTemplateReadOnly.setReadOnly(true);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
 
         // log number of existing exchanges
         int current = getKeys().size();
         int completed = scan(null).size();
 
         if (current > 0) {
-            LOG.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            LOG.info("On startup there are {} aggregate exchanges (not completed) in repository: {}", current,
+                    getRepositoryName());
         } else {
-            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: {}", getRepositoryName());
+            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: {}",
+                    getRepositoryName());
         }
         if (completed > 0) {
-            LOG.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            LOG.warn("On startup there are {} completed exchanges to be recovered in repository: {}", completed,
+                    getRepositoryNameCompleted());
         } else {
-            LOG.info("On startup there are no completed exchanges to be recovered in repository: {}", getRepositoryNameCompleted());
+            LOG.info("On startup there are no completed exchanges to be recovered in repository: {}",
+                    getRepositoryNameCompleted());
         }
     }
 

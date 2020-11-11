@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.log4j.Logger;
@@ -82,12 +84,12 @@ public class SolrCloudFixture {
             }
         }
 
-        solrClient = new CloudSolrClient.Builder().withZkHost(zkAddr).build();
+        solrClient = new CloudSolrClient.Builder(Arrays.asList(zkAddr), Optional.empty()).build();
         solrClient.connect();
 
         createCollection(solrClient, "collection1", 1, 1, "conf1");
         Thread.sleep(1000); // takes some time to setup the collection...
-                            // otherwise you'll get no live solr servers
+                           // otherwise you'll get no live solr servers
         solrClient.setDefaultCollection("collection1");
 
         SolrInputDocument doc = new SolrInputDocument();
@@ -98,12 +100,14 @@ public class SolrCloudFixture {
     }
 
     public static void putConfig(String confName, SolrZkClient zkClient, File solrhome, final String name)
-        throws Exception {
+            throws Exception {
         putConfig(confName, zkClient, solrhome, name, name);
     }
 
-    protected NamedList<Object> createCollection(CloudSolrClient server, String name, int numShards,
-                                                 int replicationFactor, String configName) throws Exception {
+    protected NamedList<Object> createCollection(
+            CloudSolrClient server, String name, int numShards,
+            int replicationFactor, String configName)
+            throws Exception {
         ModifiableSolrParams modParams = new ModifiableSolrParams();
         modParams.set(CoreAdminParams.ACTION, CollectionAction.CREATE.name());
         modParams.set("name", name);
@@ -115,8 +119,10 @@ public class SolrCloudFixture {
         return server.request(request);
     }
 
-    public static void putConfig(String confName, SolrZkClient zkClient, File solrhome, final String srcName,
-                                 String destName) throws Exception {
+    public static void putConfig(
+            String confName, SolrZkClient zkClient, File solrhome, final String srcName,
+            String destName)
+            throws Exception {
         File file = new File(solrhome, "collection1" + File.separator + "conf" + File.separator + srcName);
         if (!file.exists()) {
             LOG.info("zk skipping " + file.getAbsolutePath() + " because it doesn't exist");
@@ -130,7 +136,7 @@ public class SolrCloudFixture {
 
     // static to share with distrib test
     public void buildZooKeeper(String zkHost, String zkAddress, File solrhome, String config, String schema)
-        throws Exception {
+            throws Exception {
         zkClient = new SolrZkClient(zkAddress, 60000);
 
         Map<String, Object> props = new HashMap<>();

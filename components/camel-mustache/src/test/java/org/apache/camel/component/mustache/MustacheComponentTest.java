@@ -22,9 +22,9 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -129,14 +129,18 @@ public class MustacheComponentTest extends CamelTestSupport {
             startSimpleProducerTemplate.sendBodyAndHeader("The Body", "someHeader", "Some Header");
         }
         assertMockEndpointsSatisfied();
-        LoggerFactory.getLogger(getClass()).info("Mustache performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
+        LoggerFactory.getLogger(getClass())
+                .info("Mustache performance: " + stopwatch.taken() + "ms for " + messageCount + " messages");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                MustacheComponent mc = context.getComponent("mustache", MustacheComponent.class);
+                mc.setAllowTemplateFromHeader(true);
+
                 from("direct:startSimple")
                         .to("mustache://simple.mustache")
                         .to("mock:endSimple");

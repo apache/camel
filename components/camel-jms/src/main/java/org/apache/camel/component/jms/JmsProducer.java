@@ -41,6 +41,8 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.support.JmsUtils;
@@ -52,9 +54,11 @@ import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinati
 
 public class JmsProducer extends DefaultAsyncProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JmsProducer.class);
+
     private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";
     private final JmsEndpoint endpoint;
-    private final AtomicBoolean started = new AtomicBoolean(false);
+    private final AtomicBoolean started = new AtomicBoolean();
     private JmsOperations inOnlyTemplate;
     private JmsOperations inOutTemplate;
     private UuidGenerator uuidGenerator;
@@ -90,19 +94,22 @@ public class JmsProducer extends DefaultAsyncProducer {
                     if (endpoint.getReplyToType() != null) {
                         // setting temporary with a fixed replyTo is not supported
                         if (endpoint.getReplyTo() != null && endpoint.getReplyToType().equals(ReplyToType.Temporary.name())) {
-                            throw new IllegalArgumentException("ReplyToType " + ReplyToType.Temporary
-                                    + " is not supported when replyTo " + endpoint.getReplyTo() + " is also configured.");
+                            throw new IllegalArgumentException(
+                                    "ReplyToType " + ReplyToType.Temporary
+                                                               + " is not supported when replyTo " + endpoint.getReplyTo()
+                                                               + " is also configured.");
                         }
                     }
 
                     if (endpoint.getReplyTo() != null) {
                         replyManager = createReplyManager(endpoint.getReplyTo());
-                        if (log.isDebugEnabled()) {
-                            log.debug("Using JmsReplyManager: {} to process replies from: {}", replyManager, endpoint.getReplyTo());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Using JmsReplyManager: {} to process replies from: {}", replyManager,
+                                    endpoint.getReplyTo());
                         }
                     } else {
                         replyManager = createReplyManager();
-                        log.debug("Using JmsReplyManager: {} to process replies from temporary queue", replyManager);
+                        LOG.debug("Using JmsReplyManager: {} to process replies from temporary queue", replyManager);
                     }
                 } catch (Exception e) {
                     throw new FailedToCreateProducerException(endpoint, e);
@@ -117,8 +124,8 @@ public class JmsProducer extends DefaultAsyncProducer {
     protected void unInitReplyManager() {
         try {
             if (replyManager != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Stopping JmsReplyManager: {} from processing replies from: {}", replyManager,
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Stopping JmsReplyManager: {} from processing replies from: {}", replyManager,
                             endpoint.getReplyTo() != null ? endpoint.getReplyTo() : "temporary queue");
                 }
                 ServiceHelper.stopService(replyManager);
@@ -183,7 +190,8 @@ public class JmsProducer extends DefaultAsyncProducer {
         initReplyManager();
 
         // the request timeout can be overruled by a header otherwise the endpoint configured value is used
-        final long timeout = exchange.getIn().getHeader(JmsConstants.JMS_REQUEST_TIMEOUT, endpoint.getRequestTimeout(), long.class);
+        final long timeout
+                = exchange.getIn().getHeader(JmsConstants.JMS_REQUEST_TIMEOUT, endpoint.getRequestTimeout(), long.class);
 
         final JmsConfiguration configuration = endpoint.getConfiguration();
 
@@ -194,7 +202,8 @@ public class JmsProducer extends DefaultAsyncProducer {
         final String provisionalCorrelationId = msgIdAsCorrId ? getUuidGenerator().generateUuid() : null;
         MessageSentCallback messageSentCallback = null;
         if (msgIdAsCorrId) {
-            messageSentCallback = new UseMessageIdAsCorrelationIdMessageSentCallback(replyManager, provisionalCorrelationId, timeout);
+            messageSentCallback
+                    = new UseMessageIdAsCorrelationIdMessageSentCallback(replyManager, provisionalCorrelationId, timeout);
         }
 
         final String correlationProperty = configuration.getCorrelationProperty();
@@ -203,7 +212,7 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         final String originalCorrelationId = in.getHeader(correlationPropertyToUse, String.class);
 
-        boolean generateFreshCorrId = (ObjectHelper.isEmpty(originalCorrelationId) && !msgIdAsCorrId) 
+        boolean generateFreshCorrId = (ObjectHelper.isEmpty(originalCorrelationId) && !msgIdAsCorrId)
                 || (originalCorrelationId != null && originalCorrelationId.startsWith(GENERATED_CORRELATION_ID_PREFIX));
         if (generateFreshCorrId) {
             // we append the 'Camel-' prefix to know it was generated by us
@@ -235,12 +244,12 @@ public class JmsProducer extends DefaultAsyncProducer {
                     replyManager.setCorrelationProperty(correlationProperty);
                 }
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Using {}: {}, JMSReplyTo destination: {}, with request timeout: {} ms.",
-                           new Object[]{correlationPropertyToUse, correlationId, replyTo, timeout});
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using {}: {}, JMSReplyTo destination: {}, with request timeout: {} ms.",
+                            new Object[] { correlationPropertyToUse, correlationId, replyTo, timeout });
                 }
 
-                log.trace("Created javax.jms.Message: {}", answer);
+                LOG.trace("Created javax.jms.Message: {}", answer);
                 return answer;
             }
         };
@@ -254,10 +263,10 @@ public class JmsProducer extends DefaultAsyncProducer {
     /**
      * Strategy to determine which correlation id to use among <tt>JMSMessageID</tt> and <tt>JMSCorrelationID</tt>.
      *
-     * @param message   the JMS message
-     * @param provisionalCorrelationId an optional provisional correlation id, which is preferred to be used
-     * @return the correlation id to use
-     * @throws JMSException can be thrown
+     * @param  message                  the JMS message
+     * @param  provisionalCorrelationId an optional provisional correlation id, which is preferred to be used
+     * @return                          the correlation id to use
+     * @throws JMSException             can be thrown
      */
     protected String determineCorrelationId(Message message, String provisionalCorrelationId) throws JMSException {
         if (provisionalCorrelationId != null) {
@@ -328,7 +337,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 Object jmsReplyTo = JmsMessageHelper.getJMSReplyTo(answer);
                 if (endpoint.isDisableReplyTo()) {
                     // honor disable reply to configuration
-                    log.trace("ReplyTo is disabled on endpoint: {}", endpoint);
+                    LOG.trace("ReplyTo is disabled on endpoint: {}", endpoint);
                     JmsMessageHelper.setJMSReplyTo(answer, null);
                 } else {
                     // if the binding did not create the reply to then we have to try to create it here
@@ -348,9 +357,10 @@ public class JmsProducer extends DefaultAsyncProducer {
                 if (jmsReplyTo != null && !(endpoint.isPreserveMessageQos() || endpoint.isExplicitQosEnabled())) {
                     // log at debug what we are doing, as higher level may cause noise in production logs
                     // this behavior is also documented at the camel website
-                    if (log.isDebugEnabled()) {
-                        log.debug("Disabling JMSReplyTo: {} for destination: {}. Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: {}",
-                                new Object[]{jmsReplyTo, to, endpoint});
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(
+                                "Disabling JMSReplyTo: {} for destination: {}. Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: {}",
+                                new Object[] { jmsReplyTo, to, endpoint });
                     }
                     jmsReplyTo = null;
                 }
@@ -369,18 +379,18 @@ public class JmsProducer extends DefaultAsyncProducer {
                 if (replyToOverride != null) {
                     replyTo = resolveOrCreateDestination(replyToOverride, session);
                 } else if (jmsReplyTo instanceof Destination) {
-                    replyTo = (Destination)jmsReplyTo;
+                    replyTo = (Destination) jmsReplyTo;
                 }
                 if (replyTo != null) {
-                    log.debug("Using JMSReplyTo destination: {}", replyTo);
+                    LOG.debug("Using JMSReplyTo destination: {}", replyTo);
                     JmsMessageHelper.setJMSReplyTo(answer, replyTo);
                 } else {
                     // do not use JMSReplyTo
-                    log.trace("Not using JMSReplyTo");
+                    LOG.trace("Not using JMSReplyTo");
                     JmsMessageHelper.setJMSReplyTo(answer, null);
                 }
 
-                log.trace("Created javax.jms.Message: {}", answer);
+                LOG.trace("Created javax.jms.Message: {}", answer);
                 return answer;
             }
         };
@@ -404,13 +414,14 @@ public class JmsProducer extends DefaultAsyncProducer {
      * @param messageCreator  the creator to create the {@link Message} to send
      * @param callback        optional callback to invoke when message has been sent
      */
-    protected void doSend(boolean inOut, String destinationName, Destination destination,
-                          MessageCreator messageCreator, MessageSentCallback callback) {
+    protected void doSend(
+            boolean inOut, String destinationName, Destination destination,
+            MessageCreator messageCreator, MessageSentCallback callback) {
 
         CamelJmsTemplate template = (CamelJmsTemplate) (inOut ? getInOutTemplate() : getInOnlyTemplate());
 
-        if (log.isTraceEnabled()) {
-            log.trace("Using {} jms template", inOut ? "inOut" : "inOnly");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Using {} jms template", inOut ? "inOut" : "inOnly");
         }
 
         // destination should be preferred
@@ -435,37 +446,38 @@ public class JmsProducer extends DefaultAsyncProducer {
                 }
             }
         } else {
-            throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
+            throw new IllegalArgumentException(
+                    "Neither destination nor destinationName is specified on this endpoint: " + endpoint);
         }
     }
 
     protected Destination resolveOrCreateDestination(String destinationName, Session session)
-        throws JMSException {
+            throws JMSException {
         Destination dest = null;
 
         boolean isPubSub = isTopicPrefix(destinationName)
-                           || (!isQueuePrefix(destinationName) && endpoint.isPubSubDomain());
+                || (!isQueuePrefix(destinationName) && endpoint.isPubSubDomain());
         // try using destination resolver to lookup the destination
         if (endpoint.getDestinationResolver() != null) {
             dest = endpoint.getDestinationResolver().resolveDestinationName(session, destinationName,
-                                                                            isPubSub);
-            if (log.isDebugEnabled()) {
-                log.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> {}",
-                          new Object[] {destinationName, endpoint.getDestinationResolver(), isPubSub, dest});
+                    isPubSub);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> {}",
+                        new Object[] { destinationName, endpoint.getDestinationResolver(), isPubSub, dest });
             }
         }
         if (dest == null) {
             // must normalize the destination name
             String before = destinationName;
             destinationName = normalizeDestinationName(destinationName);
-            log.trace("Normalized JMSReplyTo destination name {} -> {}", before, destinationName);
+            LOG.trace("Normalized JMSReplyTo destination name {} -> {}", before, destinationName);
 
             // okay then fallback and create the queue/topic
             if (isPubSub) {
-                log.debug("Creating JMSReplyTo topic: {}", destinationName);
+                LOG.debug("Creating JMSReplyTo topic: {}", destinationName);
                 dest = session.createTopic(destinationName);
             } else {
-                log.debug("Creating JMSReplyTo queue: {}", destinationName);
+                LOG.debug("Creating JMSReplyTo queue: {}", destinationName);
                 dest = session.createQueue(destinationName);
             }
         }
@@ -480,7 +492,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                     out.setMessageId(out.getJmsMessage().getJMSMessageID());
                 }
             } catch (JMSException e) {
-                log.warn("Unable to retrieve JMSMessageID from outgoing JMS Message and set it into Camel's MessageId", e);
+                LOG.warn("Unable to retrieve JMSMessageID from outgoing JMS Message and set it into Camel's MessageId", e);
             }
         }
     }
@@ -526,14 +538,15 @@ public class JmsProducer extends DefaultAsyncProducer {
         try {
             CamelJmsTemplate template = (CamelJmsTemplate) getInOnlyTemplate();
 
-            if (log.isDebugEnabled()) {
-                log.debug("Testing JMS Connection on startup for destination: {}", template.getDefaultDestinationName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Testing JMS Connection on startup for destination: {}", template.getDefaultDestinationName());
             }
 
             Connection conn = template.getConnectionFactory().createConnection();
             JmsUtils.closeConnection(conn);
 
-            log.debug("Successfully tested JMS Connection on startup for destination: {}", template.getDefaultDestinationName());
+            LOG.debug("Successfully tested JMS Connection on startup for destination: {}",
+                    template.getDefaultDestinationName());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(getEndpoint(), e);
         }
@@ -565,7 +578,8 @@ public class JmsProducer extends DefaultAsyncProducer {
         replyManager.setEndpoint(getEndpoint());
 
         String name = "JmsReplyManagerTimeoutChecker[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";
-        ScheduledExecutorService replyManagerScheduledExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
+        ScheduledExecutorService replyManagerScheduledExecutorService
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
         replyManager.setScheduledExecutorService(replyManagerScheduledExecutorService);
 
         name = "JmsReplyManagerOnTimeout[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";
@@ -574,7 +588,8 @@ public class JmsProducer extends DefaultAsyncProducer {
         if (max <= 0) {
             throw new IllegalArgumentException("The option replyToOnTimeoutMaxConcurrentConsumers must be >= 1");
         }
-        ExecutorService replyManagerExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(replyManager, name, 0, max);
+        ExecutorService replyManagerExecutorService
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(replyManager, name, 0, max);
         replyManager.setOnTimeoutExecutorService(replyManagerExecutorService);
 
         ServiceHelper.startService(replyManager);
@@ -588,7 +603,8 @@ public class JmsProducer extends DefaultAsyncProducer {
         replyManager.setEndpoint(getEndpoint());
 
         String name = "JmsReplyManagerTimeoutChecker[" + replyTo + "]";
-        ScheduledExecutorService replyManagerScheduledExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
+        ScheduledExecutorService replyManagerScheduledExecutorService
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
         replyManager.setScheduledExecutorService(replyManagerScheduledExecutorService);
 
         name = "JmsReplyManagerOnTimeout[" + replyTo + "]";
@@ -597,7 +613,8 @@ public class JmsProducer extends DefaultAsyncProducer {
         if (max <= 0) {
             throw new IllegalArgumentException("The option replyToOnTimeoutMaxConcurrentConsumers must be >= 1");
         }
-        ExecutorService replyManagerExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(replyManager, name, 0, max);
+        ExecutorService replyManagerExecutorService
+                = getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(replyManager, name, 0, max);
         replyManager.setOnTimeoutExecutorService(replyManagerExecutorService);
 
         ServiceHelper.startService(replyManager);

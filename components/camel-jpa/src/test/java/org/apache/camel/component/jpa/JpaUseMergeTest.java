@@ -20,12 +20,15 @@ import java.util.List;
 
 import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class JpaUseMergeTest extends AbstractJpaMethodTest {
-    
+
     @Override
     public boolean usePersist() {
         return false;
@@ -34,7 +37,7 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
     @Test
     public void produceExistingEntity() throws Exception {
         setUp("jpa://" + Customer.class.getName() + "?usePersist=false");
-        
+
         final Customer customer = createDefaultCustomer();
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
@@ -44,7 +47,7 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
                 return null;
             }
         });
-        
+
         assertEntitiesInDatabase(1, Customer.class.getName());
         assertEntitiesInDatabase(1, Address.class.getName());
 
@@ -53,15 +56,15 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
         customer.setName("Max Mustermann");
         customer.getAddress().setAddressLine1("Musterstr. 1");
         customer.getAddress().setAddressLine2("11111 Enterhausen");
-        
+
         Customer receivedCustomer = template.requestBody(endpoint, customer, Customer.class);
-        
+
         assertEquals(customer.getName(), receivedCustomer.getName());
         assertNotNull(receivedCustomer.getId());
         assertEquals(customer.getAddress().getAddressLine1(), receivedCustomer.getAddress().getAddressLine1());
         assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
         assertNotNull(receivedCustomer.getAddress().getId());
-        
+
         List<?> results = entityManager.createQuery("select o from " + Customer.class.getName() + " o").getResultList();
         assertEquals(1, results.size());
         Customer persistedCustomer = (Customer) results.get(0);

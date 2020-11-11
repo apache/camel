@@ -34,5 +34,5 @@ public class MyCoolAopBean {
         headers.put("foo", 123);
         return s;
     }
-    
+
 }

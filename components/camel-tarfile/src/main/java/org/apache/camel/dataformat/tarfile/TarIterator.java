@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Iterator which can go through the TarArchiveInputStream according to TarArchiveEntry
- * Based on ZipIterator from camel-zipfile component
+ * The Iterator which can go through the TarArchiveInputStream according to TarArchiveEntry Based on ZipIterator from
+ * camel-zipfile component
  */
 public class TarIterator implements Iterator<Message>, Closeable {
 
@@ -61,7 +61,8 @@ public class TarIterator implements Iterator<Message>, Closeable {
             tarInputStream = (TarArchiveInputStream) inputStream;
         } else {
             try {
-                ArchiveInputStream input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR, new BufferedInputStream(inputStream));
+                ArchiveInputStream input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.TAR,
+                        new BufferedInputStream(inputStream));
                 tarInputStream = (TarArchiveInputStream) input;
             } catch (ArchiveException e) {
                 throw new RuntimeException(e.getMessage(), e);

@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncFailureProcessorWithRedeliveryAndDelayTest extends ContextTestSupport {
 
@@ -38,7 +41,7 @@ public class AsyncFailureProcessorWithRedeliveryAndDelayTest extends ContextTest
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -56,13 +59,13 @@ public class AsyncFailureProcessorWithRedeliveryAndDelayTest extends ContextTest
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 })
-                    // invoking the async endpoint could also cause a failure so
-                    // test that we can do redelivery
-                    .to("async:bye:camel?failFirstAttempts=2").process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    }).to("log:after").to("mock:after").to("mock:result");
+                        // invoking the async endpoint could also cause a failure so
+                        // test that we can do redelivery
+                        .to("async:bye:camel?failFirstAttempts=2").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

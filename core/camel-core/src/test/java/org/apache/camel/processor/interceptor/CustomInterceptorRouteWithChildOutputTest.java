@@ -30,7 +30,9 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.InterceptStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -65,7 +67,8 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
                 // add our custom interceptor
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(myInterceptor);
 
-                from("direct:start").split(body().tokenize(",")).log("Spltted ${body}").to("mock:child").end().to("mock:result");
+                from("direct:start").split(body().tokenize(",")).log("Spltted ${body}").to("mock:child").end()
+                        .to("mock:result");
             }
         };
     }
@@ -76,8 +79,10 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
         private final List<ProcessorDefinition> defs = new ArrayList<>();
 
         @Override
-        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
-            defs.add((ProcessorDefinition<?>)definition);
+        public Processor wrapProcessorInInterceptors(
+                CamelContext context, NamedNode definition, Processor target, Processor nextTarget)
+                throws Exception {
+            defs.add((ProcessorDefinition<?>) definition);
             return target;
         }
 

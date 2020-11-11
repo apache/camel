@@ -19,9 +19,11 @@ package org.apache.camel.component.smpp;
 import java.io.IOException;
 
 import org.jsmpp.session.connection.Connection;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConnectionFactory</code>
@@ -29,59 +31,59 @@ import org.junit.Test;
 public class SmppConnectionFactoryTest {
 
     @Test
-    @Ignore("Must be manually tested")
+    @Disabled("Must be manually tested")
     public void createConnection() throws IOException {
         SmppConfiguration configuration = new SmppConfiguration();
         SmppConnectionFactory factory = SmppConnectionFactory.getInstance(configuration);
         Connection connection = factory.createConnection("localhost", 2775);
 
         try {
-            Assert.assertNotNull(connection);
-            Assert.assertTrue(connection.isOpen());            
+            assertNotNull(connection);
+            assertTrue(connection.isOpen());
         } finally {
             if (connection != null) {
                 connection.close();
             }
         }
     }
-    
+
     @Test
-    @Ignore("Must be manually tested")
+    @Disabled("Must be manually tested")
     public void createConnectionWithProxyHost() throws IOException {
         SmppConfiguration configuration = new SmppConfiguration();
         configuration.setHttpProxyHost("localhost");
-        configuration.setHttpProxyPort(new Integer(3128));
+        configuration.setHttpProxyPort(Integer.valueOf(3128));
         SmppConnectionFactory factory = SmppConnectionFactory.getInstance(configuration);
         Connection connection = factory.createConnection("localhost", 2775);
 
         try {
-            Assert.assertNotNull(connection);
-            Assert.assertTrue(connection.isOpen());
+            assertNotNull(connection);
+            assertTrue(connection.isOpen());
         } finally {
             if (connection != null) {
                 connection.close();
             }
         }
     }
-    
+
     @Test
-    @Ignore("Must be manually tested")
+    @Disabled("Must be manually tested")
     public void createConnectionWithProxyUsername() throws IOException {
         SmppConfiguration configuration = new SmppConfiguration();
         configuration.setHttpProxyHost("localhost");
-        configuration.setHttpProxyPort(new Integer(3128));
+        configuration.setHttpProxyPort(Integer.valueOf(3128));
         configuration.setHttpProxyUsername("user");
         configuration.setHttpProxyPassword("secret");
         SmppConnectionFactory factory = SmppConnectionFactory.getInstance(configuration);
         Connection connection = factory.createConnection("localhost", 2775);
 
         try {
-            Assert.assertNotNull(connection);
-            Assert.assertTrue(connection.isOpen());            
+            assertNotNull(connection);
+            assertTrue(connection.isOpen());
         } finally {
             if (connection != null) {
                 connection.close();
             }
         }
-    }     
+    }
 }

@@ -17,9 +17,13 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Collections;
 
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.SupportLevel;
+import org.apache.camel.tooling.util.PackageHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
@@ -29,10 +33,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.StringHelper.camelDashToTitle;
-
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
+ * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in
+ * Camel.
  */
 @Mojo(name = "generate-others-list", threadSafe = true)
 public class PackageOtherMojo extends AbstractGeneratorMojo {
@@ -40,21 +43,33 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated components file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/others")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File otherOutDir;
 
     /**
      * The output directory for generated languages file
      */
-    @Parameter(defaultValue = "${project.build.directory}/classes")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File schemaOutDir;
+
+    public PackageOtherMojo() {
+    }
+
+    public PackageOtherMojo(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
+                            File schemaOutDir, BuildContext buildContext) {
+        setLog(log);
+        this.project = project;
+        this.projectHelper = projectHelper;
+        this.otherOutDir = otherOutDir;
+        this.schemaOutDir = schemaOutDir;
+        this.buildContext = buildContext;
+    }
 
     /**
      * Execute goal.
      *
-     * @throws MojoExecutionException execution of the main class or one of the
-     *                 threads it generated failed.
-     * @throws MojoFailureException something bad happened...
+     * @throws MojoExecutionException execution of the main class or one of the threads it generated failed.
+     * @throws MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -72,16 +87,18 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
             return;
         }
 
-        prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
+        prepareOthers();
     }
 
-    public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
-                                     File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
+    public void prepareOthers() throws MojoExecutionException {
+        Log log = getLog();
 
         // first we need to setup the output directory because the next check
-        // can stop the build before the end and eclipse always needs to know about that directory
+        // can stop the build before the end and eclipse always needs to know
+        // about that directory
         if (projectHelper != null) {
-            projectHelper.addResource(project, otherOutDir.getPath(), Collections.singletonList("**/other.properties"), Collections.emptyList());
+            projectHelper.addResource(project, otherOutDir.getPath(), Collections.singletonList("**/other.properties"),
+                    Collections.emptyList());
         }
 
         String name = project.getArtifactId();
@@ -92,38 +109,42 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
 
         try {
             // create json model
-            OtherModel otherModel = new OtherModel();
-            otherModel.setName(name);
-            otherModel.setGroupId(project.getGroupId());
-            otherModel.setArtifactId(project.getArtifactId());
-            otherModel.setVersion(project.getVersion());
-            otherModel.setDescription(project.getDescription());
-            if (project.getName() != null && project.getName().contains("(deprecated)")) {
-                otherModel.setDeprecated("true");
-            } else {
-                otherModel.setDeprecated("false");
-            }
-            otherModel.setFirstVersion(project.getProperties().getProperty("firstVersion"));
-            otherModel.setLabel(project.getProperties().getProperty("label"));
+            OtherModel model = new OtherModel();
+            model.setName(name);
+            model.setGroupId(project.getGroupId());
+            model.setArtifactId(project.getArtifactId());
+            model.setVersion(project.getVersion());
+            model.setDescription(project.getDescription());
+            model.setDeprecated(project.getName() != null && project.getName().contains("(deprecated)"));
+            model.setDeprecatedSince(project.getProperties().getProperty("deprecatedSince"));
+            model.setFirstVersion(project.getProperties().getProperty("firstVersion"));
+            model.setLabel(project.getProperties().getProperty("label"));
             String title = project.getProperties().getProperty("title");
             if (title == null) {
-                title = camelDashToTitle(name);
+                title = Strings.camelDashToTitle(name);
             }
-            otherModel.setTitle(title);
+            model.setTitle(title);
+
+            // grab level from pom.xml or default to stable
+            String level = project.getProperties().getProperty("supportLevel");
+            if (level != null) {
+                model.setSupportLevel(SupportLevel.safeValueOf(level));
+            } else {
+                model.setSupportLevel(SupportLevelHelper.defaultSupportLevel(model.getFirstVersion(), model.getVersion()));
+            }
 
             if (log.isDebugEnabled()) {
-                log.debug("Model: " + otherModel);
+                log.debug("Model: " + model);
             }
 
-            String schema = createJsonSchema(otherModel);
+            String schema = JsonMapper.createJsonSchema(model);
 
             // write this to the directory
-            Path out = schemaOutDir.toPath()
-                    .resolve(name + ".json");
-            updateResource(buildContext, out, schema);
+            String fileName = name + PackageHelper.JSON_SUFIX;
+            updateResource(schemaOutDir.toPath(), fileName, schema);
 
             if (log.isDebugEnabled()) {
-                log.debug("Generated " + out + " containing JSon schema for " + name + " other");
+                log.debug("Generated " + fileName + " containing JSON schema for " + name + " other");
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Error loading other model. Reason: " + e, e);
@@ -132,143 +153,9 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
         // now create properties file
         File camelMetaDir = new File(otherOutDir, "META-INF/services/org/apache/camel/");
 
-        Path outFile = camelMetaDir.toPath().resolve("other.properties");
         String properties = createProperties(project, "name", name);
-        updateResource(buildContext, outFile, properties);
-        log.info("Generated " + outFile + " containing 1 Camel other: " + name);
-    }
-
-    private static String createJsonSchema(OtherModel otherModel) {
-        StringBuilder buffer = new StringBuilder("{");
-        // language model
-        buffer.append("\n \"other\": {");
-        buffer.append("\n    \"name\": \"").append(otherModel.getName()).append("\",");
-        buffer.append("\n    \"kind\": \"").append("other").append("\",");
-        if (otherModel.getTitle() != null) {
-            buffer.append("\n    \"title\": \"").append(otherModel.getTitle()).append("\",");
-        }
-        if (otherModel.getDescription() != null) {
-            buffer.append("\n    \"description\": \"").append(otherModel.getDescription()).append("\",");
-        }
-        buffer.append("\n    \"deprecated\": \"").append(otherModel.getDeprecated()).append("\",");
-        if (otherModel.getFirstVersion() != null) {
-            buffer.append("\n    \"firstVersion\": \"").append(otherModel.getFirstVersion()).append("\",");
-        }
-        if (otherModel.getLabel() != null) {
-            buffer.append("\n    \"label\": \"").append(otherModel.getLabel()).append("\",");
-        }
-        buffer.append("\n    \"groupId\": \"").append(otherModel.getGroupId()).append("\",");
-        buffer.append("\n    \"artifactId\": \"").append(otherModel.getArtifactId()).append("\",");
-        buffer.append("\n    \"version\": \"").append(otherModel.getVersion()).append("\"");
-        buffer.append("\n  }");
-        buffer.append("\n}");
-        return buffer.toString();
-    }
-
-    private static class OtherModel {
-        private String name;
-        private String title;
-        private String description;
-        private String deprecated;
-        private String deprecationNote;
-        private String firstVersion;
-        private String label;
-        private String groupId;
-        private String artifactId;
-        private String version;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public String getDeprecated() {
-            return deprecated;
-        }
-
-        public void setDeprecated(String deprecated) {
-            this.deprecated = deprecated;
-        }
-
-        public String getDeprecationNote() {
-            return deprecationNote;
-        }
-
-        public void setDeprecationNote(String deprecationNote) {
-            this.deprecationNote = deprecationNote;
-        }
-
-        public String getFirstVersion() {
-            return firstVersion;
-        }
-
-        public void setFirstVersion(String firstVersion) {
-            this.firstVersion = firstVersion;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-
-        public String getGroupId() {
-            return groupId;
-        }
-
-        public void setGroupId(String groupId) {
-            this.groupId = groupId;
-        }
-
-        public String getArtifactId() {
-            return artifactId;
-        }
-
-        public void setArtifactId(String artifactId) {
-            this.artifactId = artifactId;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
-        public void setVersion(String version) {
-            this.version = version;
-        }
-
-        @Override
-        public String toString() {
-            return "OtherModel["
-                + "name='" + name + '\''
-                + ", title='" + title + '\''
-                + ", description='" + description + '\''
-                + ", label='" + label + '\''
-                + ", groupId='" + groupId + '\''
-                + ", artifactId='" + artifactId + '\''
-                + ", version='" + version + '\''
-                + ']';
-        }
+        updateResource(camelMetaDir.toPath(), "other.properties", properties);
+        log.info("Generated other.properties containing 1 Camel other: " + name);
     }
 
 }

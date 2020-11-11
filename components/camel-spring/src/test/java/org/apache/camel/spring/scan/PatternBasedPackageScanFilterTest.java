@@ -28,15 +28,15 @@ import java.util.jar.JarFile;
 
 import org.apache.camel.core.xml.PatternBasedPackageScanFilter;
 import org.apache.camel.util.CollectionHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.scan.ScanTestSupport {
 
     private Set<Class<?>> allClasses;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // use classes that are pretty much constants
         allClasses = new HashSet<>();
@@ -129,7 +129,8 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
 
         filter = new PatternBasedPackageScanFilter();
         addExcludePatterns("java.io.File");
-        validateMatchingSetContains(List.class, ArrayList.class, LinkedList.class, JarFile.class, FileInputStream.class, RandomAccessFile.class);
+        validateMatchingSetContains(List.class, ArrayList.class, LinkedList.class, JarFile.class, FileInputStream.class,
+                RandomAccessFile.class);
 
         filter = new PatternBasedPackageScanFilter();
         addExcludePatterns("java.io.File*");
@@ -163,7 +164,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         addExcludePatterns("java.util.jar.*");
         validateMatchingSetContains(List.class, ArrayList.class, LinkedList.class);
     }
-    
+
     @Test
     public void testBulkIncludeAdd() {
         // include any classes from the util pkg but exclude those in jar
@@ -171,7 +172,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
         filter.addIncludePatterns(includes);
         validateMatchingSetContains(allClasses);
     }
-    
+
     @Test
     public void testBulkExcludeAdd() {
         // include any classes from the util pkg but exclude those in jar

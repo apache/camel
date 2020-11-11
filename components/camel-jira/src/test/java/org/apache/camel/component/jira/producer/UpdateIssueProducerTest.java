@@ -41,21 +41,28 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.apache.camel.component.jira.JiraConstants.*;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_ASSIGNEE;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_PRIORITY_NAME;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_SUMMARY;
+import static org.apache.camel.component.jira.JiraConstants.ISSUE_TYPE_NAME;
+import static org.apache.camel.component.jira.JiraConstants.JIRA;
+import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
 import static org.apache.camel.component.jira.Utils.createIssue;
 import static org.apache.camel.component.jira.Utils.userAssignee;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class UpdateIssueProducerTest extends CamelTestSupport {
 
     @Mock
@@ -138,8 +145,8 @@ public class UpdateIssueProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("jira://updateIssue?jiraUrl=" + JIRA_CREDENTIALS)
-                    .to(mockResult);
+                        .to("jira://updateIssue?jiraUrl=" + JIRA_CREDENTIALS)
+                        .to(mockResult);
             }
         };
     }

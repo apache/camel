@@ -19,7 +19,6 @@ As you can see from the above Camel uses URIs to wire endpoints together.
 
 [[Routes-URI-String-Formatting]]
 == URI String formatting
-Since Camel 2.0
 
 If you have endpoint URIs that accept options and you want to be able to substitute the value, e.g. build the URI by concat the strings together, then you can use the java.lang.String.format method. But in Camel 2.0 we have added two convenient methods in the Java DSL so you can do fromF and toF that uses String formatting to build the URI.
 
@@ -46,6 +45,23 @@ RouteBuilder builder = new RouteBuilder() {
     }
 };
 -------------------------------------------------------------
+
+[[Routes-Lambda]]
+== Routes using Java lambda style
+
+*Since Camel 3.5*
+
+Camel now supports to define Camel routes in Java DSL using Lambda style. This can be beneficial for microservices or serverless where
+you may want to quickly define a few routes.
+
+For example using lambda style you can define a Camel route that takes messages from Kafka and send to JMS in a single line of code:
+[source,java]
+----
+rb -> rb.from("kafka:cheese").to("jms:queue:foo");
+----
+
+There is a bit more to this as the lambda route must be coded in a Java method that returns an instance of `LambdaRouteBuilder`.
+See more at the xref:lambda-route-builder.adoc[LambdaRouteBuilder] documentation.
 
 [[Routes-Choices]]
 == Choices

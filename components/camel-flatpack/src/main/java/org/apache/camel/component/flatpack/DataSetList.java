@@ -38,8 +38,8 @@ import net.sf.flatpack.Record;
 import net.sf.flatpack.ordering.OrderBy;
 
 /**
- * The {@link DataSetList} wraps the {@link DataSet} as a Java {@link List} type so the data can easily be iterated.
- * You can access the {@link DataSet} API from this {@link DataSetList} as it implements {@link DataSet}.
+ * The {@link DataSetList} wraps the {@link DataSet} as a Java {@link List} type so the data can easily be iterated. You
+ * can access the {@link DataSet} API from this {@link DataSetList} as it implements {@link DataSet}.
  */
 public class DataSetList extends AbstractList<Map<String, Object>> implements DataSet {
     private final DataSet dataSet;
@@ -293,7 +293,7 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
 
     @Override
     public Date getDate(String column, SimpleDateFormat sdf, Supplier<Date> defaultSupplier)
-        throws ParseException {
+            throws ParseException {
         return dataSet.getDate(column, sdf, defaultSupplier);
     }
 
@@ -309,7 +309,7 @@ public class DataSetList extends AbstractList<Map<String, Object>> implements Da
 
     @Override
     public LocalDate getLocalDate(String column, String dateFormat, Supplier<LocalDate> defaultSupplier)
-        throws ParseException {
+            throws ParseException {
         return dataSet.getLocalDate(column, dateFormat, defaultSupplier);
     }
 

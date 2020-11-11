@@ -21,15 +21,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.apicurio.datamodels.openapi.v2.models.Oas20Info;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiReaderTest extends CamelTestSupport {
+
+    private Logger log = LoggerFactory.getLogger(getClass());
 
     @BindToRegistry("dummy-rest")
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
@@ -39,12 +47,18 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/hello").consumes("application/json").produces("application/json").get("/hi/{name}").description("Saying hi").param().name("name").type(RestParamType.path)
-                    .dataType("string").description("Who is it").example("Donald Duck").endParam().to("log:hi").get("/bye/{name}").description("Saying bye").param().name("name")
-                    .type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam().responseMessage().code(200).message("A reply number")
-                    .responseModel(float.class).example("success", "123").example("error", "-1").endResponseMessage().to("log:bye").post("/bye")
-                    .description("To update the greeting message").consumes("application/xml").produces("application/xml").param().name("greeting").type(RestParamType.body)
-                    .dataType("string").description("Message to use as greeting").example("application/xml", "<hello>Hi</hello>").endParam().to("log:bye");
+                rest("/hello").consumes("application/json").produces("application/json").get("/hi/{name}")
+                        .description("Saying hi").param().name("name").type(RestParamType.path)
+                        .dataType("string").description("Who is it").example("Donald Duck").endParam().to("log:hi")
+                        .get("/bye/{name}").description("Saying bye").param().name("name")
+                        .type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
+                        .responseMessage().code(200).message("A reply number")
+                        .responseModel(float.class).example("success", "123").example("error", "-1").endResponseMessage()
+                        .to("log:bye").post("/bye")
+                        .description("To update the greeting message").consumes("application/xml").produces("application/xml")
+                        .param().name("greeting").type(RestParamType.body)
+                        .dataType("string").description("Message to use as greeting")
+                        .example("application/xml", "<hello>Hi</hello>").endParam().to("log:bye");
             }
         };
     }
@@ -53,12 +67,15 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
+        Oas20Info info = new Oas20Info();
+        config.setInfo(info);
         config.setVersion("2.0");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -66,7 +83,7 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
@@ -90,11 +107,14 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
     public void testReaderReadV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
+        Oas30Info info = new Oas30Info();
+        config.setInfo(info);
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -102,7 +122,7 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         assertTrue(json.contains("\"url\" : \"http://localhost:8080/api\""));

@@ -22,9 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTestSupport {
 
@@ -76,7 +78,8 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         template.sendBody("direct:start", "World");
 
         // give time for route to stop
-        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("errorRoute")));
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(
+                () -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("errorRoute")));
 
         template.sendBody("direct:start", "Kaboom");
 
@@ -87,7 +90,7 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         SedaEndpoint seda2 = getMandatoryEndpoint("seda:error2", SedaEndpoint.class);
         int size = seda.getQueue().size();
         int size2 = seda2.getQueue().size();
-        assertTrue("There should be 1 exchange on the seda or seda2 queue", size == 1 || size2 == 1);
+        assertTrue(size == 1 || size2 == 1, "There should be 1 exchange on the seda or seda2 queue");
     }
 
     @Override
@@ -95,12 +98,15 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).handled(true).loadBalance().roundRobin().to("seda:error", "seda:error2").end().to("mock:exception");
+                onException(Exception.class).handled(true).loadBalance().roundRobin().to("seda:error", "seda:error2").end()
+                        .to("mock:exception");
 
-                from("direct:start").to("mock:start").choice().when(body().contains("Kaboom")).throwException(new IllegalArgumentException("Forced")).otherwise()
-                    .transform(body().prepend("Bye ")).to("mock:result");
+                from("direct:start").to("mock:start").choice().when(body().contains("Kaboom"))
+                        .throwException(new IllegalArgumentException("Forced")).otherwise()
+                        .transform(body().prepend("Bye ")).to("mock:result");
 
-                from("seda:error").routeId("errorRoute").to("controlbus:route?action=stop&routeId=errorRoute&async=true").to("mock:error");
+                from("seda:error").routeId("errorRoute").to("controlbus:route?action=stop&routeId=errorRoute&async=true")
+                        .to("mock:error");
             }
         };
     }

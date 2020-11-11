@@ -28,7 +28,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultExchangeTest extends ExchangeTestSupport {
 
@@ -66,7 +68,8 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
     @Test
     public void testExceptionAsType() throws Exception {
-        exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
+        exchange.setException(
+                RuntimeCamelException.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
 
         ConnectException ce = exchange.getException(ConnectException.class);
         assertNotNull(ce);
@@ -82,7 +85,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         RuntimeCamelException rce = exchange.getException(RuntimeCamelException.class);
         assertNotNull(rce);
-        assertNotSame("Cannot connect to remote server", rce.getMessage());
+        assertNotSame(rce.getMessage(), "Cannot connect to remote server");
         assertEquals("Cannot connect to remote server", rce.getCause().getMessage());
     }
 
@@ -91,14 +94,14 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertNotNull(exchange.getIn().getHeaders());
 
         assertEquals(123, exchange.getIn().getHeader("bar"));
-        assertEquals(new Integer(123), exchange.getIn().getHeader("bar", Integer.class));
+        assertEquals(Integer.valueOf(123), exchange.getIn().getHeader("bar", Integer.class));
         assertEquals("123", exchange.getIn().getHeader("bar", String.class));
         assertEquals(123, exchange.getIn().getHeader("bar", 234));
         assertEquals(123, exchange.getIn().getHeader("bar", () -> 456));
         assertEquals(456, exchange.getIn().getHeader("baz", () -> 456));
 
         assertEquals(123, exchange.getIn().getHeader("bar", 234));
-        assertEquals(new Integer(123), exchange.getIn().getHeader("bar", 234, Integer.class));
+        assertEquals(Integer.valueOf(123), exchange.getIn().getHeader("bar", 234, Integer.class));
         assertEquals("123", exchange.getIn().getHeader("bar", "234", String.class));
         assertEquals("123", exchange.getIn().getHeader("bar", () -> "456", String.class));
         assertEquals("456", exchange.getIn().getHeader("baz", () -> "456", String.class));
@@ -244,7 +247,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         Exchange destExchange = sourceExchange.copy();
         Message destIn = destExchange.getIn();
 
-        assertEquals("Dest message should be of the same type as source message", sourceIn.getClass(), destIn.getClass());
+        assertEquals(sourceIn.getClass(), destIn.getClass(), "Dest message should be of the same type as source message");
     }
 
     public static class MyMessage extends DefaultMessage {

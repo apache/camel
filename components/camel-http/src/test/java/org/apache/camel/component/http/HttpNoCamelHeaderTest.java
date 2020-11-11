@@ -16,60 +16,51 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpNoCamelHeaderTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/hello", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        response.setStatusCode(HttpStatus.SC_OK);
-                        Object header = request.getFirstHeader(Exchange.FILE_NAME);
-                        assertNull("There should be no Camel header", header);
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/hello", (request, response, context) -> {
+                    response.setStatusCode(HttpStatus.SC_OK);
+                    Object header = request.getFirstHeader(Exchange.FILE_NAME);
+                    assertNull(header, "There should be no Camel header");
 
-                        for (Header h : request.getAllHeaders()) {
-                            if (h.getName().startsWith("Camel") || h.getName().startsWith("org.apache.camel")) {
-                                assertNull("There should be no Camel header", h);
-                            }
+                    for (Header h : request.getAllHeaders()) {
+                        if (h.getName().startsWith("Camel") || h.getName().startsWith("org.apache.camel")) {
+                            assertNull(h, "There should be no Camel header");
                         }
-
-                        // set ar regular and Camel header
-                        response.setHeader("MyApp", "dude");
-                        response.setHeader(Exchange.TO_ENDPOINT, "foo");
                     }
+
+                    // set ar regular and Camel header
+                    response.setHeader("MyApp", "dude");
+                    response.setHeader(Exchange.TO_ENDPOINT, "foo");
                 }).create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -81,20 +72,17 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
 
     @Test
     public void testNoCamelHeader() throws Exception {
-        Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/hello", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
-                exchange.getIn().setBody("This is content");
-            }
-
-        });
+        Exchange out = template.request(
+                "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/hello",
+                exchange -> {
+                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
+                    exchange.getIn().setBody("This is content");
+                });
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
-        assertEquals("dude", out.getOut().getHeader("MyApp"));
-        assertNull(out.getOut().getHeader(Exchange.TO_ENDPOINT));
+        assertFalse(out.isFailed(), "Should not fail");
+        assertEquals("dude", out.getMessage().getHeader("MyApp"));
+        assertNull(out.getMessage().getHeader(Exchange.TO_ENDPOINT));
     }
 }

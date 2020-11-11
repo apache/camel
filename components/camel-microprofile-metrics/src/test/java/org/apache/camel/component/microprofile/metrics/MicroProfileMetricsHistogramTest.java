@@ -19,9 +19,10 @@ package org.apache.camel.component.microprofile.metrics;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.Histogram;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_HISTOGRAM_VALUE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsHistogramTest extends MicroProfileMetricsTestSupport {
 
@@ -52,11 +53,11 @@ public class MicroProfileMetricsHistogramTest extends MicroProfileMetricsTestSup
             @Override
             public void configure() throws Exception {
                 from("direct:histogram")
-                    .to("microprofile-metrics:histogram:test-histogram?value=10");
+                        .to("microprofile-metrics:histogram:test-histogram?value=10");
 
                 from("direct:histogramFromHeader")
                         .setHeader(HEADER_HISTOGRAM_VALUE, constant(10))
-                    .to("microprofile-metrics:histogram:test-histogram-header");
+                        .to("microprofile-metrics:histogram:test-histogram-header");
             }
         };
     }

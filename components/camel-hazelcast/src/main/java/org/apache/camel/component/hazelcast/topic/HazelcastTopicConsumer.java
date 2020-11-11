@@ -17,7 +17,7 @@
 package org.apache.camel.component.hazelcast.topic;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
+import com.hazelcast.topic.ITopic;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
@@ -28,7 +28,8 @@ import org.apache.camel.component.hazelcast.listener.CamelMessageListener;
  */
 public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName, boolean reliable) {
+    public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName,
+                                  boolean reliable) {
         super(hazelcastInstance, endpoint, processor, cacheName);
         ITopic<Object> topic;
         if (!reliable) {

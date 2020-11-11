@@ -30,7 +30,9 @@ import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EnricherSendEventTest extends ContextTestSupport {
     private MyEventNotifier en = new MyEventNotifier();
@@ -39,21 +41,20 @@ public class EnricherSendEventTest extends ContextTestSupport {
     public void testAsyncEnricher() throws Exception {
 
         template.sendBody("direct:start1", "test");
-        assertEquals("Get a wrong sending event number", 3, en.exchangeSendingEvent.get());
-        assertEquals("Get a wrong sent event number", 3, en.exchangeSentEvent.get());
+        assertEquals(3, en.exchangeSendingEvent.get(), "Get a wrong sending event number");
+        assertEquals(3, en.exchangeSentEvent.get(), "Get a wrong sent event number");
     }
 
     @Test
     public void testSyncEnricher() throws Exception {
         template.sendBody("direct:start2", "test");
-        assertEquals("Get a wrong sending event number", 3, en.exchangeSendingEvent.get());
-        assertEquals("Get a wrong sent event number", 3, en.exchangeSentEvent.get());
+        assertEquals(3, en.exchangeSendingEvent.get(), "Get a wrong sending event number");
+        assertEquals(3, en.exchangeSentEvent.get(), "Get a wrong sent event number");
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.init();
         ShutdownStrategy shutdownStrategy = camelContext.getShutdownStrategy();
         camelContext.addComponent("async", new MyAsyncComponent());
 
@@ -73,9 +74,9 @@ public class EnricherSendEventTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start1")
-                    // using the async utility component to ensure that the
-                    // async routing engine kicks in
-                    .enrich("async:out?reply=Reply").to("mock:result");
+                        // using the async utility component to ensure that the
+                        // async routing engine kicks in
+                        .enrich("async:out?reply=Reply").to("mock:result");
 
                 from("direct:start2").enrich("direct:result").to("mock:result");
 

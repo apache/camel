@@ -18,8 +18,10 @@ package org.apache.camel.dataformat.xstream;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XStreamDataFormatDriverConfigTest extends CamelTestSupport {
 
@@ -31,7 +33,8 @@ public class XStreamDataFormatDriverConfigTest extends CamelTestSupport {
         XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
         xStreamDataFormat.setXstreamDriver(new JsonHierarchicalStreamDriver());
 
-        XStream xStream = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
+        XStream xStream
+                = xStreamDataFormat.createXStream(context.getClassResolver(), context.getApplicationContextClassLoader());
         String marshalledOrder = xStream.toXML(purchaseOrder);
 
         assertEquals("{", marshalledOrder.substring(0, 1));

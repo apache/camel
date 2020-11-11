@@ -18,25 +18,27 @@ package org.apache.camel.component.cxf.spring;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.SoapBindingFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {
 
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[]{"org/apache/camel/component/cxf/spring/SpringBusFactoryBeans.xml"};
+        return new String[] { "org/apache/camel/component/cxf/spring/SpringBusFactoryBeans.xml" };
     }
-    
+
     @Test
     public void getTheBusInstance() {
         Bus bus = ctx.getBean("cxfBus", Bus.class);
-        assertNotNull("The bus should not be null", bus);
-        
+        assertNotNull(bus, "The bus should not be null");
+
         bus = ctx.getBean("myBus", Bus.class);
-        assertNotNull("The bus should not be null", bus);
+        assertNotNull(bus, "The bus should not be null");
 
         SoapBindingFactory soapBindingFactory = bus.getExtension(SoapBindingFactory.class);
-        assertNotNull("You should find the factory here", soapBindingFactory);
+        assertNotNull(soapBindingFactory, "You should find the factory here");
     }
 
 }

@@ -24,13 +24,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.Condition;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.support.BreakpointSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DebugTest extends ContextTestSupport {
 
@@ -41,7 +45,7 @@ public class DebugTest extends ContextTestSupport {
     private Breakpoint breakpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -67,7 +71,7 @@ public class DebugTest extends ContextTestSupport {
             public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 // match when sending to mocks
                 if (definition instanceof ToDefinition) {
-                    ToDefinition to = (ToDefinition)definition;
+                    ToDefinition to = (ToDefinition) definition;
                     return to.getUri().startsWith("mock");
                 }
                 return false;

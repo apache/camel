@@ -16,15 +16,14 @@
  */
 package org.apache.camel.main;
 
-import java.util.LinkedList;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,43 +38,30 @@ public abstract class MainSupport extends BaseMainSupport {
     protected static final int DEFAULT_EXIT_CODE = 0;
 
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
-    protected final CountDownLatch latch = new CountDownLatch(1);
+    protected MainShutdownStrategy shutdownStrategy;
 
-    /**
-     * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
-     */
-    private static final class HangupInterceptor extends Thread {
-        Logger log = LoggerFactory.getLogger(this.getClass());
-        final MainSupport mainInstance;
+    protected volatile ProducerTemplate camelTemplate;
 
-        HangupInterceptor(MainSupport main) {
-            mainInstance = main;
-        }
+    private int durationMaxIdleSeconds;
+    private int durationMaxMessages;
+    private long durationMaxSeconds;
+    private int durationHitExitCode;
 
-        @Override
-        public void run() {
-            log.info("Received hang up - stopping the main instance.");
-            try {
-                mainInstance.stop();
-            } catch (Exception ex) {
-                log.warn("Error during stopping the main instance.", ex);
-            }
-        }
-    }
-
-    protected MainSupport(Class... configurationClasses) {
+    protected MainSupport(Class<?>... configurationClasses) {
         this();
-        addConfigurationClass(configurationClasses);
+        configure().addConfigurationClass(configurationClasses);
     }
 
     protected MainSupport() {
+        this.shutdownStrategy = new DefaultMainShutdownStrategy(this);
     }
 
     /**
      * Runs this process with the given arguments, and will wait until completed, or the JVM terminates.
      */
     public void run() throws Exception {
-        if (!completed.get()) {
+        if (shutdownStrategy.isRunAllowed()) {
+            init();
             internalBeforeStart();
             // if we have an issue starting then propagate the exception to caller
             beforeStart();
@@ -92,21 +78,6 @@ public abstract class MainSupport extends BaseMainSupport {
                 LOG.error("Failed: {}", e, e);
             }
         }
-    }
-
-    /**
-     * Disable the hangup support. No graceful stop by calling stop() on a
-     * Hangup signal.
-     */
-    public void disableHangupSupport() {
-        mainConfigurationProperties.setHangupInterceptorEnabled(false);
-    }
-
-    /**
-     * Hangup support is enabled by default.
-     */
-    public void enableHangupSupport() {
-        mainConfigurationProperties.setHangupInterceptorEnabled(true);
     }
 
     /**
@@ -132,12 +103,16 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     private void internalBeforeStart() {
-        if (mainConfigurationProperties.isHangupInterceptorEnabled()) {
-            String threadName = ThreadHelper.resolveThreadName(null, "CamelHangupInterceptor");
+        // used while waiting to be done
+        durationMaxIdleSeconds = mainConfigurationProperties.getDurationMaxIdleSeconds();
+        durationMaxMessages = mainConfigurationProperties.getDurationMaxMessages();
+        durationMaxSeconds = mainConfigurationProperties.getDurationMaxSeconds();
+        durationHitExitCode = mainConfigurationProperties.getDurationHitExitCode();
 
-            Thread task = new HangupInterceptor(this);
-            task.setName(threadName);
-            Runtime.getRuntime().addShutdownHook(task);
+        // register main as bootstrap
+        CamelContext context = getCamelContext();
+        if (context != null) {
+            context.adapt(ExtendedCamelContext.class).addBootstrap(new MainBootstrapCloseable(this));
         }
     }
 
@@ -178,9 +153,15 @@ public abstract class MainSupport extends BaseMainSupport {
      * Marks this process as being completed.
      */
     public void completed() {
-        completed.set(true);
+        shutdownStrategy.shutdown();
         exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, DEFAULT_EXIT_CODE);
-        latch.countDown();
+    }
+
+    /**
+     * Gets the complete task which allows to trigger this on demand.
+     */
+    public Runnable getCompleteTask() {
+        return this::completed;
     }
 
     @Deprecated
@@ -189,8 +170,9 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Sets the duration (in seconds) to run the application until it
-     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     * Sets the duration (in seconds) to run the application until it should be terminated. Defaults to -1. Any value <=
+     * 0 will run forever.
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -204,10 +186,10 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Sets the maximum idle duration (in seconds) when running the application, and
-     * if there has been no message processed after being idle for more than this duration
-     * then the application should be terminated.
-     * Defaults to -1. Any value <= 0 will run forever.
+     * Sets the maximum idle duration (in seconds) when running the application, and if there has been no message
+     * processed after being idle for more than this duration then the application should be terminated. Defaults to -1.
+     * Any value <= 0 will run forever.
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -221,8 +203,9 @@ public abstract class MainSupport extends BaseMainSupport {
     }
 
     /**
-     * Sets the duration to run the application to process at most max messages until it
-     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     * Sets the duration to run the application to process at most max messages until it should be terminated. Defaults
+     * to -1. Any value <= 0 will run forever.
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -232,6 +215,7 @@ public abstract class MainSupport extends BaseMainSupport {
 
     /**
      * Sets the exit code for the application if duration was hit
+     *
      * @deprecated use {@link #configure()}
      */
     @Deprecated
@@ -256,6 +240,20 @@ public abstract class MainSupport extends BaseMainSupport {
         mainConfigurationProperties.setTracing(true);
     }
 
+    public MainShutdownStrategy getShutdownStrategy() {
+        return shutdownStrategy;
+    }
+
+    /**
+     * Set the {@link MainShutdownStrategy} used to properly shut-down the main instance. By default a
+     * {@link DefaultMainShutdownStrategy} will be used.
+     *
+     * @param shutdownStrategy the shutdown strategy
+     */
+    public void setShutdownStrategy(MainShutdownStrategy shutdownStrategy) {
+        this.shutdownStrategy = shutdownStrategy;
+    }
+
     @Override
     protected void doStop() throws Exception {
         // call completed to properly stop as we count down the waiting latch
@@ -268,15 +266,15 @@ public abstract class MainSupport extends BaseMainSupport {
 
     @Override
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
-        if (mainConfigurationProperties.getDurationMaxMessages() > 0 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
+        if (mainConfigurationProperties.getDurationMaxMessages() > 0
+                || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
             EventNotifier notifier = new MainDurationEventNotifier(
-                camelContext,
-                mainConfigurationProperties.getDurationMaxMessages(),
-                mainConfigurationProperties.getDurationMaxIdleSeconds(),
-                completed,
-                latch,
-                true);
+                    camelContext,
+                    mainConfigurationProperties.getDurationMaxMessages(),
+                    mainConfigurationProperties.getDurationMaxIdleSeconds(),
+                    shutdownStrategy,
+                    true);
 
             // register our event notifier
             ServiceHelper.startService(notifier);
@@ -284,20 +282,21 @@ public abstract class MainSupport extends BaseMainSupport {
         }
 
         // register lifecycle so we are notified in Camel is stopped from JMX or somewhere else
-        camelContext.addLifecycleStrategy(new MainLifecycleStrategy(completed, latch));
+        camelContext.addLifecycleStrategy(new MainLifecycleStrategy(shutdownStrategy));
     }
 
     protected void waitUntilCompleted() {
-        while (!completed.get()) {
+        while (shutdownStrategy.isRunAllowed()) {
             try {
-                int idle = mainConfigurationProperties.getDurationMaxIdleSeconds();
-                int max = mainConfigurationProperties.getDurationMaxMessages();
-                long sec = mainConfigurationProperties.getDurationMaxSeconds();
+                int idle = durationMaxIdleSeconds;
+                int max = durationMaxMessages;
+                long sec = durationMaxSeconds;
+                int exit = durationHitExitCode;
                 if (sec > 0) {
                     LOG.info("Waiting for: {} seconds", sec);
-                    latch.await(sec, TimeUnit.SECONDS);
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
-                    completed.set(true);
+                    shutdownStrategy.await(sec, TimeUnit.SECONDS);
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
+                    shutdownStrategy.shutdown();
                 } else if (idle > 0 || max > 0) {
                     if (idle > 0 && max > 0) {
                         LOG.info("Waiting to be idle for: {} seconds or until: {} messages has been processed", idle, max);
@@ -306,57 +305,36 @@ public abstract class MainSupport extends BaseMainSupport {
                     } else {
                         LOG.info("Waiting until: {} messages has been processed", max);
                     }
-                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, mainConfigurationProperties.getDurationHitExitCode());
-                    latch.await();
-                    completed.set(true);
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, exit);
+                    shutdownStrategy.await();
+                    shutdownStrategy.shutdown();
                 } else {
-                    latch.await();
+                    shutdownStrategy.await();
                 }
             } catch (InterruptedException e) {
                 // okay something interrupted us so terminate
-                completed.set(true);
-                latch.countDown();
+                shutdownStrategy.shutdown();
                 Thread.currentThread().interrupt();
             }
         }
     }
 
-    public abstract class Option {
-        private String abbreviation;
-        private String fullName;
-        private String description;
+    protected abstract ProducerTemplate findOrCreateCamelTemplate();
 
-        protected Option(String abbreviation, String fullName, String description) {
-            this.abbreviation = "-" + abbreviation;
-            this.fullName = "-" + fullName;
-            this.description = description;
+    protected abstract CamelContext createCamelContext();
+
+    public ProducerTemplate getCamelTemplate() throws Exception {
+        if (camelTemplate == null) {
+            camelTemplate = findOrCreateCamelTemplate();
         }
-
-        public boolean processOption(String arg, LinkedList<String> remainingArgs) {
-            if (arg.equalsIgnoreCase(abbreviation) || fullName.startsWith(arg)) {
-                doProcess(arg, remainingArgs);
-                return true;
-            }
-            return false;
-        }
-
-        public String getAbbreviation() {
-            return abbreviation;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getFullName() {
-            return fullName;
-        }
-
-        public String getInformation() {
-            return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
-        }
-
-        protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
+        return camelTemplate;
     }
 
+    protected void initCamelContext() throws Exception {
+        camelContext = createCamelContext();
+        if (camelContext == null) {
+            throw new IllegalStateException("Created CamelContext is null");
+        }
+        postProcessCamelContext(camelContext);
+    }
 }

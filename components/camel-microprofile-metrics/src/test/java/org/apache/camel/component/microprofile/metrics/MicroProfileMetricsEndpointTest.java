@@ -18,11 +18,12 @@ package org.apache.camel.component.microprofile.metrics;
 
 import org.apache.camel.Producer;
 import org.eclipse.microprofile.metrics.MetricType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MicroProfileMetricsEndpointTest {
 
@@ -68,11 +69,10 @@ public class MicroProfileMetricsEndpointTest {
         assertThat(producer, is(instanceOf(MicroProfileMetricsTimerProducer.class)));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testInvalidMetricType() throws Exception {
         MicroProfileMetricsEndpoint endpoint = createEndpoint(MetricType.INVALID);
-        Producer producer = endpoint.createProducer();
-        assertThat(producer, is(instanceOf(MicroProfileMetricsCounterProducer.class)));
+        assertThrows(IllegalStateException.class, () -> endpoint.createProducer());
     }
 
     private MicroProfileMetricsEndpoint createEndpoint(MetricType metricType) {

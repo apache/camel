@@ -17,9 +17,11 @@
 package org.apache.camel.spi;
 
 /**
- * To allow objects to be injected with an id, such as EIP {@link org.apache.camel.Processor}s which has been defined from Camel routes.
+ * To allow objects to be injected with an id, such as EIP {@link org.apache.camel.Processor}s which has been defined
+ * from Camel routes.
  * <p/>
- * This allows access to the id of the processor at runtime, which makes it easier to map it to the corresponding model definition.
+ * This allows access to the id of the processor at runtime, which makes it easier to map it to the corresponding model
+ * definition.
  */
 public interface IdAware extends HasId {
 

@@ -87,14 +87,14 @@ again in case it has been suspended.
 == ThrottlingInflightRoutePolicy compared to the Throttler EIP
 
 The *`ThrottlingInflightRoutePolicy`* compared to
-xref:throttle-eip.adoc[Throttler] is that it does *not* block during
+xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] is that it does *not* block during
 throttling. It does throttling that is approximate based, meaning that
 its more coarse grained and not explicit precise as the
-xref:throttle-eip.adoc[Throttler]. The xref:throttle-eip.adoc[Throttler] can
+xref:{eip-vc}:eips:throttle-eip.adoc[Throttler]. The xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] can
 be much more accurate and only allow a specific number of messages being
 passed per a given time unit. Also the *`ThrottlingInflightRoutePolicy`*
 is based its metrics on number of inflight exchanges where as
-xref:throttle-eip.adoc[Throttler] is based on number of messages per time
+xref:{eip-vc}:eips:throttle-eip.adoc[Throttler] is based on number of messages per time
 unit.
 
 == `ScheduledRoutePolicy` (Simple and Cron based) using camel Quartz

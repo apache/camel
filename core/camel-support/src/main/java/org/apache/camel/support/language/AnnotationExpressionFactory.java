@@ -22,10 +22,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 
 /**
- * A factory which creates an {@link Expression} object from an annotation on a field, property or method parameter
- * of a specified type.
+ * A factory which creates an {@link Expression} object from an annotation on a field, property or method parameter of a
+ * specified type.
  */
 public interface AnnotationExpressionFactory {
 
-    Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType);
+    Expression createExpression(
+            CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation,
+            Class<?> expressionReturnType);
 }

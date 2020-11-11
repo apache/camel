@@ -1,0 +1,12 @@
+[[etcd3-other]]
+= Etcd3 Component
+:docTitle: Etcd3
+:artifactId: camel-etcd3
+:description: Aggregation repository using EtcD as datastore
+:since: 3.5
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/etcd3.adoc[opts=optional]
+
+*Since Camel {since}*
+
+The Etcd3 component provides an `AggregationStrategy` to use Etcd3 as the backend datastore.

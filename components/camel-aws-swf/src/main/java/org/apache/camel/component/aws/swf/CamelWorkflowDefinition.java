@@ -44,7 +44,8 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
     private final DecisionContextProvider contextProvider = new DecisionContextProviderImpl();
     private final WorkflowClock workflowClock = contextProvider.getDecisionContext().getWorkflowClock();
 
-    public CamelWorkflowDefinition(SWFWorkflowConsumer swfWorkflowConsumer, DecisionContext decisionContext, DataConverter dataConverter) {
+    public CamelWorkflowDefinition(SWFWorkflowConsumer swfWorkflowConsumer, DecisionContext decisionContext,
+                                   DataConverter dataConverter) {
         this.swfWorkflowConsumer = swfWorkflowConsumer;
         this.decisionContext = decisionContext;
         this.dataConverter = dataConverter;
@@ -96,9 +97,9 @@ public class CamelWorkflowDefinition extends WorkflowDefinition {
     public void signalRecieved(String signalName, String input) throws WorkflowException {
         Object[] parameters = dataConverter.fromData(input, Object[].class);
         try {
-            LOGGER.debug("Processing workflow signalRecieved");
+            LOGGER.debug("Processing workflow signalReceived");
 
-            swfWorkflowConsumer.signalRecieved(parameters);
+            swfWorkflowConsumer.signalReceived(parameters);
         } catch (Throwable e) {
             throwWorkflowException(dataConverter, e);
             throw new IllegalStateException("Unreacheable");

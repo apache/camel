@@ -28,7 +28,11 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BacklogTracerTest extends ManagementTestSupport {
 
@@ -46,10 +50,10 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
 
         Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
         assertEquals(Boolean.TRUE, removeOnDump);
@@ -68,7 +72,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         List<Exchange> exchanges = getMockEndpoint("mock:foo").getReceivedExchanges();
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         assertNotNull(events);
         assertEquals(2, events.size());
@@ -76,14 +80,16 @@ public class BacklogTracerTest extends ManagementTestSupport {
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Hello World</body>\n"
-                + "    </message>", event1.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Hello World</body>\n"
+                     + "    </message>",
+                event1.getMessageAsXml());
 
         BacklogTracerEventMessage event2 = events.get(1);
         assertEquals("foo", event2.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Bye World</body>\n"
-                + "    </message>", event2.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Bye World</body>\n"
+                     + "    </message>",
+                event2.getMessageAsXml());
     }
 
     @Test
@@ -94,10 +100,10 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -111,7 +117,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         String events = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         assertNotNull(events);
         log.info(events);
@@ -133,7 +139,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -149,7 +155,8 @@ public class BacklogTracerTest extends ManagementTestSupport {
         List<Exchange> fooExchanges = getMockEndpoint("mock:foo").getReceivedExchanges();
         List<Exchange> barExchanges = getMockEndpoint("mock:bar").getReceivedExchanges();
 
-        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+        List<BacklogTracerEventMessage> events
+                = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
         assertEquals(6, events.size());
@@ -158,43 +165,49 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertEquals("route1", event0.getRouteId());
         assertEquals(null, event0.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Hello World</body>\n"
-                + "    </message>", event0.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Hello World</body>\n"
+                     + "    </message>",
+                event0.getMessageAsXml());
 
         BacklogTracerEventMessage event1 = events.get(1);
         assertEquals("route1", event1.getRouteId());
         assertEquals("foo", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Hello World</body>\n"
-                + "    </message>", event1.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Hello World</body>\n"
+                     + "    </message>",
+                event1.getMessageAsXml());
 
         BacklogTracerEventMessage event2 = events.get(2);
         assertEquals("route1", event2.getRouteId());
         assertEquals("bar", event2.getToNode());
         assertEquals("    <message exchangeId=\"" + barExchanges.get(0).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Hello World</body>\n"
-                + "    </message>", event2.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Hello World</body>\n"
+                     + "    </message>",
+                event2.getMessageAsXml());
 
         BacklogTracerEventMessage event3 = events.get(3);
         assertEquals("route1", event3.getRouteId());
         assertEquals(null, event3.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Bye World</body>\n"
-                + "    </message>", event3.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Bye World</body>\n"
+                     + "    </message>",
+                event3.getMessageAsXml());
 
         BacklogTracerEventMessage event4 = events.get(4);
         assertEquals("route1", event4.getRouteId());
         assertEquals("foo", event4.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Bye World</body>\n"
-                + "    </message>", event3.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Bye World</body>\n"
+                     + "    </message>",
+                event3.getMessageAsXml());
 
         BacklogTracerEventMessage event5 = events.get(5);
         assertEquals("route1", event5.getRouteId());
         assertEquals("bar", event5.getToNode());
         assertEquals("    <message exchangeId=\"" + barExchanges.get(1).getExchangeId() + "\">\n"
-                + "      <body type=\"java.lang.String\">Bye World</body>\n"
-                + "    </message>", event4.getMessageAsXml());
+                     + "      <body type=\"java.lang.String\">Bye World</body>\n"
+                     + "    </message>",
+                event4.getMessageAsXml());
     }
 
     @Test
@@ -205,7 +218,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -245,7 +258,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -258,7 +271,8 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
+        List<BacklogTracerEventMessage> events
+                = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
         assertEquals(6, events.size());
@@ -298,7 +312,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -312,14 +326,14 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         assertNotNull(events);
         assertEquals(2, events.size());
 
         // and if we get again they are still there
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
         assertEquals(2, events.size());
 
         // send in another message
@@ -334,13 +348,13 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         // and now we should have 3 more messages
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
         assertNotNull(events);
         assertEquals(3, events.size());
 
         // and bar should also have 3 traced messages
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"bar"}, new String[]{"java.lang.String"});
+                new Object[] { "bar" }, new String[] { "java.lang.String" });
         assertNotNull(events);
         assertEquals(3, events.size());
     }
@@ -359,14 +373,14 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
         // change size to 2 x 10 (as we need for first as well)
         mbeanServer.setAttribute(on, new Attribute("BacklogSize", 20));
         // set the pattern to match only foo
         mbeanServer.setAttribute(on, new Attribute("TracePattern", "foo"));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable it
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
@@ -381,7 +395,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
         assertEquals(10, events.size());
 
         // the first should be 0 and the last 9
@@ -394,7 +408,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         template.sendBody("direct:start", "###" + 10 + "###");
 
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
         assertEquals(10, events.size());
 
         // and we are shifted one now
@@ -410,7 +424,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         template.sendBody("direct:start", "###" + 14 + "###");
 
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"foo"}, new String[]{"java.lang.String"});
+                new Object[] { "foo" }, new String[] { "java.lang.String" });
         assertEquals(10, events.size());
 
         // and we are shifted +4 now

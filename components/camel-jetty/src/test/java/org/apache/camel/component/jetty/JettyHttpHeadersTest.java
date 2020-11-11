@@ -18,7 +18,9 @@ package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyHttpHeadersTest extends BaseJettyTest {
 
@@ -32,7 +34,8 @@ public class JettyHttpHeadersTest extends BaseJettyTest {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "beer=yes");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "");
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo?beer=yes", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo?beer=yes", "Hello World",
+                Exchange.HTTP_METHOD, "POST", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

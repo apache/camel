@@ -24,8 +24,8 @@ import org.apache.camel.TypeConversionException;
 
 public interface MetaDataExtension extends ComponentExtension {
     /**
-     * @param parameters
-     * @return the {@link MetaData}
+     * @param  parameters
+     * @return            the {@link MetaData}
      */
     Optional<MetaData> meta(Map<String, Object> parameters);
 
@@ -38,8 +38,8 @@ public interface MetaDataExtension extends ComponentExtension {
         /**
          * Returns an attribute associated with this meta data by name.
          *
-         * @param name the attribute name
-         * @return the attribute
+         * @param  name the attribute name
+         * @return      the attribute
          */
         Object getAttribute(String name);
 
@@ -50,12 +50,12 @@ public interface MetaDataExtension extends ComponentExtension {
 
         /**
          *
-         * Returns an attribute associated with this meta data by name and
-         * specifying the type required.
+         * Returns an attribute associated with this meta data by name and specifying the type required.
          *
-         * @param name the attribute name
-         * @param type the type of the attribute
-         * @return the value of the given attribute or <tt>null</tt> if there is no attribute for the given name
+         * @param  name                    the attribute name
+         * @param  type                    the type of the attribute
+         * @return                         the value of the given attribute or <tt>null</tt> if there is no attribute
+         *                                 for the given name
          * @throws TypeConversionException is thrown if error during type conversion
          */
         <T> T getAttribute(String name, Class<T> type);
@@ -70,8 +70,8 @@ public interface MetaDataExtension extends ComponentExtension {
         /**
          * Returns the payload of the meta data as specified type.
          *
-         * @param type the type that the payload should be converted yo.
-         * @return the payload of the meta data as the specified type.
+         * @param  type                    the type that the payload should be converted yo.
+         * @return                         the payload of the meta data as the specified type.
          * @throws TypeConversionException is thrown if error during type conversion
          */
         <T> T getPayload(Class<T> type);

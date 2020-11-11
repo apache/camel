@@ -25,12 +25,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.message.MessageContentsList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
 

@@ -18,14 +18,14 @@ package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 public class AggregationStrategyBeanAdapterRefMethodNameTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myAppender", new AggregationStrategyBeanAdapterRefMethodNameTest.MyBodyAppender());
         return jndi;
     }
@@ -46,7 +46,8 @@ public class AggregationStrategyBeanAdapterRefMethodNameTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(constant(true)).aggregationStrategyRef("myAppender").aggregationStrategyMethodName("append").completionSize(3).to("mock:result");
+                from("direct:start").aggregate(constant(true)).aggregationStrategyRef("myAppender")
+                        .aggregationStrategyMethodName("append").completionSize(3).to("mock:result");
             }
         };
     }

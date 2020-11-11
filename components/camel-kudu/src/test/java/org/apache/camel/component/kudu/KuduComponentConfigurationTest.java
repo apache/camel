@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.kudu;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class KuduComponentConfigurationTest extends CamelTestSupport {
 
@@ -29,19 +32,19 @@ public class KuduComponentConfigurationTest extends CamelTestSupport {
         KuduOperations operation = KuduOperations.SCAN;
 
         KuduComponent component = new KuduComponent(this.context());
-        KuduEndpoint endpoint = (KuduEndpoint) component.createEndpoint("kudu:" + host + ":" + port + "/" + tableName + "?operation=" + operation);
+        KuduEndpoint endpoint = (KuduEndpoint) component
+                .createEndpoint("kudu:" + host + ":" + port + "/" + tableName + "?operation=" + operation);
 
-        assertEquals("Host was not correctly detected. ", host, endpoint.getHost());
-        assertEquals("Port was not correctly detected. ", port, endpoint.getPort());
-        assertEquals("Table name was not correctly detected. ", tableName, endpoint.getTableName());
-        assertEquals("Operation was not correctly detected. ", operation, endpoint.getOperation());
+        assertEquals(host, endpoint.getHost(), "Host was not correctly detected. ");
+        assertEquals(port, endpoint.getPort(), "Port was not correctly detected. ");
+        assertEquals(tableName, endpoint.getTableName(), "Table name was not correctly detected. ");
+        assertEquals(operation, endpoint.getOperation(), "Operation was not correctly detected. ");
     }
 
-
-    @Test(expected = Exception.class)
+    @Test
     public void wrongUrl() throws Exception {
-
         KuduComponent component = new KuduComponent(this.context());
-        component.createEndpoint("wrong url");
+        assertThrows(Exception.class,
+                () -> component.createEndpoint("wrong url"));
     }
 }

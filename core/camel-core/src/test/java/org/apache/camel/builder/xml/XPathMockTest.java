@@ -19,7 +19,7 @@ package org.apache.camel.builder.xml;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.builder.PredicateBuilder.not;
 import static org.apache.camel.language.xpath.XPathBuilder.xpath;

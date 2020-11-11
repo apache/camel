@@ -25,16 +25,21 @@ import org.asteriskjava.manager.AuthenticationFailedException;
 import org.asteriskjava.manager.TimeoutException;
 import org.asteriskjava.manager.action.ManagerAction;
 import org.asteriskjava.manager.response.ManagerResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Asterisk producer.
  */
 public class AsteriskProducer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AsteriskProducer.class);
+
     private final AsteriskEndpoint endpoint;
     private final AsteriskConnection connection;
 
-    public AsteriskProducer(AsteriskEndpoint endpoint) throws IllegalStateException, IOException, AuthenticationFailedException, TimeoutException, CamelAsteriskException {
+    public AsteriskProducer(AsteriskEndpoint endpoint) throws IllegalStateException, IOException, AuthenticationFailedException,
+                                                       TimeoutException, CamelAsteriskException {
         super(endpoint);
 
         this.endpoint = endpoint;
@@ -67,7 +72,7 @@ public class AsteriskProducer extends DefaultProducer {
         // Action must be set
         ObjectHelper.notNull(action, "action");
 
-        log.debug("Send action {}", action);
+        LOG.debug("Send action {}", action);
 
         ManagerAction managerAction = action.apply(exchange);
         ManagerResponse managerResponse = connection.sendAction(managerAction);

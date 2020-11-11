@@ -20,7 +20,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ManagedBrowsableEndpointEmptyTest extends ManagementTestSupport {
 
@@ -34,7 +36,8 @@ public class ManagedBrowsableEndpointEmptyTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
-        String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
+        String out
+                = (String) mbeanServer.invoke(name, "browseExchange", new Object[] { 0 }, new String[] { "java.lang.Integer" });
         assertNull(out);
     }
 

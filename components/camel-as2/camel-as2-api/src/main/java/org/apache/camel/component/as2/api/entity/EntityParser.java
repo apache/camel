@@ -72,9 +72,9 @@ public final class EntityParser {
         Args.notNull(boundary, "Boundary");
 
         String boundaryCloseDelimiter = "--" + boundary + "--"; // boundary
-                                                                // close-delimiter
-                                                                // - RFC2046
-                                                                // 5.1.1
+        // close-delimiter
+        // - RFC2046
+        // 5.1.1
 
         if (cursor == null) {
             cursor = new ParserCursor(0, boundaryCloseDelimiter.length());
@@ -101,7 +101,7 @@ public final class EntityParser {
         Args.notNull(boundary, "Boundary");
 
         String boundaryDelimiter = "--" + boundary; // boundary delimiter -
-                                                    // RFC2046 5.1.1
+        // RFC2046 5.1.1
 
         if (cursor == null) {
             cursor = new ParserCursor(0, boundaryDelimiter.length());
@@ -172,12 +172,12 @@ public final class EntityParser {
         }
 
     }
-    
+
     public static MimeEntity parseCompressedEntity(byte[] compressedData, InputExpanderProvider expanderProvider)
             throws HttpException {
 
         byte[] uncompressedContent = uncompressData(compressedData, expanderProvider);
-        
+
         return parseEntity(uncompressedContent);
     }
 
@@ -189,7 +189,7 @@ public final class EntityParser {
     }
 
     public static MimeEntity parseEntity(byte[] content) throws HttpException {
-        
+
         try {
             InputStream is = new ByteArrayInputStream(content);
             AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE);
@@ -216,7 +216,7 @@ public final class EntityParser {
             MimeEntity entity = parseEntityBody(inbuffer, null, entityContentType, entityContentTransferEncoding, headers);
             entity.removeAllHeaders();
             entity.setHeaders(headers);
-            
+
             return entity;
         } catch (Exception e) {
             throw new HttpException("Failed to parse entity", e);
@@ -237,12 +237,12 @@ public final class EntityParser {
         try {
             // Create enveloped data from encrypted data
             CMSEnvelopedData cmsEnvelopedData = new CMSEnvelopedData(encryptedData);
-            
+
             // Extract recipient information form enveloped data.
             RecipientInformationStore recipientsInformationStore = cmsEnvelopedData.getRecipientInfos();
             Collection<RecipientInformation> recipients = recipientsInformationStore.getRecipients();
             Iterator<RecipientInformation> it = recipients.iterator();
-            
+
             // Decrypt if enveloped data contains recipient information
             if (it.hasNext()) {
                 // Create recipient from private key.
@@ -255,73 +255,81 @@ public final class EntityParser {
         } catch (CMSException e) {
             throw new HttpException("Failed to decrypt data", e);
         }
-        
+
         throw new HttpException("Failed to decrypt data: bno recipeint information");
     }
-    
-    private static void parseApplicationPkcs7MimeCompressedEntity(HttpMessage message, AS2SessionInputBuffer inBuffer, ContentType contentType, String contentTransferEncoding) throws HttpException {
+
+    private static void parseApplicationPkcs7MimeCompressedEntity(
+            HttpMessage message, AS2SessionInputBuffer inBuffer, ContentType contentType, String contentTransferEncoding)
+            throws HttpException {
         ApplicationPkcs7MimeCompressedDataEntity applicationPkcs7MimeCompressedDataEntity = null;
 
         Args.notNull(message, "message");
         Args.notNull(inBuffer, "inBuffer");
-        
+
         HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
             // already parsed
             return;
         }
-        
+
         Args.check(entity.isStreaming(), "Message entity can not be parsed: entity is not streaming");
 
         try {
-            
-            applicationPkcs7MimeCompressedDataEntity = parseApplicationPkcs7MimeCompressedDataEntityBody(inBuffer, null, contentType, contentTransferEncoding);
+
+            applicationPkcs7MimeCompressedDataEntity
+                    = parseApplicationPkcs7MimeCompressedDataEntityBody(inBuffer, null, contentType, contentTransferEncoding);
             applicationPkcs7MimeCompressedDataEntity.setMainBody(true);
-            
+
             EntityUtils.setMessageEntity(message, applicationPkcs7MimeCompressedDataEntity);
 
         } catch (Exception e) {
             throw new HttpException("Failed to parse entity content", e);
         }
     }
-    
-    private static void parseApplicationPkcs7MimeEnvelopedEntity(HttpMessage message, AS2SessionInputBuffer inBuffer, ContentType contentType, String contentTransferEncoding) throws HttpException {
+
+    private static void parseApplicationPkcs7MimeEnvelopedEntity(
+            HttpMessage message, AS2SessionInputBuffer inBuffer, ContentType contentType, String contentTransferEncoding)
+            throws HttpException {
         ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEnvelopedDataEntity = null;
-        
+
         Args.notNull(message, "message");
         Args.notNull(inBuffer, "inBuffer");
-        
+
         HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
             // already parsed
             return;
         }
-        
+
         Args.check(entity.isStreaming(), "Message entity can not be parsed: entity is not streaming");
 
         try {
-            
-            applicationPkcs7MimeEnvelopedDataEntity = parseApplicationPkcs7MimeEnvelopedDataEntityBody(inBuffer, null, contentType, contentTransferEncoding);
+
+            applicationPkcs7MimeEnvelopedDataEntity
+                    = parseApplicationPkcs7MimeEnvelopedDataEntityBody(inBuffer, null, contentType, contentTransferEncoding);
             applicationPkcs7MimeEnvelopedDataEntity.setMainBody(true);
-            
+
             EntityUtils.setMessageEntity(message, applicationPkcs7MimeEnvelopedDataEntity);
 
         } catch (Exception e) {
             throw new HttpException("Failed to parse entity content", e);
         }
     }
-    
-    private static void parseMultipartSignedEntity(HttpMessage message, AS2SessionInputBuffer inBuffer, String boundary, String charsetName, String contentTransferEncoding)
+
+    private static void parseMultipartSignedEntity(
+            HttpMessage message, AS2SessionInputBuffer inBuffer, String boundary, String charsetName,
+            String contentTransferEncoding)
             throws HttpException {
         MultipartSignedEntity multipartSignedEntity = null;
-        
+
         Args.notNull(message, "message");
         Args.notNull(inBuffer, "inBuffer");
         Args.notNull(boundary, "boundary");
         Args.notNull(charsetName, "charsetName");
-        
+
         HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof MultipartSignedEntity) {
@@ -339,7 +347,8 @@ public final class EntityParser {
                 throw new HttpException("Failed to retrieve 'micalg' parameter from content type header");
             }
 
-            multipartSignedEntity = parseMultipartSignedEntityBody(inBuffer, boundary, micalg, charsetName, contentTransferEncoding);
+            multipartSignedEntity
+                    = parseMultipartSignedEntityBody(inBuffer, boundary, micalg, charsetName, contentTransferEncoding);
             multipartSignedEntity.setMainBody(true);
 
             EntityUtils.setMessageEntity(message, multipartSignedEntity);
@@ -351,12 +360,14 @@ public final class EntityParser {
         }
     }
 
-    private static void parseApplicationEDIEntity(HttpMessage message, AS2SessionInputBuffer inBuffer, ContentType contentType, String contentTransferEncoding) throws HttpException {
+    private static void parseApplicationEDIEntity(
+            HttpMessage message, AS2SessionInputBuffer inBuffer, ContentType contentType, String contentTransferEncoding)
+            throws HttpException {
         ApplicationEDIEntity applicationEDIEntity = null;
-        
+
         Args.notNull(message, "message");
         Args.notNull(inBuffer, "inBuffer");
-        
+
         HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof ApplicationEDIEntity) {
@@ -372,16 +383,18 @@ public final class EntityParser {
             applicationEDIEntity.setMainBody(true);
 
             EntityUtils.setMessageEntity(message, applicationEDIEntity);
-            
+
         } catch (Exception e) {
             throw new HttpException("Failed to parse entity content", e);
         }
     }
 
-    private static void parseMessageDispositionNotificationReportEntity(HttpMessage message, AS2SessionInputBuffer inBuffer, String boundary, String charsetName, String contentTransferEncoding)
+    private static void parseMessageDispositionNotificationReportEntity(
+            HttpMessage message, AS2SessionInputBuffer inBuffer, String boundary, String charsetName,
+            String contentTransferEncoding)
             throws HttpException {
         DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = null;
-        
+
         Args.notNull(message, "message");
         Args.notNull(inBuffer, "inBuffer");
         Args.notNull(boundary, "boundary");
@@ -397,7 +410,8 @@ public final class EntityParser {
 
         try {
 
-            dispositionNotificationMultipartReportEntity = parseMultipartReportEntityBody(inBuffer, boundary, charsetName, contentTransferEncoding);
+            dispositionNotificationMultipartReportEntity
+                    = parseMultipartReportEntityBody(inBuffer, boundary, charsetName, contentTransferEncoding);
 
             EntityUtils.setMessageEntity(message, dispositionNotificationMultipartReportEntity);
 
@@ -408,14 +422,14 @@ public final class EntityParser {
 
     /**
      * Parses message's entity and replaces it with mime entity.
-     * 
-     * @param message - message whose entity is parsed.
+     *
+     * @param  message       - message whose entity is parsed.
      * @throws HttpException when things go wrong.
      */
     public static void parseAS2MessageEntity(HttpMessage message) throws HttpException {
         if (EntityUtils.hasEntity(message)) {
             HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
-            
+
             if (entity instanceof MimeEntity) {
                 // already parsed
                 return;
@@ -425,7 +439,6 @@ public final class EntityParser {
                 // Determine Content Type of Message
                 String contentTypeStr = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TYPE);
                 ContentType contentType = ContentType.parse(contentTypeStr);
-
 
                 // Determine Charset
                 String charsetName = AS2Charset.US_ASCII;
@@ -444,30 +457,33 @@ public final class EntityParser {
                 inBuffer.bind(entity.getContent());
 
                 switch (contentType.getMimeType().toLowerCase()) {
-                case AS2MimeType.APPLICATION_EDIFACT:
-                case AS2MimeType.APPLICATION_EDI_X12:
-                case AS2MimeType.APPLICATION_EDI_CONSENT:
-                    parseApplicationEDIEntity(message, inBuffer, contentType, contentTransferEncoding);
-                    break;
-                case AS2MimeType.MULTIPART_SIGNED:
-                    parseMultipartSignedEntity(message, inBuffer, boundary, charsetName, contentTransferEncoding);
-                    break;
-                case AS2MimeType.APPLICATION_PKCS7_MIME:
-                    switch (contentType.getParameter("smime-type")) {
-                    case "compressed-data":
-                        parseApplicationPkcs7MimeCompressedEntity(message, inBuffer, contentType, contentTransferEncoding);
+                    case AS2MimeType.APPLICATION_EDIFACT:
+                    case AS2MimeType.APPLICATION_EDI_X12:
+                    case AS2MimeType.APPLICATION_EDI_CONSENT:
+                        parseApplicationEDIEntity(message, inBuffer, contentType, contentTransferEncoding);
                         break;
-                    case "enveloped-data":
-                        parseApplicationPkcs7MimeEnvelopedEntity(message, inBuffer, contentType, contentTransferEncoding);
+                    case AS2MimeType.MULTIPART_SIGNED:
+                        parseMultipartSignedEntity(message, inBuffer, boundary, charsetName, contentTransferEncoding);
+                        break;
+                    case AS2MimeType.APPLICATION_PKCS7_MIME:
+                        switch (contentType.getParameter("smime-type")) {
+                            case "compressed-data":
+                                parseApplicationPkcs7MimeCompressedEntity(message, inBuffer, contentType,
+                                        contentTransferEncoding);
+                                break;
+                            case "enveloped-data":
+                                parseApplicationPkcs7MimeEnvelopedEntity(message, inBuffer, contentType,
+                                        contentTransferEncoding);
+                                break;
+                            default:
+                        }
+                        break;
+                    case AS2MimeType.MULTIPART_REPORT:
+                        parseMessageDispositionNotificationReportEntity(message, inBuffer, boundary, charsetName,
+                                contentTransferEncoding);
                         break;
                     default:
-                    }
-                    break;
-                case AS2MimeType.MULTIPART_REPORT:
-                    parseMessageDispositionNotificationReportEntity(message, inBuffer, boundary, charsetName, contentTransferEncoding);
-                    break;
-                default:
-                    break;
+                        break;
                 }
             } catch (HttpException e) {
                 throw e;
@@ -477,11 +493,12 @@ public final class EntityParser {
         }
     }
 
-    public static MultipartSignedEntity parseMultipartSignedEntityBody(AS2SessionInputBuffer inbuffer,
-                                                                       String boundary,
-                                                                       String micalg,
-                                                                       String charsetName,
-                                                                       String contentTransferEncoding)
+    public static MultipartSignedEntity parseMultipartSignedEntityBody(
+            AS2SessionInputBuffer inbuffer,
+            String boundary,
+            String micalg,
+            String charsetName,
+            String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
@@ -522,11 +539,12 @@ public final class EntityParser {
                 throw new HttpException("Failed to find Content-Type header in signed entity body part");
             }
 
-            MimeEntity signedEntity = parseEntityBody(inbuffer, boundary, signedEntityContentType, signedEntityContentTransferEncoding, headers);
+            MimeEntity signedEntity = parseEntityBody(inbuffer, boundary, signedEntityContentType,
+                    signedEntityContentTransferEncoding, headers);
             signedEntity.removeAllHeaders();
             signedEntity.setHeaders(headers);
             multipartSignedEntity.addPart(signedEntity);
-            
+
             //
             // End Signed Entity Part
 
@@ -556,7 +574,8 @@ public final class EntityParser {
                         "Invalid content type '" + signatureContentType.getMimeType() + "' for signature body part");
             }
 
-            ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = parseApplicationPkcs7SignatureEntityBody(inbuffer, boundary, signatureContentType, signatureContentTransferEncoding);
+            ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = parseApplicationPkcs7SignatureEntityBody(inbuffer,
+                    boundary, signatureContentType, signatureContentTransferEncoding);
             applicationPkcs7SignatureEntity.removeAllHeaders();
             applicationPkcs7SignatureEntity.setHeaders(headers);
             multipartSignedEntity.addPart(applicationPkcs7SignatureEntity);
@@ -565,9 +584,9 @@ public final class EntityParser {
             // End Signature Body Part
 
             NameValuePair[] parameters = new NameValuePair[] {
-                new BasicNameValuePair("protocol", AS2MimeType.APPLICATION_PKCS7_SIGNATURE),
-                new BasicNameValuePair("boundary", boundary), new BasicNameValuePair("micalg", micalg),
-                new BasicNameValuePair("charset", charsetName)};
+                    new BasicNameValuePair("protocol", AS2MimeType.APPLICATION_PKCS7_SIGNATURE),
+                    new BasicNameValuePair("boundary", boundary), new BasicNameValuePair("micalg", micalg),
+                    new BasicNameValuePair("charset", charsetName) };
             ContentType contentType = ContentType.create(AS2MimeType.MULTIPART_SIGNED, parameters);
             multipartSignedEntity.setContentType(contentType);
             multipartSignedEntity.setContentTransferEncoding(contentTransferEncoding);
@@ -582,10 +601,11 @@ public final class EntityParser {
         }
     }
 
-    public static DispositionNotificationMultipartReportEntity parseMultipartReportEntityBody(AS2SessionInputBuffer inbuffer,
-                                                                                                                 String boundary,
-                                                                                                                 String charsetName,
-                                                                                                                 String contentTransferEncoding)
+    public static DispositionNotificationMultipartReportEntity parseMultipartReportEntityBody(
+            AS2SessionInputBuffer inbuffer,
+            String boundary,
+            String charsetName,
+            String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
@@ -599,7 +619,8 @@ public final class EntityParser {
 
             inbuffer.setCharsetDecoder(charsetDecoder);
 
-            DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = new DispositionNotificationMultipartReportEntity(boundary, false);
+            DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity
+                    = new DispositionNotificationMultipartReportEntity(boundary, false);
 
             // Skip Preamble and Start Boundary line
             skipPreambleAndStartBoundary(inbuffer, boundary);
@@ -626,12 +647,15 @@ public final class EntityParser {
                 throw new HttpException("Failed to find Content-Type header in EDI message body part");
             }
             if (!textReportContentType.getMimeType().equalsIgnoreCase(AS2MimeType.TEXT_PLAIN)) {
-                throw new HttpException("Invalid content type '" + textReportContentType.getMimeType()
-                        + "' for first body part of disposition notification");
+                throw new HttpException(
+                        "Invalid content type '" + textReportContentType.getMimeType()
+                                        + "' for first body part of disposition notification");
             }
 
-            String textReportCharsetName = textReportContentType.getCharset() == null ? AS2Charset.US_ASCII : textReportContentType.getCharset().name();
-            TextPlainEntity textReportEntity = parseTextPlainEntityBody(inbuffer, boundary, textReportCharsetName, textReportContentTransferEncoding);
+            String textReportCharsetName = textReportContentType.getCharset() == null
+                    ? AS2Charset.US_ASCII : textReportContentType.getCharset().name();
+            TextPlainEntity textReportEntity
+                    = parseTextPlainEntityBody(inbuffer, boundary, textReportCharsetName, textReportContentTransferEncoding);
             textReportEntity.setHeaders(headers);
             dispositionNotificationMultipartReportEntity.addPart(textReportEntity);
 
@@ -661,13 +685,17 @@ public final class EntityParser {
             }
             if (!dispositionNotificationContentType.getMimeType()
                     .equalsIgnoreCase(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION)) {
-                throw new HttpException("Invalid content type '" + dispositionNotificationContentType.getMimeType()
-                        + "' for second body part of disposition notification");
+                throw new HttpException(
+                        "Invalid content type '" + dispositionNotificationContentType.getMimeType()
+                                        + "' for second body part of disposition notification");
             }
 
-            String dispositionNotificationCharsetName = dispositionNotificationContentType.getCharset() == null ? AS2Charset.US_ASCII : dispositionNotificationContentType.getCharset().name();
-            AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = parseMessageDispositionNotificationEntityBody(
-                    inbuffer, boundary, dispositionNotificationCharsetName, dispositionNotificationContentTransferEncoding);
+            String dispositionNotificationCharsetName = dispositionNotificationContentType.getCharset() == null
+                    ? AS2Charset.US_ASCII : dispositionNotificationContentType.getCharset().name();
+            AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity
+                    = parseMessageDispositionNotificationEntityBody(
+                            inbuffer, boundary, dispositionNotificationCharsetName,
+                            dispositionNotificationContentTransferEncoding);
             messageDispositionNotificationEntity.setHeaders(headers);
             dispositionNotificationMultipartReportEntity.addPart(messageDispositionNotificationEntity);
 
@@ -686,10 +714,11 @@ public final class EntityParser {
 
     }
 
-    public static TextPlainEntity parseTextPlainEntityBody(AS2SessionInputBuffer inbuffer,
-                                                       String boundary,
-                                                       String charsetName,
-                                                       String contentTransferEncoding)
+    public static TextPlainEntity parseTextPlainEntityBody(
+            AS2SessionInputBuffer inbuffer,
+            String boundary,
+            String charsetName,
+            String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
@@ -717,10 +746,11 @@ public final class EntityParser {
         }
     }
 
-    public static AS2MessageDispositionNotificationEntity parseMessageDispositionNotificationEntityBody(AS2SessionInputBuffer inbuffer,
-                                                                                              String boundary,
-                                                                                              String charsetName,
-                                                                                              String contentTransferEncoding)
+    public static AS2MessageDispositionNotificationEntity parseMessageDispositionNotificationEntityBody(
+            AS2SessionInputBuffer inbuffer,
+            String boundary,
+            String charsetName,
+            String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
@@ -737,7 +767,8 @@ public final class EntityParser {
             List<CharArrayBuffer> dispositionNotificationFields = parseBodyPartFields(inbuffer, boundary,
                     BasicLineParser.INSTANCE, new ArrayList<CharArrayBuffer>());
 
-            AS2MessageDispositionNotificationEntity as2MessageDispositionNotificationEntity = DispositionNotificationContentUtils.parseDispositionNotification(dispositionNotificationFields);
+            AS2MessageDispositionNotificationEntity as2MessageDispositionNotificationEntity
+                    = DispositionNotificationContentUtils.parseDispositionNotification(dispositionNotificationFields);
             ContentType contentType = ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, charset);
             as2MessageDispositionNotificationEntity.setContentType(contentType);
             return as2MessageDispositionNotificationEntity;
@@ -750,11 +781,12 @@ public final class EntityParser {
         }
     }
 
-    public static MimeEntity parseEntityBody(AS2SessionInputBuffer inbuffer,
-                                             String boundary,
-                                             ContentType entityContentType,
-                                             String contentTransferEncoding,
-                                             Header[] headers)
+    public static MimeEntity parseEntityBody(
+            AS2SessionInputBuffer inbuffer,
+            String boundary,
+            ContentType entityContentType,
+            String contentTransferEncoding,
+            Header[] headers)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
@@ -769,53 +801,53 @@ public final class EntityParser {
 
             MimeEntity entity = null;
             switch (entityContentType.getMimeType().toLowerCase()) {
-            case AS2MimeType.APPLICATION_EDIFACT:
-            case AS2MimeType.APPLICATION_EDI_X12:
-            case AS2MimeType.APPLICATION_EDI_CONSENT:
-                entity = parseEDIEntityBody(inbuffer, boundary, entityContentType, contentTransferEncoding);
-                break;
-            case AS2MimeType.MULTIPART_SIGNED:
-                String multipartSignedBoundary = AS2HeaderUtils.getParameterValue(headers,
-                        AS2Header.CONTENT_TYPE, "boundary");
-                String micalg = AS2HeaderUtils.getParameterValue(headers, AS2Header.CONTENT_TYPE, "micalg");
-                entity = parseMultipartSignedEntityBody(inbuffer, multipartSignedBoundary, micalg, charset.name(),
-                        contentTransferEncoding);
-                skipToBoundary(inbuffer, boundary);
-                break;
-            case AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION:
-                entity = parseMessageDispositionNotificationEntityBody(inbuffer, boundary, charset.name(),
-                        contentTransferEncoding);
-                break;
-            case AS2MimeType.MULTIPART_REPORT:
-                String multipartReportBoundary = AS2HeaderUtils.getParameterValue(headers,
-                        AS2Header.CONTENT_TYPE, "boundary");
-                entity = parseMultipartReportEntityBody(inbuffer, multipartReportBoundary, charset.name(),
-                        contentTransferEncoding);
-                skipToBoundary(inbuffer, boundary);
-                break;
-            case AS2MimeType.TEXT_PLAIN:
-                entity = parseTextPlainEntityBody(inbuffer, boundary, charset.name(), contentTransferEncoding);
-                break;
-            case AS2MimeType.APPLICATION_PKCS7_SIGNATURE:
-                entity = parseApplicationPkcs7SignatureEntityBody(inbuffer, boundary, entityContentType,
-                        contentTransferEncoding);
-                break;
-            case AS2MimeType.APPLICATION_PKCS7_MIME:
-                switch(entityContentType.getParameter("smime-type")) {
-                case "compressed-data":
-                    entity = parseApplicationPkcs7MimeCompressedDataEntityBody(inbuffer, boundary, entityContentType,
+                case AS2MimeType.APPLICATION_EDIFACT:
+                case AS2MimeType.APPLICATION_EDI_X12:
+                case AS2MimeType.APPLICATION_EDI_CONSENT:
+                    entity = parseEDIEntityBody(inbuffer, boundary, entityContentType, contentTransferEncoding);
+                    break;
+                case AS2MimeType.MULTIPART_SIGNED:
+                    String multipartSignedBoundary = AS2HeaderUtils.getParameterValue(headers,
+                            AS2Header.CONTENT_TYPE, "boundary");
+                    String micalg = AS2HeaderUtils.getParameterValue(headers, AS2Header.CONTENT_TYPE, "micalg");
+                    entity = parseMultipartSignedEntityBody(inbuffer, multipartSignedBoundary, micalg, charset.name(),
+                            contentTransferEncoding);
+                    skipToBoundary(inbuffer, boundary);
+                    break;
+                case AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION:
+                    entity = parseMessageDispositionNotificationEntityBody(inbuffer, boundary, charset.name(),
                             contentTransferEncoding);
                     break;
-                case "enveloped-data":
-                    entity = parseApplicationPkcs7MimeEnvelopedDataEntityBody(inbuffer, boundary, entityContentType,
+                case AS2MimeType.MULTIPART_REPORT:
+                    String multipartReportBoundary = AS2HeaderUtils.getParameterValue(headers,
+                            AS2Header.CONTENT_TYPE, "boundary");
+                    entity = parseMultipartReportEntityBody(inbuffer, multipartReportBoundary, charset.name(),
                             contentTransferEncoding);
+                    skipToBoundary(inbuffer, boundary);
+                    break;
+                case AS2MimeType.TEXT_PLAIN:
+                    entity = parseTextPlainEntityBody(inbuffer, boundary, charset.name(), contentTransferEncoding);
+                    break;
+                case AS2MimeType.APPLICATION_PKCS7_SIGNATURE:
+                    entity = parseApplicationPkcs7SignatureEntityBody(inbuffer, boundary, entityContentType,
+                            contentTransferEncoding);
+                    break;
+                case AS2MimeType.APPLICATION_PKCS7_MIME:
+                    switch (entityContentType.getParameter("smime-type")) {
+                        case "compressed-data":
+                            entity = parseApplicationPkcs7MimeCompressedDataEntityBody(inbuffer, boundary, entityContentType,
+                                    contentTransferEncoding);
+                            break;
+                        case "enveloped-data":
+                            entity = parseApplicationPkcs7MimeEnvelopedDataEntityBody(inbuffer, boundary, entityContentType,
+                                    contentTransferEncoding);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
                     break;
-                }
-                break;
-            default:
-                break;
             }
 
             return entity;
@@ -830,10 +862,11 @@ public final class EntityParser {
 
     }
 
-    public static ApplicationEDIEntity parseEDIEntityBody(AS2SessionInputBuffer inbuffer,
-                                                          String boundary,
-                                                          ContentType ediMessageContentType,
-                                                          String contentTransferEncoding)
+    public static ApplicationEDIEntity parseEDIEntityBody(
+            AS2SessionInputBuffer inbuffer,
+            String boundary,
+            ContentType ediMessageContentType,
+            String contentTransferEncoding)
             throws ParseException {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
@@ -863,10 +896,12 @@ public final class EntityParser {
         }
     }
 
-    public static ApplicationPkcs7SignatureEntity parseApplicationPkcs7SignatureEntityBody(AS2SessionInputBuffer inbuffer,
-                                                                                           String boundary,
-                                                                                           ContentType contentType,
-                                                                                           String contentTransferEncoding) throws ParseException {
+    public static ApplicationPkcs7SignatureEntity parseApplicationPkcs7SignatureEntityBody(
+            AS2SessionInputBuffer inbuffer,
+            String boundary,
+            ContentType contentType,
+            String contentTransferEncoding)
+            throws ParseException {
 
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
@@ -880,7 +915,7 @@ public final class EntityParser {
             inbuffer.setCharsetDecoder(charsetDecoder);
 
             String pkcs7SignatureBodyContent = parseBodyPartText(inbuffer, boundary);
-            
+
             byte[] signature = EntityUtils.decode(pkcs7SignatureBodyContent.getBytes(charset), contentTransferEncoding);
 
             String charsetName = charset.toString();
@@ -896,10 +931,11 @@ public final class EntityParser {
         }
     }
 
-    public static ApplicationPkcs7MimeEnvelopedDataEntity parseApplicationPkcs7MimeEnvelopedDataEntityBody(AS2SessionInputBuffer inbuffer,
-                                                                                      String boundary,
-                                                                                      ContentType contentType,
-                                                                                      String contentTransferEncoding)
+    public static ApplicationPkcs7MimeEnvelopedDataEntity parseApplicationPkcs7MimeEnvelopedDataEntityBody(
+            AS2SessionInputBuffer inbuffer,
+            String boundary,
+            ContentType contentType,
+            String contentTransferEncoding)
             throws ParseException {
 
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
@@ -929,10 +965,11 @@ public final class EntityParser {
         }
     }
 
-    public static ApplicationPkcs7MimeCompressedDataEntity parseApplicationPkcs7MimeCompressedDataEntityBody(AS2SessionInputBuffer inbuffer,
-                                                                                                           String boundary,
-                                                                                                           ContentType contentType,
-                                                                                                           String contentTransferEncoding)
+    public static ApplicationPkcs7MimeCompressedDataEntity parseApplicationPkcs7MimeCompressedDataEntityBody(
+            AS2SessionInputBuffer inbuffer,
+            String boundary,
+            ContentType contentType,
+            String contentTransferEncoding)
             throws ParseException {
 
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
@@ -963,8 +1000,9 @@ public final class EntityParser {
         }
     }
 
-    public static String parseBodyPartText(final AS2SessionInputBuffer inbuffer,
-                                           final String boundary)
+    public static String parseBodyPartText(
+            final AS2SessionInputBuffer inbuffer,
+            final String boundary)
             throws IOException {
         CharArrayBuffer buffer = new CharArrayBuffer(DEFAULT_BUFFER_SIZE);
         CharArrayBuffer line = new CharArrayBuffer(DEFAULT_BUFFER_SIZE);
@@ -991,10 +1029,11 @@ public final class EntityParser {
         return buffer.toString();
     }
 
-    public static List<CharArrayBuffer> parseBodyPartFields(final AS2SessionInputBuffer inbuffer,
-                                                           final String boundary,
-                                                           final LineParser parser,
-                                                           final List<CharArrayBuffer> fields)
+    public static List<CharArrayBuffer> parseBodyPartFields(
+            final AS2SessionInputBuffer inbuffer,
+            final String boundary,
+            final LineParser parser,
+            final List<CharArrayBuffer> fields)
             throws IOException {
         Args.notNull(parser, "parser");
         Args.notNull(fields, "fields");

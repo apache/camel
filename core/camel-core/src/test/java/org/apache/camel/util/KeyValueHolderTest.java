@@ -16,10 +16,11 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class KeyValueHolderTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class KeyValueHolderTest {
 
     @Test
     public void testKeyValueHolder() {
@@ -34,8 +35,8 @@ public class KeyValueHolderTest extends Assert {
         KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<>("foo", 123);
 
-        assertTrue("Should be equals", foo1.equals(foo2));
-        assertTrue("Hash code should be equal", foo1.hashCode() == foo2.hashCode());
+        assertTrue(foo1.equals(foo2), "Should be equals");
+        assertTrue(foo1.hashCode() == foo2.hashCode(), "Hash code should be equal");
     }
 
     @Test
@@ -43,8 +44,8 @@ public class KeyValueHolderTest extends Assert {
         KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> bar = new KeyValueHolder<>("bar", 678);
 
-        assertFalse("Should not be equals", foo.equals(bar));
-        assertFalse("Hash code should not be equal", foo.hashCode() == bar.hashCode());
+        assertFalse(foo.equals(bar), "Should not be equals");
+        assertFalse(foo.hashCode() == bar.hashCode(), "Hash code should not be equal");
     }
 
     @Test
@@ -52,8 +53,8 @@ public class KeyValueHolderTest extends Assert {
         KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<>("foo", 678);
 
-        assertFalse("Should not be equals", foo1.equals(foo2));
-        assertFalse("Hash code should not be equal", foo1.hashCode() == foo2.hashCode());
+        assertFalse(foo1.equals(foo2), "Should not be equals");
+        assertFalse(foo1.hashCode() == foo2.hashCode(), "Hash code should not be equal");
     }
 
     @Test
@@ -61,8 +62,8 @@ public class KeyValueHolderTest extends Assert {
         KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> bar = new KeyValueHolder<>("bar", 123);
 
-        assertFalse("Should not be equals", foo.equals(bar));
-        assertFalse("Hash code should not be equal", foo.hashCode() == bar.hashCode());
+        assertFalse(foo.equals(bar), "Should not be equals");
+        assertFalse(foo.hashCode() == bar.hashCode(), "Hash code should not be equal");
     }
 
     @Test

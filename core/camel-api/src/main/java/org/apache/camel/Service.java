@@ -24,8 +24,8 @@ import java.io.IOException;
 public interface Service extends AutoCloseable {
 
     /**
-     * Optional build phase which is executed by frameworks that supports pre-building projects (pre-compile)
-     * which allows special optimizations such as camel-quarkus.
+     * Optional build phase which is executed by frameworks that supports pre-building projects (pre-compile) which
+     * allows special optimizations such as camel-quarkus.
      *
      * @throws RuntimeCamelException is thrown if build failed
      */
@@ -55,11 +55,9 @@ public interface Service extends AutoCloseable {
     void stop();
 
     /**
-     * Delegates to {@link Service#stop()} so it can be used in
-     * try-with-resources expression.
+     * Delegates to {@link Service#stop()} so it can be used in try-with-resources expression.
      * 
-     * @throws IOException per contract of {@link AutoCloseable} if
-     *             {@link Service#stop()} fails
+     * @throws IOException per contract of {@link AutoCloseable} if {@link Service#stop()} fails
      */
     default void close() throws IOException {
         try {

@@ -22,7 +22,11 @@ import javax.security.auth.login.LoginException;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNettyTest {
 
@@ -47,7 +51,8 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
 
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization",
+                auth, String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -58,8 +63,9 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=foo&securityConfiguration.securityAuthenticator=#myAuthenticator").to("mock:input")
-                    .transform().constant("Bye World");
+                from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=foo&securityConfiguration.securityAuthenticator=#myAuthenticator")
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

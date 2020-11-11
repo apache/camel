@@ -23,9 +23,7 @@ import org.apache.camel.support.component.AbstractApiComponent;
 import ${package}.internal.${name}ApiCollection;
 import ${package}.internal.${name}ApiName;
 
-/**
- * Represents the component that manages {@link ${name}Endpoint}.
- */
+@org.apache.camel.spi.annotations.Component("${scheme}")
 public class ${name}Component extends AbstractApiComponent<${name}ApiName, ${name}Configuration, ${name}ApiCollection> {
 
     public ${name}Component() {
@@ -38,7 +36,7 @@ public class ${name}Component extends AbstractApiComponent<${name}ApiName, ${nam
 
     @Override
     protected ${name}ApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return ${name}ApiName.fromValue(apiNameStr);
+        return getCamelContext().getTypeConverter().convertTo(${name}ApiName.class, apiNameStr);
     }
 
     @Override

@@ -74,7 +74,8 @@ public class FopProducer extends DefaultProducer {
         String headerOutputFormat = exchange.getIn().getHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, String.class);
         if (headerOutputFormat != null) {
             // it may be a short hand
-            FopOutputType type = exchange.getContext().getTypeConverter().tryConvertTo(FopOutputType.class, exchange, headerOutputFormat);
+            FopOutputType type
+                    = exchange.getContext().getTypeConverter().tryConvertTo(FopOutputType.class, exchange, headerOutputFormat);
             if (type != null) {
                 return type.getFormatExtended();
             } else {
@@ -86,7 +87,7 @@ public class FopProducer extends DefaultProducer {
     }
 
     private OutputStream transform(FOUserAgent userAgent, String outputFormat, Source src)
-        throws FOPException, TransformerException {
+            throws FOPException, TransformerException {
         OutputStream out = new ByteArrayOutputStream();
         Fop fop = fopFactory.newFop(outputFormat, userAgent, out);
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -101,7 +102,7 @@ public class FopProducer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     private void setEncryptionParameters(FOUserAgent userAgent, Map<String, Object> headers) {
         Map<String, Object> encryptionParameters = PropertiesHelper
-            .extractProperties(headers, FopConstants.CAMEL_FOP_ENCRYPT);
+                .extractProperties(headers, FopConstants.CAMEL_FOP_ENCRYPT);
         if (!encryptionParameters.isEmpty()) {
             PDFEncryptionParams encryptionParams = new PDFEncryptionParams();
             PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), encryptionParams, encryptionParameters);
@@ -122,5 +123,5 @@ public class FopProducer extends DefaultProducer {
             PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), userAgent, parameters);
         }
     }
-    
+
 }

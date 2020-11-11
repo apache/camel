@@ -22,7 +22,7 @@ import java.net.InetAddress;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MinaSslContextParametersUdpTest extends BaseMinaTest {
 
@@ -68,7 +68,8 @@ public class MinaSslContextParametersUdpTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina:udp://127.0.0.1:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters").to("mock:result");
+                from("mina:udp://127.0.0.1:" + getPort()
+                     + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters").to("mock:result");
             }
         };
     }

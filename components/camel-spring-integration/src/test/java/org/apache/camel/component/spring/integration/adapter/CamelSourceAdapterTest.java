@@ -19,12 +19,15 @@ package org.apache.camel.component.spring.integration.adapter;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelSourceAdapterTest extends CamelSpringTestSupport {
 
@@ -35,8 +38,8 @@ public class CamelSourceAdapterTest extends CamelSpringTestSupport {
         channelA.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
                 latch.countDown();
-                assertEquals("We should get the message from channelA", message.getPayload(), "Willem");             
-            }            
+                assertEquals("Willem", message.getPayload(), "We should get the message from channelA");
+            }
         });
 
         template.sendBody("direct:OneWay", "Willem");
@@ -48,7 +51,7 @@ public class CamelSourceAdapterTest extends CamelSpringTestSupport {
     public void testSendingTwoWayMessage() throws Exception {
         String result = template.requestBody("direct:TwoWay", "Willem", String.class);
 
-        assertEquals("Can't get the right response", result, "Hello Willem");
+        assertEquals("Hello Willem", result, "Can't get the right response");
     }
 
     @Override

@@ -43,7 +43,7 @@ public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
         template.sendBodyAndHeader("file:target/delete", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         // file should be deleted
         File file = new File("target/delete/hello.txt");
@@ -58,9 +58,7 @@ public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:target/delete?delete=true")
-                    .to(getFtpUrl())
-                    .to("mock:result");
+                from("file:target/delete?delete=true").to(getFtpUrl()).to("mock:result");
             }
         };
     }

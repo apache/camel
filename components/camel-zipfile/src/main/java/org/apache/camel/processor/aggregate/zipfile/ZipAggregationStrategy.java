@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
@@ -42,12 +43,14 @@ import org.apache.camel.util.FileUtil;
 
 /**
  * This aggregation strategy will aggregate all incoming messages into a ZIP file.
- * <p>If the incoming exchanges contain {@link GenericFileMessage} file name will 
- * be taken from the body otherwise the body content will be treated as a byte 
- * array and the ZIP entry will be named using the message id (unless the flag
- * useFilenameHeader is set to true.</p>
- * <p><b>Note:</b> Please note that this aggregation strategy requires eager 
- * completion check to work properly.</p>
+ * <p>
+ * If the incoming exchanges contain {@link GenericFileMessage} file name will be taken from the body otherwise the body
+ * content will be treated as a byte array and the ZIP entry will be named using the message id (unless the flag
+ * useFilenameHeader is set to true.
+ * </p>
+ * <p>
+ * <b>Note:</b> Please note that this aggregation strategy requires eager completion check to work properly.
+ * </p>
  */
 public class ZipAggregationStrategy implements AggregationStrategy {
 
@@ -63,38 +66,40 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     }
 
     /**
-     * @param preserveFolderStructure if true, the folder structure is preserved when the source is
-     * a type of {@link GenericFileMessage}.  If used with a file, use recursive=true.
+     * @param preserveFolderStructure if true, the folder structure is preserved when the source is a type of
+     *                                {@link GenericFileMessage}. If used with a file, use recursive=true.
      */
     public ZipAggregationStrategy(boolean preserveFolderStructure) {
         this(preserveFolderStructure, false);
     }
 
     /**
-     * @param preserveFolderStructure if true, the folder structure is preserved when the source is
-     * a type of {@link GenericFileMessage}.  If used with a file, use recursive=true.
-     * @param useFilenameHeader if true, the filename header will be used to name aggregated byte arrays
-     * within the ZIP file.
+     * @param preserveFolderStructure if true, the folder structure is preserved when the source is a type of
+     *                                {@link GenericFileMessage}. If used with a file, use recursive=true.
+     * @param useFilenameHeader       if true, the filename header will be used to name aggregated byte arrays within
+     *                                the ZIP file.
      */
     public ZipAggregationStrategy(boolean preserveFolderStructure, boolean useFilenameHeader) {
         this(preserveFolderStructure, useFilenameHeader, false);
     }
 
     /**
-     * @param preserveFolderStructure if true, the folder structure is preserved when the source is
-     * a type of {@link GenericFileMessage}.  If used with a file, use recursive=true.
-     * @param useFilenameHeader if true, the filename header will be used to name aggregated byte arrays
-     * within the ZIP file.
-     * @param useTempFile if true, the ZipFileSystem will use temporary files for zip manipulations instead of memory.
+     * @param preserveFolderStructure if true, the folder structure is preserved when the source is a type of
+     *                                {@link GenericFileMessage}. If used with a file, use recursive=true.
+     * @param useFilenameHeader       if true, the filename header will be used to name aggregated byte arrays within
+     *                                the ZIP file.
+     * @param useTempFile             if true, the ZipFileSystem will use temporary files for zip manipulations instead
+     *                                of memory.
      */
     public ZipAggregationStrategy(boolean preserveFolderStructure, boolean useFilenameHeader, boolean useTempFile) {
         this.preserveFolderStructure = preserveFolderStructure;
         this.useFilenameHeader = useFilenameHeader;
         this.useTempFile = useTempFile;
     }
-    
+
     /**
      * Gets the prefix used when creating the ZIP file name.
+     * 
      * @return the prefix
      */
     public String getFilePrefix() {
@@ -103,14 +108,16 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the prefix that will be used when creating the ZIP filename.
+     * 
      * @param filePrefix prefix to use on ZIP file.
      */
     public void setFilePrefix(String filePrefix) {
         this.filePrefix = filePrefix;
     }
-    
+
     /**
      * Gets the suffix used when creating the ZIP file name.
+     * 
      * @return the suffix
      */
     public String getFileSuffix() {
@@ -119,6 +126,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the suffix that will be used when creating the ZIP filename.
+     * 
      * @param fileSuffix suffix to use on ZIP file.
      */
     public void setFileSuffix(String fileSuffix) {
@@ -147,12 +155,12 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         File zipFile;
         Exchange answer = oldExchange;
-        
+
         // Guard against empty new exchanges
         if (newExchange == null) {
             return oldExchange;
         }
-    
+
         // First time for this aggregation
         if (oldExchange == null) {
             try {
@@ -162,7 +170,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
             answer = newExchange;
-            answer.addOnCompletion(new DeleteZipFileOnCompletion(zipFile));
+            answer.adapt(ExtendedExchange.class).addOnCompletion(new DeleteZipFileOnCompletion(zipFile));
         } else {
             zipFile = oldExchange.getIn().getBody(File.class);
         }
@@ -178,7 +186,9 @@ public class ZipAggregationStrategy implements AggregationStrategy {
                 File appendFile = (File) body;
                 // do not try to append empty files
                 if (appendFile.length() > 0) {
-                    String entryName = preserveFolderStructure ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
+                    String entryName = preserveFolderStructure
+                            ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
+                            : newExchange.getIn().getMessageId();
                     addFileToZip(zipFile, appendFile, this.preserveFolderStructure ? entryName : null);
                 }
             } catch (Exception e) {
@@ -190,7 +200,9 @@ public class ZipAggregationStrategy implements AggregationStrategy {
                 byte[] buffer = newExchange.getIn().getMandatoryBody(byte[].class);
                 // do not try to append empty data
                 if (buffer.length > 0) {
-                    String entryName = useFilenameHeader ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : newExchange.getIn().getMessageId();
+                    String entryName = useFilenameHeader
+                            ? newExchange.getIn().getHeader(Exchange.FILE_NAME, String.class)
+                            : newExchange.getIn().getMessageId();
                     addEntryToZip(zipFile, entryName, buffer, charset);
                 }
             } catch (Exception e) {
@@ -227,7 +239,8 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         }
     }
 
-    private void addEntryToZip(File zipFile, String entryName, byte[] buffer, String charset) throws IOException, URISyntaxException {
+    private void addEntryToZip(File zipFile, String entryName, byte[] buffer, String charset)
+            throws IOException, URISyntaxException {
         Map<String, Object> env = new HashMap<>();
         env.put("encoding", charset);
         env.put("useTempFile", this.useTempFile); //Intentionally boolean, it is implemented this way in ZipFileSystem
@@ -239,25 +252,25 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     }
 
     private static URI getZipURI(File zipFile) throws URISyntaxException {
-        return new URI("jar", zipFile.toURI().toString(),  null);
+        return new URI("jar", zipFile.toURI().toString(), null);
     }
 
     /**
      * This callback class is used to clean up the temporary ZIP file once the exchange has completed.
      */
     private class DeleteZipFileOnCompletion implements Synchronization {
-        
+
         private final File fileToDelete;
-        
+
         DeleteZipFileOnCompletion(File fileToDelete) {
             this.fileToDelete = fileToDelete;
         }
-        
+
         @Override
         public void onFailure(Exchange exchange) {
             // Keep the file if something gone a miss.
         }
-        
+
         @Override
         public void onComplete(Exchange exchange) {
             FileUtil.deleteFile(this.fileToDelete);

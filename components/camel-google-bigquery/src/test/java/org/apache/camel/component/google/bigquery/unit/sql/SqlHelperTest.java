@@ -23,27 +23,29 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.google.bigquery.sql.SqlHelper;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class SqlHelperTest {
 
-    String query = "INSERT INTO ${report}.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n" + "  region\n" + "FROM\n" + "  ${import}.test\n" + "WHERE\n"
+    String query = "INSERT INTO ${report}.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n"
+                   + "  region\n" + "FROM\n" + "  ${import}.test\n" + "WHERE\n"
                    + "  rec_date = @date AND id = @id\n";
 
-    String expected = "INSERT INTO report_data.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n" + "  region\n" + "FROM\n" + "  import_data.test\n"
+    String expected = "INSERT INTO report_data.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n"
+                      + "  region\n" + "FROM\n" + "  import_data.test\n"
                       + "WHERE\n" + "  rec_date = @date AND id = @id\n";
 
     Exchange exchange = Mockito.mock(Exchange.class);
     Message message = Mockito.mock(Message.class);
-    
+
     private CamelContext context = Mockito.mock(CamelContext.class);
 
     @Test
@@ -53,7 +55,7 @@ public class SqlHelperTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testResolveClasspathQuery() throws Exception {
         String answer = SqlHelper.resolveQuery(context, "classpath:sql/delete.sql", ":");
         assertEquals("delete from test.test_sql_table where id = @id", answer);
@@ -79,20 +81,19 @@ public class SqlHelperTest {
         assertEquals(expected, answer);
     }
 
-    @Test(expected = RuntimeExchangeException.class)
+    @Test
     public void testTranslateQueryWithoutParam() {
         when(exchange.getMessage()).thenReturn(message);
         when(message.getHeader(eq("report"), eq(String.class))).thenReturn("report_data");
-
-        SqlHelper.translateQuery(query, exchange);
-        fail("Should have thrown exception");
+        assertThrows(RuntimeExchangeException.class,
+                () -> SqlHelper.translateQuery(query, exchange));
     }
 
     @Test
     public void testExtractParameterNames() {
         Set<String> answer = SqlHelper.extractParameterNames(query);
         assertEquals(2, answer.size());
-        assertTrue("Parameter 'date' not found", answer.contains("date"));
-        assertTrue("Parameter 'id' not found", answer.contains("id"));
+        assertTrue(answer.contains("date"), "Parameter 'date' not found");
+        assertTrue(answer.contains("id"), "Parameter 'id' not found");
     }
 }

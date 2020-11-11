@@ -20,12 +20,13 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.net.telnet.TelnetClient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * UnitOfWork should complete even if client disconnected during the processing.
@@ -49,23 +50,23 @@ public class CxfConsumerClientDisconnectedTest extends CamelTestSupport {
                 errorHandler(noErrorHandler());
 
                 from(cxfRsEndpointUri)
-                    // should be able to convert to Customer
-                    .to("mock:result")
-                    .process(exchange-> {
-                        Thread.sleep(100);
+                        // should be able to convert to Customer
+                        .to("mock:result")
+                        .process(exchange -> {
+                            Thread.sleep(100);
 
-                        exchange.addOnCompletion(new Synchronization() {
-                            @Override
-                            public void onComplete(Exchange exchange) {
-                                template.sendBody("mock:onComplete", "");
-                            }
+                            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                                @Override
+                                public void onComplete(Exchange exchange) {
+                                    template.sendBody("mock:onComplete", "");
+                                }
 
-                            @Override
-                            public void onFailure(Exchange exchange) {
+                                @Override
+                                public void onFailure(Exchange exchange) {
 
-                            }
+                                }
+                            });
                         });
-                    });
 
             }
         };

@@ -27,17 +27,17 @@ import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.BayeuxServerImpl;
 import org.eclipse.jetty.util.log.Logger;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CometdConsumerTest {
 
     private static final String USER_NAME = "userName";
@@ -59,7 +59,7 @@ public class CometdConsumerTest {
     @Mock
     private MarkedReference<ServerChannel> markedReferenceServerChannel;
 
-    @Before
+    @BeforeEach
     public void before() {
         when(bayeuxServerImpl.newLocalSession(ArgumentMatchers.isNull())).thenReturn(localSession);
         when(bayeuxServerImpl.createChannelIfAbsent(ArgumentMatchers.isNull())).thenReturn(markedReferenceServerChannel);
@@ -67,14 +67,14 @@ public class CometdConsumerTest {
 
         testObj = new CometdConsumer(endpoint, processor);
         testObj.setBayeux(bayeuxServerImpl);
-        
+
         Set<String> attributeNames = new HashSet<>();
         String attributeKey = USER_NAME;
         attributeNames.add(attributeKey);
     }
 
     @Test
-    public void testStartDoesntCreateMultipleServices() throws Exception {
+    void testStartDoesntCreateMultipleServices() {
         // setup
         testObj.start();
         ConsumerService expectedService = testObj.getConsumerService();
@@ -86,6 +86,5 @@ public class CometdConsumerTest {
         // assert
         assertEquals(expectedService, result);
     }
-    
-}
 
+}

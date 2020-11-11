@@ -20,24 +20,31 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.http.common.HttpOperationFailedException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
+
     @Test
-    public void testMethodNotAllowed() {
+    public void testPostMethodNotAllowed() {
         try {
-            template.sendBody("http://localhost:" + getPort() + "/users/123/basic", "body");
+            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
+                    "POST");
             fail("Shall not pass!");
         } catch (Exception e) {
             HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(405, hofe.getStatusCode());
         }
     }
-    
+
     @Test
-    public void testMethodAllowed() {
+    public void testGetMethodAllowed() {
         try {
-            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD, "GET");
+            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
+                    "GET");
         } catch (Exception e) {
             fail("Shall pass with GET http method!");
         }
@@ -58,7 +65,7 @@ public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
                         .to("mock:input")
                         .process(exchange -> {
                             String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getOut().setBody(id + ";Donald Duck");
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         });
             }
         };

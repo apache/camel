@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -52,13 +52,13 @@ public class RedeliverToSubRouteTest extends ContextTestSupport {
                 onException(IOException.class).maximumRedeliveries(2).redeliveryDelay(0);
 
                 from("direct:start").to("mock:a")
-                    // call sub route (using direct)
-                    .to("direct:sub").to("mock:c");
+                        // call sub route (using direct)
+                        .to("direct:sub").to("mock:c");
 
                 from("direct:sub")
-                    // disable error handler, so the entire route can be retried
-                    // in case of redelivery
-                    .errorHandler(noErrorHandler()).to("mock:b").process(new MyProcessor());
+                        // disable error handler, so the entire route can be retried
+                        // in case of redelivery
+                        .errorHandler(noErrorHandler()).to("mock:b").process(new MyProcessor());
                 // END SNIPPET: e1
             }
         };

@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class GroovySetHeaderTest extends CamelTestSupport {
 
@@ -53,10 +53,10 @@ public class GroovySetHeaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setHeader("drink").groovy("request.headers.beer")
-                    // shows how to access the camelContext value
-                    .setHeader("camelId").groovy("camelContext.name")
-                    .to("mock:result");
+                        .setHeader("drink").groovy("request.headers.beer")
+                        // shows how to access the camelContext value
+                        .setHeader("camelId").groovy("camelContext.name")
+                        .to("mock:result");
             }
         };
     }

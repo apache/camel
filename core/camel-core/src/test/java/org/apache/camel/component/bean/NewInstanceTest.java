@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.bean;
 
-import javax.naming.Context;
-
+import org.apache.camel.BeanScope;
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BeanRouteTest;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.jndi.JndiBeanRepository;
 import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,17 +52,17 @@ public class NewInstanceTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
+    protected Registry createRegistry() throws Exception {
         jndiContext = new JndiContext();
         jndiContext.bind("myBean", new MyBean());
-        return jndiContext;
+        return new DefaultRegistry(new JndiBeanRepository(jndiContext));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").bean("myBean", false).to("mock:result");
+                from("direct:start").bean("myBean", BeanScope.Prototype).to("mock:result");
             }
         };
     }

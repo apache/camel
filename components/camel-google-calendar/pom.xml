@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.7.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-calendar</artifactId>
@@ -66,34 +66,7 @@
             <version>${google-api-services-calendar-version}</version>
         </dependency>
 
-        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-calendar</artifactId>
-            <version>${google-api-services-calendar-version}</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
@@ -103,7 +76,7 @@
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -128,42 +101,42 @@
                                 <api>
                                     <apiName>acl</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Acl</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>list</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$CalendarList</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>calendars</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Calendars</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>channels</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Channels</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>colors</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Colors</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>freebusy</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Freebusy</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>events</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Events</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                                 <api>
                                     <apiName>settings</apiName>
                                     <proxyClass>com.google.api.services.calendar.Calendar$Settings</proxyClass>
-                                    <fromJavadoc />
+                                    <fromJavasource />
                                 </api>
                             </apis>
                             <substitutions>
@@ -177,39 +150,30 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API signatures -->
+                    <dependency>
+                        <groupId>com.google.apis</groupId>
+                        <artifactId>google-api-services-calendar</artifactId>
+                        <version>${google-api-services-calendar-version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
-
-            <!-- add generated source and test source to build -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.8</version>
+                <!-- we need to generate additional configurer classes -->
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-generated-sources</id>
+                        <id>generate-configurer</id>
+                        <phase>process-classes</phase>
                         <goals>
-                            <goal>add-source</goal>
+                            <goal>generate-configurer</goal>
                         </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/camel-component</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add-generated-test-sources</id>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-test-sources/camel-component</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
 
         <pluginManagement>
@@ -229,22 +193,6 @@
         </pluginManagement>
 
     </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-api-component-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <scheme>${schemeName}</scheme>
-                    <componentName>${componentName}</componentName>
-                    <componentPackage>${componentPackage}</componentPackage>
-                    <outPackage>${outPackage}</outPackage>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
 
     <profiles>
         <profile>

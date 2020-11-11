@@ -33,6 +33,7 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StaticService;
+import org.apache.camel.ValueHolder;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -46,9 +47,12 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     private transient Producer apiProducer;
 
     @Override
-    public void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
-                               String consumes, String produces, String inType, String outType, String routeId, String description) {
-        RestServiceEntry entry = new RestServiceEntry(consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, routeId, description);
+    public void addRestService(
+            Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
+            String consumes, String produces, String inType, String outType, String routeId, String description) {
+        RestServiceEntry entry = new RestServiceEntry(
+                consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType, routeId,
+                description);
         registry.put(consumer, entry);
     }
 
@@ -73,8 +77,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         if (apiProducer == null) {
             Endpoint restApiEndpoint = null;
             Endpoint restEndpoint = null;
-            for (Map.Entry<String, Endpoint> entry : camelContext.getEndpointMap().entrySet()) {
-                String uri = entry.getKey();
+            for (Map.Entry<? extends ValueHolder<String>, Endpoint> entry : camelContext.getEndpointRegistry().entrySet()) {
+                String uri = entry.getKey().get();
                 if (uri.startsWith("rest-api:")) {
                     restApiEndpoint = entry.getValue();
                     break;
@@ -89,11 +93,16 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 String componentName = rest.getProducerComponentName();
 
                 if (componentName != null) {
-                    RestConfiguration config = camelContext.getRestConfiguration(componentName, true);
-                    String apiComponent = config.getApiComponent() != null ? config.getApiComponent() : RestApiEndpoint.DEFAULT_API_COMPONENT_NAME;
+                    RestConfiguration config = camelContext.getRestConfiguration();
+
+                    String apiComponent = config.getApiComponent() != null
+                            ? config.getApiComponent() : RestApiEndpoint.DEFAULT_API_COMPONENT_NAME;
                     String path = config.getApiContextPath() != null ? config.getApiContextPath() : "api-doc";
-                    restApiEndpoint = camelContext.getEndpoint(String.format("rest-api:%s/%s?componentName=%s&apiComponentName=%s&contextIdPattern=#name#", 
-                        path, camelContext.getName(), componentName, apiComponent));
+                    String uri = String.format(
+                            "rest-api:%s/%s?componentName=%s&apiComponentName=%s&contextIdPattern=#name#",
+                            path, camelContext.getName(), componentName, apiComponent);
+
+                    restApiEndpoint = camelContext.getEndpoint(uri);
                 }
             }
 
@@ -113,8 +122,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 Exchange dummy = apiProducer.getEndpoint().createExchange();
                 apiProducer.process(dummy);
 
-                String json = dummy.getMessage().getBody(String.class);
-                return json;
+                return dummy.getMessage().getBody(String.class);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
@@ -163,8 +171,10 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         private final String routeId;
         private final String description;
 
-        private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
-                                 String consumes, String produces, String inType, String outType, String routeId, String description) {
+        private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate,
+                                 String method,
+                                 String consumes, String produces, String inType, String outType, String routeId,
+                                 String description) {
             this.consumer = consumer;
             this.url = url;
             this.baseUrl = baseUrl;
@@ -255,8 +265,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     }
 
     /**
-     * A {@link org.apache.camel.spi.LifecycleStrategy} that keeps track when a {@link Consumer} is removed
-     * and automatic un-register it from this REST registry.
+     * A {@link org.apache.camel.spi.LifecycleStrategy} that keeps track when a {@link Consumer} is removed and
+     * automatic un-register it from this REST registry.
      */
     private final class RemoveRestServiceLifecycleStrategy extends LifecycleStrategySupport {
 

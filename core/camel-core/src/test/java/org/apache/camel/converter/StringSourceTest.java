@@ -23,22 +23,22 @@ import java.io.ObjectOutputStream;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.xml.StringSource;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class StringSourceTest extends Assert {
-    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(),
-                                                                 new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class StringSourceTest {
+    protected TypeConverter converter = new DefaultTypeConverter(
+            new DefaultPackageScanClassResolver(), new ReflectionInjector(), false);
     protected String expectedBody = "<hello>world!</hello>";
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         ServiceHelper.startService(converter);
@@ -56,16 +56,17 @@ public class StringSourceTest extends Assert {
 
         ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         Object object = in.readObject();
-        assertTrue("is a StringSource", object instanceof StringSource);
-        StringSource actual = (StringSource)object;
+        boolean b = object instanceof StringSource;
+        assertTrue(b, "is a StringSource");
+        StringSource actual = (StringSource) object;
 
-        assertEquals("source.text", expected.getPublicId(), actual.getPublicId());
-        assertEquals("source.text", expected.getSystemId(), actual.getSystemId());
-        assertEquals("source.text", expected.getEncoding(), actual.getEncoding());
-        assertEquals("source.text", expected.getText(), actual.getText());
+        assertEquals(expected.getPublicId(), actual.getPublicId(), "source.text");
+        assertEquals(expected.getSystemId(), actual.getSystemId(), "source.text");
+        assertEquals(expected.getEncoding(), actual.getEncoding(), "source.text");
+        assertEquals(expected.getText(), actual.getText(), "source.text");
 
         String value = converter.convertTo(String.class, actual);
-        assertEquals("text value of StringSource", expectedBody, value);
+        assertEquals(expectedBody, value, "text value of StringSource");
     }
 
 }

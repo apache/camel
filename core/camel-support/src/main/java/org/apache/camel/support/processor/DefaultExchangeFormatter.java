@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -35,63 +36,79 @@ import org.apache.camel.util.StringHelper;
  * Default {@link ExchangeFormatter} that have fine grained options to configure what to include in the output.
  */
 @UriParams
+@Configurer
 public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     protected static final String LS = System.lineSeparator();
     private static final String SEPARATOR = "###REPLACE_ME###";
 
-    public enum OutputStyle { Default, Tab, Fixed }
+    public enum OutputStyle {
+        Default,
+        Tab,
+        Fixed
+    }
 
     @UriParam(label = "formatting", description = "Show the unique exchange ID.")
     private boolean showExchangeId;
-    @UriParam(label = "formatting", defaultValue = "true", description = "Shows the Message Exchange Pattern (or MEP for short).")
+    @UriParam(label = "formatting", defaultValue = "true",
+              description = "Shows the Message Exchange Pattern (or MEP for short).")
     private boolean showExchangePattern = true;
     @UriParam(label = "formatting", description = "Show the exchange properties.")
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
-    @UriParam(label = "formatting", defaultValue = "true", description = "Whether to skip line separators when logging the message body."
-    + " This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
+    @UriParam(label = "formatting", defaultValue = "true",
+              description = "Whether to skip line separators when logging the message body."
+                            + " This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
     private boolean skipBodyLineSeparator = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the message body.")
     private boolean showBody = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the body Java type.")
     private boolean showBodyType = true;
-    @UriParam(label = "formatting", description = "If the exchange has an exception, show the exception message (no stacktrace)")
+    @UriParam(label = "formatting",
+              description = "If the exchange has an exception, show the exception message (no stacktrace)")
     private boolean showException;
-    @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace)."
-    + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT) and for instance a doCatch can catch exceptions.")
+    @UriParam(label = "formatting",
+              description = "f the exchange has a caught exception, show the exception message (no stack trace)."
+                            + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT) and for instance a doCatch can catch exceptions.")
     private boolean showCaughtException;
-    @UriParam(label = "formatting", description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
+    @UriParam(label = "formatting",
+              description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
     private boolean showStackTrace;
-    @UriParam(label = "formatting", description = "Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used)")
+    @UriParam(label = "formatting",
+              description = "Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used)")
     private boolean showAll;
     @UriParam(label = "formatting", description = "If enabled then each information is outputted on a newline.")
     private boolean multiline;
-    @UriParam(label = "formatting", description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
+    @UriParam(label = "formatting",
+              description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
     private boolean showFuture;
-    @UriParam(label = "formatting", description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then " 
-    + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
+    @UriParam(label = "formatting",
+              description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then "
+                            + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
     private boolean showStreams;
     @UriParam(label = "formatting", description = "If enabled Camel will output files")
     private boolean showFiles;
     @UriParam(label = "formatting", defaultValue = "10000", description = "Limits the number of characters logged per line.")
     private int maxChars = 10000;
-    @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default", description = "Sets the outputs style to use.")
+    @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default",
+              description = "Sets the outputs style to use.")
     private OutputStyle style = OutputStyle.Default;
 
-    private String style(String label) {
+    private StringBuilder style(StringBuilder sb, String label) {
         if (style == OutputStyle.Default) {
             if (multiline) {
-                return String.format("  %s: ", label);
+                sb.append("  ").append(label).append(": ");
             } else {
-                return String.format(", %s: ", label);
+                sb.append(", ").append(label).append(": ");
             }
         } else if (style == OutputStyle.Tab) {
-            return String.format("\t%s: ", label);
+            sb.append("\t").append(label).append(": ");
         } else {
-            return String.format("\t%-20s", label);
+            String s = String.format("\t%-20s", label);
+            sb.append(s);
         }
+        return sb;
     }
 
     @Override
@@ -103,32 +120,32 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("Id")).append(exchange.getExchangeId());
+            style(sb, "Id").append(exchange.getExchangeId());
         }
         if (showAll || showExchangePattern) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("ExchangePattern")).append(exchange.getPattern());
+            style(sb, "ExchangePattern").append(exchange.getPattern());
         }
 
         if (showAll || showProperties) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("Properties")).append(sortMap(filterHeaderAndProperties(exchange.getProperties())));
+            style(sb, "Properties").append(sortMap(filterHeaderAndProperties(exchange.getProperties())));
         }
         if (showAll || showHeaders) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("Headers")).append(sortMap(filterHeaderAndProperties(in.getHeaders())));
+            style(sb, "Headers").append(sortMap(filterHeaderAndProperties(in.getHeaders())));
         }
         if (showAll || showBodyType) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("BodyType")).append(getBodyTypeAsString(in));
+            style(sb, "BodyType").append(getBodyTypeAsString(in));
         }
         if (showAll || showBody) {
             if (multiline) {
@@ -138,7 +155,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (skipBodyLineSeparator) {
                 body = StringHelper.replaceAll(body, LS, "");
             }
-            sb.append(style("Body")).append(body);
+            style(sb, "Body").append(body);
         }
 
         if (showAll || showException || showCaughtException) {
@@ -157,21 +174,22 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                     sb.append(SEPARATOR);
                 }
                 if (caught) {
-                    sb.append(style("CaughtExceptionType")).append(exception.getClass().getCanonicalName());
-                    sb.append(style("CaughtExceptionMessage")).append(exception.getMessage());
+                    style(sb, "CaughtExceptionType").append(exception.getClass().getCanonicalName());
+                    style(sb, "CaughtExceptionMessage").append(exception.getMessage());
                 } else {
-                    sb.append(style("ExceptionType")).append(exception.getClass().getCanonicalName());
-                    sb.append(style("ExceptionMessage")).append(exception.getMessage());
+                    style(sb, "ExceptionType").append(exception.getClass().getCanonicalName());
+                    style(sb, "ExceptionMessage").append(exception.getMessage());
                 }
                 if (showAll || showStackTrace) {
                     StringWriter sw = new StringWriter();
                     exception.printStackTrace(new PrintWriter(sw));
-                    sb.append(style("StackTrace")).append(sw.toString());
+                    style(sb, "StackTrace").append(sw.toString());
                 }
             }
         }
 
-        if (maxChars > 0) {
+        // only cut if we hit max-chars limit (or are using multiline
+        if (multiline || (maxChars > 0 && sb.length() > maxChars)) {
             StringBuilder answer = new StringBuilder();
             for (String s : sb.toString().split(SEPARATOR)) {
                 if (s != null) {
@@ -196,8 +214,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             sb.append("]");
             return sb.toString();
         } else {
-            // get rid of the leading space comma if needed
-            if (sb.length() > 0 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
+            // get rid of the leading comma space if needed
+            if (sb.length() > 1 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
                 sb.replace(0, 2, "");
             }
             sb.insert(0, "Exchange[");
@@ -252,9 +270,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     /**
-     * Whether to skip line separators when logging the message body.
-     * This allows to log the message body in one line, setting this option to false will preserve any line separators
-     * from the body, which then will log the body as is.
+     * Whether to skip line separators when logging the message body. This allows to log the message body in one line,
+     * setting this option to false will preserve any line separators from the body, which then will log the body as is.
      */
     public void setSkipBodyLineSeparator(boolean skipBodyLineSeparator) {
         this.skipBodyLineSeparator = skipBodyLineSeparator;
@@ -309,7 +326,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     /**
-     * Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.
+     * Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or
+     * showCaughtException are enabled.
      */
     public void setShowStackTrace(boolean showStackTrace) {
         this.showStackTrace = showStackTrace;
@@ -320,9 +338,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     /**
-     * If the exchange has a caught exception, show the exception message (no stack trace).
-     * A caught exception is stored as a property on the exchange (using the key {@link org.apache.camel.Exchange#EXCEPTION_CAUGHT}
-     * and for instance a doCatch can catch exceptions.
+     * If the exchange has a caught exception, show the exception message (no stack trace). A caught exception is stored
+     * as a property on the exchange (using the key {@link org.apache.camel.Exchange#EXCEPTION_CAUGHT} and for instance
+     * a doCatch can catch exceptions.
      */
     public void setShowCaughtException(boolean showCaughtException) {
         this.showCaughtException = showCaughtException;
@@ -377,10 +395,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     /**
-     * Whether Camel should show stream bodies or not (eg such as java.io.InputStream).
-     * Beware if you enable this option then you may not be able later to access the message body
-     * as the stream have already been read by this logger.
-     * To remedy this you will have to use Stream Caching.
+     * Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option
+     * then you may not be able later to access the message body as the stream have already been read by this logger. To
+     * remedy this you will have to use Stream Caching.
      */
     public void setShowStreams(boolean showStreams) {
         this.showStreams = showStreams;
@@ -418,7 +435,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
         }
 
-        return MessageHelper.extractBodyForLogging(message, "", isShowStreams(), isShowFiles(), getMaxChars(message));
+        return MessageHelper.extractBodyForLogging(message, null, isShowStreams(), isShowFiles(), getMaxChars(message));
     }
 
     private int getMaxChars(Message message) {

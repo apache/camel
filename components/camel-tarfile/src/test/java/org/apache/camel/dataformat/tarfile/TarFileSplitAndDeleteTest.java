@@ -27,14 +27,17 @@ import java.util.Iterator;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/testDeleteTarFileWhenUnmarshalWithDataFormat");
         deleteDirectory("target/testDeleteTarFileWhenUnmarshalWithSplitter");
@@ -43,32 +46,33 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
 
     @Test
     public void testDeleteTarFileWhenUnmarshalWithDataFormat() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithDataFormat").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .from("file://target/" + "testDeleteTarFileWhenUnmarshalWithDataFormat").whenDone(1).create();
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithDataFormat");
 
         assertMockEndpointsSatisfied();
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         // the original file should have been deleted
-        assertFalse("File should been deleted", new File(tarFile).exists());
+        assertFalse(new File(tarFile).exists(), "File should been deleted");
     }
 
     @Test
     public void testDeleteTarFileWhenUnmarshalWithSplitter() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithSplitter").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).from("file://target/" + "testDeleteTarFileWhenUnmarshalWithSplitter")
+                .whenDone(1).create();
         getMockEndpoint("mock:end").expectedMessageCount(3);
         String tarFile = createTarFile("testDeleteTarFileWhenUnmarshalWithSplitter");
 
         assertMockEndpointsSatisfied();
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
 
         // the original file should have been deleted,
-        assertFalse("File should been deleted", new File(tarFile).exists());
+        assertFalse(new File(tarFile).exists(), "File should been deleted");
     }
-
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
@@ -81,14 +85,14 @@ public class TarFileSplitAndDeleteTest extends CamelTestSupport {
                 from("file://target/testDeleteTarFileWhenUnmarshalWithDataFormat?delete=true")
                         .unmarshal(dataFormat)
                         .split(bodyAs(Iterator.class)).streaming()
-                        .convertBodyTo(String.class)
-                        .to("mock:end")
+                            .convertBodyTo(String.class)
+                            .to("mock:end")
                         .end();
 
                 from("file://target/testDeleteTarFileWhenUnmarshalWithSplitter?delete=true")
                         .split(new TarSplitter()).streaming()
-                        .convertBodyTo(String.class)
-                        .to("mock:end")
+                            .convertBodyTo(String.class)
+                            .to("mock:end")
                         .end();
             }
         };

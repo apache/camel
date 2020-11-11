@@ -25,13 +25,24 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport {
 
+    private Logger log = LoggerFactory.getLogger(getClass());
+
     @BindToRegistry("dummy-rest")
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
+
+    @BindToRegistry("userService")
+    private Object dummy = new Object();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -42,16 +53,21 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
                 restConfiguration().apiVendorExtension(true);
 
                 // this user REST service is json only
-                rest("/user").tag("dude").description("User rest service").consumes("application/json").produces("application/json")
+                rest("/user").tag("dude").description("User rest service").consumes("application/json")
+                        .produces("application/json")
 
-                    .get("/{id}").description("Find user by id").outType(User.class).responseMessage().message("The user returned").endResponseMessage().param().name("id")
-                    .type(RestParamType.path).description("The id of the user to get").dataType("integer").endParam().to("bean:userService?method=getUser(${header.id})")
+                        .get("/{id}").description("Find user by id").outType(User.class).responseMessage()
+                        .message("The user returned").endResponseMessage().param().name("id")
+                        .type(RestParamType.path).description("The id of the user to get").dataType("integer").endParam()
+                        .to("bean:userService?method=getUser(${header.id})")
 
-                    .put().description("Updates or create a user").type(User.class).param().name("body").type(RestParamType.body).description("The user to update or create")
-                    .endParam().to("bean:userService?method=updateUser")
+                        .put().description("Updates or create a user").type(User.class).param().name("body")
+                        .type(RestParamType.body).description("The user to update or create")
+                        .endParam().to("bean:userService?method=updateUser")
 
-                    .get("/findAll").description("Find all users").outType(User[].class).responseMessage().message("All the found users").endResponseMessage()
-                    .to("bean:userService?method=listUsers");
+                        .get("/findAll").description("Find all users").outType(User[].class).responseMessage()
+                        .message("All the found users").endResponseMessage()
+                        .to("bean:userService?method=listUsers");
             }
         };
     }
@@ -60,7 +76,7 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
     public void testEnableVendorExtension() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -68,7 +84,8 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -76,7 +93,7 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         String camelId = context.getName();
@@ -91,20 +108,20 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
         context.stop();
     }
 
-    
     @Test
     public void testEnableVendorExtensionV3() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[] {"http"});
+        config.setSchemes(new String[] { "http" });
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
-        
+
         config.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
         RestOpenApiReader reader = new RestOpenApiReader();
 
-        OasDocument openApi = reader.read(context.getRestDefinitions(), null, config, context.getName(), new DefaultClassResolver());
+        OasDocument openApi = reader.read(context, context.getRestDefinitions(), null, config, context.getName(),
+                new DefaultClassResolver());
         assertNotNull(openApi);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -112,7 +129,7 @@ public class RestOpenApiReaderEnableVendorExtensionTest extends CamelTestSupport
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         Object dump = Library.writeNode(openApi);
         String json = mapper.writeValueAsString(dump);
-        
+
         log.info(json);
 
         String camelId = context.getName();

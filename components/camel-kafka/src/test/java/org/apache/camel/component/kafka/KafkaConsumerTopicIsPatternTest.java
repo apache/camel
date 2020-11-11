@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Collections;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
@@ -24,18 +25,19 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KafkaConsumerTopicIsPatternTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
     public static final String TOPIC_PATTERN = "t\\w\\wt";
 
-    @EndpointInject("kafka:" + TOPIC_PATTERN
-        + "?topicIsPattern=true&groupId=group1&autoOffsetReset=earliest"
-        + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+    @EndpointInject("kafka:" + TOPIC_PATTERN + "?topicIsPattern=true&groupId=group1&autoOffsetReset=earliest"
+                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -43,18 +45,20 @@ public class KafkaConsumerTopicIsPatternTest extends BaseEmbeddedKafkaTest {
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
-    @Before
+    @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
 
     }
 
-    @After
+    @AfterEach
     public void after() {
         if (producer != null) {
             producer.close();
         }
+        // clean all test topics
+        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
     }
 
     @Override
@@ -73,7 +77,8 @@ public class KafkaConsumerTopicIsPatternTest extends BaseEmbeddedKafkaTest {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         to.allMessages().header(KafkaConstants.TOPIC).isEqualTo("test");
-        // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any exchange because autoCommitEnable=true
+        // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
+        // exchange because autoCommitEnable=true
         to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
 
         for (int k = 0; k < 5; k++) {
@@ -84,10 +89,8 @@ public class KafkaConsumerTopicIsPatternTest extends BaseEmbeddedKafkaTest {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false).count());
+        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
+                .count());
     }
 
 }
-
-
-

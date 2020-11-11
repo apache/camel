@@ -23,9 +23,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GrokUnmarshalTest extends CamelTestSupport {
     @Override
@@ -54,7 +57,7 @@ public class GrokUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:ip", "178.21.82.201");
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        Assert.assertEquals("178.21.82.201", result.getExchanges().get(0).getIn().getBody(Map.class).get("ip"));
+        assertEquals("178.21.82.201", result.getExchanges().get(0).getIn().getBody(Map.class).get("ip"));
     }
 
     @Test
@@ -64,10 +67,10 @@ public class GrokUnmarshalTest extends CamelTestSupport {
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        Assert.assertEquals("178.21.82.201", get(result, 0, 0, "ip"));
-        Assert.assertEquals("178.21.82.202", get(result, 0, 1, "ip"));
-        Assert.assertEquals("178.21.82.203", get(result, 0, 2, "ip"));
-        Assert.assertEquals("178.21.82.204", get(result, 0, 3, "ip"));
+        assertEquals("178.21.82.201", get(result, 0, 0, "ip"));
+        assertEquals("178.21.82.202", get(result, 0, 1, "ip"));
+        assertEquals("178.21.82.203", get(result, 0, 2, "ip"));
+        assertEquals("178.21.82.204", get(result, 0, 3, "ip"));
     }
 
     @Test
@@ -77,10 +80,10 @@ public class GrokUnmarshalTest extends CamelTestSupport {
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        Assert.assertEquals("178.21.82.201", get(result, 0, 0, "ip"));
-        Assert.assertEquals("178.21.82.202", get(result, 0, 1, "ip"));
-        Assert.assertEquals("178.21.82.203", get(result, 0, 2, "ip"));
-        Assert.assertEquals("178.21.82.204", get(result, 0, 3, "ip"));
+        assertEquals("178.21.82.201", get(result, 0, 0, "ip"));
+        assertEquals("178.21.82.202", get(result, 0, 1, "ip"));
+        assertEquals("178.21.82.203", get(result, 0, 2, "ip"));
+        assertEquals("178.21.82.204", get(result, 0, 3, "ip"));
     }
 
     @Test
@@ -90,22 +93,21 @@ public class GrokUnmarshalTest extends CamelTestSupport {
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        Assert.assertEquals(
+        assertEquals(
                 "-- barbarfoobarfoobar --",
-                result.getExchanges().get(0).getIn().getBody(Map.class).get("fooBar")
-        );
+                result.getExchanges().get(0).getIn().getBody(Map.class).get("fooBar"));
     }
 
     private Object get(Exchange exchange, int listIndex, String mapKey) {
-        Assert.assertNotNull("Body should not be null", exchange.getIn().getBody(List.class));
+        assertNotNull(exchange.getIn().getBody(List.class), "Body should not be null");
         List list = exchange.getIn().getBody(List.class);
-        Assert.assertTrue(list.size() > listIndex);
-        Assert.assertTrue(list.get(listIndex) instanceof Map);
+        assertTrue(list.size() > listIndex);
+        assertTrue(list.get(listIndex) instanceof Map);
         return ((Map) list.get(listIndex)).get(mapKey);
     }
 
     private Object get(MockEndpoint mockEndpoint, int exchangeIndex, int listIndex, String mapKey) {
-        Assert.assertTrue(mockEndpoint.getExchanges().size() > exchangeIndex);
+        assertTrue(mockEndpoint.getExchanges().size() > exchangeIndex);
         return get(mockEndpoint.getExchanges().get(exchangeIndex), listIndex, mapKey);
     }
 }

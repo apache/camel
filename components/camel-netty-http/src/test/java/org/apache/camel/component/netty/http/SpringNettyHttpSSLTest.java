@@ -24,17 +24,17 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/org/apache/camel/component/netty/http/SpringNettyHttpSSLTest.xml"})
-public class SpringNettyHttpSSLTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@CamelSpringTest
+@ContextConfiguration(locations = { "/org/apache/camel/component/netty/http/SpringNettyHttpSSLTest.xml" })
+public class SpringNettyHttpSSLTest {
 
     @Produce
     private ProducerTemplate template;
@@ -53,7 +53,7 @@ public class SpringNettyHttpSSLTest extends Assert {
         this.port = port;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpJSSE() throws Exception {
         // ensure JSSE clients can validate the self signed dummy localhost cert,
         // use the server keystore as the trust store for these tests
@@ -62,7 +62,7 @@ public class SpringNettyHttpSSLTest extends Assert {
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownJSSE() throws Exception {
         System.clearProperty("javax.net.ssl.trustStore");
         System.clearProperty("javax.net.ssl.trustStorePassword");
@@ -79,4 +79,3 @@ public class SpringNettyHttpSSLTest extends Assert {
     }
 
 }
-

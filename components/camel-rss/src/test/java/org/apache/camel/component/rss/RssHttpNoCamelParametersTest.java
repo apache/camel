@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.rss;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RssHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test
     public void testRssHttpNoCamelParameters() throws Exception {
-        RssEndpoint rss = context.getEndpoint("rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true", RssEndpoint.class);
+        RssEndpoint rss = context.getEndpoint(
+                "rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true", RssEndpoint.class);
         assertNotNull(rss);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml", rss.getFeedUri());
@@ -33,7 +37,9 @@ public class RssHttpNoCamelParametersTest extends CamelTestSupport {
 
     @Test
     public void testRssHttpNoCamelParametersAndOneFeedParameter() throws Exception {
-        RssEndpoint rss = context.getEndpoint("rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true&foo=bar", RssEndpoint.class);
+        RssEndpoint rss = context.getEndpoint(
+                "rss://http://www.iafrica.com/pls/cms/grapevine.xml?sortEntries=true&feedHeader=true&foo=bar",
+                RssEndpoint.class);
         assertNotNull(rss);
 
         assertEquals("http://www.iafrica.com/pls/cms/grapevine.xml?foo=bar", rss.getFeedUri());

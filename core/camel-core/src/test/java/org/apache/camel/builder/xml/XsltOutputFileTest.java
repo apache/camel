@@ -25,9 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.xslt.XsltBuilder.xslt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class XsltOutputFileTest extends ContextTestSupport {
 
@@ -40,7 +42,8 @@ public class XsltOutputFileTest extends ContextTestSupport {
         mock.expectedFileExists("target/data/xslt/xsltme.xml");
         mock.message(0).body().isInstanceOf(File.class);
 
-        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME, "target/data/xslt/xsltme.xml");
+        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME,
+                "target/data/xslt/xsltme.xml");
 
         mock.assertIsSatisfied();
     }

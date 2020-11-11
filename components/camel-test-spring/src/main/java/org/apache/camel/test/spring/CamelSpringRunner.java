@@ -19,15 +19,19 @@ package org.apache.camel.test.spring;
 import java.util.List;
 
 import org.junit.runners.model.InitializationError;
+import org.springframework.test.context.BootstrapContext;
+import org.springframework.test.context.CacheAwareContextLoaderDelegate;
+import org.springframework.test.context.TestContextBootstrapper;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DefaultBootstrapContext;
 
 /**
- * An implementation bringing the functionality of {@link org.apache.camel.test.spring.CamelSpringTestSupport} to
- * Spring Test based test cases.  This approach allows developers to implement tests
- * for their Spring based applications/routes using the typical Spring Test conventions
- * for test development.
+ * An implementation bringing the functionality of {@link org.apache.camel.test.spring.CamelSpringTestSupport} to Spring
+ * Test based test cases. This approach allows developers to implement tests for their Spring based applications/routes
+ * using the typical Spring Test conventions for test development.
  */
 public class CamelSpringRunner extends SpringJUnit4ClassRunner {
 
@@ -36,8 +40,8 @@ public class CamelSpringRunner extends SpringJUnit4ClassRunner {
     }
 
     /**
-     * Returns the specialized manager instance that provides tight integration between Camel testing
-     * features and Spring.
+     * Returns the specialized manager instance that provides tight integration between Camel testing features and
+     * Spring.
      *
      * @return a new instance of {@link CamelTestContextManager}.
      */
@@ -47,22 +51,28 @@ public class CamelSpringRunner extends SpringJUnit4ClassRunner {
     }
 
     /**
-     * An implementation providing additional integration between Spring Test and Camel
-     * testing features.
+     * An implementation providing additional integration between Spring Test and Camel testing features.
      */
     public static final class CamelTestContextManager extends TestContextManager {
 
         public CamelTestContextManager(Class<?> testClass) {
-            super(testClass);
+            super(createTestContextBootstrapper(testClass));
 
             // is Camel already registered
             if (!alreadyRegistered()) {
                 // inject Camel first, and then disable jmx and add the stop-watch
                 List<TestExecutionListener> list = getTestExecutionListeners();
                 list.add(0, new CamelSpringTestContextLoaderTestExecutionListener());
-                list.add(1, new DisableJmxTestExecutionListener());
-                list.add(2, new StopWatchTestExecutionListener());
+                list.add(1, new StopWatchTestExecutionListener());
             }
+        }
+
+        static TestContextBootstrapper createTestContextBootstrapper(Class<?> testClass) {
+            CacheAwareContextLoaderDelegate cacheAwareContextLoaderDelegate = new DefaultCacheAwareContextLoaderDelegate();
+            BootstrapContext bootstrapContext = new DefaultBootstrapContext(testClass, cacheAwareContextLoaderDelegate);
+            TestContextBootstrapper testContextBootstrapper = new CamelTestContextBootstrapper();
+            testContextBootstrapper.setBootstrapContext(bootstrapContext);
+            return testContextBootstrapper;
         }
 
         private boolean alreadyRegistered() {

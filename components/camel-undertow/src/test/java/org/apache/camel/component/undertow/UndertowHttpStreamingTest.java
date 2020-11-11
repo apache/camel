@@ -31,12 +31,16 @@ import java.util.stream.LongStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHttpStreamingTest extends BaseUndertowTest {
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowHttpStreamingTest.class);
 
-    private static final String LINE =
-            String.join("", Collections.nCopies(100, "0123456789"));
+    private static final String LINE = String.join("", Collections.nCopies(100, "0123456789"));
     private static final long COUNT = 1000; // approx. 1MB
 
     @Test
@@ -47,8 +51,8 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
         mock.expectedBodiesReceived(expectedLength);
 
         Exchange response = template.send(
-        "undertow:http://localhost:{{port}}?useStreaming=true",
-        e -> produceStream(e));
+                "undertow:http://localhost:{{port}}?useStreaming=true",
+                e -> produceStream(e));
         consumeStream(response);
         long length = response.getIn().getBody(Long.class).longValue();
 
@@ -64,8 +68,8 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
         mock.expectedBodiesReceived(12);
 
         Exchange response = template.send(
-        "undertow:http://localhost:{{port}}?useStreaming=true",
-        e -> e.getIn().setBody("Hello Camel!"));
+                "undertow:http://localhost:{{port}}?useStreaming=true",
+                e -> e.getIn().setBody("Hello Camel!"));
         consumeStream(response);
         long length = response.getIn().getBody(Long.class).longValue();
 
@@ -88,7 +92,7 @@ public class UndertowHttpStreamingTest extends BaseUndertowTest {
                     }
                 });
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O exception: {}", e.getMessage(), e);
             }
         }).start();
     }

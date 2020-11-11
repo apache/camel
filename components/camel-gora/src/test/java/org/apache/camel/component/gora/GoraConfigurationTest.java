@@ -16,53 +16,62 @@
  */
 package org.apache.camel.component.gora;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * GORA Configuration Tests
  */
 public class GoraConfigurationTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setKeyClassClassShouldThrowExceptionIfNull() {
         final GoraConfiguration conf = new GoraConfiguration();
-        conf.setValueClass(null);
+        assertThrows(IllegalArgumentException.class,
+                () -> conf.setValueClass(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setKeyClassShouldThrowExceptionIfEmpty() {
         final GoraConfiguration conf = new GoraConfiguration();
-        conf.setValueClass("");
+        assertThrows(IllegalArgumentException.class,
+                () -> conf.setValueClass(""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setValueClassClassShouldThrowExceptionIfNull() {
         final GoraConfiguration conf = new GoraConfiguration();
-        conf.setValueClass(null);
+        assertThrows(IllegalArgumentException.class,
+                () -> conf.setValueClass(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setValueClassClassShouldThrowExceptionIfEmpty() {
         final GoraConfiguration conf = new GoraConfiguration();
-        conf.setValueClass("");
+        assertThrows(IllegalArgumentException.class,
+                () -> conf.setValueClass(""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setDataStoreClassShouldThrowExceptionIfNull() {
         final GoraConfiguration conf = new GoraConfiguration();
-        conf.setDataStoreClass(null);
+        assertThrows(IllegalArgumentException.class,
+                () -> conf.setDataStoreClass(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setDataStoreClassShouldThrowExceptionIfEmpty() {
         final GoraConfiguration conf = new GoraConfiguration();
-        conf.setDataStoreClass("");
+        assertThrows(IllegalArgumentException.class,
+                () -> conf.setDataStoreClass(""));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void setHadoopConfigurationShouldThrowExceptionIfNull() {
         final GoraConfiguration conf = new GoraConfiguration();
-        conf.setHadoopConfiguration(null);
+        assertThrows(NullPointerException.class,
+                () -> conf.setHadoopConfiguration(null));
     }
 
 }

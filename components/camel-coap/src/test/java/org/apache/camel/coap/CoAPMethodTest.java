@@ -18,43 +18,43 @@ package org.apache.camel.coap;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CoAPMethodTest extends CoAPTestSupport {
 
     @Test
-    public void testCoAPMethodDefaultGet() {
+    void testCoAPMethodDefaultGet() {
         // No body means GET
         String result = template.requestBody("coap://localhost:" + PORT + "/test/a", null, String.class);
         assertEquals("GET: /test/a", result);
     }
 
     @Test
-    public void testCoAPMethodDefaultPost() {
+    void testCoAPMethodDefaultPost() {
         // Providing a body means POST
         String result = template.requestBody("coap://localhost:" + PORT + "/test/b", "Camel", String.class);
         assertEquals("Hello Camel", result);
     }
 
     @Test
-    public void testCoAPMethodHeader() {
-        String result = template.requestBodyAndHeader("coap://localhost:" + PORT + "/test/c", null, CoAPConstants.COAP_METHOD, "DELETE", String.class);
+    void testCoAPMethodHeader() {
+        String result = template.requestBodyAndHeader("coap://localhost:" + PORT + "/test/c", null, CoAPConstants.COAP_METHOD,
+                "DELETE", String.class);
         assertEquals("DELETE: /test/c", result);
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT)
-                        .setBody(constant("GET: /test/a"));
+            public void configure() {
+                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/a"));
 
-                fromF("coap://localhost:%d/test/b?coapMethodRestrict=POST", PORT)
-                        .setBody(simple("Hello ${body}"));
+                fromF("coap://localhost:%d/test/b?coapMethodRestrict=POST", PORT).setBody(simple("Hello ${body}"));
 
-                fromF("coap://localhost:%d/test/c?coapMethodRestrict=DELETE", PORT)
-                        .setBody(constant("DELETE: /test/c"));
+                fromF("coap://localhost:%d/test/c?coapMethodRestrict=DELETE", PORT).setBody(constant("DELETE: /test/c"));
             }
         };
     }

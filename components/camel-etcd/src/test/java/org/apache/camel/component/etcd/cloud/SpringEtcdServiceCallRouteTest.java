@@ -16,22 +16,14 @@
  */
 package org.apache.camel.component.etcd.cloud;
 
-import java.net.URI;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import mousio.etcd4j.EtcdClient;
-import org.apache.camel.component.etcd.EtcdHelper;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.camel.component.etcd.support.SpringEtcdTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringEtcdServiceCallRouteTest extends CamelSpringTestSupport {
-    private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
-    private static final EtcdClient CLIENT = new EtcdClient(URI.create("http://localhost:2379"));
-
+public class SpringEtcdServiceCallRouteTest extends SpringEtcdTestSupport {
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/etcd/cloud/SpringEtcdServiceCallRouteTest.xml");
@@ -44,36 +36,37 @@ public class SpringEtcdServiceCallRouteTest extends CamelSpringTestSupport {
     @Override
     public void doPreSetup() throws Exception {
         JsonNode service1 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9091");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9091");
         JsonNode service2 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9092");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9092");
         JsonNode service3 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9093");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9093");
         JsonNode service4 = MAPPER.createObjectNode()
-            .put("name", "http-service")
-            .put("address", "127.0.0.1")
-            .put("port", "9094");
+                .put("name", "http-service")
+                .put("address", "127.0.0.1")
+                .put("port", "9094");
 
-        CLIENT.put("/etcd-services-1/" + "service-1", MAPPER.writeValueAsString(service1)).send().get();
-        CLIENT.put("/etcd-services-1/" + "service-2", MAPPER.writeValueAsString(service2)).send().get();
-        CLIENT.put("/etcd-services-2/" + "service-3", MAPPER.writeValueAsString(service3)).send().get();
-        CLIENT.put("/etcd-services-2/" + "service-4", MAPPER.writeValueAsString(service4)).send().get();
+        EtcdClient client = getClient();
+        client.put("/etcd-services-1/" + "service-1", MAPPER.writeValueAsString(service1)).send().get();
+        client.put("/etcd-services-1/" + "service-2", MAPPER.writeValueAsString(service2)).send().get();
+        client.put("/etcd-services-2/" + "service-3", MAPPER.writeValueAsString(service3)).send().get();
+        client.put("/etcd-services-2/" + "service-4", MAPPER.writeValueAsString(service4)).send().get();
 
         super.doPreSetup();
     }
 
     @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        CLIENT.deleteDir("/etcd-services-1/").recursive().send().get();
-        CLIENT.deleteDir("/etcd-services-2/").recursive().send().get();
+    protected void cleanupResources() throws Exception {
+        getClient().deleteDir("/etcd-services-1/").recursive().send().get();
+        getClient().deleteDir("/etcd-services-2/").recursive().send().get();
+
+        super.cleanupResources();
     }
 
     // *************************************************************************

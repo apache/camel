@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -47,9 +48,10 @@ import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
 import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 
 /**
- * The coap component is used for sending and receiving messages from COAP capable devices.
+ * Send and receive messages to/from COAP capable devices.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri", label = "iot")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri",
+             category = { Category.IOT })
 public class CoAPEndpoint extends DefaultEndpoint {
     @UriPath
     private URI uri;
@@ -82,6 +84,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
     @UriParam
     private SSLContextParameters sslContextParameters;
 
+    @UriParam(defaultValue = "true")
+    private boolean recommendedCipherSuitesOnly = true;
+
     private CoAPComponent component;
 
     public CoAPEndpoint(String uri, CoAPComponent component) {
@@ -99,7 +104,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods (DELETE, GET, POST, PUT).
+     * Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods
+     * (DELETE, GET, POST, PUT).
      */
     public String getCoapMethodRestrict() {
         return this.coapMethodRestrict;
@@ -131,22 +137,22 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets the alias used to query the KeyStore for the private key and certificate. This parameter is used
-     * when we are enabling TLS with certificates on the service side, and similarly on the client side when
-     * TLS is used with certificates and client authentication. If the parameter is not specified then the
-     * default behavior is to use the first alias in the keystore that contains a key entry. This configuration
-     * parameter does not apply to configuring TLS via a Raw Public Key or a Pre-Shared Key.
+     * Gets the alias used to query the KeyStore for the private key and certificate. This parameter is used when we are
+     * enabling TLS with certificates on the service side, and similarly on the client side when TLS is used with
+     * certificates and client authentication. If the parameter is not specified then the default behavior is to use the
+     * first alias in the keystore that contains a key entry. This configuration parameter does not apply to configuring
+     * TLS via a Raw Public Key or a Pre-Shared Key.
      */
     public String getAlias() {
         return alias;
     }
 
     /**
-     * Sets the alias used to query the KeyStore for the private key and certificate. This parameter is used
-     * when we are enabling TLS with certificates on the service side, and similarly on the client side when
-     * TLS is used with certificates and client authentication. If the parameter is not specified then the
-     * default behavior is to use the first alias in the keystore that contains a key entry. This configuration
-     * parameter does not apply to configuring TLS via a Raw Public Key or a Pre-Shared Key.
+     * Sets the alias used to query the KeyStore for the private key and certificate. This parameter is used when we are
+     * enabling TLS with certificates on the service side, and similarly on the client side when TLS is used with
+     * certificates and client authentication. If the parameter is not specified then the default behavior is to use the
+     * first alias in the keystore that contains a key entry. This configuration parameter does not apply to configuring
+     * TLS via a Raw Public Key or a Pre-Shared Key.
      */
     public void setAlias(String alias) {
         this.alias = alias;
@@ -253,21 +259,33 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets the configuration options for server-side client-authentication requirements. The value is
-     * either null or one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back
-     * to checking the sslContextParameters.getServerParameters().getClientAuthentication() value.
+     * Gets the configuration options for server-side client-authentication requirements. The value is either null or
+     * one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back to checking the
+     * sslContextParameters.getServerParameters().getClientAuthentication() value.
      */
     public String getClientAuthentication() {
         return clientAuthentication;
     }
 
     /**
-     * Sets the configuration options for server-side client-authentication requirements.
-     * The value must be one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back
-     * to checking the sslContextParameters.getServerParameters().getClientAuthentication() value.
+     * Sets the configuration options for server-side client-authentication requirements. The value must be one of NONE,
+     * WANT, REQUIRE. If this value is not specified, then it falls back to checking the
+     * sslContextParameters.getServerParameters().getClientAuthentication() value.
      */
     public void setClientAuthentication(String clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
+    }
+
+    public boolean isRecommendedCipherSuitesOnly() {
+        return recommendedCipherSuitesOnly;
+    }
+
+    /**
+     * The CBC cipher suites are not recommended. If you want to use them, you first need to set the
+     * recommendedCipherSuitesOnly option to false.
+     */
+    public void setRecommendedCipherSuitesOnly(boolean recommendedCipherSuitesOnly) {
+        this.recommendedCipherSuitesOnly = recommendedCipherSuitesOnly;
     }
 
     public boolean isClientAuthenticationRequired() {
@@ -310,7 +328,6 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return new Certificate[0];
     }
 
-
     public static boolean enableDTLS(URI uri) {
         return "coaps".equals(uri.getScheme());
     }
@@ -324,36 +341,42 @@ public class CoAPEndpoint extends DefaultEndpoint {
         DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
         if (client) {
             if (trustedRpkStore == null && sslContextParameters == null && pskStore == null) {
-                throw new IllegalStateException("Either a trustedRpkStore, sslContextParameters or pskStore object "
+                throw new IllegalStateException(
+                        "Either a trustedRpkStore, sslContextParameters or pskStore object "
                                                 + "must be configured for a TLS client");
             }
-
+            builder.setRecommendedCipherSuitesOnly(isRecommendedCipherSuitesOnly());
             builder.setClientOnly();
         } else {
             if (privateKey == null && sslContextParameters == null && pskStore == null) {
-                throw new IllegalStateException("Either a privateKey, sslContextParameters or pskStore object "
+                throw new IllegalStateException(
+                        "Either a privateKey, sslContextParameters or pskStore object "
                                                 + "must be configured for a TLS service");
             }
             if (privateKey != null && publicKey == null) {
                 throw new IllegalStateException("A public key must be configured to use a Raw Public Key with TLS");
             }
             if ((isClientAuthenticationRequired() || isClientAuthenticationWanted())
-                && (sslContextParameters == null || sslContextParameters.getTrustManagers() == null) && publicKey == null) {
+                    && (sslContextParameters == null || sslContextParameters.getTrustManagers() == null)
+                    && publicKey == null) {
                 throw new IllegalStateException("A truststore must be configured to support TLS client authentication");
             }
 
             builder.setAddress(address);
             builder.setClientAuthenticationRequired(isClientAuthenticationRequired());
             builder.setClientAuthenticationWanted(isClientAuthenticationWanted());
+            builder.setRecommendedCipherSuitesOnly(isRecommendedCipherSuitesOnly());
         }
 
         try {
-            // Configure the identity if the sslContextParameters or privateKey parameter is specified
+            // Configure the identity if the sslContextParameters or privateKey
+            // parameter is specified
             if (sslContextParameters != null && sslContextParameters.getKeyManagers() != null) {
                 KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
                 KeyStore keyStore = keyManagers.getKeyStore().createKeyStore();
 
-                // Use the configured alias or fall back to the first alias in the keystore that contains a key
+                // Use the configured alias or fall back to the first alias in
+                // the keystore that contains a key
                 String alias = getAlias();
                 if (alias == null) {
                     Enumeration<String> aliases = keyStore.aliases();
@@ -369,8 +392,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
                     throw new IllegalStateException("The sslContextParameters keystore must contain a key entry");
                 }
 
-                PrivateKey privateKey =
-                    (PrivateKey)keyStore.getKey(alias, keyManagers.getKeyPassword().toCharArray());
+                PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, keyManagers.getKeyPassword().toCharArray());
                 builder.setIdentity(privateKey, keyStore.getCertificateChain(alias));
             } else if (privateKey != null) {
                 builder.setIdentity(privateKey, publicKey);

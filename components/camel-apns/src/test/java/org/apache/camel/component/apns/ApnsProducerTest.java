@@ -27,10 +27,13 @@ import org.apache.camel.component.apns.model.ApnsConstants;
 import org.apache.camel.component.apns.model.MessageType;
 import org.apache.camel.component.apns.util.ApnsUtils;
 import org.apache.camel.component.apns.util.TestConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 /**
  * Unit test that we can produce JMS message from files
@@ -41,22 +44,24 @@ public class ApnsProducerTest extends CamelTestSupport {
 
     private ApnsServerStub server;
 
-    @Before
+    @BeforeEach
     public void startup() {
         server = ApnsUtils.prepareAndStartServer(TestConstants.TEST_GATEWAY_PORT, TestConstants.TEST_FEEDBACK_PORT);
     }
 
-    @After
+    @AfterEach
     public void stop() {
         server.stop();
     }
 
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(5)
     public void testProducer() throws Exception {
         String message = "Hello World";
         String messagePayload = APNS.newPayload().alertBody(message).build();
 
-        EnhancedApnsNotification apnsNotification = new EnhancedApnsNotification(1, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
+        EnhancedApnsNotification apnsNotification
+                = new EnhancedApnsNotification(1, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
         server.stopAt(apnsNotification.length());
 
         template.sendBody("direct:test", message);
@@ -65,14 +70,14 @@ public class ApnsProducerTest extends CamelTestSupport {
         assertArrayEquals(apnsNotification.marshall(), server.getReceived().toByteArray());
     }
 
-
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(5)
     public void testProducerWithApnsNotification() throws InterruptedException {
         String message = "Hello World";
         String messagePayload = APNS.newPayload().alertBody(message).build();
 
-        final EnhancedApnsNotification apnsNotification =
-                new EnhancedApnsNotification(14, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
+        final EnhancedApnsNotification apnsNotification
+                = new EnhancedApnsNotification(14, EnhancedApnsNotification.MAXIMUM_EXPIRY, FAKE_TOKEN, messagePayload);
         server.stopAt(apnsNotification.length());
 
         template.sendBody("direct:testWithApnsNotification", apnsNotification);

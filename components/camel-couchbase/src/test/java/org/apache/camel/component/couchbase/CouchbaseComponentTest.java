@@ -20,17 +20,22 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CouchbaseComponentTest extends CamelTestSupport {
 
     private CouchbaseComponent component;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        component = context.getComponent("couchbase",  CouchbaseComponent.class);
+        component = context.getComponent("couchbase", CouchbaseComponent.class);
     }
 
     @Override
@@ -58,14 +63,13 @@ public class CouchbaseComponentTest extends CamelTestSupport {
         params.put("persistTo", 2);
         params.put("replicateTo", 3);
 
-        String uri = "couchdb:http://localhost:91234/bucket";
-        String remaining = "http://localhost:91234/bucket";
+        String uri = "couchdb:http://localhost:91234";
+        String remaining = "http://localhost:91234";
 
         CouchbaseEndpoint endpoint = component.createEndpoint(uri, remaining, params);
 
         assertEquals("http", endpoint.getProtocol());
         assertEquals("localhost", endpoint.getHostname());
-        assertEquals("bucket", endpoint.getBucket());
         assertEquals(91234, endpoint.getPort());
         assertEquals("ugol", endpoint.getUsername());
         assertEquals("pwd", endpoint.getPassword());

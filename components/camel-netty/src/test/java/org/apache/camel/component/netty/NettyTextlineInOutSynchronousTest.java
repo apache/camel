@@ -19,7 +19,10 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyTextlineInOutSynchronousTest extends BaseNettyTest {
 
@@ -35,7 +38,7 @@ public class NettyTextlineInOutSynchronousTest extends BaseNettyTest {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertTrue(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use same threads");
     }
 
     @Override
@@ -44,25 +47,25 @@ public class NettyTextlineInOutSynchronousTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=true")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .to("log:after")
-                    .to("mock:result");
+                        .to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=true")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        })
+                        .to("log:after")
+                        .to("mock:result");
 
                 from("netty:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=true")
-                    // body should be a String when using textline codec
-                    .validate(body().isInstanceOf(String.class))
-                    .transform(body().regexReplaceAll("Hello", "Bye"));
+                        // body should be a String when using textline codec
+                        .validate(body().isInstanceOf(String.class))
+                        .transform(body().regexReplaceAll("Hello", "Bye"));
             }
         };
     }

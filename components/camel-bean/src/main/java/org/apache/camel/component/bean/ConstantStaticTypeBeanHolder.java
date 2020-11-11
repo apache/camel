@@ -17,19 +17,22 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 
 /**
- * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class
- * where the intention is to only invoke static methods, without the need for creating an instance of the type.
+ * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class where the intention is to
+ * only invoke static methods, without the need for creating an instance of the type.
  */
 public class ConstantStaticTypeBeanHolder extends ConstantTypeBeanHolder {
 
-    public ConstantStaticTypeBeanHolder(Class<?> type, CamelContext context) {
-        super(type, context);
+    public ConstantStaticTypeBeanHolder(Class<?> type, CamelContext context,
+                                        ParameterMappingStrategy parameterMappingStrategy,
+                                        BeanComponent beanComponent) {
+        super(type, context, parameterMappingStrategy, beanComponent);
     }
 
     @Override
-    public Object getBean() {
+    public Object getBean(Exchange exchange) {
         // we cannot create a bean as there is no default constructor
         return null;
     }

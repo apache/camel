@@ -18,12 +18,13 @@ package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.ringbuffer.Ringbuffer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,21 +55,21 @@ public class HazelcastRingbufferProducerForSpringTest extends HazelcastCamelSpri
         Object result = template.requestBody("direct:readonceTail", 12L, String.class);
         assertEquals("pippo", result);
     }
-    
+
     @Test
     public void testAdd() throws InterruptedException {
         when(ringbuffer.add(ArgumentMatchers.anyLong())).thenReturn(13L);
         Object result = template.requestBody("direct:add", 12L, Long.class);
         assertEquals(13L, result);
     }
-    
+
     @Test
     public void testCapacity() throws InterruptedException {
         when(ringbuffer.capacity()).thenReturn(13L);
         Object result = template.requestBody("direct:capacity", 12L, Long.class);
         assertEquals(13L, result);
     }
-    
+
     @Test
     public void testRemainingCapacity() throws InterruptedException {
         when(ringbuffer.remainingCapacity()).thenReturn(2L);

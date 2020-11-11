@@ -21,9 +21,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.processor.validation.PredicateValidationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.support.processor.PredicateValidationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ValidateSimpleTest extends ContextTestSupport {
 
@@ -31,7 +33,7 @@ public class ValidateSimpleTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -58,8 +60,8 @@ public class ValidateSimpleTest extends ContextTestSupport {
         } catch (CamelExecutionException e) {
             // expected
             assertIsInstanceOf(PredicateValidationException.class, e.getCause());
-            String s = "Validation failed for Predicate[Simple: ${body} contains 'Camel'].";
-            assertTrue(e.getCause().getMessage().startsWith(s));
+            String s = "Validation failed for Predicate[body contains Camel].";
+            assertStringContains(e.getCause().getMessage(), s);
         }
 
         assertMockEndpointsSatisfied();

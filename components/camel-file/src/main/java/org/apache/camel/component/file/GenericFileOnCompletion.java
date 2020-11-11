@@ -27,12 +27,12 @@ import org.slf4j.LoggerFactory;
 /**
  * On completion strategy that performs the required work after the {@link Exchange} has been processed.
  * <p/>
- * The work is for example to move the processed file into a backup folder, delete the file or
- * in case of processing failure do a rollback. 
+ * The work is for example to move the processed file into a backup folder, delete the file or in case of processing
+ * failure do a rollback.
  */
 public class GenericFileOnCompletion<T> implements Synchronization {
 
-    private final Logger log = LoggerFactory.getLogger(GenericFileOnCompletion.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFileOnCompletion.class);
     private GenericFileEndpoint<T> endpoint;
     private GenericFileOperations<T> operations;
     private GenericFileProcessStrategy<T> processStrategy;
@@ -40,8 +40,9 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     private GenericFile<T> file;
     private String absoluteFileName;
 
-    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations, GenericFileProcessStrategy processStrategy,
-                                   GenericFile<T> file, String absoluteFileName) {
+    public GenericFileOnCompletion(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations,
+                                   GenericFileProcessStrategy processStrategy, GenericFile<T> file,
+                                   String absoluteFileName) {
         this.endpoint = endpoint;
         this.operations = operations;
         this.processStrategy = processStrategy;
@@ -72,25 +73,29 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     }
 
     protected void onCompletion(Exchange exchange) {
-        log.debug("Done processing file: {} using exchange: {}", file, exchange);
+        LOG.debug("Done processing file: {} using exchange: {}", file, exchange);
 
         // commit or rollback
         boolean committed = false;
         try {
             boolean failed = exchange.isFailed();
             if (!failed) {
-                // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
+                // commit the file strategy if there was no failure or already
+                // handled by the DeadLetterChannel
                 processStrategyCommit(processStrategy, exchange, file);
                 committed = true;
             }
-            // if we failed, then it will be handled by the rollback in the finally block below
+            // if we failed, then it will be handled by the rollback in the
+            // finally block below
         } finally {
             if (!committed) {
                 processStrategyRollback(processStrategy, exchange, file);
             }
 
-            // remove file from the in progress list as its no longer in progress
-            // use the original file name that was used to add it to the repository
+            // remove file from the in progress list as its no longer in
+            // progress
+            // use the original file name that was used to add it to the
+            // repository
             // as the name can be different when using preMove option
             endpoint.getInProgressRepository().remove(absoluteFileName);
         }
@@ -103,11 +108,12 @@ public class GenericFileOnCompletion<T> implements Synchronization {
      * @param exchange        the exchange
      * @param file            the file processed
      */
-    protected void processStrategyCommit(GenericFileProcessStrategy<T> processStrategy,
-                                         Exchange exchange, GenericFile<T> file) {
+    protected void processStrategyCommit(
+            GenericFileProcessStrategy<T> processStrategy, Exchange exchange, GenericFile<T> file) {
         if (endpoint.isIdempotent()) {
 
-            // use absolute file path as default key, but evaluate if an expression key was configured
+            // use absolute file path as default key, but evaluate if an
+            // expression key was configured
             String key = absoluteFileName;
             if (endpoint.getIdempotentKey() != null) {
                 Exchange dummy = endpoint.createExchange(file);
@@ -123,7 +129,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         handleDoneFile(exchange);
 
         try {
-            log.trace("Commit file strategy: {} for file: {}", processStrategy, file);
+            LOG.trace("Commit file strategy: {} for file: {}", processStrategy, file);
             processStrategy.commit(operations, endpoint, exchange, file);
         } catch (Exception e) {
             handleException("Error during commit", exchange, e);
@@ -137,14 +143,15 @@ public class GenericFileOnCompletion<T> implements Synchronization {
      * @param exchange        the exchange
      * @param file            the file processed
      */
-    protected void processStrategyRollback(GenericFileProcessStrategy<T> processStrategy,
-                                           Exchange exchange, GenericFile<T> file) {
+    protected void processStrategyRollback(
+            GenericFileProcessStrategy<T> processStrategy, Exchange exchange, GenericFile<T> file) {
 
-        if (log.isWarnEnabled()) {
-            log.warn("Rollback file strategy: {} for file: {}", processStrategy, file);
+        if (LOG.isWarnEnabled()) {
+            LOG.warn("Rollback file strategy: {} for file: {}", processStrategy, file);
         }
 
-        // only delete done file if moveFailed option is enabled, as otherwise on rollback,
+        // only delete done file if moveFailed option is enabled, as otherwise
+        // on rollback,
         // we should leave the done file so we can retry
         if (endpoint.getMoveFailed() != null) {
             handleDoneFile(exchange);
@@ -170,9 +177,9 @@ public class GenericFileOnCompletion<T> implements Synchronization {
                 try {
                     // delete done file
                     boolean deleted = operations.deleteFile(doneFileName);
-                    log.trace("Done file: {} was deleted: {}", doneFileName, deleted);
+                    LOG.trace("Done file: {} was deleted: {}", doneFileName, deleted);
                     if (!deleted) {
-                        log.warn("Done file: {} could not be deleted", doneFileName);
+                        LOG.warn("Done file: {} could not be deleted", doneFileName);
                     }
                 } catch (Exception e) {
                     handleException("Error deleting done file: " + doneFileName, exchange, e);

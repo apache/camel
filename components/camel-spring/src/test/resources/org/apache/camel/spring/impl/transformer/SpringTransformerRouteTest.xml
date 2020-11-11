@@ -24,11 +24,11 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="myTypeConverters" class="org.apache.camel.impl.transformer.TransformerRouteTest$MyTypeConverters"/>
-    <bean id="myJsonDataFormatDef" class="org.apache.camel.impl.transformer.TransformerRouteTest$MyJsonDataFormatDefinition"/>
+    <bean id="myTypeConverters" class="org.apache.camel.processor.transformer.TransformerRouteTest$MyTypeConverters"/>
+    <bean id="myJsonDataFormatDef" class="org.apache.camel.processor.transformer.TransformerRouteTest$MyJsonDataFormatDefinition"/>
     <bean id="myXmlProcessor" class="org.apache.camel.spring.impl.transformer.SpringTransformerRouteTest$MyXmlProcessor"/>
-    <bean id="otherToXOrder" class="org.apache.camel.impl.transformer.TransformerRouteTest$OtherToXOrderTransformer"/>
-    <bean id="xOrderResponseToOther" class="org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponseToOtherTransformer"/>
+    <bean id="otherToXOrder" class="org.apache.camel.processor.transformer.TransformerRouteTest$OtherToXOrderTransformer"/>
+    <bean id="xOrderResponseToOther" class="org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponseToOtherTransformer"/>
     
     <camelContext xmlns="http://camel.apache.org/schema/spring">
     
@@ -38,18 +38,18 @@
             <dataFormatTransformer scheme="json">
                 <custom ref="myJsonDataFormatDef"/>
             </dataFormatTransformer>
-            <endpointTransformer ref="myXmlEndpoint" fromType="xml:XmlXOrder" toType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
-            <endpointTransformer ref="myXmlEndpoint" fromType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse" toType="xml:XmlXOrderResponse"/>
-            <customTransformer ref="otherToXOrder" fromType="other:OtherXOrder" toType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
-            <customTransformer ref="xOrderResponseToOther" fromType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse" toType="other:OtherXOrderResponse"/>
+            <endpointTransformer ref="myXmlEndpoint" fromType="xml:XmlXOrder" toType="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrder"/>
+            <endpointTransformer ref="myXmlEndpoint" fromType="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponse" toType="xml:XmlXOrderResponse"/>
+            <customTransformer ref="otherToXOrder" fromType="other:OtherXOrder" toType="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrder"/>
+            <customTransformer ref="xOrderResponseToOther" fromType="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponse" toType="other:OtherXOrderResponse"/>
         </transformers>
         
         <route>
             <from uri="direct:abc"/>
-            <inputType urn="java:org.apache.camel.impl.transformer.TransformerRouteTest$AOrder"/>
-            <outputType urn="java:org.apache.camel.impl.transformer.TransformerRouteTest$AOrderResponse"/>
+            <inputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$AOrder"/>
+            <outputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$AOrderResponse"/>
             <when>
-                <simple>${body} not is 'org.apache.camel.impl.transformer.TransformerRouteTest\\$AOrder'</simple>
+                <simple>${body} not is 'org.apache.camel.processor.transformer.TransformerRouteTest\\$AOrder'</simple>
                 <throwException exceptionType="java.lang.Exception" message="expected AOrder object but was '${body}'"/>
             </when>
             <inOut uri="direct:xyz"/>
@@ -58,10 +58,10 @@
 
         <route>
             <from uri="direct:xyz"/>
-            <inputType urn="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
-            <outputType urn="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse"/>
+            <inputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrder"/>
+            <outputType urn="java:org.apache.camel.processor.transformer.TransformerRouteTest$XOrderResponse"/>
             <when>
-                <simple>${body} not is 'org.apache.camel.impl.transformer.TransformerRouteTest\\$XOrder'</simple>
+                <simple>${body} not is 'org.apache.camel.processor.transformer.TransformerRouteTest\\$XOrder'</simple>
                 <throwException exceptionType="java.lang.Exception" message="expected XOrder object but was '${body}'"/>
             </when>
             <setBody><constant>response</constant></setBody>

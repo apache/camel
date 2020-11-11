@@ -24,261 +24,244 @@ import javax.validation.ConstraintViolation;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.condition.OS.AIX;
 
 public class BeanValidatorRouteTest extends CamelTestSupport {
     private Locale origLocale;
 
-    @Before
+    @BeforeEach
     public void setLanguage() {
         origLocale = Locale.getDefault();
         Locale.setDefault(Locale.US);
     }
 
-    @After
+    @AfterEach
     public void restoreLanguage() {
         Locale.setDefault(origLocale);
     }
 
+    @DisabledOnOs(AIX)
     @Test
-    public void validateShouldSuccessWithImpliciteDefaultGroup() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void validateShouldSuccessWithImpliciteDefaultGroup() {
 
         Exchange exchange = template.request("bean-validator://x", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(createCar("BMW", "DD-AB-123"));
             }
         });
 
         assertNotNull(exchange);
     }
-    
+
+    @DisabledOnOs(AIX)
     @Test
-    public void validateShouldSuccessWithExpliciteDefaultGroup() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void validateShouldSuccessWithExpliciteDefaultGroup() {
 
         Exchange exchange = template.request("bean-validator://x?group=javax.validation.groups.Default", new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(createCar("BMW", "DD-AB-123"));
             }
         });
 
         assertNotNull(exchange);
     }
-    
+
+    @DisabledOnOs(AIX)
     @Test
-    public void validateShouldFailWithImpliciteDefaultGroup() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void validateShouldFailWithImpliciteDefaultGroup() {
 
         final String url = "bean-validator://x";
         final Car car = createCar("BMW", null);
-        
+
         try {
             template.requestBody(url, car);
             fail("should throw exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
-            
+
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
-            
+
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<Object> constraintViolation = constraintViolations.iterator().next();
             assertEquals("licensePlate", constraintViolation.getPropertyPath().toString());
             assertEquals(null, constraintViolation.getInvalidValue());
             assertEquals("must not be null", constraintViolation.getMessage());
         }
-        
+
         car.setLicensePlate("D-A");
-        
+
         Exchange exchange = template.request(url, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(car);
             }
         });
 
         assertNotNull(exchange);
     }
-    
+
+    @DisabledOnOs(AIX)
     @Test
-    public void validateShouldFailWithExpliciteDefaultGroup() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void validateShouldFailWithExpliciteDefaultGroup() {
 
         final String url = "bean-validator://x?group=javax.validation.groups.Default";
         final Car car = createCar("BMW", null);
-        
+
         try {
             template.requestBody(url, car);
             fail("should throw exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
-            
+
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
-            
+
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<Object> constraintViolation = constraintViolations.iterator().next();
             assertEquals("licensePlate", constraintViolation.getPropertyPath().toString());
             assertEquals(null, constraintViolation.getInvalidValue());
             assertEquals("must not be null", constraintViolation.getMessage());
         }
-        
+
         car.setLicensePlate("D-A");
-        
+
         Exchange exchange = template.request(url, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(car);
             }
         });
 
         assertNotNull(exchange);
     }
-    
+
+    @DisabledOnOs(AIX)
     @Test
-    public void validateShouldFailWithOptionalChecksGroup() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void validateShouldFailWithOptionalChecksGroup() {
 
         final String url = "bean-validator://x?group=org.apache.camel.component.bean.validator.OptionalChecks";
         final Car car = createCar("BMW", "D-A");
-        
+
         try {
             template.requestBody(url, car);
             fail("should throw exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
-            
+
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
-            
+
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<Object> constraintViolation = constraintViolations.iterator().next();
             assertEquals("licensePlate", constraintViolation.getPropertyPath().toString());
             assertEquals("D-A", constraintViolation.getInvalidValue());
             assertEquals("size must be between 5 and 14", constraintViolation.getMessage());
         }
-        
+
         car.setLicensePlate("DD-AB-123");
-        
+
         Exchange exchange = template.request(url, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(car);
             }
         });
 
         assertNotNull(exchange);
     }
-    
+
+    @DisabledOnOs(AIX)
     @Test
-    public void validateShouldFailWithOrderedChecksGroup() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void validateShouldFailWithOrderedChecksGroup() {
 
         final String url = "bean-validator://x?group=org.apache.camel.component.bean.validator.OrderedChecks";
         final Car car = createCar(null, "D-A");
-        
+
         try {
             template.requestBody(url, car);
             fail("should throw exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
-            
+
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
-            
+
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<Object> constraintViolation = constraintViolations.iterator().next();
             assertEquals("manufacturer", constraintViolation.getPropertyPath().toString());
             assertEquals(null, constraintViolation.getInvalidValue());
             assertEquals("must not be null", constraintViolation.getMessage());
         }
-        
+
         car.setManufacturer("BMW");
-        
+
         try {
             template.requestBody(url, car);
             fail("should throw exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
-            
+
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
-            
+
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<Object> constraintViolation = constraintViolations.iterator().next();
             assertEquals("licensePlate", constraintViolation.getPropertyPath().toString());
             assertEquals("D-A", constraintViolation.getInvalidValue());
             assertEquals("size must be between 5 and 14", constraintViolation.getMessage());
         }
-        
+
         car.setLicensePlate("DD-AB-123");
-        
+
         Exchange exchange = template.request(url, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(car);
             }
         });
 
         assertNotNull(exchange);
     }
-    
+
+    @DisabledOnOs(AIX)
     @Test
-    public void validateShouldSuccessWithRedefinedDefaultGroup() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void validateShouldSuccessWithRedefinedDefaultGroup() {
 
         final String url = "bean-validator://x";
         final Car car = new CarWithRedefinedDefaultGroup(null, "DD-AB-123");
-        
+
         Exchange exchange = template.request(url, new Processor() {
-            public void process(Exchange exchange) throws Exception {
+            public void process(Exchange exchange) {
                 exchange.getIn().setBody(car);
             }
         });
 
         assertNotNull(exchange);
     }
-    
+
+    @DisabledOnOs(AIX)
     @Test
-    public void validateShouldFailWithRedefinedDefaultGroup() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
+    void validateShouldFailWithRedefinedDefaultGroup() {
 
         final String url = "bean-validator://x";
         final Car car = new CarWithRedefinedDefaultGroup(null, "D-A");
-        
+
         try {
             template.requestBody(url, car);
             fail("should throw exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(BeanValidationException.class, e.getCause());
-            
+
             BeanValidationException exception = (BeanValidationException) e.getCause();
             Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
-            
+
             assertEquals(1, constraintViolations.size());
             ConstraintViolation<Object> constraintViolation = constraintViolations.iterator().next();
             assertEquals("licensePlate", constraintViolation.getPropertyPath().toString());
@@ -286,7 +269,7 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
             assertEquals("size must be between 5 and 14", constraintViolation.getMessage());
         }
     }
-    
+
     Car createCar(String manufacturer, String licencePlate) {
         return new CarWithAnnotations(manufacturer, licencePlate);
     }

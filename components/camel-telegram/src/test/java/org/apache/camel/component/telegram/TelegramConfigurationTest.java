@@ -30,7 +30,8 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
 
     @Test
     public void testChatBotResult() throws Exception {
-        TelegramEndpoint endpoint = (TelegramEndpoint) context().getEndpoints().stream().filter(e -> e instanceof TelegramEndpoint).findAny().get();
+        TelegramEndpoint endpoint = (TelegramEndpoint) context().getEndpoints().stream()
+                .filter(e -> e instanceof TelegramEndpoint).findAny().get();
         TelegramConfiguration config = endpoint.getConfiguration();
 
         assertEquals("bots", config.getType());
@@ -41,8 +42,8 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
         assertEquals(Integer.valueOf(60), config.getLimit());
         assertEquals("127.0.0.1", config.getProxyHost());
         assertEquals(Integer.valueOf(1234), config.getProxyPort());
+        assertEquals(TelegramProxyType.SOCKS5, config.getProxyType());
     }
-
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
@@ -51,7 +52,7 @@ public class TelegramConfigurationTest extends TelegramTestSupport {
             public void configure() throws Exception {
 
                 from("direct:telegram")
-                        .to("telegram:bots/?authorizationToken=mock-token&chatId=12345&delay=2000&timeout=10&limit=60&proxyHost=127.0.0.1&proxyPort=1234");
+                        .to("telegram:bots/?authorizationToken=mock-token&chatId=12345&delay=2000&timeout=10&limit=60&proxyHost=127.0.0.1&proxyPort=1234&proxyType=SOCKS5");
             }
         };
     }

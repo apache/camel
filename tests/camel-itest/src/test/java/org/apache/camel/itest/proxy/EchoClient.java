@@ -20,9 +20,6 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-/**
- *
- */
 @Component("client")
 public class EchoClient {
 

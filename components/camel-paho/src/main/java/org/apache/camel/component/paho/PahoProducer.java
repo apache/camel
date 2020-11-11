@@ -21,8 +21,12 @@ import org.apache.camel.support.DefaultProducer;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PahoProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PahoProducer.class);
 
     private volatile MqttClient client;
     private volatile String clientId;
@@ -35,22 +39,25 @@ public class PahoProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String topic = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC, getEndpoint().getTopic(), String.class);
-        int qos = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_QOS, getEndpoint().getConfiguration().getQos(), Integer.class);
-        boolean retained = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_RETAINED, getEndpoint().getConfiguration().isRetained(), Boolean.class);
+        String topic
+                = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_OVERRIDE_TOPIC, getEndpoint().getTopic(), String.class);
+        int qos = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_QOS, getEndpoint().getConfiguration().getQos(),
+                Integer.class);
+        boolean retained = exchange.getIn().getHeader(PahoConstants.CAMEL_PAHO_MSG_RETAINED,
+                getEndpoint().getConfiguration().isRetained(), Boolean.class);
         byte[] payload = exchange.getIn().getBody(byte[].class);
 
         MqttMessage message = new MqttMessage(payload);
         message.setQos(qos);
         message.setRetained(retained);
 
-        log.debug("Publishing to topic: {}, qos: {}, retrained: {}", topic, qos, retained);
+        LOG.debug("Publishing to topic: {}, qos: {}, retrained: {}", topic, qos, retained);
         client.publish(topic, message);
     }
 
     @Override
     public PahoEndpoint getEndpoint() {
-        return (PahoEndpoint)super.getEndpoint();
+        return (PahoEndpoint) super.getEndpoint();
     }
 
     public MqttClient getClient() {
@@ -73,10 +80,11 @@ public class PahoProducer extends DefaultProducer {
                 clientId = "camel-" + MqttClient.generateClientId();
             }
             stopClient = true;
-            client = new MqttClient(getEndpoint().getConfiguration().getBrokerUrl(),
+            client = new MqttClient(
+                    getEndpoint().getConfiguration().getBrokerUrl(),
                     clientId,
                     PahoEndpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
-            log.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
             client.connect(connectOptions);
         }
     }
@@ -86,10 +94,10 @@ public class PahoProducer extends DefaultProducer {
         super.doStop();
 
         if (stopClient && client != null && client.isConnected()) {
-            log.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            LOG.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
             client.disconnect();
-            client = null;
         }
+        client = null;
     }
 
 }

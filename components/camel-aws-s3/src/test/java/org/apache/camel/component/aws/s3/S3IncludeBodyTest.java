@@ -31,12 +31,14 @@ import com.amazonaws.util.StringInputStream;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Test to verify that the body is not retrieved when the includeBody option is
- * false
+ * Test to verify that the body is not retrieved when the includeBody option is false
  */
 public class S3IncludeBodyTest extends CamelTestSupport {
 
@@ -49,7 +51,7 @@ public class S3IncludeBodyTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         assertMockEndpointsSatisfied();
-        assertNull("Expected body to be empty", mock.getExchanges().get(0).getIn().getBody(String.class));
+        assertNull(mock.getExchanges().get(0).getIn().getBody(String.class), "Expected body to be empty");
     }
 
     @Override
@@ -57,7 +59,8 @@ public class S3IncludeBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" + "&maxMessagesPerPoll=5&prefix=confidential&includeBody=false").to("mock:result");
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50"
+                     + "&maxMessagesPerPoll=5&prefix=confidential&includeBody=false").to("mock:result");
             }
         };
     }

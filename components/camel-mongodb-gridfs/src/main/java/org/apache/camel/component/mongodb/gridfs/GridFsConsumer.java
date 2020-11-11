@@ -17,28 +17,36 @@
 package org.apache.camel.component.mongodb.gridfs;
 
 import java.io.InputStream;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoException;
-import com.mongodb.gridfs.GridFSDBFile;
-import com.mongodb.util.JSON;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.gridfs.GridFSDownloadStream;
+import com.mongodb.client.gridfs.model.GridFSFile;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
+import com.mongodb.client.model.Updates;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.IOHelper;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_ATTRIBUTE_DONE;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_ATTRIBUTE_PROCESSING;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_CONTENT_TYPE;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.GRIDFS_FILE_KEY_UPLOAD_DATE;
+import static org.apache.camel.component.mongodb.gridfs.GridFsConstants.PERSISTENT_TIMESTAMP_KEY;
 
 public class GridFsConsumer extends DefaultConsumer implements Runnable {
-    final GridFsEndpoint endpoint;
-    private ExecutorService executor;
+    private final GridFsEndpoint endpoint;
+    private volatile ExecutorService executor;
 
-    /**
-     * @param endpoint
-     * @param processor
-     */
     public GridFsConsumer(GridFsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
@@ -48,7 +56,7 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     protected void doStop() throws Exception {
         super.doStop();
         if (executor != null) {
-            executor.shutdown();
+            endpoint.getCamelContext().getExecutorServiceManager().shutdown(executor);
             executor = null;
         }
     }
@@ -56,91 +64,105 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
+                1);
         executor.execute(this);
     }
 
     @Override
     public void run() {
-        DBCursor c = null;
-        java.util.Date fromDate = null;
-        
-        QueryStrategy s = endpoint.getQueryStrategy();
-        boolean usesTimestamp = s != QueryStrategy.FileAttribute;
-        boolean persistsTimestamp = s == QueryStrategy.PersistentTimestamp || s == QueryStrategy.PersistentTimestampAndFileAttribute;
-        boolean usesAttribute = s == QueryStrategy.FileAttribute
-            || s == QueryStrategy.TimeStampAndFileAttribute 
-            || s == QueryStrategy.PersistentTimestampAndFileAttribute;
-        
-        DBCollection ptsCollection = null;
-        DBObject persistentTimestamp = null;
+        MongoCursor<GridFSFile> cursor = null;
+        Date fromDate = null;
+
+        QueryStrategy queryStrategy = endpoint.getQueryStrategy();
+        boolean usesTimestamp = queryStrategy != QueryStrategy.FileAttribute;
+        boolean persistsTimestamp = queryStrategy == QueryStrategy.PersistentTimestamp
+                || queryStrategy == QueryStrategy.PersistentTimestampAndFileAttribute;
+        boolean usesAttribute = queryStrategy == QueryStrategy.FileAttribute
+                || queryStrategy == QueryStrategy.TimeStampAndFileAttribute
+                || queryStrategy == QueryStrategy.PersistentTimestampAndFileAttribute;
+
+        MongoCollection<Document> ptsCollection = null;
+        Document persistentTimestamp = null;
         if (persistsTimestamp) {
             ptsCollection = endpoint.getDB().getCollection(endpoint.getPersistentTSCollection());
-         // ensure standard indexes as long as collections are small
-            try {
-                if (ptsCollection.count() < 1000) {
-                    ptsCollection.createIndex(new BasicDBObject("id", 1));
-                }
-            } catch (MongoException e) {
-                //TODO: Logging
+
+            // ensure standard indexes as long as collections are small
+            if (ptsCollection.countDocuments() < 1000) {
+                ptsCollection.createIndex(new BasicDBObject("id", 1));
             }
-            persistentTimestamp = ptsCollection.findOne(new BasicDBObject("id", endpoint.getPersistentTSObject()));
+
+            persistentTimestamp = ptsCollection.find(eq("id", endpoint.getPersistentTSObject())).first();
             if (persistentTimestamp == null) {
-                persistentTimestamp = new BasicDBObject("id", endpoint.getPersistentTSObject());
-                fromDate = new java.util.Date();
-                persistentTimestamp.put("timestamp", fromDate);
-                ptsCollection.save(persistentTimestamp);
+                persistentTimestamp = new Document("id", endpoint.getPersistentTSObject());
+                fromDate = new Date();
+                persistentTimestamp.put(PERSISTENT_TIMESTAMP_KEY, fromDate);
+                ptsCollection.insertOne(persistentTimestamp);
             }
-            fromDate = (java.util.Date)persistentTimestamp.get("timestamp");
+            fromDate = persistentTimestamp.get(PERSISTENT_TIMESTAMP_KEY, Date.class);
         } else if (usesTimestamp) {
-            fromDate = new java.util.Date();
+            fromDate = new Date();
         }
         try {
             Thread.sleep(endpoint.getInitialDelay());
-            while (isStarted()) {                
-                if (c == null || c.getCursorId() == 0) {
-                    if (c != null) {
-                        c.close();
-                    }
+            while (isStarted()) {
+                if (cursor == null) {
                     String queryString = endpoint.getQuery();
-                    DBObject query;
-                    if (queryString == null) {
-                        query = new BasicDBObject();
-                    } else {
-                        query = (DBObject) JSON.parse(queryString);
+                    Bson query = null;
+                    if (queryString != null) {
+                        query = Document.parse(queryString);
                     }
                     if (usesTimestamp) {
-                        query.put("uploadDate", new BasicDBObject("$gt", fromDate));
+                        Bson uploadDateFilter = Filters.gt(GRIDFS_FILE_KEY_UPLOAD_DATE, fromDate);
+                        if (query == null) {
+                            query = uploadDateFilter;
+                        } else {
+                            query = Filters.and(query, uploadDateFilter);
+                        }
                     }
                     if (usesAttribute) {
-                        query.put(endpoint.getFileAttributeName(), null);
+                        Bson fileAttributeNameFilter = Filters.eq(endpoint.getFileAttributeName(), null);
+                        if (query == null) {
+                            query = fileAttributeNameFilter;
+                        } else {
+                            query = Filters.and(query, fileAttributeNameFilter);
+                        }
                     }
-                    c = endpoint.getFilesCollection().find(query);
+                    cursor = endpoint.getGridFsBucket().find(query).cursor();
                 }
                 boolean dateModified = false;
-                while (c.hasNext() && isStarted()) {
-                    GridFSDBFile file = (GridFSDBFile)c.next();
-                    GridFSDBFile forig = file;
+                while (cursor.hasNext() && isStarted()) {
+                    GridFSFile file = cursor.next();
+                    GridFSFile forig = file;
                     if (usesAttribute) {
-                        file.put(endpoint.getFileAttributeName(), "processing");
-                        DBObject q = BasicDBObjectBuilder.start("_id", file.getId()).append("camel-processed", null).get();
-                        forig = (GridFSDBFile)endpoint.getFilesCollection().findAndModify(q, null, null, false, file, true, false);
+                        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions();
+                        options.returnDocument(ReturnDocument.AFTER);
+                        Bson filter = Filters.and(eq("_id", file.getId()), eq(endpoint.getFileAttributeName(), null));
+                        Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_PROCESSING);
+                        forig = endpoint.getFilesCollection().findOneAndUpdate(filter, update, options);
                     }
                     if (forig != null) {
-                        file = endpoint.getGridFs().findOne(new BasicDBObject("_id", file.getId()));
-                        
                         Exchange exchange = endpoint.createExchange();
-                        exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, JSON.serialize(file.getMetaData()));
-                        exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, file.getContentType());
+                        GridFSDownloadStream downloadStream = endpoint.getGridFsBucket().openDownloadStream(file.getFilename());
+                        file = downloadStream.getGridFSFile();
+
+                        Document metadata = file.getMetadata();
+                        if (metadata != null) {
+                            String contentType = metadata.get(GRIDFS_FILE_KEY_CONTENT_TYPE, String.class);
+                            if (contentType != null) {
+                                exchange.getIn().setHeader(Exchange.FILE_CONTENT_TYPE, contentType);
+                            }
+                            exchange.getIn().setHeader(GridFsEndpoint.GRIDFS_METADATA, metadata.toJson());
+                        }
+
                         exchange.getIn().setHeader(Exchange.FILE_LENGTH, file.getLength());
                         exchange.getIn().setHeader(Exchange.FILE_LAST_MODIFIED, file.getUploadDate());
-                        exchange.getIn().setBody(file.getInputStream(), InputStream.class);
+                        exchange.getIn().setBody(downloadStream, InputStream.class);
                         try {
                             getProcessor().process(exchange);
-                            //System.out.println("Processing " + file.getFilename());
                             if (usesAttribute) {
-                                forig.put(endpoint.getFileAttributeName(), "done");
-                                endpoint.getFilesCollection().save(forig);
+                                Bson update = Updates.set(endpoint.getFileAttributeName(), GRIDFS_FILE_ATTRIBUTE_DONE);
+                                endpoint.getFilesCollection().findOneAndUpdate(eq("_id", forig.getId()), update);
                             }
                             if (usesTimestamp) {
                                 if (file.getUploadDate().compareTo(fromDate) > 0) {
@@ -149,24 +171,24 @@ public class GridFsConsumer extends DefaultConsumer implements Runnable {
                                 }
                             }
                         } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            // ignore
                         }
                     }
                 }
+
                 if (persistsTimestamp && dateModified) {
-                    persistentTimestamp.put("timestamp", fromDate);
-                    ptsCollection.save(persistentTimestamp);
+                    Bson update = Updates.set(PERSISTENT_TIMESTAMP_KEY, fromDate);
+                    ptsCollection.findOneAndUpdate(eq("_id", persistentTimestamp.getObjectId("_id")), update);
                 }
+
+                cursor = null;
                 Thread.sleep(endpoint.getDelay());
             }
         } catch (Throwable e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            // ignore
         }
-        if (c != null) {
-            c.close();
+        if (cursor != null) {
+            IOHelper.close(cursor);
         }
     }
-    
 }

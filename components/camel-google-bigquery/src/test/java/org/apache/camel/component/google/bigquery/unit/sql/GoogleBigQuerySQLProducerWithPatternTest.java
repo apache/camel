@@ -20,16 +20,17 @@ import java.util.List;
 
 import com.google.api.services.bigquery.model.QueryRequest;
 import org.apache.camel.Exchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class GoogleBigQuerySQLProducerWithPatternTest extends GoogleBigQuerySQLProducerBaseTest {
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         sql = "insert into ${testDatasetId}.testTableId(id, data) values(1, 'test')";
         setupBigqueryMock();

@@ -25,8 +25,7 @@ import org.junit.jupiter.api.Test;
 public class FromSftpRecursiveNotStepwiseNoBasePathTest extends SftpServerTestSupport {
 
     protected String getSftpUrl() {
-        return "sftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false"
-                + "&recursive=true";
+        return "sftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false" + "&recursive=true";
     }
 
     @Override
@@ -39,7 +38,7 @@ public class FromSftpRecursiveNotStepwiseNoBasePathTest extends SftpServerTestSu
 
     @Test
     public void testRecursiveNotStepwiseNoBasePath() throws Exception {
-        //CAMEL-13400
+        // CAMEL-13400
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
         assertMockEndpointsSatisfied();
@@ -50,9 +49,7 @@ public class FromSftpRecursiveNotStepwiseNoBasePathTest extends SftpServerTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getSftpUrl())
-                        .convertBodyTo(String.class)
-                        .to("mock:result");
+                from(getSftpUrl()).convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -33,16 +33,20 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * File consumer.
  */
 public class FileConsumer extends GenericFileConsumer<File> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FileConsumer.class);
     private String endpointPath;
     private Set<String> extendedAttributes;
 
-    public FileConsumer(FileEndpoint endpoint, Processor processor, GenericFileOperations<File> operations, GenericFileProcessStrategy<File> processStrategy) {
+    public FileConsumer(FileEndpoint endpoint, Processor processor, GenericFileOperations<File> operations,
+                        GenericFileProcessStrategy<File> processStrategy) {
         super(endpoint, processor, operations, processStrategy);
         this.endpointPath = endpoint.getConfiguration().getDirectory();
 
@@ -54,33 +58,33 @@ public class FileConsumer extends GenericFileConsumer<File> {
 
     @Override
     protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
-        log.trace("pollDirectory from fileName: {}", fileName);
+        LOG.trace("pollDirectory from fileName: {}", fileName);
 
         depth++;
 
         File directory = new File(fileName);
         if (!directory.exists() || !directory.isDirectory()) {
-            log.debug("Cannot poll as directory does not exists or its not a directory: {}", directory);
+            LOG.debug("Cannot poll as directory does not exists or its not a directory: {}", directory);
             if (getEndpoint().isDirectoryMustExist()) {
                 throw new GenericFileOperationFailedException("Directory does not exist: " + directory);
             }
             return true;
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Polling directory: {}, absolute path: {}", directory.getPath(), directory.getAbsolutePath());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Polling directory: {}, absolute path: {}", directory.getPath(), directory.getAbsolutePath());
         }
         File[] dirFiles = directory.listFiles();
         if (dirFiles == null || dirFiles.length == 0) {
             // no files in this directory to poll
-            if (log.isTraceEnabled()) {
-                log.trace("No files found in directory: {}", directory.getPath());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("No files found in directory: {}", directory.getPath());
             }
             return true;
         } else {
             // we found some files
-            if (log.isTraceEnabled()) {
-                log.trace("Found {} in directory: {}", dirFiles.length, directory.getPath());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found {} in directory: {}", dirFiles.length, directory.getPath());
             }
         }
         List<File> files = Arrays.asList(dirFiles);
@@ -94,14 +98,17 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 return false;
             }
 
-            // trace log as Windows/Unix can have different views what the file is?
-            if (log.isTraceEnabled()) {
-                log.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]",
-                        file, file.isAbsolute(), file.isDirectory(), file.isFile(), file.isHidden());
+            // trace log as Windows/Unix can have different views what the file
+            // is?
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file, file.isAbsolute(),
+                        file.isDirectory(), file.isFile(),
+                        file.isHidden());
             }
 
             // creates a generic file
-            GenericFile<File> gf = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
+            GenericFile<File> gf
+                    = asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
 
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(gf, true, files)) {
@@ -113,9 +120,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
                     }
                 }
             } else {
-                // Windows can report false to a file on a share so regard it always as a file (if its not a directory)
+                // Windows can report false to a file on a share so regard it
+                // always as a file (if its not a directory)
                 if (depth >= endpoint.minDepth && isValidFile(gf, false, files)) {
-                    log.trace("Adding valid file: {}", file);
+                    LOG.trace("Adding valid file: {}", file);
                     // matched file so add
                     if (extendedAttributes != null) {
                         Path path = file.toPath();
@@ -142,8 +150,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
                                     allAttributes.put(attribute, Files.getAttribute(path, attribute));
                                 }
                             } catch (IOException e) {
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Unable to read attribute {} on file {}", attribute, file, e);
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Unable to read attribute {} on file {}", attribute, file, e);
                                 }
                             }
                         }
@@ -169,17 +177,17 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 return true;
             }
         }
-        log.trace("Done file: {} does not exist", doneFileName);
+        LOG.trace("Done file: {} does not exist", doneFileName);
         return false;
     }
 
     /**
      * Creates a new GenericFile<File> based on the given file.
      *
-     * @param endpointPath the starting directory the endpoint was configured with
-     * @param file the source file
-     * @param probeContentType whether to probe the content type of the file or not
-     * @return wrapped as a GenericFile
+     * @param  endpointPath     the starting directory the endpoint was configured with
+     * @param  file             the source file
+     * @param  probeContentType whether to probe the content type of the file or not
+     * @return                  wrapped as a GenericFile
      */
     public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset, boolean probeContentType) {
         GenericFile<File> answer = new GenericFile<>(probeContentType);
@@ -192,10 +200,14 @@ public class FileConsumer extends GenericFileConsumer<File> {
         answer.setFileNameOnly(file.getName());
         answer.setFileLength(file.length());
         answer.setDirectory(file.isDirectory());
-        // must use FileUtil.isAbsolute to have consistent check for whether the file is
-        // absolute or not. As windows do not consider \ paths as absolute where as all
-        // other OS platforms will consider \ as absolute. The logic in Camel mandates
-        // that we align this for all OS. That is why we must use FileUtil.isAbsolute
+        // must use FileUtil.isAbsolute to have consistent check for whether the
+        // file is
+        // absolute or not. As windows do not consider \ paths as absolute where
+        // as all
+        // other OS platforms will consider \ as absolute. The logic in Camel
+        // mandates
+        // that we align this for all OS. That is why we must use
+        // FileUtil.isAbsolute
         // to return a consistent answer for all OS platforms.
         answer.setAbsolute(FileUtil.isAbsolute(file));
         answer.setAbsoluteFilePath(file.getAbsolutePath());
@@ -248,7 +260,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
     }
 
     private boolean fileHasMoved(GenericFile<File> file) {
-        // GenericFile's absolute path is always up to date whereas the underlying file is not
+        // GenericFile's absolute path is always up to date whereas the
+        // underlying file is not
         return !file.getFile().getAbsolutePath().equals(file.getAbsoluteFilePath());
     }
 }

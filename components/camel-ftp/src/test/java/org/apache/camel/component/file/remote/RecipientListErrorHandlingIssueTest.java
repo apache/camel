@@ -28,7 +28,8 @@ public class RecipientListErrorHandlingIssueTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         // use a wrong password so we cannot login and get an exception so we
-        // can test that the error handler kick in and we know which endpoint failed
+        // can test that the error handler kick in and we know which endpoint
+        // failed
         return "ftp://admin@localhost:" + getPort() + "/recipientlist?password=denied";
     }
 

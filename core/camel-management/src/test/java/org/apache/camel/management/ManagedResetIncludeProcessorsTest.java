@@ -26,7 +26,9 @@ import javax.management.QueryExp;
 import javax.management.StringValueExp;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedResetIncludeProcessorsTest extends ManagementTestSupport {
 
@@ -56,7 +58,7 @@ public class ManagedResetIncludeProcessorsTest extends ManagementTestSupport {
         template.sendBody("direct:baz", "F");
 
         assertMockEndpointsSatisfied();
-        
+
         // should be 5 on the route
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(5, completed.longValue());
@@ -70,7 +72,7 @@ public class ManagedResetIncludeProcessorsTest extends ManagementTestSupport {
         }
 
         // reset which should reset all processors also
-        mbeanServer.invoke(on, "reset", new Object[]{true}, new String[]{"boolean"});
+        mbeanServer.invoke(on, "reset", new Object[] { true }, new String[] { "boolean" });
 
         // should be 0 on the route
         completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
@@ -108,12 +110,12 @@ public class ManagedResetIncludeProcessorsTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("first")
-                    .to("log:foo").id("foo")
-                    .to("log:bar").id("bar")
-                    .to("mock:result").id("mock");
+                        .to("log:foo").id("foo")
+                        .to("log:bar").id("bar")
+                        .to("mock:result").id("mock");
 
                 from("direct:baz").routeId("second")
-                    .to("mock:baz").id("baz");
+                        .to("mock:baz").id("baz");
             }
         };
     }

@@ -19,9 +19,10 @@ package org.apache.camel.processor;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LoopWithAggregatorTest extends ContextTestSupport {
 
@@ -42,11 +43,12 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // instruct loop to use copy mode, which mean it will use a
-                    // copy of the input exchange
-                    // for each loop iteration, instead of keep using the same
-                    // exchange all over
-                    .loop(3).copy().enrich("direct:getTimeStamp", new ExampleAggregationStrategy()).inOnly("mock:loop").end().to("mock:result");
+                        // instruct loop to use copy mode, which mean it will use a
+                        // copy of the input exchange
+                        // for each loop iteration, instead of keep using the same
+                        // exchange all over
+                        .loop(3).copy().enrich("direct:getTimeStamp", new ExampleAggregationStrategy()).to(ExchangePattern.InOnly,"mock:loop")
+                        .end().to("mock:result");
                 // END SNIPPET: e1
 
                 from("direct:getTimeStamp").process(new Processor() {
@@ -68,13 +70,13 @@ public class LoopWithAggregatorTest extends ContextTestSupport {
         @Override
         public Exchange aggregate(Exchange original, Exchange resource) {
             String originalBody = original.getIn().getBody(String.class);
-            if (original.getOut().getBody() != null) {
-                originalBody = original.getOut().getBody(String.class);
+            if (original.getMessage().getBody() != null) {
+                originalBody = original.getMessage().getBody(String.class);
             }
             String resourceResponse = resource.getIn().getBody(String.class);
             String mergeResult = originalBody + resourceResponse;
             if (original.getPattern().isOutCapable()) {
-                original.getOut().setBody(mergeResult);
+                original.getMessage().setBody(mergeResult);
             } else {
                 original.getIn().setBody(mergeResult);
             }

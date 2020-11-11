@@ -19,9 +19,8 @@ package org.apache.camel.component.xchange.metadata;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.meta.CurrencyMetaData;
@@ -29,66 +28,70 @@ import org.knowm.xchange.dto.meta.CurrencyPairMetaData;
 
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY;
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MetaDataProducerTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                
+            public void configure() {
+
                 from("direct:currencies")
-                    .to("xchange:binance?service=metadata&method=currencies");
-                
+                        .to("xchange:binance?service=metadata&method=currencies");
+
                 from("direct:currencyMetaData")
-                    .to("xchange:binance?service=metadata&method=currencyMetaData");
-                
+                        .to("xchange:binance?service=metadata&method=currencyMetaData");
+
                 from("direct:currencyPairs")
-                    .to("xchange:binance?service=metadata&method=currencyPairs");
-                
+                        .to("xchange:binance?service=metadata&method=currencyPairs");
+
                 from("direct:currencyPairMetaData")
-                    .to("xchange:binance?service=metadata&method=currencyPairMetaData");
+                        .to("xchange:binance?service=metadata&method=currencyPairMetaData");
             }
         };
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testCurrencies() throws Exception {
-        
+    void testCurrencies() {
+
         List<Currency> currencies = template.requestBody("direct:currencies", null, List.class);
-        Assert.assertNotNull("Currencies not null", currencies);
-        Assert.assertTrue("Contains ETH", currencies.contains(Currency.ETH));
+        assertNotNull(currencies, "Currencies not null");
+        assertTrue(currencies.contains(Currency.ETH), "Contains ETH");
     }
 
     @Test
-    public void testCurrencyMetaData() throws Exception {
-        
+    void testCurrencyMetaData() {
+
         CurrencyMetaData metadata = template.requestBody("direct:currencyMetaData", Currency.ETH, CurrencyMetaData.class);
-        Assert.assertNotNull("CurrencyMetaData not null", metadata);
-        
-        metadata = template.requestBodyAndHeader("direct:currencyMetaData", null, HEADER_CURRENCY, Currency.ETH, CurrencyMetaData.class);
-        Assert.assertNotNull("CurrencyMetaData not null", metadata);
+        assertNotNull(metadata, "CurrencyMetaData not null");
+
+        metadata = template.requestBodyAndHeader("direct:currencyMetaData", null, HEADER_CURRENCY, Currency.ETH,
+                CurrencyMetaData.class);
+        assertNotNull(metadata, "CurrencyMetaData not null");
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testCurrencyPairs() throws Exception {
-        
+    void testCurrencyPairs() {
+
         List<CurrencyPair> pairs = template.requestBody("direct:currencyPairs", null, List.class);
-        Assert.assertNotNull("Pairs not null", pairs);
-        Assert.assertTrue("Contains EOS/ETH", pairs.contains(CurrencyPair.EOS_ETH));
+        assertNotNull(pairs, "Pairs not null");
+        assertTrue(pairs.contains(CurrencyPair.EOS_ETH), "Contains EOS/ETH");
     }
 
     @Test
-    public void testCurrencyPairMetaData() throws Exception {
-        
-        CurrencyPairMetaData metadata = template.requestBody("direct:currencyPairMetaData", CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
-        Assert.assertNotNull("CurrencyPairMetaData not null", metadata);
-        
-        metadata = template.requestBodyAndHeader("direct:currencyPairMetaData", null, HEADER_CURRENCY_PAIR, CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
-        Assert.assertNotNull("CurrencyPairMetaData not null", metadata);
+    void testCurrencyPairMetaData() {
+
+        CurrencyPairMetaData metadata
+                = template.requestBody("direct:currencyPairMetaData", CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
+        assertNotNull(metadata, "CurrencyPairMetaData not null");
+
+        metadata = template.requestBodyAndHeader("direct:currencyPairMetaData", null, HEADER_CURRENCY_PAIR,
+                CurrencyPair.EOS_ETH, CurrencyPairMetaData.class);
+        assertNotNull(metadata, "CurrencyPairMetaData not null");
     }
 }
-

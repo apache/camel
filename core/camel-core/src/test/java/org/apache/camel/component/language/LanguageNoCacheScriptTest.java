@@ -21,7 +21,10 @@ import java.net.URLEncoder;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class LanguageNoCacheScriptTest extends ContextTestSupport {
 
@@ -50,7 +53,8 @@ public class LanguageNoCacheScriptTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 String script = URLEncoder.encode("Hello ${body}", "UTF-8");
-                endpoint = context.getEndpoint("language:simple:" + script + "?transform=false&cacheScript=false", LanguageEndpoint.class);
+                endpoint = context.getEndpoint("language:simple:" + script + "?transform=false&cacheScript=false",
+                        LanguageEndpoint.class);
 
                 from("direct:start").to(endpoint).to("mock:result");
             }

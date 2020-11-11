@@ -34,7 +34,10 @@ class FujiServiceNowAggregateProcessor extends FujiServiceNowProcessor {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String apiVersion, String tableName, String sysId) throws Exception {
+    protected void doProcess(
+            Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String apiVersion,
+            String tableName, String sysId)
+            throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
             response = retrieveStats(exchange.getIn(), requestModel, responseModel, tableName);
@@ -45,27 +48,28 @@ class FujiServiceNowAggregateProcessor extends FujiServiceNowProcessor {
         setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 
-    private Response retrieveStats(Message in, Class<?> requestModel, Class<?> responseModel, String tableName) throws Exception {
+    private Response retrieveStats(Message in, Class<?> requestModel, Class<?> responseModel, String tableName)
+            throws Exception {
         final String apiVersion = getApiVersion(in);
 
         return client.reset()
-            .types(MediaType.APPLICATION_JSON_TYPE)
-            .path("now")
-            .path(apiVersion)
-            .path("stats")
-            .path(tableName)
-            .query(ServiceNowParams.SYSPARM_QUERY, in)
-            .query(ServiceNowParams.SYSPARM_AVG_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_COUNT, in)
-            .query(ServiceNowParams.SYSPARM_MIN_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_QUERY, in)
-            .query(ServiceNowParams.SYSPARM_MAX_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_SUM_FIELDS, in)
-            .query(ServiceNowParams.SYSPARM_GROUP_BY, in)
-            .query(ServiceNowParams.SYSPARM_ORDER_BY, in)
-            .query(ServiceNowParams.SYSPARM_HAVING, in)
-            .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
-            .query(responseModel)
-            .invoke(HttpMethod.GET);
+                .types(MediaType.APPLICATION_JSON_TYPE)
+                .path("now")
+                .path(apiVersion)
+                .path("stats")
+                .path(tableName)
+                .query(ServiceNowParams.SYSPARM_QUERY, in)
+                .query(ServiceNowParams.SYSPARM_AVG_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_COUNT, in)
+                .query(ServiceNowParams.SYSPARM_MIN_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_QUERY, in)
+                .query(ServiceNowParams.SYSPARM_MAX_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_SUM_FIELDS, in)
+                .query(ServiceNowParams.SYSPARM_GROUP_BY, in)
+                .query(ServiceNowParams.SYSPARM_ORDER_BY, in)
+                .query(ServiceNowParams.SYSPARM_HAVING, in)
+                .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
+                .query(responseModel)
+                .invoke(HttpMethod.GET);
     }
 }

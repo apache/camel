@@ -19,10 +19,10 @@ package org.apache.camel.component.google.bigquery.unit.sql;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GoogleBigQuerySQLComponentTest {
     private CamelContext context = Mockito.mock(CamelContext.class);
@@ -31,7 +31,8 @@ public class GoogleBigQuerySQLComponentTest {
     public void testQuerySet() throws Exception {
         String uri = "google-bigquery-sql:myproject:insert into testDatasetId.testTableId(id) values(1)";
 
-        GoogleBigQuerySQLEndpoint endpoint = (GoogleBigQuerySQLEndpoint)new GoogleBigQuerySQLComponent(context).createEndpoint(uri);
+        GoogleBigQuerySQLEndpoint endpoint
+                = (GoogleBigQuerySQLEndpoint) new GoogleBigQuerySQLComponent(context).createEndpoint(uri);
 
         assertEquals("myproject", endpoint.getConfiguration().getProjectId());
         assertEquals("insert into testDatasetId.testTableId(id) values(1)", endpoint.getConfiguration().getQuery());
@@ -41,7 +42,8 @@ public class GoogleBigQuerySQLComponentTest {
     public void testQueryFromResourceSet() throws Exception {
         String uri = "google-bigquery-sql:myproject:classpath:sql/delete.sql";
 
-        GoogleBigQuerySQLEndpoint endpoint = (GoogleBigQuerySQLEndpoint)new GoogleBigQuerySQLComponent(context).createEndpoint(uri);
+        GoogleBigQuerySQLEndpoint endpoint
+                = (GoogleBigQuerySQLEndpoint) new GoogleBigQuerySQLComponent(context).createEndpoint(uri);
 
         assertEquals("myproject", endpoint.getConfiguration().getProjectId());
         assertEquals("classpath:sql/delete.sql", endpoint.getConfiguration().getQuery());

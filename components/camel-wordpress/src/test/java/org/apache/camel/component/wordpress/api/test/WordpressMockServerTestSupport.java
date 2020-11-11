@@ -24,8 +24,8 @@ import java.util.Map;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public abstract class WordpressMockServerTestSupport {
 
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpMockServer() throws IOException {
         // @formatter:off
         int i = 0;
@@ -58,7 +58,8 @@ public abstract class WordpressMockServerTestSupport {
         serviceProvider = WordpressServiceProvider.getInstance();
         serviceProvider.init(getServerBaseUrl());
         // @formatter:on
-        LOGGER.info("Local server up and running on address {} and port {}", localServer.getInetAddress(), localServer.getLocalPort());
+        LOGGER.info("Local server up and running on address {} and port {}", localServer.getInetAddress(),
+                localServer.getLocalPort());
 
     }
 
@@ -82,14 +83,16 @@ public abstract class WordpressMockServerTestSupport {
         usersSingleUpdateRequestHandlers.put("DELETE", "/data/users/delete.json");
 
         // @formatter:off
-        return ServerBootstrap.bootstrap().setListenerPort(port).registerHandler("/wp/v2/posts", new WordpressServerHttpRequestHandler(postsListCreateRequestHandlers))
-            .registerHandler("/wp/v2/posts/*", new WordpressServerHttpRequestHandler(postsSingleUpdateRequestHandlers))
-            .registerHandler("/wp/v2/users", new WordpressServerHttpRequestHandler(usersListCreateRequestHandlers))
-            .registerHandler("/wp/v2/users/*", new WordpressServerHttpRequestHandler(usersSingleUpdateRequestHandlers)).create();
+        return ServerBootstrap.bootstrap().setListenerPort(port)
+                .registerHandler("/wp/v2/posts", new WordpressServerHttpRequestHandler(postsListCreateRequestHandlers))
+                .registerHandler("/wp/v2/posts/*", new WordpressServerHttpRequestHandler(postsSingleUpdateRequestHandlers))
+                .registerHandler("/wp/v2/users", new WordpressServerHttpRequestHandler(usersListCreateRequestHandlers))
+                .registerHandler("/wp/v2/users/*", new WordpressServerHttpRequestHandler(usersSingleUpdateRequestHandlers))
+                .create();
         // @formatter:on
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownMockServer() {
         LOGGER.info("Stopping local server");
         if (localServer != null) {

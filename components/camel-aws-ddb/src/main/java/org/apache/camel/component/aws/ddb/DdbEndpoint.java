@@ -32,6 +32,7 @@ import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.model.TableStatus;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -40,12 +41,17 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
+ * Store and retrieve data from AWS DynamoDB service.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName",
+             producerOnly = true, category = { Category.CLOUD, Category.DATABASE, Category.NOSQL })
 public class DdbEndpoint extends ScheduledPollEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DdbEndpoint.class);
 
     @UriParam
     private DdbConfiguration configuration;
@@ -71,11 +77,12 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        ddbClient = configuration.getAmazonDDBClient() != null ? configuration.getAmazonDDBClient()
-            : createDdbClient();
-        
+        ddbClient = configuration.getAmazonDDBClient() != null
+                ? configuration.getAmazonDDBClient()
+                : createDdbClient();
+
         String tableName = getConfiguration().getTableName();
-        log.trace("Querying whether table [{}] already exists...", tableName);
+        LOG.trace("Querying whether table [{}] already exists...", tableName);
 
         try {
             DescribeTableRequest request = new DescribeTableRequest().withTableName(tableName);
@@ -84,20 +91,20 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
                 waitForTableToBecomeAvailable(tableName);
             }
 
-            log.trace("Table [{}] already exists", tableName);
+            LOG.trace("Table [{}] already exists", tableName);
             return;
         } catch (ResourceNotFoundException e) {
-            log.trace("Table [{}] doesn't exist yet", tableName);
-            log.trace("Creating table [{}]...", tableName);
+            LOG.trace("Table [{}] doesn't exist yet", tableName);
+            LOG.trace("Creating table [{}]...", tableName);
             TableDescription tableDescription = createTable(tableName);
             if (!isTableActive(tableDescription)) {
                 waitForTableToBecomeAvailable(tableName);
             }
 
-            log.trace("Table [{}] created", tableName);
+            LOG.trace("Table [{}] created", tableName);
         }
     }
-    
+
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonDDBClient())) {
@@ -144,7 +151,8 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (isClientConfigFound) {
-                clientBuilder = AmazonDynamoDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonDynamoDBClientBuilder.standard().withClientConfiguration(clientConfiguration)
+                        .withCredentials(credentialsProvider);
             } else {
                 clientBuilder = AmazonDynamoDBClientBuilder.standard().withCredentials(credentialsProvider);
             }
@@ -163,7 +171,7 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     }
 
     private void waitForTableToBecomeAvailable(String tableName) {
-        log.trace("Waiting for [{}] to become ACTIVE...", tableName);
+        LOG.trace("Waiting for [{}] to become ACTIVE...", tableName);
 
         long waitTime = 5 * 60 * 1000;
         while (waitTime > 0) {
@@ -176,10 +184,10 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
                 DescribeTableRequest request = new DescribeTableRequest().withTableName(tableName);
                 TableDescription tableDescription = getDdbClient().describeTable(request).getTable();
                 if (isTableActive(tableDescription)) {
-                    log.trace("Table [{}] became active", tableName);
+                    LOG.trace("Table [{}] became active", tableName);
                     return;
                 }
-                log.trace("Table [{}] not active yet", tableName);
+                LOG.trace("Table [{}] not active yet", tableName);
             } catch (AmazonServiceException ase) {
                 if (!ase.getErrorCode().equalsIgnoreCase("ResourceNotFoundException")) {
                     throw ase;

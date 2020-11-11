@@ -29,15 +29,18 @@ public final class ManagedGroupFactoryBuilder {
     private ManagedGroupFactoryBuilder() {
     }
 
-    public static ManagedGroupFactory create(CuratorFramework curator,
-                                             ClassLoader loader,
-                                             CamelContext camelContext,
-                                             Callable<CuratorFramework> factory) throws Exception {
+    public static ManagedGroupFactory create(
+            CuratorFramework curator,
+            ClassLoader loader,
+            CamelContext camelContext,
+            Callable<CuratorFramework> factory)
+            throws Exception {
         if (curator != null) {
             return new StaticManagedGroupFactory(curator, false);
         }
         try {
-            Class<?> clazz = camelContext.getClassResolver().resolveClass("org.apache.camel.component.zookeepermaster.group.internal.osgi.OsgiManagedGroupFactory");
+            Class<?> clazz = camelContext.getClassResolver()
+                    .resolveClass("org.apache.camel.component.zookeepermaster.group.internal.osgi.OsgiManagedGroupFactory");
             if (clazz != null) {
                 Object instance = ObjectHelper.newInstance(clazz);
                 BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();

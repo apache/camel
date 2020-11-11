@@ -27,8 +27,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyMultiBytesTest extends CamelTestSupport {
 
@@ -38,23 +40,22 @@ public class BindyMultiBytesTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-
     // *************************************************************************
     // TESTS
     // *************************************************************************
 
     /**
-     * Let's assume we want to read the content of a 10 bytes record from an UTF-8 encoded file.
-     * test string takes 10 bytes with 9 characters (2 char = 3 bytes content + padding).
-     * I assume to be able to read 9 char string from this 10 bytes fixed length record with bindy.
+     * Let's assume we want to read the content of a 10 bytes record from an UTF-8 encoded file. test string takes 10
+     * bytes with 9 characters (2 char = 3 bytes content + padding). I assume to be able to read 9 char string from this
+     * 10 bytes fixed length record with bindy.
      */
     @Test
     public void testMultiBytes() throws Exception {
         String test = "a\u00DF        ";
-        assertEquals("Should be 10 length", 10, test.length());
+        assertEquals(10, test.length(), "Should be 10 length");
 
         byte[] testAsBytes = test.getBytes(StandardCharsets.UTF_8);
-        assertEquals("A\u00DF takes 11 bytes, because \u00DF takes 2", 11, testAsBytes.length);
+        assertEquals(11, testAsBytes.length, "A\u00DF takes 11 bytes, because \u00DF takes 2");
 
         result.expectedMessagesMatches(exchange -> test.equals(exchange.getIn().getBody(TestRecord.class).getField1()));
 

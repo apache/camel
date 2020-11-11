@@ -19,7 +19,7 @@ package org.apache.camel.component.language;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class LanguageLoadScriptFromClasspathHeaderTest extends ContextTestSupport {
 
@@ -27,7 +27,8 @@ public class LanguageLoadScriptFromClasspathHeaderTest extends ContextTestSuppor
     public void testLanguage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("direct:start", "World", Exchange.LANGUAGE_SCRIPT, "classpath:org/apache/camel/component/language/mysimplescript.txt");
+        template.sendBodyAndHeader("direct:start", "World", Exchange.LANGUAGE_SCRIPT,
+                "classpath:org/apache/camel/component/language/mysimplescript.txt");
 
         assertMockEndpointsSatisfied();
     }

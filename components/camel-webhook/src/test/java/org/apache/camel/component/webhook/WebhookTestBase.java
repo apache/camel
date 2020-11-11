@@ -17,14 +17,14 @@
 package org.apache.camel.component.webhook;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
 
 public class WebhookTestBase extends CamelTestSupport {
 
     protected static int port;
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }

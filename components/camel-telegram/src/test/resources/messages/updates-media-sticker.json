@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 525704899,
+      "message": {
+        "message_id": 180,
+        "from": {
+          "id": 1585844777,
+          "first_name": "John",
+          "last_name": "Doe"
+        },
+        "chat": {
+          "id": 158584478,
+          "first_name": "John",
+          "last_name": "Doe",
+          "type": "private"
+        },
+        "date": 1463479642,
+        "sticker": {
+          "file_id":"CAADBAADEQADmDVxAkmg3XnDZam0FgQ",
+          "file_size":42112,
+          "width":512,
+          "height":512,
+          "emoji":"\ud83d\ude28",
+          "set_name":"GreatMindsColor",
+          "is_animated":false,
+          "mask_position": {
+            "point": "forehead",
+            "x_shift": "-1.0 ",
+            "y_shift": "1.0",
+            "scale": "2.0"
+          },
+          "thumb": {
+            "file_id":"AAQCAAPfCAACCLcZAnLSRFdZiNzlpSg5DwAEAQAHbQADXxgAAhYE",
+            "file_size":6316,
+            "width":128,
+            "height":128
+          }
+        }
+      }
+    }
+  ]
+}

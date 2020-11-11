@@ -25,14 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 
 public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
 
-   
     @Test
     public void testAggregate() throws Exception {
         // Test that the collection has 0 documents in it
@@ -41,10 +40,10 @@ public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
 
         // result sorted by _id
         Object result = template
-            .requestBody("direct:aggregate",
-                         "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}},"
-                         + "{ $group: { _id: \"$scientist\", count: { $sum: 1 }} },{ $sort : { _id : 1}} ]");
-        
+                .requestBody("direct:aggregate",
+                        "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}},"
+                                                 + "{ $group: { _id: \"$scientist\", count: { $sum: 1 }} },{ $sort : { _id : 1}} ]");
+
         assertTrue(result instanceof List, "Result is not of type List");
 
         @SuppressWarnings("unchecked")
@@ -56,7 +55,7 @@ public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
         assertEquals("Einstein", resultList.get(1).get("_id"), "Second result Document._id should be Einstein");
         assertEquals(100, resultList.get(1).get("count"), "Second result Document.count should be 100");
     }
-    
+
     @Test
     public void testAggregateDBCursor() {
         // Test that the collection has 0 documents in it
@@ -66,7 +65,7 @@ public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
         Object result = template
                 .requestBody("direct:aggregateDBCursor",
                         "[{ $match : {$or : [{\"scientist\" : \"Darwin\"},{\"scientist\" : \"Einstein\"}]}}]");
-        
+
         assertTrue(result instanceof MongoIterable, "Result is not of type DBCursor");
 
         MongoIterable<Document> resultCursor = (MongoIterable<Document>) result;
@@ -110,16 +109,15 @@ public class MongoDbAggregateOperationTest extends AbstractMongoDbTest {
         assertEquals(200, count, "Result does not contain 200 elements");
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:aggregate")
-                    .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate");
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate");
                 from("direct:aggregateDBCursor")
-                    .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate&dynamicity=true&outputType=MongoIterable")
-                      .to("mock:resultAggregateDBCursor");
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=aggregate&dynamicity=true&outputType=MongoIterable")
+                        .to("mock:resultAggregateDBCursor");
             }
         };
     }

@@ -17,7 +17,7 @@
 package org.apache.camel.component.web3j;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -47,7 +47,7 @@ public class Web3jConsumerEthLogObservableMockTest extends Web3jMockTestSupport 
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<Log>)args[0]).call(new Log());
+                ((Action1<Log>) args[0]).call(new Log());
                 return subscription;
             }
         });
@@ -66,7 +66,7 @@ public class Web3jConsumerEthLogObservableMockTest extends Web3jMockTestSupport 
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<Throwable>)args[1]).call(new RuntimeException("Error"));
+                ((Action1<Throwable>) args[1]).call(new RuntimeException("Error"));
                 return subscription;
             }
         });
@@ -86,7 +86,7 @@ public class Web3jConsumerEthLogObservableMockTest extends Web3jMockTestSupport 
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action0)args[2]).call();
+                ((Action0) args[2]).call();
                 return subscription;
             }
         });

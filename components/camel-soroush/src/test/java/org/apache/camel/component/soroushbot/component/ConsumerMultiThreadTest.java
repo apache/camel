@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConsumerMultiThreadTest extends SoroushBotTestSupport {
 
@@ -33,7 +33,6 @@ public class ConsumerMultiThreadTest extends SoroushBotTestSupport {
         mockEndpoint.assertIsSatisfied();
     }
 
-
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -42,8 +41,7 @@ public class ConsumerMultiThreadTest extends SoroushBotTestSupport {
                 from("soroush://" + SoroushAction.getMessage + "/5")
                         .threads(5).process(exchange -> {
                             Thread.sleep(1000);
-                        }
-                ).to("mock:supportForConcurrentThreadTest");
+                        }).to("mock:supportForConcurrentThreadTest");
             }
         };
     }

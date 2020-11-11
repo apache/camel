@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BatchResequencerAllowDuplicatesTest extends ContextTestSupport {
 
@@ -47,9 +47,9 @@ public class BatchResequencerAllowDuplicatesTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // allow duplicates which means messages with same id is
-                    // retained
-                    .resequence(header("id")).allowDuplicates().to("mock:result");
+                        // allow duplicates which means messages with same id is
+                        // retained
+                        .resequence(header("id")).allowDuplicates().to("mock:result");
                 // END SNIPPET: e1
             }
         };

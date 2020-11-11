@@ -16,23 +16,27 @@
  */
 package org.apache.camel.spring.config;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
-import org.apache.camel.spi.RouteContext;
+import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.support.processor.DelegateProcessor;
 import org.springframework.beans.factory.BeanNameAware;
 
 public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements BeanNameAware {
+
     public static final String PROPERTY_NAME = "DummyErrorHandler";
+
+    static {
+        ErrorHandlerReifier.registerReifier(DummyErrorHandlerBuilder.class, DummyErrorHandlerReifier::new);
+    }
+
     private String beanName;
 
     public DummyErrorHandlerBuilder() {
-    }
-
-    public DummyErrorHandlerBuilder(String beanName) {
-        this.beanName = beanName;
     }
 
     @Override
@@ -40,28 +44,33 @@ public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport impleme
         this.beanName = beanName;
     }
 
-    @Override
-    public boolean supportTransacted() {
-        return false;
+    public String getBeanName() {
+        return beanName;
     }
 
     @Override
     public ErrorHandlerBuilder cloneBuilder() {
         DummyErrorHandlerBuilder answer = new DummyErrorHandlerBuilder();
-        super.cloneBuilder(answer);
         answer.beanName = beanName;
         return answer;
     }
 
-    @Override
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        return new DelegateProcessor(processor) {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.setProperty(PROPERTY_NAME, beanName);
-                super.process(exchange);
-            }
-        };
+    public static class DummyErrorHandlerReifier extends ErrorHandlerReifier<DummyErrorHandlerBuilder> {
+
+        public DummyErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
+            super(route, (DummyErrorHandlerBuilder) definition);
+        }
+
+        @Override
+        public Processor createErrorHandler(Processor processor) throws Exception {
+            return new DelegateProcessor(processor) {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    exchange.setProperty(PROPERTY_NAME, definition.getBeanName());
+                    super.process(exchange);
+                }
+            };
+        }
     }
 
 }

@@ -23,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Contains information about a photo.
+ *
+ * @see <a href="https://core.telegram.org/bots/api#photosize">https://core.telegram.org/bots/api#photosize</a>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IncomingPhotoSize implements Serializable {
@@ -31,6 +33,9 @@ public class IncomingPhotoSize implements Serializable {
 
     @JsonProperty("file_id")
     private String fileId;
+
+    @JsonProperty("file_unique_id")
+    private String fileUniqueId;
 
     private Integer width;
 
@@ -74,6 +79,14 @@ public class IncomingPhotoSize implements Serializable {
         this.fileSize = fileSize;
     }
 
+    public String getFileUniqueId() {
+        return fileUniqueId;
+    }
+
+    public void setFileUniqueId(String fileUniqueId) {
+        this.fileUniqueId = fileUniqueId;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("IncomingPhotoSize{");
@@ -81,6 +94,7 @@ public class IncomingPhotoSize implements Serializable {
         sb.append(", width=").append(width);
         sb.append(", height=").append(height);
         sb.append(", fileSize=").append(fileSize);
+        sb.append(", fileUniqueId=").append(fileUniqueId);
         sb.append('}');
         return sb.toString();
     }

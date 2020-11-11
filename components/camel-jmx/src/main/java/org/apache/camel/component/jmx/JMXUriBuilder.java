@@ -21,8 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Builder for JMX endpoint URI's. Saves you from having to do the string concat'ing
- * and messing up the param names
+ * Builder for JMX endpoint URI's. Saves you from having to do the string concat'ing and messing up the param names
  */
 public class JMXUriBuilder {
     private Map<String, String> mQueryProps = new LinkedHashMap<>();
@@ -69,7 +68,7 @@ public class JMXUriBuilder {
         addProperty("handback", aHandback);
         return this;
     }
-    
+
     public JMXUriBuilder withMonitorType(String aMonitorType) {
         addProperty("monitorType", aMonitorType);
         return this;
@@ -79,7 +78,7 @@ public class JMXUriBuilder {
         addProperty("initThreshold", String.valueOf(aInitThreshold));
         return this;
     }
-    
+
     public JMXUriBuilder withOffset(int aOffset) {
         addProperty("offset", String.valueOf(aOffset));
         return this;
@@ -104,7 +103,7 @@ public class JMXUriBuilder {
         addProperty("observedAttribute", aObservedAttribute);
         return this;
     }
-    
+
     public JMXUriBuilder withNotifyHigh(boolean aNotifyHigh) {
         addProperty("notifyHigh", String.valueOf(aNotifyHigh));
         return this;
@@ -139,27 +138,26 @@ public class JMXUriBuilder {
         addProperty("stringToCompare", aStringToCompare);
         return this;
     }
-    
+
     public JMXUriBuilder withTestConnectionOnStartup(boolean aTestConnectionOnStartup) {
         addProperty("testConnectionOnStartup", String.valueOf(aTestConnectionOnStartup));
         return this;
     }
-    
+
     public JMXUriBuilder withReconnectOnConnectionFailure(boolean aReconnectOnConnectionFailure) {
         addProperty("reconnectOnConnectionFailure", String.valueOf(aReconnectOnConnectionFailure));
         return this;
     }
-    
+
     public JMXUriBuilder withReconnectDelay(int aReconnectDelay) {
         addProperty("reconnectDelay", String.valueOf(aReconnectDelay));
         return this;
     }
 
     /**
-     * Converts all of the values to params with the "key." prefix so the
-     * component will pick up on them and set them on the endpoint. Alternatively,
-     * you can pass in a reference to a Hashtable using the version of this
-     * method that takes a single string.
+     * Converts all of the values to params with the "key." prefix so the component will pick up on them and set them on
+     * the endpoint. Alternatively, you can pass in a reference to a Hashtable using the version of this method that
+     * takes a single string.
      */
     public JMXUriBuilder withObjectProperties(Map<String, String> aPropertiesSansKeyPrefix) {
         for (Entry<String, String> entry : aPropertiesSansKeyPrefix.entrySet()) {
@@ -169,8 +167,8 @@ public class JMXUriBuilder {
     }
 
     /**
-     * Your value should start with a hash mark since it's a reference to a value.
-     * This method will add the hash mark if it's not present.
+     * Your value should start with a hash mark since it's a reference to a value. This method will add the hash mark if
+     * it's not present.
      */
     public JMXUriBuilder withObjectPropertiesReference(String aReferenceToHashtable) {
         if (aReferenceToHashtable.startsWith("#")) {

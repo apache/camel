@@ -28,16 +28,18 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The control bus producer.
  */
 public class ControlBusProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ControlBusProducer.class);
 
     private final CamelLogger logger;
 
@@ -87,20 +89,6 @@ public class ControlBusProducer extends DefaultAsyncProducer {
         } else {
             task.run();
         }
-    }
-
-    private static String getRouteId(Exchange exchange) {
-        String answer = null;
-        UnitOfWork uow = exchange.getUnitOfWork();
-        RouteContext rc = uow != null ? uow.getRouteContext() : null;
-        if (rc != null) {
-            answer = rc.getRouteId();
-        }
-        if (answer == null) {
-            // fallback and get from route id on the exchange
-            answer = exchange.getFromRouteId();
-        }
-        return answer;
     }
 
     /**
@@ -162,7 +150,7 @@ public class ControlBusProducer extends DefaultAsyncProducer {
             String id = getEndpoint().getRouteId();
 
             if (ObjectHelper.equal("current", id)) {
-                id = getRouteId(exchange);
+                id = ExchangeHelper.getRouteId(exchange);
             }
 
             Object result = null;
@@ -170,24 +158,24 @@ public class ControlBusProducer extends DefaultAsyncProducer {
 
             try {
                 if ("start".equals(action)) {
-                    log.debug("Starting route: {}", id);
+                    LOG.debug("Starting route: {}", id);
                     getEndpoint().getCamelContext().getRouteController().startRoute(id);
                 } else if ("stop".equals(action)) {
-                    log.debug("Stopping route: {}", id);
+                    LOG.debug("Stopping route: {}", id);
                     getEndpoint().getCamelContext().getRouteController().stopRoute(id);
                 } else if ("suspend".equals(action)) {
-                    log.debug("Suspending route: {}", id);
+                    LOG.debug("Suspending route: {}", id);
                     getEndpoint().getCamelContext().getRouteController().suspendRoute(id);
                 } else if ("resume".equals(action)) {
-                    log.debug("Resuming route: {}", id);
+                    LOG.debug("Resuming route: {}", id);
                     getEndpoint().getCamelContext().getRouteController().resumeRoute(id);
                 } else if ("restart".equals(action)) {
-                    log.debug("Restarting route: {}", id);
+                    LOG.debug("Restarting route: {}", id);
                     getEndpoint().getCamelContext().getRouteController().stopRoute(id);
                     int delay = getEndpoint().getRestartDelay();
                     if (delay > 0) {
                         try {
-                            log.debug("Sleeping {} ms before starting route: {}", delay, id);
+                            LOG.debug("Sleeping {} ms before starting route: {}", delay, id);
                             Thread.sleep(delay);
                         } catch (InterruptedException e) {
                             // ignore
@@ -195,13 +183,13 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                     }
                     getEndpoint().getCamelContext().getRouteController().startRoute(id);
                 } else if ("status".equals(action)) {
-                    log.debug("Route status: {}", id);
+                    LOG.debug("Route status: {}", id);
                     ServiceStatus status = getEndpoint().getCamelContext().getRouteController().getRouteStatus(id);
                     if (status != null) {
                         result = status.name();
                     }
                 } else if ("stats".equals(action)) {
-                    log.debug("Route stats: {}", id);
+                    LOG.debug("Route stats: {}", id);
 
                     // camel context or per route
                     String name = getEndpoint().getCamelContext().getManagementName();
@@ -212,16 +200,20 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                         String operation;
                         if (id == null) {
                             CamelContext camelContext = getEndpoint().getCamelContext();
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(camelContext);
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                                    .getObjectNameForCamelContext(camelContext);
                             operation = "dumpRoutesStatsAsXml";
                         } else {
                             Route route = getEndpoint().getCamelContext().getRoute(id);
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy()
+                                    .getObjectNameForRoute(route);
                             operation = "dumpRouteStatsAsXml";
                         }
                         if (on != null) {
-                            MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
-                            result = server.invoke(on, operation, new Object[]{true, true}, new String[]{"boolean", "boolean"});
+                            MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent()
+                                    .getMBeanServer();
+                            result = server.invoke(on, operation, new Object[] { true, true },
+                                    new String[] { "boolean", "boolean" });
                         } else {
                             result = "Cannot lookup route with id " + id;
                         }

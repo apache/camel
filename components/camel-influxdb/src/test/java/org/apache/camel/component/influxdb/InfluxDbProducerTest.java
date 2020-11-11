@@ -22,8 +22,8 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class InfluxDbProducerTest extends AbstractInfluxDbTest {
 
@@ -48,7 +48,7 @@ public class InfluxDbProducerTest extends AbstractInfluxDbTest {
         };
     }
 
-    @Before
+    @BeforeEach
     public void resetEndpoints() {
         errorEndpoint.reset();
         successEndpoint.reset();
@@ -92,7 +92,6 @@ public class InfluxDbProducerTest extends AbstractInfluxDbTest {
         Map<String, Object> pointMap = new HashMap<>();
         pointMap.remove(InfluxDbConstants.MEASUREMENT_NAME);
         sendBody("direct:test", pointMap);
-
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();

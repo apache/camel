@@ -28,17 +28,15 @@ import org.apache.cxf.phase.Phase;
 import org.apache.cxf.transport.MessageObserver;
 
 /**
- * A Consumer of exchanges for a JAXRS service in CXF.  CxfRsConsumer acts a CXF
- * service to receive REST requests, convert them to a normal java object invocation,
- * and forward them to Camel route for processing. 
- * It is also responsible for converting and sending back responses to CXF client. 
+ * A Consumer of exchanges for a JAXRS service in CXF. CxfRsConsumer acts a CXF service to receive REST requests,
+ * convert them to a normal java object invocation, and forward them to Camel route for processing. It is also
+ * responsible for converting and sending back responses to CXF client.
  */
 public class CxfRsConsumer extends DefaultConsumer implements Suspendable {
     private Server server;
 
     public CxfRsConsumer(CxfRsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        server = createServer();
     }
 
     protected Server createServer() {
@@ -58,7 +56,6 @@ public class CxfRsConsumer extends DefaultConsumer implements Suspendable {
         svrBean.getInInterceptors().add(new UnitOfWorkCloserInterceptor(Phase.POST_INVOKE, true));
         // close the UnitOfWork normally
         svrBean.getOutInterceptors().add(new UnitOfWorkCloserInterceptor());
-
 
         Server server = svrBean.create();
 
@@ -90,7 +87,7 @@ public class CxfRsConsumer extends DefaultConsumer implements Suspendable {
         }
         super.doStop();
     }
-    
+
     public Server getServer() {
         return server;
     }

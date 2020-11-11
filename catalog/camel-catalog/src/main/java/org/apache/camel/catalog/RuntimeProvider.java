@@ -19,9 +19,9 @@ package org.apache.camel.catalog;
 import java.util.List;
 
 /**
- * A pluggable strategy for chosen runtime to run Camel such as default, karaf, spring-boot, etc.
- * This allows third party runtimes to provide their own provider, that can amend the catalog
- * to match the runtime. For example spring-boot or karaf does not support all the default Camel components.
+ * A pluggable strategy for chosen runtime to run Camel such as default, karaf, spring-boot, etc. This allows third
+ * party runtimes to provide their own provider, that can amend the catalog to match the runtime. For example
+ * spring-boot or karaf does not support all the default Camel components.
  */
 public interface RuntimeProvider {
 

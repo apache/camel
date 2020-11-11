@@ -19,20 +19,20 @@ package org.apache.camel.util.spring;
 import javax.annotation.Resource;
 
 import org.apache.camel.support.jsse.SecureRandomParameters;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public class SecureRandomParametersFactoryBeanTest {
-    
+
     @Resource
     SecureRandomParameters srp;
-    
+
     @Test
     public void testKeyStoreParameters() {
         assertEquals("algorithm", srp.getAlgorithm());

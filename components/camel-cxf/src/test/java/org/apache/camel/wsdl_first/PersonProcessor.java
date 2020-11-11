@@ -35,25 +35,25 @@ public class PersonProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         LOG.info("processing exchange in camel");
 
-        BindingOperationInfo boi = (BindingOperationInfo)exchange.getProperty(BindingOperationInfo.class.getName());
+        BindingOperationInfo boi = (BindingOperationInfo) exchange.getProperty(BindingOperationInfo.class.getName());
         if (boi != null) {
             LOG.info("boi.isUnwrapped" + boi.isUnwrapped());
         }
         // Get the parameters list which element is the holder.
-        MessageContentsList msgList = (MessageContentsList)exchange.getIn().getBody();
-        Holder<String> personId = (Holder<String>)msgList.get(0);
-        Holder<String> ssn = (Holder<String>)msgList.get(1);
-        Holder<String> name = (Holder<String>)msgList.get(2);
+        MessageContentsList msgList = (MessageContentsList) exchange.getIn().getBody();
+        Holder<String> personId = (Holder<String>) msgList.get(0);
+        Holder<String> ssn = (Holder<String>) msgList.get(1);
+        Holder<String> name = (Holder<String>) msgList.get(2);
 
         if (personId.value == null || personId.value.length() == 0) {
             LOG.info("person id 123, so throwing exception");
             // Try to throw out the soap fault message
-            org.apache.camel.wsdl_first.types.UnknownPersonFault personFault =
-                new org.apache.camel.wsdl_first.types.UnknownPersonFault();
+            org.apache.camel.wsdl_first.types.UnknownPersonFault personFault
+                    = new org.apache.camel.wsdl_first.types.UnknownPersonFault();
             personFault.setPersonId("");
-            org.apache.camel.wsdl_first.UnknownPersonFault fault =
-                new org.apache.camel.wsdl_first.UnknownPersonFault("Get the null value of person name", personFault);
-            exchange.getOut().setBody(fault);
+            org.apache.camel.wsdl_first.UnknownPersonFault fault
+                    = new org.apache.camel.wsdl_first.UnknownPersonFault("Get the null value of person name", personFault);
+            exchange.getMessage().setBody(fault);
             return;
         }
 
@@ -62,7 +62,7 @@ public class PersonProcessor implements Processor {
         LOG.info("setting Bonjour as the response");
         // Set the response message, first element is the return value of the operation,
         // the others are the holders of method parameters
-        exchange.getOut().setBody(new Object[] {null, personId, ssn, name});
+        exchange.getMessage().setBody(new Object[] { null, personId, ssn, name });
     }
 
 }

@@ -30,16 +30,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.fix.simple.Order;
 import org.apache.camel.model.dataformat.BindyType;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
-public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleKeyValuePairMarshallDslTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
     private String result = "1=BE.CHM.00111=CHM0001-0122=448=BE0001245678"
-        + "54=158=this is a camel - bindy test777=17-02-2011 23:29:59\r\n";
+                            + "54=158=this is a camel - bindy test777=17-02-2011 23:29:59\r\n";
 
     @Produce("direct:start")
     private ProducerTemplate template;
@@ -79,12 +80,12 @@ public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4Spring
     }
 
     public static class ContextConfig extends RouteBuilder {
-        
+
         @Override
         public void configure() {
             from("direct:start").marshal()
-                .bindy(BindyType.KeyValue, org.apache.camel.dataformat.bindy.model.fix.simple.Order.class)
-                .to("mock:result");
+                    .bindy(BindyType.KeyValue, org.apache.camel.dataformat.bindy.model.fix.simple.Order.class)
+                    .to("mock:result");
         }
 
     }

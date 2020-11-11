@@ -86,8 +86,9 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionTest extends FtpServerTe
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool        
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
+        // test that we can pool
         sendFile(getFtpUrl(), "Hello Paris", "report-3.dat");
         sendFile(getFtpUrl(), "Hello London", "REPORT-2.txt");
         sendFile(getFtpUrl(), "Hello Copenhagen", "Report-1.xml");

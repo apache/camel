@@ -84,7 +84,8 @@ public class FallbackTypeConverter {
 
     /**
      * Whether the JAXB converter supports using ObjectFactory classes to create the POJO classes during conversion.
-     * This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
+     * This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor
+     * files.
      */
     public void setObjectFactory(boolean objectFactory) {
         this.defaultObjectFactory = objectFactory;
@@ -131,7 +132,8 @@ public class FallbackTypeConverter {
                     return marshall(type, exchange, value, converter, null, prettyPrint);
                 }
                 if (objectFactory) {
-                    Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), value.getClass());
+                    Method objectFactoryMethod
+                            = JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), value.getClass());
                     if (objectFactoryMethod != null) {
                         return marshall(type, exchange, value, converter, objectFactoryMethod, prettyPrint);
                     }
@@ -187,7 +189,7 @@ public class FallbackTypeConverter {
                         return castJaxbType(unmarshalled, type);
                     } catch (Exception ex) {
                         // There is some issue on the StaxStreamReader to CXFPayload message body with different namespaces
-                        LOG.debug("Cannot use StaxStreamReader to unmarshal the message, due to {}", ex);
+                        LOG.debug("Cannot use StaxStreamReader to unmarshal the message, due to {}", ex.getMessage(), ex);
                     }
                 }
             }
@@ -219,9 +221,10 @@ public class FallbackTypeConverter {
         return null;
     }
 
-    protected <T> T marshall(Class<T> type, Exchange exchange, Object value, TypeConverter converter,
-                             Method objectFactoryMethod, boolean prettyPrint)
-        throws JAXBException, FactoryConfigurationError, TypeConversionException {
+    protected <T> T marshall(
+            Class<T> type, Exchange exchange, Object value, TypeConverter converter,
+            Method objectFactoryMethod, boolean prettyPrint)
+            throws JAXBException, FactoryConfigurationError, TypeConversionException {
         LOG.trace("Marshal from value {} to type {}", value, type);
 
         T answer = null;
@@ -248,7 +251,8 @@ public class FallbackTypeConverter {
                         toMarshall = objectFactoryMethod.invoke(instance, value);
                     }
                 } catch (Exception e) {
-                    LOG.debug("Unable to create JAXBElement object for type " + value.getClass() + " due to " + e.getMessage(), e);
+                    LOG.debug("Unable to create JAXBElement object for type {} due to {}", value.getClass(),
+                            e.getMessage(), e);
                 }
             }
             if (needFiltering(exchange)) {
@@ -265,34 +269,35 @@ public class FallbackTypeConverter {
     }
 
     protected Object unmarshal(Unmarshaller unmarshaller, Exchange exchange, Object value)
-        throws JAXBException, UnsupportedEncodingException, XMLStreamException {
+            throws JAXBException, UnsupportedEncodingException, XMLStreamException {
         try {
             XMLStreamReader xmlReader;
             if (value instanceof XMLStreamReader) {
                 xmlReader = (XMLStreamReader) value;
             } else if (value instanceof InputStream) {
                 if (needFiltering(exchange)) {
-                    xmlReader = staxConverter.createXMLStreamReader(new NonXmlFilterReader(new InputStreamReader((InputStream)value, ExchangeHelper.getCharsetName(exchange))));
+                    xmlReader = staxConverter.createXMLStreamReader(new NonXmlFilterReader(
+                            new InputStreamReader((InputStream) value, ExchangeHelper.getCharsetName(exchange))));
                 } else {
-                    xmlReader = staxConverter.createXMLStreamReader((InputStream)value, exchange);
+                    xmlReader = staxConverter.createXMLStreamReader((InputStream) value, exchange);
                 }
             } else if (value instanceof Reader) {
-                Reader reader = (Reader)value;
+                Reader reader = (Reader) value;
                 if (needFiltering(exchange)) {
                     if (!(value instanceof NonXmlFilterReader)) {
-                        reader = new NonXmlFilterReader((Reader)value);
+                        reader = new NonXmlFilterReader((Reader) value);
                     }
                 }
                 xmlReader = staxConverter.createXMLStreamReader(reader);
             } else if (value instanceof Source) {
-                xmlReader = staxConverter.createXMLStreamReader((Source)value);
+                xmlReader = staxConverter.createXMLStreamReader((Source) value);
             } else {
                 throw new IllegalArgumentException("Cannot convert from " + value.getClass());
             }
             return unmarshaller.unmarshal(xmlReader);
         } finally {
             if (value instanceof Closeable) {
-                IOHelper.close((Closeable)value, "Unmarshalling", LOG);
+                IOHelper.close((Closeable) value, "Unmarshalling", LOG);
             }
         }
     }

@@ -21,13 +21,14 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class Sjms2ComponentRestartTest extends CamelTestSupport {
 
     @BindToRegistry("activemqCF")
-    private ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+    private ActiveMQConnectionFactory connectionFactory
+            = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -37,7 +38,7 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
     @Test
     public void testRestartWithStopStart() throws Exception {
         Sjms2Component sjms2Component = new Sjms2Component();
-        sjms2Component.setConnectionFactory((ConnectionFactory)context.getRegistry().lookupByName("activemqCF"));
+        sjms2Component.setConnectionFactory((ConnectionFactory) context.getRegistry().lookupByName("activemqCF"));
         context.addComponent("sjms2", sjms2Component);
 
         RouteBuilder routeBuilder = new RouteBuilder(context) {
@@ -75,7 +76,7 @@ public class Sjms2ComponentRestartTest extends CamelTestSupport {
     @Test
     public void testRestartWithSuspendResume() throws Exception {
         Sjms2Component sjms2Component = new Sjms2Component();
-        sjms2Component.setConnectionFactory((ConnectionFactory)context.getRegistry().lookupByName("activemqCF"));
+        sjms2Component.setConnectionFactory((ConnectionFactory) context.getRegistry().lookupByName("activemqCF"));
         context.addComponent("sjms2", sjms2Component);
 
         RouteBuilder routeBuilder = new RouteBuilder(context) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.flink;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,9 +29,10 @@ import org.apache.flink.api.java.DataSet;
 import org.apache.flink.streaming.api.datastream.DataStream;
 
 /**
- * The flink component can be used to send DataSet jobs to Apache Flink cluster.
+ * Send DataSet jobs to an Apache Flink cluster.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "flink", title = "Flink", syntax = "flink:endpointType", producerOnly = true, label = "hadoop")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "flink", title = "Flink", syntax = "flink:endpointType", producerOnly = true,
+             category = { Category.TRANSFORMATION, Category.BIGDATA, Category.STREAMS })
 public class FlinkEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -53,8 +55,8 @@ public class FlinkEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (dataSet == null) {
             dataSet = getComponent().getDataSet();

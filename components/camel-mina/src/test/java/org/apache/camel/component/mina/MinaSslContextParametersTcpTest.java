@@ -18,7 +18,7 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MinaSslContextParametersTcpTest extends BaseMinaTest {
 
@@ -28,7 +28,9 @@ public class MinaSslContextParametersTcpTest extends BaseMinaTest {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("mina:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", body, "cheese", 123);
+        template.sendBodyAndHeader(
+                "mina:tcp://localhost:" + getPort() + "?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
+                body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }
@@ -43,9 +45,10 @@ public class MinaSslContextParametersTcpTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                fromF("mina:tcp://localhost:%s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters", getPort())
-                        .to("log:before?showAll=true")
-                        .to("mock:result").to("log:after?showAll=true");
+                fromF("mina:tcp://localhost:%s?sync=false&minaLogger=true&sslContextParameters=#sslContextParameters",
+                        getPort())
+                                .to("log:before?showAll=true")
+                                .to("mock:result").to("log:after?showAll=true");
             }
         };
     }

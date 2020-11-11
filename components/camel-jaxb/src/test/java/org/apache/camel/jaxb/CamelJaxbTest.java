@@ -24,8 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelJaxbTest extends CamelTestSupport {
 
@@ -43,12 +47,12 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testUnmarshalBadCharsNoFiltering() throws Exception {
         String xml = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>";
-        template.sendBody("direct:getJAXBElementValue", xml);
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:getJAXBElementValue", xml));
     }
-    
+
     @Test
     public void testFilterNonXmlChars() throws Exception {
         String xmlUTF = "<Person><firstName>FOO</firstName><lastName>BAR \u20AC </lastName></Person>";
@@ -60,7 +64,7 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.expectedBodiesReceived(expected);
         template.sendBody("direct:unmarshalFilteringEnabled", xml);
         resultEndpoint.assertIsSatisfied();
-       
+
     }
 
     @Test
@@ -75,7 +79,7 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertFalse("Non-xml character wasn't replaced", body.contains("\u0004"));
+        assertFalse(body.contains("\u0004"), "Non-xml character wasn't replaced");
     }
 
     @Test
@@ -91,10 +95,9 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertTrue("Non-xml character unexpectedly did not get into marshalled contents", body
-                .contains("\u0004"));
+        assertTrue(body.contains("\u0004"), "Non-xml character unexpectedly did not get into marshalled contents");
     }
-    
+
     @Test
     public void testMarshalWithSchemaLocation() throws Exception {
         PersonType person = new PersonType();
@@ -108,8 +111,7 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertTrue("We should get the schemaLocation here", body
-                .contains("schemaLocation=\"person.xsd\""));
+        assertTrue(body.contains("schemaLocation=\"person.xsd\""), "We should get the schemaLocation here");
     }
 
     @Test
@@ -137,7 +139,7 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertTrue("Body did not get processed correctly by custom filter", body.contains("-Foo"));
+        assertTrue(body.contains("-Foo"), "Body did not get processed correctly by custom filter");
     }
 
     @Test
@@ -152,9 +154,8 @@ public class CamelJaxbTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertFalse("Non-xml character unexpectedly did not get into marshalled contents", body
-                .contains("\u0004"));
-        assertTrue("Body did not get processed correctly by custom filter", body.contains("-Foo"));
+        assertFalse(body.contains("\u0004"), "Non-xml character unexpectedly did not get into marshalled contents");
+        assertTrue(body.contains("-Foo"), "Body did not get processed correctly by custom filter");
     }
 
     @Test
@@ -170,15 +171,16 @@ public class CamelJaxbTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
         resultEndpoint.reset();
-        resultEndpoint.expectedMessageCount(1);        
-        template.sendBody("direct:getJAXBElement", xml);        
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("direct:getJAXBElement", xml);
         resultEndpoint.assertIsSatisfied();
-        assertTrue("We should get the JAXBElement here", resultEndpoint.getExchanges().get(0).getIn().getBody() instanceof JAXBElement);
-        
+        assertTrue(resultEndpoint.getExchanges().get(0).getIn().getBody() instanceof JAXBElement,
+                "We should get the JAXBElement here");
+
         resultEndpoint.reset();
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedBodiesReceived(expected);
-        template.sendBody("direct:unmarshall", xml);        
+        template.sendBody("direct:unmarshall", xml);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -206,28 +208,28 @@ public class CamelJaxbTest extends CamelTestSupport {
                 customWriterAndFilterFormat.setXmlStreamWriterWrapper(new TestXmlStreamWriter());
 
                 from("direct:getJAXBElementValue")
-                    .unmarshal(new JaxbDataFormat("org.apache.camel.foo.bar"))                        
+                        .unmarshal(new JaxbDataFormat("org.apache.camel.foo.bar"))
                         .to("mock:result");
-                
+
                 from("direct:getJAXBElement")
-                    .unmarshal(dataFormat)
-                    .to("mock:result");
+                        .unmarshal(dataFormat)
+                        .to("mock:result");
 
                 from("direct:unmarshalFilteringEnabled")
-                    .unmarshal(filterEnabledFormat)
-                    .to("mock:result");
+                        .unmarshal(filterEnabledFormat)
+                        .to("mock:result");
 
                 from("direct:marshal")
-                    .marshal(dataFormat)
-                    .to("mock:result");
+                        .marshal(dataFormat)
+                        .to("mock:result");
 
                 from("direct:marshalWithoutContentType")
-                    .marshal(dataFormatWithoutContentType)
-                    .to("mock:result");
+                        .marshal(dataFormatWithoutContentType)
+                        .to("mock:result");
 
                 from("direct:marshalFilteringEnabled")
-                    .marshal(filterEnabledFormat)
-                    .to("mock:result");
+                        .marshal(filterEnabledFormat)
+                        .to("mock:result");
 
                 from("direct:marshalCustomWriter")
                         .marshal(customWriterFormat)
@@ -235,14 +237,14 @@ public class CamelJaxbTest extends CamelTestSupport {
                 from("direct:marshalCustomWriterAndFiltering")
                         .marshal(customWriterAndFilterFormat)
                         .to("mock:result");
-                
+
                 from("direct:unmarshall")
-                    .unmarshal()
-                    .jaxb(PersonType.class.getPackage().getName())
-                    .to("mock:result");
+                        .unmarshal()
+                        .jaxb(PersonType.class.getPackage().getName())
+                        .to("mock:result");
 
             }
         };
     }
-    
+
 }

@@ -30,9 +30,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MailRouteTest extends CamelTestSupport {
 
@@ -55,7 +60,7 @@ public class MailRouteTest extends CamelTestSupport {
 
         // Validate that the headers were preserved.
         Exchange exchange = resultEndpoint.getReceivedExchanges().get(0);
-        String replyTo = (String)exchange.getIn().getHeader("reply-to");
+        String replyTo = (String) exchange.getIn().getHeader("reply-to");
         assertEquals("route-test-reply@localhost", replyTo);
 
         assertMailboxReceivedMessages("route-test-copy@localhost");
@@ -86,16 +91,16 @@ public class MailRouteTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertFalse("Should not have attachements", mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments());
+        assertFalse(mock.getExchanges().get(0).getIn(AttachmentMessage.class).hasAttachments(), "Should not have attachements");
 
     }
 
     protected void assertMailboxReceivedMessages(String name) throws IOException, MessagingException {
         Mailbox mailbox = Mailbox.get(name);
-        assertEquals(name + " should have received 1 mail", 1, mailbox.size());
+        assertEquals(1, mailbox.size(), name + " should have received 1 mail");
 
         Message message = mailbox.get(0);
-        assertNotNull(name + " should have received at least one mail!", message);
+        assertNotNull(message, name + " should have received at least one mail!");
         assertEquals("hello world!", message.getContent());
         assertEquals("camel@localhost", message.getFrom()[0].toString());
         boolean found = false;
@@ -104,7 +109,7 @@ public class MailRouteTest extends CamelTestSupport {
                 found = true;
             }
         }
-        assertTrue("Should have found the recpient to in the mail: " + name, found);
+        assertTrue(found, "Should have found the recpient to in the mail: " + name);
     }
 
     @Override
@@ -114,18 +119,18 @@ public class MailRouteTest extends CamelTestSupport {
                 from("pop3://route-test-james@localhost?initialDelay=100&delay=100").to("direct:a");
 
                 // must use fixed to option to send the mail to the given
-                // reciever, as we have polled
+                // receiver, as we have polled
                 // a mail from a mailbox where it already has the 'old' To as
                 // header value
-                // here we send the mail to 2 recievers. notice we can use a
+                // here we send the mail to 2 receivers. notice we can use a
                 // plain string with semi colon
                 // to seperate the mail addresses
                 from("direct:a")
-                    .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
-                    .to("smtp://localhost");
+                        .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
+                        .to("smtp://localhost");
 
                 from("pop3://route-test-result@localhost?initialDelay=100&delay=100").convertBodyTo(String.class)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

@@ -20,28 +20,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class EventNotifierEventsTest extends ContextTestSupport {
+import static org.apache.camel.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class EventNotifierEventsTest {
 
     private static List<CamelEvent> events = new ArrayList<>();
 
-    @Override
-    @Before
+    private CamelContext context;
+    private ProducerTemplate template;
+
+    @BeforeEach
     public void setUp() throws Exception {
         events.clear();
-        super.setUp();
+        context = createCamelContext();
+        context.addRoutes(createRouteBuilder());
+        template = context.createProducerTemplate();
+        context.start();
     }
 
-    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        if (context != null) {
+            context.stop();
+        }
+    }
+
     protected CamelContext createCamelContext() throws Exception {
-        DefaultCamelContext context = new DefaultCamelContext(createRegistry());
+        DefaultCamelContext context = new DefaultCamelContext();
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             public void notify(CamelEvent event) throws Exception {
                 events.add(event);
@@ -52,11 +69,15 @@ public class EventNotifierEventsTest extends ContextTestSupport {
 
     @Test
     public void testExchangeDone() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        // not optimized as this requires exchange events
+        assertTrue(context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable());
+
+        MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisfied();
+        mock.assertIsSatisfied();
 
         assertEquals(16, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
@@ -92,6 +113,9 @@ public class EventNotifierEventsTest extends ContextTestSupport {
 
     @Test
     public void testExchangeFailed() throws Exception {
+        // not optimized as this requires exchange events
+        assertTrue(context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable());
+
         try {
             template.sendBody("direct:fail", "Hello World");
             fail("Should have thrown an exception");
@@ -130,6 +154,9 @@ public class EventNotifierEventsTest extends ContextTestSupport {
 
     @Test
     public void testSuspendResume() throws Exception {
+        // not optimized as this requires exchange events
+        assertTrue(context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable());
+
         assertEquals(8, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));
         assertIsInstanceOf(CamelContextRoutesStartingEvent.class, events.get(1));
@@ -154,7 +181,6 @@ public class EventNotifierEventsTest extends ContextTestSupport {
         assertIsInstanceOf(CamelContextResumedEvent.class, events.get(11));
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

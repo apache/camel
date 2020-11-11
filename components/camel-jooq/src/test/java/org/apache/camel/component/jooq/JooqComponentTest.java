@@ -18,7 +18,10 @@ package org.apache.camel.component.jooq;
 
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JooqComponentTest extends BaseJooqTest {
 
@@ -26,22 +29,27 @@ public class JooqComponentTest extends BaseJooqTest {
     public void testEndpointConfiguration() throws Exception {
         JooqComponent component = (JooqComponent) context().getComponent("jooq");
 
-        JooqEndpoint ep1 = (JooqEndpoint) component.createEndpoint("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
+        JooqEndpoint ep1 = (JooqEndpoint) component
+                .createEndpoint("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord");
         assertEquals(JooqOperation.NONE, ep1.getConfiguration().getOperation());
         assertEquals(BookStoreRecord.class, ep1.getConfiguration().getEntityType());
 
-        JooqEndpoint ep2 = (JooqEndpoint) component.createEndpoint("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute");
+        JooqEndpoint ep2 = (JooqEndpoint) component
+                .createEndpoint("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=execute");
         assertEquals(JooqOperation.EXECUTE, ep2.getConfiguration().getOperation());
         assertEquals(BookStoreRecord.class, ep2.getConfiguration().getEntityType());
 
-        JooqEndpoint ep3 = (JooqEndpoint) component.createEndpoint("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch");
+        JooqEndpoint ep3 = (JooqEndpoint) component
+                .createEndpoint("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=fetch");
         assertEquals(JooqOperation.FETCH, ep3.getConfiguration().getOperation());
         assertEquals(BookStoreRecord.class, ep3.getConfiguration().getEntityType());
     }
 
-    @Test(expected = PropertyBindingException.class)
+    @Test
     public void testNonDefaultConfig() throws Exception {
         JooqComponent component = (JooqComponent) context().getComponent("jooq");
-        component.createEndpoint("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=unexpectedOperation");
+        assertThrows(PropertyBindingException.class,
+                () -> component.createEndpoint(
+                        "jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?operation=unexpectedOperation"));
     }
 }

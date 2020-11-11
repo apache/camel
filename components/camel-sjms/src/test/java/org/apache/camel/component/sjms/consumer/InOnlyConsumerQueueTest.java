@@ -19,7 +19,7 @@ package org.apache.camel.component.sjms.consumer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InOnlyConsumerQueueTest extends JmsTestSupport {
 
@@ -34,7 +34,7 @@ public class InOnlyConsumerQueueTest extends JmsTestSupport {
         mock.expectedBodiesReceived(expectedBody);
 
         template.sendBody(SJMS_QUEUE_NAME, expectedBody);
-        
+
         mock.assertIsSatisfied();
     }
 
@@ -43,7 +43,7 @@ public class InOnlyConsumerQueueTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(SJMS_QUEUE_NAME)
-                    .to(MOCK_RESULT);
+                        .to(MOCK_RESULT);
             }
         };
     }

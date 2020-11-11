@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.saga.InMemorySagaService;
-import org.junit.Test;
+import org.apache.camel.saga.InMemorySagaService;
+import org.junit.jupiter.api.Test;
 
 public class SagaFailuresTest extends ContextTestSupport {
 

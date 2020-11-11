@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +25,10 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.StateRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "offset-rebalance";
@@ -45,8 +49,14 @@ public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
     @Test
     public void offsetGetStateMustHaveBeenCalledTwice() throws Exception {
         boolean offsetGetStateCalled = messagesLatch.await(30000, TimeUnit.MILLISECONDS);
-        assertTrue("StateRepository.getState should have been called twice for topic " + TOPIC  
-                + ". Remaining count : " + messagesLatch.getCount(), offsetGetStateCalled);
+        assertTrue(offsetGetStateCalled, "StateRepository.getState should have been called twice for topic " + TOPIC
+                                         + ". Remaining count : " + messagesLatch.getCount());
+    }
+
+    @AfterEach
+    public void after() {
+        // clean all test topics
+        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
     }
 
     @Override
@@ -54,21 +64,16 @@ public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("kafka:" + TOPIC
-                             + "?groupId=" + TOPIC + "_GROUP"
-                             + "&autoCommitIntervalMs=1000"
-                             + "&autoOffsetReset=latest"
-                             + "&consumersCount=1"
-                             + "&offsetRepository=#offset")
-                        .routeId("consumer-rebalance-route")
-                        .to("mock:result");
+                from("kafka:" + TOPIC + "?groupId=" + TOPIC + "_GROUP" + "&autoCommitIntervalMs=1000"
+                     + "&autoOffsetReset=latest" + "&consumersCount=1"
+                     + "&offsetRepository=#offset").routeId("consumer-rebalance-route").to("mock:result");
             }
         };
     }
 
     public class OffsetStateRepository implements StateRepository<String, String> {
         CountDownLatch messagesLatch;
-        
+
         public OffsetStateRepository(CountDownLatch messagesLatch) {
             this.messagesLatch = messagesLatch;
         }

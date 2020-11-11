@@ -18,27 +18,29 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
 
     @Test
     public void testAdviceWithA() throws Exception {
         RouteDefinition route = context.getRouteDefinition("a");
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint()
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
 
@@ -48,16 +50,18 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
     @Test
     public void testAdviceWithB() throws Exception {
         RouteDefinition route = context.getRouteDefinition("b");
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint()
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
         getMockEndpoint("mock:b").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:b", "Hello World");
 
@@ -67,26 +71,30 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
     @Test
     public void testAdviceWithAB() throws Exception {
         RouteDefinition route = context.getRouteDefinition("a");
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint()
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
         route = context.getRouteDefinition("b");
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint()
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(2);
-        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
-        getMockEndpoint("mock:error").message(1).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:error").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:error").message(1).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
         template.sendBody("direct:b", "Bye World");
@@ -99,9 +107,11 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").routeId("a").onException(Exception.class).handled(true).to("mock:error").end().to("log:a").to("mock:a");
+                from("direct:a").routeId("a").onException(Exception.class).handled(true).to("mock:error").end().to("log:a")
+                        .to("mock:a");
 
-                from("direct:b").routeId("b").onException(Exception.class).handled(true).to("mock:error").end().to("log:b").to("mock:b");
+                from("direct:b").routeId("b").onException(Exception.class).handled(true).to("mock:error").end().to("log:b")
+                        .to("mock:b");
             }
         };
     }

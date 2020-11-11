@@ -26,8 +26,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UnitOfWorkProducerTest extends ContextTestSupport {
 
@@ -49,7 +51,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         events.clear();
         super.tearDown();
@@ -64,7 +66,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // there should be 2 completed events
         // one for the producer template, and another for the Camel route
@@ -80,7 +82,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // there should be 1 completed events as direct endpoint will be like a
         // direct method call

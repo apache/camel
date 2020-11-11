@@ -37,13 +37,17 @@ import org.asynchttpclient.Realm;
 import org.asynchttpclient.Realm.Builder;
 import org.asynchttpclient.cookie.CookieStore;
 import org.asynchttpclient.cookie.ThreadSafeCookieStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
+ * To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
 @Component("ahc")
 public class AhcComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
+
     private static final String CLIENT_CONFIG_PREFIX = "clientConfig.";
     private static final String CLIENT_REALM_CONFIG_PREFIX = "clientConfig.realm.";
 
@@ -80,20 +84,20 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
         endpoint.setClientConfig(getClientConfig());
         endpoint.setBinding(getBinding());
         endpoint.setSslContextParameters(ssl);
-        
+
         setProperties(endpoint, parameters);
 
         if (PropertiesHelper.hasProperties(parameters, CLIENT_CONFIG_PREFIX)) {
             DefaultAsyncHttpClientConfig.Builder builder = endpoint.getClientConfig() == null
                     ? new DefaultAsyncHttpClientConfig.Builder() : AhcComponent.cloneConfig(endpoint.getClientConfig());
-            
+
             if (endpoint.getClient() != null) {
-                log.warn("The user explicitly set an AsyncHttpClient instance on the component or "
+                LOG.warn("The user explicitly set an AsyncHttpClient instance on the component or "
                          + "endpoint, but this endpoint URI contains client configuration parameters.  "
                          + "Are you sure that this is what was intended?  The AsyncHttpClient will be used"
                          + " and the URI parameters will be ignored.");
             } else if (endpoint.getClientConfig() != null) {
-                log.warn("The user explicitly set an AsyncHttpClientConfig instance on the component or "
+                LOG.warn("The user explicitly set an AsyncHttpClientConfig instance on the component or "
                          + "endpoint, but this endpoint URI contains client configuration parameters.  "
                          + "Are you sure that this is what was intended?  The URI parameters will be applied"
                          + " to a clone of the supplied AsyncHttpClientConfig in order to prevent unintended modification"
@@ -125,7 +129,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
                 setProperties(realmBuilder, realmParams);
                 validateParameters(uri, realmParams, null);
             }
-            
+
             // set and validate additional parameters on client config
             Map<String, Object> clientParams = PropertiesHelper.extractProperties(parameters, CLIENT_CONFIG_PREFIX);
 
@@ -145,7 +149,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
         addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI httpUri = URISupport.createRemainingURI(new URI(addressUri), parameters);
         endpoint.setHttpUri(httpUri);
-        
+
         return endpoint;
     }
 
@@ -190,9 +194,9 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
-     * Note that configuring this option will override any SSL/TLS configuration options provided through the
-     * clientConfig option at the endpoint or component level.
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry. Note that configuring this
+     * option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint
+     * or component level.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -205,8 +209,8 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     /**
      * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
      * <p/>
-     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
-     * data from the request to Java and that can be a potential security risk.
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from
+     * the request to Java and that can be a potential security risk.
      */
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
@@ -234,11 +238,11 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * Creates a new client configuration builder using {@code DefaultAsyncHttpClientConfig} as a template for
-     * the builder.
+     * Creates a new client configuration builder using {@code DefaultAsyncHttpClientConfig} as a template for the
+     * builder.
      *
-     * @param clientConfig the instance to serve as a template for the builder
-     * @return a builder configured with the same options as the supplied config
+     * @param  clientConfig the instance to serve as a template for the builder
+     * @return              a builder configured with the same options as the supplied config
      */
     static DefaultAsyncHttpClientConfig.Builder cloneConfig(AsyncHttpClientConfig clientConfig) {
         DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder(clientConfig);

@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test re-creating operations
+ * 
  * @see {org.apache.camel.component.file.remote.RemoteFileConsumer#recoverableConnectIfNecessary}
  */
 public class FromFtpClientSoTimeout3Test extends CamelTestSupport {
@@ -51,12 +52,13 @@ public class FromFtpClientSoTimeout3Test extends CamelTestSupport {
         ftpEndpoint.setFtpClientParameters(ftpClientParameters);
 
         // test RemoteFileConsumer#buildConsumer
-        assertEquals(ftpClientParameters.get("soTimeout"), "10");
+        assertEquals("10", ftpClientParameters.get("soTimeout"));
         ftpEndpoint.createRemoteFileOperations();
 
         // test RemoteFileConsumer#recoverableConnectIfNecessary
-        // recover by re-creating operations which should most likely be able to recover
-        assertEquals(ftpClientParameters.get("soTimeout"), "10");
+        // recover by re-creating operations which should most likely be able to
+        // recover
+        assertEquals("10", ftpClientParameters.get("soTimeout"));
         ftpEndpoint.createRemoteFileOperations();
     }
 

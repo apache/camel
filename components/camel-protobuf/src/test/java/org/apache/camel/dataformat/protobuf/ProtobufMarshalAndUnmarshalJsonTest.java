@@ -19,30 +19,32 @@ package org.apache.camel.dataformat.protobuf;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProtobufMarshalAndUnmarshalJsonTest extends CamelTestSupport {
-    
+
     private static final String PERSON_TEST_NAME = "Martin";
     private static final String PERSON_TEST_JSON = "{\"name\": \"Martin\",\"id\": 1234}";
     private static final int PERSON_TEST_ID = 1234;
-    
+
     @Test
     public void testMarshalAndUnmarshal() throws Exception {
         marshalAndUnmarshal("direct:in", "direct:back");
     }
-    
+
     @Test
     public void testMarshalAndUnmarshalWithDSL() throws Exception {
         marshalAndUnmarshal("direct:marshal", "direct:unmarshalA");
     }
-    
+
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Person.class);
-        
+
         Object marshalled = template.requestBody(inURI, PERSON_TEST_JSON);
 
         template.sendBody(outURI, marshalled);
@@ -59,12 +61,15 @@ public class ProtobufMarshalAndUnmarshalJsonTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ProtobufDataFormat format = new ProtobufDataFormat(Person.getDefaultInstance(), ProtobufDataFormat.CONTENT_TYPE_FORMAT_JSON);
+                ProtobufDataFormat format
+                        = new ProtobufDataFormat(Person.getDefaultInstance(), ProtobufDataFormat.CONTENT_TYPE_FORMAT_JSON);
 
                 from("direct:in").unmarshal(format).to("mock:reverse");
                 from("direct:back").marshal(format);
 
-                from("direct:marshal").unmarshal().protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person", "json").to("mock:reverse");
+                from("direct:marshal").unmarshal()
+                        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person", "json")
+                        .to("mock:reverse");
                 from("direct:unmarshalA").marshal().protobuf();
             }
         };

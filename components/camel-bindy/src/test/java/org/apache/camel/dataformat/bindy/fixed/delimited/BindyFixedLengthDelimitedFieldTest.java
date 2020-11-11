@@ -29,23 +29,31 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * This test validates the marshalling / unmarshalling of delimited, variable-length fields within a 'fixed-length' record. 
+ * This test validates the marshalling / unmarshalling of delimited, variable-length fields within a 'fixed-length'
+ * record.
  */
 public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
 
-    public static final String URI_DIRECT_MARSHALL         = "direct:marshall";
-    public static final String URI_DIRECT_UNMARSHALL       = "direct:unmarshall";
-    public static final String URI_MOCK_MARSHALL_RESULT    = "mock:marshall-result";
-    public static final String URI_MOCK_UNMARSHALL_RESULT  = "mock:unmarshall-result";
-    
+    public static final String URI_DIRECT_MARSHALL = "direct:marshall";
+    public static final String URI_DIRECT_UNMARSHALL = "direct:unmarshall";
+    public static final String URI_MOCK_MARSHALL_RESULT = "mock:marshall-result";
+    public static final String URI_MOCK_UNMARSHALL_RESULT = "mock:unmarshall-result";
+
     private static final String TEST_RECORD = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
-    private static final String TEST_RECORD_WITH_EXTRA_CHARS = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009xxx\r\n";
-    private static final String TEST_RECORD_WITH_SINGLE_EXTRA_CHAR = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009x\r\n";
-    private static final String TEST_RECORD_WITH_WHITSPACE_THEN_EXTRA_CHAR = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009   x\r\n";
+    private static final String TEST_RECORD_WITH_EXTRA_CHARS
+            = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009xxx\r\n";
+    private static final String TEST_RECORD_WITH_SINGLE_EXTRA_CHAR
+            = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009x\r\n";
+    private static final String TEST_RECORD_WITH_WHITSPACE_THEN_EXTRA_CHAR
+            = "10A9Pauline^M^ISINXD12345678BUYShare000002500.45USD01-08-2009   x\r\n";
 
     @EndpointInject(URI_MOCK_MARSHALL_RESULT)
     private MockEndpoint marshallResult;
@@ -61,17 +69,17 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
 
         unmarshallResult.expectedMessageCount(1);
         template.sendBody(URI_DIRECT_UNMARSHALL, TEST_RECORD);
-        
+
         unmarshallResult.assertIsSatisfied();
 
         // check the model
-        BindyFixedLengthDelimitedFieldTest.Order order = 
-            (BindyFixedLengthDelimitedFieldTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
+        BindyFixedLengthDelimitedFieldTest.Order order
+                = (BindyFixedLengthDelimitedFieldTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(10, order.getOrderNr());
         assertEquals("Pauline", order.getFirstName());
         assertEquals("M", order.getLastName());
     }
-    
+
     @Test
     public void testFailWhenUnmarshallMessageWithUnmappedChars() throws Exception {
 
@@ -84,10 +92,10 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
             assertTrue(e.getCause().getMessage().contains("unmapped characters"));
             return;
         }
-        
+
         fail("An error is expected when unmapped characters are encountered in the fixed length record");
     }
-    
+
     @Test
     public void testFailWhenUnmarshallMessageWithWhitespaceThenUnmappedChar() throws Exception {
 
@@ -100,10 +108,10 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
             assertTrue(e.getCause().getMessage().contains("unmapped characters"));
             return;
         }
-        
+
         fail("An error is expected when unmapped characters are encountered in the fixed length record");
     }
-    
+
     @Test
     public void testFailWhenUnmarshallMessageWithUnmappedChar() throws Exception {
 
@@ -116,10 +124,10 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
             assertTrue(e.getCause().getMessage().contains("unmapped characters"));
             return;
         }
-        
+
         fail("An error is expected when unmapped characters are encountered in the fixed length record");
     }
-    
+
     @Test
     public void testMarshallMessage() throws Exception {
         BindyFixedLengthDelimitedFieldTest.Order order = new Order();
@@ -136,38 +144,38 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
         Calendar calendar = new GregorianCalendar();
         calendar.set(2009, 7, 1);
         order.setOrderDate(calendar.getTime());
-        
+
         marshallResult.expectedMessageCount(1);
-        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] {TEST_RECORD}));
+        marshallResult.expectedBodiesReceived(Arrays.asList(new String[] { TEST_RECORD }));
         template.sendBody(URI_DIRECT_MARSHALL, order);
         marshallResult.assertIsSatisfied();
     }
-    
+
     // *************************************************************************
     // ROUTES
     // *************************************************************************
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         RouteBuilder routeBuilder = new RouteBuilder() {
 
             @Override
             public void configure() throws Exception {
-                BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setClassType(BindyFixedLengthDelimitedFieldTest.Order.class);
-                bindy.setLocale("en");
-                bindy.setType(BindyType.Fixed);
+                BindyDataFormat bindy = new BindyDataFormat()
+                        .classType(BindyFixedLengthDelimitedFieldTest.Order.class)
+                        .locale("en")
+                        .fixed();
 
                 from(URI_DIRECT_MARSHALL)
-                    .marshal(bindy)
-                    .to(URI_MOCK_MARSHALL_RESULT);
-            
+                        .marshal(bindy)
+                        .to(URI_MOCK_MARSHALL_RESULT);
+
                 from(URI_DIRECT_UNMARSHALL)
-                    .unmarshal().bindy(BindyType.Fixed, BindyFixedLengthDelimitedFieldTest.Order.class)
-                    .to(URI_MOCK_UNMARSHALL_RESULT);
+                        .unmarshal().bindy(BindyType.Fixed, BindyFixedLengthDelimitedFieldTest.Order.class)
+                        .to(URI_MOCK_UNMARSHALL_RESULT);
             }
         };
-        
+
         return routeBuilder;
     }
 
@@ -300,8 +308,10 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }

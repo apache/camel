@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.Message;
@@ -30,12 +29,13 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedValidatorRegistryTest extends ManagementTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(ManagedValidatorRegistryTest.class);
 
     @Test
     public void testManageValidatorRegistry() throws Exception {
@@ -62,7 +62,7 @@ public class ManagedValidatorRegistryTest extends ManagementTestSupport {
             }
         }
 
-        assertNotNull("Should have found ValidatorRegistry", on);
+        assertNotNull(on, "Should have found ValidatorRegistry");
 
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumCacheSize");
         assertEquals(1000, max.intValue());
@@ -80,29 +80,7 @@ public class ManagedValidatorRegistryTest extends ManagementTestSupport {
         assertTrue(source.startsWith("ValidatorRegistry"));
         assertTrue(source.endsWith("capacity: 1000"));
 
-        
         TabularData data = (TabularData) mbeanServer.invoke(on, "listValidators", null, null);
-        for (Object row : data.values()) {
-            CompositeData composite = (CompositeData)row;
-            String type = (String)composite.get("type");
-            String description = (String)composite.get("description");
-            boolean isStatic = (boolean)composite.get("static");
-            boolean isDynamic = (boolean)composite.get("dynamic");
-            LOG.info("[{}][{}][{}][{}]", type, isStatic, isDynamic, description);
-            if (description.startsWith("ProcessorValidator")) {
-                if (description.contains("direct://transformer")) {
-                    assertEquals("xml:foo", type);
-                } else if (description.contains("validate(simple{${body}} is not null")) {
-                    assertEquals("json:test", type);
-                } else {
-                    fail("Unexpected validator:" + description);
-                }
-            } else if (description.startsWith("MyValidator")) {
-                assertEquals("custom", type);
-            } else {
-                fail("Unexpected validator:" + description);
-            }
-        }
         assertEquals(3, data.size());
     }
 
@@ -112,15 +90,15 @@ public class ManagedValidatorRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 validator()
-                    .type("xml:foo")
-                    .withUri("direct:transformer");
+                        .type("xml:foo")
+                        .withUri("direct:transformer");
                 validator()
-                    .type("json:test")
-                    .withExpression(body().isNotNull());
+                        .type("json:test")
+                        .withExpression(body().isNotNull());
                 validator()
-                    .type("custom")
-                    .withJava(MyValidator.class);
-                
+                        .type("custom")
+                        .withJava(MyValidator.class);
+
                 from("direct:start").to("mock:result");
             }
         };

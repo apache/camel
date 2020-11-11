@@ -43,11 +43,15 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.TZlibTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents Thrift server consumer implementation
  */
 public class ThriftConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumer.class);
 
     private TNonblockingServerSocket asyncServerTransport;
     private TServerSocket syncServerTransport;
@@ -69,17 +73,18 @@ public class ThriftConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         if (server == null) {
-            log.debug("Starting the Thrift server");
+            LOG.debug("Starting the Thrift server");
             initializeServer();
             server.serve();
-            log.info("Thrift server started and listening on port: {}", asyncServerTransport == null ? syncServerTransport.getServerSocket().getLocalPort() : asyncServerTransport.getPort());
+            LOG.info("Thrift server started and listening on port: {}", asyncServerTransport == null
+                    ? syncServerTransport.getServerSocket().getLocalPort() : asyncServerTransport.getPort());
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (server != null) {
-            log.debug("Terminating Thrift server");
+            LOG.debug("Terminating Thrift server");
             server.stop();
             if (ObjectHelper.isNotEmpty(asyncServerTransport)) {
                 asyncServerTransport.close();
@@ -95,7 +100,7 @@ public class ThriftConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void initializeServer() throws TTransportException, IOException {
         Class serverImplementationClass;
         Object serverImplementationInstance;
@@ -104,24 +109,30 @@ public class ThriftConsumer extends DefaultConsumer {
         MethodHandler methodHandler = new ThriftMethodHandler(endpoint, this);
 
         try {
-            Class serverInterface = ThriftUtils.getServerInterface(endpoint.getServicePackage(), endpoint.getServiceName(), endpoint.isSynchronous(), endpoint.getCamelContext());
-            serviceProxy.setInterfaces(new Class[] {serverInterface});
+            Class serverInterface = ThriftUtils.getServerInterface(endpoint.getServicePackage(), endpoint.getServiceName(),
+                    endpoint.isSynchronous(), endpoint.getCamelContext());
+            serviceProxy.setInterfaces(new Class[] { serverInterface });
             serverImplementationClass = serviceProxy.createClass();
             serverImplementationInstance = serverImplementationClass.getConstructor().newInstance();
-            ((Proxy)serverImplementationInstance).setHandler(methodHandler);
+            ((Proxy) serverImplementationInstance).setHandler(methodHandler);
 
-            serverProcessor = ThriftUtils.constructServerProcessor(endpoint.getServicePackage(), endpoint.getServiceName(), serverImplementationInstance, endpoint.isSynchronous(),
-                                                                   endpoint.getCamelContext());
-        } catch (IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-            throw new IllegalArgumentException("Unable to create server implementation proxy service for " + configuration.getService());
+            serverProcessor = ThriftUtils.constructServerProcessor(endpoint.getServicePackage(), endpoint.getServiceName(),
+                    serverImplementationInstance, endpoint.isSynchronous(),
+                    endpoint.getCamelContext());
+        } catch (IllegalArgumentException | InstantiationException | IllegalAccessException | InvocationTargetException
+                 | NoSuchMethodException | SecurityException e) {
+            throw new IllegalArgumentException(
+                    "Unable to create server implementation proxy service for " + configuration.getService());
         }
 
         if (configuration.getNegotiationType() == ThriftNegotiationType.SSL && endpoint.isSynchronous()) {
             ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
             SSLContextParameters sslParameters = configuration.getSslParameters();
-            
+
             if (sslParameters == null) {
-                throw new IllegalArgumentException("SSL parameters must be initialized if negotiation type is set to " + configuration.getNegotiationType());
+                throw new IllegalArgumentException(
+                        "SSL parameters must be initialized if negotiation type is set to "
+                                                   + configuration.getNegotiationType());
             }
 
             ObjectHelper.notNull(sslParameters.getSecureSocketProtocol(), "Security protocol");
@@ -129,71 +140,89 @@ public class ThriftConsumer extends DefaultConsumer {
             ObjectHelper.notNull(sslParameters.getKeyManagers().getKeyStore().getPassword(), "Keystore password");
 
             TSSLTransportFactory.TSSLTransportParameters sslParams;
-            sslParams = new TSSLTransportFactory.TSSLTransportParameters(sslParameters.getSecureSocketProtocol(),
-                                                     sslParameters.getCipherSuites() == null ? null
-                                                     : sslParameters.getCipherSuites().getCipherSuite().stream().toArray(String[]::new));
-            
-            if (ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getProvider()) && ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getType())) {
-                sslParams.setKeyStore(ResourceHelper.resolveResourceAsInputStream(classResolver, sslParameters.getKeyManagers().getKeyStore().getResource()),
-                                      sslParameters.getKeyManagers().getKeyStore().getPassword(),
-                                      sslParameters.getKeyManagers().getKeyStore().getProvider(),
-                                      sslParameters.getKeyManagers().getKeyStore().getType());
+            sslParams = new TSSLTransportFactory.TSSLTransportParameters(
+                    sslParameters.getSecureSocketProtocol(),
+                    sslParameters.getCipherSuites() == null
+                            ? null
+                            : sslParameters.getCipherSuites().getCipherSuite().stream().toArray(String[]::new));
+
+            if (ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getProvider())
+                    && ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getType())) {
+                sslParams.setKeyStore(
+                        ResourceHelper.resolveResourceAsInputStream(classResolver,
+                                sslParameters.getKeyManagers().getKeyStore().getResource()),
+                        sslParameters.getKeyManagers().getKeyStore().getPassword(),
+                        sslParameters.getKeyManagers().getKeyStore().getProvider(),
+                        sslParameters.getKeyManagers().getKeyStore().getType());
             } else {
-                sslParams.setKeyStore(ResourceHelper.resolveResourceAsInputStream(classResolver, sslParameters.getKeyManagers().getKeyStore().getResource()),
-                                      sslParameters.getKeyManagers().getKeyStore().getPassword());
+                sslParams.setKeyStore(
+                        ResourceHelper.resolveResourceAsInputStream(classResolver,
+                                sslParameters.getKeyManagers().getKeyStore().getResource()),
+                        sslParameters.getKeyManagers().getKeyStore().getPassword());
             }
 
             try {
-                syncServerTransport = TSSLTransportFactory.getServerSocket(configuration.getPort(), configuration.getClientTimeout(), InetAddress.getByName(configuration.getHost()),
-                                                                          sslParams);
+                syncServerTransport = TSSLTransportFactory.getServerSocket(configuration.getPort(),
+                        configuration.getClientTimeout(), InetAddress.getByName(configuration.getHost()),
+                        sslParams);
             } catch (UnknownHostException e) {
                 throw new IllegalArgumentException("Unknown host defined: " + configuration.getHost());
             }
             ThriftThreadPoolServer.Args args = new ThriftThreadPoolServer.Args(syncServerTransport);
-            args.processor((TProcessor)serverProcessor);
-            args.executorService(getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(this, getEndpoint().getEndpointUri(), configuration.getPoolSize(),
-                                                                                                           configuration.getMaxPoolSize()));
-            args.startThreadPool(getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "start-" + getEndpoint().getEndpointUri()));
+            args.processor((TProcessor) serverProcessor);
+            args.executorService(getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(this,
+                    getEndpoint().getEndpointUri(), configuration.getPoolSize(),
+                    configuration.getMaxPoolSize()));
+            args.startThreadPool(getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                    "start-" + getEndpoint().getEndpointUri()));
             args.context(endpoint.getCamelContext());
 
             server = new ThriftThreadPoolServer(args);
         } else if (configuration.getCompressionType() == ThriftCompressionType.ZLIB && endpoint.isSynchronous()) {
             if (ObjectHelper.isNotEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
-                log.debug("Building sync Thrift server on {}:{}", configuration.getHost(), configuration.getPort());
-                syncServerTransport = new TServerSocket(new InetSocketAddress(configuration.getHost(), configuration.getPort()), configuration.getClientTimeout());
+                LOG.debug("Building sync Thrift server on {}:{}", configuration.getHost(), configuration.getPort());
+                syncServerTransport = new TServerSocket(
+                        new InetSocketAddress(configuration.getHost(), configuration.getPort()),
+                        configuration.getClientTimeout());
             } else if (ObjectHelper.isEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
-                log.debug("Building sync Thrift server on <any address>:{}", configuration.getPort());
+                LOG.debug("Building sync Thrift server on <any address>:{}", configuration.getPort());
                 syncServerTransport = new TServerSocket(configuration.getPort(), configuration.getClientTimeout());
             } else {
                 throw new IllegalArgumentException("No server start properties (host, port) specified");
             }
-            
+
             ThriftThreadPoolServer.Args args = new ThriftThreadPoolServer.Args(syncServerTransport);
-            args.processor((TProcessor)serverProcessor);
+            args.processor((TProcessor) serverProcessor);
             args.transportFactory(new TZlibTransport.Factory());
-            args.executorService(getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(this, getEndpoint().getEndpointUri(), configuration.getPoolSize(),
-                                                                                                           configuration.getMaxPoolSize()));
-            args.startThreadPool(getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "start-" + getEndpoint().getEndpointUri()));
+            args.executorService(getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(this,
+                    getEndpoint().getEndpointUri(), configuration.getPoolSize(),
+                    configuration.getMaxPoolSize()));
+            args.startThreadPool(getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                    "start-" + getEndpoint().getEndpointUri()));
             args.context(endpoint.getCamelContext());
-            
+
             server = new ThriftThreadPoolServer(args);
         } else {
 
             if (ObjectHelper.isNotEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
-                log.debug("Building Thrift server on {}:{}", configuration.getHost(), configuration.getPort());
-                asyncServerTransport = new TNonblockingServerSocket(new InetSocketAddress(configuration.getHost(), configuration.getPort()), configuration.getClientTimeout());
+                LOG.debug("Building Thrift server on {}:{}", configuration.getHost(), configuration.getPort());
+                asyncServerTransport = new TNonblockingServerSocket(
+                        new InetSocketAddress(configuration.getHost(), configuration.getPort()),
+                        configuration.getClientTimeout());
             } else if (ObjectHelper.isEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
-                log.debug("Building Thrift server on <any address>:{}", configuration.getPort());
+                LOG.debug("Building Thrift server on <any address>:{}", configuration.getPort());
                 asyncServerTransport = new TNonblockingServerSocket(configuration.getPort(), configuration.getClientTimeout());
             } else {
                 throw new IllegalArgumentException("No server start properties (host, port) specified");
             }
 
             ThriftHsHaServer.Args args = new ThriftHsHaServer.Args(asyncServerTransport);
-            args.processor((TProcessor)serverProcessor);
-            args.executorService(getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(this, getEndpoint().getEndpointUri(), configuration.getPoolSize(),
-                                                                                                           configuration.getMaxPoolSize()));
-            args.startThreadPool(getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "start-" + getEndpoint().getEndpointUri()));
+            args.processor((TProcessor) serverProcessor);
+            args.executorService(getEndpoint().getCamelContext().getExecutorServiceManager().newThreadPool(this,
+                    getEndpoint().getEndpointUri(), configuration.getPoolSize(),
+                    configuration.getMaxPoolSize()));
+            args.startThreadPool(getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
+                    "start-" + getEndpoint().getEndpointUri()));
             args.context(endpoint.getCamelContext());
             server = new ThriftHsHaServer(args);
         }
@@ -213,7 +242,7 @@ public class ThriftConsumer extends DefaultConsumer {
             });
             return false;
         } else {
-            log.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
+            LOG.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
             callback.done(true);
             return true;
         }

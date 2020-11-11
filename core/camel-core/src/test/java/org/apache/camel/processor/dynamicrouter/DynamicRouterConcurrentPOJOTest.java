@@ -21,7 +21,7 @@ import org.apache.camel.DynamicRouter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
 

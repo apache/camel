@@ -20,8 +20,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -31,7 +33,8 @@ public class BindyMarshalUnmarshalWithDefaultValueTest extends CamelTestSupport 
     @Test
     public void testBindyMarshalWithDefaultValue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultMarshal");
-        mock.expectedBodiesReceived("\"123\",\"Wednesday, November 9, 2011\",\"North Pole\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
+        mock.expectedBodiesReceived(
+                "\"123\",\"Wednesday, November 9, 2011\",\"North Pole\"" + ConverterUtils.getStringCarriageReturn("WINDOWS"));
 
         WeatherModel model = new WeatherModel();
         model.setId(123);
@@ -60,11 +63,11 @@ public class BindyMarshalUnmarshalWithDefaultValueTest extends CamelTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:marshal")
-                    .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
-                    .to("mock:resultMarshal");
+                        .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .to("mock:resultMarshal");
                 from("direct:unmarshal")
-                    .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
-                    .to("mock:resultUnmarshal");
+                        .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.csv2.WeatherModel.class)
+                        .to("mock:resultUnmarshal");
             }
         };
     }

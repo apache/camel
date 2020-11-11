@@ -17,8 +17,8 @@
 package org.apache.camel.dataformat.bindy;
 
 /**
- * The PatternFormat extends the format interface and allows to retrieve the
- * pattern linked to a format (Date, Double, ...)
+ * The PatternFormat extends the format interface and allows to retrieve the pattern linked to a format (Date, Double,
+ * ...)
  */
 public interface PatternFormat<T> extends Format<T> {
 

@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateDiscardOnFailureTest extends ContextTestSupport {
 
@@ -109,10 +109,11 @@ public class AggregateDiscardOnFailureTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(3).completionTimeout(2000)
-                    // and if an exception happens in aggregate then discard the
-                    // message
-                    .discardOnAggregationFailure().to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(3)
+                        .completionTimeout(2000)
+                        // and if an exception happens in aggregate then discard the
+                        // message
+                        .discardOnAggregationFailure().to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

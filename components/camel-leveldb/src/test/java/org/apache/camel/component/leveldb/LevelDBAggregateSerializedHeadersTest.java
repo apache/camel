@@ -19,29 +19,26 @@ package org.apache.camel.component.leveldb;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.AggregationStrategy;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.util.HeaderDto;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.params.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LevelDBAggregateSerializedHeadersTest extends CamelTestSupport {
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+
+public class LevelDBAggregateSerializedHeadersTest extends LevelDBTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregateSerializedHeadersTest.class);
     private static final int SIZE = 500;
-    private LevelDBAggregationRepository repo;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
-        repo.setAllowSerializedHeaders(true);
+        getRepo().setAllowSerializedHeaders(true);
         super.setUp();
     }
 
@@ -74,32 +71,14 @@ public class LevelDBAggregateSerializedHeadersTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:start?size=" + SIZE)
-                    .to("log:input?groupSize=500")
-                    .aggregate(header("id"), new MyAggregationStrategy())
-                        .aggregationRepository(repo)
-                        .completionSize(SIZE)
-                        .to("log:output?showHeaders=true")
-                        .to("mock:result")
-                    .end();
+                        .to("log:input?groupSize=500")
+                        .aggregate(header("id"), new IntegerAggregationStrategy())
+                            .aggregationRepository(getRepo())
+                            .completionSize(SIZE)
+                            .to("log:output?showHeaders=true")
+                            .to("mock:result")
+                        .end();
             }
         };
     }
-
-    public static class MyAggregationStrategy implements AggregationStrategy {
-
-        @Override
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            if (oldExchange == null) {
-                return newExchange;
-            }
-
-            Integer body1 = oldExchange.getIn().getBody(Integer.class);
-            Integer body2 = newExchange.getIn().getBody(Integer.class);
-            int sum = body1 + body2;
-
-            oldExchange.getIn().setBody(sum);
-            return oldExchange;
-        }
-    }
-
 }

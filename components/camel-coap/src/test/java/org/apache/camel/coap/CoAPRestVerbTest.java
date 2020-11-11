@@ -21,26 +21,28 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CoAPRestVerbTest extends CoAPTestSupport {
 
     @Test
-    public void testGetAll() throws Exception {
+    void testGetAll() throws Exception {
         CoapClient client = createClient("/users");
         CoapResponse response = client.get();
         assertEquals("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]", response.getResponseText());
     }
 
     @Test
-    public void testGetOne() throws Exception {
+    void testGetOne() throws Exception {
         CoapClient client = createClient("/users/1");
         CoapResponse response = client.get();
         assertEquals("{ \"id\":\"1\", \"name\":\"Scott\" }", response.getResponseText());
     }
 
     @Test
-    public void testPost() throws Exception {
+    void testPost() throws Exception {
         final String body = "{ \"id\":\"1\", \"name\":\"Scott\" }";
 
         MockEndpoint mock = getMockEndpoint("mock:create");
@@ -53,7 +55,7 @@ public class CoAPRestVerbTest extends CoAPTestSupport {
     }
 
     @Test
-    public void testPut() throws Exception {
+    void testPut() throws Exception {
         final String body = "{ \"id\":\"1\", \"name\":\"Scott\" }";
 
         MockEndpoint mock = getMockEndpoint("mock:update");
@@ -67,7 +69,7 @@ public class CoAPRestVerbTest extends CoAPTestSupport {
     }
 
     @Test
-    public void testDelete() throws Exception {
+    void testDelete() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:delete");
         mock.expectedHeaderReceived("id", "1");
 
@@ -78,18 +80,18 @@ public class CoAPRestVerbTest extends CoAPTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("coap").host("localhost").port(PORT);
 
-                rest()
-                    .get("/users").route().transform().constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()
-                    .get("/users/{id}").route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }").endRest()
-                    .post("/users").to("mock:create")
-                    .put("/users/{id}").to("mock:update")
-                    .delete("/users/{id}").to("mock:delete");
+                rest().get("/users").route().transform()
+                        .constant("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]").endRest()
+                        .get("/users/{id}")
+                        .route().transform().simple("{ \"id\":\"${header.id}\", \"name\":\"Scott\" }").endRest().post("/users")
+                        .to("mock:create").put("/users/{id}").to("mock:update")
+                        .delete("/users/{id}").to("mock:delete");
             }
         };
     }

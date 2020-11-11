@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
+  <!-- tag::example[] -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
       <jmxAgent id="agent" disabled="true"/>
   </camelContext>
@@ -36,6 +36,6 @@
       </bean>
     </property>
   </bean>
-  <!-- END SNIPPET: example -->
+  <!-- end::example[] -->
 
 </beans>

@@ -34,6 +34,7 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -56,11 +57,11 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     private final File file;
     private final CipherPair ciphers;
 
-    /** Only for testing purposes.*/
+    /** Only for testing purposes. */
     public FileInputStreamCache(File file) throws FileNotFoundException {
         this(new TempFileManager(file, true));
     }
-    
+
     FileInputStreamCache(TempFileManager closer) throws FileNotFoundException {
         this.file = closer.getTempFile();
         this.stream = null;
@@ -69,7 +70,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         this.tempFileManager = closer;
         this.tempFileManager.add(this);
     }
-    
+
     @Override
     public void close() {
         if (stream != null) {
@@ -78,12 +79,12 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     }
 
     @Override
-    public void reset() {
+    public synchronized void reset() {
         // reset by closing and creating a new stream based on the file
         close();
         // reset by creating a new stream based on the file
         stream = null;
-        
+
         if (!file.exists()) {
             throw new RuntimeCamelException("Cannot reset stream from file " + file);
         }
@@ -137,6 +138,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         if (ciphers != null) {
             in = new CipherInputStream(in, ciphers.getDecryptor()) {
                 boolean closed;
+
                 public void close() throws IOException {
                     if (!closed) {
                         super.close();
@@ -148,41 +150,43 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         return in;
     }
 
-    /** 
+    /**
      * Manages the temporary file for the file input stream caches.
      * 
-     * Collects all FileInputStreamCache instances of the temporary file.
-     * Counts the number of exchanges which have a FileInputStreamCache  instance of the temporary file.
-     * Deletes the temporary file, if all exchanges are done.
+     * Collects all FileInputStreamCache instances of the temporary file. Counts the number of exchanges which have a
+     * FileInputStreamCache instance of the temporary file. Deletes the temporary file, if all exchanges are done.
      * 
      * @see CachedOutputStream
      */
     static class TempFileManager {
-        
+
         private static final Logger LOG = LoggerFactory.getLogger(TempFileManager.class);
-        /** Indicator whether the file input stream caches are closed on completion of the exchanges. */
+        /**
+         * Indicator whether the file input stream caches are closed on completion of the exchanges.
+         */
         private final boolean closedOnCompletion;
         private AtomicInteger exchangeCounter = new AtomicInteger();
         private File tempFile;
         private OutputStream outputStream; // file output stream
         private CipherPair ciphers;
-        
+
         // there can be several input streams, for example in the multi-cast, or wiretap parallel processing
         private List<FileInputStreamCache> fileInputStreamCaches;
 
-        /** Only for testing.*/
+        /** Only for testing. */
         private TempFileManager(File file, boolean closedOnCompletion) {
             this(closedOnCompletion);
             this.tempFile = file;
         }
-        
+
         TempFileManager(boolean closedOnCompletion) {
             this.closedOnCompletion = closedOnCompletion;
         }
-                
-        /** Adds a FileInputStreamCache instance to the closer.
+
+        /**
+         * Adds a FileInputStreamCache instance to the closer.
          * <p>
-         * Must be synchronized, because can be accessed by several threads. 
+         * Must be synchronized, because can be accessed by several threads.
          */
         synchronized void add(FileInputStreamCache fileInputStreamCache) {
             if (fileInputStreamCaches == null) {
@@ -190,7 +194,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             }
             fileInputStreamCaches.add(fileInputStreamCache);
         }
-        
+
         void addExchange(Exchange exchange) {
             if (closedOnCompletion) {
                 exchangeCounter.incrementAndGet();
@@ -201,7 +205,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                         int actualExchanges = exchangeCounter.decrementAndGet();
                         if (actualExchanges == 0) {
                             // only one exchange (one thread) left, therefore we must not synchronize the following lines of code
-                            try {                              
+                            try {
                                 closeFileInputStreams();
                                 if (outputStream != null) {
                                     outputStream.close();
@@ -212,7 +216,9 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                             try {
                                 cleanUpTempFile();
                             } catch (Exception e) {
-                                LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
+                                LOG.warn("Error deleting temporary cache file: " + tempFile
+                                         + ". This exception will be ignored.",
+                                        e);
                             }
                         }
                     }
@@ -223,28 +229,45 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                     }
                 };
                 UnitOfWork streamCacheUnitOfWork = exchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, UnitOfWork.class);
-                if (streamCacheUnitOfWork != null) {
+                if (streamCacheUnitOfWork != null && streamCacheUnitOfWork.getRoute() != null) {
                     // The stream cache must sometimes not be closed when the exchange is deleted. This is for example the
                     // case in the splitter and multi-cast case with AggregationStrategy where the result of the sub-routes
                     // are aggregated later in the main route. Here, the cached streams of the sub-routes must be closed with
                     // the Unit of Work of the main route.
+                    // streamCacheUnitOfWork.getRoute() != null means that the unit of work is still active and the done method
+                    // was not yet called: It can happen that streamCacheUnitOfWork.getRoute() == null in the split or 
+                    // multi-cast case when there is a timeout on the main route and an exchange of the sub-route is added after
+                    // the timeout. This we have to avoid because the stream cache would never be closed then.
                     streamCacheUnitOfWork.addSynchronization(onCompletion);
                 } else {
                     // add on completion so we can cleanup after the exchange is done such as deleting temporary files
-                    exchange.addOnCompletion(onCompletion);
+                    exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
                 }
             }
         }
-        
+
         OutputStream createOutputStream(StreamCachingStrategy strategy) throws IOException {
             // should only be called once
             if (tempFile != null) {
                 throw new IllegalStateException("The method 'createOutputStream' can only be called once!");
             }
+            if (closedOnCompletion && exchangeCounter.get() == 0) {
+                // exchange was already stopped -> in this case the tempFile would never be deleted.
+                // This can happen when in the splitter or Multi-cast case with parallel processing, the CachedOutputStream is created when the main unit of work
+                // is still active, but has a timeout and after the timeout which stops the unit of work the FileOutputStream is created.
+                // We only can throw here an Exception and inform the user that the processing took longer than the set timeout.
+                String error
+                        = "Cannot create a FileOutputStream for Stream Caching, because this FileOutputStream would never be removed from the file system."
+                          + " This situation can happen with a Splitter or Multi Cast in parallel processing if there is a timeout set on the Splitter or Multi Cast, "
+                          + " and the processing in a sub-branch takes longer than the timeout. Consider to increase the timeout.";
+                LOG.error(error);
+                throw new IOException(error);
+            }
             tempFile = FileUtil.createTempFile("cos", ".tmp", strategy.getSpoolDirectory());
 
             LOG.trace("Creating temporary stream cache file: {}", tempFile);
-            OutputStream out = new BufferedOutputStream(Files.newOutputStream(tempFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE));
+            OutputStream out = new BufferedOutputStream(
+                    Files.newOutputStream(tempFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE));
             if (ObjectHelper.isNotEmpty(strategy.getSpoolCipher())) {
                 try {
                     if (ciphers == null) {
@@ -255,6 +278,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 }
                 out = new CipherOutputStream(out, ciphers.getEncryptor()) {
                     boolean closed;
+
                     public void close() throws IOException {
                         if (!closed) {
                             super.close();
@@ -266,7 +290,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
             outputStream = out;
             return out;
         }
-        
+
         FileInputStreamCache newStreamCache() throws IOException {
             try {
                 return new FileInputStreamCache(this);
@@ -274,7 +298,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 throw new IOException("Cached file " + tempFile + " not found", e);
             }
         }
-        
+
         void closeFileInputStreams() {
             if (fileInputStreamCaches != null) {
                 for (FileInputStreamCache fileInputStreamCache : fileInputStreamCaches) {
@@ -282,7 +306,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 }
                 fileInputStreamCaches.clear();
             }
-        } 
+        }
 
         void cleanUpTempFile() {
             // cleanup temporary file
@@ -292,18 +316,18 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                     tempFile = null;
                 }
             } catch (Exception e) {
-                LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
+                LOG.warn("Error deleting temporary cache file: {}. This exception will be ignored.", tempFile, e);
             }
         }
-        
+
         File getTempFile() {
             return tempFile;
         }
-        
+
         CipherPair getCiphers() {
             return ciphers;
         }
-        
+
     }
 
 }

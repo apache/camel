@@ -22,32 +22,34 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LanguageServiceTest extends ContextTestSupport {
 
     private MyLanguage my = new MyLanguage();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("my", my);
         return jndi;
     }
 
     @Test
     public void testLanguageService() throws Exception {
-        MyLanguage myl = (MyLanguage)context.resolveLanguage("my");
+        MyLanguage myl = (MyLanguage) context.resolveLanguage("my");
         assertNotNull(myl);
         assertEquals("Started", myl.getState());
         // simple language is resolved by default hence why there is 2
         assertEquals(2, context.getLanguageNames().size());
 
         // resolve again, should find same instance
-        MyLanguage myl2 = (MyLanguage)context.resolveLanguage("my");
+        MyLanguage myl2 = (MyLanguage) context.resolveLanguage("my");
         assertNotNull(myl2);
         assertSame(myl, myl2);
         assertEquals("Started", myl2.getState());
@@ -56,24 +58,6 @@ public class LanguageServiceTest extends ContextTestSupport {
 
         context.stop();
         assertEquals("Stopped", myl.getState());
-        assertTrue(context.getLanguageNames().isEmpty());
-    }
-
-    @Test
-    public void testNonSingletonLanguage() throws Exception {
-        Language tol = context.resolveLanguage("tokenize");
-        assertNotNull(tol);
-        // simple language is resolved by default hence why there is 2
-        assertEquals(2, context.getLanguageNames().size());
-
-        // resolve again, should find another instance
-        Language tol2 = context.resolveLanguage("tokenize");
-        assertNotNull(tol2);
-        assertNotSame(tol, tol2);
-        // simple language is resolved by default hence why there is 2
-        assertEquals(2, context.getLanguageNames().size());
-
-        context.stop();
         assertTrue(context.getLanguageNames().isEmpty());
     }
 

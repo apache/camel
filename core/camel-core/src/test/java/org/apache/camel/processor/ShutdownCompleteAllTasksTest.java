@@ -26,8 +26,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
@@ -36,7 +38,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
     private static CountDownLatch latch = new CountDownLatch(2);
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/pending");
         super.setUp();
@@ -70,7 +72,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
         context.stop();
 
         // should route all
-        assertEquals("Should complete all messages", batch, counter.get());
+        assertEquals(batch, counter.get(), "Should complete all messages");
     }
 
     @Override
@@ -80,8 +82,8 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
             // START SNIPPET: e1
             public void configure() throws Exception {
                 from(url).routeId("foo").noAutoStartup()
-                    // let it complete all tasks during shutdown
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).process(new MyProcessor()).to("mock:bar");
+                        // let it complete all tasks during shutdown
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).process(new MyProcessor()).to("mock:bar");
             }
             // END SNIPPET: e1
         };

@@ -28,7 +28,9 @@ import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.Issue;
 import org.eclipse.egit.github.core.Repository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateIssueProducerTest extends GitHubComponentTestBase {
 
@@ -43,7 +45,6 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
                         .process(new MockIssueCreateProducerProcessor())
                         .to("github://createissue?state=success&username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
-
 
         };
     }
@@ -66,7 +67,6 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
         assertEquals("There's an error", issue.getBody());
     }
 
-
     public class MockIssueCreateProducerProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
@@ -75,6 +75,5 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_ISSUE_TITLE, "Error");
         }
     }
-
 
 }

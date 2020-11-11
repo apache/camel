@@ -24,8 +24,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SqsComponentTest extends CamelTestSupport {
 
@@ -83,16 +86,18 @@ public class SqsComponentTest extends CamelTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ATTRIBUTES));
 
-        assertEquals("This is my message text.", exchange.getOut().getBody());
-        assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
+        assertEquals("This is my message text.", exchange.getMessage().getBody());
+        assertNotNull(exchange.getMessage().getHeader(SqsConstants.MESSAGE_ID));
+        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getMessage().getHeader(SqsConstants.MD5_OF_BODY));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            final String sqsURI = String.format("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&messageRetentionPeriod=%s&maximumMessageSize=%s&policy=%s", "1209600", "65536",
-                                                "");
+            final String sqsURI = String.format(
+                    "aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&messageRetentionPeriod=%s&maximumMessageSize=%s&policy=%s",
+                    "1209600", "65536",
+                    "");
 
             @Override
             public void configure() throws Exception {

@@ -22,8 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultProducer;
 
 public class CryptoCmsProducer extends DefaultProducer {
-    // private static final Logger log =
-    // LoggerFactory.getLogger(CmsProducer.class);
 
     private Processor processor;
 
@@ -33,15 +31,8 @@ public class CryptoCmsProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception { // NOPMD a
-                                                              // processor can
-                                                              // throw any
-                                                              // exception
-        // try {
+    public void process(Exchange exchange) throws Exception {
         processor.process(exchange);
-        // } catch (Exception e) {
-        // exchange.setException(e);
-        // }
     }
 
 }

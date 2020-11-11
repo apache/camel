@@ -20,31 +20,31 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.wsdl_first.PersonImpl12;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayloadModeNoSpringTest {
-    
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
     @Override
-    @Before
+    @BeforeEach
     public void startService() {
-        endpoint = Endpoint.publish("http://localhost:" + port1 + "/" 
-            + getClass().getSimpleName() 
-            + "/PersonService", new PersonImpl12());
+        endpoint = Endpoint.publish("http://localhost:" + port1 + "/"
+                                    + getClass().getSimpleName()
+                                    + "/PersonService",
+                new PersonImpl12());
     }
-    
+
     @Override
     protected String getServiceName() {
         return "{http://camel.apache.org/wsdl-first}PersonService12";
     }
-    
+
     @Override
     protected void checkSOAPAction(Exchange exchange) {
-        assertEquals(exchange.getIn().getHeader("SOAPAction"), "GetPersonAction");
+        assertEquals("GetPersonAction", exchange.getIn().getHeader("SOAPAction"));
     }
-    
+
 }

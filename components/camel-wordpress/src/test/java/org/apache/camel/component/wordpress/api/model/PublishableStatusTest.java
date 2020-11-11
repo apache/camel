@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.wordpress.api.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PublishableStatusTest {
 
@@ -32,18 +33,20 @@ public class PublishableStatusTest {
         assertThat(PublishableStatus.fromString(input2), is(PublishableStatus.private_));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFromStringEmpty() {
         final String input3 = "";
 
-        assertThat(PublishableStatus.fromString(input3), is(PublishableStatus.private_));
+        assertThrows(IllegalArgumentException.class,
+                () -> PublishableStatus.fromString(input3));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testFromStringNull() {
         final String input4 = null;
 
-        assertThat(PublishableStatus.fromString(input4), is(PublishableStatus.private_));
+        assertThrows(NullPointerException.class,
+                () -> PublishableStatus.fromString(input4));
     }
 
 }

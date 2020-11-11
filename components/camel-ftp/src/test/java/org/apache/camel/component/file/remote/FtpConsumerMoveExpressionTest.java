@@ -36,7 +36,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
 
     @BindToRegistry("myguidgenerator")
     private MyGuidGenerator guid = new MyGuidGenerator();
-    
+
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin&delay=5000";
     }
@@ -69,7 +69,8 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}" + "-${file:name.noext}.bak").to("mock:result");
+                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}" + "-${file:name.noext}.bak")
+                        .to("mock:result");
             }
         };
     }

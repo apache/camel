@@ -19,8 +19,8 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -31,7 +31,7 @@ public class JMSTransactionErrorHandlerTest extends CamelSpringTestSupport {
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/JMSTransactionErrorHandlerTest.xml");
+                "/org/apache/camel/component/jms/tx/JMSTransactionErrorHandlerTest.xml");
     }
 
     @Test

@@ -32,15 +32,17 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.service.ServiceHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport {
 
     private String uri = "my:foo?pollingConsumerQueueSize=10&pollingConsumerBlockWhenFull=false";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.addComponent("my", new MyQueueComponent());
@@ -146,7 +148,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
 
         @Override
         protected void doStart() throws Exception {
-            consumer = (EventDrivenPollingConsumer)super.createPollingConsumer();
+            consumer = (EventDrivenPollingConsumer) super.createPollingConsumer();
             super.doStart();
         }
     }

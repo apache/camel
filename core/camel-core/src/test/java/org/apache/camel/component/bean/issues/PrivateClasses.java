@@ -49,16 +49,14 @@ public final class PrivateClasses {
     }
 
     /**
-     * @return package-private implementation that can only be bean-binded
-     *         through its interface
+     * @return package-private implementation that can only be bean-binded through its interface
      */
     public static HelloCamel newPackagePrivateHelloCamel() {
         return new PackagePrivateHelloCamel();
     }
 
     /**
-     * @return private implementation that can only be bean-binded through its
-     *         interface
+     * @return private implementation that can only be bean-binded through its interface
      */
     public static HelloCamel newPrivateHelloCamel() {
         return new PrivateHelloCamel();

@@ -29,8 +29,8 @@ import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * This implements a {@link ThreadPoolFactory} and generates an Instrumented versions of ExecutorService used to
- * monitor performance of each thread using Metrics.
+ * This implements a {@link ThreadPoolFactory} and generates an Instrumented versions of ExecutorService used to monitor
+ * performance of each thread using Metrics.
  */
 public class InstrumentedThreadPoolFactory implements ThreadPoolFactory {
 
@@ -56,12 +56,14 @@ public class InstrumentedThreadPoolFactory implements ThreadPoolFactory {
 
     @Override
     public ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-        return new InstrumentedExecutorService(threadPoolFactory.newThreadPool(profile, threadFactory), metricRegistry, profile.getId());
+        return new InstrumentedExecutorService(
+                threadPoolFactory.newThreadPool(profile, threadFactory), metricRegistry, profile.getId());
     }
 
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-        return new InstrumentedScheduledExecutorService(threadPoolFactory.newScheduledThreadPool(profile, threadFactory), metricRegistry, profile.getId());
+        return new InstrumentedScheduledExecutorService(
+                threadPoolFactory.newScheduledThreadPool(profile, threadFactory), metricRegistry, profile.getId());
     }
 
 }

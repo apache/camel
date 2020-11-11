@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RecipientListFunctionalTest extends ContextTestSupport {
 
@@ -46,7 +46,8 @@ public class RecipientListFunctionalTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").recipientList().message(m -> m.getHeader("Endpoints", String.class).split(",")).onPrepare().message(m -> m.setHeader("OnPrepare", true));
+                from("direct:a").recipientList().message(m -> m.getHeader("Endpoints", String.class).split(",")).onPrepare()
+                        .message(m -> m.setHeader("OnPrepare", true));
             }
         };
     }

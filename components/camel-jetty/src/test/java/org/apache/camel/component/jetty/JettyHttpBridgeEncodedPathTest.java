@@ -19,7 +19,10 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
 
@@ -28,8 +31,9 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
 
     @Test
     public void testJettyHttpClient() throws Exception {
-        String response = template.requestBody("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222", null, String.class);
-        assertEquals("Get a wrong response", "param1=+447777111222", response);
+        String response = template.requestBody("http://localhost:" + port2 + "/jettyTestRouteA?param1=%2B447777111222", null,
+                String.class);
+        assertEquals("param1=+447777111222", response, "Get a wrong response");
     }
 
     @Override
@@ -50,15 +54,16 @@ public class JettyHttpBridgeEncodedPathTest extends BaseJettyTest {
                         assertTrue(s.equals(" 447777111222") || s.equals("+447777111222") || s.equals("%2B447777111222"));
 
                         // send back the query
-                        exchange.getOut().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
+                        exchange.getMessage().setBody(exchange.getIn().getHeader(Exchange.HTTP_QUERY));
                     }
                 };
                 from("jetty://http://localhost:" + port2 + "/jettyTestRouteA?matchOnUriPrefix=true")
-                    .log("Using JettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
-                    .to("http://localhost:" + port1 + "/jettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                        .log("Using JettyTestRouteA route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
+                        .to("http://localhost:" + port1 + "/jettyTestRouteB?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
                 from("jetty://http://localhost:" + port1 + "/jettyTestRouteB?matchOnUriPrefix=true")
-                    .log("Using JettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]").process(serviceProc);
+                        .log("Using JettyTestRouteB route: CamelHttpPath=[${header.CamelHttpPath}], CamelHttpUri=[${header.CamelHttpUri}]")
+                        .process(serviceProc);
             }
         };
     }

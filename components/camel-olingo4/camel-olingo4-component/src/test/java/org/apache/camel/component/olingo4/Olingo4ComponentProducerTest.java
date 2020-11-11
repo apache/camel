@@ -22,7 +22,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchChangeRequest;
@@ -41,16 +44,21 @@ import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.ex.ODataError;
 import org.apache.olingo.commons.api.http.HttpStatusCode;
 import org.apache.olingo.server.api.uri.queryoption.SystemQueryOptionKind;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
- * Test class for {@link org.apache.camel.component.olingo4.api.Olingo4App}
- * APIs.
+ * Test class for {@link org.apache.camel.component.olingo4.api.Olingo4App} APIs.
  * <p>
- * The integration test runs against using the sample OData 4.0 remote TripPin
- * service published on http://services.odata.org/TripPinRESTierService.
+ * The integration test runs against using the sample OData 4.0 remote TripPin service published on
+ * http://services.odata.org/TripPinRESTierService.
  * </p>
  */
 public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
@@ -63,68 +71,86 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     private static final String TEST_CREATE_PEOPLE = PEOPLE + "(" + TEST_CREATE_KEY + ")";
     private static final String TEST_CREATE_RESOURCE_CONTENT_ID = "1";
     private static final String TEST_UPDATE_RESOURCE_CONTENT_ID = "2";
-    private static final String TEST_CREATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n" + "  \"LastName\": \"Black\"\n" + "}";
-    private static final String TEST_UPDATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n" + "  \"MiddleName\": \"Black\",\n"
+    private static final String TEST_CREATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n"
                                                    + "  \"LastName\": \"Black\"\n" + "}";
+    private static final String TEST_UPDATE_JSON
+            = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n" + "  \"MiddleName\": \"Black\",\n"
+              + "  \"LastName\": \"Black\"\n" + "}";
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
+        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(true);
+        return context;
+    }
 
     @Test
     public void testRead() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
 
         // Read metadata ($metadata) object
-        final Edm metadata = (Edm)requestBodyAndHeaders("direct:readmetadata", null, headers);
+        final Edm metadata = (Edm) requestBodyAndHeaders("direct:readmetadata", null, headers);
         assertNotNull(metadata);
         assertEquals(1, metadata.getSchemas().size());
 
         // Read service document object
-        final ClientServiceDocument document = (ClientServiceDocument)requestBodyAndHeaders("direct:readdocument", null, headers);
+        final ClientServiceDocument document
+                = (ClientServiceDocument) requestBodyAndHeaders("direct:readdocument", null, headers);
 
         assertNotNull(document);
         assertTrue(document.getEntitySets().size() > 1);
         LOG.info("Service document has {} entity sets", document.getEntitySets().size());
 
         // Read entity set of the People object
-        final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders("direct:readentities", null, headers);
+        final ClientEntitySet entities = (ClientEntitySet) requestBodyAndHeaders("direct:readentities", null, headers);
         assertNotNull(entities);
         assertEquals(5, entities.getEntities().size());
 
         // Read object count with query options passed through header
-        final Long count = (Long)requestBodyAndHeaders("direct:readcount", null, headers);
+        final Long count = (Long) requestBodyAndHeaders("direct:readcount", null, headers);
         assertEquals(20, count.intValue());
 
-        final ClientPrimitiveValue value = (ClientPrimitiveValue)requestBodyAndHeaders("direct:readvalue", null, headers);
+        final ClientPrimitiveValue value = (ClientPrimitiveValue) requestBodyAndHeaders("direct:readvalue", null, headers);
         LOG.info("Client value \"{}\" has type {}", value, value.getTypeName());
         assertEquals("Male", value.asPrimitive().toString());
 
-        final ClientPrimitiveValue singleProperty = (ClientPrimitiveValue)requestBodyAndHeaders("direct:readsingleprop", null, headers);
+        final ClientPrimitiveValue singleProperty
+                = (ClientPrimitiveValue) requestBodyAndHeaders("direct:readsingleprop", null, headers);
         assertTrue(singleProperty.isPrimitive());
         assertEquals("San Francisco International Airport", singleProperty.toString());
 
-        final ClientComplexValue complexProperty = (ClientComplexValue)requestBodyAndHeaders("direct:readcomplexprop", null, headers);
+        final ClientComplexValue complexProperty
+                = (ClientComplexValue) requestBodyAndHeaders("direct:readcomplexprop", null, headers);
         assertTrue(complexProperty.isComplex());
         assertEquals("San Francisco", complexProperty.get("City").getComplexValue().get("Name").getValue().toString());
 
-        final ClientCollectionValue<?> collectionProperty = (ClientCollectionValue<?>)requestBodyAndHeaders("direct:readcollectionprop", null, headers);
+        final ClientCollectionValue<?> collectionProperty
+                = (ClientCollectionValue<?>) requestBodyAndHeaders("direct:readcollectionprop", null, headers);
         assertTrue(collectionProperty.isCollection());
         assertEquals(1, collectionProperty.size());
         Iterator<?> propIter = collectionProperty.iterator();
         Object propValueObj = propIter.next();
         assertIsInstanceOf(ClientComplexValue.class, propValueObj);
-        ClientComplexValue propValue = (ClientComplexValue)propValueObj;
+        ClientComplexValue propValue = (ClientComplexValue) propValueObj;
         assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
 
-        final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct:readentitybyid", null, headers);
+        final ClientEntity entity = (ClientEntity) requestBodyAndHeaders("direct:readentitybyid", null, headers);
         assertNotNull(entity);
         assertEquals("Russell", entity.getProperty("FirstName").getValue().toString());
 
-        final ClientEntity unbFuncReturn = (ClientEntity)requestBodyAndHeaders("direct:callunboundfunction", null, headers);
+        final ClientEntity unbFuncReturn = (ClientEntity) requestBodyAndHeaders("direct:callunboundfunction", null, headers);
         assertNotNull(unbFuncReturn);
+
+        // should be reflection free
+        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        assertEquals(0, counter);
     }
 
     @Test
     public void testReadWithFilter() {
         // Read entity set with filter of the Airports object
-        final ClientEntitySet entities = (ClientEntitySet)requestBody("direct:readwithfilter", null);
+        final ClientEntitySet entities = (ClientEntitySet) requestBody("direct:readwithfilter", null);
 
         assertNotNull(entities);
         assertEquals(1, entities.getEntities().size());
@@ -140,17 +166,18 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         assertEquals("", entity.getProperty("MiddleName").getValue().toString());
 
         // update
-        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
+        clientEntity.getProperties()
+                .add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
 
         HttpStatusCode status = requestBody("direct:update-entity", clientEntity);
-        assertNotNull("Update status", status);
-        assertEquals("Update status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Update status");
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Update status");
         LOG.info("Update entity status: {}", status);
 
         // delete
         status = requestBody("direct:delete-entity", null);
-        assertNotNull("Delete status", status);
-        assertEquals("Delete status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Delete status");
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Delete status");
         LOG.info("Delete status: {}", status);
 
         // check for delete
@@ -173,14 +200,14 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
 
         // update
         HttpStatusCode status = requestBody("direct:update-entity", TEST_UPDATE_JSON);
-        assertNotNull("Update status", status);
-        assertEquals("Update status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Update status");
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Update status");
         LOG.info("Update entity status: {}", status);
 
         // delete
         status = requestBody("direct:delete-entity", null);
-        assertNotNull("Delete status", status);
-        assertEquals("Delete status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+        assertNotNull(status, "Delete status");
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode(), "Delete status");
         LOG.info("Delete status: {}", status);
 
         // check for delete
@@ -195,9 +222,12 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     private ClientEntity createEntity() {
         ClientEntity clientEntity = objFactory.newEntity(null);
 
-        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("UserName", objFactory.newPrimitiveValueBuilder().buildString("lewisblack")));
-        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("FirstName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
-        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("LastName", objFactory.newPrimitiveValueBuilder().buildString("Black")));
+        clientEntity.getProperties().add(
+                objFactory.newPrimitiveProperty("UserName", objFactory.newPrimitiveValueBuilder().buildString("lewisblack")));
+        clientEntity.getProperties()
+                .add(objFactory.newPrimitiveProperty("FirstName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
+        clientEntity.getProperties()
+                .add(objFactory.newPrimitiveProperty("LastName", objFactory.newPrimitiveValueBuilder().buildString("Black")));
 
         return clientEntity;
     }
@@ -218,47 +248,52 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         // 4. Read with $top
         final HashMap<String, String> queryParams = new HashMap<>();
         queryParams.put(SystemQueryOptionKind.TOP.toString(), "5");
-        batchParts.add(Olingo4BatchQueryRequest.resourcePath(PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).queryParams(queryParams).build());
+        batchParts.add(Olingo4BatchQueryRequest.resourcePath(PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).queryParams(queryParams)
+                .build());
 
         // 5. Create entity
         ClientEntity clientEntity = createEntity();
-        batchParts.add(Olingo4BatchChangeRequest.resourcePath(PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).contentId(TEST_CREATE_RESOURCE_CONTENT_ID).operation(Operation.CREATE)
-            .body(clientEntity).build());
+        batchParts.add(Olingo4BatchChangeRequest.resourcePath(PEOPLE).resourceUri(TEST_SERVICE_BASE_URL)
+                .contentId(TEST_CREATE_RESOURCE_CONTENT_ID).operation(Operation.CREATE)
+                .body(clientEntity).build());
 
         // 6. Update middle name in created entry
-        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
-        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).contentId(TEST_UPDATE_RESOURCE_CONTENT_ID)
-            .operation(Operation.UPDATE).body(clientEntity).build());
+        clientEntity.getProperties()
+                .add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
+        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL)
+                .contentId(TEST_UPDATE_RESOURCE_CONTENT_ID)
+                .operation(Operation.UPDATE).body(clientEntity).build());
 
         // 7. Delete entity
-        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).operation(Operation.DELETE).build());
+        batchParts.add(Olingo4BatchChangeRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL)
+                .operation(Operation.DELETE).build());
 
         // 8. Read deleted entity to verify delete
         batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).build());
 
         // execute batch request
         final List<Olingo4BatchResponse> responseParts = requestBody("direct:batch", batchParts);
-        assertNotNull("Batch response", responseParts);
-        assertEquals("Batch responses expected", 8, responseParts.size());
+        assertNotNull(responseParts, "Batch response");
+        assertEquals(8, responseParts.size(), "Batch responses expected");
 
-        final Edm edm = (Edm)responseParts.get(0).getBody();
+        final Edm edm = (Edm) responseParts.get(0).getBody();
         assertNotNull(edm);
         LOG.info("Edm entity sets: {}", edm.getEntityContainer().getEntitySets());
 
-        ClientEntitySet entitySet = (ClientEntitySet)responseParts.get(1).getBody();
+        ClientEntitySet entitySet = (ClientEntitySet) responseParts.get(1).getBody();
         assertNotNull(entitySet);
         LOG.info("Read entities: {}", entitySet.getEntities());
 
-        clientEntity = (ClientEntity)responseParts.get(2).getBody();
+        clientEntity = (ClientEntity) responseParts.get(2).getBody();
         assertNotNull(clientEntity);
         LOG.info("Read entiry properties: {}", clientEntity.getProperties());
 
-        ClientEntitySet entitySetWithTop = (ClientEntitySet)responseParts.get(3).getBody();
+        ClientEntitySet entitySetWithTop = (ClientEntitySet) responseParts.get(3).getBody();
         assertNotNull(entitySetWithTop);
         assertEquals(5, entitySetWithTop.getEntities().size());
         LOG.info("Read entities with $top=5: {}", entitySet.getEntities());
 
-        clientEntity = (ClientEntity)responseParts.get(4).getBody();
+        clientEntity = (ClientEntity) responseParts.get(4).getBody();
         assertNotNull(clientEntity);
         LOG.info("Created entity: {}", clientEntity.getProperties());
 
@@ -271,7 +306,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         LOG.info("Delete entity status: {}", statusCode);
 
         assertEquals(HttpStatusCode.NOT_FOUND.getStatusCode(), responseParts.get(7).getStatusCode());
-        final ODataError error = (ODataError)responseParts.get(7).getBody();
+        final ODataError error = (ODataError) responseParts.get(7).getBody();
         assertNotNull(error);
         LOG.info("Read deleted entity error: {}", error.getMessage());
     }
@@ -285,8 +320,10 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     @Test
     public void testBoundActionRequest() throws Exception {
         final ClientEntity clientEntity = objFactory.newEntity(null);
-        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
-        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
+        clientEntity.getProperties().add(
+                objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
+        clientEntity.getProperties()
+                .add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
 
         final HttpStatusCode status = requestBody("direct:bound-action-people", clientEntity);
         assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
@@ -296,13 +333,14 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     @Test
     public void testEndpointHttpHeaders() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
-        final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct:read-etag", null, headers);
+        final ClientEntity entity = (ClientEntity) requestBodyAndHeaders("direct:read-etag", null, headers);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:check-etag-header");
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
 
-        Map<String, String> responseHttpHeaders = (Map<String, String>)mockEndpoint.getExchanges().get(0).getIn().getHeader("CamelOlingo4.responseHttpHeaders");
+        Map<String, String> responseHttpHeaders = (Map<String, String>) mockEndpoint.getExchanges().get(0).getIn()
+                .getHeader("CamelOlingo4.responseHttpHeaders");
         assertEquals(responseHttpHeaders.get("ETag"), entity.getETag());
 
         Map<String, String> endpointHttpHeaders = new HashMap<>();
@@ -319,8 +357,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     /**
-     * Read entity set of the People object and with no filter already seen, all
-     * items should be present in each message
+     * Read entity set of the People object and with no filter already seen, all items should be present in each message
      *
      * @throws Exception
      */
@@ -335,7 +372,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         mockEndpoint.expectedMessageCount(expectedMsgCount);
 
         for (int i = 0; i < expectedMsgCount; ++i) {
-            final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders(endpoint, null, headers);
+            final ClientEntitySet entities = (ClientEntitySet) requestBodyAndHeaders(endpoint, null, headers);
             assertNotNull(entities);
         }
 
@@ -344,7 +381,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         for (int i = 0; i < expectedMsgCount; ++i) {
             Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
             assertTrue(body instanceof ClientEntitySet);
-            ClientEntitySet set = (ClientEntitySet)body;
+            ClientEntitySet set = (ClientEntitySet) body;
 
             //
             // All messages contained all the entities
@@ -354,8 +391,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     }
 
     /**
-     * Read entity set of the People object and filter already seen items on
-     * subsequent exchanges
+     * Read entity set of the People object and filter already seen items on subsequent exchanges
      */
     @Test
     public void testProducerReadFilterAlreadySeen() throws Exception {
@@ -368,7 +404,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         mockEndpoint.expectedMessageCount(expectedMsgCount);
 
         for (int i = 0; i < expectedMsgCount; ++i) {
-            final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders(endpoint, null, headers);
+            final ClientEntitySet entities = (ClientEntitySet) requestBodyAndHeaders(endpoint, null, headers);
             assertNotNull(entities);
         }
 
@@ -377,7 +413,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         for (int i = 0; i < expectedMsgCount; ++i) {
             Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
             assertTrue(body instanceof ClientEntitySet);
-            ClientEntitySet set = (ClientEntitySet)body;
+            ClientEntitySet set = (ClientEntitySet) body;
 
             if (i == 0) {
                 //
@@ -417,7 +453,8 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
 
                 from("direct:readentitybyid").to("olingo4://read/" + TEST_PEOPLE + "");
 
-                from("direct:readwithfilter").to("olingo4://read/Airports?$filter=Name eq 'San Francisco International Airport'");
+                from("direct:readwithfilter")
+                        .to("olingo4://read/Airports?$filter=Name eq 'San Francisco International Airport'");
 
                 from("direct:callunboundfunction").to("olingo4://read/GetNearestAirport(lat=33,lon=-118)");
 
@@ -442,12 +479,14 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
 
                 from("direct:read-people-nofilterseen").to("olingo4://read/" + PEOPLE).to("mock:producer-noalreadyseen");
 
-                from("direct:read-people-filterseen").to("olingo4://read/" + PEOPLE + "?filterAlreadySeen=true").to("mock:producer-alreadyseen");
+                from("direct:read-people-filterseen").to("olingo4://read/" + PEOPLE + "?filterAlreadySeen=true")
+                        .to("mock:producer-alreadyseen");
 
                 // test routes action's
                 from("direct:unbound-action-ResetDataSource").to("olingo4://action/ResetDataSource");
 
-                from("direct:bound-action-people").to("olingo4://action/" + TEST_PEOPLE + "/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip");
+                from("direct:bound-action-people").to(
+                        "olingo4://action/" + TEST_PEOPLE + "/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip");
             }
         };
     }

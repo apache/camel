@@ -1,0 +1,181 @@
+[[RouteTemplate]]
+= Route Template
+
+A Route template is as its name implies a template for a route, which are used
+to create routes from a set of input parameters. Another way of think is that
+route templates are parameterized routes.
+
+    Route template + input parameters => route
+
+From a route template you can create one or more routes.
+
+== Defining route templates in the DSL
+
+Route templates are to be defined in the DSL (just like routes) as shown in the following:
+
+[source,java]
+----
+public class MyRouteTemplates extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        // create a route template with the given name
+        routeTemplate("myTemplate")
+            // here we define the required input parameters (can have default values)
+            .templateParameter("name")
+            .templateParameter("greeting")
+            .templateParameter("myPeriod", "3s")
+            // here comes the route in the template
+            // notice how we use {{name}} to refer to the template parameters
+            // we can also use {{propertyName}} to refer to property placeholders
+            .from("timer:{{name}}?period={{myPeriod}}")
+                .setBody(simple("{{greeting}} ${body}"))
+                .log("${body}");
+    }
+}
+----
+
+And in XML DSL
+
+[source,xml]
+----
+<camelContext>
+  <routeTemplate id="myTemplate">
+    <templateParameter name="name"/>
+    <templateParameter name="greeting"/>
+    <templateParameter name="myPeriod" defaultValue="3s"/>
+    <route>
+      <from uri="timer:{{name}}?period={{myPeriod}}"/>
+      <setBody><simple>{{greeting}} ${body}</simple></setBody>
+      <log message="${body}"/>
+    </route>
+  </routeTemplate>
+</camelContext>
+----
+
+In the examples above there was one route template, but you can define as many as you want.
+Each template must have an unique id. The template parameters are used for defining the parameters
+the template accepts. As you can see there are 3 parameters: name, greeting, and myPeriod. The first two
+parameters are mandatory, where as myPeriod is optional as it has a default value of 3s.
+
+The template parameters are then used in the route as regular property placeholders with the `{{ }}` syntax.
+Notice how we use `{\{name}}` and `{\{greeting}}` in the timer endpoint and the simple language.
+
+The route can of course also use regular property placeholders as well.
+Now imagine there was a property placeholder with the name greeting:
+
+[source,properties]
+----
+greeting = Davs
+----
+
+Then Camel would normally have used this value `Davs` when creating the route. However as the route template
+has defined a template parameter with the same name `greeting` then a value must be provided when
+creating routes from the template.
+
+Template parameters take precedence over regular property placeholders.
+
+== Creating a route from a route template
+
+To create routes from route templates, then you must use the Java API from `CamelContext`.
+
+In the following you can see how this is done with the `addRouteFromTemplate` method
+
+[source,java]
+----
+    Map<String, Object> parameters = new HashMap<>();
+    parameters.put("name", "one");
+    parameters.put("greeting", "hello");
+    context.addRouteFromTemplate(null, "myTemplate", parameters);
+----
+
+There is a fluent builder variation as shown below:
+
+[source,java]
+----
+    // create two routes from the template
+    TemplatedRouteBuilder.builder(context, "myTemplate")
+        .parameter("name", "one")
+        .parameter("greeting", "Hello")
+        .add();
+
+    TemplatedRouteBuilder.builder(context, "myTemplate")
+        .parameter("name", "two")
+        .parameter("greeting", "Bonjour")
+        .parameter("myPeriod", "5s")
+        .add();
+----
+
+The returned value from `add` is the route id of the new route that was added.
+However `null` is returned if the route is not yet created and added, which can happen if `CamelContext` is
+not started yet.
+
+If no route id is provided, then Camel will auto assign a route id. In the example above then Camel would
+assign route ids such as `route1`, `route2` to these routes.
+
+If you want to specify a route id, then do as follows, where the name is myCoolRoute:
+
+[source,java]
+----
+    Map<String, Object> parameters = new HashMap<>();
+    parameters.put("name", "one");
+    parameters.put("greeting", "hello");
+    context.addRouteFromTemplate("myCoolRoute", "myTemplate", parameters);
+----
+
+Or with the fluent builder:
+
+[source,java]
+----
+    TemplatedRouteBuilder.builder(context, "myTemplate")
+        .routeId("myCoolRoute")
+        .parameter("name", "one")
+        .parameter("greeting", "Hello")
+        .add();
+----
+
+== JMX management
+
+The route templates can be dumped as XML from the `ManagedCamelContextMBean` MBean via the `dumpRouteTemplatesAsXml` operation.
+
+== Creating routes from properties file
+
+When using `camel-main` you can specify the parameters for route templates in `application.properties` file.
+
+For example given the route template below (from a `RouteBuilder` class):
+
+[source,java]
+----
+routeTemplate("mytemplate")
+    .templateParameter("input")
+    .templateParameter("result")
+    .from("direct:{{input}}")
+        .to("mock:{{result}}");
+----
+
+Then we can create two routes from this template by configuring the values in the `application.properties` file:
+
+[source,properties]
+----
+camel.route-template[0].template-id=mytemplate
+camel.route-template[0].input=foo
+camel.route-template[0].result=cheese
+
+camel.route-template[1].template-id=mytemplate
+camel.route-template[1].input=bar
+camel.route-template[1].result=cheese
+----
+
+== Creating routes from custom sources of template parameters
+
+The SPI interface `org.apache.camel.spi.RouteTemplateParameterSource` can be used to implement custom sources that
+are used during startup of Camel to create routes via the templates with parameters from the custom source(s).
+
+For example a custom source can be implemented that reads parameters from a shared database that Camel uses during staring
+by creating routes. This allows to externalize these parameters and as well to easily add more routes with varying parameters.
+
+To let Camel discover custom sources then register the source into the Camel registry.
+
+== See Also
+
+See the example https://github.com/apache/camel-examples/tree/master/examples/camel-example-routetemplate[camel-example-routetemplate].

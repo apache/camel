@@ -18,7 +18,8 @@ package org.apache.camel.component.sap.netweaver;
 
 public final class NetWeaverTestConstants {
     public static final String NETWEAVER_GATEWAY_URL = "https://sapes4.sapdevcenter.com/sap/opu/odata/IWFND/RMTSAMPLEFLIGHT";
-    public static final String NETWEAVER_FLIGHT_COMMAND = "FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')";
+    public static final String NETWEAVER_FLIGHT_COMMAND
+            = "FlightCollection(carrid='AA',connid='0017',fldate=datetime'2016-04-20T00%3A00%3A00')";
     public static final String NETWEAVER_FLIGHT_BOOKING_COMMAND = NETWEAVER_FLIGHT_COMMAND + "/flightbooking";
 
     private NetWeaverTestConstants() {

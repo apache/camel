@@ -24,7 +24,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Trying to reproduce CAMEL-927.
@@ -46,7 +49,7 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Counter should be 2 or higher", counter >= 2);
+        assertTrue(counter >= 2, "Counter should be 2 or higher");
     }
 
     @Override
@@ -64,7 +67,9 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
     private static class MyTracer implements InterceptStrategy {
 
         @Override
-        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(
+                CamelContext context, NamedNode definition, Processor target, Processor nextTarget)
+                throws Exception {
             assertNotNull(target);
             counter++;
             return target;

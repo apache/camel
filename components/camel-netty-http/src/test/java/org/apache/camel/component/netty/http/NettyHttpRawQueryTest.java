@@ -21,7 +21,7 @@ import java.net.URL;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.HTTP_QUERY;
 import static org.apache.camel.Exchange.HTTP_RAW_QUERY;
@@ -49,7 +49,7 @@ public class NettyHttpRawQueryTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/")
-                    .to(mockEndpoint);
+                        .to(mockEndpoint);
             }
         };
     }

@@ -46,16 +46,16 @@ public final class SaxonConverter {
     @Converter
     public static Document toDOMDocument(NodeInfo node) throws XPathException {
         switch (node.getNodeKind()) {
-        case Type.DOCUMENT:
-            // DOCUMENT type nodes can be wrapped directly
-            return (Document) NodeOverNodeInfo.wrap(node);
-        case Type.ELEMENT:
-            // ELEMENT nodes need to build a new DocumentInfo before wrapping
-            Configuration config = node.getConfiguration();
-            DocumentInfo documentInfo = config.buildDocument(node);
-            return (Document) NodeOverNodeInfo.wrap(documentInfo);
-        default:
-            return null;
+            case Type.DOCUMENT:
+                // DOCUMENT type nodes can be wrapped directly
+                return (Document) NodeOverNodeInfo.wrap(node);
+            case Type.ELEMENT:
+                // ELEMENT nodes need to build a new DocumentInfo before wrapping
+                Configuration config = node.getConfiguration();
+                DocumentInfo documentInfo = config.buildDocument(node);
+                return (Document) NodeOverNodeInfo.wrap(documentInfo);
+            default:
+                return null;
         }
     }
 
@@ -108,7 +108,7 @@ public final class SaxonConverter {
                         lion.add((NodeInfo) o);
                     }
                 }
-                if (lion.size() > 0) {
+                if (!lion.isEmpty()) {
                     NodeList nl = toDOMNodeList(lion);
                     return tc.convertTo(type, exchange, nl);
                 }

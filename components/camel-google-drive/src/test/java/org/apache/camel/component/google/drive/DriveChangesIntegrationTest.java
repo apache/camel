@@ -22,9 +22,11 @@ import com.google.api.services.drive.model.Change;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveChangesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Changes APIs.
@@ -32,7 +34,8 @@ import org.slf4j.LoggerFactory;
 public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveChangesIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveChangesApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleDriveApiCollection.getCollection().getApiName(DriveChangesApiMethod.class).getName();
 
     @Test
     public void testGet() throws Exception {
@@ -41,11 +44,11 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
         if (!items.isEmpty()) {
             Change change = items.get(0);
             Long id = change.getId();
-    
+
             // using String message body for single parameter "changeId"
             final com.google.api.services.drive.model.Change result = requestBody("direct://GET", id);
-    
-            assertNotNull("get result", result);
+
+            assertNotNull(result, "get result");
             LOG.debug("get: " + result);
         }
     }
@@ -54,7 +57,7 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
     public void testList() throws Exception {
         final com.google.api.services.drive.model.ChangeList result = requestBody("direct://LIST", null);
 
-        assertNotNull("list result", result);
+        assertNotNull(result, "list result");
         LOG.debug("list: " + result);
     }
 
@@ -64,15 +67,15 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
             public void configure() {
                 // test route for get
                 from("direct://GET")
-                    .to("google-drive://" + PATH_PREFIX + "/get?inBody=changeId");
+                        .to("google-drive://" + PATH_PREFIX + "/get?inBody=changeId");
 
                 // test route for list
                 from("direct://LIST")
-                    .to("google-drive://" + PATH_PREFIX + "/list");
+                        .to("google-drive://" + PATH_PREFIX + "/list");
 
                 // test route for watch
                 from("direct://WATCH")
-                    .to("google-drive://" + PATH_PREFIX + "/watch?inBody=contentChannel");
+                        .to("google-drive://" + PATH_PREFIX + "/watch?inBody=contentChannel");
 
             }
         };

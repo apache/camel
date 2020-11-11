@@ -40,17 +40,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ${packageName}.${componentName}ApiCollection;
 import ${packageName}.${enumName};
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * Test class for {@link ${proxyType.Name}} APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
+ * TODO Move the file to src/test/java, populate parameter values, and remove @Disabled annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class ${testName} extends Abstract${componentName}TestSupport {
@@ -67,7 +69,7 @@ public class ${testName} extends Abstract${componentName}TestSupport {
 #if ( !$args.isEmpty() )
     // TODO provide parameter values for $model.Name
 #end
-    @Ignore
+    @Disabled
     @Test
     public void test${testName}() throws Exception {
 ## single argument, use as body
@@ -100,7 +102,7 @@ requestBodyAndHeaders("direct://${model.UniqueName}", null, headers);
 #end
 #if ( !$voidResult )
 
-        assertNotNull("${model.Name} result", result);
+        assertNotNull(result, "${model.Name} result");
         LOG.debug("${model.Name}: " + result);
 #end
     }

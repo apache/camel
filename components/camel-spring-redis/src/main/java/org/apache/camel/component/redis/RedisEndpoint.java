@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.redis;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,9 +25,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The spring-redis component allows sending and receiving messages from Redis.
+ * Send and receive messages from Redis.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port", label = "spring,nosql")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port",
+             category = { Category.SPRING, Category.NOSQL })
 public class RedisEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -44,7 +46,8 @@ public class RedisEndpoint extends DefaultEndpoint {
         if (defaultCommand == null) {
             defaultCommand = Command.SET;
         }
-        return new RedisProducer(this,
+        return new RedisProducer(
+                this,
                 RedisConstants.COMMAND,
                 defaultCommand.name(),
                 redisProcessorsCreator);
@@ -60,8 +63,9 @@ public class RedisEndpoint extends DefaultEndpoint {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        redisProcessorsCreator = new AllRedisProcessorsCreator(new RedisClient(configuration.getRedisTemplate()),
-                ((RedisComponent)getComponent()).getExchangeConverter());
+        redisProcessorsCreator = new AllRedisProcessorsCreator(
+                new RedisClient(configuration.getRedisTemplate()),
+                ((RedisComponent) getComponent()).getExchangeConverter());
     }
 
     @Override

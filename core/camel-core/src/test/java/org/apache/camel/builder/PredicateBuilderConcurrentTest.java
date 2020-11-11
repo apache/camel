@@ -29,7 +29,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PredicateBuilderConcurrentTest extends ContextTestSupport {
 
@@ -72,9 +74,9 @@ public class PredicateBuilderConcurrentTest extends ContextTestSupport {
         for (int i = 0; i < 1000; i++) {
             Boolean result = futures.get(i).get(10, TimeUnit.SECONDS);
             if (i % 2 == 0) {
-                assertEquals("Should be true for #" + i, true, result.booleanValue());
+                assertEquals(true, result.booleanValue(), "Should be true for #" + i);
             } else {
-                assertEquals("Should be false for #" + i, false, result.booleanValue());
+                assertEquals(false, result.booleanValue(), "Should be false for #" + i);
             }
         }
 

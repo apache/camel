@@ -68,15 +68,16 @@ public final class BoxConnectionHelper {
                     "Box API connection failed: Authentication type not specified in configuration");
         }
         switch (configuration.getAuthenticationType()) {
-        case BoxConfiguration.APP_ENTERPRISE_AUTHENTICATION:
-            return createAppEnterpriseAuthenticatedConnection(configuration);
-        case BoxConfiguration.APP_USER_AUTHENTICATION:
-            return createAppUserAuthenticatedConnection(configuration);
-        case BoxConfiguration.STANDARD_AUTHENTICATION:
-            return createStandardAuthenticatedConnection(configuration);
-        default:
-            throw new RuntimeCamelException(String.format("Box API connection failed: Invalid authentication type '%s'",
-                    configuration.getAuthenticationType()));
+            case BoxConfiguration.APP_ENTERPRISE_AUTHENTICATION:
+                return createAppEnterpriseAuthenticatedConnection(configuration);
+            case BoxConfiguration.APP_USER_AUTHENTICATION:
+                return createAppUserAuthenticatedConnection(configuration);
+            case BoxConfiguration.STANDARD_AUTHENTICATION:
+                return createStandardAuthenticatedConnection(configuration);
+            default:
+                throw new RuntimeCamelException(
+                        String.format("Box API connection failed: Invalid authentication type '%s'",
+                                configuration.getAuthenticationType()));
         }
     }
 
@@ -106,13 +107,14 @@ public final class BoxConnectionHelper {
             final String authorizeUrl = authorizationUrl(configuration.getClientId(), csrfToken);
 
             //load loginPage
-            final Connection.Response loginPageResponse = addProxy(Jsoup.connect(authorizeUrl), proxy).method(Connection.Method.GET).execute();
+            final Connection.Response loginPageResponse
+                    = addProxy(Jsoup.connect(authorizeUrl), proxy).method(Connection.Method.GET).execute();
             final Document loginPage = loginPageResponse.parse();
 
             validatePage(loginPage);
 
             //fill login form
-            final FormElement loginForm = (FormElement)loginPage.select("form[name=login_form]").first();
+            final FormElement loginForm = (FormElement) loginPage.select("form[name=login_form]").first();
 
             final Element loginField = loginForm.select("input[name=login]").first();
             loginField.val(configuration.getUserName());
@@ -134,7 +136,7 @@ public final class BoxConnectionHelper {
             //possible invalid credentials error
             validatePage(consentPage);
 
-            final FormElement consentForm = (FormElement)consentPage.select("form[name=consent_form]").first();
+            final FormElement consentForm = (FormElement) consentPage.select("form[name=consent_form]").first();
 
             //remove reject input
             consentForm.elements().removeIf(e -> e.attr("name").equals("consent_reject"));
@@ -166,7 +168,8 @@ public final class BoxConnectionHelper {
                 // get authorization code
                 final String authorizationCode = params.get("code");
 
-                return new BoxAPIConnection(configuration.getClientId(), configuration.getClientSecret(),
+                return new BoxAPIConnection(
+                        configuration.getClientId(), configuration.getClientSecret(),
                         authorizationCode);
             }
 
@@ -181,11 +184,8 @@ public final class BoxConnectionHelper {
     }
 
     /**
-     * Validation of page:
-     * - detects CAPTCHA test
-     * - detects 2-step verification
-     * - detects invalid credentials error
-     * - detects wrong clientId error
+     * Validation of page: - detects CAPTCHA test - detects 2-step verification - detects invalid credentials error -
+     * detects wrong clientId error
      */
     private static void validatePage(Document page) {
         // CAPTCHA
@@ -207,7 +207,7 @@ public final class BoxConnectionHelper {
         String errorMessage = null;
         if (!errorDivs.isEmpty()) {
             errorMessage = errorDivs.first().text().replaceAll("\\s+", " ")
-                    .replaceAll(" Show Error Details", ":").trim();
+                    .replace(" Show Error Details", ":").trim();
         } else {
             errorDivs = page.select("div[class*=message]");
             if (!errorDivs.isEmpty()) {
@@ -227,7 +227,7 @@ public final class BoxConnectionHelper {
         if (proxy != null) {
             return connection.proxy(proxy);
         }
-        return  connection;
+        return connection;
     }
 
     public static BoxAPIConnection createAppUserAuthenticatedConnection(BoxConfiguration configuration) {
@@ -294,7 +294,7 @@ public final class BoxConnectionHelper {
 
     public static String authorizationUrl(String clientId, String stateToken) {
         return "https://account.box.com/api/oauth2/authorize?response_type=code&redirect_url=https%3A%2F%2Flocalhost%2F&client_id="
-                + clientId + "&state=" + stateToken;
+               + clientId + "&state=" + stateToken;
     }
 
 }

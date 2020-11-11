@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MulticastDslTest extends ContextTestSupport {
     @Test
@@ -39,8 +39,9 @@ public class MulticastDslTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").multicast().onPrepare().message(m -> m.setHeader("onPrepare", true)).aggregationStrategy().body(Integer.class, (o, n) -> o != null ? o + n : n)
-                    .to("direct:increase-by-1").to("direct:increase-by-2").end().to("mock:result");
+                from("direct:start").multicast().onPrepare().message(m -> m.setHeader("onPrepare", true)).aggregationStrategy()
+                        .body(Integer.class, (o, n) -> o != null ? o + n : n)
+                        .to("direct:increase-by-1").to("direct:increase-by-2").end().to("mock:result");
 
                 from("direct:increase-by-1").bean(new Increase(1));
                 from("direct:increase-by-2").bean(new Increase(2));

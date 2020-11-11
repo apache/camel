@@ -17,38 +17,39 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify using '#' notation to reference serviceClass.
  */
 @ContextConfiguration
-public class ServiceClassRefTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+public class ServiceClassRefTest {
 
     static {
         CXFTestSupport.getPort1();
     }
-    
+
     @Autowired
     protected CamelContext context;
-    
+
     @Test
     public void testServiceClassNameCreatedByRefNotation() throws Exception {
         // verify the '#' notation works
         CxfEndpoint endpoint = context.getEndpoint("cxf:bean:fromEndpoint", CxfEndpoint.class);
-        assertEquals("org.apache.camel.component.cxf.HelloServiceImpl", 
-                     endpoint.getServiceClass().getName());
+        assertEquals("org.apache.camel.component.cxf.HelloServiceImpl",
+                endpoint.getServiceClass().getName());
         assertEquals(DataFormat.POJO, endpoint.getDataFormat());
-        
+
         // verify values in bean properties are ok
         endpoint = context.getEndpoint("cxf:bean:fromEndpointWithProps", CxfEndpoint.class);
         assertEquals(DataFormat.PAYLOAD, endpoint.getDataFormat());
     }
-
 
 }

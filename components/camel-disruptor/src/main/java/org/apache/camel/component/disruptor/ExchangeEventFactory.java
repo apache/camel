@@ -19,8 +19,8 @@ package org.apache.camel.component.disruptor;
 import com.lmax.disruptor.EventFactory;
 
 /**
- * This class is used by the Disruptor to create new instanced of an {@link ExchangeEvent} to fill up a ringbuffer
- * with mutable object references.
+ * This class is used by the Disruptor to create new instanced of an {@link ExchangeEvent} to fill up a ringbuffer with
+ * mutable object references.
  */
 class ExchangeEventFactory implements EventFactory<ExchangeEvent> {
 

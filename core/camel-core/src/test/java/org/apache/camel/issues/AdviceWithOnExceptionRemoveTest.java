@@ -17,10 +17,13 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
@@ -39,7 +42,7 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         getMockEndpoint("mock:d").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
 
-        RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveById("myException").remove();
@@ -69,7 +72,7 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:dead2").expectedMessageCount(1);
 
-        RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveById("myException").replace().onException(Exception.class).handled(true).to("mock:dead2");
@@ -92,7 +95,8 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
                 from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
 
-                from("direct:foo").routeId("foo").to("mock:a").throwException(new IllegalArgumentException("Forced")).to("mock:b");
+                from("direct:foo").routeId("foo").to("mock:a").throwException(new IllegalArgumentException("Forced"))
+                        .to("mock:b");
 
             }
         };

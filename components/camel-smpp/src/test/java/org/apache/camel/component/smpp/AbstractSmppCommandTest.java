@@ -18,56 +18,71 @@ package org.apache.camel.component.smpp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.session.SMPPSession;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class AbstractSmppCommandTest {
-    
+
     private SMPPSession session = new SMPPSession();
     private SmppConfiguration config = new SmppConfiguration();
     private AbstractSmppCommand command;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         session = new SMPPSession();
         config = new SmppConfiguration();
-        
+
         command = new AbstractSmppCommand(session, config) {
             @Override
             public void execute(Exchange exchange) throws SmppException {
             }
         };
     }
-    
+
     @Test
     public void constructor() {
         assertSame(session, command.session);
         assertSame(config, command.config);
     }
-    
+
     @Test
     public void getResponseMessage() {
         Exchange inOnlyExchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOnly);
         Exchange inOutExchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+
+        assertSame(command.getResponseMessage(inOnlyExchange), inOnlyExchange.getIn());
+        /*
+          NOTE: in this test it's important to call the methods in this order:
+          1. command.getResponseMessage
+          2. inOutExchange.getMessage
         
-        assertSame(inOnlyExchange.getIn(), command.getResponseMessage(inOnlyExchange));
-        assertSame(inOutExchange.getOut(), command.getResponseMessage(inOutExchange));
+          This is so, because the empty out Message object is created by the getOut messaged called by
+          command.getResponseMessage. Calling in the inverse order causes the hasOut check on getMessage()
+          to return false, which, in turns, causes it to return the in message. Thus failing the test.
+         */
+        Message expectedMessage = command.getResponseMessage(inOutExchange);
+        Message verificationMessage = inOutExchange.getMessage();
+
+        assertSame(expectedMessage, verificationMessage);
     }
 
     @Test
     public void determineTypeClass() throws Exception {
         assertSame(OptionalParameter.Source_subaddress.class, command.determineTypeClass(Tag.SOURCE_SUBADDRESS));
-        assertSame(OptionalParameter.Additional_status_info_text.class, command.determineTypeClass(Tag.ADDITIONAL_STATUS_INFO_TEXT));
+        assertSame(OptionalParameter.Additional_status_info_text.class,
+                command.determineTypeClass(Tag.ADDITIONAL_STATUS_INFO_TEXT));
         assertSame(OptionalParameter.Dest_addr_subunit.class, command.determineTypeClass(Tag.DEST_ADDR_SUBUNIT));
         assertSame(OptionalParameter.Dest_telematics_id.class, command.determineTypeClass(Tag.DEST_TELEMATICS_ID));
         assertSame(OptionalParameter.Qos_time_to_live.class, command.determineTypeClass(Tag.QOS_TIME_TO_LIVE));
-        assertSame(OptionalParameter.Alert_on_message_delivery.class, command.determineTypeClass(Tag.ALERT_ON_MESSAGE_DELIVERY));
+        assertSame(OptionalParameter.Alert_on_message_delivery.class,
+                command.determineTypeClass(Tag.ALERT_ON_MESSAGE_DELIVERY));
     }
 }

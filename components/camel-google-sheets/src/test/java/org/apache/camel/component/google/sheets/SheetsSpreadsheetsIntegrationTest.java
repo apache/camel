@@ -31,11 +31,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollection;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.internal.SheetsSpreadsheetsApiMethod;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServerAssert.assertThatGoogleApi;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link com.google.api.services.sheets.v4.Sheets.Spreadsheets} APIs.
@@ -43,7 +45,8 @@ import static org.apache.camel.component.google.sheets.server.GoogleSheetsApiTes
 public class SheetsSpreadsheetsIntegrationTest extends AbstractGoogleSheetsTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SheetsSpreadsheetsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleSheetsApiCollection.getCollection().getApiName(SheetsSpreadsheetsApiMethod.class).getName();
 
     @Test
     public void testCreate() throws Exception {
@@ -61,7 +64,7 @@ public class SheetsSpreadsheetsIntegrationTest extends AbstractGoogleSheetsTestS
 
         final Spreadsheet result = requestBody("direct://CREATE", sheetToCreate);
 
-        assertNotNull("create result is null", result);
+        assertNotNull(result, "create result is null");
         assertEquals(title, result.getProperties().getTitle());
 
         LOG.debug("create: " + result);
@@ -83,7 +86,7 @@ public class SheetsSpreadsheetsIntegrationTest extends AbstractGoogleSheetsTestS
         // using String message body for single parameter "spreadsheetId"
         final Spreadsheet result = requestBody("direct://GET", testSheet.getSpreadsheetId());
 
-        assertNotNull("get result is null", result);
+        assertNotNull(result, "get result is null");
         assertEquals(testSheet.getSpreadsheetId(), result.getSpreadsheetId());
 
         LOG.debug("get: " + result);
@@ -109,14 +112,15 @@ public class SheetsSpreadsheetsIntegrationTest extends AbstractGoogleSheetsTestS
         headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "spreadsheetId", testSheet.getSpreadsheetId());
         // parameter type is com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
         headers.put(GoogleSheetsConstants.PROPERTY_PREFIX + "batchUpdateSpreadsheetRequest", new BatchUpdateSpreadsheetRequest()
-                                                                            .setIncludeSpreadsheetInResponse(true)
-                                                                            .setRequests(Collections.singletonList(new Request().setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
-                                                                                    .setProperties(new SpreadsheetProperties().setTitle(updateTitle))
-                                                                                    .setFields("title")))));
+                .setIncludeSpreadsheetInResponse(true)
+                .setRequests(Collections
+                        .singletonList(new Request().setUpdateSpreadsheetProperties(new UpdateSpreadsheetPropertiesRequest()
+                                .setProperties(new SpreadsheetProperties().setTitle(updateTitle))
+                                .setFields("title")))));
 
         final BatchUpdateSpreadsheetResponse result = requestBodyAndHeaders("direct://BATCHUPDATE", null, headers);
 
-        assertNotNull("batchUpdate result is null", result);
+        assertNotNull(result, "batchUpdate result is null");
         assertEquals(updateTitle, result.getUpdatedSpreadsheet().getProperties().getTitle());
 
         LOG.debug("batchUpdate: " + result);

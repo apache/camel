@@ -25,16 +25,15 @@ import org.apache.camel.support.DefaultConsumer;
  */
 public abstract class AbstractEtcdConsumer extends DefaultConsumer {
     private final EtcdConfiguration configuration;
-    private final EtcdNamespace namespace;
     private final String path;
 
     private EtcdClient client;
 
-    protected AbstractEtcdConsumer(AbstractEtcdEndpoint endpoint, Processor processor, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
+    protected AbstractEtcdConsumer(AbstractEtcdEndpoint endpoint, Processor processor, EtcdConfiguration configuration,
+                                   String path) {
         super(endpoint, processor);
 
         this.configuration = configuration;
-        this.namespace = namespace;
         this.path = path;
         this.client = null;
     }
@@ -50,7 +49,7 @@ public abstract class AbstractEtcdConsumer extends DefaultConsumer {
 
     protected EtcdClient getClient() throws Exception {
         if (client == null) {
-            client = ((EtcdEndpoint)getEndpoint()).createClient();
+            client = ((EtcdEndpoint) getEndpoint()).createClient();
         }
 
         return client;
@@ -58,10 +57,6 @@ public abstract class AbstractEtcdConsumer extends DefaultConsumer {
 
     public EtcdConfiguration getConfiguration() {
         return configuration;
-    }
-
-    public EtcdNamespace getNamespace() {
-        return namespace;
     }
 
     public String getPath() {

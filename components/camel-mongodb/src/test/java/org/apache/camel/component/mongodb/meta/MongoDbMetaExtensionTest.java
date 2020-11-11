@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
-
     // We simulate the presence of an authenticated user
     @BeforeEach
     public void createAuthorizationUser() {
@@ -59,39 +58,40 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         MongoDbComponent component = this.getComponent();
         // Given
         Document jsonSchema = Document.parse("{ \n"
-                + "      bsonType: \"object\", \n"
-                + "      required: [ \"name\", \"surname\", \"email\" ], \n"
-                + "      properties: { \n"
-                + "         name: { \n"
-                + "            bsonType: \"string\", \n"
-                + "            description: \"required and must be a string\" }, \n"
-                + "         surname: { \n"
-                + "            bsonType: \"string\", \n"
-                + "            description: \"required and must be a string\" }, \n"
-                + "         email: { \n"
-                + "            bsonType: \"string\", \n"
-                + "            pattern: \"^.+@.+$\", \n"
-                + "            description: \"required and must be a valid email address\" }, \n"
-                + "         year_of_birth: { \n"
-                + "            bsonType: \"int\", \n"
-                + "            minimum: 1900, \n"
-                + "            maximum: 2018,\n"
-                + "            description: \"the value must be in the range 1900-2018\" }, \n"
-                + "         gender: { \n"
-                + "            enum: [ \"M\", \"F\" ], \n"
-                + "            description: \"can be only M or F\" } \n"
-                + "      }}");
+                                             + "      bsonType: \"object\", \n"
+                                             + "      required: [ \"name\", \"surname\", \"email\" ], \n"
+                                             + "      properties: { \n"
+                                             + "         name: { \n"
+                                             + "            bsonType: \"string\", \n"
+                                             + "            description: \"required and must be a string\" }, \n"
+                                             + "         surname: { \n"
+                                             + "            bsonType: \"string\", \n"
+                                             + "            description: \"required and must be a string\" }, \n"
+                                             + "         email: { \n"
+                                             + "            bsonType: \"string\", \n"
+                                             + "            pattern: \"^.+@.+$\", \n"
+                                             + "            description: \"required and must be a valid email address\" }, \n"
+                                             + "         year_of_birth: { \n"
+                                             + "            bsonType: \"int\", \n"
+                                             + "            minimum: 1900, \n"
+                                             + "            maximum: 2018,\n"
+                                             + "            description: \"the value must be in the range 1900-2018\" }, \n"
+                                             + "         gender: { \n"
+                                             + "            enum: [ \"M\", \"F\" ], \n"
+                                             + "            description: \"can be only M or F\" } \n"
+                                             + "      }}");
         ValidationOptions collOptions = new ValidationOptions().validator(Filters.jsonSchema(jsonSchema));
         AbstractMongoDbTest.mongo.getDatabase(database).createCollection(collection,
                 new CreateCollectionOptions().validationOptions(collOptions));
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
         parameters.put("collection", collection);
-        parameters.put("host", HOST);
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
-        MetaDataExtension.MetaData result = component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(UnsupportedOperationException::new);
+        MetaDataExtension.MetaData result = component.getExtension(MetaDataExtension.class).get().meta(parameters)
+                .orElseThrow(UnsupportedOperationException::new);
         // Then
         assertEquals("application/schema+json", result.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE));
         assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
@@ -113,13 +113,12 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
         parameters.put("collection", collection);
-        parameters.put("host", HOST);
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
         // Then
         assertThrows(IllegalArgumentException.class, () -> {
-
             component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(IllegalArgumentException::new);
         });
     }
@@ -148,13 +147,14 @@ public class MongoDbMetaExtensionTest extends AbstractMongoDbTest {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("database", database);
         parameters.put("collection", collection);
-        parameters.put("host", HOST);
+        parameters.put("host", service.getConnectionAddress());
         parameters.put("user", USER);
         parameters.put("password", PASSWORD);
 
         // Then
         assertThrows(UnsupportedOperationException.class, () -> {
-            component.getExtension(MetaDataExtension.class).get().meta(parameters).orElseThrow(UnsupportedOperationException::new);
+            component.getExtension(MetaDataExtension.class).get().meta(parameters)
+                    .orElseThrow(UnsupportedOperationException::new);
         });
     }
 

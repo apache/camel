@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateThreadPoolProfileTest extends ContextTestSupport {
 
@@ -49,8 +49,8 @@ public class AggregateThreadPoolProfileTest extends ContextTestSupport {
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
                 from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
-                    // use our custom thread pool profile
-                    .completionSize(3).executorServiceRef("myProfile").to("log:foo").to("mock:aggregated");
+                        // use our custom thread pool profile
+                        .completionSize(3).executorServiceRef("myProfile").to("log:foo").to("mock:aggregated");
             }
         };
     }

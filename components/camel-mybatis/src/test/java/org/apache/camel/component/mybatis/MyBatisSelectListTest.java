@@ -20,7 +20,9 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisSelectListTest extends MyBatisTestSupport {
 
@@ -47,8 +49,8 @@ public class MyBatisSelectListTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:selectAllAccounts?statementType=SelectList")
-                    .to("mock:result");
+                        .to("mybatis:selectAllAccounts?statementType=SelectList")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

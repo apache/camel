@@ -22,7 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionAndInterceptTest extends ContextTestSupport {
 
@@ -67,8 +70,8 @@ public class OnCompletionAndInterceptTest extends ContextTestSupport {
                 intercept().to("mock:intercept");
 
                 from("direct:start").onCompletion().to("log:sync").to("mock:sync")
-                    // must use end to denote the end of the onCompletion route
-                    .end().process(new MyProcessor()).to("mock:result");
+                        // must use end to denote the end of the onCompletion route
+                        .end().process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };

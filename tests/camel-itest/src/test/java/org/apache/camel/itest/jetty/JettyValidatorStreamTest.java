@@ -20,32 +20,35 @@ import java.io.InputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyValidatorStreamTest extends CamelTestSupport {
 
     private int port;
 
     @Test
-    public void testValideRequestAsStream() throws Exception {
+    void testValideRequestAsStream() {
         InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
-        assertNotNull("the inputStream should not be null", inputStream);
+        assertNotNull(inputStream, "The inputStream should not be null");
 
         String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
-        assertEquals("The response should be ok", response, "<ok/>");
+        assertEquals("<ok/>", response, "The response should be ok");
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:" + port + "/test")
-                    .to("validator:OptimizationRequest.xsd")
-                    .transform(constant("<ok/>"));
+                        .to("validator:OptimizationRequest.xsd")
+                        .transform(constant("<ok/>"));
             }
         };
     }

@@ -20,9 +20,12 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XQueryEndpointTest extends CamelSpringTestSupport {
 
@@ -32,19 +35,20 @@ public class XQueryEndpointTest extends CamelSpringTestSupport {
         endpoint.expectedMessageCount(1);
 
         template.sendBody("direct:start",
-            "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+                "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
 
         assertMockEndpointsSatisfied();
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
-        assertNotNull("The transformed XML should not be null", xml);
-        assertEquals("transformed", "<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
-            + "<body>Hello world!</body></mail></transformed>", xml);
+        assertNotNull(xml, "The transformed XML should not be null");
+        assertEquals("<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
+                     + "<body>Hello world!</body></mail></transformed>",
+                xml, "transformed");
 
         TestBean bean = getMandatoryBean(TestBean.class, "testBean");
-        assertEquals("bean.subject", "Hey", bean.getSubject());
+        assertEquals("Hey", bean.getSubject(), "bean.subject");
     }
 
     @Override

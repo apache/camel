@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration test consuming statistics on Docker Platform
@@ -30,7 +30,7 @@ public class DockerStatsConsumerTestIT extends DockerITTestSupport {
     private static final String CONTAINER_ID = "470b9b823e6c";
 
     @Test
-    public void testDocker() throws Exception {
+    void testDocker() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -39,12 +39,12 @@ public class DockerStatsConsumerTestIT extends DockerITTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 fromF("docker://stats?containerId=%s", CONTAINER_ID)
-                    .log("${body}")
-                    .to("mock:result");
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

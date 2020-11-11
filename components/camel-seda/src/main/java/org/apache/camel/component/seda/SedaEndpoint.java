@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -46,13 +47,18 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
+ * Asynchronously call another endpoint from any Camel Context in the same JVM.
  */
 @ManagedResource(description = "Managed SedaEndpoint")
-@UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name", label = "core,endpoint")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name",
+             category = { Category.CORE, Category.ENDPOINT })
 public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
 
     private final Set<SedaProducer> producers = new CopyOnWriteArraySet<>();
     private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<>();
@@ -60,7 +66,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private volatile boolean multicastStarted;
     private volatile ExecutorService multicastExecutor;
 
-    @UriPath(description = "Name of queue") @Metadata(required = true)
+    @UriPath(description = "Name of queue")
+    @Metadata(required = true)
     private String name;
     @UriParam(label = "advanced", description = "Define the queue instance which will be used by the endpoint")
     private BlockingQueue queue;
@@ -80,9 +87,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     @UriParam(label = "producer", defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
     private long timeout = 30000;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", javaType = "java.time.Duration")
     private long offerTimeout;
     @UriParam(label = "producer")
     private boolean blockWhenFull;
@@ -113,7 +120,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         getComponent().registerQueue(this, queue);
     }
 
-    public SedaEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+    public SedaEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory,
+                        int concurrentConsumers) {
         this(endpointUri, component, concurrentConsumers);
         this.queueFactory = queueFactory;
     }
@@ -130,7 +138,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     @Override
     public Producer createProducer() throws Exception {
-        return new SedaProducer(this, getWaitForTaskToComplete(), getTimeout(),
+        return new SedaProducer(
+                this, getWaitForTaskToComplete(), getTimeout(),
                 isBlockWhenFull(), isDiscardWhenFull(), getOfferTimeout());
     }
 
@@ -142,8 +151,10 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             QueueReference ref = getComponent().getQueueReference(key);
             if (ref != null && ref.getMultipleConsumers() != isMultipleConsumers()) {
                 // there is already a multiple consumers, so make sure they matches
-                throw new IllegalArgumentException("Cannot use existing queue " + key + " as the existing queue multiple consumers "
-                        + ref.getMultipleConsumers() + " does not match given multiple consumers " + multipleConsumers);
+                throw new IllegalArgumentException(
+                        "Cannot use existing queue " + key + " as the existing queue multiple consumers "
+                                                   + ref.getMultipleConsumers() + " does not match given multiple consumers "
+                                                   + multipleConsumers);
             }
         }
 
@@ -174,7 +185,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
                 queue = ref.getQueue();
                 String key = getComponent().getQueueKey(getEndpointUri());
-                log.info("Endpoint {} is using shared queue: {} with size: {}", this, key, ref.getSize() !=  null ? ref.getSize() : Integer.MAX_VALUE);
+                LOG.info("Endpoint {} is using shared queue: {} with size: {}", this, key,
+                        ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE);
                 // and set the size we are using
                 if (ref.getSize() != null) {
                     setSize(ref.getSize());
@@ -182,7 +194,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             } else {
                 // fallback and create queue (as this endpoint has no component)
                 queue = createQueue();
-                log.info("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
+                LOG.info("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
             }
         }
         return queue;
@@ -232,7 +244,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         if (size >= 1) {
             if (multicastExecutor == null) {
                 // create multicast executor as we need it when we have more than 1 processor
-                multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
+                multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this,
+                        URISupport.sanitizeUri(getEndpointUri()) + "(multicast)");
             }
             // create list of consumers to multicast to
             List<Processor> processors = new ArrayList<>(size);
@@ -241,7 +254,10 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             }
             // create multicast processor
             multicastStarted = false;
-            consumerMulticastProcessor = getCamelContext().adapt(ExtendedCamelContext.class).createMulticast(processors, multicastExecutor, false);
+
+            consumerMulticastProcessor = (AsyncProcessor) getCamelContext().adapt(ExtendedCamelContext.class)
+                    .getProcessorFactory().createProcessor(getCamelContext(), "MulticastProcessor",
+                            new Object[] { processors, multicastExecutor, false });
         }
     }
 
@@ -261,8 +277,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * The maximum capacity of the SEDA queue (i.e., the number of messages it can hold).
-     * Will by default use the defaultSize set on the SEDA component.
+     * The maximum capacity of the SEDA queue (i.e., the number of messages it can hold). Will by default use the
+     * defaultSize set on the SEDA component.
      */
     public void setSize(int size) {
         this.size = size;
@@ -274,9 +290,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted.
-     * By default, an exception will be thrown stating that the queue is full.
-     * By enabling this option, the calling thread will instead block and wait until the message can be accepted.
+     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer
+     * exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the
+     * calling thread will instead block and wait until the message can be accepted.
      */
     public void setBlockWhenFull(boolean blockWhenFull) {
         this.blockWhenFull = blockWhenFull;
@@ -288,10 +304,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Whether a thread that sends messages to a full SEDA queue will be discarded.
-     * By default, an exception will be thrown stating that the queue is full.
-     * By enabling this option, the calling thread will give up sending and continue,
-     * meaning that the message was not sent to the SEDA queue.
+     * Whether a thread that sends messages to a full SEDA queue will be discarded. By default, an exception will be
+     * thrown stating that the queue is full. By enabling this option, the calling thread will give up sending and
+     * continue, meaning that the message was not sent to the SEDA queue.
      */
     public void setDiscardWhenFull(boolean discardWhenFull) {
         this.discardWhenFull = discardWhenFull;
@@ -320,8 +335,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Whether to limit the number of concurrentConsumers to the maximum of 500.
-     * By default, an exception will be thrown if an endpoint is configured with a greater number. You can disable that check by turning this option off.
+     * Whether to limit the number of concurrentConsumers to the maximum of 500. By default, an exception will be thrown
+     * if an endpoint is configured with a greater number. You can disable that check by turning this option off.
      */
     public void setLimitConcurrentConsumers(boolean limitConcurrentConsumers) {
         this.limitConcurrentConsumers = limitConcurrentConsumers;
@@ -332,11 +347,10 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Option to specify whether the caller should wait for the async task to complete or not before continuing.
-     * The following three options are supported: Always, Never or IfReplyExpected.
-     * The first two values are self-explanatory.
-     * The last value, IfReplyExpected, will only wait if the message is Request Reply based.
-     * The default option is IfReplyExpected.
+     * Option to specify whether the caller should wait for the async task to complete or not before continuing. The
+     * following three options are supported: Always, Never or IfReplyExpected. The first two values are
+     * self-explanatory. The last value, IfReplyExpected, will only wait if the message is Request Reply based. The
+     * default option is IfReplyExpected.
      */
     public void setWaitForTaskToComplete(WaitForTaskToComplete waitForTaskToComplete) {
         this.waitForTaskToComplete = waitForTaskToComplete;
@@ -348,8 +362,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Timeout (in milliseconds) before a SEDA producer will stop waiting for an asynchronous task to complete.
-     * You can disable timeout by using 0 or a negative value.
+     * Timeout (in milliseconds) before a SEDA producer will stop waiting for an asynchronous task to complete. You can
+     * disable timeout by using 0 or a negative value.
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
@@ -361,8 +375,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * offerTimeout (in milliseconds)  can be added to the block case when queue is full.
-     * You can disable timeout by using 0 or a negative value.
+     * offerTimeout (in milliseconds) can be added to the block case when queue is full. You can disable timeout by
+     * using 0 or a negative value.
      */
     public void setOfferTimeout(long offerTimeout) {
         this.offerTimeout = offerTimeout;
@@ -376,7 +390,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     /**
      * Whether the producer should fail by throwing an exception, when sending to a queue with no active consumers.
      * <p/>
-     * Only one of the options <tt>discardIfNoConsumers</tt> and <tt>failIfNoConsumers</tt> can be enabled at the same time.
+     * Only one of the options <tt>discardIfNoConsumers</tt> and <tt>failIfNoConsumers</tt> can be enabled at the same
+     * time.
      */
     public void setFailIfNoConsumers(boolean failIfNoConsumers) {
         this.failIfNoConsumers = failIfNoConsumers;
@@ -388,9 +403,11 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Whether the producer should discard the message (do not add the message to the queue), when sending to a queue with no active consumers.
+     * Whether the producer should discard the message (do not add the message to the queue), when sending to a queue
+     * with no active consumers.
      * <p/>
-     * Only one of the options <tt>discardIfNoConsumers</tt> and <tt>failIfNoConsumers</tt> can be enabled at the same time.
+     * Only one of the options <tt>discardIfNoConsumers</tt> and <tt>failIfNoConsumers</tt> can be enabled at the same
+     * time.
      */
     public void setDiscardIfNoConsumers(boolean discardIfNoConsumers) {
         this.discardIfNoConsumers = discardIfNoConsumers;
@@ -403,8 +420,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     /**
      * Specifies whether multiple consumers are allowed. If enabled, you can use SEDA for Publish-Subscribe messaging.
-     * That is, you can send a message to the SEDA queue and have each consumer receive a copy of the message.
-     * When enabled, this option should be specified on every consumer endpoint.
+     * That is, you can send a message to the SEDA queue and have each consumer receive a copy of the message. When
+     * enabled, this option should be specified on every consumer endpoint.
      */
     public void setMultipleConsumers(boolean multipleConsumers) {
         this.multipleConsumers = multipleConsumers;
@@ -416,8 +433,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * The timeout used when polling. When a timeout occurs, the consumer can check whether it is allowed to continue running.
-     * Setting a lower value allows the consumer to react more quickly upon shutdown.
+     * The timeout used when polling. When a timeout occurs, the consumer can check whether it is allowed to continue
+     * running. Setting a lower value allows the consumer to react more quickly upon shutdown.
      */
     public void setPollTimeout(int pollTimeout) {
         this.pollTimeout = pollTimeout;
@@ -429,8 +446,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Whether to purge the task queue when stopping the consumer/route.
-     * This allows to stop faster, as any pending messages on the queue is discarded.
+     * Whether to purge the task queue when stopping the consumer/route. This allows to stop faster, as any pending
+     * messages on the queue is discarded.
      */
     public void setPurgeWhenStopping(boolean purgeWhenStopping) {
         this.purgeWhenStopping = purgeWhenStopping;
@@ -455,7 +472,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
      */
     @ManagedOperation(description = "Purges the seda queue")
     public void purgeQueue() {
-        log.debug("Purging queue with {} exchanges", queue.size());
+        LOG.debug("Purging queue with {} exchanges", queue.size());
         queue.clear();
     }
 
@@ -496,16 +513,17 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     public boolean hasConsumers() {
-        return this.consumers.size() > 0;
+        return !this.consumers.isEmpty();
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         if (discardWhenFull && blockWhenFull) {
-            throw new IllegalArgumentException("Cannot enable both discardWhenFull=true and blockWhenFull=true."
-                    + " You can only either discard or block when full.");
+            throw new IllegalArgumentException(
+                    "Cannot enable both discardWhenFull=true and blockWhenFull=true."
+                                               + " You can only either discard or block when full.");
         }
 
         // force creating queue when starting
@@ -524,14 +542,14 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         if (getConsumers().isEmpty()) {
             super.stop();
         } else {
-            log.debug("There is still active consumers.");
+            LOG.debug("There is still active consumers.");
         }
     }
 
     @Override
     public void shutdown() {
         if (isShutdown()) {
-            log.trace("Service already shut down");
+            LOG.trace("Service already shut down");
             return;
         }
 
@@ -543,7 +561,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         if (getConsumers().isEmpty()) {
             super.shutdown();
         } else {
-            log.debug("There is still active consumers.");
+            LOG.debug("There is still active consumers.");
         }
     }
 

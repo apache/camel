@@ -39,7 +39,7 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
         return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-            + "/changed?username=admin&password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
+               + "/changed?username=admin&password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
     }
 
     @Override
@@ -94,9 +94,7 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl())
-                    .routeId("foo").noAutoStartup()
-                    .to("file:target/changed/out", "mock:result");
+                from(getFtpUrl()).routeId("foo").noAutoStartup().to("file:target/changed/out", "mock:result");
             }
         };
     }

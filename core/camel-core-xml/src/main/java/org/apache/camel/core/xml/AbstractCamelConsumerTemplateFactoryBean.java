@@ -27,15 +27,15 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * A factory for creating a new {@link org.apache.camel.ConsumerTemplate}
- * instance with a minimum of XML
+ * A factory for creating a new {@link org.apache.camel.ConsumerTemplate} instance with a minimum of XML
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelConsumerTemplateFactoryBean extends AbstractCamelFactoryBean<ConsumerTemplate> {
 
     @XmlTransient
     private ConsumerTemplate template;
-    @XmlAttribute @Metadata(description = "Sets a custom maximum cache size to use in the backing cache pools.")
+    @XmlAttribute
+    @Metadata(description = "Sets a custom maximum cache size to use in the backing cache pools.")
     private Integer maximumCacheSize;
 
     @Override

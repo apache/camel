@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * File utilities.
  */
 public final class FileUtil {
-    
+
     public static final int BUFFER_SIZE = 128 * 1024;
 
     private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
@@ -147,14 +147,14 @@ public final class FileUtil {
         if (ObjectHelper.isEmpty(name)) {
             return name;
         }
-        
+
         String s = name;
-        
+
         // there must be some leading text, as we should only remove trailing separators 
         while (s.endsWith("/") || s.endsWith(File.separator)) {
             s = s.substring(0, s.length() - 1);
         }
-        
+
         // if the string is empty, that means there was only trailing slashes, and no leading text
         // and so we should then return the original name as is
         if (ObjectHelper.isEmpty(s)) {
@@ -255,16 +255,15 @@ public final class FileUtil {
     }
 
     /**
-     * Compacts a path by stacking it and reducing <tt>..</tt>,
-     * and uses OS specific file separators (eg {@link java.io.File#separator}).
+     * Compacts a path by stacking it and reducing <tt>..</tt>, and uses OS specific file separators (eg
+     * {@link java.io.File#separator}).
      */
     public static String compactPath(String path) {
         return compactPath(path, "" + File.separatorChar);
     }
 
     /**
-     * Compacts a path by stacking it and reducing <tt>..</tt>,
-     * and uses the given separator.
+     * Compacts a path by stacking it and reducing <tt>..</tt>, and uses the given separator.
      *
      */
     public static String compactPath(String path, char separator) {
@@ -272,16 +271,19 @@ public final class FileUtil {
     }
 
     /**
-     * Compacts a path by stacking it and reducing <tt>..</tt>,
-     * and uses the given separator.
+     * Compacts a file path by stacking it and reducing <tt>..</tt>, and uses the given separator.
      */
     public static String compactPath(String path, String separator) {
         if (path == null) {
             return null;
         }
-        
+
+        if (path.startsWith("http:")) {
+            return path;
+        }
+
         // only normalize if contains a path separator
-        if (path.indexOf('/') == -1 && path.indexOf('\\') == -1)  {
+        if (path.indexOf('/') == -1 && path.indexOf('\\') == -1) {
             return path;
         }
 
@@ -300,7 +302,7 @@ public final class FileUtil {
                 cntSlashsAtStart++;
             }
         }
-        
+
         Deque<String> stack = new ArrayDeque<>();
 
         // separator can either be windows or unix style
@@ -319,7 +321,7 @@ public final class FileUtil {
 
         // build path based on stack
         StringBuilder sb = new StringBuilder();
-        
+
         for (int i = 0; i < cntSlashsAtStart; i++) {
             sb.append(separator);
         }
@@ -332,7 +334,7 @@ public final class FileUtil {
             }
         }
 
-        if (endsWithSlash && stack.size() > 0) {
+        if (endsWithSlash && !stack.isEmpty()) {
             sb.append(separator);
         }
 
@@ -374,11 +376,11 @@ public final class FileUtil {
     /**
      * Renames a file.
      *
-     * @param from the from file
-     * @param to   the to file
-     * @param copyAndDeleteOnRenameFail whether to fallback and do copy and delete, if renameTo fails
-     * @return <tt>true</tt> if the file was renamed, otherwise <tt>false</tt>
-     * @throws java.io.IOException is thrown if error renaming file
+     * @param  from                      the from file
+     * @param  to                        the to file
+     * @param  copyAndDeleteOnRenameFail whether to fallback and do copy and delete, if renameTo fails
+     * @return                           <tt>true</tt> if the file was renamed, otherwise <tt>false</tt>
+     * @throws java.io.IOException       is thrown if error renaming file
      */
     public static boolean renameFile(File from, File to, boolean copyAndDeleteOnRenameFail) throws IOException {
         // do not try to rename non existing files
@@ -421,12 +423,12 @@ public final class FileUtil {
     }
 
     /**
-     * Rename file using copy and delete strategy. This is primarily used in
-     * environments where the regular rename operation is unreliable.
+     * Rename file using copy and delete strategy. This is primarily used in environments where the regular rename
+     * operation is unreliable.
      * 
-     * @param from the file to be renamed
-     * @param to the new target file
-     * @return <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
+     * @param  from        the file to be renamed
+     * @param  to          the new target file
+     * @return             <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
      * @throws IOException If an I/O error occurs during copy or delete operations.
      */
     public static boolean renameFileUsingCopy(File from, File to) throws IOException {
@@ -439,7 +441,9 @@ public final class FileUtil {
 
         copyFile(from, to);
         if (!deleteFile(from)) {
-            throw new IOException("Renaming file from '" + from + "' to '" + to + "' failed: Cannot delete file '" + from + "' after copy succeeded");
+            throw new IOException(
+                    "Renaming file from '" + from + "' to '" + to + "' failed: Cannot delete file '" + from
+                                  + "' after copy succeeded");
         }
 
         return true;
@@ -448,8 +452,8 @@ public final class FileUtil {
     /**
      * Copies the file
      *
-     * @param from  the source file
-     * @param to    the destination file
+     * @param  from        the source file
+     * @param  to          the destination file
      * @throws IOException If an I/O error occurs during copy operation
      */
     public static void copyFile(File from, File to) throws IOException {
@@ -459,10 +463,10 @@ public final class FileUtil {
     /**
      * Deletes the file.
      * <p/>
-     * This implementation will attempt to delete the file up till three times with one second delay, which
-     * can mitigate problems on deleting files on some platforms such as Windows.
+     * This implementation will attempt to delete the file up till three times with one second delay, which can mitigate
+     * problems on deleting files on some platforms such as Windows.
      *
-     * @param file  the file to delete
+     * @param file the file to delete
      */
     public static boolean deleteFile(File file) {
         // do not try to delete non existing files
@@ -488,7 +492,6 @@ public final class FileUtil {
             count++;
         }
 
-
         if (LOG.isDebugEnabled() && count > 0) {
             LOG.debug("Tried {} to delete file: {} with result: {}", count, file, deleted);
         }
@@ -498,11 +501,11 @@ public final class FileUtil {
     /**
      * Is the given file an absolute file.
      * <p/>
-     * Will also work around issue on Windows to consider files on Windows starting with a \
-     * as absolute files. This makes the logic consistent across all OS platforms.
+     * Will also work around issue on Windows to consider files on Windows starting with a \ as absolute files. This
+     * makes the logic consistent across all OS platforms.
      *
-     * @param file  the file
-     * @return <tt>true</ff> if its an absolute path, <tt>false</tt> otherwise.
+     * @param  file the file
+     * @return      <tt>true</ff> if its an absolute path, <tt>false</tt> otherwise.
      */
     public static boolean isAbsolute(File file) {
         if (isWindows()) {
@@ -518,8 +521,8 @@ public final class FileUtil {
     /**
      * Creates a new file.
      *
-     * @param file the file
-     * @return <tt>true</tt> if created a new file, <tt>false</tt> otherwise
+     * @param  file        the file
+     * @return             <tt>true</tt> if created a new file, <tt>false</tt> otherwise
      * @throws IOException is thrown if error creating the new file
      */
     public static boolean createNewFile(File file) throws IOException {

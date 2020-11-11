@@ -19,6 +19,7 @@ package org.apache.camel.component.hazelcast.seda;
 import java.util.concurrent.BlockingQueue;
 
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -30,9 +31,11 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The hazelcast-seda component is used to access <a href="http://www.hazelcast.com/">Hazelcast</a> {@link BlockingQueue}.
+ * Asynchronously send/receive Exchanges between Camel routes running on potentially distinct JVMs/hosts backed by
+ * Hazelcast {@link BlockingQueue}.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-seda", title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName", label = "cache,datagrid")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast-seda", title = "Hazelcast SEDA", syntax = "hazelcast-seda:cacheName",
+             category = { Category.CACHE, Category.DATAGRID })
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
     private final BlockingQueue<Object> queue;
@@ -40,7 +43,8 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
     @UriParam
     private final HazelcastSedaConfiguration configuration;
 
-    public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri, final HazelcastDefaultComponent component, final HazelcastSedaConfiguration configuration) {
+    public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri,
+                                 final HazelcastDefaultComponent component, final HazelcastSedaConfiguration configuration) {
         super(hazelcastInstance, uri, component);
         this.queue = hazelcastInstance.getQueue(configuration.getQueueName());
         this.configuration = configuration;

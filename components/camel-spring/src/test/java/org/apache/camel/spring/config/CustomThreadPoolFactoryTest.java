@@ -24,9 +24,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.apache.camel.support.DefaultThreadPoolFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration
 public class CustomThreadPoolFactoryTest extends SpringRunWithTestSupport {
@@ -38,8 +40,9 @@ public class CustomThreadPoolFactoryTest extends SpringRunWithTestSupport {
     public void testCustomThreadPoolFactory() throws Exception {
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "foo");
 
-        MyCustomThreadPoolFactory factory = assertIsInstanceOf(MyCustomThreadPoolFactory.class, context.getExecutorServiceManager().getThreadPoolFactory());
-        assertTrue("Should use custom thread pool factory", factory.isInvoked());
+        MyCustomThreadPoolFactory factory = assertIsInstanceOf(MyCustomThreadPoolFactory.class,
+                context.getExecutorServiceManager().getThreadPoolFactory());
+        assertTrue(factory.isInvoked(), "Should use custom thread pool factory");
     }
 
     public static class MyCustomThreadPoolFactory extends DefaultThreadPoolFactory {
@@ -53,16 +56,18 @@ public class CustomThreadPoolFactoryTest extends SpringRunWithTestSupport {
         }
 
         @Override
-        public ExecutorService newThreadPool(int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize, 
-                                             boolean allowCoreThreadTimeOut, RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory) throws IllegalArgumentException {
+        public ExecutorService newThreadPool(
+                int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit, int maxQueueSize,
+                boolean allowCoreThreadTimeOut, RejectedExecutionHandler rejectedExecutionHandler, ThreadFactory threadFactory)
+                throws IllegalArgumentException {
             invoked = true;
-            return super.newThreadPool(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut, rejectedExecutionHandler, threadFactory);
+            return super.newThreadPool(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, allowCoreThreadTimeOut,
+                    rejectedExecutionHandler, threadFactory);
         }
 
         public boolean isInvoked() {
             return invoked;
         }
     }
-
 
 }

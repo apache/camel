@@ -18,7 +18,7 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class QuartzRouteRestartTest extends BaseQuartzTest {
 
@@ -53,7 +53,7 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
         return new RouteBuilder() {
             public void configure() {
                 from("quartz://groupName/timerName?cron=0/1+*+*+*+*+?").routeId("trigger")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

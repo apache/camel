@@ -26,11 +26,12 @@ import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * A {@link org.apache.camel.spi.ClassResolver} which loads type converters
- * from an instance that implements {@link org.apache.camel.TypeConverters}.
+ * A {@link org.apache.camel.spi.ClassResolver} which loads type converters from an instance that implements
+ * {@link org.apache.camel.TypeConverters}.
  * <p/>
  * This is used when adding converters manually using the
- * {@link org.apache.camel.impl.converter.BaseTypeConverterRegistry#addTypeConverters(org.apache.camel.TypeConverters)} method.
+ * {@link org.apache.camel.impl.converter.BaseTypeConverterRegistry#addTypeConverters(org.apache.camel.TypeConverters)}
+ * method.
  */
 public class TypeConvertersPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver {
 
@@ -96,13 +97,4 @@ public class TypeConvertersPackageScanClassResolver extends ServiceSupport imple
         // noop
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // noop
-    }
 }

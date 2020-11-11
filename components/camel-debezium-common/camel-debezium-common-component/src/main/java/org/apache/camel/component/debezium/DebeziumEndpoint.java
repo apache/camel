@@ -46,8 +46,9 @@ public abstract class DebeziumEndpoint<C extends EmbeddedDebeziumConfiguration> 
 
     @Override
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("Cannot produce from a DebeziumEndpoint: "
-                + getEndpointUri());
+        throw new UnsupportedOperationException(
+                "Cannot produce from a DebeziumEndpoint: "
+                                                + getEndpointUri());
     }
 
     @Override

@@ -25,14 +25,15 @@ import java.util.UUID;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AsyncTest extends BigQueryTestSupport {
     private static final String TABLE_ID = "asynctest";
@@ -49,7 +50,7 @@ public class AsyncTest extends BigQueryTestSupport {
     @Produce("direct:in")
     private ProducerTemplate producer;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         createBqTable(TABLE_ID);
     }
@@ -62,7 +63,7 @@ public class AsyncTest extends BigQueryTestSupport {
                         .to("seda:seda");
                 from("seda:seda")
                         .routeId("Async")
-                        .inOnly(bigqueryEndpoint)
+                        .to(ExchangePattern.InOnly, bigqueryEndpoint)
                         .log(LoggingLevel.INFO, "To sendresult")
                         .to(sendResult);
             }
@@ -88,7 +89,7 @@ public class AsyncTest extends BigQueryTestSupport {
 
         sendResult.assertIsSatisfied(4000);
 
-        for (Map object: objects) {
+        for (Map object : objects) {
             assertRowExist(TABLE_ID, object);
         }
     }

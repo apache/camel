@@ -23,8 +23,11 @@ import java.util.List;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.twitter.AbstractComponentVerifierTest;
 import org.apache.camel.component.twitter.AbstractTwitterComponent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TwitterSearchComponentVerifierTest extends AbstractComponentVerifierTest {
     @Override
@@ -39,10 +42,11 @@ public class TwitterSearchComponentVerifierTest extends AbstractComponentVerifie
 
         {
             // Parameters validation
-            ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, Collections.emptyMap());
+            ComponentVerifierExtension.Result result
+                    = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, Collections.emptyMap());
 
-            Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-            Assert.assertEquals(5, result.getErrors().size());
+            assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+            assertEquals(5, result.getErrors().size());
 
             List<String> expected = new LinkedList<>();
             expected.add("keywords");
@@ -55,18 +59,22 @@ public class TwitterSearchComponentVerifierTest extends AbstractComponentVerifie
                 expected.removeAll(error.getParameterKeys());
             }
 
-            Assert.assertTrue("Missing expected params: " + expected.toString(), expected.isEmpty());
+            assertTrue(expected.isEmpty(), "Missing expected params: " + expected.toString());
         }
 
         {
             // Connectivity validation
-            ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, Collections.emptyMap());
+            ComponentVerifierExtension.Result result
+                    = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, Collections.emptyMap());
 
-            Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-            Assert.assertEquals(1, result.getErrors().size());
-            Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-            Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-            Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof IllegalArgumentException);
+            assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+            assertEquals(1, result.getErrors().size());
+            assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION,
+                    result.getErrors().get(0).getCode());
+            assertNotNull(result.getErrors().get(0).getDetails()
+                    .get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+            assertTrue(result.getErrors().get(0).getDetails().get(
+                    ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof IllegalArgumentException);
         }
     }
 }

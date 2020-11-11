@@ -20,8 +20,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 /**
- * The {@link MessageProducer} resources for all {@link SjmsProducer}
- * classes.
+ * The {@link MessageProducer} resources for all {@link SjmsProducer} classes.
  */
 public class MessageProducerResources {
 
@@ -33,15 +32,15 @@ public class MessageProducerResources {
         this(session, messageProducer, null);
     }
 
-    public MessageProducerResources(Session session, MessageProducer messageProducer, TransactionCommitStrategy commitStrategy) {
+    public MessageProducerResources(Session session, MessageProducer messageProducer,
+                                    TransactionCommitStrategy commitStrategy) {
         this.session = session;
         this.messageProducer = messageProducer;
         this.commitStrategy = commitStrategy;
     }
 
     /**
-     * Gets the Session value of session for this instance of
-     * MessageProducerResources.
+     * Gets the Session value of session for this instance of MessageProducerResources.
      *
      * @return the session
      */
@@ -50,8 +49,7 @@ public class MessageProducerResources {
     }
 
     /**
-     * Gets the QueueSender value of queueSender for this instance of
-     * MessageProducerResources.
+     * Gets the QueueSender value of queueSender for this instance of MessageProducerResources.
      *
      * @return the queueSender
      */
@@ -60,8 +58,8 @@ public class MessageProducerResources {
     }
 
     /**
-     * Gets the TransactionCommitStrategy value of commitStrategy for this
-     * instance of SjmsProducer.MessageProducerResources.
+     * Gets the TransactionCommitStrategy value of commitStrategy for this instance of
+     * SjmsProducer.MessageProducerResources.
      *
      * @return the commitStrategy
      */

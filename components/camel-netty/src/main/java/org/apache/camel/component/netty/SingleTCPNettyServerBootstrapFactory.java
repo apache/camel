@@ -58,25 +58,31 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     }
 
     @Override
-    public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
+    public void init(
+            CamelContext camelContext, NettyServerBootstrapConfiguration configuration,
+            ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
 
         this.allChannels = configuration.getChannelGroup() != null
-            ? configuration.getChannelGroup()
-            : new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
+                ? configuration.getChannelGroup()
+                : new DefaultChannelGroup(
+                        SingleTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
     @Override
-    public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
+    public void init(
+            ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration,
+            ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
 
         this.allChannels = configuration.getChannelGroup() != null
-            ? configuration.getChannelGroup()
-            : new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
+                ? configuration.getChannelGroup()
+                : new DefaultChannelGroup(
+                        SingleTCPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
     @Override
@@ -174,7 +180,8 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         LOG.debug("Created ServerBootstrap {}", serverBootstrap);
 
         LOG.info("ServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-        ChannelFuture channelFuture = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort())).sync();
+        ChannelFuture channelFuture
+                = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort())).sync();
         channel = channelFuture.channel();
         // to keep track of all channels in use
         allChannels.add(channel);

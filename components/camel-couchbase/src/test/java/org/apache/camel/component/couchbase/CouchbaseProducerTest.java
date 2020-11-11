@@ -19,33 +19,39 @@ package org.apache.camel.component.couchbase;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.couchbase.client.CouchbaseClient;
-import net.spy.memcached.internal.OperationFuture;
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Collection;
+import com.couchbase.client.java.Scope;
+import com.couchbase.client.java.kv.MutationResult;
+import com.couchbase.client.java.kv.UpsertOptions;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_TTL;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CouchbaseProducerTest {
 
     @Mock
-    private CouchbaseClient client;
+    private Bucket client;
+
+    @Mock
+    private Collection collection;
+
+    @Mock
+    private Scope scope;
 
     @Mock
     private CouchbaseEndpoint endpoint;
@@ -57,159 +63,78 @@ public class CouchbaseProducerTest {
     private Message msg;
 
     @Mock
-    private OperationFuture<?> response;
+    private MutationResult response;
+    //    Observable<String> myStringObservable
 
     @Mock
-    private OperationFuture<Boolean> of;
+    private MutationResult of;
 
     private CouchbaseProducer producer;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
-        when(endpoint.getProducerRetryAttempts()).thenReturn(CouchbaseConstants.DEFAULT_PRODUCER_RETRIES);
+        lenient().when(endpoint.getProducerRetryAttempts()).thenReturn(CouchbaseConstants.DEFAULT_PRODUCER_RETRIES);
+        lenient().when(endpoint.getProducerRetryAttempts()).thenReturn(3);
+        lenient().when(endpoint.getProducerRetryPause()).thenReturn(200);
+        lenient().when(client.defaultCollection()).thenReturn(collection);
+
         producer = new CouchbaseProducer(endpoint, client, 0, 0);
-        when(exchange.getIn()).thenReturn(msg);
+        lenient().when(exchange.getIn()).thenReturn(msg);
     }
 
-    @Test(expected = CouchbaseException.class)
+    @Test
     public void testBodyMandatory() throws Exception {
-        producer.process(exchange);
+        assertThrows(CouchbaseException.class,
+                () -> producer.process(exchange));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testPersistToLowerThanSupported() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, -1, 0);
+        assertThrows(IllegalArgumentException.class,
+                () -> new CouchbaseProducer(endpoint, client, -1, 0));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testPersistToHigherThanSupported() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, 5, 0);
+        assertThrows(IllegalArgumentException.class,
+                () -> new CouchbaseProducer(endpoint, client, 5, 0));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testReplicateToLowerThanSupported() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, 0, -1);
+        assertThrows(IllegalArgumentException.class,
+                () -> new CouchbaseProducer(endpoint, client, 0, -1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testReplicateToHigherThanSupported() throws Exception {
-        producer = new CouchbaseProducer(endpoint, client, 0, 4);
+        assertThrows(IllegalArgumentException.class,
+                () -> new CouchbaseProducer(endpoint, client, 0, 4));
     }
 
     @Test
     public void testMaximumValuesForPersistToAndRepicateTo() throws Exception {
-        try {
-            producer = new CouchbaseProducer(endpoint, client, 4, 3);
-        } catch (IllegalArgumentException e) {
-            Assert.fail("Exception was thrown while testing maximum values for persistTo and replicateTo parameters " + e.getMessage());
-        }
+        producer = new CouchbaseProducer(endpoint, client, 4, 3);
     }
 
+    //
     @Test
     public void testExpiryTimeIsSet() throws Exception {
-        when(of.get()).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Exception {
-                return true;
-
-            }
-        });
-
-        when(client.set(anyString(), anyInt(), any(), any(), any())).thenReturn(of);
-
         // Mock out some headers so we can set an expiry
         int expiry = 5000;
         Map<String, Object> testHeaders = new HashMap<>();
         testHeaders.put("CCB_TTL", Integer.toString(expiry));
         when(msg.getHeaders()).thenReturn(testHeaders);
+        when(collection.upsert(anyString(), any(), any())).thenReturn(response);
         when(msg.getHeader(HEADER_TTL, String.class)).thenReturn(Integer.toString(expiry));
 
         when(endpoint.getId()).thenReturn("123");
         when(endpoint.getOperation()).thenReturn("CCB_PUT");
-        when(exchange.getOut()).thenReturn(msg);
+        when(exchange.getMessage()).thenReturn(msg);
+        ArgumentCaptor<UpsertOptions> options = ArgumentCaptor.forClass(UpsertOptions.class);
 
         producer.process(exchange);
 
-        verify(client).set(anyString(), eq(expiry), any(), any(), any());
-    }
-
-    @Test
-    public void testTimeOutRetryToException() throws Exception {
-
-        when(of.get()).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Exception {
-                throw new RuntimeException("Timed out waiting for operation");
-
-            }
-        });
-
-        when(client.set(anyString(), anyInt(), any(), any(), any())).thenReturn(of);
-        when(endpoint.getId()).thenReturn("123");
-        when(endpoint.getOperation()).thenReturn("CCB_PUT");
-        try {
-            producer.process(exchange);
-        } catch (Exception e) {
-            // do nothing
-            verify(of, times(3)).get();
-        }
-
-    }
-
-    @Test
-    public void testTimeOutRetryThenSuccess() throws Exception {
-
-        when(of.get()).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Exception {
-                throw new RuntimeException("Timed out waiting for operation");
-            }
-        }).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Exception {
-                return true;
-            }
-        });
-
-        when(client.set(anyString(), anyInt(), any(), any(), any())).thenReturn(of);
-        when(endpoint.getId()).thenReturn("123");
-        when(endpoint.getOperation()).thenReturn("CCB_PUT");
-        when(exchange.getOut()).thenReturn(msg);
-
-        producer.process(exchange);
-
-        verify(of, times(2)).get();
-        verify(msg).setBody(true);
-    }
-
-    @Test
-    public void testTimeOutRetryTwiceThenSuccess() throws Exception {
-
-        when(of.get()).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Exception {
-                throw new RuntimeException("Timed out waiting for operation");
-            }
-        }).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Exception {
-                throw new RuntimeException("Timed out waiting for operation");
-            }
-        }).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Exception {
-                return true;
-            }
-        });
-
-        when(client.set(anyString(), anyInt(), any(), any(), any())).thenReturn(of);
-        when(endpoint.getId()).thenReturn("123");
-        when(endpoint.getOperation()).thenReturn("CCB_PUT");
-        when(exchange.getOut()).thenReturn(msg);
-
-        producer.process(exchange);
-
-        verify(of, times(3)).get();
-        verify(msg).setBody(true);
+        verify(collection).upsert(anyString(), any(), options.capture());
     }
 }

@@ -21,8 +21,11 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for writing done files
@@ -30,7 +33,7 @@ import org.junit.Test;
 public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/done");
         super.setUp();
@@ -53,7 +56,7 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
 
         // done file should exist
         File file = new File("target/data/done/hello.txt.ready");
-        assertTrue("Done file should exist: " + file, file.exists());
+        assertTrue(file.exists(), "Done file should exist: " + file);
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -61,10 +64,10 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
-        assertFalse("Done file should be deleted: " + file, file.exists());
+        assertFalse(file.exists(), "Done file should be deleted: " + file);
     }
 
     @Override
@@ -72,7 +75,8 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=${file:name}.ready&initialDelay=0&delay=50").convertBodyTo(String.class).to("mock:result");
+                from("file:target/data/done?doneFileName=${file:name}.ready&initialDelay=0&delay=50")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

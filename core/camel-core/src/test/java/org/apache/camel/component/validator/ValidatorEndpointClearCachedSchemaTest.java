@@ -18,7 +18,6 @@ package org.apache.camel.component.validator;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,31 +25,24 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Tests whether the ValidatorEndpoint.clearCachedSchema() can be executed when
- * several sender threads are running.
+ * Tests whether the ValidatorEndpoint.clearCachedSchema() can be executed when several sender threads are running.
  */
 public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidatorEndpointClearCachedSchemaTest.class);
 
-    private CamelContext context;
-
     @Test
     public void testClearCachedSchema() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-
-        // send one message for start up to finish.
-        new Sender().run();
 
         // send with 5 sender threads in parallel and call clear cache in
         // between
@@ -59,7 +51,7 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         for (int i = 0; i < 5; i++) {
             senderPool.execute(new Sender());
             if (i == 2) {
-                /**
+                /*
                  * The clear cache thread calls xsdEndpoint.clearCachedSchema
                  */
                 executorClearCache.execute(new ClearCache());
@@ -69,17 +61,13 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         senderPool.shutdown();
         executorClearCache.shutdown();
 
-        senderPool.awaitTermination(2, TimeUnit.SECONDS);
-
-        List<Exchange> exchanges = mock.getExchanges();
-
-        assertNotNull(exchanges);
+        senderPool.awaitTermination(4, TimeUnit.SECONDS);
 
         // expect at least 5 correct sent messages, the messages sent before
         // the clearCacheSchema method is called will fail with a validation
         // error and will nor result in an exchange
-        assertTrue("Less then expected exchanges", exchanges.size() > 5);
-
+        mock.expectedMinimumMessageCount(5);
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -95,7 +83,8 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("validator:pd:somefile.xsd").convertBodyTo(String.class).to("log:after").to("mock:result");
+                from("direct:start").to("validator:pd:somefile.xsd").convertBodyTo(String.class).to("log:after")
+                        .to("mock:result");
 
             }
         };
@@ -150,7 +139,7 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         for (Endpoint endpoint : endpoints) {
             LOG.info("Endpoint URI: " + endpoint.getEndpointUri());
             if (endpoint.getEndpointUri().startsWith("validator:")) {
-                ValidatorEndpoint xsltEndpoint = (ValidatorEndpoint)endpoint;
+                ValidatorEndpoint xsltEndpoint = (ValidatorEndpoint) endpoint;
                 xsltEndpoint.clearCachedSchema();
                 LOG.info("schema cache cleared");
             }

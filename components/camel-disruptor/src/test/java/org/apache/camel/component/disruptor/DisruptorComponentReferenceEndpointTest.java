@@ -19,15 +19,18 @@ package org.apache.camel.component.disruptor;
 import java.util.Iterator;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class DisruptorComponentReferenceEndpointTest extends CamelTestSupport {
     @Test
-    public void testDisruptorComponentReference() throws Exception {
+    void testDisruptorComponentReference() throws Exception {
         final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
 
         final String fooKey = DisruptorComponent.getDisruptorKey("disruptor://foo");
@@ -37,7 +40,7 @@ public class DisruptorComponentReferenceEndpointTest extends CamelTestSupport {
         // add a second consumer on the endpoint
         context.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo?concurrentConsumers=1").routeId("foo2").to("mock:foo2");
             }
         });
@@ -66,10 +69,10 @@ public class DisruptorComponentReferenceEndpointTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo").routeId("foo").to("mock:foo");
 
                 from("disruptor:bar").routeId("bar").to("mock:bar");

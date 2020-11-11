@@ -36,8 +36,11 @@ import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultCamelContextTest extends TestSupport {
 
@@ -73,7 +76,7 @@ public class DefaultCamelContextTest extends TestSupport {
         ctx.disableJMX();
         ctx.start();
 
-        BeanComponent component = (BeanComponent)ctx.getComponent("bean", true, false);
+        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, false);
         // should be stopped
         assertTrue(component.getStatus().isStopped());
     }
@@ -84,7 +87,7 @@ public class DefaultCamelContextTest extends TestSupport {
         ctx.disableJMX();
         ctx.start();
 
-        BeanComponent component = (BeanComponent)ctx.getComponent("bean", true, true);
+        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, true);
         // should be started
         assertTrue(component.getStatus().isStarted());
     }
@@ -119,19 +122,11 @@ public class DefaultCamelContextTest extends TestSupport {
         assertNotNull(endpoint);
 
         try {
-            ctx.getEndpoint(null);
+            ctx.getEndpoint((String) null);
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             // expected
         }
-    }
-
-    @Test
-    public void testGetEndpointNoScheme() throws Exception {
-        DefaultCamelContext ctx = new DefaultCamelContext();
-        ctx.disableJMX();
-        Endpoint endpoint = ctx.getEndpoint("log");
-        assertNotNull(endpoint);
     }
 
     @Test
@@ -141,7 +136,9 @@ public class DefaultCamelContextTest extends TestSupport {
             camelContext.getEndpoint("xxx", Endpoint.class);
             fail();
         } catch (NoSuchEndpointException e) {
-            assertEquals("No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.", e.getMessage());
+            assertEquals(
+                    "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
+                    e.getMessage());
         }
     }
 
@@ -181,8 +178,8 @@ public class DefaultCamelContextTest extends TestSupport {
         try {
             ctx.getEndpoint("xxx:foo");
             fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getMessage().contains("No component found with scheme: xxx"));
+        } catch (NoSuchEndpointException e) {
+            assertTrue(e.getMessage().contains("No endpoint could be found for: xxx:"));
         }
     }
 
@@ -209,15 +206,15 @@ public class DefaultCamelContextTest extends TestSupport {
             }
         });
         ctx.start();
-        assertEquals("Should have one RouteService", 1, ctx.getRouteServices().size());
+        assertEquals(1, ctx.getRouteServices().size(), "Should have one RouteService");
         String routesString = ctx.getRoutes().toString();
         ctx.stop();
-        assertEquals("The RouteService should NOT be removed even when we stop", 1, ctx.getRouteServices().size());
+        assertEquals(1, ctx.getRouteServices().size(), "The RouteService should NOT be removed even when we stop");
         ctx.start();
-        assertEquals("Should have one RouteService", 1, ctx.getRouteServices().size());
-        assertEquals("The Routes should be same", routesString, ctx.getRoutes().toString());
+        assertEquals(1, ctx.getRouteServices().size(), "Should have one RouteService");
+        assertEquals(routesString, ctx.getRoutes().toString(), "The Routes should be same");
         ctx.stop();
-        assertEquals("The RouteService should NOT be removed even when we stop", 1, ctx.getRouteServices().size());
+        assertEquals(1, ctx.getRouteServices().size(), "The RouteService should NOT be removed even when we stop");
     }
 
     @Test
@@ -225,7 +222,7 @@ public class DefaultCamelContextTest extends TestSupport {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
         ctx.init();
-        assertNotNull("Should have a default name", ctx.getName());
+        assertNotNull(ctx.getName(), "Should have a default name");
         ctx.setName("foo");
         assertEquals("foo", ctx.getName());
 
@@ -237,7 +234,7 @@ public class DefaultCamelContextTest extends TestSupport {
     public void testVersion() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
-        assertNotNull("Should have a version", ctx.getVersion());
+        assertNotNull(ctx.getVersion(), "Should have a version");
     }
 
     @Test
@@ -280,7 +277,7 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(1, map.size());
 
         try {
-            ctx.hasEndpoint(null);
+            ctx.hasEndpoint((String) null);
             fail("Should have thrown exception");
         } catch (ResolveEndpointFailedException e) {
             // expected

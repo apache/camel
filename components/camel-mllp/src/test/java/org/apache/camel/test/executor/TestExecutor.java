@@ -41,7 +41,7 @@ public class TestExecutor {
         log.info("{} Runnables were active", runnables == null ? 0 : runnables.size());
         for (Runnable runnable : runnables) {
             if (runnable instanceof TestRunnable) {
-                log.info(((TestRunnable)runnable).status());
+                log.info(((TestRunnable) runnable).status());
             } else {
                 log.warn("Runnable is not instance of TestRunnable: {}", runnable.getClass().getName());
             }

@@ -105,6 +105,21 @@ public class KubernetesConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private Integer connectionTimeout;
 
+    @UriParam(label = "consumer")
+    private String crdName;
+
+    @UriParam(label = "consumer")
+    private String crdGroup;
+
+    @UriParam(label = "consumer")
+    private String crdScope;
+
+    @UriParam(label = "consumer")
+    private String crdVersion;
+
+    @UriParam(label = "consumer")
+    private String crdPlural;
+
     /**
      * Kubernetes Master url
      */
@@ -401,11 +416,65 @@ public class KubernetesConfiguration implements Cloneable {
     }
 
     /**
-     * Connection timeout in milliseconds to use when making requests to the
-     * Kubernetes API server.
+     * Connection timeout in milliseconds to use when making requests to the Kubernetes API server.
      */
     public void setConnectionTimeout(Integer connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
+    }
+
+    /**
+     * The Consumer CRD Resource name we would like to watch
+     */
+    public String getCrdName() {
+        return crdName;
+    }
+
+    public void setCrdName(String crdName) {
+        this.crdName = crdName;
+    }
+
+    /**
+     * The Consumer CRD Resource Group we would like to watch
+     */
+    public String getCrdGroup() {
+        return crdGroup;
+    }
+
+    public void setCrdGroup(String crdGroup) {
+        this.crdGroup = crdGroup;
+    }
+
+    /**
+     * The Consumer CRD Resource Scope we would like to watch
+     */
+    public String getCrdScope() {
+        return crdScope;
+    }
+
+    public void setCrdScope(String crdScope) {
+        this.crdScope = crdScope;
+    }
+
+    /**
+     * The Consumer CRD Resource Version we would like to watch
+     */
+    public String getCrdVersion() {
+        return crdVersion;
+    }
+
+    public void setCrdVersion(String crdVersion) {
+        this.crdVersion = crdVersion;
+    }
+
+    /**
+     * The Consumer CRD Resource Plural we would like to watch
+     */
+    public String getCrdPlural() {
+        return crdPlural;
+    }
+
+    public void setCrdPlural(String crdPlural) {
+        this.crdPlural = crdPlural;
     }
 
     // ****************************************
@@ -414,7 +483,7 @@ public class KubernetesConfiguration implements Cloneable {
 
     public KubernetesConfiguration copy() {
         try {
-            return (KubernetesConfiguration)super.clone();
+            return (KubernetesConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
@@ -422,11 +491,16 @@ public class KubernetesConfiguration implements Cloneable {
 
     @Override
     public String toString() {
-        return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient=" + kubernetesClient + ", username=" + username + ", password="
-               + password + ", operation=" + operation + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData + ", caCertFile=" + caCertFile + ", clientCertData="
-               + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo + ", clientKeyData=" + clientKeyData + ", clientKeyFile="
-               + clientKeyFile + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts=" + trustCerts + ", namespace=" + namespace
-               + ", labelKey=" + labelKey + ", labelValue=" + labelValue + ", resourceName=" + resourceName + ", portName=" + portName + ", dnsDomain=" + dnsDomain + ", poolSize="
+        return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient="
+               + kubernetesClient + ", username=" + username + ", password="
+               + password + ", operation=" + operation + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData
+               + ", caCertFile=" + caCertFile + ", clientCertData="
+               + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo + ", clientKeyData="
+               + clientKeyData + ", clientKeyFile="
+               + clientKeyFile + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
+               + trustCerts + ", namespace=" + namespace
+               + ", labelKey=" + labelKey + ", labelValue=" + labelValue + ", resourceName=" + resourceName + ", portName="
+               + portName + ", dnsDomain=" + dnsDomain + ", poolSize="
                + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
     }
 

@@ -32,8 +32,12 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.consumer.common.ConfigMapEvent;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KubernetesConfigMapsConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(KubernetesConfigMapsConsumer.class);
 
     private final Processor processor;
     private ExecutorService executor;
@@ -46,7 +50,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -62,7 +66,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        log.debug("Stopping Kubernetes ConfigMap Consumer");
+        LOG.debug("Stopping Kubernetes ConfigMap Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 if (configMapWatcher != null) {
@@ -85,15 +89,18 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch, Watcher<ConfigMap>> w = null;
+
+            FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch> w = null;
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
-                && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
-                w = getEndpoint().getKubernetesClient().configMaps().withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(),
-                                                                               getEndpoint().getKubernetesConfiguration().getLabelValue());
+                    && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
+                w = getEndpoint().getKubernetesClient().configMaps().withLabel(
+                        getEndpoint().getKubernetesConfiguration().getLabelKey(),
+                        getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
-                w = (FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch, Watcher<ConfigMap>>)getEndpoint().getKubernetesClient().configMaps()
-                    .withName(getEndpoint().getKubernetesConfiguration().getResourceName());
+                w = (FilterWatchListDeletable<ConfigMap, ConfigMapList, Boolean, Watch>) getEndpoint()
+                        .getKubernetesClient().configMaps()
+                        .withName(getEndpoint().getKubernetesConfiguration().getResourceName());
             }
             if (w == null) {
                 throw new RuntimeCamelException("Consumer label key or consumer resource name need to be set.");
@@ -117,7 +124,7 @@ public class KubernetesConfigMapsConsumer extends DefaultConsumer {
                 @Override
                 public void onClose(KubernetesClientException cause) {
                     if (cause != null) {
-                        log.error(cause.getMessage(), cause);
+                        LOG.error(cause.getMessage(), cause);
                     }
 
                 }

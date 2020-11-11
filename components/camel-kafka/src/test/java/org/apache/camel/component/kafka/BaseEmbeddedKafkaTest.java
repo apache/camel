@@ -18,56 +18,50 @@ package org.apache.camel.component.kafka;
 
 import java.util.Properties;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.kafka.embedded.EmbeddedKafkaBroker;
-import org.apache.camel.component.kafka.embedded.EmbeddedZookeeper;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.infra.kafka.services.KafkaService;
+import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BaseEmbeddedKafkaTest extends CamelTestSupport {
+public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
+    @RegisterExtension
+    public static KafkaService service = KafkaServiceFactory.createService();
 
-    @ClassRule
-    public static EmbeddedZookeeper zookeeper = new EmbeddedZookeeper(
-            AvailablePortFinder.getNextAvailable());
-
-    @ClassRule
-    public static EmbeddedKafkaBroker kafkaBroker =
-            new EmbeddedKafkaBroker(0,
-                    AvailablePortFinder.getNextAvailable(),
-                    zookeeper.getConnection(),
-                    new Properties());
+    protected static AdminClient kafkaAdminClient;
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
-        LOG.info("### Embedded Zookeeper connection: " + zookeeper.getConnection());
-        LOG.info("### Embedded Kafka cluster broker list: " + kafkaBroker.getBrokerList());
+        LOG.info("### Embedded Kafka cluster broker list: " + service.getBootstrapServers());
+        System.setProperty("bootstrapServers", service.getBootstrapServers());
+    }
+
+    @BeforeEach
+    public void setKafkaAdminClient() {
+        if (kafkaAdminClient == null) {
+            kafkaAdminClient = createAdminClient();
+        }
     }
 
     protected Properties getDefaultProperties() {
+        LOG.info("Connecting to Kafka {}", service.getBootstrapServers());
+
         Properties props = new Properties();
-        LOG.info("Connecting to Kafka port {}", kafkaBroker.getPort());
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBrokerList());
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
         props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
         props.put(ProducerConfig.ACKS_CONFIG, "1");
         return props;
-    }
-
-    @BindToRegistry("prop")
-    public Properties loadProperties() throws Exception {
-        Properties prop = new Properties();
-        prop.setProperty("zookeeperPort", "" + getZookeeperPort());
-        prop.setProperty("kafkaPort", "" + getKafkaPort());
-        return prop;
     }
 
     @Override
@@ -76,18 +70,22 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
         context.getPropertiesComponent().setLocation("ref:prop");
 
         KafkaComponent kafka = new KafkaComponent(context);
-        kafka.setBrokers("localhost:" + getKafkaPort());
+        kafka.init();
+        kafka.getConfiguration().setBrokers(service.getBootstrapServers());
         context.addComponent("kafka", kafka);
 
         return context;
     }
 
-    protected static int getZookeeperPort() {
-        return zookeeper.getPort();
+    @Deprecated
+    protected static String getBootstrapServers() {
+        return service.getBootstrapServers();
     }
 
-    protected static int getKafkaPort() {
-        return kafkaBroker.getPort();
-    }
+    private static AdminClient createAdminClient() {
+        final Properties properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
 
+        return KafkaAdminClient.create(properties);
+    }
 }

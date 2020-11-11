@@ -17,15 +17,15 @@
 package org.apache.camel.itest.async;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
 
 public class HttpAsyncTestSupport extends CamelTestSupport {
-    
+
     protected static int port;
 
-    @BeforeClass
-    public static void initPort() throws Exception {
+    @BeforeAll
+    public static void initPort() {
         port = AvailablePortFinder.getNextAvailable();
     }
 

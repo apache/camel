@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointFailOverLoadBalanceOnlyAsyncTest extends ContextTestSupport {
 
@@ -38,7 +41,7 @@ public class AsyncEndpointFailOverLoadBalanceOnlyAsyncTest extends ContextTestSu
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -53,12 +56,13 @@ public class AsyncEndpointFailOverLoadBalanceOnlyAsyncTest extends ContextTestSu
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 }).loadBalance().failover()
-                    // the last would succeed
-                    .to("async:bye:camel?failFirstAttempts=5", "async:bye:moon?failFirstAttempts=5", "async:bye:world").end().process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    }).to("log:after").to("mock:after").to("mock:result");
+                        // the last would succeed
+                        .to("async:bye:camel?failFirstAttempts=5", "async:bye:moon?failFirstAttempts=5", "async:bye:world")
+                        .end().process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

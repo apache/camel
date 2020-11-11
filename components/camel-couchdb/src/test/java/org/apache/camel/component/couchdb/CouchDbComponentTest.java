@@ -19,8 +19,13 @@ package org.apache.camel.component.couchdb;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CouchDbComponentTest extends CamelTestSupport {
 
@@ -30,23 +35,24 @@ public class CouchDbComponentTest extends CamelTestSupport {
     }
 
     @Test
-    public void testEndpointCreated() throws Exception {
+    void testEndpointCreated() throws Exception {
         Map<String, Object> params = new HashMap<>();
 
         String uri = "couchdb:http://localhost:5984/db";
         String remaining = "http://localhost:5984/db";
 
-        CouchDbEndpoint endpoint = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
+        CouchDbEndpoint endpoint
+                = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
         assertNotNull(endpoint);
     }
 
     @Test
-    public void testPropertiesSet() throws Exception {
+    void testPropertiesSet() throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("createDatabase", true);
         params.put("username", "coldplay");
         params.put("password", "chrism");
-        params.put("heartbeat", 1000);
+        params.put("heartbeat", "1000");
         params.put("style", "gothic");
         params.put("deletes", false);
         params.put("updates", false);
@@ -54,7 +60,8 @@ public class CouchDbComponentTest extends CamelTestSupport {
         String uri = "couchdb:http://localhost:14/db";
         String remaining = "http://localhost:14/db";
 
-        CouchDbEndpoint endpoint = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
+        CouchDbEndpoint endpoint
+                = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
         assertEquals("http", endpoint.getProtocol());
         assertEquals("localhost", endpoint.getHostname());
         assertEquals("db", endpoint.getDatabase());

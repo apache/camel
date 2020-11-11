@@ -21,6 +21,7 @@ import java.util.List;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -32,20 +33,21 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
- * The google-sheets component provides access to Google Sheets.
+ * Poll for changes in Google Sheets.
  */
 @UriEndpoint(firstVersion = "2.23.0",
              scheme = "google-sheets-stream",
              title = "Google Sheets Stream",
-             syntax = "google-sheets-stream:apiName",
+             syntax = "google-sheets-stream:apiName", apiSyntax = "apiName",
              consumerOnly = true,
-             label = "api,cloud,sheets")
+             category = { Category.API, Category.CLOUD, Category.SHEETS })
 public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
     private GoogleSheetsStreamConfiguration configuration;
 
-    public GoogleSheetsStreamEndpoint(String uri, GoogleSheetsStreamComponent component, GoogleSheetsStreamConfiguration endpointConfiguration) {
+    public GoogleSheetsStreamEndpoint(String uri, GoogleSheetsStreamComponent component,
+                                      GoogleSheetsStreamConfiguration endpointConfiguration) {
         super(uri, component);
         this.configuration = endpointConfiguration;
     }
@@ -63,15 +65,15 @@ public class GoogleSheetsStreamEndpoint extends ScheduledPollEndpoint {
     }
 
     public Sheets getClient() {
-        return ((GoogleSheetsStreamComponent)getComponent()).getClient(configuration);
+        return ((GoogleSheetsStreamComponent) getComponent()).getClient(configuration);
     }
 
     public GoogleSheetsClientFactory getClientFactory() {
-        return ((GoogleSheetsStreamComponent)getComponent()).getClientFactory();
+        return ((GoogleSheetsStreamComponent) getComponent()).getClientFactory();
     }
 
     public void setClientFactory(GoogleSheetsClientFactory clientFactory) {
-        ((GoogleSheetsStreamComponent)getComponent()).setClientFactory(clientFactory);
+        ((GoogleSheetsStreamComponent) getComponent()).setClientFactory(clientFactory);
     }
 
     public GoogleSheetsStreamConfiguration getConfiguration() {

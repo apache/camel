@@ -78,7 +78,9 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
                     AttachmentMessage am = message.getExchange().getMessage(AttachmentMessage.class);
                     am.addAttachmentObject(part.getName(), attachment);
                 } else {
-                    LOG.debug("Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}", fileName, getFileNameExtWhitelist());
+                    LOG.debug(
+                            "Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}",
+                            fileName, getFileNameExtWhitelist());
                 }
             }
         } catch (Exception e) {

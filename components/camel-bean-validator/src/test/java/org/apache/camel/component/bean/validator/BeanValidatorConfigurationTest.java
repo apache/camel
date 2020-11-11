@@ -27,9 +27,15 @@ import javax.validation.Path.Node;
 import javax.validation.TraversableResolver;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.condition.OS.AIX;
 
 public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
@@ -41,7 +47,7 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     private ConstraintValidatorFactory constraintValidatorFactory;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.messageInterpolator = new MyMessageInterpolator();
         this.traversableResolver = new MyTraversableResolver();
@@ -50,32 +56,27 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @DisabledOnOs(AIX)
     @Test
-    public void configureWithDefaults() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
-
+    void configureWithDefaults() {
         BeanValidatorEndpoint endpoint = context.getEndpoint("bean-validator://x", BeanValidatorEndpoint.class);
         assertNull(endpoint.getGroup());
     }
 
+    @DisabledOnOs(AIX)
     @Test
-    public void configureBeanValidator() throws Exception {
-        if (isPlatform("aix")) {
-            // cannot run on aix
-            return;
-        }
-
+    void configureBeanValidator() {
         BeanValidatorEndpoint endpoint = context
-            .getEndpoint("bean-validator://x" + "?group=org.apache.camel.component.bean.validator.OptionalChecks" + "&messageInterpolator=#myMessageInterpolator"
-                         + "&traversableResolver=#myTraversableResolver" + "&constraintValidatorFactory=#myConstraintValidatorFactory", BeanValidatorEndpoint.class);
+                .getEndpoint("bean-validator://x" + "?group=org.apache.camel.component.bean.validator.OptionalChecks"
+                             + "&messageInterpolator=#myMessageInterpolator"
+                             + "&traversableResolver=#myTraversableResolver"
+                             + "&constraintValidatorFactory=#myConstraintValidatorFactory",
+                        BeanValidatorEndpoint.class);
 
         assertEquals("org.apache.camel.component.bean.validator.OptionalChecks", endpoint.getGroup());
-        assertSame(endpoint.getMessageInterpolator(), this.messageInterpolator);
-        assertSame(endpoint.getTraversableResolver(), this.traversableResolver);
-        assertSame(endpoint.getConstraintValidatorFactory(), this.constraintValidatorFactory);
+        assertSame(this.messageInterpolator, endpoint.getMessageInterpolator());
+        assertSame(this.traversableResolver, endpoint.getTraversableResolver());
+        assertSame(this.constraintValidatorFactory, endpoint.getConstraintValidatorFactory());
     }
 
     class MyMessageInterpolator implements MessageInterpolator {
@@ -94,12 +95,16 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     class MyTraversableResolver implements TraversableResolver {
 
         @Override
-        public boolean isCascadable(Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject, ElementType elementType) {
+        public boolean isCascadable(
+                Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject,
+                ElementType elementType) {
             return false;
         }
 
         @Override
-        public boolean isReachable(Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject, ElementType elementType) {
+        public boolean isReachable(
+                Object traversableObject, Node traversableProperty, Class<?> rootBeanType, Path pathToTraversableObject,
+                ElementType elementType) {
             return false;
         }
     }

@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class InfinispanRemoteAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanRemoteAggregationRepository.class.getName());
-    
+
     private boolean useRecovery = true;
     private RemoteCacheManager manager;
     private String cacheName;
@@ -48,15 +48,16 @@ public class InfinispanRemoteAggregationRepository extends ServiceSupport implem
     private Configuration configuration;
 
     /**
-     * Creates new {@link InfinispanRemoteAggregationRepository} that defaults to non-optimistic locking
-     * with recoverable behavior and a local Infinispan cache. 
+     * Creates new {@link InfinispanRemoteAggregationRepository} that defaults to non-optimistic locking with
+     * recoverable behavior and a local Infinispan cache.
      */
     public InfinispanRemoteAggregationRepository() {
     }
-    
+
     /**
-     * Creates new {@link InfinispanRemoteAggregationRepository} that defaults to non-optimistic locking
-     * with recoverable behavior and a local Infinispan cache. 
+     * Creates new {@link InfinispanRemoteAggregationRepository} that defaults to non-optimistic locking with
+     * recoverable behavior and a local Infinispan cache.
+     * 
      * @param cacheName cache name
      */
     public InfinispanRemoteAggregationRepository(final String cacheName) {
@@ -116,7 +117,7 @@ public class InfinispanRemoteAggregationRepository extends ServiceSupport implem
     public void setRecoveryInterval(long interval) {
         this.recoveryInterval = interval;
     }
-    
+
     @Override
     public long getRecoveryIntervalInMillis() {
         return recoveryInterval;
@@ -166,7 +167,7 @@ public class InfinispanRemoteAggregationRepository extends ServiceSupport implem
         } else {
             manager = new RemoteCacheManager(configuration);
             manager.start();
-        }        
+        }
         if (ObjectHelper.isEmpty(cacheName)) {
             cache = manager.getCache();
         } else {
@@ -187,7 +188,7 @@ public class InfinispanRemoteAggregationRepository extends ServiceSupport implem
         }
         return exchange;
     }
-    
+
     public RemoteCacheManager getManager() {
         return manager;
     }

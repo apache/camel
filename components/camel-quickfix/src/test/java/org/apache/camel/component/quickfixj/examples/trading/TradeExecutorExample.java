@@ -50,89 +50,87 @@ public class TradeExecutorExample {
     public static void main(String[] args) throws Exception {
         new TradeExecutorExample().sendMessage();
     }
-    
+
     public void sendMessage() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
         context.addComponent("trade-executor", new TradeExecutorComponent());
-        
+
         final CountDownLatch logonLatch = new CountDownLatch(2);
         final CountDownLatch executionReportLatch = new CountDownLatch(2);
-        
+
         RouteBuilder routes = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // Release latch when session logon events are received
-                from("quickfix:examples/inprocess.cfg").
-                    filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon)).
-                    bean(new CountDownLatchDecrementer("logon", logonLatch));
+                from("quickfix:examples/inprocess.cfg")
+                        .filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon))
+                        .bean(new CountDownLatchDecrementer("logon", logonLatch));
 
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER").
-                    filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived)).
-                    to("trade-executor:market");
+                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER").filter(
+                        header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived))
+                        .to("trade-executor:market");
 
                 from("trade-executor:market").to("quickfix:examples/inprocess.cfg");
-                
+
                 // Logger app messages as JSON
-                from("quickfix:examples/inprocess.cfg").
-                    filter(PredicateBuilder.or(
+                from("quickfix:examples/inprocess.cfg").filter(PredicateBuilder.or(
                         header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived),
-                        header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageSent))).
-                    bean(new QuickfixjMessageJsonPrinter());
-                
+                        header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageSent)))
+                        .bean(new QuickfixjMessageJsonPrinter());
+
                 // Release latch when trader receives execution report
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").
-                    filter(PredicateBuilder.and(
+                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").filter(PredicateBuilder.and(
                         header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.AppMessageReceived),
-                        header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.EXECUTION_REPORT))).
-                    bean(new CountDownLatchDecrementer("execution report", executionReportLatch));
+                        header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.EXECUTION_REPORT)))
+                        .bean(new CountDownLatchDecrementer("execution report", executionReportLatch));
             }
         };
-        
+
         context.addRoutes(routes);
-        
+
         LOG.info("Starting Camel context");
         context.start();
-        
+
         // This is not strictly necessary, but it prevents the need for session
         // synchronization due to app messages being sent before being logged on
         if (!logonLatch.await(5, TimeUnit.SECONDS)) {
             throw new IllegalStateException("Logon did not complete");
         }
-        
+
         String gatewayUri = "quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET";
         Endpoint gatewayEndpoint = context.getEndpoint(gatewayUri);
         Producer producer = gatewayEndpoint.createProducer();
-        
+
         LOG.info("Sending order");
-        
+
         NewOrderSingle order = createNewOrderMessage();
         Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(order);
-        producer.process(exchange);            
+        producer.process(exchange);
 
         if (!executionReportLatch.await(5, TimeUnit.SECONDS)) {
             throw new IllegalStateException("Did not receive execution reports");
         }
-        
+
         LOG.info("Message received, shutting down Camel context");
-        
+
         context.stop();
-        
+
         LOG.info("Order execution example complete");
     }
 
     private NewOrderSingle createNewOrderMessage() {
         NewOrderSingle order = new NewOrderSingle(
-            new ClOrdID("CLIENT_ORDER_ID"), 
-            new HandlInst('1'), 
-            new Symbol("GOOG"), 
-            new Side(Side.BUY), 
-            new TransactTime(LocalDateTime.now()), 
-            new OrdType(OrdType.LIMIT));
-        
+                new ClOrdID("CLIENT_ORDER_ID"),
+                new HandlInst('1'),
+                new Symbol("GOOG"),
+                new Side(Side.BUY),
+                new TransactTime(LocalDateTime.now()),
+                new OrdType(OrdType.LIMIT));
+
         order.set(new OrderQty(10));
         order.set(new Price(300.00));
-        
+
         return order;
     }
 }

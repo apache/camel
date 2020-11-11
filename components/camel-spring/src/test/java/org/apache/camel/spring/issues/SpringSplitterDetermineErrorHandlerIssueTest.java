@@ -17,7 +17,7 @@
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,7 +28,8 @@ public class SpringSplitterDetermineErrorHandlerIssueTest extends SpringTestSupp
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringSplitterDetermineErrorHandlerIssueTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/issues/SpringSplitterDetermineErrorHandlerIssueTest.xml");
     }
 
     @Test

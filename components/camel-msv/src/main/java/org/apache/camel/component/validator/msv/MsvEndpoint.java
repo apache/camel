@@ -18,6 +18,7 @@ package org.apache.camel.component.validator.msv;
 
 import javax.xml.XMLConstants;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.component.validator.ValidatorEndpoint;
 import org.apache.camel.spi.UriEndpoint;
@@ -25,9 +26,10 @@ import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 
 /**
- * Validates the payload of a message using the MSV Library.
+ * Validate XML payloads using Multi-Schema Validator (MSV).
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "msv", title = "MSV", syntax = "msv:resourceUri", producerOnly = true, label = "validation")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "msv", title = "MSV", syntax = "msv:resourceUri", producerOnly = true,
+             category = { Category.VALIDATION })
 public class MsvEndpoint extends ValidatorEndpoint {
 
     public MsvEndpoint(String endpointUri, Component component, String resourceUri) {
@@ -41,8 +43,8 @@ public class MsvEndpoint extends ValidatorEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    protected void doInit() throws Exception {
+        super.doInit();
 
         // use relax schema factory by default
         if (getSchemaFactory() == null) {

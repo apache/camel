@@ -20,9 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class FileAsyncStressFileDropper extends ContextTestSupport {
 
     private static int counter;
@@ -60,8 +60,10 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // generate a new file continuously
-                from("timer:foo?period=50").setHeader(Exchange.FILE_NAME, method(FileAsyncStressFileDropper.class, "getFilename")).setBody(constant("Hello World"))
-                    .to("file:target/data/filestress").to("mock:result");
+                from("timer:foo?period=50")
+                        .setHeader(Exchange.FILE_NAME, method(FileAsyncStressFileDropper.class, "getFilename"))
+                        .setBody(constant("Hello World"))
+                        .to("file:target/data/filestress").to("mock:result");
             }
         };
     }

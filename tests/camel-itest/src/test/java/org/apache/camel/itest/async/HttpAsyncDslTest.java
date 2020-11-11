@@ -16,25 +16,27 @@
  */
 package org.apache.camel.itest.async;
 
-import javax.jms.ConnectionFactory;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.itest.CamelJmsTestHelper;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpAsyncDslTest extends CamelTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     private static volatile String order = "";
 
     @Test
-    public void testRequestOnly() throws Exception {
+    void testRequestOnly() throws Exception {
         getMockEndpoint("mock:validate").expectedMessageCount(1);
         // even though its request only the message is still continued being processed
         getMockEndpoint("mock:order").expectedMessageCount(1);
@@ -50,7 +52,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRequestReply() throws Exception {
+    void testRequestReply() throws Exception {
         getMockEndpoint("mock:validate").expectedMessageCount(1);
         // even though its request only the message is still continued being processed
         getMockEndpoint("mock:order").expectedMessageCount(1);
@@ -66,7 +68,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         order = "";
         super.setUp();
@@ -74,7 +76,7 @@ public class HttpAsyncDslTest extends CamelTestSupport {
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
-        Registry registry =  new SimpleRegistry();
+        Registry registry = new SimpleRegistry();
         registry.bind("validateOrder", new MyValidateOrderBean());
         registry.bind("handleOrder", new MyHandleOrderBean());
         return registry;
@@ -83,32 +85,32 @@ public class HttpAsyncDslTest extends CamelTestSupport {
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        JmsComponent amq = jmsServiceExtension.getComponent();
+
         amq.setCamelContext(context);
         registry.bind("jms", amq);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // START SNIPPET: e1
 
                 // list on the JMS queue for new orders
                 from("jms:queue:order")
-                    // do some sanity check validation
-                    .to("bean:validateOrder")
-                    .to("mock:validate")
-                    // use multi threading with a pool size of 20
-                    // turn the route async as some others do not expect a reply
-                    // and a few does then we can use the threads DSL as a turning point
-                    // if the JMS ReplyTo was set then we expect a reply, otherwise not
-                    // use a pool of 20 threads for the point forward
-                    .threads(20)
-                    // do some CPU heavy processing of the message (we simulate and delay just 500 ms)
-                    .delay(500).to("bean:handleOrder").to("mock:order");
+                        // do some sanity check validation
+                        .to("bean:validateOrder")
+                        .to("mock:validate")
+                        // use multi threading with a pool size of 20
+                        // turn the route async as some others do not expect a reply
+                        // and a few does then we can use the threads DSL as a turning point
+                        // if the JMS ReplyTo was set then we expect a reply, otherwise not
+                        // use a pool of 20 threads for the point forward
+                        .threads(20)
+                        // do some CPU heavy processing of the message (we simulate and delay just 500 ms)
+                        .delay(500).to("bean:handleOrder").to("mock:order");
                 // END SNIPPET: e1
             }
         };

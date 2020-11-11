@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  * Represents a list of TLS/SSL cipher suite names.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "secureSocketProtocolsParameters", propOrder = {"secureSocketProtocol"})
+@XmlType(name = "secureSocketProtocolsParameters", propOrder = { "secureSocketProtocol" })
 public class SecureSocketProtocolsParametersDefinition {
 
     private List<String> secureSocketProtocol;

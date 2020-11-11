@@ -23,7 +23,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.validation.SchemaReader;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport {
 
@@ -36,7 +36,8 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
 
     protected String ssrfPayloud = "<!DOCTYPE roottag PUBLIC \"-//VSR//PENTEST//EN\" \"http://notex.isting/test\">\n" + payloud;
 
-    protected String xxePayloud = "<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"http://notex.istinghost/test\">]>\n" + getPayloudPart("&file;");
+    protected String xxePayloud
+            = "<!DOCTYPE updateProfile [<!ENTITY file SYSTEM \"http://notex.istinghost/test\">]>\n" + getPayloudPart("&file;");
 
     private final boolean accessExternalDTD;
 
@@ -49,7 +50,7 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -69,8 +70,10 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
                 if (accessExternalDTD) {
                     getContext().getGlobalOptions().put(SchemaReader.ACCESS_EXTERNAL_DTD, "true");
                 }
-                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/schema.xsd").to("mock:valid").doCatch(ValidationException.class).to("mock:invalid")
-                    .doCatch(UnknownHostException.class).to("mock:unknownHostException").doFinally().to("mock:finally").end();
+                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/schema.xsd").to("mock:valid")
+                        .doCatch(ValidationException.class).to("mock:invalid")
+                        .doCatch(UnknownHostException.class).to("mock:unknownHostException").doFinally().to("mock:finally")
+                        .end();
             }
         };
     }

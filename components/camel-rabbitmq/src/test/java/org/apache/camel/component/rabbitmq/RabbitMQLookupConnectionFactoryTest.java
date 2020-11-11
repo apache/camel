@@ -19,8 +19,11 @@ package org.apache.camel.component.rabbitmq;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class RabbitMQLookupConnectionFactoryTest extends CamelTestSupport {
 

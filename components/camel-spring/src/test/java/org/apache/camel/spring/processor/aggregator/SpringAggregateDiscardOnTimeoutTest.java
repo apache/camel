@@ -25,7 +25,8 @@ public class SpringAggregateDiscardOnTimeoutTest extends AggregateDiscardOnTimeo
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateDiscardOnTimeoutTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateDiscardOnTimeoutTest.xml");
     }
 
 }

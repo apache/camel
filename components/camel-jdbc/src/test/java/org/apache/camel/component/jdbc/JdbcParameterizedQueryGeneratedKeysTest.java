@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JdbcParameterizedQueryGeneratedKeysTest extends AbstractJdbcGeneratedKeysTest {
 
@@ -38,17 +38,20 @@ public class JdbcParameterizedQueryGeneratedKeysTest extends AbstractJdbcGenerat
 
     @Test
     public void testRetrieveGeneratedKeysWithStringGeneratedColumns() throws Exception {
-        super.testRetrieveGeneratedKeysWithStringGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
+        super.testRetrieveGeneratedKeysWithStringGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)",
+                VALUE_MAP);
     }
 
     @Test
     public void testRetrieveGeneratedKeysWithIntGeneratedColumns() throws Exception {
-        super.testRetrieveGeneratedKeysWithIntGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
+        super.testRetrieveGeneratedKeysWithIntGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)",
+                VALUE_MAP);
     }
 
     @Test
     public void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown() throws Exception {
-        super.testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown("insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
+        super.testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown(
+                "insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
     }
 
     @Override

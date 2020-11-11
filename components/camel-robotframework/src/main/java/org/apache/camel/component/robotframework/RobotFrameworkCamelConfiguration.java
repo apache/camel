@@ -160,6 +160,12 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     @UriParam(defaultValue = "false")
     private boolean noStatusReturnCode;
 
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
+
+    @UriParam(defaultValue = "false")
+    private boolean allowContextMapAll;
+
     public String getName() {
         return name;
     }
@@ -355,93 +361,79 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Sets free metadata for the top level tests suites.
-     * comma seperated list of string resulting as List<String>
+     * Sets free metadata for the top level tests suites. comma seperated list of string resulting as List<String>
      */
     public void setMetadata(String metadata) {
         this.metadata = metadata;
     }
 
     /**
-     * Sets the tags(s) to all executed tests cases.
-     * List<String>
+     * Sets the tags(s) to all executed tests cases. List<String>
      */
     public void setTags(String tags) {
         this.tags = tags;
     }
 
     /**
-     * Selects the tests cases by name.
-     * List<String>
+     * Selects the tests cases by name. List<String>
      */
     public void setTests(String tests) {
         this.tests = tests;
     }
 
-
     /**
-     * Selects the tests suites by name.
-     * List<String>
+     * Selects the tests suites by name. List<String>
      */
     public void setSuites(String suites) {
         this.suites = suites;
     }
 
     /**
-     * Selects the tests cases by tags.
-     * List<String>
+     * Selects the tests cases by tags. List<String>
      */
     public void setIncludes(String includes) {
         this.includes = includes;
     }
 
     /**
-     * Selects the tests cases by tags.
-     * List<String>
+     * Selects the tests cases by tags. List<String>
      */
     public void setExcludes(String excludes) {
         this.excludes = excludes;
     }
 
-    
     /**
-     * Tests that have the given tags are considered critical.
-     * List<String>
+     * Tests that have the given tags are considered critical. List<String>
      */
     public void setCriticalTags(String criticalTags) {
         this.criticalTags = criticalTags;
     }
 
     /**
-     * Tests that have the given tags are not critical.
-     * List<String>
+     * Tests that have the given tags are not critical. List<String>
      */
     public void setNonCriticalTags(String nonCriticalTags) {
         this.nonCriticalTags = nonCriticalTags;
     }
 
-
     /**
-     * Sets the execution mode for this tests run. Note that this setting has
-     * been deprecated in Robot Framework 2.8. Use separate dryryn,
-     * skipTeardownOnExit, exitOnFailure, and randomize settings instead.
+     * Sets the execution mode for this tests run. Note that this setting has been deprecated in Robot Framework 2.8.
+     * Use separate dryryn, skipTeardownOnExit, exitOnFailure, and randomize settings instead.
      */
     public void setRunMode(String runMode) {
         this.runMode = runMode;
     }
 
     /**
-     * Sets dryrun mode on use. In the dry run mode tests are run without
-     * executing keywords originating from test libraries. Useful for
-     * validating test data syntax.
+     * Sets dryrun mode on use. In the dry run mode tests are run without executing keywords originating from test
+     * libraries. Useful for validating test data syntax.
      */
     public void setDryrun(boolean dryrun) {
         this.dryrun = dryrun;
     }
 
     /**
-     * Sets whether the teardowns are skipped if the test
-     * execution is prematurely stopped.
+     * Sets whether the teardowns are skipped if the test execution is prematurely stopped.
      */
     public void setSkipTeardownOnExit(boolean skipTeardownOnExit) {
         this.skipTeardownOnExit = skipTeardownOnExit;
@@ -455,24 +447,21 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the test execution order to be randomized. Valid values are all,
-     * suite, and test
+     * Sets the test execution order to be randomized. Valid values are all, suite, and test
      */
     public void setRandomize(String randomize) {
         this.randomize = randomize;
     }
 
     /**
-     * Sets individual variables. Use the format "name:value"
-     * List<String>
+     * Sets individual variables. Use the format "name:value" List<String>
      */
     public void setVariables(String variables) {
         this.variables = variables;
     }
 
     /**
-     * Sets variables using variables files. Use the format "path:args"
-     * List<String>
+     * Sets variables using variables files. Use the format "path:args" List<String>
      */
     public void setVariableFiles(String variableFiles) {
         this.variableFiles = variableFiles;
@@ -507,9 +496,9 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the path to the generated XUnit compatible result file, relative to outputDirectory. The
-     * file is in xml format. By default, the file name is derived from the testCasesDirectory
-     * parameter, replacing blanks in the directory name by underscores.
+     * Sets the path to the generated XUnit compatible result file, relative to outputDirectory. The file is in xml
+     * format. By default, the file name is derived from the testCasesDirectory parameter, replacing blanks in the
+     * directory name by underscores.
      */
     public void setXunitFile(File xunitFile) {
         this.xunitFile = xunitFile;
@@ -579,50 +568,43 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Includes only these tags in the Statistics by Tag and Test Details by Tag tables in outputs.
-     * List<String>
+     * Includes only these tags in the Statistics by Tag and Test Details by Tag tables in outputs. List<String>
      */
     public void setTagStatIncludes(String tagStatIncludes) {
         this.tagStatIncludes = tagStatIncludes;
     }
 
     /**
-     * Excludes these tags from the Statistics by Tag and Test Details by Tag tables in outputs.
-     * List<String>
+     * Excludes these tags from the Statistics by Tag and Test Details by Tag tables in outputs. List<String>
      */
     public void setTagStatExcludes(String tagStatExcludes) {
         this.tagStatExcludes = tagStatExcludes;
     }
 
     /**
-     * Creates combined statistics based on tags. Use the format "tags:title"
-     * List<String>
+     * Creates combined statistics based on tags. Use the format "tags:title" List<String>
      */
     public void setCombinedTagStats(String combinedTagStats) {
         this.combinedTagStats = combinedTagStats;
     }
 
     /**
-     * Adds documentation to the specified tags.
-     * List<String>
+     * Adds documentation to the specified tags. List<String>
      */
     public void setTagDocs(String tagDocs) {
         this.tagDocs = tagDocs;
     }
 
     /**
-     * Adds external links to the Statistics by Tag table in outputs. Use the format
-     * "pattern:link:title"
-     * List<String>
+     * Adds external links to the Statistics by Tag table in outputs. Use the format "pattern:link:title" List<String>
      */
     public void setTagStatLinks(String tagStatLinks) {
         this.tagStatLinks = tagStatLinks;
     }
 
     /**
-     * Sets multiple listeners for monitoring tests execution. Use the format "ListenerWithArgs:arg1:arg2" or
-     * simply "ListenerWithoutArgs"
-     * List<String>
+     * Sets multiple listeners for monitoring tests execution. Use the format "ListenerWithArgs:arg1:arg2" or simply
+     * "ListenerWithoutArgs" List<String>
      */
     public void setListeners(String listeners) {
         this.listeners = listeners;
@@ -650,8 +632,7 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Using ANSI colors in console. Normally colors work in unixes but not in Windows. Default is
-     * 'on'.
+     * Using ANSI colors in console. Normally colors work in unixes but not in Windows. Default is 'on'.
      * <ul>
      * <li>'on' - use colors in unixes but not in Windows</li>
      * <li>'off' - never use colors</li>
@@ -670,8 +651,8 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Executes tests also if the top level test suite is empty. Useful e.g. with
-     * --include/--exclude when it is not an error that no test matches the condition.
+     * Executes tests also if the top level test suite is empty. Useful e.g. with --include/--exclude when it is not an
+     * error that no test matches the condition.
      */
     public void setRunEmptySuite(boolean runEmptySuite) {
         this.runEmptySuite = runEmptySuite;
@@ -685,16 +666,42 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * If true, sets the return code to zero regardless of failures in test cases. Error codes are
-     * returned normally.
+     * If true, sets the return code to zero regardless of failures in test cases. Error codes are returned normally.
      */
     public void setNoStatusReturnCode(boolean noStatusReturnCode) {
         this.noStatusReturnCode = noStatusReturnCode;
     }
 
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
+    }
+
+    public boolean isAllowContextMapAll() {
+        return allowContextMapAll;
+    }
+
+    /**
+     * Sets whether the context map should allow access to all details. By default only the message body and headers can
+     * be accessed. This option can be enabled for full access to the current Exchange and CamelContext. Doing so impose
+     * a potential security risk as this opens access to the full power of CamelContext API.
+     */
+    public void setAllowContextMapAll(boolean allowContextMapAll) {
+        this.allowContextMapAll = allowContextMapAll;
+    }
+
     public RobotFrameworkCamelConfiguration copy() {
         try {
-            return (RobotFrameworkCamelConfiguration)super.clone();
+            return (RobotFrameworkCamelConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

@@ -19,17 +19,20 @@ package org.apache.camel.component.rest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.apache.camel.Component;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.CatalogVerifierCustomizer;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.support.JSonSchemaHelper;
+import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 
@@ -74,40 +77,56 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
     // Helpers
     // *********************************
 
-    protected void verifyUnderlyingComponent(Scope scope, ResultBuilder builder, Map<String, Object> parameters) {
+    protected void verifyUnderlyingComponent(Scope scope, ResultBuilder builder, Map<String, Object> map) {
         // componentName is required for validation even at runtime camel might
         // be able to find a suitable component at runtime.
-        String componentName = (String)parameters.get("componentName");
+
+        String componentName = (String) map.get("componentName");
         if (ObjectHelper.isNotEmpty(componentName)) {
+
+            // make a defensive copy of the parameters as we mutate the map
+            final Map<String, Object> parameters = new HashMap<>(map);
+
             try {
                 final Component component = getTransportComponent(componentName);
                 final Optional<ComponentVerifierExtension> extension = component.getExtension(ComponentVerifierExtension.class);
 
                 if (extension.isPresent()) {
                     final ComponentVerifierExtension verifier = extension.get();
-                    final RuntimeCamelCatalog catalog = getCamelContext().getExtension(RuntimeCamelCatalog.class);
+                    final RuntimeCamelCatalog catalog
+                            = getCamelContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
                     final String json = catalog.componentJSonSchema("rest");
-                    final Map<String, Object> restParameters = new HashMap<>(parameters);
+                    final ComponentModel model = JsonMapper.generateComponentModel(json);
 
-                    for (Map<String, String> m : JSonSchemaHelper.parseJsonSchema("componentProperties", json, true)) {
-                        String name = m.get("name");
-                        Object val = restParameters.remove(name);
-                        if (val != null) {
-                            // Add rest prefix to properties belonging to the rest
-                            // component so the underlying component know we want
-                            // to validate rest-related stuffs.
-                            restParameters.put("rest." + name, parameters.get(name));
-                        }
-                    }
-                    for (Map<String, String> m : JSonSchemaHelper.parseJsonSchema("properties", json, true)) {
-                        String name = m.get("name");
-                        Object val = restParameters.remove(name);
-                        if (val != null) {
-                            // Add rest prefix to properties belonging to the rest
-                            // component so the underlying component know we want
-                            // to validate rest-related stuffs.
-                            restParameters.put("rest." + name, parameters.get(name));
-                        }
+                    // remove endpoint path parameters as they cannot be validated on component level
+                    model.getEndpointPathOptions().stream()
+                            .filter(o -> o.getKind().equals("path")).forEach(o -> parameters.remove(o.getName()));
+
+                    final Map<String, Object> restParameters = new HashMap<>(parameters);
+                    Stream.concat(model.getComponentOptions().stream(),
+                            model.getOptions().stream()).forEach(o -> {
+                                String name = o.getName();
+                                Object val = restParameters.remove(name);
+                                if (val != null) {
+                                    // Add rest prefix to properties belonging to the rest
+                                    // component so the underlying component know we want
+                                    // to validate rest-related stuffs.
+                                    restParameters.put("rest." + name, parameters.get(name));
+                                }
+                            });
+
+                    if (scope == Scope.CONNECTIVITY) {
+                        // need to include endpoint path parameters as otherwise we cannot verify connectivity
+                        model.getEndpointPathOptions().forEach(o -> {
+                            String name = o.getName();
+                            Object val = map.get(name);
+                            if (val != null) {
+                                // Add rest prefix to properties belonging to the rest
+                                // component so the underlying component know we want
+                                // to validate rest-related stuffs.
+                                restParameters.put("rest." + name, val);
+                            }
+                        });
                     }
 
                     // restParameters now should contains rest-component related
@@ -120,31 +139,28 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
                     // they comes from
                     for (VerificationError error : result.getErrors()) {
                         builder.error(
-                            ResultErrorBuilder.fromError(error)
-                                .detail("component", componentName)
-                                .build()
-                        );
+                                ResultErrorBuilder.fromError(error)
+                                        .detail("component", componentName)
+                                        .build());
                     }
                 } else {
                     builder.error(
-                        ResultErrorBuilder.withUnsupportedComponent(componentName).build()
-                    );
+                            ResultErrorBuilder.withUnsupportedComponent(componentName).build());
                 }
             } catch (Exception e) {
                 builder.error(
-                    ResultErrorBuilder.withException(e).build()
-                );
+                        ResultErrorBuilder.withException(e).build());
             }
         } else {
             builder.error(ResultErrorBuilder.withMissingOption("componentName").build());
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Component getTransportComponent(String componentName) throws Exception {
         return Suppliers.firstMatching(
-            comp -> comp != null && (comp instanceof RestConsumerFactory || comp instanceof RestProducerFactory),
-            () -> getCamelContext().getRegistry().lookupByNameAndType(componentName, Component.class),
-            () -> getCamelContext().getComponent(componentName, true, false)
-        ).orElse(null);
+                comp -> comp instanceof RestConsumerFactory || comp instanceof RestProducerFactory,
+                () -> getCamelContext().getRegistry().lookupByNameAndType(componentName, Component.class),
+                () -> getCamelContext().getComponent(componentName, true, false)).orElse(null);
     }
 }

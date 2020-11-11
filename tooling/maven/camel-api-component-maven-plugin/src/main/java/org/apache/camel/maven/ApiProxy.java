@@ -16,7 +16,6 @@
  */
 package org.apache.camel.maven;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,23 +27,17 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class ApiProxy {
 
     private String apiName;
-
+    private String apiDescription;
+    private boolean consumerOnly;
+    private boolean producerOnly;
     private String proxyClass;
-
-    private File fromSignatureFile;
-
-    private FromJavadoc fromJavadoc;
-
+    private FromJavasource fromJavasource;
     private Substitution[] substitutions = new Substitution[0];
-
     private String excludeConfigNames;
-
     private String excludeConfigTypes;
-
     private ExtraOption[] extraOptions;
-
     private String[] nullableOptions;
-
+    private String classPrefix;
     private List<ApiMethodAlias> aliases = Collections.emptyList();
 
     public String getApiName() {
@@ -55,6 +48,30 @@ public class ApiProxy {
         this.apiName = apiName;
     }
 
+    public String getApiDescription() {
+        return apiDescription;
+    }
+
+    public void setApiDescription(String apiDescription) {
+        this.apiDescription = apiDescription;
+    }
+
+    public boolean isConsumerOnly() {
+        return consumerOnly;
+    }
+
+    public void setConsumerOnly(boolean consumerOnly) {
+        this.consumerOnly = consumerOnly;
+    }
+
+    public boolean isProducerOnly() {
+        return producerOnly;
+    }
+
+    public void setProducerOnly(boolean producerOnly) {
+        this.producerOnly = producerOnly;
+    }
+
     public String getProxyClass() {
         return proxyClass;
     }
@@ -63,20 +80,12 @@ public class ApiProxy {
         this.proxyClass = proxyClass;
     }
 
-    public File getFromSignatureFile() {
-        return fromSignatureFile;
+    public FromJavasource getFromJavasource() {
+        return fromJavasource;
     }
 
-    public void setFromSignatureFile(File fromSignatureFile) {
-        this.fromSignatureFile = fromSignatureFile;
-    }
-
-    public FromJavadoc getFromJavadoc() {
-        return fromJavadoc;
-    }
-
-    public void setFromJavadoc(FromJavadoc fromJavadoc) {
-        this.fromJavadoc = fromJavadoc;
+    public void setFromJavasource(FromJavasource fromJavasource) {
+        this.fromJavasource = fromJavasource;
     }
 
     public Substitution[] getSubstitutions() {
@@ -125,6 +134,14 @@ public class ApiProxy {
 
     public void setAliases(List<ApiMethodAlias> aliases) {
         this.aliases = aliases;
+    }
+
+    public String getClassPrefix() {
+        return classPrefix;
+    }
+
+    public void setClassPrefix(String classPrefix) {
+        this.classPrefix = classPrefix;
     }
 
     public void validate() throws MojoExecutionException {

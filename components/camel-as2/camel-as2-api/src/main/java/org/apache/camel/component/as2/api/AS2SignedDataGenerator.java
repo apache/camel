@@ -55,35 +55,35 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
      * Signing algorithms for DSA keys in order of preference
      */
     public static final String[] DSA_SIGNING_ALGORITHMS = {
-    "SHA512WITHDSA",
-    "SHA384WITHDSA",
-    "SHA256WITHDSA",
-    "SHA224WITHDSA",
-    "SHA1WITHDSA",
+            "SHA512WITHDSA",
+            "SHA384WITHDSA",
+            "SHA256WITHDSA",
+            "SHA224WITHDSA",
+            "SHA1WITHDSA",
     };
 
     /**
      * Signing algorithms for RSA keys in order of preference
      */
     public static final String[] RSA_SIGNING_ALGORITHMS = {
-    "SHA512WITHRSA",
-    "SHA384WITHRSA",
-    "SHA256WITHRSA",
-    "SHA224WITHRSA",
-    "SHA1WITHRSA",
-    "MD5WITHRSA",
-    "MD2WITHRSA",
+            "SHA512WITHRSA",
+            "SHA384WITHRSA",
+            "SHA256WITHRSA",
+            "SHA224WITHRSA",
+            "SHA1WITHRSA",
+            "MD5WITHRSA",
+            "MD2WITHRSA",
     };
 
     /**
      * Signing algorithms for EC keys in order of preference
      */
     public static final String[] EC_SIGNING_ALGORITHMS = {
-    "SHA512WITHECDSA",
-    "SHA384WITHECDSA",
-    "SHA256WITHECDSA",
-    "SHA224WITHECDSA",
-    "SHA1WITHECDSA",
+            "SHA512WITHECDSA",
+            "SHA384WITHECDSA",
+            "SHA256WITHECDSA",
+            "SHA224WITHECDSA",
+            "SHA1WITHECDSA",
     };
 
     public AS2SignedDataGenerator() {
@@ -92,8 +92,8 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
     /**
      * Creates a <code>multipart/signed</code> content type containing the algorithms used by this generator.
      *
-     * @param boundary - boundary to use to demarcate content.
-     * @return A <code>multipart/signed</code> content type
+     * @param  boundary - boundary to use to demarcate content.
+     * @return          A <code>multipart/signed</code> content type
      */
     public ContentType createMultipartSignedContentType(String boundary) {
         StringBuffer header = new StringBuffer(AS2MediaType.MULTIPART_SIGNED);
@@ -160,14 +160,14 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
     public static String[] getSupportedSignatureAlgorithmNamesForKey(Key key) {
 
         switch (key.getAlgorithm()) {
-        case "DSA":
-            return DSA_SIGNING_ALGORITHMS;
-        case "RSA":
-            return RSA_SIGNING_ALGORITHMS;
-        case "EC":
-            return EC_SIGNING_ALGORITHMS;
-        default:
-            return new String[0];
+            case "DSA":
+                return DSA_SIGNING_ALGORITHMS;
+            case "RSA":
+                return RSA_SIGNING_ALGORITHMS;
+            case "EC":
+                return EC_SIGNING_ALGORITHMS;
+            default:
+                return new String[0];
         }
     }
 

@@ -22,13 +22,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/enrich");
         deleteDirectory("target/data/enrichdata");
@@ -63,13 +65,15 @@ public class PollEnrichFileDefaultAggregationStrategyTest extends ContextTestSup
             @Override
             public void configure() throws Exception {
                 from("file://target/data/enrich?initialDelay=0&delay=10&move=.done").to("mock:start")
-                    .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done", 10000).to("mock:result");
+                        .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done",
+                                10000)
+                        .to("mock:result");
             }
         };
     }
 
     private static void assertFileDoesNotExists(String filename) {
         File file = new File(filename);
-        assertFalse("File " + filename + " should not exist, it should have been deleted after being processed", file.exists());
+        assertFalse(file.exists(), "File " + filename + " should not exist, it should have been deleted after being processed");
     }
 }

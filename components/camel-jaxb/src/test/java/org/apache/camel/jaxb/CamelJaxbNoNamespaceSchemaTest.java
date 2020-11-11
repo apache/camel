@@ -20,11 +20,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.foo.bar.PersonType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
-    
+
     @Test
     public void testMarshalWithNoNamespaceSchemaLocation() throws Exception {
         PersonType person = new PersonType();
@@ -37,8 +39,8 @@ public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        assertTrue("We should get the noNamespaceSchemaLocation here", body
-                .contains("noNamespaceSchemaLocation=\"person-no-namespace.xsd\""));
+        assertTrue(body.contains("noNamespaceSchemaLocation=\"person-no-namespace.xsd\""),
+                "We should get the noNamespaceSchemaLocation here");
     }
 
     @Override
@@ -50,13 +52,12 @@ public class CamelJaxbNoNamespaceSchemaTest extends CamelTestSupport {
                 dataFormat.setNoNamespaceSchemaLocation("person-no-namespace.xsd");
                 dataFormat.setIgnoreJAXBElement(false);
 
-
                 from("direct:marshal")
-                    .marshal(dataFormat)
-                    .to("mock:result");
+                        .marshal(dataFormat)
+                        .to("mock:result");
 
             }
         };
     }
-    
+
 }

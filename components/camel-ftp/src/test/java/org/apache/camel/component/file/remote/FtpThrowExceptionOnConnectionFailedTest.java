@@ -49,8 +49,9 @@ public class FtpThrowExceptionOnConnectionFailedTest extends FtpServerTestSuppor
     }
 
     private void uploadFile(String username, String password) throws Exception {
-        Endpoint endpoint = context.getEndpoint("ftp://" + username + "@localhost:" + getPort() + "/login?password="
-                + password + "&maximumReconnectAttempts=0&throwExceptionOnConnectFailed=true");
+        Endpoint endpoint = context
+                .getEndpoint("ftp://" + username + "@localhost:" + getPort() + "/login?password=" + password
+                             + "&maximumReconnectAttempts=0&throwExceptionOnConnectFailed=true");
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");

@@ -21,31 +21,35 @@ import org.apache.camel.Message;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientSpringTestSupport;
 import org.apache.camel.impl.engine.DefaultFluentProducerTemplate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DirtiesContext
 public class SpringAtomixMapProducerTest extends AtomixClientSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/atomix/client/map/SpringAtomixMapProducerTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/atomix/client/map/SpringAtomixMapProducerTest.xml");
     }
 
     @Test
-    public void testPut() throws Exception {
+    void testPut() {
         final String key = context().getUuidGenerator().generateUuid();
         final String val = context().getUuidGenerator().generateUuid();
         final DistributedMap<Object, Object> map = getClient().getMap("test-map").join();
 
         Message result = DefaultFluentProducerTemplate.on(context)
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
-            .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
-            .withBody(val)
-            .to("direct:start")
-            .request(Message.class);
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixMap.Action.PUT)
+                .withHeader(AtomixClientConstants.RESOURCE_KEY, key)
+                .withBody(val)
+                .to("direct:start")
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val, result.getBody());

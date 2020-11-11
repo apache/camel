@@ -30,12 +30,11 @@ public class QueueServiceConsumer extends ScheduledPollConsumer {
     public QueueServiceConsumer(QueueServiceEndpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
     }
-    
+
     @Override
     protected int poll() throws Exception {
         Exchange exchange = super.getEndpoint().createExchange();
         try {
-            log.trace("Retrieving a message");
             retrieveMessage(exchange);
             super.getAsyncProcessor().process(exchange);
             return 1;
@@ -47,14 +46,14 @@ public class QueueServiceConsumer extends ScheduledPollConsumer {
             }
         }
     }
-    
+
     private void retrieveMessage(Exchange exchange) throws Exception {
         //TODO: Support the batch processing if needed, given that it is possible
         // to retrieve more than 1 message in one go, similarly to camel-aws/s3 consumer. 
         QueueServiceUtil.retrieveMessage(exchange, getConfiguration());
-        
+
     }
-        
+
     protected QueueServiceConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }

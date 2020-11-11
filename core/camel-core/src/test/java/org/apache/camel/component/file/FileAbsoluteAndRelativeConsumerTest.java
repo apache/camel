@@ -22,15 +22,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
 
     private String base;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filerelative");
         deleteDirectory("target/data/fileabsolute");
@@ -70,9 +70,11 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filerelative?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class).to("mock:relative");
+                from("file://target/data/filerelative?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class)
+                        .to("mock:relative");
 
-                from("file://" + base + "?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class).to("mock:absolute");
+                from("file://" + base + "?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class)
+                        .to("mock:absolute");
             }
         };
     }

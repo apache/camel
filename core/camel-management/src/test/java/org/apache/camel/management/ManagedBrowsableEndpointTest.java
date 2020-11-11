@@ -20,7 +20,11 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedBrowsableEndpointTest extends ManagementTestSupport {
 
@@ -47,17 +51,18 @@ public class ManagedBrowsableEndpointTest extends ManagementTestSupport {
         Long size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(2, size.longValue());
 
-        String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
+        String out
+                = (String) mbeanServer.invoke(name, "browseExchange", new Object[] { 0 }, new String[] { "java.lang.Integer" });
         assertNotNull(out);
         // message body is not dumped when browsing exchange
         assertFalse(out.contains("Hello World"));
 
-        out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{1}, new String[]{"java.lang.Integer"});
+        out = (String) mbeanServer.invoke(name, "browseExchange", new Object[] { 1 }, new String[] { "java.lang.Integer" });
         assertNotNull(out);
         // message body is not dumped when browsing exchange
         assertFalse(out.contains("Bye World"));
 
-        out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{1}, new String[]{"java.lang.Integer"});
+        out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[] { 1 }, new String[] { "java.lang.Integer" });
         assertNotNull(out);
         assertEquals("Bye World", out);
     }

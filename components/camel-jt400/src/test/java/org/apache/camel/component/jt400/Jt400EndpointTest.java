@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.jt400;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test case for {@link Jt400Endpoint}
@@ -27,10 +30,11 @@ public class Jt400EndpointTest extends Jt400TestSupport {
     private Jt400Endpoint endpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        endpoint = (Jt400Endpoint) resolveMandatoryEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true&connectionPool=#mockPool");
+        endpoint = (Jt400Endpoint) resolveMandatoryEndpoint(
+                "jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true&connectionPool=#mockPool");
     }
 
     /**
@@ -45,8 +49,4 @@ public class Jt400EndpointTest extends Jt400TestSupport {
         assertTrue(endpoint.getSystem().isGuiAvailable());
     }
 
-    @Test
-    public void testToString() {
-        assertEquals("jt400://user:xxxxxx@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&connectionPool=%23mockPool&format=binary&guiAvailable=true", endpoint.toString());
-    }
 }

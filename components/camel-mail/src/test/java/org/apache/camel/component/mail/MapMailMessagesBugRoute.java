@@ -30,7 +30,7 @@ public class MapMailMessagesBugRoute extends RouteBuilder {
 
     public static void main(String... args) throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new MapMailMessagesBugRoute());
+        main.configure().addRoutesBuilder(new MapMailMessagesBugRoute());
         main.run(args);
     }
 
@@ -52,4 +52,3 @@ public class MapMailMessagesBugRoute extends RouteBuilder {
     }
 
 }
-

@@ -26,14 +26,15 @@ public final class PubNubSensorExample {
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new SensorRoute());
+        main.configure().addRoutesBuilder(new SensorRoute());
         main.run();
     }
 
     static class SensorRoute extends RouteBuilder {
         @Override
         public void configure() throws Exception {
-            from("pubnub:pubnub-sensor-network?subscribeKey=sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe").log("${body}").to("mock:result");
+            from("pubnub:pubnub-sensor-network?subscribeKey=sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe").log("${body}")
+                    .to("mock:result");
         }
     }
 

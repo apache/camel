@@ -18,9 +18,9 @@ package org.apache.camel.test.junit5.patterns;
 
 import java.util.Properties;
 
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ public class UseOverridePropertiesWithPropertiesComponentTest extends CamelTestS
                 interceptSendToEndpoint("file:*").skipSendToOriginalEndpoint().to("mock:file");
             }
         };
-        RouteReifier.adviceWith(context.getRouteDefinition("myRoute"), context, mocker);
+        AdviceWith.adviceWith(context.getRouteDefinition("myRoute"), context, mocker);
     }
 
     @Override
@@ -68,7 +68,8 @@ public class UseOverridePropertiesWithPropertiesComponentTest extends CamelTestS
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("ftp:somepath?username={{ftp.username}}&password={{ftp.password}}").routeId("myRoute").to("file:target/out");
+                from("ftp:somepath?username={{ftp.username}}&password={{ftp.password}}").routeId("myRoute")
+                        .to("file:target/out");
             }
         };
     }

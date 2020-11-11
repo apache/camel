@@ -31,16 +31,20 @@ import com.braintreegateway.TransactionRequest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(TransactionGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(TransactionGatewayApiMethod.class).getName();
 
     private BraintreeGateway gateway;
     private final List<String> transactionIds;
@@ -60,7 +64,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (this.gateway != null) {
             for (String token : this.transactionIds) {
@@ -76,19 +80,19 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
 
     @Test
     public void testSale() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> result = requestBody(
-            "direct://SALE",
-            new TransactionRequest()
-                .amount(new BigDecimal("100.00"))
-                .paymentMethodNonce("fake-valid-nonce")
-                .options()
-                    .submitForSettlement(true)
-                .done(),
-            Result.class);
+                "direct://SALE",
+                new TransactionRequest()
+                        .amount(new BigDecimal("100.00"))
+                        .paymentMethodNonce("fake-valid-nonce")
+                        .options()
+                        .submitForSettlement(true)
+                        .done(),
+                Result.class);
 
-        assertNotNull("sale result", result);
+        assertNotNull(result, "sale result");
         assertTrue(result.isSuccess());
 
         LOG.info("Transaction done - id={}", result.getTarget().getId());
@@ -97,173 +101,49 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
 
     @Test
     public void testCloneTransaction() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
-            "direct://SALE",
-            new TransactionRequest()
-                .amount(new BigDecimal("100.00"))
-                .paymentMethodNonce("fake-valid-nonce")
-                .options()
-                    .submitForSettlement(false)
-                .done(),
-            Result.class);
+                "direct://SALE",
+                new TransactionRequest()
+                        .amount(new BigDecimal("100.00"))
+                        .paymentMethodNonce("fake-valid-nonce")
+                        .options()
+                        .submitForSettlement(false)
+                        .done(),
+                Result.class);
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         LOG.info("Transaction done - id={}", createResult.getTarget().getId());
         this.transactionIds.add(createResult.getTarget().getId());
 
         final Result<Transaction> cloneResult = requestBodyAndHeaders(
-            "direct://CLONETRANSACTION",
-            null,
-            new BraintreeHeaderBuilder()
-                .add("id", createResult.getTarget().getId())
-                .add("cloneRequest", new TransactionCloneRequest()
-                    .amount(new BigDecimal("99.00"))
-                    .options()
-                        .submitForSettlement(true)
-                    .done())
-                .build(),
-            Result.class);
+                "direct://CLONETRANSACTION",
+                null,
+                new BraintreeHeaderBuilder()
+                        .add("id", createResult.getTarget().getId())
+                        .add("cloneRequest", new TransactionCloneRequest()
+                                .amount(new BigDecimal("99.00"))
+                                .options()
+                                .submitForSettlement(true)
+                                .done())
+                        .build(),
+                Result.class);
 
-        assertNotNull("clone result", cloneResult);
+        assertNotNull(cloneResult, "clone result");
         assertTrue(cloneResult.isSuccess());
 
         LOG.info("Clone Transaction done - clonedId={}, id={}",
-            createResult.getTarget().getId(), cloneResult.getTarget().getId());
+                createResult.getTarget().getId(), cloneResult.getTarget().getId());
 
         this.transactionIds.add(cloneResult.getTarget().getId());
     }
 
     @Test
     public void testFind() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-
-        final Result<Transaction> createResult = requestBody(
-            "direct://SALE",
-            new TransactionRequest()
-                .amount(new BigDecimal("100.00"))
-                .paymentMethodNonce("fake-valid-nonce")
-                .options()
-                    .submitForSettlement(false)
-                .done(),
-            Result.class);
-
-        assertNotNull("sale result", createResult);
-        assertTrue(createResult.isSuccess());
-
-        LOG.info("Transaction done - id={}", createResult.getTarget().getId());
-        this.transactionIds.add(createResult.getTarget().getId());
-
-
-        // using String message body for single parameter "id"
-        final Transaction result = requestBody("direct://FIND", createResult.getTarget().getId());
-
-        assertNotNull("find result", result);
-        LOG.info("Transaction found - id={}", result.getId());
-    }
-
-    @Test
-    public void testSubmitForSettlementWithId() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-
-        final Result<Transaction> createResult = requestBody(
-            "direct://SALE",
-            new TransactionRequest()
-                .amount(new BigDecimal("100.00"))
-                .paymentMethodNonce("fake-valid-nonce")
-                .options()
-                    .submitForSettlement(false)
-                .done(),
-            Result.class);
-
-        assertNotNull("sale result", createResult);
-        assertTrue(createResult.isSuccess());
-
-        LOG.info("Transaction done - id={}", createResult.getTarget().getId());
-        this.transactionIds.add(createResult.getTarget().getId());
-
-        final Result<Transaction> result = requestBody(
-            "direct://SUBMITFORSETTLEMENT_WITH_ID",
-            createResult.getTarget().getId(),
-            Result.class);
-
-        assertNotNull("Submit For Settlement result", result);
-        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
-    }
-
-    @Test
-    public void testSubmitForSettlementWithIdAndAmount() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-
-        final Result<Transaction> createResult = requestBody(
-            "direct://SALE",
-            new TransactionRequest()
-                .amount(new BigDecimal("100.00"))
-                .paymentMethodNonce("fake-valid-nonce")
-                .options()
-                .submitForSettlement(false)
-                .done(),
-            Result.class);
-
-        assertNotNull("sale result", createResult);
-        assertTrue(createResult.isSuccess());
-
-        LOG.info("Transaction done - id={}", createResult.getTarget().getId());
-        this.transactionIds.add(createResult.getTarget().getId());
-
-        final Result<Transaction> result = requestBodyAndHeaders(
-            "direct://SUBMITFORSETTLEMENT_WITH_ID_ADN_AMOUNT",
-            null,
-            new BraintreeHeaderBuilder()
-                .add("id", createResult.getTarget().getId())
-                .add("amount", new BigDecimal("100.00"))
-                .build(),
-            Result.class);
-
-        assertNotNull("Submit For Settlement result", result);
-        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
-    }
-
-    @Test
-    public void testSubmitForSettlementWithRequest() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
-
-        final Result<Transaction> createResult = requestBody(
-            "direct://SALE",
-            new TransactionRequest()
-                .amount(new BigDecimal("100.00"))
-                .paymentMethodNonce("fake-valid-nonce")
-                .options()
-                    .submitForSettlement(false)
-                .done(),
-            Result.class);
-
-        assertNotNull("sale result", createResult);
-        assertTrue(createResult.isSuccess());
-
-        LOG.info("Transaction done - id={}", createResult.getTarget().getId());
-        this.transactionIds.add(createResult.getTarget().getId());
-
-        final Result<Transaction> result = requestBodyAndHeaders(
-            "direct://SUBMITFORSETTLEMENT_WITH_REQUEST",
-            null,
-            new BraintreeHeaderBuilder()
-                .add("id", createResult.getTarget().getId())
-                .add("request", new TransactionRequest()
-                    .amount(new BigDecimal("100.00")))
-                .build(),
-            Result.class);
-
-        assertNotNull("Submit For Settlement result", result);
-        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
-    }
-
-    @Test
-    public void testRefund() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
@@ -271,34 +151,122 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                         .amount(new BigDecimal("100.00"))
                         .paymentMethodNonce("fake-valid-nonce")
                         .options()
-                            .submitForSettlement(true)
+                        .submitForSettlement(false)
                         .done(),
-                Result.class
-        );
+                Result.class);
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
-        String createId = createResult.getTarget().getId();
+        LOG.info("Transaction done - id={}", createResult.getTarget().getId());
+        this.transactionIds.add(createResult.getTarget().getId());
 
-        final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
-        assertNotNull("settle result", settleResult);
-        assertTrue(settleResult.isSuccess());
+        // using String message body for single parameter "id"
+        final Transaction result = requestBody("direct://FIND", createResult.getTarget().getId());
 
-        final Result<Transaction> result = requestBody(
-                "direct://REFUND_WITH_ID",
-                createId,
-                Result.class
-        );
-
-        assertNotNull("Request Refund result", result);
-        assertTrue(result.isSuccess());
-        LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
+        assertNotNull(result, "find result");
+        LOG.info("Transaction found - id={}", result.getId());
     }
 
     @Test
-    public void testRefundWithAmount() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+    public void testSubmitForSettlementWithId() throws Exception {
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+
+        final Result<Transaction> createResult = requestBody(
+                "direct://SALE",
+                new TransactionRequest()
+                        .amount(new BigDecimal("100.00"))
+                        .paymentMethodNonce("fake-valid-nonce")
+                        .options()
+                        .submitForSettlement(false)
+                        .done(),
+                Result.class);
+
+        assertNotNull(createResult, "sale result");
+        assertTrue(createResult.isSuccess());
+
+        LOG.info("Transaction done - id={}", createResult.getTarget().getId());
+        this.transactionIds.add(createResult.getTarget().getId());
+
+        final Result<Transaction> result = requestBody(
+                "direct://SUBMITFORSETTLEMENT_WITH_ID",
+                createResult.getTarget().getId(),
+                Result.class);
+
+        assertNotNull(result, "Submit For Settlement result");
+        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
+    }
+
+    @Test
+    public void testSubmitForSettlementWithIdAndAmount() throws Exception {
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+
+        final Result<Transaction> createResult = requestBody(
+                "direct://SALE",
+                new TransactionRequest()
+                        .amount(new BigDecimal("100.00"))
+                        .paymentMethodNonce("fake-valid-nonce")
+                        .options()
+                        .submitForSettlement(false)
+                        .done(),
+                Result.class);
+
+        assertNotNull(createResult, "sale result");
+        assertTrue(createResult.isSuccess());
+
+        LOG.info("Transaction done - id={}", createResult.getTarget().getId());
+        this.transactionIds.add(createResult.getTarget().getId());
+
+        final Result<Transaction> result = requestBodyAndHeaders(
+                "direct://SUBMITFORSETTLEMENT_WITH_ID_ADN_AMOUNT",
+                null,
+                new BraintreeHeaderBuilder()
+                        .add("id", createResult.getTarget().getId())
+                        .add("amount", new BigDecimal("100.00"))
+                        .build(),
+                Result.class);
+
+        assertNotNull(result, "Submit For Settlement result");
+        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
+    }
+
+    @Test
+    public void testSubmitForSettlementWithRequest() throws Exception {
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+
+        final Result<Transaction> createResult = requestBody(
+                "direct://SALE",
+                new TransactionRequest()
+                        .amount(new BigDecimal("100.00"))
+                        .paymentMethodNonce("fake-valid-nonce")
+                        .options()
+                        .submitForSettlement(false)
+                        .done(),
+                Result.class);
+
+        assertNotNull(createResult, "sale result");
+        assertTrue(createResult.isSuccess());
+
+        LOG.info("Transaction done - id={}", createResult.getTarget().getId());
+        this.transactionIds.add(createResult.getTarget().getId());
+
+        final Result<Transaction> result = requestBodyAndHeaders(
+                "direct://SUBMITFORSETTLEMENT_WITH_REQUEST",
+                null,
+                new BraintreeHeaderBuilder()
+                        .add("id", createResult.getTarget().getId())
+                        .add("request", new TransactionRequest()
+                                .amount(new BigDecimal("100.00")))
+                        .build(),
+                Result.class);
+
+        assertNotNull(result, "Submit For Settlement result");
+        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
+    }
+
+    @Test
+    public void testRefund() throws Exception {
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
@@ -308,16 +276,48 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                         .options()
                         .submitForSettlement(true)
                         .done(),
-                Result.class
-        );
+                Result.class);
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         String createId = createResult.getTarget().getId();
 
         final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
-        assertNotNull("settle result", settleResult);
+        assertNotNull(settleResult, "settle result");
+        assertTrue(settleResult.isSuccess());
+
+        final Result<Transaction> result = requestBody(
+                "direct://REFUND_WITH_ID",
+                createId,
+                Result.class);
+
+        assertNotNull(result, "Request Refund result");
+        assertTrue(result.isSuccess());
+        LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
+    }
+
+    @Test
+    public void testRefundWithAmount() throws Exception {
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
+
+        final Result<Transaction> createResult = requestBody(
+                "direct://SALE",
+                new TransactionRequest()
+                        .amount(new BigDecimal("100.00"))
+                        .paymentMethodNonce("fake-valid-nonce")
+                        .options()
+                        .submitForSettlement(true)
+                        .done(),
+                Result.class);
+
+        assertNotNull(createResult, "sale result");
+        assertTrue(createResult.isSuccess());
+
+        String createId = createResult.getTarget().getId();
+
+        final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
+        assertNotNull(settleResult, "settle result");
         assertTrue(settleResult.isSuccess());
 
         final Result<Transaction> result = requestBodyAndHeaders(
@@ -327,17 +327,16 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                         .add("id", createId)
                         .add("amount", new BigDecimal("99.00"))
                         .build(),
-                Result.class
-        );
+                Result.class);
 
-        assertNotNull("Request Refund result", result);
+        assertNotNull(result, "Request Refund result");
         assertTrue(result.isSuccess());
         LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
     }
 
     @Test
     public void testRefundWithRequest() throws Exception {
-        assertNotNull("BraintreeGateway can't be null", this.gateway);
+        assertNotNull(this.gateway, "BraintreeGateway can't be null");
 
         final Result<Transaction> createResult = requestBody(
                 "direct://SALE",
@@ -347,16 +346,15 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                         .options()
                         .submitForSettlement(true)
                         .done(),
-                Result.class
-        );
+                Result.class);
 
-        assertNotNull("sale result", createResult);
+        assertNotNull(createResult, "sale result");
         assertTrue(createResult.isSuccess());
 
         String createId = createResult.getTarget().getId();
 
         final Result<Transaction> settleResult = this.gateway.testing().settle(createId);
-        assertNotNull("settle result", settleResult);
+        assertNotNull(settleResult, "settle result");
         assertTrue(settleResult.isSuccess());
 
         final Result<Transaction> result = requestBodyAndHeaders(
@@ -367,10 +365,9 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
                         .add("refundRequest", new TransactionRefundRequest()
                                 .amount(new BigDecimal("100.00")))
                         .build(),
-                Result.class
-        );
+                Result.class);
 
-        assertNotNull("Request Refund result", result);
+        assertNotNull(result, "Request Refund result");
         assertTrue(result.isSuccess());
         LOG.info(String.format("Refund id(%s) created for transaction id(%s)", result.getTarget().getId(), createId));
     }
@@ -380,62 +377,62 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
     // *************************************************************************
 
     // TODO provide parameter values for cancelRelease
-    @Ignore
+    @Disabled
     @Test
     public void testCancelRelease() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://CANCELRELEASE", null);
 
-        assertNotNull("cancelRelease result", result);
+        assertNotNull(result, "cancelRelease result");
         LOG.debug("cancelRelease: " + result);
     }
 
     // TODO provide parameter values for credit
-    @Ignore
+    @Disabled
     @Test
     public void testCredit() throws Exception {
         // using com.braintreegateway.TransactionRequest message body for single parameter "request"
         final com.braintreegateway.Result result = requestBody("direct://CREDIT", null);
 
-        assertNotNull("credit result", result);
+        assertNotNull(result, "credit result");
         LOG.debug("credit: " + result);
     }
 
     // TODO provide parameter values for holdInEscrow
-    @Ignore
+    @Disabled
     @Test
     public void testHoldInEscrow() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://HOLDINESCROW", null);
 
-        assertNotNull("holdInEscrow result", result);
+        assertNotNull(result, "holdInEscrow result");
         LOG.debug("holdInEscrow: " + result);
     }
 
     // TODO provide parameter values for releaseFromEscrow
-    @Ignore
+    @Disabled
     @Test
     public void testReleaseFromEscrow() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://RELEASEFROMESCROW", null);
 
-        assertNotNull("releaseFromEscrow result", result);
+        assertNotNull(result, "releaseFromEscrow result");
         LOG.debug("releaseFromEscrow: " + result);
     }
 
     // TODO provide parameter values for search
-    @Ignore
+    @Disabled
     @Test
     public void testSearch() throws Exception {
         // using com.braintreegateway.TransactionSearchRequest message body for single parameter "query"
         final com.braintreegateway.ResourceCollection result = requestBody("direct://SEARCH", null);
 
-        assertNotNull("search result", result);
+        assertNotNull(result, "search result");
         LOG.debug("search: " + result);
     }
 
     // TODO provide parameter values for submitForPartialSettlement
-    @Ignore
+    @Disabled
     @Test
     public void testSubmitForPartialSettlement() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -446,18 +443,18 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
 
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://SUBMITFORPARTIALSETTLEMENT", null, headers);
 
-        assertNotNull("submitForPartialSettlement result", result);
+        assertNotNull(result, "submitForPartialSettlement result");
         LOG.debug("submitForPartialSettlement: " + result);
     }
 
     // TODO provide parameter values for voidTransaction
-    @Ignore
+    @Disabled
     @Test
     public void testVoidTransaction() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://VOIDTRANSACTION", null);
 
-        assertNotNull("voidTransaction result", result);
+        assertNotNull(result, "voidTransaction result");
         LOG.debug("voidTransaction: " + result);
     }
 
@@ -471,49 +468,49 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
             public void configure() {
                 // test route for cancelRelease
                 from("direct://CANCELRELEASE")
-                    .to("braintree://" + PATH_PREFIX + "/cancelRelease?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/cancelRelease?inBody=id");
                 // test route for cloneTransaction
                 from("direct://CLONETRANSACTION")
-                    .to("braintree://" + PATH_PREFIX + "/cloneTransaction");
+                        .to("braintree://" + PATH_PREFIX + "/cloneTransaction");
                 // test route for credit
                 from("direct://CREDIT")
-                    .to("braintree://" + PATH_PREFIX + "/credit?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/credit?inBody=request");
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
                 // test route for holdInEscrow
                 from("direct://HOLDINESCROW")
-                    .to("braintree://" + PATH_PREFIX + "/holdInEscrow?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/holdInEscrow?inBody=id");
                 // test route for refund
                 from("direct://REFUND")
-                    .to("braintree://" + PATH_PREFIX + "/refund");
+                        .to("braintree://" + PATH_PREFIX + "/refund");
                 // test route for refund
                 from("direct://REFUND_WITH_ID")
                         .to("braintree://" + PATH_PREFIX + "/refund?inBody=id");
                 // test route for releaseFromEscrow
                 from("direct://RELEASEFROMESCROW")
-                    .to("braintree://" + PATH_PREFIX + "/releaseFromEscrow?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/releaseFromEscrow?inBody=id");
                 // test route for sale
                 from("direct://SALE")
-                    .to("braintree://" + PATH_PREFIX + "/sale?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/sale?inBody=request");
                 // test route for search
                 from("direct://SEARCH")
                         .to("braintree://" + PATH_PREFIX + "/search?inBody=query");
                 // test route for submitForPartialSettlement
                 from("direct://SUBMITFORPARTIALSETTLEMENT")
-                    .to("braintree://" + PATH_PREFIX + "/submitForPartialSettlement");
+                        .to("braintree://" + PATH_PREFIX + "/submitForPartialSettlement");
                 // test route for submitForSettlement
                 from("direct://SUBMITFORSETTLEMENT_WITH_ID")
-                    .to("braintree://" + PATH_PREFIX + "/submitForSettlement?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/submitForSettlement?inBody=id");
                 // test route for submitForSettlement
                 from("direct://SUBMITFORSETTLEMENT_WITH_ID_ADN_AMOUNT")
-                    .to("braintree://" + PATH_PREFIX + "/submitForSettlement");
+                        .to("braintree://" + PATH_PREFIX + "/submitForSettlement");
                 // test route for submitForSettlement
                 from("direct://SUBMITFORSETTLEMENT_WITH_REQUEST")
-                    .to("braintree://" + PATH_PREFIX + "/submitForSettlement");
+                        .to("braintree://" + PATH_PREFIX + "/submitForSettlement");
                 // test route for voidTransaction
                 from("direct://VOIDTRANSACTION")
-                    .to("braintree://" + PATH_PREFIX + "/voidTransaction?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/voidTransaction?inBody=id");
             }
         };
     }

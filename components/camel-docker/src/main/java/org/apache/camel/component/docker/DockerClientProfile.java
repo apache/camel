@@ -207,7 +207,7 @@ public class DockerClientProfile {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        DockerClientProfile other = (DockerClientProfile)obj;
+        DockerClientProfile other = (DockerClientProfile) obj;
         if (certPath == null) {
             if (other.certPath != null) {
                 return false;

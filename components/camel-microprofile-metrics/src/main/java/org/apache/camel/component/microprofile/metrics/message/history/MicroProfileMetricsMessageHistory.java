@@ -32,14 +32,15 @@ public class MicroProfileMetricsMessageHistory extends DefaultMessageHistory {
     private final Context context;
 
     public MicroProfileMetricsMessageHistory(MetricRegistry metricRegistry, Route route, NamedNode namedNode,
-            MicroProfileMetricsMessageHistoryNamingStrategy namingStrategy, long timestamp, Message message) {
+                                             MicroProfileMetricsMessageHistoryNamingStrategy namingStrategy, long timestamp,
+                                             Message message) {
         super(route.getId(), namedNode, timestamp, message);
 
         Metadata routeNodeMetadata = new MetadataBuilder()
-            .withName(namingStrategy.getName(route, getNode()))
-            .withDisplayName(MESSAGE_HISTORY_DISPLAY_NAME)
-            .withDescription(MESSAGE_HISTORY_DESCRIPTION)
-            .build();
+                .withName(namingStrategy.getName(route, getNode()))
+                .withDisplayName(MESSAGE_HISTORY_DISPLAY_NAME)
+                .withDescription(MESSAGE_HISTORY_DESCRIPTION)
+                .build();
         this.context = metricRegistry.timer(routeNodeMetadata, namingStrategy.getTags(route, getNode())).time();
     }
 

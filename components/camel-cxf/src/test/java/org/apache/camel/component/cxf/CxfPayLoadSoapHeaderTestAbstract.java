@@ -18,38 +18,35 @@ package org.apache.camel.component.cxf;
 
 import javax.xml.ws.Endpoint;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfPayLoadSoapHeaderTestAbstract extends CamelTestSupport {
-    static int port1 = CXFTestSupport.getPort1(); 
-    static int port2 = CXFTestSupport.getPort2(); 
-    
+    static int port1 = CXFTestSupport.getPort1();
+    static int port2 = CXFTestSupport.getPort2();
+
     protected String getRouterEndpointURI() {
-        return "cxf:http://localhost:" + port1 + "/" + getClass().getSimpleName() 
-            + "/pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
+        return "cxf:http://localhost:" + port1 + "/" + getClass().getSimpleName()
+               + "/pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
     }
+
     protected String getServiceEndpointURI() {
         return "cxf:http://localhost:" + port2 + "/" + getClass().getSimpleName()
-            + "/new_pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
-    }     
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
+               + "/new_pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
     }
 
- 
     protected void start(String n) {
         Object implementor = new PizzaImpl();
         String address = "http://localhost:" + port2 + "/" + n
-            + "/new_pizza_service/services/PizzaService";
-        Endpoint.publish(address, implementor);        
+                         + "/new_pizza_service/services/PizzaService";
+        Endpoint.publish(address, implementor);
     }
-    
-    @Before
+
+    @BeforeEach
     public void startService() {
         start(getClass().getSimpleName());
     }
-    
 
 }

@@ -23,12 +23,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class ManualFromQueueTest extends CamelTestSupport {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     // using failover will automatic re-connect with ActiveMQ
     // private String url = "failover:tcp://localhost:61616";
@@ -60,8 +64,8 @@ public class ManualFromQueueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sjms:queue:foo?asyncStartListener=true")
-                    .to("log:foo")
-                    .to("mock:foo");
+                        .to("log:foo")
+                        .to("mock:foo");
             }
         };
     }

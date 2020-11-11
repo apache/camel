@@ -26,7 +26,7 @@ public final class Messages {
     /**
      * Fill a Message from a DataValue
      *
-     * @param value the value to feed from
+     * @param value  the value to feed from
      * @param result the result to feed to
      */
     public static void fillFromDataValue(final DataValue value, final DefaultMessage result) {

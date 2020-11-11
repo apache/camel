@@ -41,6 +41,8 @@ import org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.MatchT
 import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
 import org.apache.camel.component.facebook.data.ReadingBuilder;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PREFIX;
@@ -54,6 +56,8 @@ import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper
  * The Facebook consumer.
  */
 public class FacebookConsumer extends ScheduledPollConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FacebookConsumer.class);
 
     private static final String SINCE_PREFIX = "since=";
 
@@ -91,12 +95,15 @@ public class FacebookConsumer extends ScheduledPollConsumer {
                 try {
                     this.sinceTime = URLDecoder.decode(strSince, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeCamelException(String.format("Error decoding %s.since with value %s due to: %s", READING_PREFIX, strSince, e.getMessage()), e);
+                    throw new RuntimeCamelException(
+                            String.format("Error decoding %s.since with value %s due to: %s", READING_PREFIX, strSince,
+                                    e.getMessage()),
+                            e);
                 }
-                log.debug("Using supplied property {}since value {}", READING_PREFIX, this.sinceTime);
+                LOG.debug("Using supplied property {}since value {}", READING_PREFIX, this.sinceTime);
             }
             if (queryString.contains("until=")) {
-                log.debug("Overriding configured property {}until", READING_PREFIX);
+                LOG.debug("Overriding configured property {}until", READING_PREFIX);
             }
         }
         this.endpointProperties = Collections.unmodifiableMap(properties);
@@ -113,26 +120,27 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         FacebookMethodsType result;
         // find one that takes the largest subset of endpoint parameters
         final Set<String> argNames = new HashSet<>();
-        argNames.addAll(FacebookPropertiesHelper.getEndpointPropertyNames(endpoint.getCamelContext(), endpoint.getConfiguration()));
+        argNames.addAll(
+                FacebookPropertiesHelper.getEndpointPropertyNames(endpoint.getCamelContext(), endpoint.getConfiguration()));
 
         // add reading property for polling, if it doesn't already exist!
         argNames.add(READING_PROPERTY);
 
         final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
         List<FacebookMethodsType> filteredMethods = filterMethods(
-            endpoint.getCandidates(), MatchType.SUPER_SET, argNamesArray);
+                endpoint.getCandidates(), MatchType.SUPER_SET, argNamesArray);
 
         if (filteredMethods.isEmpty()) {
             throw new IllegalArgumentException(
-                String.format("Missing properties for %s, need one or more from %s",
-                    endpoint.getMethod(),
-                    getMissingProperties(endpoint.getMethod(), endpoint.getNameStyle(), argNames)));
+                    String.format("Missing properties for %s, need one or more from %s",
+                            endpoint.getMethod(),
+                            getMissingProperties(endpoint.getMethod(), endpoint.getNameStyle(), argNames)));
         } else if (filteredMethods.size() == 1) {
             // single match
             result = filteredMethods.get(0);
         } else {
             result = getHighestPriorityMethod(filteredMethods);
-            log.warn("Using highest priority method {} from methods {}", method, filteredMethods);
+            LOG.warn("Using highest priority method {} from methods {}", method, filteredMethods);
         }
         return result;
     }
@@ -146,9 +154,9 @@ public class FacebookConsumer extends ScheduledPollConsumer {
             String rawJSON = null;
             Object result;
             if (endpoint.getConfiguration().getJsonStoreEnabled() == null
-                || !endpoint.getConfiguration().getJsonStoreEnabled()) {
+                    || !endpoint.getConfiguration().getJsonStoreEnabled()) {
                 result = invokeMethod(endpoint.getConfiguration().getFacebook(),
-                    method, args);
+                        method, args);
             } else {
                 final Facebook facebook = endpoint.getConfiguration().getFacebook();
                 synchronized (facebook) {
@@ -216,8 +224,10 @@ public class FacebookConsumer extends ScheduledPollConsumer {
             try {
                 reading = ReadingBuilder.copy(reading, true);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new IllegalArgumentException(String.format("Error creating property [%s]: %s",
-                        READING_PROPERTY, e.getMessage()), e);
+                throw new IllegalArgumentException(
+                        String.format("Error creating property [%s]: %s",
+                                READING_PROPERTY, e.getMessage()),
+                        e);
             }
         }
 
@@ -226,8 +236,9 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         final long currentMillis = System.currentTimeMillis();
         if (this.sinceTime == null) {
             // first poll, set this to (current time - initial poll delay)
-            final Date startTime = new Date(currentMillis
-                - TimeUnit.MILLISECONDS.convert(getInitialDelay(), getTimeUnit()));
+            final Date startTime = new Date(
+                    currentMillis
+                                            - TimeUnit.MILLISECONDS.convert(getInitialDelay(), getTimeUnit()));
             this.sinceTime = dateFormat.format(startTime);
         } else if (this.untilTime != null) {
             // use the last 'until' time

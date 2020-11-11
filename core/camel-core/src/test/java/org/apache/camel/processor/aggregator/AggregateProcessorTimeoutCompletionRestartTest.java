@@ -29,12 +29,13 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * To test CAMEL-4037 that a restart of aggregator can re-initialize the timeout
- * map
+ * To test CAMEL-4037 that a restart of aggregator can re-initialize the timeout map
  */
 public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestSupport {
 
@@ -46,7 +47,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         executorService = Executors.newSingleThreadExecutor();

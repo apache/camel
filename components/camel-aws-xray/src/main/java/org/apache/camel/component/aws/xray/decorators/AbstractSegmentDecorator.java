@@ -63,28 +63,28 @@ public abstract class AbstractSegmentDecorator implements SegmentDecorator {
      * This method removes the scheme, any leading slash characters and options from the supplied URI. This is intended
      * to extract a meaningful name from the URI that can be used in situations, such as the operation name.
      *
-     * @param endpoint The endpoint
-     * @return The stripped value from the URI
+     * @param  endpoint The endpoint
+     * @return          The stripped value from the URI
      */
     public static String stripSchemeAndOptions(Endpoint endpoint) {
-        int start = endpoint.getEndpointUri().indexOf(":");
+        int start = endpoint.getEndpointUri().indexOf(':');
         start++;
         // Remove any leading '/'
         while (endpoint.getEndpointUri().charAt(start) == '/') {
             start++;
         }
-        int end = endpoint.getEndpointUri().indexOf("?");
+        int end = endpoint.getEndpointUri().indexOf('?');
         return end == -1 ? endpoint.getEndpointUri().substring(start) : endpoint.getEndpointUri().substring(start, end);
     }
 
     /**
      * Extracts any parameters passed in the given URI as a key-value representation.
      *
-     * @param uri The URI to extract passed parameters from
-     * @return A {@link Map} representation of the contained parameters of the provided URI
+     * @param  uri The URI to extract passed parameters from
+     * @return     A {@link Map} representation of the contained parameters of the provided URI
      */
-    public static Map<String,  String> toQueryParameters(String uri) {
-        int index = uri.indexOf("?");
+    public static Map<String, String> toQueryParameters(String uri) {
+        int index = uri.indexOf('?');
         if (index != -1) {
             String queryString = uri.substring(index + 1);
             Map<String, String> map = new HashMap<>();

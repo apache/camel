@@ -18,14 +18,17 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.junit5.TestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DisruptorVmInOutChainedTest extends AbstractVmTestSupport {
 
     @Test
-    public void testInOutDisruptorVmChained() throws Exception {
+    void testInOutDisruptorVmChained() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
-        resolveMandatoryEndpoint(context2, "mock:b", MockEndpoint.class).expectedBodiesReceived("start-a");
+        TestSupport.resolveMandatoryEndpoint(context2, "mock:b", MockEndpoint.class).expectedBodiesReceived("start-a");
         getMockEndpoint("mock:c").expectedBodiesReceived("start-a-b");
 
         String reply = template2.requestBody("disruptor-vm:a", "start", String.class);
@@ -35,10 +38,10 @@ public class DisruptorVmInOutChainedTest extends AbstractVmTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:a").to("mock:a").transform(simple("${body}-a")).to("disruptor-vm:b");
 
                 from("disruptor-vm:c").to("mock:c").transform(simple("${body}-c"));
@@ -47,10 +50,10 @@ public class DisruptorVmInOutChainedTest extends AbstractVmTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+    protected RouteBuilder createRouteBuilderForSecondContext() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor-vm:b").to("mock:b").transform(simple("${body}-b")).to("disruptor-vm:c");
             }
         };

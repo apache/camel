@@ -44,26 +44,26 @@ public class VolumeProducer extends AbstractOpenstackProducer {
         String operation = getOperation(exchange);
 
         switch (operation) {
-        case OpenstackConstants.CREATE:
-            doCreate(exchange);
-            break;
-        case OpenstackConstants.GET:
-            doGet(exchange);
-            break;
-        case OpenstackConstants.GET_ALL:
-            doGetAll(exchange);
-            break;
-        case CinderConstants.GET_ALL_TYPES:
-            doGetAllTypes(exchange);
-            break;
-        case OpenstackConstants.UPDATE:
-            doUpdate(exchange);
-            break;
-        case OpenstackConstants.DELETE:
-            doDelete(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            case OpenstackConstants.CREATE:
+                doCreate(exchange);
+                break;
+            case OpenstackConstants.GET:
+                doGet(exchange);
+                break;
+            case OpenstackConstants.GET_ALL:
+                doGetAll(exchange);
+                break;
+            case CinderConstants.GET_ALL_TYPES:
+                doGetAllTypes(exchange);
+                break;
+            case OpenstackConstants.UPDATE:
+                doUpdate(exchange);
+                break;
+            case OpenstackConstants.DELETE:
+                doDelete(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -76,7 +76,8 @@ public class VolumeProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
+        final String id
+                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Volume ID");
         final Volume out = os.blockStorage().volumes().get(id);
         msg.setBody(out);
@@ -94,7 +95,8 @@ public class VolumeProducer extends AbstractOpenstackProducer {
 
     private void doUpdate(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
+        final String id
+                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
         final Volume vol = messageToVolume(msg);
         StringHelper.notEmpty(id, "Cinder Volume ID");
         StringHelper.notEmpty(vol.getDescription(), "Cinder Volume Description");
@@ -105,7 +107,8 @@ public class VolumeProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
+        final String id
+                = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Cinder Volume ID");
         final ActionResponse out = os.blockStorage().volumes().delete(id);
         checkFailure(out, exchange, "Delete volume " + id);

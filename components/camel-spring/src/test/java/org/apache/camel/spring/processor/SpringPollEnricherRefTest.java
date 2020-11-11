@@ -18,11 +18,11 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.enricher.PollEnricherTest;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-@Ignore
+@Disabled
 public class SpringPollEnricherRefTest extends PollEnricherTest {
 
     @Override

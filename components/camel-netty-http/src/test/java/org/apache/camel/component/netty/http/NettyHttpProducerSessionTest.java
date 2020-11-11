@@ -22,10 +22,10 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
+import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.http.common.HttpMessage;
-import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
-import org.apache.camel.http.common.cookie.InstanceCookieHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NettyHttpProducerSessionTest extends BaseNettyTest {
 
@@ -64,13 +64,18 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").toF("netty-http:http://127.0.0.1:%d/session", getPort()).toF("netty-http:http://127.0.0.1:%d/session", getPort()).to("mock:result");
+                from("direct:start").toF("netty-http:http://127.0.0.1:%d/session", getPort())
+                        .toF("netty-http:http://127.0.0.1:%d/session", getPort()).to("mock:result");
 
-                from("direct:instance").toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
-                    .toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort()).to("mock:result");
+                from("direct:instance")
+                        .toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
+                        .toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
+                        .to("mock:result");
 
-                from("direct:exchange").toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
-                    .toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort()).to("mock:result");
+                from("direct:exchange")
+                        .toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
+                        .toF("netty-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
+                        .to("mock:result");
 
                 fromF("jetty:http://127.0.0.1:%d/session?sessionSupport=true", getPort()).process(new Processor() {
                     @Override

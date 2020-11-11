@@ -24,13 +24,17 @@ import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IrcConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IrcConsumer.class);
 
     private final IrcConfiguration configuration;
     private final IrcEndpoint endpoint;
     private final IRCConnection connection;
-    private  IRCEventAdapter listener;
+    private IRCEventAdapter listener = new FilteredIRCEventAdapter();
 
     public IrcConsumer(IrcEndpoint endpoint, Processor processor, IRCConnection connection) {
         super(endpoint, processor);
@@ -42,8 +46,8 @@ public class IrcConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         if (connection != null) {
-            for (IrcChannel channel : endpoint.getConfiguration().getChannels()) {
-                log.debug("Parting: {}", channel);
+            for (IrcChannel channel : endpoint.getConfiguration().getChannelList()) {
+                LOG.debug("Parting: {}", channel);
                 connection.doPart(channel.getName());
             }
             connection.removeIRCEventListener(listener);
@@ -57,7 +61,7 @@ public class IrcConsumer extends DefaultConsumer {
         listener = getListener();
         connection.addIRCEventListener(listener);
 
-        log.debug("Sleeping for {} seconds before sending commands.", configuration.getCommandTimeout() / 1000);
+        LOG.debug("Sleeping for {} seconds before sending commands.", configuration.getCommandTimeout() / 1000);
         // sleep for a few seconds as the server sometimes takes a moment to fully connect, print banners, etc after connection established
         try {
             Thread.sleep(configuration.getCommandTimeout());
@@ -65,12 +69,12 @@ public class IrcConsumer extends DefaultConsumer {
             // ignore
         }
         if (ObjectHelper.isNotEmpty(configuration.getNickPassword())) {
-            log.debug("Identifying and enforcing nick with NickServ.");
+            LOG.debug("Identifying and enforcing nick with NickServ.");
             // Identify nick and enforce, https://meta.wikimedia.org/wiki/IRC/Instructions#Register_your_nickname.2C_identify.2C_and_enforce
             connection.doPrivmsg("nickserv", "identify " + configuration.getNickPassword());
             connection.doPrivmsg("nickserv", "set enforce on");
         }
-        
+
         endpoint.joinChannels();
     }
 
@@ -79,9 +83,6 @@ public class IrcConsumer extends DefaultConsumer {
     }
 
     public IRCEventAdapter getListener() {
-        if (listener == null) {
-            listener = new FilteredIRCEventAdapter();
-        }
         return listener;
     }
 

@@ -57,8 +57,8 @@ public final class MicroProfileMetricsHelper {
         if (rawTags != null && !rawTags.isEmpty()) {
             String[] tagStrings = rawTags.split("\\s*,\\s*");
             return Stream.of(tagStrings)
-                .map(tag -> parseTag(tag))
-                .collect(Collectors.toList());
+                    .map(tag -> parseTag(tag))
+                    .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
@@ -67,7 +67,8 @@ public final class MicroProfileMetricsHelper {
         return findMetric(metricRegistry, metricName, metricType, Collections.emptyList());
     }
 
-    public static <T extends Metric> T findMetric(MetricRegistry metricRegistry, String metricName, Class<T> metricType, List<Tag> tags) {
+    public static <T extends Metric> T findMetric(
+            MetricRegistry metricRegistry, String metricName, Class<T> metricType, List<Tag> tags) {
         Map<MetricID, Metric> metrics = metricRegistry.getMetrics();
         for (Map.Entry<MetricID, Metric> entry : metrics.entrySet()) {
             if (metricTypeMatches(entry.getValue(), metricType)) {

@@ -26,8 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class KMSProducerTest extends CamelTestSupport {
 
@@ -36,7 +39,7 @@ public class KMSProducerTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
-    
+
     @Test
     public void kmsListKeysTest() throws Exception {
 
@@ -49,12 +52,12 @@ public class KMSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         ListKeysResult resultGet = (ListKeysResult) exchange.getIn().getBody();
         assertEquals(1, resultGet.getKeys().size());
         assertEquals("keyId", resultGet.getKeys().get(0).getKeyId());
     }
-    
+
     @Test
     public void kmsCreateKeyTest() throws Exception {
 
@@ -67,12 +70,12 @@ public class KMSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         CreateKeyResult resultGet = (CreateKeyResult) exchange.getIn().getBody();
         assertEquals("test", resultGet.getKeyMetadata().getKeyId());
         assertEquals(true, resultGet.getKeyMetadata().isEnabled());
     }
-    
+
     @Test
     public void kmsDisableKeyTest() throws Exception {
 
@@ -86,9 +89,9 @@ public class KMSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
     }
-    
+
     @Test
     public void kmsEnableKeyTest() throws Exception {
 
@@ -102,9 +105,9 @@ public class KMSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
     }
-    
+
     @Test
     public void kmsScheduleKeyDeletionTest() throws Exception {
 
@@ -118,11 +121,11 @@ public class KMSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         ScheduleKeyDeletionResult resultGet = (ScheduleKeyDeletionResult) exchange.getIn().getBody();
         assertEquals("test", resultGet.getKeyId());
     }
-    
+
     @Test
     public void kmsDescribeKeyTest() throws Exception {
 
@@ -136,7 +139,7 @@ public class KMSProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        
+
         DescribeKeyResult resultGet = exchange.getIn().getBody(DescribeKeyResult.class);
         assertEquals("test", resultGet.getKeyMetadata().getKeyId());
         assertEquals("MyCamelKey", resultGet.getKeyMetadata().getDescription());
@@ -149,23 +152,23 @@ public class KMSProducerTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:listKeys")
-                    .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=listKeys")
-                    .to("mock:result");
+                        .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=listKeys")
+                        .to("mock:result");
                 from("direct:createKey")
-                    .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=createKey")
-                    .to("mock:result");
+                        .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=createKey")
+                        .to("mock:result");
                 from("direct:disableKey")
-                    .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=disableKey")
-                    .to("mock:result");
+                        .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=disableKey")
+                        .to("mock:result");
                 from("direct:enableKey")
-                    .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=enableKey")
-                    .to("mock:result");
+                        .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=enableKey")
+                        .to("mock:result");
                 from("direct:scheduleDelete")
-                    .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=scheduleKeyDeletion")
-                    .to("mock:result");
+                        .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=scheduleKeyDeletion")
+                        .to("mock:result");
                 from("direct:describeKey")
-                    .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=describeKey")
-                    .to("mock:result");
+                        .to("aws-kms://test?kmsClient=#amazonKmsClient&operation=describeKey")
+                        .to("mock:result");
             }
         };
     }

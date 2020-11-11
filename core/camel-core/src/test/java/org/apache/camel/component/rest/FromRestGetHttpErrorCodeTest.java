@@ -20,14 +20,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         return jndi;
     }
@@ -54,8 +57,10 @@ public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
-                rest("/say/bye").get().route().choice().when(body().contains("Kaboom")).setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
-                    .setHeader(Exchange.CONTENT_TYPE, constant("text/plain")).setBody(constant("The data is invalid")).otherwise().transform().constant("Bye World");
+                rest("/say/bye").get().route().choice().when(body().contains("Kaboom"))
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(404))
+                        .setHeader(Exchange.CONTENT_TYPE, constant("text/plain")).setBody(constant("The data is invalid"))
+                        .otherwise().transform().constant("Bye World");
             }
         };
     }

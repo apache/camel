@@ -27,10 +27,10 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("fix me")
+@Disabled("fix me")
 public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
 
     @Test
@@ -52,12 +52,13 @@ public class MinaClientModeTcpTextlineDelimiterTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() {
-                from(String.format("mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true", getPort()))
-                    .id("minaRoute")
-                    .noAutoStartup()
-                    .to("log:before?showAll=true")
-                    .to("mock:result")
-                    .to("log:after?showAll=true");
+                from(String.format("mina:tcp://127.0.0.1:%1$s?sync=false&textline=true&textlineDelimiter=UNIX&clientMode=true",
+                        getPort()))
+                                .id("minaRoute")
+                                .noAutoStartup()
+                                .to("log:before?showAll=true")
+                                .to("mock:result")
+                                .to("log:after?showAll=true");
             }
         };
     }

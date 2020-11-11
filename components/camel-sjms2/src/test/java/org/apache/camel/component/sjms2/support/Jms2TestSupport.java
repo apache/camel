@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.sjms2.support;
 
-import java.util.Arrays;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.MessageConsumer;
@@ -31,13 +29,7 @@ import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
 import org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory;
 import org.apache.activemq.artemis.core.server.QueueQueryResult;
-import org.apache.activemq.artemis.jms.server.config.ConnectionFactoryConfiguration;
-import org.apache.activemq.artemis.jms.server.config.JMSConfiguration;
-import org.apache.activemq.artemis.jms.server.config.JMSQueueConfiguration;
-import org.apache.activemq.artemis.jms.server.config.impl.ConnectionFactoryConfigurationImpl;
-import org.apache.activemq.artemis.jms.server.config.impl.JMSConfigurationImpl;
-import org.apache.activemq.artemis.jms.server.config.impl.JMSQueueConfigurationImpl;
-import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
+import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -47,19 +39,24 @@ import org.apache.camel.component.sjms2.Sjms2Component;
 import org.apache.camel.component.sjms2.jms.Jms2ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
- * A support class that builds up and tears down an ActiveMQ Artemis instance to be used
- * for unit testing.
+ * A support class that builds up and tears down an ActiveMQ Artemis instance to be used for unit testing.
  */
 public class Jms2TestSupport extends CamelTestSupport {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Produce
     protected ProducerTemplate template;
     protected String brokerUri;
     protected int port;
-    private EmbeddedJMS broker;
+    private EmbeddedActiveMQ broker;
     private Connection connection;
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
@@ -67,13 +64,13 @@ public class Jms2TestSupport extends CamelTestSupport {
     /**
      * Set up the Broker
      *
-     * @see CamelTestSupport#doPreSetup()
+     * @see              CamelTestSupport#doPreSetup()
      *
      * @throws Exception
      */
     @Override
     protected void doPreSetup() throws Exception {
-        broker = new EmbeddedJMS();
+        broker = new EmbeddedActiveMQ();
         deleteDirectory("target/data");
         port = AvailablePortFinder.getNextAvailable();
         brokerUri = "tcp://localhost:" + port;
@@ -81,7 +78,7 @@ public class Jms2TestSupport extends CamelTestSupport {
         startBroker();
     }
 
-    protected void configureBroker(EmbeddedJMS broker) throws Exception {
+    protected void configureBroker(EmbeddedActiveMQ broker) throws Exception {
         Configuration configuration = new ConfigurationImpl()
                 .setPersistenceEnabled(false)
                 .setJournalDirectory("target/data/journal")
@@ -90,16 +87,7 @@ public class Jms2TestSupport extends CamelTestSupport {
                 .addAcceptorConfiguration("vm", "vm://broker")
                 .addConnectorConfiguration("connector", new TransportConfiguration(NettyConnectorFactory.class.getName()));
 
-        JMSConfiguration jmsConfig = new JMSConfigurationImpl();
-
-        ConnectionFactoryConfiguration cfConfig = new ConnectionFactoryConfigurationImpl().setName("cf").setConnectorNames(
-                Arrays.asList("connector")).setBindings("cf");
-        jmsConfig.getConnectionFactoryConfigurations().add(cfConfig);
-
-        JMSQueueConfiguration queueConfig = new JMSQueueConfigurationImpl().setName("queue1").setDurable(false).setBindings("queue/queue1");
-        jmsConfig.getQueueConfigurations().add(queueConfig);
-
-        broker.setConfiguration(configuration).setJmsConfiguration(jmsConfig);
+        broker.setConfiguration(configuration);
     }
 
     private void startBroker() throws Exception {
@@ -110,7 +98,7 @@ public class Jms2TestSupport extends CamelTestSupport {
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        DefaultCamelContext dcc = (DefaultCamelContext)context;
+        DefaultCamelContext dcc = (DefaultCamelContext) context;
         while (!dcc.isStopped()) {
             log.info("Waiting on the Camel Context to stop");
         }
@@ -132,7 +120,7 @@ public class Jms2TestSupport extends CamelTestSupport {
     }
 
     /*
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createCamelContext()
+     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
      * @return
      * @throws Exception
      */
@@ -157,10 +145,10 @@ public class Jms2TestSupport extends CamelTestSupport {
         //and CORE so its not possible to write protocol agnostic tests but in the future releases
         //of artemis we may be able test against them in an agnostic way.
         switch (protocol) {
-        case "OPENWIRE":
-            return new ActiveMQConnectionFactory(brokerUri);
-        default:
-            return ActiveMQJMSClient.createConnectionFactory(brokerUri, "test");
+            case "OPENWIRE":
+                return new ActiveMQConnectionFactory(brokerUri);
+            default:
+                return ActiveMQJMSClient.createConnectionFactory(brokerUri, "test");
         }
     }
 
@@ -177,10 +165,13 @@ public class Jms2TestSupport extends CamelTestSupport {
     }
 
     public MessageConsumer createQueueConsumer(String destination) throws Exception {
-        return new Jms2ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, false), null, false, null, false, false);
+        return new Jms2ObjectFactory().createMessageConsumer(session,
+                destinationCreationStrategy.createDestination(session, destination, false), null, false, null, false, false);
     }
 
     public MessageConsumer createTopicConsumer(String destination, String messageSelector) throws Exception {
-        return new Jms2ObjectFactory().createMessageConsumer(session, destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, false, false);
+        return new Jms2ObjectFactory().createMessageConsumer(session,
+                destinationCreationStrategy.createDestination(session, destination, true), messageSelector, true, null, false,
+                false);
     }
 }

@@ -16,33 +16,88 @@
  */
 package org.apache.camel.component.cassandra;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.time.Duration;
+
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
+import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
+import org.apache.camel.test.infra.cassandra.services.CassandraLocalContainerService;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
 public abstract class BaseCassandraTest extends CamelTestSupport {
 
-    public static boolean canTest() {
-        // we cannot test on CI
-        return System.getenv("BUILD_ID") == null;
+    @RegisterExtension
+    public static CassandraLocalContainerService service;
+
+    public static final String KEYSPACE_NAME = "camel_ks";
+    public static final String DATACENTER_NAME = "datacenter1";
+
+    private CqlSession session;
+
+    static {
+        service = new CassandraLocalContainerService();
+
+        service.getContainer()
+                .withInitScript("initScript.cql")
+                .withNetworkAliases("cassandra");
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        if (canTest()) {
-            CassandraUnitUtils.startEmbeddedCassandra();
-        }
+    @Override
+    public void beforeEach(ExtensionContext context) throws Exception {
+        super.beforeEach(context);
+
+        executeScript("BasicDataSet.cql");
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        if (canTest()) {
-            try {
-                CassandraUnitUtils.cleanEmbeddedCassandra();
-            } catch (Throwable e) {
-                // ignore shutdown errors
+    public void executeScript(String pathToScript) throws IOException {
+        String s = IOUtils.toString(getClass().getResourceAsStream("/" + pathToScript), "UTF-8");
+        String[] statements = s.split(";");
+        for (int i = 0; i < statements.length; i++) {
+            if (!statements[i].isEmpty()) {
+                executeCql(statements[i]);
             }
         }
     }
 
+    public void executeCql(String cql) {
+        getSession().execute(cql);
+    }
+
+    @Override
+    protected void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
+        try {
+            if (session != null) {
+                session.close();
+                session = null;
+            }
+        } catch (Exception e) {
+            // ignored
+        }
+    }
+
+    public CqlSession getSession() {
+        if (session == null) {
+            InetSocketAddress endpoint
+                    = new InetSocketAddress(service.getCassandraHost(), service.getCQL3Port());
+            //create a new session
+            session = CqlSession.builder()
+                    .withLocalDatacenter(DATACENTER_NAME)
+                    .withKeyspace(KEYSPACE_NAME)
+                    .withConfigLoader(DriverConfigLoader.programmaticBuilder()
+                            .withDuration(DefaultDriverOption.REQUEST_TIMEOUT, Duration.ofSeconds(5)).build())
+                    .addContactPoint(endpoint).build();
+        }
+        return session;
+    }
+
+    public String getUrl() {
+        return service.getCQL3Endpoint();
+    }
 }

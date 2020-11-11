@@ -25,3 +25,4 @@ components/camel-cxf/activemq-data
 *.swp
 .flattened-pom.xml
 .java-version
+node_modules/

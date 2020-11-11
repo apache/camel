@@ -16,23 +16,34 @@
  */
 package org.apache.camel.cdi;
 
+import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * CDI {@link org.apache.camel.CamelContext} class that can be extended
- * to declare custom Camel context beans. Camel CDI is capable of managing
- * any bean that implements {@code org.apache.camel.CamelContext},
- * so that directly extending {@link org.apache.camel.impl.DefaultCamelContext}
- * is an option to avoid having to depend on Camel CDI specific API, e.g.:
+ * CDI {@link org.apache.camel.CamelContext} class that can be extended to declare custom Camel context beans. Camel CDI
+ * is capable of managing any bean that implements {@code org.apache.camel.CamelContext}, so that directly extending
+ * {@link org.apache.camel.impl.DefaultCamelContext} is an option to avoid having to depend on Camel CDI specific API,
+ * e.g.:
  *
- * <pre><code>
+ * <pre>
+ * <code>
  * {@literal @}ApplicationScoped
- * {@literal @}ContextName("foo")
  * public class FooCamelContext extends DefaultCamelContext {
  * }
- * </code></pre>
+ * </code>
+ * </pre>
  */
 @Vetoed
 public class CdiCamelContext extends DefaultCamelContext {
 
+    @Override
+    protected boolean eagerCreateTypeConverter() {
+        // camel-cdi is complex so we cant optimize
+        return false;
+    }
+
+    @Override
+    public TypeConverter getTypeConverter() {
+        return getOrCreateTypeConverter();
+    }
 }

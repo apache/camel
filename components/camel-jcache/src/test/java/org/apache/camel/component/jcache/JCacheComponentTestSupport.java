@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import javax.cache.Cache;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +31,8 @@ class JCacheComponentTestSupport extends CamelTestSupport {
 
     protected Cache<Object, Object> getCacheFromEndpoint(String endpoint) throws Exception {
         return resolveMandatoryEndpoint(endpoint, JCacheEndpoint.class)
-            .getManager()
-            .getCache();
+                .getManager()
+                .getCache();
     }
 
     protected String randomString() {

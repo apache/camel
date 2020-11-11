@@ -23,7 +23,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Mode;
@@ -96,7 +96,6 @@ public class SlowTypeConverterTest {
             }
         }
     }
-
 
     @Benchmark
     public void typeConvertByteBufToArray(BenchmarkCamelContextState state, Blackhole bh) {

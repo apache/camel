@@ -59,17 +59,16 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.IOHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SignedDataTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpProvider() {
         Security.addProvider(new BouncyCastleProvider());
     }
@@ -99,28 +98,32 @@ public class SignedDataTest {
         signAndVerify("Test Message", "system.jks", "SHA1withDSA", "dsa", true, false);
     }
 
-    private void signAndVerify(String message, String keystoreName, String signatureAlgorithm, String alias, boolean includeContent, boolean includeCertificates)
-        throws UnsupportedEncodingException, Exception {
+    private void signAndVerify(
+            String message, String keystoreName, String signatureAlgorithm, String alias, boolean includeContent,
+            boolean includeCertificates)
+            throws UnsupportedEncodingException, Exception {
 
         byte[] signed = sign(message, keystoreName, signatureAlgorithm, includeContent, includeCertificates, alias);
         byte[] result = verify(keystoreName, alias, signed, false);
 
-        Assert.assertEquals(message, new String(result, "UTF-8"));
+        assertEquals(message, new String(result, "UTF-8"));
     }
 
-    private byte[] sign(String message, String keystoreName, String signatureAlgorithm, boolean includeContent, boolean includeCertificates, String... aliases)
-        throws UnsupportedEncodingException, Exception {
+    private byte[] sign(
+            String message, String keystoreName, String signatureAlgorithm, boolean includeContent, boolean includeCertificates,
+            String... aliases)
+            throws UnsupportedEncodingException, Exception {
         KeyStoreParameters keystore = KeystoreUtil.getKeyStoreParameters(keystoreName);
 
         List<SignerInfo> signers = new ArrayList<>(aliases.length);
         for (String alias : aliases) {
             DefaultSignerInfo signerInfo = new DefaultSignerInfo();
             signerInfo.setIncludeCertificates(includeCertificates); // without
-                                                                    // certificates,
-                                                                    // optional
-                                                                    // default
-                                                                    // value is
-                                                                    // true
+                                                                   // certificates,
+                                                                   // optional
+                                                                   // default
+                                                                   // value is
+                                                                   // true
             signerInfo.setSignatureAlgorithm(signatureAlgorithm); // mandatory
             signerInfo.setPrivateKeyAlias(alias);
             signerInfo.setKeyStoreParameters(keystore);
@@ -133,19 +136,21 @@ public class SignedDataTest {
         }
         // config.setBlockSize(blockSize); // optional
         config.setIncludeContent(includeContent); // optional default value is
-                                                  // true
+                                                 // true
         config.init();
         SignedDataCreator signer = new SignedDataCreator(config);
 
         Exchange exchange = ExchangeUtil.getExchange();
         exchange.getIn().setBody(new ByteArrayInputStream(message.getBytes("UTF-8")));
         signer.process(exchange);
-        byte[] signed = (byte[])exchange.getOut().getBody();
+        byte[] signed = (byte[]) exchange.getMessage().getBody();
         return signed;
     }
 
-    private byte[] verify(String keystoreName, String alias, byte[] signed, boolean base64) throws Exception, UnsupportedEncodingException {
-        DefaultSignedDataVerifierConfiguration verifierConf = getCryptoCmsSignedDataVerifierConf(keystoreName, Collections.singletonList(alias), base64);
+    private byte[] verify(String keystoreName, String alias, byte[] signed, boolean base64)
+            throws Exception, UnsupportedEncodingException {
+        DefaultSignedDataVerifierConfiguration verifierConf
+                = getCryptoCmsSignedDataVerifierConf(keystoreName, Collections.singletonList(alias), base64);
 
         SignedDataVerifier verifier = new SignedDataVerifier(verifierConf);
 
@@ -153,12 +158,13 @@ public class SignedDataTest {
         Exchange exchangeVeri = ExchangeUtil.getExchange();
         exchangeVeri.getIn().setBody(is);
         verifier.process(exchangeVeri);
-        byte[] result = (byte[])exchangeVeri.getOut().getBody();
+        byte[] result = (byte[]) exchangeVeri.getMessage().getBody();
         return result;
     }
 
-    DefaultSignedDataVerifierConfiguration getCryptoCmsSignedDataVerifierConf(String keystoreName, Collection<String> aliases, boolean base64)
-        throws GeneralSecurityException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+    DefaultSignedDataVerifierConfiguration getCryptoCmsSignedDataVerifierConf(
+            String keystoreName, Collection<String> aliases, boolean base64)
+            throws GeneralSecurityException, IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
         KeyStoreParameters keystorePas = KeystoreUtil.getKeyStoreParameters(keystoreName);
         KeyStore keystore = keystorePas.createKeyStore();
 
@@ -183,15 +189,16 @@ public class SignedDataTest {
         sign("", "system.jks", "SHA1withRSA", true, false, "rsa", "rsa2");
     }
 
-    @Test(expected = CryptoCmsNoKeyOrCertificateForAliasException.class)
+    @Test
     public void signWithTwoAliasesOneWithNoPrivateKeyInKeystore() throws Exception {
-        sign("Test Message", "system.jks", "SHA1withDSA", true, false, "dsa", "noEntry");
+        assertThrows(CryptoCmsNoKeyOrCertificateForAliasException.class,
+                () -> sign("Test Message", "system.jks", "SHA1withDSA", true, false, "dsa", "noEntry"));
     }
 
-    @Test(expected = CryptoCmsNoKeyOrCertificateForAliasException.class)
+    @Test
     public void signWrongAlias() throws Exception {
-        sign("Test Message", "system.jks", "SHA1withDSA", true, false, "wrong");
-
+        assertThrows(CryptoCmsNoKeyOrCertificateForAliasException.class,
+                () -> sign("Test Message", "system.jks", "SHA1withDSA", true, false, "wrong"));
     }
 
     @Test
@@ -199,14 +206,16 @@ public class SignedDataTest {
         sign("", "system.jks", "SHA1withDSA", true, false, "dsa");
     }
 
-    @Test(expected = CryptoCmsInvalidKeyException.class)
+    @Test
     public void signSignatureAlgorithmNotCorrespondingToPrivateKey() throws Exception {
-        sign("testMessage", "system.jks", "MD5withRSA", true, false, "dsa");
+        assertThrows(CryptoCmsInvalidKeyException.class,
+                () -> sign("testMessage", "system.jks", "MD5withRSA", true, false, "dsa"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void signWrongSignatureAlgorithm() throws Exception {
-        sign("testMessage", "system.jks", "wrongRSA", true, false, "rsa");
+        assertThrows(IllegalArgumentException.class,
+                () -> sign("testMessage", "system.jks", "wrongRSA", true, false, "rsa"));
     }
 
     @Test
@@ -215,44 +224,39 @@ public class SignedDataTest {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         IOHelper.copy(is, os);
         byte[] signed = os.toByteArray();
-        try {
-            verify("system.jks", "rsa", signed, false);
-        } catch (CryptoCmsException e) {
-            String message = e.getMessage();
-            assertEquals("PKCS7/CMS signature validation not possible: The content for which the hash-value must be calculated is missing in the PKCS7/CMS signed data instance. "
-                         + "Please check the configuration of the sender of the PKCS7/CMS signature.", message);
-            return;
-        }
-        fail("Exception expected");
+        CryptoCmsException e = assertThrows(CryptoCmsException.class,
+                () -> verify("system.jks", "rsa", signed, false));
+        String message = e.getMessage();
+        assertEquals(
+                "PKCS7/CMS signature validation not possible: The content for which the hash-value must be calculated is missing in the PKCS7/CMS signed data instance. "
+                     + "Please check the configuration of the sender of the PKCS7/CMS signature.",
+                message);
     }
 
-    @Test(expected = CryptoCmsNoCertificateForSignerInfosException.class)
+    @Test
     public void verifyNoVerifierCerts() throws Exception {
-
         byte[] signed = sign("Test Message", "system.jks", "SHA1withRSA", true, true, "rsa");
 
-        verify("system.jks", "wrongAlias", signed, false); // wrongAlias means
-                                                           // that no
-                                                           // certificates are
-                                                           // added to the
-                                                           // verifier keystore
+        // wrongAlias means that no certificates are added to the verifier keystore
+        assertThrows(CryptoCmsException.class,
+                () -> verify("system.jks", "wrongAlias", signed, false));
     }
 
-    @Test(expected = CryptoCmsFormatException.class)
+    @Test
     public void verifyWrongFormat() throws Exception {
-
-        verify("system.jks", "rsa", "test".getBytes(), false);
+        assertThrows(CryptoCmsFormatException.class,
+                () -> verify("system.jks", "rsa", "test".getBytes(), false));
     }
 
-    @Test(expected = CryptoCmsFormatException.class)
+    @Test
     public void verifyWrongFormatInHeader() throws Exception {
-
-        verifyContentWithSeparateSignature(new ByteArrayInputStream("ABCDEFG1ABCDEFG1ABCDEFG1".getBytes()), new ByteArrayInputStream("ABCDEFG1ABCDEFG1ABCDEFG1".getBytes()), "rsa");
+        assertThrows(CryptoCmsFormatException.class,
+                () -> verifyContentWithSeparateSignature(new ByteArrayInputStream("ABCDEFG1ABCDEFG1ABCDEFG1".getBytes()),
+                        new ByteArrayInputStream("ABCDEFG1ABCDEFG1ABCDEFG1".getBytes()), "rsa"));
     }
 
     @Test
     public void verifyContentWithSeparateSignature() throws Exception {
-
         InputStream message = new ByteArrayInputStream("Test Message".getBytes(StandardCharsets.UTF_8));
 
         InputStream signature = this.getClass().getClassLoader().getResourceAsStream("detached_signature.binary");
@@ -261,21 +265,20 @@ public class SignedDataTest {
         verifyContentWithSeparateSignature(message, signature, "rsa");
     }
 
-    @Test(expected = CryptoCmsSignatureInvalidContentHashException.class)
+    @Test
     public void verifyContentWithSeparateSignatureWrongContent() throws Exception {
-
         InputStream message = new ByteArrayInputStream("Wrong Message".getBytes());
 
         InputStream signature = this.getClass().getClassLoader().getResourceAsStream("detached_signature.binary");
         assertNotNull(signature);
 
-        verifyContentWithSeparateSignature(message, signature, "rsa");
-
+        assertThrows(CryptoCmsSignatureInvalidContentHashException.class,
+                () -> verifyContentWithSeparateSignature(message, signature, "rsa"));
     }
 
     private void verifyContentWithSeparateSignature(InputStream content, InputStream signature, String alias) throws Exception {
-
-        DefaultSignedDataVerifierConfiguration verifierConf = getCryptoCmsSignedDataVerifierConf("system.jks", Collections.singletonList(alias), Boolean.FALSE);
+        DefaultSignedDataVerifierConfiguration verifierConf
+                = getCryptoCmsSignedDataVerifierConf("system.jks", Collections.singletonList(alias), Boolean.FALSE);
         SignedDataVerifier verifier = new SignedDataVerifierFromHeader(verifierConf);
 
         Exchange exchange = ExchangeUtil.getExchange();
@@ -294,33 +297,38 @@ public class SignedDataTest {
         verifyDetachedSignatureWithKeystore("system.jks", "noEntry", "rsa");
     }
 
-    @Test(expected = CryptoCmsException.class)
+    @Test
     public void verifyWithEmptyAlias() throws Exception {
-        verifyDetachedSignatureWithKeystore("system.jks", "");
+        assertThrows(CryptoCmsException.class,
+                () -> verifyDetachedSignatureWithKeystore("system.jks", ""));
     }
 
-    @Test(expected = CryptoCmsNoCertificateForSignerInfoException.class)
+    @Test
     public void verifyDetachedSignatureWithAliasNotFittingToSigner() throws Exception {
-        verifyDetachedSignatureWithKeystore("system.jks", "rsa2");
+        assertThrows(CryptoCmsNoCertificateForSignerInfoException.class,
+                () -> verifyDetachedSignatureWithKeystore("system.jks", "rsa2"));
     }
 
-    @Test(expected = CryptoCmsNoCertificateForSignerInfosException.class)
+    @Test
     public void verifyDetachedSignatureWithAliasNotFittingToSignerWithVerifiyAllSignaturesFalse() throws Exception {
-        verifyDetachedSignatureWithKeystore("system.jks", Boolean.FALSE, "rsa2");
+        assertThrows(CryptoCmsNoCertificateForSignerInfosException.class,
+                () -> verifyDetachedSignatureWithKeystore("system.jks", Boolean.FALSE, "rsa2"));
     }
 
-    private void verifyDetachedSignatureWithKeystore(String keystoreName, String... aliases) throws FileNotFoundException, CryptoCmsException, Exception {
+    private void verifyDetachedSignatureWithKeystore(String keystoreName, String... aliases)
+            throws FileNotFoundException, CryptoCmsException, Exception {
         verifyDetachedSignatureWithKeystore(keystoreName, Boolean.TRUE, aliases);
     }
 
     private void verifyDetachedSignatureWithKeystore(String keystoreName, Boolean verifyAllSignatures, String... aliases)
-        throws FileNotFoundException, CryptoCmsException, Exception {
+            throws FileNotFoundException, CryptoCmsException, Exception {
 
         InputStream message = new ByteArrayInputStream("Test Message".getBytes(StandardCharsets.UTF_8));
 
         assertNotNull(message);
 
-        DefaultSignedDataVerifierConfiguration verifierConf = getCryptoCmsSignedDataVerifierConf(keystoreName, Arrays.asList(aliases), Boolean.FALSE);
+        DefaultSignedDataVerifierConfiguration verifierConf
+                = getCryptoCmsSignedDataVerifierConf(keystoreName, Arrays.asList(aliases), Boolean.FALSE);
         verifierConf.setVerifySignaturesOfAllSigners(verifyAllSignatures);
 
         verifierConf.setSignedDataHeaderBase64(Boolean.TRUE);
@@ -344,8 +352,8 @@ public class SignedDataTest {
 
         DefaultSignerInfo signerInfo = new DefaultSignerInfo();
         signerInfo.setIncludeCertificates(false); // without certificates,
-                                                  // optional default value is
-                                                  // true
+                                                 // optional default value is
+                                                 // true
         signerInfo.setSignatureAlgorithm("SHA1withRSA"); // mandatory
         signerInfo.setPrivateKeyAlias(alias);
         signerInfo.setKeyStoreParameters(keystore);
@@ -364,9 +372,10 @@ public class SignedDataTest {
         exchange.getIn().setBody(new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)));
         signer.process(exchange);
 
-        byte[] signature = exchange.getOut().getHeader(CryptoCmsConstants.CAMEL_CRYPTO_CMS_SIGNED_DATA, byte[].class);
+        byte[] signature = exchange.getMessage().getHeader(CryptoCmsConstants.CAMEL_CRYPTO_CMS_SIGNED_DATA, byte[].class);
 
-        DefaultSignedDataVerifierConfiguration verifierConf = getCryptoCmsSignedDataVerifierConf(keystoreName, Collections.singleton(alias), Boolean.FALSE);
+        DefaultSignedDataVerifierConfiguration verifierConf
+                = getCryptoCmsSignedDataVerifierConf(keystoreName, Collections.singleton(alias), Boolean.FALSE);
         verifierConf.setSignedDataHeaderBase64(Boolean.TRUE);
 
         SignedDataVerifier verifier = new SignedDataVerifierFromHeader(verifierConf);
@@ -405,9 +414,10 @@ public class SignedDataTest {
     }
 
     // SHA1withECDSA // ECSDSA keys not supported
-    @Test(expected = CryptoCmsException.class)
+    @Test
     public void testSigAlgorithmSHA1withECDSA() throws Exception {
-        signAndVerifyByDSASigAlgorithm("SHA1withECDSA");
+        assertThrows(CryptoCmsException.class,
+                () -> signAndVerifyByDSASigAlgorithm("SHA1withECDSA"));
     }
 
     // MD2withRSA
@@ -471,13 +481,15 @@ public class SignedDataTest {
         signAndVerifyByRSASigAlgorithm("RIPEMD256withRSA");
     }
 
-    @Test(expected = CryptoCmsInvalidKeyException.class)
+    @Test
     public void testSigAlgorithmDoesnotFitToDSAPrivateKey() throws Exception {
-        signAndVerifyByDSASigAlgorithm("RIPEMD128withRSA");
+        assertThrows(CryptoCmsInvalidKeyException.class,
+                () -> signAndVerifyByDSASigAlgorithm("RIPEMD128withRSA"));
     }
 
-    @Test(expected = CryptoCmsInvalidKeyException.class)
+    @Test
     public void testSigAlgorithmDoesnotFitToRSAPrivateKey() throws Exception {
-        signAndVerifyByRSASigAlgorithm("SHA224withDSA");
+        assertThrows(CryptoCmsInvalidKeyException.class,
+                () -> signAndVerifyByRSASigAlgorithm("SHA224withDSA"));
     }
 }

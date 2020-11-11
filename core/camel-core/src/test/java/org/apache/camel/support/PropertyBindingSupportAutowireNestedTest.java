@@ -18,7 +18,9 @@ package org.apache.camel.support;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -45,16 +47,13 @@ public class PropertyBindingSupportAutowireNestedTest extends ContextTestSupport
         PropertyBindingSupport.build().bind(context, foo, "bar.age", "33");
         PropertyBindingSupport.build().bind(context, foo, "bar.rider", "true");
         PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
-        PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(context, foo, false, false, null);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
         assertTrue(foo.getBar().isRider());
         assertTrue(foo.getBar().isGoldCustomer());
-        // should be auto wired
-        assertNotNull(foo.getBar().getWork());
-        assertEquals(456, foo.getBar().getWork().getId());
-        assertEquals("Acme", foo.getBar().getWork().getName());
+        // should not be auto wired
+        assertNull(foo.getBar().getWork());
     }
 
     public static class Foo {

@@ -32,13 +32,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.support.jsse.SSLContextParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component("netty")
 public class NettyComponent extends DefaultComponent implements SSLContextParametersAware {
 
-    @Metadata(label = "advanced")
-    private NettyConfiguration configuration;
+    private static final Logger LOG = LoggerFactory.getLogger(NettyComponent.class);
+
+    @Metadata
+    private NettyConfiguration configuration = new NettyConfiguration();
     @Metadata(label = "consumer,advanced")
     private int maximumPoolSize;
     @Metadata(label = "consumer,advanced")
@@ -61,14 +64,13 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
     }
 
     /**
-     * Sets a maximum thread pool size for the netty consumer ordered thread pool.
-     * The default size is 2 x cpu core + 1. Setting this value to eg 10 will then use 10 threads
-     * unless 2 x cpu core + 1 is a higher value, which then will override and be used. For example
-     * if there are 8 cores, then the consumer thread pool will be 17.
+     * Sets a maximum thread pool size for the netty consumer ordered thread pool. The default size is 2 x cpu_core plus
+     * 1. Setting this value to eg 10 will then use 10 threads unless 2 x cpu_core plus 1 is a higher value, which then
+     * will override and be used. For example if there are 8 cores, then the consumer thread pool will be 17.
      *
-     * This thread pool is used to route messages received from Netty by Camel.
-     * We use a separate thread pool to ensure ordering of messages and also in case some messages
-     * will block, then nettys worker threads (event loop) wont be affected.
+     * This thread pool is used to route messages received from Netty by Camel. We use a separate thread pool to ensure
+     * ordering of messages and also in case some messages will block, then nettys worker threads (event loop) wont be
+     * affected.
      */
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
@@ -76,16 +78,12 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        NettyConfiguration config;
-        if (configuration != null) {
-            config = configuration.copy();
-        } else {
-            config = new NettyConfiguration();
-        }
+        NettyConfiguration config = configuration.copy();
         config = parseConfiguration(config, remaining, parameters);
 
         // merge any custom bootstrap configuration on the config
-        NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
+        NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters,
+                "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
         if (bootstrapConfiguration != null) {
             Map<String, Object> options = new HashMap<>();
             BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
@@ -102,7 +100,7 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
         config.validateConfiguration();
 
         NettyEndpoint nettyEndpoint = new NettyEndpoint(uri, this, config);
-        setProperties(nettyEndpoint.getConfiguration(), parameters);
+        setProperties(nettyEndpoint, parameters);
         return nettyEndpoint;
     }
 
@@ -111,7 +109,9 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
      *
      * @return the parsed and valid configuration to use
      */
-    protected NettyConfiguration parseConfiguration(NettyConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
+    protected NettyConfiguration parseConfiguration(
+            NettyConfiguration configuration, String remaining, Map<String, Object> parameters)
+            throws Exception {
         configuration.parseURI(new URI(remaining), parameters, this, "tcp", "udp");
         return configuration;
     }
@@ -147,25 +147,12 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    @Metadata(description = "To configure security using SSLContextParameters", label = "security")
-    public void setSslContextParameters(final SSLContextParameters sslContextParameters) {
-        if (configuration == null) {
-            configuration = new NettyConfiguration();
-        }
-
-        configuration.setSslContextParameters(sslContextParameters);
-    }
-
     public EventExecutorGroup getExecutorService() {
         return executorService;
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (configuration == null) {
-            configuration = new NettyConfiguration();
-        }
-
         //Only setup the executorService if it is needed
         if (configuration.isUsingExecutorService() && executorService == null) {
             int netty = SystemPropertyUtil.getInt("io.netty.eventLoopThreads", NettyRuntime.availableProcessors() * 2);
@@ -174,7 +161,7 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
             // and therefore we use math.max to find the highest value
             int threads = Math.max(maximumPoolSize, netty + 1);
             executorService = NettyHelper.createExecutorGroup(getCamelContext(), "NettyConsumerExecutorGroup", threads);
-            log.info("Creating shared NettyConsumerExecutorGroup with {} threads", threads);
+            LOG.info("Creating shared NettyConsumerExecutorGroup with {} threads", threads);
         }
 
         super.doStart();

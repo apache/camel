@@ -12,9 +12,8 @@ About the XMPP unit / integration tests
 ------------------------------------------
 Most of the tests in this module are configured to execute against an embedded version
 of the Apache Vysper XMPP server (http://mina.apache.org/vysper/).  A small number of users and 
-chat rooms are statically configured during the server setup and are re-used across the tests.  
-
-@see org.apache.camel.component.xmpp.EmbeddedXmppTestServer.java in ./src/test/java 
+chat rooms are statically configured during the server setup and are re-used across the tests.
+Vysper based Xmpp server is packaged as separate docker image.
 
 A few of the tests in this module specifically require a GoogleTalk service.  These tests are
 annotated with @Ignore by default. The tester must configure such tests with known gmail 

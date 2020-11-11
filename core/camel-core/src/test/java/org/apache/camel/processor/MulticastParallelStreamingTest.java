@@ -22,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MulticastParallelStreamingTest extends ContextTestSupport {
 
@@ -70,8 +72,8 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
                         return oldExchange;
                     }
                 }).parallelProcessing().streaming().to("direct:a", "direct:b")
-                    // use end to indicate end of multicast route
-                    .end().to("mock:result");
+                        // use end to indicate end of multicast route
+                        .end().to("mock:result");
 
                 from("direct:a").delay(250).asyncDelayed().setBody(constant("A"));
 

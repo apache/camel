@@ -55,14 +55,18 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     }
 
     @Override
-    public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
+    public void init(
+            CamelContext camelContext, NettyServerBootstrapConfiguration configuration,
+            ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
     }
 
     @Override
-    public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
+    public void init(
+            ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration,
+            ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
@@ -128,13 +132,13 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         clientBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
         clientBootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
 
-
         LOG.debug("Created ClientBootstrap {}", clientBootstrap);
         clientBootstrap.handler(pipelineFactory);
-        ChannelFuture channelFuture = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        ChannelFuture channelFuture
+                = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
-                    new Object[]{configuration.getHost(), configuration.getPort(), clientBootstrap});
+                    new Object[] { configuration.getHost(), configuration.getPort(), clientBootstrap });
         }
         LOG.info("ClientModeServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
         channel = openChannel(channelFuture);
@@ -153,7 +157,8 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     protected void doReconnectIfNeeded() throws Exception {
         if (channel == null || !channel.isActive()) {
             LOG.debug("ClientModeServerBootstrap re-connect to {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture connectFuture = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            ChannelFuture connectFuture
+                    = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
             channel = openChannel(connectFuture);
         }
     }
@@ -208,8 +213,9 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
                     LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
                     doReconnectIfNeeded();
                 } catch (Exception e) {
-                    LOG.warn("Error during re-connect to " + configuration.getAddress() + ". Will attempt again in "
-                            + configuration.getReconnectInterval() + " millis. This exception is ignored.", e);
+                    LOG.warn("Error during re-connect to {}. Will attempt again in {} millis. This exception is ignored.",
+                            configuration.getAddress(), configuration.getReconnectInterval(),
+                            e);
                 }
             }
         }, configuration.getReconnectInterval(), TimeUnit.MILLISECONDS);

@@ -23,17 +23,18 @@ import java.util.List;
 
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelRouteDetails;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DuplicateRouteIdsTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DuplicateRouteIdsTest.class);
 
     @Test
-    public void testXml() throws Exception {
+    void testXml() throws Exception {
         List<CamelRouteDetails> list = new ArrayList<>();
 
         InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myduplicateroutes.xml");
@@ -45,10 +46,10 @@ public class DuplicateRouteIdsTest {
             LOG.info(detail.getRouteId());
         }
 
-        Assert.assertEquals(3, list.size());
-        Assert.assertEquals("foo", list.get(0).getRouteId());
-        Assert.assertEquals("bar", list.get(1).getRouteId());
-        Assert.assertEquals("foo", list.get(2).getRouteId());
+        assertEquals(3, list.size());
+        assertEquals("foo", list.get(0).getRouteId());
+        assertEquals("bar", list.get(1).getRouteId());
+        assertEquals("foo", list.get(2).getRouteId());
     }
 
 }

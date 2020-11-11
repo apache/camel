@@ -70,12 +70,12 @@ public final class NettyHttpHelper {
     /**
      * Appends the key/value to the headers.
      * <p/>
-     * This implementation supports keys with multiple values. In such situations the value
-     * will be a {@link java.util.List} that contains the multiple values.
+     * This implementation supports keys with multiple values. In such situations the value will be a
+     * {@link java.util.List} that contains the multiple values.
      *
-     * @param headers  headers
-     * @param key      the key
-     * @param value    the value
+     * @param headers headers
+     * @param key     the key
+     * @param value   the value
      */
     @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
@@ -98,8 +98,8 @@ public final class NettyHttpHelper {
     /**
      * Creates the {@link HttpMethod} to use to call the remote server, often either its GET or POST.
      *
-     * @param message  the Camel message
-     * @return the created method
+     * @param  message the Camel message
+     * @return         the created method
      */
     public static HttpMethod createMethod(Message message, boolean hasPayload) {
         // use header first
@@ -123,7 +123,8 @@ public final class NettyHttpHelper {
         }
     }
 
-    public static Exception populateNettyHttpOperationFailedException(Exchange exchange, String url, FullHttpResponse response, int responseCode, boolean transferException) {
+    public static Exception populateNettyHttpOperationFailedException(
+            Exchange exchange, String url, FullHttpResponse response, int responseCode, boolean transferException) {
         String uri = url;
         String statusText = response.status().reasonPhrase();
 
@@ -180,9 +181,9 @@ public final class NettyHttpHelper {
     /**
      * Creates the URL to invoke.
      *
-     * @param exchange the exchange
-     * @param endpoint the endpoint
-     * @return the URL to invoke
+     * @param  exchange the exchange
+     * @param  endpoint the endpoint
+     * @return          the URL to invoke
      */
     public static String createURL(Exchange exchange, NettyHttpEndpoint endpoint) throws URISyntaxException {
         // rest producer may provide an override url to be used which we should discard if using (hence the remove)
@@ -207,7 +208,7 @@ public final class NettyHttpHelper {
             }
 
             // inject the dynamic path before the query params, if there are any
-            int idx = uri.indexOf("?");
+            int idx = uri.indexOf('?');
 
             // if there are no query params
             if (idx == -1) {
@@ -232,10 +233,10 @@ public final class NettyHttpHelper {
     /**
      * Creates the URI to invoke.
      *
-     * @param exchange the exchange
-     * @param url      the url to invoke
-     * @param endpoint the endpoint
-     * @return the URI to invoke
+     * @param  exchange the exchange
+     * @param  url      the url to invoke
+     * @param  endpoint the endpoint
+     * @return          the URI to invoke
      */
     public static URI createURI(Exchange exchange, String url, NettyHttpEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
@@ -270,9 +271,9 @@ public final class NettyHttpHelper {
     /**
      * Checks whether the given http status code is within the ok range
      *
-     * @param statusCode the status code
-     * @param okStatusCodeRange the ok range (inclusive)
-     * @return <tt>true</tt> if ok, <tt>false</tt> otherwise
+     * @param  statusCode        the status code
+     * @param  okStatusCodeRange the ok range (inclusive)
+     * @return                   <tt>true</tt> if ok, <tt>false</tt> otherwise
      */
     public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
         String[] ranges = okStatusCodeRange.split(",");
@@ -281,7 +282,7 @@ public final class NettyHttpHelper {
             if (range.contains("-")) {
                 int from = Integer.valueOf(StringHelper.before(range, "-"));
                 int to = Integer.valueOf(StringHelper.after(range, "-"));
-                ok =  statusCode >= from && statusCode <= to;
+                ok = statusCode >= from && statusCode <= to;
             } else {
                 int exact = Integer.valueOf(range);
                 ok = exact == statusCode;

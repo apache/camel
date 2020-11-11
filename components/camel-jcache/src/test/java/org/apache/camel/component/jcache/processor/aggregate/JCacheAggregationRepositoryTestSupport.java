@@ -17,7 +17,7 @@
 package org.apache.camel.component.jcache.processor.aggregate;
 
 import org.apache.camel.component.jcache.JCacheConfiguration;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 class JCacheAggregationRepositoryTestSupport extends CamelTestSupport {
 

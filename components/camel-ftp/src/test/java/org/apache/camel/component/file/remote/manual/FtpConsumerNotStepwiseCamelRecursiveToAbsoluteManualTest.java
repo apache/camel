@@ -46,8 +46,7 @@ public class FtpConsumerNotStepwiseCamelRecursiveToAbsoluteManualTest extends Ca
             @Override
             public void configure() throws Exception {
                 from("ftp:localhost/one/two?username=camel&password=camel&recursive=true&noop=true&stepwise=false")
-                    .to("file:E:/temp/sample/file2ftp")
-                    .to("mock:result");
+                        .to("file:E:/temp/sample/file2ftp").to("mock:result");
             }
         };
     }

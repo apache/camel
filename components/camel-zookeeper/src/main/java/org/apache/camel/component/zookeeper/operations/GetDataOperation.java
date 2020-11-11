@@ -22,8 +22,8 @@ import org.apache.zookeeper.data.Stat;
 import static java.lang.String.format;
 
 /**
- * <code>GetDataOperation</code> is a basic operation to immediately retrieve
- * the data associated with a given ZooKeeper node.
+ * <code>GetDataOperation</code> is a basic operation to immediately retrieve the data associated with a given ZooKeeper
+ * node.
  */
 public class GetDataOperation extends ZooKeeperOperation<byte[]> {
 

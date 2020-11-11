@@ -17,9 +17,9 @@
 package org.apache.camel.cdi.pojo;
 
 public class TypeConverterOutput {
-    
+
     private String property;
-    
+
     public String getProperty() {
         return property;
     }

@@ -18,7 +18,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
 
-public class DeadLetterChannelExceptionCausePropagatedWithDefaultErrorHandlerTest extends DeadLetterChannelExceptionCausePropagatedTest {
+public class DeadLetterChannelExceptionCausePropagatedWithDefaultErrorHandlerTest
+        extends DeadLetterChannelExceptionCausePropagatedTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {

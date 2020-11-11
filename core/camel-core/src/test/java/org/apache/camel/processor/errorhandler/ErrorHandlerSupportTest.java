@@ -22,10 +22,14 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ErrorHandlerBuilderSupport;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.junit.Test;
+import org.apache.camel.reifier.errorhandler.DefaultErrorHandlerReifier;
+import org.apache.camel.spi.ErrorHandler;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ErrorHandlerSupportTest extends ContextTestSupport {
 
@@ -36,7 +40,7 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
         exceptions.add(ParentException.class);
 
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        ErrorHandlerBuilderSupport.addExceptionPolicy(support, context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(exceptions));
+        addExceptionPolicy(support, context.getRoute("foo"), new OnExceptionDefinition(exceptions));
 
         assertEquals(ChildException.class.getName(), getExceptionPolicyFor(support, new ChildException(), 0));
         assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 1));
@@ -49,7 +53,7 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
         exceptions.add(ChildException.class);
 
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        ErrorHandlerBuilderSupport.addExceptionPolicy(support, context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(exceptions));
+        addExceptionPolicy(support, context.getRoute("foo"), new OnExceptionDefinition(exceptions));
 
         assertEquals(ChildException.class.getName(), getExceptionPolicyFor(support, new ChildException(), 1));
         assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 0));
@@ -58,8 +62,8 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
     @Test
     public void testTwoPolicyChildFirst() {
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        ErrorHandlerBuilderSupport.addExceptionPolicy(support, context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(ChildException.class));
-        ErrorHandlerBuilderSupport.addExceptionPolicy(support, context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(ParentException.class));
+        addExceptionPolicy(support, context.getRoute("foo"), new OnExceptionDefinition(ChildException.class));
+        addExceptionPolicy(support, context.getRoute("foo"), new OnExceptionDefinition(ParentException.class));
 
         assertEquals(ChildException.class.getName(), getExceptionPolicyFor(support, new ChildException(), 0));
         assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 0));
@@ -68,11 +72,16 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
     @Test
     public void testTwoPolicyChildLast() {
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        ErrorHandlerBuilderSupport.addExceptionPolicy(support, context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(ParentException.class));
-        ErrorHandlerBuilderSupport.addExceptionPolicy(support, context.getRoute("foo").getRouteContext(), new OnExceptionDefinition(ChildException.class));
+        addExceptionPolicy(support, context.getRoute("foo"), new OnExceptionDefinition(ParentException.class));
+        addExceptionPolicy(support, context.getRoute("foo"), new OnExceptionDefinition(ChildException.class));
 
         assertEquals(ChildException.class.getName(), getExceptionPolicyFor(support, new ChildException(), 0));
         assertEquals(ParentException.class.getName(), getExceptionPolicyFor(support, new ParentException(), 0));
+    }
+
+    private static void addExceptionPolicy(
+            ErrorHandlerSupport handlerSupport, Route route, OnExceptionDefinition exceptionType) {
+        new DefaultErrorHandlerReifier<>(route, null).addExceptionPolicy(handlerSupport, exceptionType);
     }
 
     private static String getExceptionPolicyFor(ErrorHandlerSupport support, Throwable childException, int index) {
@@ -104,6 +113,11 @@ public class ErrorHandlerSupportTest extends ContextTestSupport {
 
         @Override
         public Processor getOutput() {
+            return null;
+        }
+
+        @Override
+        public ErrorHandler clone(Processor output) {
             return null;
         }
 

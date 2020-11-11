@@ -17,8 +17,8 @@
 package org.apache.camel;
 
 /**
- * A runtime exception thrown if a routing processor such as a
- * recipient list is unable to resolve an {@link Endpoint} from a URI.
+ * A runtime exception thrown if a routing processor such as a recipient list is unable to resolve an {@link Endpoint}
+ * from a URI.
  */
 public class NoSuchEndpointException extends RuntimeCamelException {
 
@@ -29,7 +29,7 @@ public class NoSuchEndpointException extends RuntimeCamelException {
               + ", please check your classpath contains the needed Camel component jar.");
         this.uri = uri;
     }
-    
+
     public NoSuchEndpointException(String uri, String resolveMethod) {
         super("No endpoint could be found for: " + uri
               + ", please " + resolveMethod);

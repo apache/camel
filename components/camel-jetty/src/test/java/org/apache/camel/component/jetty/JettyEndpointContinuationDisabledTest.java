@@ -19,7 +19,9 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyEndpointContinuationDisabledTest extends BaseJettyTest {
 
@@ -41,7 +43,7 @@ public class JettyEndpointContinuationDisabledTest extends BaseJettyTest {
                 from("jetty:http://localhost:{{port}}/myservice?useContinuation=false").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Thread.sleep(1000);
-                        exchange.getOut().setBody("Bye World");
+                        exchange.getMessage().setBody("Bye World");
                     }
                 }).to("mock:result");
             }

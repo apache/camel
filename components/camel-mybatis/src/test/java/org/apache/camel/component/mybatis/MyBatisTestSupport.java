@@ -20,8 +20,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class MyBatisTestSupport extends CamelTestSupport {
 
@@ -57,14 +57,14 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         try (Connection connection = createConnection();
-            ResultSet checkTableExistResultSet = connection.getMetaData().getTables(null, null, getTableName(), null);
-            Statement deletePreExistingTableStatement = connection.createStatement();
-            Statement createTableStatement = connection.createStatement()) {
+             ResultSet checkTableExistResultSet = connection.getMetaData().getTables(null, null, getTableName(), null);
+             Statement deletePreExistingTableStatement = connection.createStatement();
+             Statement createTableStatement = connection.createStatement()) {
 
             // delete any pre-existing ACCOUNT table
             if (checkTableExistResultSet.next()) {
@@ -89,7 +89,7 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
             account2.setLastName("Ibsen");
             account2.setEmailAddress("Noname@gmail.com");
 
-            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[] {account1, account2});
+            template.sendBody("mybatis:insertAccount?statementType=Insert", new Account[] { account1, account2 });
         }
     }
 

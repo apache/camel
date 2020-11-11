@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "jta",
+    "title": "JTA",
+    "description": "Using Camel With JTA Transaction Manager",
+    "deprecated": false,
+    "firstVersion": "3.4.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jta",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

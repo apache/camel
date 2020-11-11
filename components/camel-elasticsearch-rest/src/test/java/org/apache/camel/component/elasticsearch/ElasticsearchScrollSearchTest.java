@@ -33,9 +33,14 @@ import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.*;
+import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL;
+import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
+import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PROPERTY_SCROLL_ES_QUERY_COUNT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
 
@@ -48,12 +53,12 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
         for (int i = 0; i < 10; i++) {
             Map<String, String> map = createIndexedData();
             String indexId = template.requestBody("direct:scroll-index", map, String.class);
-            assertNotNull("indexId should be set", indexId);
+            assertNotNull(indexId, "indexId should be set");
         }
 
         // perform a refresh
         Response refreshResponse = getClient().performRequest(new Request("post", "/" + TWITTER_ES_INDEX_NAME + "/_refresh"));
-        assertEquals("Cannot perform a refresh", 200, refreshResponse.getStatusLine().getStatusCode());
+        assertEquals(200, refreshResponse.getStatusLine().getStatusCode(), "Cannot perform a refresh");
 
         SearchRequest req = getScrollSearchRequest(TWITTER_ES_INDEX_NAME);
 
@@ -65,19 +70,22 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
 
         exchange = template.send("direct:scroll-search", exchange);
 
-        try (ElasticsearchScrollRequestIterator scrollRequestIterator = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class)) {
-            assertNotNull("response should not be null", scrollRequestIterator);
+        try (ElasticsearchScrollRequestIterator scrollRequestIterator
+                = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class)) {
+            assertNotNull(scrollRequestIterator, "response should not be null");
 
             List result = new ArrayList();
             scrollRequestIterator.forEachRemaining(result::add);
 
-            assertEquals("response hits should be == 10", 10, result.size());
-            assertEquals("11 request should have been send to Elasticsearch", 11, scrollRequestIterator.getRequestCount());
+            assertEquals(10, result.size(), "response hits should be == 10");
+            assertEquals(11, scrollRequestIterator.getRequestCount(), "11 request should have been send to Elasticsearch");
         }
 
-        ElasticsearchScrollRequestIterator scrollRequestIterator = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class);
-        assertTrue("iterator should be closed", scrollRequestIterator.isClosed());
-        assertEquals("11 request should have been send to Elasticsearch", 11, (int) exchange.getProperty(PROPERTY_SCROLL_ES_QUERY_COUNT, Integer.class));
+        ElasticsearchScrollRequestIterator scrollRequestIterator
+                = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class);
+        assertTrue(scrollRequestIterator.isClosed(), "iterator should be closed");
+        assertEquals(11, (int) exchange.getProperty(PROPERTY_SCROLL_ES_QUERY_COUNT, Integer.class),
+                "11 request should have been send to Elasticsearch");
     }
 
     @Test
@@ -86,12 +94,13 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
         for (int i = 0; i < 10; i++) {
             Map<String, String> map = createIndexedData();
             String indexId = template.requestBody("direct:scroll-n-split-index", map, String.class);
-            assertNotNull("indexId should be set", indexId);
+            assertNotNull(indexId, "indexId should be set");
         }
 
         // perform a refresh
-        Response refreshResponse = getClient().performRequest(new Request("post", "/" + SPLIT_TWITTER_ES_INDEX_NAME + "/_refresh"));
-        assertEquals("Cannot perform a refresh", 200, refreshResponse.getStatusLine().getStatusCode());
+        Response refreshResponse
+                = getClient().performRequest(new Request("post", "/" + SPLIT_TWITTER_ES_INDEX_NAME + "/_refresh"));
+        assertEquals(200, refreshResponse.getStatusLine().getStatusCode(), "Cannot perform a refresh");
 
         MockEndpoint mock = getMockEndpoint("mock:output");
         mock.expectedMessageCount(1);
@@ -105,15 +114,17 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
         // wait for aggregation
         mock.assertIsSatisfied();
         Iterator<Exchange> iterator = mock.getReceivedExchanges().iterator();
-        assertTrue("response should contain 1 exchange", iterator.hasNext());
+        assertTrue(iterator.hasNext(), "response should contain 1 exchange");
         Collection aggregatedExchanges = iterator.next().getIn().getBody(Collection.class);
 
-        assertEquals("response hits should be == 10", 10, aggregatedExchanges.size());
+        assertEquals(10, aggregatedExchanges.size(), "response hits should be == 10");
 
-        ElasticsearchScrollRequestIterator scrollRequestIterator = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class);
-        assertTrue("iterator should be closed", scrollRequestIterator.isClosed());
-        assertEquals("11 request should have been send to Elasticsearch", 11, scrollRequestIterator.getRequestCount());
-        assertEquals("11 request should have been send to Elasticsearch", 11, (int)exchange.getProperty(PROPERTY_SCROLL_ES_QUERY_COUNT, Integer.class));
+        ElasticsearchScrollRequestIterator scrollRequestIterator
+                = exchange.getIn().getBody(ElasticsearchScrollRequestIterator.class);
+        assertTrue(scrollRequestIterator.isClosed(), "iterator should be closed");
+        assertEquals(11, scrollRequestIterator.getRequestCount(), "11 request should have been send to Elasticsearch");
+        assertEquals(11, (int) exchange.getProperty(PROPERTY_SCROLL_ES_QUERY_COUNT, Integer.class),
+                "11 request should have been send to Elasticsearch");
     }
 
     private SearchRequest getScrollSearchRequest(String indexName) {
@@ -131,15 +142,16 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
             @Override
             public void configure() {
                 from("direct:scroll-index")
-                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + TWITTER_ES_INDEX_NAME);
                 from("direct:scroll-search")
-                        .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=" + TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=" + TWITTER_ES_INDEX_NAME);
 
                 from("direct:scroll-n-split-index")
-                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME);
                 from("direct:scroll-n-split-search")
                         .to("elasticsearch-rest://elasticsearch?"
-                                + "useScroll=true&scrollKeepAliveMs=50000&operation=Search&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT)
+                            + "useScroll=true&scrollKeepAliveMs=50000&operation=Search&indexName="
+                            + SPLIT_TWITTER_ES_INDEX_NAME)
                         .split()
                         .body()
                         .streaming()

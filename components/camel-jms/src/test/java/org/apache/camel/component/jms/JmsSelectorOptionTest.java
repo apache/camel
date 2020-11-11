@@ -23,13 +23,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmsSelectorOptionTest extends CamelTestSupport {
-    
+
     protected String componentName = "activemq";
 
     @Test
@@ -37,12 +39,12 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
         MockEndpoint endpointA = getMockEndpoint("mock:a");
         MockEndpoint endpointB = getMockEndpoint("mock:b");
         MockEndpoint endpointC = getMockEndpoint("mock:c");
-        
+
         endpointA.expectedBodiesReceivedInAnyOrder("A blue car!", "A blue car, again!");
         endpointA.expectedHeaderReceived("color", "blue");
         endpointB.expectedHeaderReceived("color", "red");
         endpointB.expectedBodiesReceived("A red car!");
-        
+
         endpointC.expectedBodiesReceived("Message1", "Message2");
         endpointC.expectedMessageCount(2);
 
@@ -54,7 +56,7 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
         template.sendBodyAndHeader("activemq:queue:hello", "Message2", "SIZE_NUMBER", 1600);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testConsumerTemplate() throws Exception {
         template.sendBodyAndHeader("activemq:queue:consumer", "Message1", "SIZE_NUMBER", 1505);
@@ -68,8 +70,8 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
             if (ex != null) {
                 Message message = ex.getIn();
                 int size = message.getHeader("SIZE_NUMBER", int.class);
-                assertTrue("The message header SIZE_NUMBER should be less than 1500", size < 1500);
-                assertEquals("The message body is wrong", "Message3", message.getBody());
+                assertTrue(size < 1500, "The message header SIZE_NUMBER should be less than 1500");
+                assertEquals("Message3", message.getBody(), "The message body is wrong");
             } else {
                 break;
             }

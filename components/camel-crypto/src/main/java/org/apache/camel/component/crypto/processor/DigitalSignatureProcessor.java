@@ -17,12 +17,10 @@
 package org.apache.camel.component.crypto.processor;
 
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Signature;
-import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -31,7 +29,6 @@ import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
 import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 public abstract class DigitalSignatureProcessor implements Processor {
 
@@ -87,10 +84,7 @@ public abstract class DigitalSignatureProcessor implements Processor {
 
     protected void clearMessageHeaders(Message in) {
         if (config.isClearHeaders()) {
-            Map<String, Object> headers = in.getHeaders();
-            for (Field f : DigitalSignatureConstants.class.getFields()) {
-                headers.remove(ObjectHelper.lookupConstantFieldValue(DigitalSignatureConstants.class, f.getName()));
-            }
+            in.removeHeaders("^Camel(Digital)?Signature.*");
         }
     }
 }

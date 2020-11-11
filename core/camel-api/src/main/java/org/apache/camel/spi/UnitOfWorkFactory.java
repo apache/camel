@@ -16,19 +16,25 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.AfterPropertiesConfigured;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
 /**
  * Factory to create {@link org.apache.camel.spi.UnitOfWork}.
  */
-public interface UnitOfWorkFactory {
+public interface UnitOfWorkFactory extends AfterPropertiesConfigured {
 
     /**
      * Creates a new {@link UnitOfWork}
      *
-     * @param exchange  the exchange
-     * @return the created {@link UnitOfWork}
+     * @param  exchange the exchange
+     * @return          the created {@link UnitOfWork}
      */
     UnitOfWork createUnitOfWork(Exchange exchange);
-}
 
+    @Override
+    default void afterPropertiesConfigured(CamelContext camelContext) {
+        // noop
+    }
+}

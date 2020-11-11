@@ -31,8 +31,8 @@ import org.apache.camel.util.StringHelper;
 public class EtcdKeysProducer extends AbstractEtcdProducer {
     private final EtcdConfiguration configuration;
 
-    public EtcdKeysProducer(EtcdKeysEndpoint endpoint, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
-        super(endpoint, configuration, namespace, path);
+    public EtcdKeysProducer(EtcdKeysEndpoint endpoint, EtcdConfiguration configuration, String path) {
+        super(endpoint, configuration, path);
 
         this.configuration = configuration;
     }
@@ -48,21 +48,21 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
         StringHelper.notEmpty(path, EtcdConstants.ETCD_PATH);
         StringHelper.notEmpty(action, EtcdConstants.ETCD_ACTION);
 
-        switch(action) {
-        case EtcdConstants.ETCD_KEYS_ACTION_SET:
-            processSet(getClient(), path, exchange);
-            break;
-        case EtcdConstants.ETCD_KEYS_ACTION_GET:
-            processGet(getClient(), path, exchange);
-            break;
-        case EtcdConstants.ETCD_KEYS_ACTION_DELETE:
-            processDel(getClient(), path, false, exchange);
-            break;
-        case EtcdConstants.ETCD_KEYS_ACTION_DELETE_DIR:
-            processDel(getClient(), path, true, exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown action " + action);
+        switch (action) {
+            case EtcdConstants.ETCD_KEYS_ACTION_SET:
+                processSet(getClient(), path, exchange);
+                break;
+            case EtcdConstants.ETCD_KEYS_ACTION_GET:
+                processGet(getClient(), path, exchange);
+                break;
+            case EtcdConstants.ETCD_KEYS_ACTION_DELETE:
+                processDel(getClient(), path, false, exchange);
+                break;
+            case EtcdConstants.ETCD_KEYS_ACTION_DELETE_DIR:
+                processDel(getClient(), path, true, exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown action " + action);
         }
     }
 
@@ -76,7 +76,7 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
         setRequestTimeout(request, exchange);
 
         try {
-            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "keys");
             exchange.getIn().setBody(request.send().get());
         } catch (TimeoutException e) {
             throw new ExchangeTimedOutException(exchange, configuration.getTimeout());
@@ -89,7 +89,7 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
         setRequestRecursive(request, exchange);
 
         try {
-            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "keys");
             exchange.getIn().setBody(request.send().get());
         } catch (TimeoutException e) {
             throw new ExchangeTimedOutException(exchange, configuration.getTimeout());
@@ -106,7 +106,7 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
         }
 
         try {
-            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, "keys");
             exchange.getIn().setBody(request.send().get());
         } catch (TimeoutException e) {
             throw new ExchangeTimedOutException(exchange, configuration.getTimeout());

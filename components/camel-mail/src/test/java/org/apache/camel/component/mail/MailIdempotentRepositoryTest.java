@@ -25,10 +25,12 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for idempotent repository.
@@ -39,7 +41,7 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
     private MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -90,8 +92,9 @@ public class MailIdempotentRepositoryTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&initialDelay=100&delay=100").routeId("foo").noAutoStartup()
-                    .to("mock:result");
+                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&initialDelay=100&delay=100")
+                        .routeId("foo").noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

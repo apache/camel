@@ -19,7 +19,9 @@ package org.apache.camel.model;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RoutePropertiesTest extends ContextTestSupport {
 
@@ -33,7 +35,8 @@ public class RoutePropertiesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("route-id").routeProperty("key1", "val1").routeProperty("key2", "val2").to("mock:output");
+                from("direct:start").routeId("route-id").routeProperty("key1", "val1").routeProperty("key2", "val2")
+                        .to("mock:output");
             }
         });
 

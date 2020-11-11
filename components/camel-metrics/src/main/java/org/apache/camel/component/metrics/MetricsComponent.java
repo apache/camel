@@ -28,7 +28,10 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages metrics endpoints.
@@ -40,6 +43,8 @@ public class MetricsComponent extends DefaultComponent {
     public static final MetricsType DEFAULT_METRICS_TYPE = MetricsType.METER;
     public static final long DEFAULT_REPORTING_INTERVAL_SECONDS = 60L;
 
+    private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
+
     @Metadata(label = "advanced")
     private MetricRegistry metricRegistry;
 
@@ -48,17 +53,24 @@ public class MetricsComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (metricRegistry == null) {
-            Registry camelRegistry = getCamelContext().getRegistry();
-            metricRegistry = getOrCreateMetricRegistry(camelRegistry, METRIC_REGISTRY_NAME);
-        }
         String metricsName = getMetricsName(remaining);
         MetricsType metricsType = getMetricsType(remaining);
 
-        log.debug("Metrics type: {}; name: {}", metricsType, metricsName);
+        LOG.debug("Metrics type: {}; name: {}", metricsType, metricsName);
         Endpoint endpoint = new MetricsEndpoint(uri, this, metricRegistry, metricsType, metricsName);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public MetricRegistry getMetricRegistry() {
+        return metricRegistry;
+    }
+
+    /**
+     * To use a custom configured MetricRegistry.
+     */
+    public void setMetricRegistry(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
     }
 
     String getMetricsName(String remaining) {
@@ -80,18 +92,18 @@ public class MetricsComponent extends DefaultComponent {
         return type;
     }
 
-    MetricRegistry getOrCreateMetricRegistry(Registry camelRegistry, String registryName) {
-        log.debug("Looking up MetricRegistry from Camel Registry for name \"{}\"", registryName);
+    static MetricRegistry getOrCreateMetricRegistry(Registry camelRegistry, String registryName) {
+        LOG.debug("Looking up MetricRegistry from Camel Registry for name \"{}\"", registryName);
         MetricRegistry result = getMetricRegistryFromCamelRegistry(camelRegistry, registryName);
         if (result == null) {
-            log.debug("MetricRegistry not found from Camel Registry for name \"{}\"", registryName);
-            log.info("Creating new default MetricRegistry");
+            LOG.debug("MetricRegistry not found from Camel Registry for name \"{}\"", registryName);
+            LOG.info("Creating new default MetricRegistry");
             result = createMetricRegistry();
         }
         return result;
     }
 
-    MetricRegistry getMetricRegistryFromCamelRegistry(Registry camelRegistry, String registryName) {
+    static MetricRegistry getMetricRegistryFromCamelRegistry(Registry camelRegistry, String registryName) {
         MetricRegistry registry = camelRegistry.lookupByNameAndType(registryName, MetricRegistry.class);
         if (registry != null) {
             return registry;
@@ -104,10 +116,10 @@ public class MetricsComponent extends DefaultComponent {
         return null;
     }
 
-    MetricRegistry createMetricRegistry() {
+    static MetricRegistry createMetricRegistry() {
         MetricRegistry registry = new MetricRegistry();
         final Slf4jReporter reporter = Slf4jReporter.forRegistry(registry)
-                .outputTo(log)
+                .outputTo(LOG)
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .withLoggingLevel(Slf4jReporter.LoggingLevel.DEBUG)
@@ -116,14 +128,15 @@ public class MetricsComponent extends DefaultComponent {
         return registry;
     }
 
-    public MetricRegistry getMetricRegistry() {
-        return metricRegistry;
-    }
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
 
-    /**
-     * To use a custom configured MetricRegistry.
-     */
-    public void setMetricRegistry(MetricRegistry metricRegistry) {
-        this.metricRegistry = metricRegistry;
+        if (metricRegistry == null) {
+            Registry camelRegistry = getCamelContext().getRegistry();
+            metricRegistry = getOrCreateMetricRegistry(camelRegistry, METRIC_REGISTRY_NAME);
+        }
+
+        ObjectHelper.notNull(metricRegistry, "MetricsRegistry", this);
     }
 }

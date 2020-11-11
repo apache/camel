@@ -22,7 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Based on user forum issue
@@ -30,11 +33,25 @@ import org.junit.Test;
 public class AggregateLostGroupIssueTest extends ContextTestSupport {
 
     private int messageIndex;
+    private MemoryAggregationRepository aggregationRepository;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        messageIndex = 0;
+        super.setUp();
+        getAggregationRepository().start();
+        context.getRouteController().startRoute("foo");
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        context.getRouteController().stopRoute("foo");
+        getAggregationRepository().stop();
+        super.tearDown();
+    }
 
     @Test
     public void testAggregateLostGroupIssue() throws Exception {
-        messageIndex = 0;
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.message(0).body().isEqualTo("0,1,2,3,4,5,6,7,8,9");
@@ -43,12 +60,19 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    protected synchronized MemoryAggregationRepository getAggregationRepository() {
+        if (aggregationRepository == null) {
+            aggregationRepository = new MemoryAggregationRepository();
+        }
+        return aggregationRepository;
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer://foo?period=10&delay=0").startupOrder(2).process(new Processor() {
+                from("timer://foo?period=10&delay=0").id("foo").startupOrder(2).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getMessage().setBody(messageIndex++);
                         exchange.getMessage().setHeader("aggregateGroup", "group1");
@@ -67,7 +91,9 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(oldBody + "," + newBody);
                         return oldExchange;
                     }
-                }).completionSize(10).completionTimeout(200).completionTimeoutCheckerInterval(10).to("log:aggregated").to("mock:result");
+                }).aggregationRepository(AggregateLostGroupIssueTest.this::getAggregationRepository)
+                        .completionSize(10).completionTimeout(200).completionTimeoutCheckerInterval(10).to("log:aggregated")
+                        .to("mock:result");
             }
         };
     }

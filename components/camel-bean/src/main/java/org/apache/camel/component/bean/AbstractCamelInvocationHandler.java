@@ -95,12 +95,13 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     public abstract Object doInvokeProxy(Object proxy, Method method, Object[] args) throws Throwable;
 
     @SuppressWarnings("unchecked")
-    protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding) throws Throwable {
+    protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding)
+            throws Throwable {
         final Exchange exchange = new DefaultExchange(endpoint, pattern);
 
         //Need to check if there are mutiple arguments and the parameters have no annotations for binding,
         //then use the original bean invocation.
-        
+
         boolean canUseBinding = method.getParameterCount() == 1;
 
         if (!canUseBinding) {
@@ -160,9 +161,12 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
 
         if (binding) {
-            LOG.trace("Binding to service interface as @Body,@Header,@ExchangeProperty detected when calling proxy method: {}", method);
+            LOG.trace("Binding to service interface as @Body,@Header,@ExchangeProperty detected when calling proxy method: {}",
+                    method);
         } else {
-            LOG.trace("No binding to service interface as @Body,@Header,@ExchangeProperty not detected when calling proxy method: {}", method);
+            LOG.trace(
+                    "No binding to service interface as @Body,@Header,@ExchangeProperty not detected when calling proxy method: {}",
+                    method);
         }
 
         return doInvoke(method, exchange);
@@ -219,7 +223,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
             Throwable found = findSuitableException(cause, method);
             if (found != null) {
                 if (found instanceof Exception) {
-                    throw (Exception)found;
+                    throw (Exception) found;
                 } else {
                     // wrap as exception
                     throw new CamelExchangeException("Error processing exchange", exchange, cause);
@@ -230,13 +234,13 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                 // if the inner cause is a runtime exception we can throw it
                 // directly
                 if (cause.getCause() instanceof RuntimeException) {
-                    throw (RuntimeException)((RuntimeCamelException)cause).getCause();
+                    throw (RuntimeException) ((RuntimeCamelException) cause).getCause();
                 }
-                throw (RuntimeCamelException)cause;
+                throw (RuntimeCamelException) cause;
             }
             // okay just throw the exception as is
             if (cause instanceof Exception) {
-                throw (Exception)cause;
+                throw (Exception) cause;
             } else {
                 // wrap as exception
                 throw new CamelExchangeException("Error processing exchange", exchange, cause);
@@ -285,10 +289,12 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
             // try to lookup a pool first based on id/profile
             executorService = context.getRegistry().lookupByNameAndType("CamelInvocationHandler", ExecutorService.class);
             if (executorService == null) {
-                executorService = context.getExecutorServiceManager().newThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler", "CamelInvocationHandler");
+                executorService = context.getExecutorServiceManager().newThreadPool(CamelInvocationHandler.class,
+                        "CamelInvocationHandler", "CamelInvocationHandler");
             }
             if (executorService == null) {
-                executorService = context.getExecutorServiceManager().newDefaultThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler");
+                executorService = context.getExecutorServiceManager().newDefaultThreadPool(CamelInvocationHandler.class,
+                        "CamelInvocationHandler");
             }
         }
         return executorService;
@@ -297,13 +303,12 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     /**
      * Tries to find the best suited exception to throw.
      * <p/>
-     * It looks in the exception hierarchy from the caused exception and matches
-     * this against the declared exceptions being thrown on the method.
+     * It looks in the exception hierarchy from the caused exception and matches this against the declared exceptions
+     * being thrown on the method.
      *
-     * @param cause the caused exception
-     * @param method the method
-     * @return the exception to throw, or <tt>null</tt> if not possible to find
-     *         a suitable exception
+     * @param  cause  the caused exception
+     * @param  method the method
+     * @return        the exception to throw, or <tt>null</tt> if not possible to find a suitable exception
      */
     protected Throwable findSuitableException(Throwable cause, Method method) {
         if (method.getExceptionTypes() == null || method.getExceptionTypes().length == 0) {

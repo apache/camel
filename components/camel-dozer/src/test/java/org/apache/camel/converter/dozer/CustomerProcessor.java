@@ -18,7 +18,7 @@ package org.apache.camel.converter.dozer;
 
 import org.apache.camel.converter.dozer.model.Customer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CustomerProcessor {
 

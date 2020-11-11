@@ -35,7 +35,8 @@ public class MiloClientProducer extends DefaultAsyncProducer {
 
     private final boolean defaultAwaitWrites;
 
-    public MiloClientProducer(final MiloClientEndpoint endpoint, final MiloClientConnection connection, final boolean defaultAwaitWrites) {
+    public MiloClientProducer(final MiloClientEndpoint endpoint, final MiloClientConnection connection,
+                              final boolean defaultAwaitWrites) {
         super(endpoint);
 
         this.connection = connection;
@@ -49,8 +50,6 @@ public class MiloClientProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback async) {
         final Message msg = exchange.getIn();
         final Object value = msg.getBody();
-
-        log.debug("Processing message: {}", value);
 
         final CompletableFuture<?> future;
 

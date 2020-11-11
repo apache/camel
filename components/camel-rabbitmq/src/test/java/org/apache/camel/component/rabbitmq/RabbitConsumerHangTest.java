@@ -18,10 +18,11 @@ package org.apache.camel.component.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RabbitConsumerHangTest {
 
@@ -30,7 +31,8 @@ public class RabbitConsumerHangTest {
     private Connection conn = Mockito.mock(Connection.class);
     private Channel channel = Mockito.mock(Channel.class);
 
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(5)
     public void testHandleDeliveryShouldNotHangForeverIfChanelWasClosed() throws Exception {
         Mockito.when(consumer.getEndpoint()).thenReturn(endpoint);
         Mockito.when(consumer.getConnection()).thenReturn(conn);
@@ -41,7 +43,8 @@ public class RabbitConsumerHangTest {
         RabbitConsumer rabbitConsumer = new RabbitConsumer(consumer);
 
         rabbitConsumer.handleDelivery(null, null, null, null);
-        // will now fail with some NPE which is expected as we have not mocked all the inner details
+        // will now fail with some NPE which is expected as we have not mocked
+        // all the inner details
         try {
             rabbitConsumer.handleDelivery(null, null, null, null);
             fail("Should have thrown NPE");

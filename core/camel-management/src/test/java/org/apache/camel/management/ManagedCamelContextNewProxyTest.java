@@ -21,7 +21,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedCamelContextNewProxyTest extends ManagementTestSupport {
 

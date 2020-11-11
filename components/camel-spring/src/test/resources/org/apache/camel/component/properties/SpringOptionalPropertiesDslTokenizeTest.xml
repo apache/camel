@@ -34,7 +34,7 @@
     <route>
       <from uri="direct:start"/>
       <split>
-        <tokenize token="," prop:group="onlytwo"/>
+        <tokenize token="," group="{{onlytwo}}"/>
         <to uri="mock:a"/>
       </split>
     </route>

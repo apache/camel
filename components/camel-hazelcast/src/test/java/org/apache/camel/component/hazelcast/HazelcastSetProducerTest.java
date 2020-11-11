@@ -19,15 +19,19 @@ package org.apache.camel.component.hazelcast;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.hazelcast.collection.ISet;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ISet;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class HazelcastSetProducerTest extends HazelcastCamelTestSupport {
 
@@ -36,7 +40,7 @@ public class HazelcastSetProducerTest extends HazelcastCamelTestSupport {
 
     @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
-        when(hazelcastInstance.<String>getSet("bar")).thenReturn(set);
+        when(hazelcastInstance.<String> getSet("bar")).thenReturn(set);
     }
 
     @Override
@@ -44,14 +48,15 @@ public class HazelcastSetProducerTest extends HazelcastCamelTestSupport {
         verify(hazelcastInstance, atLeastOnce()).getSet("bar");
     }
 
-    @After
+    @AfterEach
     public final void verifySetMock() {
         verifyNoMoreInteractions(set);
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testWithInvalidOperation() {
-        template.sendBody("direct:addInvalid", "bar");
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:addInvalid", "bar"));
     }
 
     @Test
@@ -77,13 +82,13 @@ public class HazelcastSetProducerTest extends HazelcastCamelTestSupport {
         template.sendBody("direct:removeValue", "foo2");
         verify(set).remove("foo2");
     }
-    
+
     @Test
     public void clearList() {
         template.sendBody("direct:clear", "");
         verify(set).clear();
     }
-    
+
     @Test
     public void addAll() throws InterruptedException {
         Collection t = new ArrayList();
@@ -92,7 +97,7 @@ public class HazelcastSetProducerTest extends HazelcastCamelTestSupport {
         template.sendBody("direct:addall", t);
         verify(set).addAll(t);
     }
-    
+
     @Test
     public void removeAll() throws InterruptedException {
         Collection t = new ArrayList();
@@ -101,7 +106,7 @@ public class HazelcastSetProducerTest extends HazelcastCamelTestSupport {
         template.sendBody("direct:removeAll", t);
         verify(set).removeAll(t);
     }
-    
+
     @Test
     public void retainAll() throws InterruptedException {
         Collection t = new ArrayList();
@@ -117,29 +122,33 @@ public class HazelcastSetProducerTest extends HazelcastCamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:addInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).toF("hazelcast-%sbar", HazelcastConstants.SET_PREFIX);
+                from("direct:addInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).toF("hazelcast-%sbar",
+                        HazelcastConstants.SET_PREFIX);
 
-                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.ADD)).toF("hazelcast-%sbar", HazelcastConstants.SET_PREFIX);
+                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.ADD))
+                        .toF("hazelcast-%sbar", HazelcastConstants.SET_PREFIX);
 
-                from("direct:removeValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_VALUE)).to(
-                        String.format("hazelcast-%sbar", HazelcastConstants.SET_PREFIX));
-                
-                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR)).toF("hazelcast-%sbar", HazelcastConstants.SET_PREFIX);
+                from("direct:removeValue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_VALUE))
+                        .to(
+                                String.format("hazelcast-%sbar", HazelcastConstants.SET_PREFIX));
+
+                from("direct:clear").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.CLEAR))
+                        .toF("hazelcast-%sbar", HazelcastConstants.SET_PREFIX);
 
                 from("direct:addall").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.ADD_ALL)).to(
                         String.format("hazelcast-%sbar", HazelcastConstants.SET_PREFIX));
-                
+
                 from("direct:removeAll").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.REMOVE_ALL)).to(
                         String.format("hazelcast-%sbar", HazelcastConstants.SET_PREFIX));
-                
+
                 from("direct:RETAIN_ALL").setHeader(HazelcastConstants.OPERATION, constant(HazelcastOperation.RETAIN_ALL)).to(
                         String.format("hazelcast-%sbar", HazelcastConstants.SET_PREFIX));
-                
-                from("direct:addWithOperationNumber").toF("hazelcast-%sbar?operation=%s", HazelcastConstants.SET_PREFIX, HazelcastOperation.ADD);
+
+                from("direct:addWithOperationNumber").toF("hazelcast-%sbar?operation=%s", HazelcastConstants.SET_PREFIX,
+                        HazelcastOperation.ADD);
                 from("direct:addWithOperationName").toF("hazelcast-%sbar?operation=ADD", HazelcastConstants.SET_PREFIX);
             }
         };
     }
 
 }
-

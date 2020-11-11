@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -30,34 +29,38 @@ import org.apache.http.HttpStatus;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.protocol.HttpContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.http.HttpHeaders.ACCEPT_LANGUAGE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpCamelHeadersTest extends BaseHttpTest {
 
     protected HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("TestHeader", "test");
-        expectedHeaders.put("Accept-Language", "pl");
+        expectedHeaders.put(ACCEPT_LANGUAGE, "pl");
 
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new MyHeaderValidationHandler("GET", "HTTP/1.0", getExpectedContent(), expectedHeaders)).create();
+        localServer
+                = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                        .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                        .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                        .registerHandler("/",
+                                new MyHeaderValidationHandler(GET.name(), "HTTP/1.0", getExpectedContent(), expectedHeaders))
+                        .create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -77,25 +80,22 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
         super.assertHeaders(headers);
 
         assertEquals("test", headers.get("TestHeader"));
-        assertEquals("pl", headers.get("Accept-Language"));
+        assertEquals("pl", headers.get(ACCEPT_LANGUAGE));
     }
 
     private Exchange doExchange() {
         return template.request(
                 "http://"
-                        + localServer.getInetAddress().getHostName()
-                        + ":"
-                        + localServer.getLocalPort()
-                        + "/"
-                        + setupEndpointParams(),
-                new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setHeader("TestHeader", "test");
-                        exchange.getIn().setHeader("Accept-Language", "pl");
-                        exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
-                    }
-                }
-        );
+                                + localServer.getInetAddress().getHostName()
+                                + ":"
+                                + localServer.getLocalPort()
+                                + "/"
+                                + setupEndpointParams(),
+                exchange -> {
+                    exchange.getIn().setHeader("TestHeader", "test");
+                    exchange.getIn().setHeader(ACCEPT_LANGUAGE, "pl");
+                    exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
+                });
     }
 
     protected String setupEndpointParams() {
@@ -106,14 +106,16 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
         private String expectProtocolVersion;
 
         MyHeaderValidationHandler(String expectedMethod, String protocolVersion,
-                                         String responseContent, Map<String, String> expectedHeaders) {
+                                  String responseContent, Map<String, String> expectedHeaders) {
             super(expectedMethod, null, null, responseContent, expectedHeaders);
             expectProtocolVersion = protocolVersion;
         }
 
         @Override
-        public void handle(final HttpRequest request, final HttpResponse response,
-                           final HttpContext context) throws HttpException, IOException {
+        public void handle(
+                final HttpRequest request, final HttpResponse response,
+                final HttpContext context)
+                throws HttpException, IOException {
             if (!expectProtocolVersion.equals(request.getProtocolVersion().toString())) {
                 response.setStatusCode(HttpStatus.SC_HTTP_VERSION_NOT_SUPPORTED);
                 return;

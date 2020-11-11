@@ -24,7 +24,10 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagementTestSupport {
 
@@ -47,31 +50,23 @@ public class ManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagementTes
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
-
-        // and one context scoped error handler
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
-        assertEquals(1, set.size());
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+        assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
 
         // remove
         mbeanServer.invoke(on, "remove", null, null);
 
         // should not be registered anymore
         boolean registered = mbeanServer.isRegistered(on);
-        assertFalse("Route mbean should have been unregistered", registered);
+        assertFalse(registered, "Route mbean should have been unregistered");
 
         // and no more routes
-        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(0, set.size());
-
-        // and the route scoped error handler should be removed
-        set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
+        Set set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());
     }
 
@@ -88,9 +83,9 @@ public class ManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagementTes
             @Override
             public void configure() throws Exception {
                 from("seda:foo")
-                    // route scoped error handler
-                    .errorHandler(deadLetterChannel("mock:dead"))
-                    .to("mock:result");
+                        // route scoped error handler
+                        .errorHandler(deadLetterChannel("mock:dead"))
+                        .to("mock:result");
             }
         };
     }

@@ -19,8 +19,10 @@ package org.apache.camel.component.bean.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
@@ -43,12 +45,13 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertEquals("Derived class should have been invoked", "Hello World", derived.getAndClearBody());
+        assertEquals("Hello World", derived.getAndClearBody(), "Derived class should have been invoked");
     }
 
     @Test
     public void testDerivedClassCalledWithNoCustomProcessor() throws Exception {
-        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
+        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class,
+                new MyMessageToProcessorConverter());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -61,21 +64,22 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         context.start();
 
         Object out = template.requestBody("direct:start", "Hello World");
-        assertEquals("Derived class should have been invoked", "Hello World", derived.getAndClearBody());
+        assertEquals("Hello World", derived.getAndClearBody(), "Derived class should have been invoked");
         assertEquals("Hello World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello World"));
-        assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
+        assertEquals(null, derived.getAndClearBody(), "Derived class should NOT have been invoked");
         assertEquals("Bye World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello Again"));
-        assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
+        assertEquals(null, derived.getAndClearBody(), "Derived class should NOT have been invoked");
         assertEquals("Bye World", out.toString());
     }
 
     @Test
     public void testDerivedClassCalledWithCustomProcessor() throws Exception {
-        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
+        context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class,
+                new MyMessageToProcessorConverter());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -90,21 +94,21 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         context.start();
 
         Object out = template.requestBody("direct:start", new MyMessage("Hello World"));
-        assertEquals("Derived class should have been invoked", "Hello World", derived.getAndClearBody());
+        assertEquals("Hello World", derived.getAndClearBody(), "Derived class should have been invoked");
         assertEquals("Hello World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello World"));
-        assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
+        assertEquals(null, derived.getAndClearBody(), "Derived class should NOT have been invoked");
         assertEquals("Bye World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello Again"));
-        assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
+        assertEquals(null, derived.getAndClearBody(), "Derived class should NOT have been invoked");
         assertEquals("Bye World", out.toString());
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("derived", derived);
         return jndi;
     }

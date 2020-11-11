@@ -30,8 +30,8 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.eclipse.californium.elements.tcp.TcpClientConnector;
-import org.eclipse.californium.elements.tcp.TlsClientConnector;
+import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
+import org.eclipse.californium.elements.tcp.netty.TlsClientConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
 
 /**
@@ -51,7 +51,7 @@ public class CoAPProducer extends DefaultProducer {
         CoapClient client = getClient(exchange);
         String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         if (ct == null) {
-            //?default?
+            // ?default?
             ct = "application/octet-stream";
         }
         String method = CoAPHelper.getDefaultMethod(exchange, client);
@@ -59,25 +59,25 @@ public class CoAPProducer extends DefaultProducer {
         CoapResponse response = null;
         boolean pingResponse = false;
         switch (method) {
-        case CoAPConstants.METHOD_GET:
-            response = client.get();
-            break;
-        case CoAPConstants.METHOD_DELETE:
-            response = client.delete();
-            break;
-        case CoAPConstants.METHOD_POST:
-            byte[] bodyPost = exchange.getIn().getBody(byte[].class);
-            response = client.post(bodyPost, mediaType);
-            break;
-        case CoAPConstants.METHOD_PUT:
-            byte[] bodyPut = exchange.getIn().getBody(byte[].class);
-            response = client.put(bodyPut, mediaType);
-            break;
-        case CoAPConstants.METHOD_PING:
-            pingResponse = client.ping();
-            break;
-        default:
-            break;
+            case CoAPConstants.METHOD_GET:
+                response = client.get();
+                break;
+            case CoAPConstants.METHOD_DELETE:
+                response = client.delete();
+                break;
+            case CoAPConstants.METHOD_POST:
+                byte[] bodyPost = exchange.getIn().getBody(byte[].class);
+                response = client.post(bodyPost, mediaType);
+                break;
+            case CoAPConstants.METHOD_PUT:
+                byte[] bodyPut = exchange.getIn().getBody(byte[].class);
+                response = client.put(bodyPut, mediaType);
+                break;
+            case CoAPConstants.METHOD_PING:
+                pingResponse = client.ping();
+                break;
+            default:
+                break;
         }
 
         if (response != null) {

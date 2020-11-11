@@ -28,7 +28,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.jboss.forge.roaster.model.util.Strings;
+import org.apache.camel.tooling.util.Strings;
 
 /**
  * Various XML helper methods used for parsing XML routes.
@@ -197,13 +197,14 @@ public final class CamelXmlHelper {
 
     private static Document loadCamelXmlFileAsDom(InputStream resourceInputStream) throws Exception {
         // must enforce the namespace to be http://camel.apache.org/schema/spring which is what the camel-core JAXB model uses
-        Document root = XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests", "http://camel.apache.org/schema/spring");
+        Document root = XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests",
+                "http://camel.apache.org/schema/spring");
         return root;
     }
 
     private static Node findCamelNodeInDocument(Document root, String key) {
         Node selectedNode = null;
-        if (root != null && !Strings.isBlank(key)) {
+        if (root != null && !Strings.isNullOrEmpty(key)) {
             String[] paths = key.split("/");
             NodeList camels = getCamelContextElements(root);
             if (camels != null) {
@@ -263,7 +264,7 @@ public final class CamelXmlHelper {
             int count = countObject != null ? countObject : 0;
             nodeCounts.put(elementName, ++count);
             answer = element.getAttribute("id");
-            if (Strings.isBlank(answer)) {
+            if (Strings.isNullOrEmpty(answer)) {
                 answer = "_" + elementName + count;
             }
         }

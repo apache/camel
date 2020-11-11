@@ -22,8 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test for consuming the same filename only.
@@ -31,7 +33,7 @@ import org.junit.Test;
 public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/files");
         super.setUp();
@@ -48,17 +50,18 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // file should not exists
-        assertFalse("File should been deleted", new File("target/data/files/report.txt").exists());
+        assertFalse(new File("target/data/files/report.txt").exists(), "File should been deleted");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/files/?initialDelay=0&delay=10&fileName=report.txt&delete=true").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/files/?initialDelay=0&delay=10&fileName=report.txt&delete=true")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -22,9 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IrcOnReplyTest extends IrcIntegrationTestSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcOnReplyTest.class);
+
     protected String command = "WHO #camel-test";
     protected String resultEnd = "End of /WHO list.";
     private boolean sentMessages;
@@ -37,18 +42,16 @@ public class IrcOnReplyTest extends IrcIntegrationTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
         }
-    }   
-    
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fromUri()).
-                        choice().
-                        when(header(IrcConstants.IRC_NUM).isEqualTo(315)).to("mock:result").
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
+                from(fromUri()).choice().when(header(IrcConstants.IRC_NUM).isEqualTo(315)).to("mock:result")
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
 
                 from("seda:consumerJoined").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -63,8 +66,8 @@ public class IrcOnReplyTest extends IrcIntegrationTestSupport {
     protected String fromUri() {
         StringBuilder sb = new StringBuilder(super.fromUri());
         return sb.append("&onReply=true").toString();
-    }    
-    
+    }
+
     /**
      * Lets send messages once the consumer has joined
      */

@@ -44,6 +44,7 @@ public final class UndertowConstants {
          * Unused in Undertow component. Kept for compatibility with Camel websocket component.
          */
         ONERROR(-1);
+
         private final int code;
 
         EventType(int code) {
@@ -60,14 +61,14 @@ public final class UndertowConstants {
 
         public static EventType ofCode(int code) {
             switch (code) {
-            case 1:
-                return ONOPEN;
-            case 0:
-                return ONCLOSE;
-            case -1:
-                return ONERROR;
-            default:
-                throw new IllegalArgumentException("Cannot find an " + EventType.class.getName() + " for code " + code);
+                case 1:
+                    return ONOPEN;
+                case 0:
+                    return ONCLOSE;
+                case -1:
+                    return ONERROR;
+                default:
+                    throw new IllegalArgumentException("Cannot find an " + EventType.class.getName() + " for code " + code);
             }
         }
     }

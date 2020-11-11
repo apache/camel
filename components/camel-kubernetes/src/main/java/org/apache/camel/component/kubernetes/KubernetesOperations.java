@@ -86,7 +86,7 @@ public interface KubernetesOperations {
     String GET_NODE_OPERATION = "getNode";
     String CREATE_NODE_OPERATION = "createNode";
     String DELETE_NODE_OPERATION = "deleteNode";
-    
+
     // HPA
     String LIST_HPA = "listHPA";
     String LIST_HPA_BY_LABELS_OPERATION = "listHPAByLabels";
@@ -125,4 +125,11 @@ public interface KubernetesOperations {
     String GET_JOB_OPERATION = "getJob";
     String CREATE_JOB_OPERATION = "createJob";
     String DELETE_JOB_OPERATION = "deleteJob";
+
+    // Custom Resources
+    String LIST_CUSTOMRESOURCES = "listCustomResources";
+    String LIST_CUSTOMRESOURCES_BY_LABELS_OPERATION = "listCustomResourcesByLabels";
+    String GET_CUSTOMRESOURCE = "getCustomResource";
+    String DELETE_CUSTOMRESOURCE = "deleteCustomResource";
+    String CREATE_CUSTOMRESOURCE = "createCustomResource";
 }

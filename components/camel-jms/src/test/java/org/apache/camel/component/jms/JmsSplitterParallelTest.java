@@ -21,8 +21,8 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -59,17 +59,17 @@ public class JmsSplitterParallelTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split(body().tokenize(",")).parallelProcessing()
+                        .split(body().tokenize(",")).parallelProcessing()
                         .to("log:before")
                         .to(ExchangePattern.InOut, getUri())
                         .to("log:after")
                         .to("mock:split")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
 
                 from(getUri())
-                    .transform(body().prepend("Bye "))
-                    .to("mock:reply");
+                        .transform(body().prepend("Bye "))
+                        .to("mock:reply");
             }
         };
     }

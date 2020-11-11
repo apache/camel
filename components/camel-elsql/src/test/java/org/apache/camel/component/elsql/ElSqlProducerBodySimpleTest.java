@@ -25,20 +25,24 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sql.SqlConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
 
     @BindToRegistry("dataSource")
-    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+    private EmbeddedDatabase db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY)
+            .addScript("sql/createAndPopulateDatabase.sql").build();
 
     @Test
-    public void testSimpleBody() throws Exception {
+    void testSimpleBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -61,7 +65,7 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBodyParameter() throws InterruptedException {
+    void testBodyParameter() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(List.class);
@@ -79,7 +83,7 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHeadersParameter() throws InterruptedException {
+    void testHeadersParameter() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(List.class);
@@ -97,7 +101,7 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUpdateHeader() throws InterruptedException {
+    void testUpdateHeader() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).header(SqlConstants.SQL_UPDATE_COUNT).isEqualTo(1);
@@ -112,7 +116,7 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -120,10 +124,11 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:simple").to("elsql:projectsByIdBody:elsql/projects.elsql?dataSource=#dataSource").to("mock:result");
+                from("direct:simple").to("elsql:projectsByIdBody:elsql/projects.elsql?dataSource=#dataSource")
+                        .to("mock:result");
 
                 from("direct:parameters").to("elsql:projectById:elsql/projects.elsql?dataSource=#dataSource").to("mock:result");
 

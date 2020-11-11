@@ -17,9 +17,9 @@
 package org.apache.camel.test.patterns;
 
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ public class SimpleWeaveAddMockLastTest extends CamelTestSupport {
 
     @Test
     public void testWeaveAddMockLast() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddLast().to("mock:result");
@@ -53,8 +53,8 @@ public class SimpleWeaveAddMockLastTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .transform(simple("Bye ${body}"))
-                    .to("seda:queue");
+                        .transform(simple("Bye ${body}"))
+                        .to("seda:queue");
             }
         };
     }

@@ -16,18 +16,30 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Projections;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.infra.mongodb.services.MongoDBLocalContainerService;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
@@ -37,7 +49,81 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbFindOperationTest extends AbstractMongoDbTest {
+public class MongoDbFindOperationTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public static MongoDBLocalContainerService service;
+
+    protected static String dbName = "test";
+    protected static String testCollectionName;
+
+    private static MongoClient mongo;
+    private static MongoDatabase db;
+    private static MongoCollection<Document> testCollection;
+
+    static {
+
+        // This one requires Mongo 4.4. This is related to
+        // "CAMEL-15604 support allowDiskUse for MongoDB find operations"
+        service = new MongoDBLocalContainerService("mongo:4.4");
+
+        service.getContainer()
+                .waitingFor(Wait.forListeningPort())
+                .withCommand(
+                        "--replSet", "replicationName",
+                        "--oplogSize", "5000",
+                        "--syncdelay", "0",
+                        "--noauth");
+    }
+
+    @Override
+    public void doPreSetup() throws Exception {
+        super.doPreSetup();
+
+        mongo = MongoClients.create(service.getReplicaSetUrl());
+        db = mongo.getDatabase(dbName);
+    }
+
+    @Override
+    protected void doPostSetup() {
+        // Refresh the test collection - drop it and recreate it. We don't do
+        // this for the database because MongoDB would create large
+        // store files each time
+        testCollectionName = "camelTest";
+        testCollection = db.getCollection(testCollectionName, Document.class);
+        testCollection.drop();
+        testCollection = db.getCollection(testCollectionName, Document.class);
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        MongoDbComponent component = new MongoDbComponent();
+        component.setMongoConnection(mongo);
+
+        @SuppressWarnings("deprecation")
+        CamelContext ctx = new DefaultCamelContext();
+        ctx.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
+
+        ctx.addComponent("mongodb", component);
+
+        return ctx;
+    }
+
+    protected void pumpDataIntoTestCollection() {
+        // there should be 100 of each
+        String[] scientists
+                = { "Einstein", "Darwin", "Copernicus", "Pasteur", "Curie", "Faraday", "Newton", "Bohr", "Galilei", "Maxwell" };
+        for (int i = 1; i <= 1000; i++) {
+            int index = i % scientists.length;
+            Formatter f = new Formatter();
+            String doc
+                    = f.format("{\"_id\":\"%d\", \"scientist\":\"%s\", \"fixedField\": \"fixedValue\"}", i, scientists[index])
+                            .toString();
+            IOHelper.close(f);
+            testCollection.insertOne(Document.parse(doc));
+        }
+        assertEquals(1000L, testCollection.countDocuments(), "Data pumping of 1000 entries did not complete entirely");
+    }
 
     @Test
     public void testFindAllNoCriteriaOperation() throws Exception {
@@ -49,7 +135,7 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         assertTrue(result instanceof List, "Result is not of type List");
 
         @SuppressWarnings("unchecked")
-        List<Document> resultList = (List<Document>)result;
+        List<Document> resultList = (List<Document>) result;
 
         assertListSize("Result does not contain all entries in collection", resultList, 1000);
 
@@ -64,8 +150,30 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         // TODO: decide what to do with total count
         // assertEquals("Result total size header should equal 1000", 1000,
         // resultExchange.getIn().getHeader(MongoDbConstants.RESULT_TOTAL_SIZE));
-        assertEquals(1000, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE), "Result page size header should equal 1000");
+        assertEquals(1000, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE),
+                "Result page size header should equal 1000");
 
+    }
+
+    @Test
+    public void testFindAllAllowDiskUse() throws Exception {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.countDocuments());
+        pumpDataIntoTestCollection();
+
+        Object result
+                = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.ALLOW_DISK_USE, true);
+        assertTrue(result instanceof List, "Result (allowDiskUse=true) is not of type List");
+        assertListSize("Result (allowDiskUse=true) does not contain all entries in collection", (List<Document>) result, 1000);
+
+        result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.ALLOW_DISK_USE, false);
+        assertTrue(result instanceof List, "Result (allowDiskUse=false) is not of type List");
+        assertListSize("Result (allowDiskUse=false) does not contain all entries in collection", (List<Document>) result,
+                1000);
+
+        result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.ALLOW_DISK_USE, null);
+        assertTrue(result instanceof List, "Result (allowDiskUse=null) is not of type List");
+        assertListSize("Result (allowDiskUse=null) does not contain all entries in collection", (List<Document>) result, 1000);
     }
 
     @Test
@@ -78,7 +186,7 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         assertTrue(result instanceof List, "Result is not of type List");
 
         @SuppressWarnings("unchecked")
-        List<Document> resultList = (List<Document>)result;
+        List<Document> resultList = (List<Document>) result;
 
         assertListSize("Result does not contain correct number of Einstein entries", resultList, 100);
 
@@ -92,7 +200,8 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         }
 
         Exchange resultExchange = getMockEndpoint("mock:resultFindAll").getReceivedExchanges().get(0);
-        assertEquals(100, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE), "Result page size header should equal 100");
+        assertEquals(100, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE),
+                "Result page size header should equal 100");
     }
 
     @Test
@@ -106,7 +215,7 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         assertTrue(result instanceof List, "Result is not of type List");
 
         @SuppressWarnings("unchecked")
-        List<Document> resultList = (List<Document>)result;
+        List<Document> resultList = (List<Document>) result;
 
         assertListSize("Result does not contain correct number of Einstein entries", resultList, 100);
 
@@ -120,7 +229,8 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         }
 
         Exchange resultExchange = getMockEndpoint("mock:resultFindAll").getReceivedExchanges().get(0);
-        assertEquals(100, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE), "Result page size header should equal 100");
+        assertEquals(100, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE),
+                "Result page size header should equal 100");
     }
 
     @Test
@@ -130,11 +240,12 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         pumpDataIntoTestCollection();
 
         Bson fieldFilter = Projections.exclude(MONGO_ID, "fixedField");
-        Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.FIELDS_PROJECTION, fieldFilter);
+        Object result = template.requestBodyAndHeader("direct:findAll", ObjectUtils.NULL, MongoDbConstants.FIELDS_PROJECTION,
+                fieldFilter);
         assertTrue(result instanceof List, "Result is not of type List");
 
         @SuppressWarnings("unchecked")
-        List<Document> resultList = (List<Document>)result;
+        List<Document> resultList = (List<Document>) result;
 
         assertListSize("Result does not contain all entries in collection", resultList, 1000);
 
@@ -148,7 +259,8 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         Exchange resultExchange = getMockEndpoint("mock:resultFindAll").getReceivedExchanges().get(0);
         // assertEquals("Result total size header should equal 1000", 1000,
         // resultExchange.getIn().getHeader(MongoDbConstants.RESULT_TOTAL_SIZE));
-        assertEquals(1000, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE), "Result page size header should equal 1000");
+        assertEquals(1000, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE),
+                "Result page size header should equal 1000");
 
     }
 
@@ -169,10 +281,11 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
             assertTrue(result instanceof List, "Result is not of type List");
 
             @SuppressWarnings("unchecked")
-            List<Document> resultList = (List<Document>)result;
+            List<Document> resultList = (List<Document>) result;
 
             assertListSize("Result does not contain 100 elements", resultList, 100);
-            assertEquals(numToSkip + 1, Integer.parseInt((String)resultList.get(0).get(MONGO_ID)), "Id of first record is not as expected");
+            assertEquals(numToSkip + 1, Integer.parseInt((String) resultList.get(0).get(MONGO_ID)),
+                    "Id of first record is not as expected");
 
             // Ensure that all returned documents contain all fields
             for (Document document : resultList) {
@@ -188,7 +301,8 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
             // TODO: decide what to do with the total number of elements
             // assertEquals("Result total size header should equal 1000", 1000,
             // resultExchange.getIn().getHeader(MongoDbConstants.RESULT_TOTAL_SIZE));
-            assertEquals(100, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE), "Result page size header should equal 100");
+            assertEquals(100, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE),
+                    "Result page size header should equal 100");
         }
     }
 
@@ -198,11 +312,12 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
-        Object result = template.requestBodyAndHeader("direct:findDistinct", null, MongoDbConstants.DISTINCT_QUERY_FIELD, "scientist");
+        Object result = template.requestBodyAndHeader("direct:findDistinct", null, MongoDbConstants.DISTINCT_QUERY_FIELD,
+                "scientist");
         assertTrue(result instanceof List, "Result is not of type List");
 
         @SuppressWarnings("unchecked")
-        List<String> resultList = (List<String>)result;
+        List<String> resultList = (List<String>) result;
         assertEquals(10, resultList.size());
     }
 
@@ -214,11 +329,12 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
 
         Bson query = eq("scientist", "Einstein");
 
-        Object result = template.requestBodyAndHeader("direct:findDistinct", query, MongoDbConstants.DISTINCT_QUERY_FIELD, "scientist");
+        Object result = template.requestBodyAndHeader("direct:findDistinct", query, MongoDbConstants.DISTINCT_QUERY_FIELD,
+                "scientist");
         assertTrue(result instanceof List, "Result is not of type List");
 
         @SuppressWarnings("unchecked")
-        List<String> resultList = (List<String>)result;
+        List<String> resultList = (List<String>) result;
         assertEquals(1, resultList.size());
 
         assertEquals("Einstein", resultList.get(0));
@@ -284,17 +400,21 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         return new RouteBuilder() {
             public void configure() {
 
-                from("direct:findAll").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true")
-                    .to("mock:resultFindAll");
+                from("direct:findAll").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true")
+                        .to("mock:resultFindAll");
 
-                from("direct:findOneByQuery").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneByQuery&dynamicity=true")
-                    .to("mock:resultFindOneByQuery");
+                from("direct:findOneByQuery").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneByQuery&dynamicity=true")
+                        .to("mock:resultFindOneByQuery");
 
-                from("direct:findById").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
-                    .to("mock:resultFindById");
+                from("direct:findById").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
+                        .to("mock:resultFindById");
 
-                from("direct:findDistinct").to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findDistinct&dynamicity=true")
-                    .to("mock:resultFindDistinct");
+                from("direct:findDistinct").to(
+                        "mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findDistinct&dynamicity=true")
+                        .to("mock:resultFindDistinct");
             }
         };
     }

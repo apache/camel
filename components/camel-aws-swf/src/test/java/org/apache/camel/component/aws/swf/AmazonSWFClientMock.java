@@ -25,7 +25,8 @@ import com.amazonaws.services.simpleworkflow.model.StartWorkflowExecutionRequest
 public class AmazonSWFClientMock extends AmazonSimpleWorkflowClient {
 
     @Override
-    public Run startWorkflowExecution(StartWorkflowExecutionRequest startWorkflowExecutionRequest) throws AmazonServiceException, AmazonClientException {
+    public Run startWorkflowExecution(StartWorkflowExecutionRequest startWorkflowExecutionRequest)
+            throws AmazonServiceException, AmazonClientException {
         return new Run().withRunId("run1");
     }
 }

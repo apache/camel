@@ -20,7 +20,9 @@ import java.util.Arrays;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisDeleteListTest extends MyBatisTestSupport {
 
@@ -35,7 +37,7 @@ public class MyBatisDeleteListTest extends MyBatisTestSupport {
 
         // there should be 0 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
-        assertEquals("There should be 0 rows", 0, rows.intValue());
+        assertEquals(0, rows.intValue(), "There should be 0 rows");
     }
 
     @Test
@@ -49,7 +51,7 @@ public class MyBatisDeleteListTest extends MyBatisTestSupport {
 
         // there should be 2 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
-        assertEquals("There should be 2 rows", 2, rows.intValue());
+        assertEquals(2, rows.intValue(), "There should be 2 rows");
     }
 
     @Override
@@ -58,8 +60,8 @@ public class MyBatisDeleteListTest extends MyBatisTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis:batchDeleteAccountById?statementType=DeleteList")
-                    .to("mock:result");
+                        .to("mybatis:batchDeleteAccountById?statementType=DeleteList")
+                        .to("mock:result");
             }
         };
     }

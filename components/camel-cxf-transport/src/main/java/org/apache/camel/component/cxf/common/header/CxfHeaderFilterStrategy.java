@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(CxfHeaderFilterStrategy.class);
     private Map<String, MessageHeaderFilter> messageHeaderFiltersMap;
- 
+
     private List<MessageHeaderFilter> messageHeaderFilters;
 
     private boolean relayHeaders = true;
@@ -45,14 +45,14 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     private boolean relayAllMessageHeaders;
 
     public CxfHeaderFilterStrategy() {
-        initialize();  
+        initialize();
     }
 
     protected void initialize() {
         //filter the operationName and operationName
         getOutFilter().add(CxfConstants.OPERATION_NAME.toLowerCase());
         getOutFilter().add(CxfConstants.OPERATION_NAMESPACE.toLowerCase());
-        
+
         // Request and response context Maps will be passed to CXF Client APIs
         getOutFilter().add(Client.REQUEST_CONTEXT.toLowerCase());
         getOutFilter().add(Client.RESPONSE_CONTEXT.toLowerCase());
@@ -62,7 +62,7 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // we need to filter the header of this name.
         getOutFilter().add(Message.PROTOCOL_HEADERS.toLowerCase());
         getInFilter().add(Message.PROTOCOL_HEADERS.toLowerCase());
-        
+
         // Add the filter for the Generic Message header
         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.5
         getOutFilter().add("cache-control");
@@ -74,7 +74,7 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add("upgrade");
         getOutFilter().add("via");
         getOutFilter().add("warning");
-        
+
         // Since CXF can take the content-type from the protocol header
         // we need to filter this header of this name.
         getOutFilter().add("Content-Type".toLowerCase());
@@ -84,34 +84,34 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // message size (e.g. with attachment) is large and response content length 
         // is bigger than request content length.)
         getOutFilter().add("Content-Length".toLowerCase());
-        
+
         // Filter Content-Length as it will cause some trouble when the message 
         // is passed to the other endpoint
         getInFilter().add("content-length".toLowerCase());
-        
+
         setLowerCase(true);
 
         // initialize message header filter map with default SOAP filter
         messageHeaderFiltersMap = new HashMap<>();
         addToMessageHeaderFilterMap(new SoapMessageHeaderFilter());
-        
+
         // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
+        setOutFilterPattern(CAMEL_FILTER_PATTERN);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected boolean extendedFilter(Direction direction, String key, Object value, Exchange exchange) {
         // Currently only handles Header.HEADER_LIST message header relay/filter
-        if (!Header.HEADER_LIST.equals(key) || value == null) { 
+        if (!Header.HEADER_LIST.equals(key) || value == null) {
             return false;
         }
-        
+
         if (!relayHeaders) {
             // not propagating Header.HEADER_LIST at all
             return true;
         }
-        
+
         if (relayAllMessageHeaders) {
             // all message headers will be relayed (no filtering)
             return false;
@@ -123,35 +123,37 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
             LOG.debug("No CXF Binding namespace can be resolved.  Message headers are intact.");
             return false;
         }
-        
+
         LOG.trace("messageHeaderfilter = {}", messageHeaderfilter);
 
         try {
-            messageHeaderfilter.filter(direction, (List<Header>)value);
+            messageHeaderfilter.filter(direction, (List<Header>) value);
         } catch (Throwable t) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Failed to cast value to Header<List> due to {}", t.toString(), t);
             }
         }
-        
+
         // return false since the header list (which has been filtered) should be propagated
         return false;
     }
 
     private void addToMessageHeaderFilterMap(MessageHeaderFilter filter) {
         for (String ns : filter.getActivationNamespaces()) {
-            if (messageHeaderFiltersMap.containsKey(ns) && messageHeaderFiltersMap.get(ns) 
-                != messageHeaderFiltersMap && !allowFilterNamespaceClash) {
-                throw new IllegalArgumentException("More then one MessageHeaderRelay activates "
+            if (messageHeaderFiltersMap.containsKey(ns) && messageHeaderFiltersMap.get(ns)
+                                                           != messageHeaderFiltersMap
+                    && !allowFilterNamespaceClash) {
+                throw new IllegalArgumentException(
+                        "More then one MessageHeaderRelay activates "
                                                    + "for the same namespace: " + ns);
             }
             messageHeaderFiltersMap.put(ns, filter);
         }
     }
-    
+
     private MessageHeaderFilter getMessageHeaderFilter(Exchange exchange) {
-        BindingOperationInfo boi = exchange.getProperty(BindingOperationInfo.class.getName(), 
-                                                        BindingOperationInfo.class);
+        BindingOperationInfo boi = exchange.getProperty(BindingOperationInfo.class.getName(),
+                BindingOperationInfo.class);
         String ns = null;
         if (boi != null) {
             BindingInfo b = boi.getBinding();
@@ -159,12 +161,12 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
                 ns = b.getBindingId();
             }
         }
-        
+
         MessageHeaderFilter answer = null;
         if (ns != null) {
             answer = messageHeaderFiltersMap.get(ns);
         }
-        
+
         return answer;
     }
 
@@ -200,7 +202,7 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     public void setAllowFilterNamespaceClash(boolean allowFilterNamespaceClash) {
         this.allowFilterNamespaceClash = allowFilterNamespaceClash;
     }
-    
+
     /**
      * @return the messageHeaderFiltersMap
      */

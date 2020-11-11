@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.saga;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,9 +27,10 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The saga component provides access to advanced options for managing the flow in the Saga EIP.
+ * Execute custom actions within a route using the Saga EIP.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "saga", title = "Saga", syntax = "saga:action", producerOnly = true, label = "core,endpoint")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "saga", title = "Saga", syntax = "saga:action", producerOnly = true,
+             category = { Category.CORE, Category.ENDPOINT })
 public class SagaEndpoint extends DefaultEndpoint {
 
     public enum SagaEndpointAction {

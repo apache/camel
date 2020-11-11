@@ -47,7 +47,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
         }
         this.cache = manager.getCache(cacheName, kt, vt);
     }
-    
+
     // ****************************
     // Handlers
     // ****************************
@@ -68,7 +68,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(EhcacheConstants.ACTION_PUT_ALL)
     public void onPutAll(Message message) throws Exception {
-        cache.putAll((Map)getValue(message, Map.class));
+        cache.putAll((Map) getValue(message, Map.class));
 
         setResult(message, true, null, null);
     }
@@ -90,8 +90,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
     @InvokeOnHeader(EhcacheConstants.ACTION_GET_ALL)
     public void onGetAll(Message message) throws Exception {
         Object result = cache.getAll(
-            message.getHeader(EhcacheConstants.KEYS, Collections::emptySet, Set.class)
-        );
+                message.getHeader(EhcacheConstants.KEYS, Collections::emptySet, Set.class));
 
         setResult(message, true, result, null);
     }
@@ -112,8 +111,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
     @InvokeOnHeader(EhcacheConstants.ACTION_REMOVE_ALL)
     public void onRemoveAll(Message message) throws Exception {
         cache.removeAll(
-            message.getHeader(EhcacheConstants.KEYS, Collections::emptySet, Set.class)
-        );
+                message.getHeader(EhcacheConstants.KEYS, Collections::emptySet, Set.class));
 
         setResult(message, true, null, null);
     }
@@ -152,16 +150,15 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
         if (value == null) {
             throw new CamelExchangeException(
-                "No value provided in header or as default value (" + EhcacheConstants.KEY + ")",
-                message.getExchange()
-            );
+                    "No value provided in header or as default value (" + EhcacheConstants.KEY + ")",
+                    message.getExchange());
         }
 
         return value;
     }
 
     @SuppressWarnings("unchecked")
-    private Object getValue(final Message message, final Object type)  throws Exception {
+    private Object getValue(final Message message, final Object type) throws Exception {
         Object value = message.getHeader(EhcacheConstants.VALUE);
         if (value == null) {
             if (type instanceof String) {
@@ -176,9 +173,8 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
         if (value == null) {
             throw new CamelExchangeException(
-                "No value provided in header or body (" + EhcacheConstants.VALUE + ")",
-                message.getExchange()
-            );
+                    "No value provided in header or body (" + EhcacheConstants.VALUE + ")",
+                    message.getExchange());
         }
 
         return value;

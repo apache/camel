@@ -18,7 +18,7 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SimpleRouteExpressionAsPredicateTest extends ContextTestSupport {
 
@@ -39,12 +39,12 @@ public class SimpleRouteExpressionAsPredicateTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:foo")
-                    // evaluate as predicate because the result type is boolean
-                    .setBody().simple("${header.foo} == ${header.foo}", boolean.class).to("mock:foo");
+                        // evaluate as predicate because the result type is boolean
+                        .setBody().simple("${header.foo} == ${header.foo}", boolean.class).to("mock:foo");
 
                 from("direct:bar")
-                    // evaluate as expression as no boolean as result type
-                    .setBody().simple("${header.bar} == ${header.bar}").to("mock:bar");
+                        // evaluate as expression as no boolean as result type
+                        .setBody().simple("${header.bar} == ${header.bar}").to("mock:bar");
             }
         };
     }

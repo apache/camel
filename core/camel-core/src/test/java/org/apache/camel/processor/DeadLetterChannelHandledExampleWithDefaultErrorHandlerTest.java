@@ -19,8 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Unit test to verify that handled policy is working as expected for wiki
- * documentation.
+ * Unit test to verify that handled policy is working as expected for wiki documentation.
  */
 public class DeadLetterChannelHandledExampleWithDefaultErrorHandlerTest extends DeadLetterChannelHandledExampleTest {
 
@@ -32,24 +31,24 @@ public class DeadLetterChannelHandledExampleWithDefaultErrorHandlerTest extends 
                 // we do special error handling for when OrderFailedException is
                 // thrown
                 onException(OrderFailedException.class)
-                    // we mark the exchange as handled so the caller doesn't
-                    // receive the
-                    // OrderFailedException but whatever we want to return
-                    // instead
-                    .handled(true)
-                    // this bean handles the error handling where we can
-                    // customize the error
-                    // response using java code
-                    .bean(OrderService.class, "orderFailed")
-                    // and since this is an unit test we use mocks for testing
-                    .to("mock:error");
+                        // we mark the exchange as handled so the caller doesn't
+                        // receive the
+                        // OrderFailedException but whatever we want to return
+                        // instead
+                        .handled(true)
+                        // this bean handles the error handling where we can
+                        // customize the error
+                        // response using java code
+                        .bean(OrderService.class, "orderFailed")
+                        // and since this is an unit test we use mocks for testing
+                        .to("mock:error");
 
                 // this is our route where we handle orders
                 from("direct:start")
-                    // this bean is our order service
-                    .bean(OrderService.class, "handleOrder")
-                    // this is the destination if the order is OK
-                    .to("mock:result");
+                        // this bean is our order service
+                        .bean(OrderService.class, "handleOrder")
+                        // this is the destination if the order is OK
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

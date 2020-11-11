@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.jetty.rest;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Does not run well on CI due test uses JMX mbeans")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Does not run well on CI due test uses JMX mbeans")
 public class RestApiJettyYamlTest extends RestApiJettyTest {
 
     @Override

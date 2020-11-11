@@ -20,9 +20,11 @@ import java.util.Random;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import static org.apache.camel.test.junit5.TestSupport.body;
 
 /**
  * Concurrency test of XQuery using transform.xquery DSL.
@@ -74,8 +76,8 @@ public class XQueryConcurrencyTest extends CamelTestSupport {
                 errorHandler(noErrorHandler());
 
                 from(uri)
-                    .transform().xquery("/person/id", String.class)
-                    .to("mock:result");
+                        .transform().xquery("/person/id", String.class)
+                        .to("mock:result");
             }
         };
     }

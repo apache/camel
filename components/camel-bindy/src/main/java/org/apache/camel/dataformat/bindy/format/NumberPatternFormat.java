@@ -40,7 +40,8 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
         this.locale = locale;
     }
 
-    public NumberPatternFormat(String pattern, Locale locale, int precision, String rounding, String decimalSeparator, String groupingSeparator) {
+    public NumberPatternFormat(String pattern, Locale locale, int precision, String rounding, String decimalSeparator,
+                               String groupingSeparator) {
         this.pattern = pattern;
         this.locale = locale;
         this.decimalSeparator = decimalSeparator;

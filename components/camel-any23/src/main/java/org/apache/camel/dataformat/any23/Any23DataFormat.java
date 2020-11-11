@@ -41,8 +41,7 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 
 /**
- * Dataformat for any23 .. This dataformat is intended to convert HTML from a
- * site (or file) into rdf.
+ * Dataformat for any23 .. This dataformat is intended to convert HTML from a site (or file) into rdf.
  */
 @Dataformat("any23")
 public class Any23DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
@@ -72,7 +71,8 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
         this.baseURI = baseURI;
     }
 
-    public Any23DataFormat(Map<String, String> configurations, List<String> extractors, Any23OutputFormat outputFormat, String baseURI) {
+    public Any23DataFormat(Map<String, String> configurations, List<String> extractors, Any23OutputFormat outputFormat,
+                           String baseURI) {
         this.configurations = configurations;
         this.extractors = extractors;
         this.outputFormat = outputFormat;
@@ -91,7 +91,7 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
         outputStreamWriter.write("<html><script type=\"application/ld+json\">\n");
         outputStreamWriter.flush();
-        Model mdl = (Model)object;
+        Model mdl = (Model) object;
         Rio.write(mdl, outputStream, RDFFormat.JSONLD);
         outputStreamWriter.write("\n</script></html>");
         outputStreamWriter.flush();
@@ -110,16 +110,18 @@ public class Any23DataFormat extends ServiceSupport implements DataFormat, DataF
         handler.close();
         Object respon;
         if (outputFormat == Any23OutputFormat.RDF4JMODEL) {
-            respon = ((RDF4JModelWriter)handler).getModel();
+            respon = ((RDF4JModelWriter) handler).getModel();
         } else {
-            respon = new String(out.toByteArray());
+            respon = out.toString();
         }
         return respon;
 
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         ModifiableConfiguration conf = null;
         String[] extrArray = null;
         if (extractors != null && !extractors.isEmpty()) {

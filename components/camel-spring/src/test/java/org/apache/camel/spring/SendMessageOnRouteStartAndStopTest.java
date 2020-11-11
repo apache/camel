@@ -19,11 +19,13 @@ package org.apache.camel.spring;
 import java.io.File;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -38,25 +40,25 @@ public class SendMessageOnRouteStartAndStopTest extends SpringTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         // the event notifier should have send a message to the file endpoint
         // so the start file is created on startup
         File start = new File("target/startandstop/start.txt");
-        assertTrue("Start file should exist on startup", start.exists());
+        assertTrue(start.exists(), "Start file should exist on startup");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
         // the event notifier should have send a message to the file endpoint
         // so the stop file is created on shutdown
         File start = new File("target/startandstop/stop.txt");
-        assertTrue("Stop file should exist on shutdown", start.exists());
+        assertTrue(start.exists(), "Stop file should exist on shutdown");
     }
 
     @Test

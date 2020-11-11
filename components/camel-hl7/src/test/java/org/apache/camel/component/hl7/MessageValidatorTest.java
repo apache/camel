@@ -28,11 +28,12 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.hl7.HL7.messageConforms;
 import static org.apache.camel.component.hl7.HL7.messageConformsTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MessageValidatorTest extends CamelTestSupport {
 
@@ -73,12 +74,13 @@ public class MessageValidatorTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testCustomHapiContext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:test5");
         mock.expectedMessageCount(0);
         Message msg = createADT01Message();
-        template.sendBody("direct:test5", msg);
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:test5", msg));
         assertMockEndpointsSatisfied();
     }
 
@@ -91,12 +93,13 @@ public class MessageValidatorTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testCustomValidationContext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:test2");
         mock.expectedMessageCount(0);
         Message msg = createADT01Message();
-        template.sendBody("direct:test2", msg);
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:test2", msg));
         assertMockEndpointsSatisfied();
     }
 
@@ -119,13 +122,14 @@ public class MessageValidatorTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testDynamicCustomHapiContext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:test6");
         mock.expectedMessageCount(0);
         Message msg = createADT01Message();
         msg.setParser(customContext.getPipeParser());
-        template.sendBody("direct:test6", msg);
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:test6", msg));
         assertMockEndpointsSatisfied();
     }
 

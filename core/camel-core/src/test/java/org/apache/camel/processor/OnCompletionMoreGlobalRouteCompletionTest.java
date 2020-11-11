@@ -22,7 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionMoreGlobalRouteCompletionTest extends ContextTestSupport {
 
@@ -91,13 +94,13 @@ public class OnCompletionMoreGlobalRouteCompletionTest extends ContextTestSuppor
                 onCompletion().onFailureOnly().to("log:global").to("mock:failure");
 
                 from("direct:start")
-                    // no route on completion so this one uses all the global
-                    // ones
-                    .process(new MyProcessor()).to("mock:result");
+                        // no route on completion so this one uses all the global
+                        // ones
+                        .process(new MyProcessor()).to("mock:result");
 
                 from("direct:other")
-                    // this route completion should override the global
-                    .onCompletion().to("mock:route").end().process(new MyProcessor()).to("mock:other");
+                        // this route completion should override the global
+                        .onCompletion().to("mock:route").end().process(new MyProcessor()).to("mock:other");
             }
         };
     }

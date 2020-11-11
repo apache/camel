@@ -22,9 +22,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.hamcrest.core.Is;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
 
@@ -54,7 +57,7 @@ public class BindyPaddingAndTrimmingTest extends CamelTestSupport {
         unmarhsalResult.assertIsSatisfied();
         MyBindyModel myBindyModel = unmarhsalResult.getReceivedExchanges().get(0).getIn().getBody(MyBindyModel.class);
         assertEquals("foo  ", myBindyModel.foo);
-        assertThat(myBindyModel.bar, Is.is(""));
+        assertThat(myBindyModel.bar, is(""));
     }
 
     @Test

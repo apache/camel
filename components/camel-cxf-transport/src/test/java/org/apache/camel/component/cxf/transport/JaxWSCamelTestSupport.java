@@ -28,15 +28,15 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class JaxWSCamelTestSupport extends CamelTestSupport {
-    
+
     /**
      * Expected SOAP answer for the 'SampleWS.getSomething' method
      */
@@ -44,11 +44,11 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
                                         + "<Body>" + "<getSomethingResponse xmlns='urn:test'>"
                                         + "<result>Something</result>" + "</getSomethingResponse>"
                                         + "</Body>" + "</Envelope>";
-    
+
     public static final String REQUEST = "<Envelope xmlns='http://schemas.xmlsoap.org/soap/envelope/'>"
-        + "<Body>" + "<getSomething xmlns='urn:test'/>"
-        + "</Body>" + "</Envelope>";
-    
+                                         + "<Body>" + "<getSomething xmlns='urn:test'/>"
+                                         + "</Body>" + "</Envelope>";
+
     private Bus bus;
 
     /**
@@ -60,36 +60,35 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
         @WebMethod(operationName = "getSomething")
         @WebResult(name = "result", targetNamespace = "urn:test")
         String getSomething();
-       
+
     }
-    
+
     @WebService(targetNamespace = "urn:test", serviceName = "testService", portName = "testPort")
     public interface SampleWSAsync {
         @WebMethod(operationName = "getSomething")
         @WebResult(name = "result", targetNamespace = "urn:test")
         String getSomething();
-        
+
         @WebMethod(operationName = "getSomething")
         Response<String> getSomethingAsync();
-        
+
         @WebMethod(operationName = "getSomething")
-        Future<?> getSomethingAsync(@WebParam(name = "asyncHandler", targetNamespace = "")
-            AsyncHandler<String> asyncHandler);
+        Future<?> getSomethingAsync(@WebParam(name = "asyncHandler", targetNamespace = "") AsyncHandler<String> asyncHandler);
     }
-    
+
     public static class SampleWSImpl implements SampleWS {
 
         @Override
         public String getSomething() {
             return "something!";
         }
-        
+
     }
 
     /**
      * Initialize CamelTransportFactory without Spring
      */
-    @Before
+    @BeforeEach
     public void setUpCXFCamelContext() {
         bus = BusFactory.getThreadDefaultBus();
         // make sure the CamelTransportFactory is injected with right camel context
@@ -99,7 +98,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
     /**
      * Create a SampleWS JAXWS-Proxy to a specified route
      * 
-     * @param camelEndpoint
+     * @param  camelEndpoint
      * @return
      */
     public SampleWS getSampleWS(String camelEndpoint) {
@@ -111,7 +110,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
 
         return s.getPort(SampleWS.class);
     }
-    
+
     public SampleWS getSampleWSWithCXFAPI(String camelEndpoint) {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setAddress("camel://" + camelEndpoint);
@@ -119,7 +118,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
         factory.setBus(bus);
         return factory.create(SampleWS.class);
     }
-    
+
     public SampleWSAsync getSampleWSAsyncWithCXFAPI(String camelEndpoint) {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setAddress("camel://" + camelEndpoint);
@@ -127,28 +126,30 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
         factory.setBus(bus);
         return factory.create(SampleWSAsync.class);
     }
-    
+
     /**
      * Create a SampleWS Server to a specified route
+     * 
      * @param camelEndpoint
      */
-    
+
     public Endpoint publishSampleWS(String camelEndpoint) {
         return Endpoint.publish("camel://" + camelEndpoint, new SampleWSImpl());
-        
+
     }
-    
+
     /**
      * Create a SampleWS Server with Gzip enabled to a specified route
+     * 
      * @param camelEndpoint
      */
-    
+
     public Endpoint publishSampleWSWithGzipEnabled(String camelEndpoint) {
-        EndpointImpl endpoint = (EndpointImpl)Endpoint.publish("camel://" + camelEndpoint, new SampleWSImpl());
+        EndpointImpl endpoint = (EndpointImpl) Endpoint.publish("camel://" + camelEndpoint, new SampleWSImpl());
         endpoint.getInInterceptors().add(new org.apache.cxf.transport.common.gzip.GZIPInInterceptor());
         endpoint.getOutInterceptors().add(new org.apache.cxf.transport.common.gzip.GZIPOutInterceptor(0));
         return endpoint;
-        
+
     }
 
 }

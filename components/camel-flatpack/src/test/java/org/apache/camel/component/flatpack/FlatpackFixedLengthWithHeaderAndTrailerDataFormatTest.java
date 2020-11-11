@@ -23,8 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.dataformat.flatpack.FlatpackDataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for fixed length DataFormat.
@@ -76,10 +78,10 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
                 df.setFixed(true);
 
                 from("direct:unmarshal")
-                    .setHeader("MyFirstHeader", constant("1"))
-                    .unmarshal(df)
-                    .setHeader("MySecondHeader", constant("2"))
-                    .to("mock:unmarshal");
+                        .setHeader("MyFirstHeader", constant("1"))
+                        .unmarshal(df)
+                        .setHeader("MySecondHeader", constant("2"))
+                        .to("mock:unmarshal");
 
                 // with the definition
                 from("direct:marshal").marshal(df).convertBodyTo(String.class).to("mock:marshal");

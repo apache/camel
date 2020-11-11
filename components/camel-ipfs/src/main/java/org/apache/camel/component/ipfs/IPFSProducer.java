@@ -29,17 +29,19 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import io.ipfs.multihash.Multihash;
-import io.nessus.ipfs.client.DefaultIPFSClient;
 import io.nessus.ipfs.client.IPFSClient;
+import io.nessus.ipfs.client.IPFSException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IPFSProducer extends DefaultProducer {
 
-    private static final long DEFAULT_TIMEOUT = 10000L;
+    private static final Logger LOG = LoggerFactory.getLogger(IPFSComponent.class);
 
-    private IPFSClient client;
+    private static final long DEFAULT_TIMEOUT = 10000L;
 
     public IPFSProducer(IPFSEndpoint endpoint) {
         super(endpoint);
@@ -47,14 +49,17 @@ public class IPFSProducer extends DefaultProducer {
 
     @Override
     public IPFSEndpoint getEndpoint() {
-        return (IPFSEndpoint)super.getEndpoint();
+        return (IPFSEndpoint) super.getEndpoint();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (this.client == null) {
-            this.client = createClient(getEndpoint().getConfiguration());
+        IPFSClient client = getEndpoint().getIPFSClient();
+        try {
+            client.connect();
+        } catch (IPFSException ex) {
+            LOG.warn(ex.getMessage());
         }
     }
 
@@ -97,21 +102,15 @@ public class IPFSProducer extends DefaultProducer {
     private Path pathFromBody(Exchange exchange) {
         Object body = exchange.getMessage().getBody();
         if (body instanceof Path) {
-            return (Path)body;
+            return (Path) body;
         }
         if (body instanceof String) {
-            return Paths.get((String)body);
+            return Paths.get((String) body);
         }
         if (body instanceof File) {
-            return ((File)body).toPath();
+            return ((File) body).toPath();
         }
         throw new IllegalArgumentException("Invalid path: " + body);
-    }
-
-
-    private IPFSClient createClient(IPFSConfiguration config) {
-        IPFSClient ipfsClient = new DefaultIPFSClient(config.getIpfsHost(), config.getIpfsPort());
-        return ipfsClient;
     }
 
     public IPFSCommand getCommand() {
@@ -153,11 +152,11 @@ public class IPFSProducer extends DefaultProducer {
     }
 
     private IPFSClient ipfs() {
+        IPFSClient client = getEndpoint().getIPFSClient();
         if (!client.hasConnection()) {
             client.connect();
         }
         return client;
     }
-
 
 }

@@ -22,14 +22,19 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.jndi.JndiBeanRepository;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+@Deprecated
 public class BeanCachedTest extends ContextTestSupport {
 
     private Context context;
 
-    private JndiRegistry registry;
+    private Registry registry;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -44,11 +49,10 @@ public class BeanCachedTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("something", new MyBean());
-        this.context = registry.getContext();
-        this.registry = registry;
+    protected Registry createRegistry() throws Exception {
+        context = createJndiContext();
+        context.bind("something", new MyBean());
+        registry = new DefaultRegistry(new JndiBeanRepository(context));
         return registry;
     }
 
@@ -77,7 +81,8 @@ public class BeanCachedTest extends ContextTestSupport {
             template.sendBody("direct:cached", null);
             fail("The IllegalStateException is expected");
         } catch (CamelExecutionException ex) {
-            assertTrue("IllegalStateException is expected!", ex.getCause() instanceof IllegalStateException);
+            boolean b = ex.getCause() instanceof IllegalStateException;
+            assertTrue(b, "IllegalStateException is expected!");
             assertEquals("This bean is not supported to be invoked again!", ex.getCause().getMessage());
         }
     }

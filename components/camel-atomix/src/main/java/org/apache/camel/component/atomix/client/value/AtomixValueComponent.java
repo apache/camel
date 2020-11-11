@@ -21,10 +21,12 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 
 @Component("atomix-value")
 public final class AtomixValueComponent extends AbstractAtomixClientComponent<AtomixValueConfiguration> {
+    @Metadata
     private AtomixValueConfiguration configuration = new AtomixValueConfiguration();
 
     public AtomixValueComponent() {

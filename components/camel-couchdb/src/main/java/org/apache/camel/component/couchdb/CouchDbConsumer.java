@@ -20,8 +20,12 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CouchDbConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CouchDbConsumer.class);
 
     private final CouchDbClientWrapper couchClient;
     private final CouchDbEndpoint endpoint;
@@ -37,9 +41,10 @@ public class CouchDbConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        log.info("Starting CouchDB consumer");
+        LOG.info("Starting CouchDB consumer");
 
-        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), 1);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(),
+                1);
         task = new CouchDbChangesetTracker(endpoint, this, couchClient);
         executor.submit(task);
     }
@@ -47,7 +52,7 @@ public class CouchDbConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        log.info("Stopping CouchDB consumer");
+        LOG.info("Stopping CouchDB consumer");
         if (task != null) {
             task.stop();
         }

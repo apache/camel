@@ -23,6 +23,7 @@ import java.util.Properties;
 import io.atomix.AtomixClient;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -46,6 +47,7 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
     /**
      * The shared AtomixClient instance
      */
+    @Metadata
     public void setAtomix(AtomixClient client) {
         getComponentConfiguration().setAtomix(client);
     }
@@ -57,6 +59,7 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
     /**
      * The nodes the AtomixClient should connect to
      */
+    @Metadata
     public void setNodes(List<Address> nodes) {
         getComponentConfiguration().setNodes(nodes);
     }
@@ -72,10 +75,10 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
     /**
      * The path to the AtomixClient configuration
      */
+    @Metadata
     public void setConfigurationUri(String configurationUri) {
         getComponentConfiguration().setConfigurationUri(configurationUri);
     }
-
 
     // *****************************************
     // Properties
@@ -85,27 +88,27 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
         // Resolve config for named maps
         Map<String, Object> configs = PropertiesHelper.extractProperties(parameters, "resource.config.");
         for (Map.Entry<String, Object> entry : configs.entrySet()) {
-            String ref = (String)entry.getValue();
+            String ref = (String) entry.getValue();
             if (!EndpointHelper.isReferenceParameter(ref)) {
                 throw new IllegalArgumentException("The option resource.config." + ref + " should be a reference");
             }
 
             configuration.addResourceConfig(
-                entry.getKey(),
-                EndpointHelper.resolveReferenceParameter(getCamelContext(), ref, Properties.class));
+                    entry.getKey(),
+                    EndpointHelper.resolveReferenceParameter(getCamelContext(), ref, Properties.class));
         }
 
         // Resolve options for named maps
         Map<String, Object> options = PropertiesHelper.extractProperties(parameters, "resource.options.");
         for (Map.Entry<String, Object> entry : options.entrySet()) {
-            String ref = (String)entry.getValue();
+            String ref = (String) entry.getValue();
             if (!EndpointHelper.isReferenceParameter(ref)) {
                 throw new IllegalArgumentException("The option resource.options." + ref + " should be a reference");
             }
 
             configuration.addResourceOption(
-                entry.getKey(),
-                EndpointHelper.resolveReferenceParameter(getCamelContext(), ref, Properties.class));
+                    entry.getKey(),
+                    EndpointHelper.resolveReferenceParameter(getCamelContext(), ref, Properties.class));
         }
 
         return configuration;
@@ -114,6 +117,6 @@ public abstract class AbstractAtomixClientComponent<C extends AtomixClientConfig
     // *****************************************
     // Properties
     // *****************************************
-    
+
     protected abstract C getComponentConfiguration();
 }

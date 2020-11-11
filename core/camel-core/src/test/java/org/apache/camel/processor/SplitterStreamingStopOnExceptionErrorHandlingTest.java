@@ -21,7 +21,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitterStreamingStopOnExceptionErrorHandlingTest extends ContextTestSupport {
 
@@ -58,14 +61,15 @@ public class SplitterStreamingStopOnExceptionErrorHandlingTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").split(body().tokenize(",")).streaming().stopOnException().to("mock:a").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Kaboom".equals(body)) {
-                            throw new IllegalArgumentException("Cannot do this");
-                        }
-                    }
-                }).to("mock:b").end().to("mock:result");
+                from("direct:start").split(body().tokenize(",")).streaming().stopOnException().to("mock:a")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Kaboom".equals(body)) {
+                                    throw new IllegalArgumentException("Cannot do this");
+                                }
+                            }
+                        }).to("mock:b").end().to("mock:result");
             }
         };
     }

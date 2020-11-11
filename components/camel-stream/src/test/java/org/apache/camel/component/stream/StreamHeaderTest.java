@@ -20,8 +20,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.component.stream.StreamGroupLinesTest.LS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test when using custom output stream.
@@ -50,8 +53,7 @@ public class StreamHeaderTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").setHeader("stream", constant(mystream)).
-                    to("stream:header");
+                from("direct:in").setHeader("stream", constant(mystream)).to("stream:header");
             }
         };
     }
@@ -60,7 +62,7 @@ public class StreamHeaderTest extends CamelTestSupport {
 
         @Override
         public void write(int b) throws IOException {
-            sb.append((char)b);
+            sb.append((char) b);
         }
     }
     // END SNIPPET: e1

@@ -22,8 +22,8 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for {@link ChunkComponent} and {@link ChunkEndpoint}
@@ -35,12 +35,12 @@ public class ChunkComponentTemplateTest extends CamelTestSupport {
 
     @Produce("direct:startSimple")
     protected ProducerTemplate startSimpleProducerTemplate;
-    
+
     /**
      * Test using code Template header
      */
     @Test
-    public void testChunkWithTemplateHeader() throws Exception {
+    void testChunkWithTemplateHeader() throws Exception {
         // Prepare
         Exchange exchange = createExchangeWithBody("The Body");
         exchange.getIn().setHeader("someHeader", "Some Header");
@@ -54,12 +54,12 @@ public class ChunkComponentTemplateTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:startSimple")
-                        .to("chunk://hello")
+                        .to("chunk://hello?allowTemplateFromHeader=true")
                         .to("mock:endSimple");
             }
         };

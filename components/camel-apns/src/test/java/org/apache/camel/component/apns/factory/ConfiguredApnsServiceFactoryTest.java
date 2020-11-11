@@ -20,8 +20,8 @@ import java.io.IOException;
 
 import com.notnoop.apns.ApnsServiceBuilder;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -40,7 +40,7 @@ public class ConfiguredApnsServiceFactoryTest {
         }
     };
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         apnsServiceFactory.setSslContextParameters(mock(SSLContextParameters.class));
     }

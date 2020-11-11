@@ -21,15 +21,17 @@ import java.util.Arrays;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test case for routes that contain <code>jt400:</code> endpoints This test
- * case does nothing by default -- you can use it to test integration when there
- * is a real AS/400 system available by filling in correct values for
- * {@link #USER}, {@link #PASSWORD}, {@link #SYSTEM}, {@link #LIBRARY} and
- * {@link #QUEUE}
+ * Test case for routes that contain <code>jt400:</code> endpoints This test case does nothing by default -- you can use
+ * it to test integration when there is a real AS/400 system available by filling in correct values for {@link #USER},
+ * {@link #PASSWORD}, {@link #SYSTEM}, {@link #LIBRARY} and {@link #QUEUE}
  */
 public class Jt400PgmRouteTest extends CamelTestSupport {
 
@@ -54,7 +56,7 @@ public class Jt400PgmRouteTest extends CamelTestSupport {
                     Exchange exchange = endpoint.getReceivedExchanges().get(0);
                     char[] secondParameter = new char[512];
                     Arrays.fill(secondParameter, ' ');
-                    String[] expectedBody = new String[]{"1234", new String(secondParameter), "01"};
+                    String[] expectedBody = new String[] { "1234", new String(secondParameter), "01" };
                     Object actualBody = exchange.getIn().getBody();
 
                     assertNotNull(actualBody);
@@ -67,7 +69,7 @@ public class Jt400PgmRouteTest extends CamelTestSupport {
                 }
             };
             endpoint.expects(runnable);
-            sendBody("direct:a", new String[]{"1234", "", ""});
+            sendBody("direct:a", new String[] { "1234", "", "" });
             endpoint.assertIsSatisfied();
         }
     }

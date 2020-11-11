@@ -18,7 +18,9 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHttpProducerTest extends BaseUndertowTest {
 
@@ -36,7 +38,8 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
     public void testHttpSimpleHeader() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "POST", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "POST",
+                String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -48,7 +51,8 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo", "Hello World", Exchange.HTTP_METHOD, "POST", String.class);
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/foo", "Hello World", Exchange.HTTP_METHOD, "POST",
+                String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -60,8 +64,8 @@ public class UndertowHttpProducerTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 from("undertow:http://localhost:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

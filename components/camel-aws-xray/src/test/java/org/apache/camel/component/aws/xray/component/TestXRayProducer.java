@@ -47,6 +47,6 @@ public class TestXRayProducer extends DefaultProducer {
     }
 
     private static String trim(String endpoint) {
-        return endpoint.substring(endpoint.indexOf(":") + 1);
+        return endpoint.substring(endpoint.indexOf(':') + 1);
     }
 }

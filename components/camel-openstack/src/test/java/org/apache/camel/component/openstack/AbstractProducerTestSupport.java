@@ -18,21 +18,21 @@ package org.apache.camel.component.openstack;
 
 import java.io.IOException;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.engine.DefaultHeadersMapFactory;
 import org.apache.camel.support.DefaultMessage;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.OSClient.OSClientV3;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public abstract class AbstractProducerTestSupport {
 
     @Mock
@@ -42,16 +42,17 @@ public abstract class AbstractProducerTestSupport {
     protected Exchange exchange;
 
     @Mock
-    protected CamelContext camelContext;
+    protected ExtendedCamelContext camelContext;
 
     protected Message msg;
 
     protected Producer producer;
 
-    @Before
+    @BeforeEach
     public void before() throws IOException {
         msg = new DefaultMessage(camelContext);
         when(exchange.getIn()).thenReturn(msg);
-        when(camelContext.getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
+        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(camelContext);
+        when(camelContext.adapt(ExtendedCamelContext.class).getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
     }
 }

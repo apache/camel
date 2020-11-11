@@ -17,8 +17,8 @@
 package org.apache.camel.component.crypto.cms.exception;
 
 /**
- * Is thrown when the signature validation fails because no certificate is found
- * in the keystore which corresponds to the sent signer infos.
+ * Is thrown when the signature validation fails because no certificate is found in the keystore which corresponds to
+ * the sent signer infos.
  */
 public class CryptoCmsNoCertificateForSignerInfosException extends CryptoCmsSignatureException {
 

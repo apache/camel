@@ -21,13 +21,17 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.engine.DefaultRouteContext;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spring.example.DummyBean;
-import org.junit.Test;
+import org.apache.camel.support.CamelContextHelper;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class EndpointReferenceTest extends SpringTestSupport {
     protected static Object body = "<hello>world!</hello>";
@@ -41,11 +45,11 @@ public class EndpointReferenceTest extends SpringTestSupport {
     public void testEndpointConfiguration() throws Exception {
         Endpoint endpoint = getMandatoryBean(Endpoint.class, "endpoint1");
 
-        assertEquals("endpoint URI", "direct://start", endpoint.getEndpointUri());
+        assertEquals("direct://start", endpoint.getEndpointUri(), "endpoint URI");
 
         DummyBean dummyBean = getMandatoryBean(DummyBean.class, "mybean");
-        assertNotNull("The bean should have an endpoint injected", dummyBean.getEndpoint());
-        assertEquals("endpoint URI", "direct://start", dummyBean.getEndpoint().getEndpointUri());
+        assertNotNull(dummyBean.getEndpoint(), "The bean should have an endpoint injected");
+        assertEquals("direct://start", dummyBean.getEndpoint().getEndpointUri(), "endpoint URI");
 
         log.debug("Found dummy bean: " + dummyBean);
 
@@ -72,18 +76,18 @@ public class EndpointReferenceTest extends SpringTestSupport {
 
         testEndpointConfiguration();
     }
-    
+
     @Test
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
         RouteDefinition route = new RouteDefinition("temporary");
         String routeId = route.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
-        RouteContext routeContext = new DefaultRouteContext(context, route, routeId);
         try {
-            routeContext.resolveEndpoint(null, "endpoint1");
+            CamelContextHelper.resolveEndpoint(context, null, "endpoint1");
             fail("Should have thrown exception");
         } catch (NoSuchEndpointException exception) {
-            assertTrue("Get a wrong exception message", exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"));
+            assertTrue(exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"),
+                    "Get a wrong exception message");
         }
     }
 

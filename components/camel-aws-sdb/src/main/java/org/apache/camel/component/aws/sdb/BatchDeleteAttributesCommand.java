@@ -32,12 +32,12 @@ public class BatchDeleteAttributesCommand extends AbstractSdbCommand {
     @Override
     public void execute() {
         BatchDeleteAttributesRequest request = new BatchDeleteAttributesRequest()
-            .withDomainName(determineDomainName())
-            .withItems(determineDeletableItems());
+                .withDomainName(determineDomainName())
+                .withItems(determineDeletableItems());
         log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
-        
+
         this.sdbClient.batchDeleteAttributes(request);
-        
+
         log.trace("Request sent");
     }
 

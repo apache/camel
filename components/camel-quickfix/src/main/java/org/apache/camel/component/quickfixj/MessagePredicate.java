@@ -33,14 +33,14 @@ import quickfix.field.TargetCompID;
 public class MessagePredicate {
     private final List<Field<String>> headerCriteria = new ArrayList<>();
     private final List<Field<String>> bodyCriteria = new ArrayList<>();
-    
+
     public MessagePredicate(SessionID requestingSessionID, String msgType) {
         // TODO may need to optionally include subID and locationID
         addHeaderFieldIfPresent(SenderCompID.FIELD, requestingSessionID.getSenderCompID());
         addHeaderFieldIfPresent(TargetCompID.FIELD, requestingSessionID.getTargetCompID());
         withMessageType(msgType);
     }
-    
+
     private void addHeaderFieldIfPresent(int tag, String value) {
         if (!ObjectHelper.isEmpty(value)) {
             withHeaderField(tag, value);
@@ -50,7 +50,7 @@ public class MessagePredicate {
     public boolean evaluate(Message message) {
         return evaluate(message, bodyCriteria) && evaluate(message.getHeader(), headerCriteria);
     }
-    
+
     private boolean evaluate(FieldMap fieldMap, List<Field<String>> criteria) {
         for (Field<String> c : criteria) {
             String value = null;

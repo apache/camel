@@ -31,8 +31,8 @@ public interface MicroProfileMetricsRoutePolicyNamingStrategy {
 
     default Tag[] getTags(Route route) {
         return new Tag[] {
-            new Tag(CAMEL_CONTEXT_TAG, route.getCamelContext().getName()),
-            new Tag(ROUTE_ID_TAG, route.getId()),
+                new Tag(CAMEL_CONTEXT_TAG, route.getCamelContext().getName()),
+                new Tag(ROUTE_ID_TAG, route.getId()),
         };
     }
 }

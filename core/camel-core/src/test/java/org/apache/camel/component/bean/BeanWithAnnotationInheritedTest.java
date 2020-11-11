@@ -20,18 +20,15 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 
 /**
- * Test inheritance of parameter binding annotations from superclasses and
- * interfaces.
+ * Test inheritance of parameter binding annotations from superclasses and interfaces.
  */
 public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
 
@@ -76,10 +73,11 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
+
         answer.bind("b", new B());
-        answer.bind("p", Proxy.newProxyInstance(I1.class.getClassLoader(), new Class[] {I1.class}, new InvocationHandler() {
+        answer.bind("p", Proxy.newProxyInstance(I1.class.getClassLoader(), new Class[] { I1.class }, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if (method.getName().equals("m1")) {
@@ -96,11 +94,16 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in1").setHeader("foo", constant("x1")).setHeader("bar", constant("y1")).to("bean:b?method=m1").to("mock:result");
-                from("direct:in2").setHeader("foo", constant("x2")).setHeader("bar", constant("y2")).to("bean:b?method=m2").to("mock:result");
-                from("direct:in3").setHeader("foo", constant("x3")).setHeader("bar", constant("y3")).to("bean:b?method=m3").to("mock:result");
-                from("direct:in4").setHeader("foo", constant("x4")).setHeader("bar", constant("y4")).to("bean:b?method=m4").to("mock:result");
-                from("direct:in5").setHeader("foo", constant("x5")).setHeader("bar", constant("y5")).to("bean:p?method=m1").to("mock:result");
+                from("direct:in1").setHeader("foo", constant("x1")).setHeader("bar", constant("y1")).to("bean:b?method=m1")
+                        .to("mock:result");
+                from("direct:in2").setHeader("foo", constant("x2")).setHeader("bar", constant("y2")).to("bean:b?method=m2")
+                        .to("mock:result");
+                from("direct:in3").setHeader("foo", constant("x3")).setHeader("bar", constant("y3")).to("bean:b?method=m3")
+                        .to("mock:result");
+                from("direct:in4").setHeader("foo", constant("x4")).setHeader("bar", constant("y4")).to("bean:b?method=m4")
+                        .to("mock:result");
+                from("direct:in5").setHeader("foo", constant("x5")).setHeader("bar", constant("y5")).to("bean:p?method=m1")
+                        .to("mock:result");
             }
         };
     }

@@ -57,4 +57,3 @@ public class Trailer {
         this.numberOfRecords = numberOfRecords;
     }
 }
-

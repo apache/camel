@@ -18,7 +18,9 @@ package org.apache.camel.component.undertow;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHeaderTest extends BaseUndertowTest {
 
@@ -70,12 +72,12 @@ public class UndertowHeaderTest extends BaseUndertowTest {
             @Override
             public void configure() throws Exception {
                 from("undertow:http://localhost:{{port}}/headers")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
 
                 from("undertow:http://localhost:{{port}}/hello?matchOnUriPrefix=true")
-                    .to("mock:input")
-                    .transform().constant("Hello World");
+                        .to("mock:input")
+                        .transform().constant("Hello World");
             }
         };
     }

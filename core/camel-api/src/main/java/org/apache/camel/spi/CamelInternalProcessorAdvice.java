@@ -25,15 +25,16 @@ import org.apache.camel.Exchange;
  * {@link #after(org.apache.camel.Exchange, Object)} methods during routing in correct order.
  *
  * @param <T>
- * @see org.apache.camel.processor.CamelInternalProcessor
+ * @see       org.apache.camel.processor.CamelInternalProcessor
  */
 public interface CamelInternalProcessorAdvice<T> {
 
     /**
      * Callback executed before processing a step in the route.
      *
-     * @param exchange  the current exchange
-     * @return any state to keep and provide as data to the {@link #after(org.apache.camel.Exchange, Object)} method, or use <tt>null</tt> for no state.
+     * @param  exchange  the current exchange
+     * @return           any state to keep and provide as data to the {@link #after(org.apache.camel.Exchange, Object)}
+     *                   method, or use <tt>null</tt> for no state.
      * @throws Exception is thrown if error during the call.
      */
     T before(Exchange exchange) throws Exception;
@@ -41,10 +42,17 @@ public interface CamelInternalProcessorAdvice<T> {
     /**
      * Callback executed after processing a step in the route.
      *
-     * @param exchange  the current exchange
-     * @param data      the state, if any, returned in the {@link #before(org.apache.camel.Exchange)} method.
+     * @param  exchange  the current exchange
+     * @param  data      the state, if any, returned in the {@link #before(org.apache.camel.Exchange)} method.
      * @throws Exception is thrown if error during the call.
      */
     void after(Exchange exchange, T data) throws Exception;
+
+    /**
+     * Whether this advice has state or not.
+     */
+    default boolean hasState() {
+        return true;
+    }
 
 }

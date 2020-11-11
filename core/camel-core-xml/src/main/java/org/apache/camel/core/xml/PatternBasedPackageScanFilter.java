@@ -24,9 +24,8 @@ import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.AntPathMatcher;
 
 /**
- * {@link PatternBasedPackageScanFilter} uses an underlying
- * {@link AntPathMatcher} to filter scanned files according to include and
- * exclude patterns.
+ * {@link PatternBasedPackageScanFilter} uses an underlying {@link AntPathMatcher} to filter scanned files according to
+ * include and exclude patterns.
  * 
  * @see AntPathMatcher
  */
@@ -37,8 +36,7 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
     private List<String> includePatterns;
 
     /**
-     * add and exclude pattern to the filter. Classes matching this pattern will
-     * not match the filter 
+     * add and exclude pattern to the filter. Classes matching this pattern will not match the filter
      */
     public void addExcludePattern(String excludePattern) {
         if (excludePatterns == null) {
@@ -48,8 +46,7 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
     }
 
     /**
-     * add and include pattern to the filter. Classes must match one of supplied
-     * include patterns to match the filter 
+     * add and include pattern to the filter. Classes must match one of supplied include patterns to match the filter
      */
     public void addIncludePattern(String includePattern) {
         if (includePatterns == null) {
@@ -57,14 +54,14 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
         }
         includePatterns.add(includePattern);
     }
-    
+
     public void addIncludePatterns(Collection<String> includes) {
         if (includePatterns == null) {
             includePatterns = new ArrayList<>();
         }
         includePatterns.addAll(includes);
     }
-    
+
     public void addExcludePatterns(Collection<String> excludes) {
         if (excludePatterns == null) {
             excludePatterns = new ArrayList<>();
@@ -73,23 +70,19 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
     }
 
     /**
-     * Tests if a given class matches the patterns in this filter. Patterns are
-     * specified by {@link AntPathMatcher}
+     * Tests if a given class matches the patterns in this filter. Patterns are specified by {@link AntPathMatcher}
      * <p>
      * if no include or exclude patterns are set then all classes match.
      * <p>
-     * If the filter contains only include filters, then the candidate class
-     * must match one of the include patterns to match the filter and return
-     * true.
+     * If the filter contains only include filters, then the candidate class must match one of the include patterns to
+     * match the filter and return true.
      * <p>
-     * If the filter contains only exclude filters, then the filter will return
-     * true unless the candidate class matches an exclude pattern.
+     * If the filter contains only exclude filters, then the filter will return true unless the candidate class matches
+     * an exclude pattern.
      * <p>
-     * if this contains both include and exclude filters, then the above rules
-     * apply with excludes taking precedence over includes i.e. an include
-     * pattern of java.util.* and an exclude pattern of java.util.jar.* will
-     * include a file only if it is in the util pkg and not in the util.jar
-     * package.
+     * if this contains both include and exclude filters, then the above rules apply with excludes taking precedence
+     * over includes i.e. an include pattern of java.util.* and an exclude pattern of java.util.jar.* will include a
+     * file only if it is in the util pkg and not in the util.jar package.
      * 
      * @return true if candidate class matches according to the above rules
      */
@@ -98,13 +91,13 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
         String candidate = candidateClass.getName();
         if (includePatterns != null || excludePatterns != null) {
 
-            if (excludePatterns != null && excludePatterns.size() > 0) {
+            if (excludePatterns != null && !excludePatterns.isEmpty()) {
                 if (matchesAny(excludePatterns, candidate)) {
                     return false;
                 }
             }
 
-            if (includePatterns != null && includePatterns.size() > 0) {
+            if (includePatterns != null && !includePatterns.isEmpty()) {
                 return matchesAny(includePatterns, candidate);
             }
 

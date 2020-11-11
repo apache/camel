@@ -20,12 +20,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CoAPRestContextPathTest extends CoAPTestSupport {
 
     @Test
-    public void testCoAPRestContextPath() throws Exception {
+    void testCoAPRestContextPath() throws Exception {
         CoapClient client = createClient("/rest/services/test/a");
         CoapResponse response = client.get();
         assertEquals(ResponseCode.CONTENT, response.getCode());
@@ -33,19 +35,13 @@ public class CoAPRestContextPathTest extends CoAPTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                restConfiguration("coap")
-                    .host("localhost")
-                    .port(PORT)
-                    .contextPath("/rest/services");
+            public void configure() {
+                restConfiguration().host("localhost").port(PORT).contextPath("/rest/services");
 
-                rest("/test")
-                    .get("/a")
-                        .route()
-                            .setBody(constant("GET: /test/a"));
+                rest("/test").get("/a").route().setBody(constant("GET: /test/a"));
             }
         };
     }

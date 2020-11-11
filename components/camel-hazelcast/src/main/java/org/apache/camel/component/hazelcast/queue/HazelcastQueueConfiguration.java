@@ -32,7 +32,6 @@ public class HazelcastQueueConfiguration {
     @UriParam(label = "consumer", defaultValue = "1")
     private int poolSize = 1;
 
-
     /**
      * Define the polling timeout of the Queue consumer in Poll mode
      */
@@ -45,7 +44,7 @@ public class HazelcastQueueConfiguration {
     }
 
     /**
-     * Define the Queue Consumer mode: Listen or Poll 
+     * Define the Queue Consumer mode: Listen or Poll
      */
     public HazelcastQueueConsumerMode getQueueConsumerMode() {
         return queueConsumerMode;

@@ -22,21 +22,27 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.http.HttpStatus;
 
+import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public abstract class BaseHttpTest extends HttpServerTestSupport {
 
     protected void assertExchange(Exchange exchange) {
         assertNotNull(exchange);
 
         assertTrue(exchange.hasOut());
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         assertHeaders(out.getHeaders());
         assertBody(out.getBody(String.class));
     }
 
     protected void assertHeaders(Map<String, Object> headers) {
         assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("12", headers.get("Content-Length"));
-        assertNotNull("Should have Content-Type header", headers.get("Content-Type"));
+        assertEquals("12", headers.get(CONTENT_LENGTH));
+        assertNotNull(headers.get(CONTENT_TYPE), "Should have Content-Type header");
     }
 
     protected void assertBody(String body) {

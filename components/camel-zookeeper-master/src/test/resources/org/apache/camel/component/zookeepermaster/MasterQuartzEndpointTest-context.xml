@@ -22,26 +22,28 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <!-- Since this is a test case lets run a local ZK server -->
-  <bean id="zkServer" class="org.apache.camel.component.zookeepermaster.ZKServerFactoryBean">
-    <property name="port" value="9003"/>
+  <bean id="zkContainer" class="org.apache.camel.component.zookeepermaster.ZKContainer" init-method="start" destroy-method="start">
+    <constructor-arg>
+      <value>zookeeper</value>
+    </constructor-arg>
   </bean>
 
+  <bean id="zkConnectString" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="zkContainer"/>
+    <property name="targetMethod" value="getConnectionString">
+    </property>
+  </bean>
 
-  <bean id="curator" class="org.apache.camel.component.zookeepermaster.CuratorFactoryBean" depends-on="zkServer">
+  <bean id="curator" class="org.apache.camel.component.zookeepermaster.CuratorFactoryBean" depends-on="zkContainer">
     <property name="timeout" value="3000"/>
-    <property name="connectString" value="localhost:9003"/>
+    <property name="connectString" ref="zkConnectString"/>
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring" depends-on="curator">
-
     <route>
       <from uri="zookeeper-master:master-000:quartz://masterTest?cron=0/2+0/1+*+1/1+*+?+*"/>
-
       <to uri="mock:results"/>
     </route>
 
   </camelContext>
-
-  <!-- some other stuff here... -->
-
 </beans>

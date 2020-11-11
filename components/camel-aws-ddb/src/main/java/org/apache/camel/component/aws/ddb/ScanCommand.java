@@ -35,6 +35,8 @@ public class ScanCommand extends AbstractDdbCommand {
     public void execute() {
         ScanResult result = ddbClient.scan(new ScanRequest()
                 .withTableName(determineTableName())
+                .withLimit(determineLimit())
+                .withExclusiveStartKey(determineExclusiveStartKey())
                 .withScanFilter(determineScanFilter()));
 
         Map tmp = new HashMap<>();

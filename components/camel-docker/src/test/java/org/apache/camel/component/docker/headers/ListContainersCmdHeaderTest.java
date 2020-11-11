@@ -21,7 +21,7 @@ import java.util.Map;
 import com.github.dockerjava.api.command.ListContainersCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -36,7 +36,7 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
     private ListContainersCmd mockObject;
 
     @Test
-    public void listContainerHeaderTest() {
+    void listContainerHeaderTest() {
 
         boolean showSize = true;
         boolean showAll = false;
@@ -50,7 +50,6 @@ public class ListContainersCmdHeaderTest extends BaseDockerHeaderTest<ListContai
         headers.put(DockerConstants.DOCKER_SHOW_SIZE, showSize);
         headers.put(DockerConstants.DOCKER_SINCE, since);
         headers.put(DockerConstants.DOCKER_BEFORE, before);
-
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 

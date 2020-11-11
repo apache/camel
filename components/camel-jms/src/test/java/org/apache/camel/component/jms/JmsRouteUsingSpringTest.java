@@ -19,24 +19,24 @@ package org.apache.camel.component.jms;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JmsRouteUsingSpringTest extends JmsRouteTest {
     private ClassPathXmlApplicationContext applicationContext;
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = createApplicationContext();
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
-    
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpring.xml");
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);

@@ -27,8 +27,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.ANNOTATION_TYPE })
+@Target({ ElementType.ANNOTATION_TYPE })
 public @interface LanguageAnnotation {
     String language();
+
     Class<?> factory() default Object.class;
 }

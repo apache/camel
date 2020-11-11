@@ -22,12 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.commons.exec.OS;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_ARGS;
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_EXECUTABLE;
@@ -36,30 +38,32 @@ import static org.apache.camel.component.exec.ExecBinding.EXEC_STDERR;
 import static org.apache.camel.component.exec.ExecEndpoint.NO_TIMEOUT;
 import static org.apache.camel.component.exec.ExecTestUtils.getClasspathResourceFileOrNull;
 import static org.apache.camel.component.exec.ExecutableJavaProgram.PRINT_IN_STDOUT;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test executing a OS script. Use only manually, see the TODO
  */
+@CamelSpringTest
 @ContextConfiguration
-public class ExecScriptTest extends AbstractJUnit4SpringContextTests {
+public class ExecScriptTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecScriptTest.class);
 
     @Produce("direct:input")
     private ProducerTemplate producerTemplate;
 
     /**
-     * TODO <b>the test is ignored for now to prevent accidental build
-     * failures.</b> Java 1.5 does not offer a method to check if a file is
-     * executable there is only a canRead method, which is not enough to
-     * guarantee that the script can be executed. <br>
+     * TODO <b>the test is Disabledd for now to prevent accidental build failures.</b> Java 1.5 does not offer a method
+     * to check if a file is executable there is only a canRead method, which is not enough to guarantee that the script
+     * can be executed. <br>
      * 
      * @throws Exception
      */
     @Test
     @DirtiesContext
-    @Ignore
+    @Disabled
     public void testExecuteScript() throws Exception {
         File scriptFile = getExecScriptFileOrNull("exec-test-script");
         if (scriptFile != null) {
@@ -67,7 +71,7 @@ public class ExecScriptTest extends AbstractJUnit4SpringContextTests {
             Exchange exchange = executeScript(scriptFile, NO_TIMEOUT, classpathArg, PRINT_IN_STDOUT);
             if (exchange != null) {
                 String out = exchange.getIn().getBody(String.class);
-                String err = (String)exchange.getIn().getHeader(EXEC_STDERR);
+                String err = (String) exchange.getIn().getHeader(EXEC_STDERR);
 
                 assertNotNull(out);
                 assertTrue(out.contains(PRINT_IN_STDOUT));
@@ -75,7 +79,7 @@ public class ExecScriptTest extends AbstractJUnit4SpringContextTests {
             }
         } else {
             String os = System.getProperty("os.name");
-            logger.warn("Executing batch scripts is not tested on " + os);
+            LOGGER.warn("Executing batch scripts is not tested on " + os);
         }
     }
 
@@ -122,7 +126,7 @@ public class ExecScriptTest extends AbstractJUnit4SpringContextTests {
         File resourceFile = getClasspathResourceFileOrNull(resource);
         // TODO use canExecute here (available since java 1.6)
         if (resourceFile != null && !resourceFile.canRead()) {
-            logger.warn("The resource  " + resourceFile.getAbsolutePath() + " is not readable!");
+            LOGGER.warn("The resource  " + resourceFile.getAbsolutePath() + " is not readable!");
             // it is not readable, do not try to execute it
             return null;
         }

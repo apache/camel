@@ -24,7 +24,6 @@ import io.fabric8.kubernetes.api.model.ServiceBuilder;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ServiceResource;
@@ -48,7 +47,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -63,28 +62,28 @@ public class KubernetesServicesProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_SERVICES_OPERATION:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SERVICES_OPERATION:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_SERVICES_BY_LABELS_OPERATION:
-            doListServiceByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SERVICES_BY_LABELS_OPERATION:
+                doListServiceByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_SERVICE_OPERATION:
-            doGetService(exchange, operation);
-            break;
+            case KubernetesOperations.GET_SERVICE_OPERATION:
+                doGetService(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_SERVICE_OPERATION:
-            doCreateService(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_SERVICE_OPERATION:
+                doCreateService(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_SERVICE_OPERATION:
-            doDeleteService(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_SERVICE_OPERATION:
+                doDeleteService(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -112,8 +111,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
             }
             servicesList = services.list();
         } else {
-            FilterWatchListMultiDeletable<Service, ServiceList, Boolean, Watch, Watcher<Service>> services;
-            services = getEndpoint().getKubernetesClient().services().inAnyNamespace();
+            FilterWatchListMultiDeletable<Service, ServiceList, Boolean, Watch> services
+                    = getEndpoint().getKubernetesClient().services().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 services.withLabel(entry.getKey(), entry.getValue());
             }
@@ -158,7 +157,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
             throw new IllegalArgumentException("Create a specific service require specify a service spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, Map.class);
-        Service serviceCreating = new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labels).endMetadata().withSpec(serviceSpec).build();
+        Service serviceCreating = new ServiceBuilder().withNewMetadata().withName(serviceName).withLabels(labels).endMetadata()
+                .withSpec(serviceSpec).build();
         service = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).create(serviceCreating);
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(service);
@@ -175,7 +175,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
             LOG.error("Delete a specific service require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific service require specify a namespace name");
         }
-        boolean serviceDeleted = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).delete();
+        boolean serviceDeleted
+                = getEndpoint().getKubernetesClient().services().inNamespace(namespaceName).withName(serviceName).delete();
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(serviceDeleted);
     }

@@ -1,0 +1,14 @@
+[[tracing-other]]
+= Tracing Component
+:docTitle: Tracing
+:artifactId: camel-tracing
+:description: Distributed tracing common interfaces
+:since: 3.5
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/tracing.adoc[opts=optional]
+
+*Since Camel {since}*
+
+This module is common interfaces and API for distributed tracing.
+
+This module is not intended to be used by end users, but they should use `camel-opentelemetry`, `camel-opentracing` or `camel-zipkin` instead.

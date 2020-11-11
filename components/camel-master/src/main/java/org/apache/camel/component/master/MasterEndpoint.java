@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.master;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
@@ -24,25 +25,23 @@ import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.cluster.CamelClusterService;
-import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Represents an endpoint which only becomes active when the {@link CamelClusterView}
- * has the leadership.
+ * Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
  */
 @ManagedResource(description = "Managed Master Endpoint")
 @UriEndpoint(
-    firstVersion = "2.20.0",
-    scheme = "master",
-    syntax = "master:namespace:delegateUri",
-    consumerOnly = true,
-    title = "Master",
-    lenientProperties = true,
-    label = "clustering")
+             firstVersion = "2.20.0",
+             scheme = "master",
+             syntax = "master:namespace:delegateUri",
+             consumerOnly = true,
+             title = "Master",
+             lenientProperties = true,
+             category = { Category.CLUSTERING })
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     private final Endpoint delegateEndpoint;
     private final CamelClusterService clusterService;
@@ -55,7 +54,8 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
     @Metadata(required = true)
     private final String delegateUri;
 
-    public MasterEndpoint(String uri, MasterComponent component, CamelClusterService clusterService, String namespace, String delegateUri) {
+    public MasterEndpoint(String uri, MasterComponent component, CamelClusterService clusterService, String namespace,
+                          String delegateUri) {
         super(uri, component);
 
         this.clusterService = clusterService;

@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateExpressionSizeFallbackTest extends ContextTestSupport {
 
@@ -46,8 +46,8 @@ public class AggregateExpressionSizeFallbackTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
-                    // if no mySize header it will fallback to the 3 in size
-                    .completionSize(header("mySize")).completionSize(3).to("mock:aggregated");
+                        // if no mySize header it will fallback to the 3 in size
+                        .completionSize(header("mySize")).completionSize(3).to("mock:aggregated");
             }
         };
     }

@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSupport {
     static final String ALTERNATE_EXCEPTION_MESSAGE = "Test Message";
@@ -113,7 +113,8 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorSix() throws Exception {
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpAcknowledgementTimeoutException(
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertNull(instance.getCause());
@@ -143,7 +144,8 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testConstructorEight() throws Exception {
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpAcknowledgementTimeoutException(
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
 
         assertTrue(instance.getMessage().startsWith(ALTERNATE_EXCEPTION_MESSAGE));
         assertSame(CAUSE, instance.getCause());
@@ -158,7 +160,8 @@ public class MllpAcknowledgementTimeoutExceptionTest extends MllpExceptionTestSu
      */
     @Test
     public void testGetHl7Acknowledgement() throws Exception {
-        instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpAcknowledgementTimeoutException(
+                ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
         assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.getHl7Acknowledgement());
 
         instance = new MllpAcknowledgementTimeoutException(ALTERNATE_EXCEPTION_MESSAGE, HL7_MESSAGE_BYTES, new byte[0], CAUSE);

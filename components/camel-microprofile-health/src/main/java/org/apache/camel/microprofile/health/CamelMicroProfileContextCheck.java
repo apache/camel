@@ -28,35 +28,27 @@ import org.apache.camel.impl.health.ContextHealthCheck;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
-import org.eclipse.microprofile.health.Liveness;
 import org.eclipse.microprofile.health.Readiness;
 
 /**
  * A simple health check implementation for checking the status of a CamelContext
  */
 @Readiness
-@Liveness
 public class CamelMicroProfileContextCheck implements HealthCheck, CamelContextAware {
 
     @Inject
-    private CamelContext camelContext;
-
-    private ContextHealthCheck contextHealthCheck = new ContextHealthCheck();
-
-    public CamelMicroProfileContextCheck() {
-        contextHealthCheck.getConfiguration().setEnabled(true);
-    }
+    CamelContext camelContext;
 
     @Override
     public HealthCheckResponse call() {
         final HealthCheckResponseBuilder builder = HealthCheckResponse.builder();
-        builder.name("camel");
+        builder.name("camel-context-check");
         builder.down();
 
         if (camelContext != null) {
-            contextHealthCheck.setCamelContext(camelContext);
-
-            Result result = contextHealthCheck.call();
+            ContextHealthCheck chc = new ContextHealthCheck();
+            chc.setCamelContext(camelContext);
+            Result result = chc.call();
             Map<String, Object> details = result.getDetails();
             builder.withData("name", details.get("context.name").toString());
             builder.withData("contextStatus", details.get("context.status").toString());

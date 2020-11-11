@@ -26,10 +26,19 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.metrics.MetricsComponent;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedMessageHistoryTest extends CamelTestSupport {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @BindToRegistry(MetricsComponent.METRIC_REGISTRY_NAME)
     private MetricRegistry metricRegistry = new MetricRegistry();
@@ -80,9 +89,10 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         assertEquals(3, set.size());
 
         // get the message history service using JMX
-        String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsMessageHistoryService", context.getManagementName());
+        String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsMessageHistoryService",
+                context.getManagementName());
         ObjectName on = ObjectName.getInstance(name);
-        String json = (String)getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
 
@@ -100,7 +110,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        json = (String)getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
         assertNotNull(json);
         log.info(json);
 

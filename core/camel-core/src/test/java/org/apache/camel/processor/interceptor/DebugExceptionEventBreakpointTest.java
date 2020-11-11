@@ -23,12 +23,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.Condition;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.support.BreakpointSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
 
@@ -37,14 +42,15 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
     private Breakpoint breakpoint;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
             public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
                 Exception e = event.getExchange().getException();
-                logs.add("Breakpoint at " + definition + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage() + "]");
+                logs.add("Breakpoint at " + definition + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage()
+                         + "]");
             }
         };
 
@@ -72,7 +78,9 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(1, logs.size());
-        assertEquals("Breakpoint at ThrowException[java.lang.IllegalArgumentException] caused by: IllegalArgumentException[Damn]", logs.get(0));
+        assertEquals(
+                "Breakpoint at ThrowException[java.lang.IllegalArgumentException] caused by: IllegalArgumentException[Damn]",
+                logs.get(0));
     }
 
     @Override
@@ -83,7 +91,8 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
                 // use debugger
                 context.setDebugger(new DefaultDebugger());
 
-                from("direct:start").to("log:foo").choice().when(body().contains("Camel")).throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
+                from("direct:start").to("log:foo").choice().when(body().contains("Camel"))
+                        .throwException(new IllegalArgumentException("Damn")).end().to("mock:result");
             }
         };
     }

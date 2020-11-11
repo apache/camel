@@ -90,7 +90,8 @@ public class EnvelopedDataDecryptor extends CryptoCmsUnmarshaller {
         RecipientInformationStore recipientsStore = parser.getRecipientInfos();
 
         if (recipientsStore.size() == 0) {
-            throw new CryptoCmsException("PKCS7/CMS enveloped data message is incorrect. No recipient information found in enveloped data.");
+            throw new CryptoCmsException(
+                    "PKCS7/CMS enveloped data message is incorrect. No recipient information found in enveloped data.");
         }
 
         // we loop over the key-pairs in the keystore and use the first entry
@@ -98,7 +99,8 @@ public class EnvelopedDataDecryptor extends CryptoCmsUnmarshaller {
         RecipientInformation recipientInformation = null;
         Collection<PrivateKeyWithCertificate> privateKeyCerts = conf.getPrivateKeyCertificateCollection(exchange);
         if (privateKeyCerts.isEmpty()) {
-            throw new CryptoCmsNoCertificateForRecipientsException("Cannot decrypt PKCS7/CMS enveloped data object. No private key for the decryption configured.");
+            throw new CryptoCmsNoCertificateForRecipientsException(
+                    "Cannot decrypt PKCS7/CMS enveloped data object. No private key for the decryption configured.");
 
         }
         PrivateKey foundPrivateKey = null;
@@ -109,7 +111,7 @@ public class EnvelopedDataDecryptor extends CryptoCmsUnmarshaller {
             if (recipientInformation != null) {
 
                 LOG.debug("Recipient found for certificate with subjectDN={}, issuerDN={}, and serial number={}",
-                          new Object[] {cert.getSubjectDN(), cert.getIssuerDN(), cert.getSerialNumber()});
+                        new Object[] { cert.getSubjectDN(), cert.getIssuerDN(), cert.getSerialNumber() });
                 foundPrivateKey = privateKeyCert.getPrivateKey();
                 break; // use the first found private key
             }
@@ -119,9 +121,11 @@ public class EnvelopedDataDecryptor extends CryptoCmsUnmarshaller {
             for (PrivateKeyWithCertificate pc : privateKeyCerts) {
                 certs.add(pc.getCertificate());
             }
-            throw new CryptoCmsNoCertificateForRecipientsException("Cannot decrypt PKCS7/CMS enveloped data object. No certificate found among the configured certificates "
+            throw new CryptoCmsNoCertificateForRecipientsException(
+                    "Cannot decrypt PKCS7/CMS enveloped data object. No certificate found among the configured certificates "
                                                                    + "which fit to one of the recipients in the enveloped data object. The recipients in the enveloped data object are: "
-                                                                   + recipientsToString(recipientsStore.getRecipients()) + "The configured certificates are: "
+                                                                   + recipientsToString(recipientsStore.getRecipients())
+                                                                   + "The configured certificates are: "
                                                                    + certsToString(certs)
                                                                    + ". Specify a certificate with private key which fits to one of the recipients in the configruation or"
                                                                    + " check whether the encrypted message is encrypted with the correct key.");
@@ -171,24 +175,26 @@ public class EnvelopedDataDecryptor extends CryptoCmsUnmarshaller {
             @SuppressWarnings("unchecked")
             Store<X509CertificateHolder> certStore = originatorInfo.getCertificates();
             Collection<X509CertificateHolder> certs = certStore.getMatches(null);
-            if (certs != null && certs.size() > 0) {
+            if (certs != null && !certs.isEmpty()) {
                 LOG.debug("Certificates in the originator information:");
                 for (X509CertificateHolder cert : certs) {
-                    LOG.debug("    subject=" + cert.getSubject() + ", issuer=" + cert.getIssuer() + ", serial number=" + cert.getSerialNumber());
+                    LOG.debug("    subject={}, issuer={}, serial number={}",
+                            cert.getSubject(), cert.getIssuer(), cert.getSerialNumber());
                 }
             }
             @SuppressWarnings("unchecked")
             Store<X509CRLHolder> crlsStore = originatorInfo.getCRLs();
             Collection<X509CRLHolder> crls = crlsStore.getMatches(null);
-            if (crls != null && crls.size() > 0) {
+            if (crls != null && !crls.isEmpty()) {
                 LOG.debug("CRLs in the originator information:");
                 for (X509CRLHolder crl : crls) {
                     LOG.debug("    CRL issuer={}", crl.getIssuer());
                     @SuppressWarnings("unchecked")
                     Collection<X509CRLEntryHolder> revokedCerts = crl.getRevokedCertificates();
                     for (X509CRLEntryHolder revokedCert : revokedCerts) {
-                        LOG.debug("        Revoked Certificate: issuer=" + revokedCert.getCertificateIssuer() + ", serial number=" + revokedCert.getSerialNumber() + ", date="
-                                  + revokedCert.getRevocationDate());
+                        LOG.debug("        Revoked Certificate: issuer={}, serial number={}, date={}",
+                                revokedCert.getCertificateIssuer(), revokedCert.getSerialNumber(),
+                                revokedCert.getRevocationDate());
                     }
                 }
             }
@@ -223,8 +229,9 @@ public class EnvelopedDataDecryptor extends CryptoCmsUnmarshaller {
 
     protected String recipientToString(RecipientInformation recipient) {
         if (recipient instanceof KeyTransRecipientInformation) {
-            KeyTransRecipientId rid = (KeyTransRecipientId)recipient.getRID();
-            return "Issuer=" + rid.getIssuer() + ", serial number=" + rid.getSerialNumber() + ", key encryption algorithm OID=" + recipient.getKeyEncryptionAlgOID();
+            KeyTransRecipientId rid = (KeyTransRecipientId) recipient.getRID();
+            return "Issuer=" + rid.getIssuer() + ", serial number=" + rid.getSerialNumber() + ", key encryption algorithm OID="
+                   + recipient.getKeyEncryptionAlgOID();
         } else {
             return "not a KeyTransRecipientInformation: " + recipient.getRID().getType();
         }

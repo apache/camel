@@ -20,7 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.yammer.model.Messages;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class YammerMessageRouteTest extends YammerComponentTestSupport {
 
@@ -29,13 +31,14 @@ public class YammerMessageRouteTest extends YammerComponentTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         assertMockEndpointsSatisfied();
-        
+
         Exchange exchange = mock.getExchanges().get(0);
         Messages messages = exchange.getIn().getBody(Messages.class);
 
         assertEquals(2, messages.getMessages().size());
         assertEquals("Testing yammer API...", messages.getMessages().get(0).getBody().getPlain());
-        assertEquals("(Principal Software Engineer) has #joined the redhat.com network. Take a moment to welcome Jonathan.", messages.getMessages().get(1).getBody().getPlain());
+        assertEquals("(Principal Software Engineer) has #joined the redhat.com network. Take a moment to welcome Jonathan.",
+                messages.getMessages().get(1).getBody().getPlain());
     }
 
     @Override
@@ -43,7 +46,8 @@ public class YammerMessageRouteTest extends YammerComponentTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // using dummy keys here since we are mocking out calls to yammer.com with static json; in a real app, please use your own keys!
-                from("yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
+                from("yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken")
+                        .to("mock:result");
             }
         };
     }

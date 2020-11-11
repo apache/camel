@@ -18,7 +18,9 @@ package org.apache.camel.component.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestSupport {
 
@@ -32,7 +34,7 @@ public class VmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestS
         assertMockEndpointsSatisfied();
 
         // check the camel context of the exchange
-        assertEquals("Get a wrong context. ", context, result.getExchanges().get(0).getContext());
+        assertEquals(context, result.getExchanges().get(0).getContext(), "Get a wrong context. ");
     }
 
     @Override

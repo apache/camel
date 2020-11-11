@@ -32,7 +32,7 @@ public class HttpOutboundStreamHandler extends ChunkedWriteHandler {
             super.write(ctx, ((OutboundStreamHttpRequest) msg).getRequest(), promise);
             needNewPromise = true;
         } else if (msg instanceof OutboundStreamHttpResponse) {
-            super.write(ctx, ((OutboundStreamHttpResponse)msg).getResponse(), promise);
+            super.write(ctx, ((OutboundStreamHttpResponse) msg).getResponse(), promise);
             needNewPromise = true;
         }
 

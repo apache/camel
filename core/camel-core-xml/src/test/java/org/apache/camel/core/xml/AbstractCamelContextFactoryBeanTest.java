@@ -29,16 +29,16 @@ import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinder;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.support.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.Invocation;
 
@@ -60,34 +60,39 @@ public class AbstractCamelContextFactoryBeanTest {
     // placeholders
     Set<String> propertiesThatAreNotPlaceholdered = Collections.singleton("{{getErrorHandlerRef}}");
 
-    TypeConverter typeConverter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-        new Injector() {
-            @Override
-            public <T> T newInstance(Class<T> type) {
-                return newInstance(type, false);
-            }
+    TypeConverter typeConverter = new DefaultTypeConverter(
+            new DefaultPackageScanClassResolver(),
+            new Injector() {
+                @Override
+                public <T> T newInstance(Class<T> type) {
+                    return newInstance(type, false);
+                }
 
-            @Override
-            public <T> T newInstance(Class<T> type, String factoryMethod) {
-                return null;
-            }
+                @Override
+                public <T> T newInstance(Class<T> type, String factoryMethod) {
+                    return null;
+                }
 
-            @Override
-            public <T> T newInstance(Class<T> type, boolean postProcessBean) {
-                return ObjectHelper.newInstance(type);
-            }
+                @Override
+                public <T> T newInstance(Class<T> type, boolean postProcessBean) {
+                    return ObjectHelper.newInstance(type);
+                }
 
-            @Override
-            public boolean supportsAutoWiring() {
-                return false;
-            }
-        },
-        new DefaultFactoryFinder(new DefaultClassResolver(), "META-INF/services/org/apache/camel/"), false);
+                @Override
+                public boolean supportsAutoWiring() {
+                    return false;
+                }
+            }, false);
 
     // properties that should return value that can be converted to boolean
-    Set<String> valuesThatReturnBoolean = new HashSet<>(asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
-        "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}", "{{getHandleFault}}",
-        "{{getAutoStartup}}", "{{getUseMDCLogging}}", "{{getUseDataType}}", "{{getUseBreadcrumb}}", "{{getAllowUseOriginalMessage}}"));
+    Set<String> valuesThatReturnBoolean = new HashSet<>(
+            asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
+                    "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}", "{{getHandleFault}}",
+                    "{{getCaseInsensitiveHeaders}}",
+                    "{{getAutoStartup}}", "{{getUseMDCLogging}}", "{{getUseDataType}}", "{{getUseBreadcrumb}}",
+                    "{{getBeanPostProcessorEnabled}}", "{{getAllowUseOriginalMessage}}",
+                    "{{getLoadTypeConverters}}", "{{getTypeConverterStatisticsEnabled}}",
+                    "{{getInflightRepositoryBrowseEnabled}}"));
 
     // properties that should return value that can be converted to long
     Set<String> valuesThatReturnLong = new HashSet<>(asList("{{getDelayer}}"));
@@ -101,7 +106,7 @@ public class AbstractCamelContextFactoryBeanTest {
         final Set<Invocation> invocations = new LinkedHashSet<>();
 
         final DefaultCamelContext context = mock(DefaultCamelContext.class,
-            withSettings().invocationListeners(i -> invocations.add((Invocation) i.getInvocation())));
+                withSettings().invocationListeners(i -> invocations.add((Invocation) i.getInvocation())));
 
         when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
 
@@ -127,6 +132,8 @@ public class AbstractCamelContextFactoryBeanTest {
         when(context.getRuntimeEndpointRegistry()).thenReturn(mock(RuntimeEndpointRegistry.class));
         when(context.getManagementNameStrategy()).thenReturn(mock(ManagementNameStrategy.class));
         when(context.getExecutorServiceManager()).thenReturn(mock(ExecutorServiceManager.class));
+        when(context.getInflightRepository()).thenReturn(mock(InflightRepository.class));
+        when(context.getBeanPostProcessor()).thenReturn(mock(CamelBeanPostProcessor.class));
 
         @SuppressWarnings("unchecked")
         final AbstractCamelContextFactoryBean<ModelCamelContext> factory = mock(AbstractCamelContextFactoryBean.class);
@@ -147,10 +154,10 @@ public class AbstractCamelContextFactoryBeanTest {
         expectedPropertiesToBeResolved.removeAll(propertiesThatAreNotPlaceholdered);
 
         assertThat(capturedPlaceholders.getAllValues())
-            .as("The expectation is that all abstract getter methods that return Strings should support property "
-                + "placeholders, and that for those will delegate to CamelContext::resolvePropertyPlaceholders, "
-                + "we captured all placeholders that tried to resolve and found differences")
-            .containsAll(expectedPropertiesToBeResolved);
+                .as("The expectation is that all abstract getter methods that return Strings should support property "
+                    + "placeholders, and that for those will delegate to CamelContext::resolvePropertyPlaceholders, "
+                    + "we captured all placeholders that tried to resolve and found differences")
+                .containsAll(expectedPropertiesToBeResolved);
     }
 
     Set<String> propertiesToBeResolved(final AbstractCamelContextFactoryBean<ModelCamelContext> factory) {
@@ -163,25 +170,25 @@ public class AbstractCamelContextFactoryBeanTest {
         // mock, so the returned collection will be empty until initContext
         // invokes the mocked method
         stream(AbstractCamelContextFactoryBean.class.getDeclaredMethods())
-            .filter(m -> Modifier.isAbstract(m.getModifiers()) && m.getParameterCount() == 0).forEach(m -> {
-                try {
-                    when(m.invoke(factory)).thenAnswer(invocation -> {
-                        final Method method = invocation.getMethod();
+                .filter(m -> Modifier.isAbstract(m.getModifiers()) && m.getParameterCount() == 0).forEach(m -> {
+                    try {
+                        when(m.invoke(factory)).thenAnswer(invocation -> {
+                            final Method method = invocation.getMethod();
 
-                        final String name = method.getName();
+                            final String name = method.getName();
 
-                        if (String.class.equals(method.getReturnType())) {
-                            final String placeholder = "{{" + name + "}}";
-                            expectedPropertiesToBeResolved.add(placeholder);
-                            return placeholder;
-                        }
+                            if (String.class.equals(method.getReturnType())) {
+                                final String placeholder = "{{" + name + "}}";
+                                expectedPropertiesToBeResolved.add(placeholder);
+                                return placeholder;
+                            }
 
-                        return null;
-                    });
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ignored) {
-                    // ignored
-                }
-            });
+                            return null;
+                        });
+                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ignored) {
+                        // ignored
+                    }
+                });
 
         return expectedPropertiesToBeResolved;
     }

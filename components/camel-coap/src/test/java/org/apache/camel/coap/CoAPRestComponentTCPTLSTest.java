@@ -29,8 +29,8 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.eclipse.californium.elements.tcp.TcpClientConnector;
-import org.eclipse.californium.elements.tcp.TlsClientConnector;
+import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
+import org.eclipse.californium.elements.tcp.netty.TlsClientConnector;
 
 /**
  * Test the CoAP Rest Component with TCP + TLS

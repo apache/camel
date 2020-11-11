@@ -25,8 +25,6 @@ import org.apache.camel.component.grpc.GrpcConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static io.grpc.internal.GrpcAttributes.ATTR_LB_ADDR_AUTHORITY;
-
 /**
  * JSON Web Token client credentials generator and injector
  */
@@ -40,22 +38,19 @@ public class JwtCallCredentials extends CallCredentials {
 
     @Override
     public void applyRequestMetadata(RequestInfo requestInfo, Executor executor, MetadataApplier metadataApplier) {
-        String authority = requestInfo.getTransportAttrs().get(ATTR_LB_ADDR_AUTHORITY);
+        String authority = requestInfo.getAuthority();
 
         LOG.debug("Using authority {} for credentials", authority);
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    LOG.debug("Start to apply for the JWT token header");
-                    Metadata headers = new Metadata();
-                    Metadata.Key<String> jwtKey = GrpcConstants.GRPC_JWT_METADATA_KEY;
-                    headers.put(jwtKey, jwtToken);
-                    metadataApplier.apply(headers);
-                } catch (Throwable e) {
-                    LOG.debug("Unable to set metadata credentials header", e);
-                    metadataApplier.fail(Status.UNAUTHENTICATED.withCause(e));
-                }
+        executor.execute(() -> {
+            try {
+                LOG.debug("Start to apply for the JWT token header");
+                Metadata headers = new Metadata();
+                Metadata.Key<String> jwtKey = GrpcConstants.GRPC_JWT_METADATA_KEY;
+                headers.put(jwtKey, jwtToken);
+                metadataApplier.apply(headers);
+            } catch (Throwable e) {
+                LOG.debug("Unable to set metadata credentials header", e);
+                metadataApplier.fail(Status.UNAUTHENTICATED.withCause(e));
             }
         });
     }

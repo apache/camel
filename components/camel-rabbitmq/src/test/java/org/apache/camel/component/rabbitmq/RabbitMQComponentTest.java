@@ -23,9 +23,13 @@ import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class RabbitMQComponentTest extends CamelTestSupport {
 
@@ -113,7 +117,8 @@ public class RabbitMQComponentTest extends CamelTestSupport {
         Map<String, Object> params = new HashMap<>();
         params.put("connectionFactory", "#connectionFactoryMock");
 
-        RabbitMQEndpoint endpoint = new RabbitMQComponent(defaultContext).createEndpoint("rabbitmq:localhost/exchange", "localhost/exchange", params);
+        RabbitMQEndpoint endpoint = new RabbitMQComponent(defaultContext).createEndpoint("rabbitmq:localhost/exchange",
+                "localhost/exchange", params);
 
         assertSame(connectionFactoryMock, endpoint.getConnectionFactory());
 

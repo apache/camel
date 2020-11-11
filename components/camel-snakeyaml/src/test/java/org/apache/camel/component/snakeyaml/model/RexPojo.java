@@ -56,7 +56,7 @@ public class RexPojo {
     @Override
     public String toString() {
         return "RexPojo {"
-            + "name='" + name + '\''
-            + '}';
+               + "name='" + name + '\''
+               + '}';
     }
 }

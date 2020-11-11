@@ -23,8 +23,8 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -52,7 +52,7 @@ public class JmsNotIncludeAllJMSXPropertiesTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setIncludeAllJMSXProperties(false);
+        jms.getConfiguration().setIncludeAllJMSXProperties(false);
         camelContext.addComponent("activemq", jms);
         return camelContext;
     }
@@ -62,7 +62,7 @@ public class JmsNotIncludeAllJMSXPropertiesTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:queue:in")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

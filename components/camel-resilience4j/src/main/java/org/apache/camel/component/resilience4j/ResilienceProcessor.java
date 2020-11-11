@@ -37,6 +37,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
@@ -55,7 +56,8 @@ import org.slf4j.LoggerFactory;
  * Implementation of Circuit Breaker EIP using resilience4j.
  */
 @ManagedResource(description = "Managed Resilience Processor")
-public class ResilienceProcessor extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+public class ResilienceProcessor extends AsyncProcessorSupport
+        implements CamelContextAware, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResilienceProcessor.class);
 
@@ -70,7 +72,8 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
     private boolean shutdownExecutorService;
     private ExecutorService executorService;
 
-    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig, TimeLimiterConfig timeLimiterConfig, Processor processor,
+    public ResilienceProcessor(CircuitBreakerConfig circuitBreakerConfig, BulkheadConfig bulkheadConfig,
+                               TimeLimiterConfig timeLimiterConfig, Processor processor,
                                Processor fallback) {
         this.circuitBreakerConfig = circuitBreakerConfig;
         this.bulkheadConfig = bulkheadConfig;
@@ -479,11 +482,11 @@ public class ResilienceProcessor extends AsyncProcessorSupport implements CamelC
             // give the rest of the pipeline another chance
             exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exchange.getException());
-            exchange.removeProperty(Exchange.ROUTE_STOP);
+            exchange.setRouteStop(false);
             exchange.setException(null);
             // and we should not be regarded as exhausted as we are in a try ..
             // catch block
-            exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+            exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
             // run the fallback processor
             try {
                 LOG.debug("Running fallback: {} with exchange: {}", processor, exchange);

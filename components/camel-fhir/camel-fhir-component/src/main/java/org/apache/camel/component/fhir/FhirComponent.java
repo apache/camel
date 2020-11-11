@@ -33,6 +33,9 @@ import org.apache.camel.support.component.AbstractApiComponent;
 public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfiguration, FhirApiCollection> {
 
     @Metadata(label = "advanced")
+    FhirConfiguration configuration;
+
+    @Metadata(label = "advanced")
     private IGenericClient client;
 
     public FhirComponent() {
@@ -44,13 +47,14 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
     }
 
     @Override
-    protected FhirApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return FhirApiName.fromValue(apiNameStr);
+    protected FhirApiName getApiName(String apiNameStr) {
+        return getCamelContext().getTypeConverter().convertTo(FhirApiName.class, apiNameStr);
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, FhirApiName apiName,
-                                      FhirConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, FhirApiName apiName,
+            FhirConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new FhirEndpoint(uri, this, apiName, methodName, endpointConfiguration);
@@ -85,4 +89,3 @@ public class FhirComponent extends AbstractApiComponent<FhirApiName, FhirConfigu
     }
 
 }
-

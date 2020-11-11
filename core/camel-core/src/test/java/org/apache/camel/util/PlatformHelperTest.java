@@ -17,12 +17,13 @@
 package org.apache.camel.util;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.PlatformHelper.isOsgiContext;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PlatformHelperTest extends Assert {
+public class PlatformHelperTest {
 
     @Test
     public void shouldNotMatchDefaultCamelContext() {

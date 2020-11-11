@@ -39,9 +39,13 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Dataformat("cbor")
 public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CBORDataFormat.class);
 
     private CamelContext camelContext;
     private ObjectMapper objectMapper;
@@ -63,8 +67,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     /**
-     * Use the default CBOR Jackson {@link ObjectMapper} and with a custom
-     * unmarshal type
+     * Use the default CBOR Jackson {@link ObjectMapper} and with a custom unmarshal type
      *
      * @param unmarshalType the custom unmarshal type
      */
@@ -103,7 +106,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     public String getDataFormatName() {
         return "cbor";
     }
-    
+
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -174,7 +177,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         setCollectionType(null);
         setUnmarshalType(HashMap.class);
     }
-    
+
     public boolean isPrettyPrint() {
         return prettyPrint;
     }
@@ -182,34 +185,33 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
-    
+
     /**
-     * Allows jackson to use the <tt>JMSType</tt> header as an indicator what
-     * the classname is for unmarshaling json content to POJO
+     * Allows jackson to use the <tt>JMSType</tt> header as an indicator what the classname is for unmarshaling json
+     * content to POJO
      * <p/>
      * By default this option is <tt>false</tt>.
      */
     public void setAllowJmsType(boolean allowJmsType) {
         this.allowJmsType = allowJmsType;
     }
-    
+
     public boolean isAllowJmsType() {
         return allowJmsType;
     }
-    
+
     public String getEnableFeatures() {
         return enableFeatures;
     }
-    
+
     public boolean isEnableJacksonTypeConverter() {
         return enableJacksonTypeConverter;
     }
 
     /**
      * If enabled then Jackson is allowed to attempt to be used during Camels
-     * <a href="https://camel.apache.org/type-converter.html">type converter</a>
-     * as a {@link org.apache.camel.FallbackConverter} that attempts to convert
-     * POJOs to/from {@link Map}/{@link List} types.
+     * <a href="https://camel.apache.org/type-converter.html">type converter</a> as a
+     * {@link org.apache.camel.FallbackConverter} that attempts to convert POJOs to/from {@link Map}/{@link List} types.
      * <p/>
      * This should only be enabled when desired to be used.
      */
@@ -218,10 +220,8 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     /**
-     * Set of features to enable on the Jackson {@link ObjectMapper}. The
-     * features should be a name that matches a enum from
-     * {@link SerializationFeature}, {@link DeserializationFeature}, or
-     * {@link MapperFeature}.
+     * Set of features to enable on the Jackson {@link ObjectMapper}. The features should be a name that matches a enum
+     * from {@link SerializationFeature}, {@link DeserializationFeature}, or {@link MapperFeature}.
      */
     public void setEnableFeatures(String enableFeatures) {
         this.enableFeatures = enableFeatures;
@@ -232,10 +232,8 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     /**
-     * Set of features to disable on the Jackson {@link ObjectMapper}. The
-     * features should be a name that matches a enum from
-     * {@link SerializationFeature}, {@link DeserializationFeature}, or
-     * {@link MapperFeature}.
+     * Set of features to disable on the Jackson {@link ObjectMapper}. The features should be a name that matches a enum
+     * from {@link SerializationFeature}, {@link DeserializationFeature}, or {@link MapperFeature}.
      */
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
@@ -290,33 +288,36 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (objectMapper == null) {
             // lookup if there is a single default mapper we can use
             if (useDefaultObjectMapper && camelContext != null) {
                 Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
                 if (set.size() == 1) {
                     objectMapper = set.iterator().next();
-                    log.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
+                    LOG.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
                 } else if (set.size() > 1) {
-                    log.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.", set.size());
+                    LOG.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.",
+                            set.size());
                 }
             }
             if (objectMapper == null) {
                 CBORFactory factory = new CBORFactory();
                 objectMapper = new ObjectMapper(factory);
-                log.debug("Creating new ObjectMapper to use: {}", objectMapper);
+                LOG.debug("Creating new ObjectMapper to use: {}", objectMapper);
             }
         }
 
         if (useList) {
             setCollectionType(ArrayList.class);
         }
-        
+
         if (prettyPrint) {
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
-        
+
         if (enableFeatures != null) {
             Iterator<?> it = ObjectHelper.createIterator(enableFeatures);
             while (it.hasNext()) {
@@ -327,7 +328,8 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
                     objectMapper.enable(sf);
                     continue;
                 }
-                DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
+                DeserializationFeature df
+                        = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
                 if (df != null) {
                     objectMapper.enable(df);
                     continue;
@@ -337,7 +339,8 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
                     objectMapper.enable(mf);
                     continue;
                 }
-                throw new IllegalArgumentException("Enable feature: " + enable
+                throw new IllegalArgumentException(
+                        "Enable feature: " + enable
                                                    + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
             }
         }
@@ -346,12 +349,14 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
             while (it.hasNext()) {
                 String disable = it.next().toString();
                 // it can be different kind
-                SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
+                SerializationFeature sf
+                        = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
                 if (sf != null) {
                     objectMapper.disable(sf);
                     continue;
                 }
-                DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
+                DeserializationFeature df
+                        = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
                 if (df != null) {
                     objectMapper.disable(df);
                     continue;
@@ -361,7 +366,8 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
                     objectMapper.disable(mf);
                     continue;
                 }
-                throw new IllegalArgumentException("Disable feature: " + disable
+                throw new IllegalArgumentException(
+                        "Disable feature: " + disable
                                                    + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
             }
         }
@@ -369,7 +375,6 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     protected void doStop() throws Exception {
-        // TODO Auto-generated method stub
-
+        // noop
     }
 }

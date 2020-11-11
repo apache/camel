@@ -25,10 +25,10 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.TransactionalMap;
+import com.hazelcast.map.IMap;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
+import com.hazelcast.transaction.TransactionalMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
@@ -42,40 +42,42 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A Hazelcast-based AggregationRepository implementing
- * {@link RecoverableAggregationRepository} and {@link OptimisticLockingAggregationRepository}.
- * Defaults to thread-safe (non-optimistic) locking and recoverable strategy.
- * Hazelcast settings are given to an end-user and can be controlled with repositoryName and persistentRespositoryName,
- * both are {@link com.hazelcast.core.IMap} &lt;String, Exchange&gt;. However HazelcastAggregationRepository
- * can run it's own Hazelcast instance, but obviously no benefits of Hazelcast clustering are gained this way.
- * If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it will DESTROY this
- * instance on {@link #doStop()}. You should control {@link HazelcastInstance} lifecycle yourself whenever you instantiate
- * {@link HazelcastAggregationRepository} passing a reference to the instance.
+ * A Hazelcast-based AggregationRepository implementing {@link RecoverableAggregationRepository} and
+ * {@link OptimisticLockingAggregationRepository}. Defaults to thread-safe (non-optimistic) locking and recoverable
+ * strategy. Hazelcast settings are given to an end-user and can be controlled with repositoryName and
+ * persistentRespositoryName, both are {@link com.hazelcast.map.IMap} &lt;String, Exchange&gt;. However
+ * HazelcastAggregationRepository can run it's own Hazelcast instance, but obviously no benefits of Hazelcast clustering
+ * are gained this way. If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it
+ * will DESTROY this instance on {@link #doStop()}. You should control {@link HazelcastInstance} lifecycle yourself
+ * whenever you instantiate {@link HazelcastAggregationRepository} passing a reference to the instance.
  *
  */
 public class HazelcastAggregationRepository extends ServiceSupport
-                                                  implements RecoverableAggregationRepository,
-                                                             OptimisticLockingAggregationRepository {
+        implements RecoverableAggregationRepository,
+        OptimisticLockingAggregationRepository {
+
+    protected static final String COMPLETED_SUFFIX = "-completed";
+
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName());
-    private static final String COMPLETED_SUFFIX = "-completed";
-    
-    private boolean optimistic;
-    private boolean useLocalHzInstance;
-    private boolean useRecovery = true;
-    private IMap<String, DefaultExchangeHolder> cache;
-    private IMap<String, DefaultExchangeHolder> persistedCache;
-    private HazelcastInstance hzInstance;
-    private String mapName;
-    private String persistenceMapName;
-    private String deadLetterChannel;
-    private long recoveryInterval = 5000;
-    private int maximumRedeliveries = 3;
-    private boolean allowSerializedHeaders;
+
+    protected boolean optimistic;
+    protected boolean useLocalHzInstance;
+    protected boolean useRecovery = true;
+    protected IMap<String, DefaultExchangeHolder> cache;
+    protected IMap<String, DefaultExchangeHolder> persistedCache;
+    protected HazelcastInstance hzInstance;
+    protected String mapName;
+    protected String persistenceMapName;
+    protected String deadLetterChannel;
+    protected long recoveryInterval = 5000;
+    protected int maximumRedeliveries = 3;
+    protected boolean allowSerializedHeaders;
 
     /**
-     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
-     * with recoverable behavior and a local Hazelcast instance. Recoverable repository name defaults to
-     * {@code repositoryName} + "-compeleted".
+     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
+     * behavior and a local Hazelcast instance. Recoverable repository name defaults to {@code repositoryName} +
+     * "-compeleted".
+     * 
      * @param repositoryName {@link IMap} repository name;
      */
     public HazelcastAggregationRepository(final String repositoryName) {
@@ -86,11 +88,12 @@ public class HazelcastAggregationRepository extends ServiceSupport
     }
 
     /**
-    * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
-    * with recoverable behavior and a local Hazelcast instance.
-    * @param repositoryName {@link IMap} repository name;
-    * @param  persistentRepositoryName {@link IMap} recoverable repository name;
-    */
+     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
+     * behavior and a local Hazelcast instance.
+     * 
+     * @param repositoryName           {@link IMap} repository name;
+     * @param persistentRepositoryName {@link IMap} recoverable repository name;
+     */
     public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName) {
         mapName = repositoryName;
         persistenceMapName = persistentRepositoryName;
@@ -101,8 +104,9 @@ public class HazelcastAggregationRepository extends ServiceSupport
     /**
      * Creates new {@link HazelcastAggregationRepository} with recoverable behavior and a local Hazelcast instance.
      * Recoverable repository name defaults to {@code repositoryName} + "-compeleted".
+     * 
      * @param repositoryName {@link IMap} repository name;
-     * @param  optimistic whether to use optimistic locking manner.
+     * @param optimistic     whether to use optimistic locking manner.
      */
     public HazelcastAggregationRepository(final String repositoryName, boolean optimistic) {
         this(repositoryName);
@@ -112,48 +116,53 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     /**
      * Creates new {@link HazelcastAggregationRepository} with recoverable behavior and a local Hazelcast instance.
-     * @param repositoryName {@link IMap} repository name;
-     * @param  persistentRepositoryName {@link IMap} recoverable repository name;
-     * @param optimistic whether to use optimistic locking manner.
+     * 
+     * @param repositoryName           {@link IMap} repository name;
+     * @param persistentRepositoryName {@link IMap} recoverable repository name;
+     * @param optimistic               whether to use optimistic locking manner.
      */
-    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName, boolean optimistic) {
+    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
+                                          boolean optimistic) {
         this(repositoryName, persistentRepositoryName);
         this.optimistic = optimistic;
         useLocalHzInstance = true;
     }
 
     /**
-     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
-     * with recoverable behavior. Recoverable repository name defaults to
-     * {@code repositoryName} + "-compeleted".
+     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
+     * behavior. Recoverable repository name defaults to {@code repositoryName} + "-compeleted".
+     * 
      * @param repositoryName {@link IMap} repository name;
-     * @param hzInstanse externally configured {@link HazelcastInstance}.
+     * @param hzInstanse     externally configured {@link HazelcastInstance}.
      */
     public HazelcastAggregationRepository(final String repositoryName, HazelcastInstance hzInstanse) {
-        this (repositoryName, false);
+        this(repositoryName, false);
         this.hzInstance = hzInstanse;
         useLocalHzInstance = false;
     }
 
     /**
-     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
-     * with recoverable behavior.
-     * @param repositoryName {@link IMap} repository name;
-     * @param  persistentRepositoryName {@link IMap} recoverable repository name;
-     * @param hzInstanse externally configured {@link HazelcastInstance}.
+     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
+     * behavior.
+     * 
+     * @param repositoryName           {@link IMap} repository name;
+     * @param persistentRepositoryName {@link IMap} recoverable repository name;
+     * @param hzInstanse               externally configured {@link HazelcastInstance}.
      */
-    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName, HazelcastInstance hzInstanse) {
-        this (repositoryName, persistentRepositoryName, false);
+    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
+                                          HazelcastInstance hzInstanse) {
+        this(repositoryName, persistentRepositoryName, false);
         this.hzInstance = hzInstanse;
         useLocalHzInstance = false;
     }
 
     /**
-     * Creates new {@link HazelcastAggregationRepository} with recoverable behavior.
-     * Recoverable repository name defaults to {@code repositoryName} + "-compeleted".
+     * Creates new {@link HazelcastAggregationRepository} with recoverable behavior. Recoverable repository name
+     * defaults to {@code repositoryName} + "-compeleted".
+     * 
      * @param repositoryName {@link IMap} repository name;
-     * @param  optimistic whether to use optimistic locking manner;
-     * @param hzInstance  externally configured {@link HazelcastInstance}.
+     * @param optimistic     whether to use optimistic locking manner;
+     * @param hzInstance     externally configured {@link HazelcastInstance}.
      */
     public HazelcastAggregationRepository(final String repositoryName, boolean optimistic, HazelcastInstance hzInstance) {
         this(repositoryName, optimistic);
@@ -163,19 +172,22 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     /**
      * Creates new {@link HazelcastAggregationRepository} with recoverable behavior.
-     * @param repositoryName {@link IMap} repository name;
-     * @param optimistic whether to use optimistic locking manner;
+     * 
+     * @param repositoryName           {@link IMap} repository name;
+     * @param optimistic               whether to use optimistic locking manner;
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
-     * @param hzInstance  externally configured {@link HazelcastInstance}.
+     * @param hzInstance               externally configured {@link HazelcastInstance}.
      */
-    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName, boolean optimistic, HazelcastInstance hzInstance) {
+    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName,
+                                          boolean optimistic, HazelcastInstance hzInstance) {
         this(repositoryName, persistentRepositoryName, optimistic);
         this.hzInstance = hzInstance;
         useLocalHzInstance = false;
     }
 
     @Override
-    public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) throws OptimisticLockingException {
+    public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange)
+            throws OptimisticLockingException {
         if (!optimistic) {
             throw new UnsupportedOperationException();
         }
@@ -185,15 +197,17 @@ public class HazelcastAggregationRepository extends ServiceSupport
             final DefaultExchangeHolder misbehaviorHolder = cache.putIfAbsent(key, holder);
             if (misbehaviorHolder != null) {
                 Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
-                LOG.error("Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
+                LOG.error(
+                        "Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
                         key, misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
-                throw  new OptimisticLockingException();
+                throw new OptimisticLockingException();
             }
         } else {
             DefaultExchangeHolder oldHolder = DefaultExchangeHolder.marshal(oldExchange, true, allowSerializedHeaders);
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             if (!cache.replace(key, oldHolder, newHolder)) {
-                LOG.error("Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one",
+                LOG.error(
+                        "Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one",
                         key);
                 throw new OptimisticLockingException();
             }
@@ -208,7 +222,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
             throw new UnsupportedOperationException();
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
-        Lock l = hzInstance.getLock(mapName);
+        Lock l = hzInstance.getCPSubsystem().getLock(mapName);
         try {
             l.lock();
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
@@ -228,7 +242,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
             LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
             return scanned;
         } else {
-            LOG.warn("What for to run recovery scans in {} context while repository {} is running in non-recoverable aggregation repository mode?!",
+            LOG.warn(
+                    "What for to run recovery scans in {} context while repository {} is running in non-recoverable aggregation repository mode?!",
                     camelContext.getName(), mapName);
             return Collections.emptySet();
         }
@@ -289,7 +304,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public Exchange get(CamelContext camelContext, String key) {
         return unmarshallExchange(camelContext, cache.get(key));
     }
-    
+
     /**
      * Checks if the key in question is in the repository.
      * 
@@ -302,7 +317,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
             return false;
         }
     }
-    
+
     public boolean isAllowSerializedHeaders() {
         return allowSerializedHeaders;
     }
@@ -312,12 +327,13 @@ public class HazelcastAggregationRepository extends ServiceSupport
     }
 
     /**
-     * This method performs transactional operation on removing the {@code exchange}
-     * from the operational storage and moving it into the persistent one if the {@link HazelcastAggregationRepository}
-     * runs in recoverable mode and {@code optimistic} is false. It will act at <u>your own</u> risk otherwise.
-     * @param camelContext   the current CamelContext
-     * @param key            the correlation key
-     * @param exchange       the exchange to remove
+     * This method performs transactional operation on removing the {@code exchange} from the operational storage and
+     * moving it into the persistent one if the {@link HazelcastAggregationRepository} runs in recoverable mode and
+     * {@code optimistic} is false. It will act at <u>your own</u> risk otherwise.
+     * 
+     * @param camelContext the current CamelContext
+     * @param key          the correlation key
+     * @param exchange     the exchange to remove
      */
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
@@ -325,7 +341,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
         if (optimistic) {
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             if (!cache.remove(key, holder)) {
-                LOG.error("Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
+                LOG.error(
+                        "Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
                         key);
                 throw new OptimisticLockingException();
             }
@@ -360,13 +377,15 @@ public class HazelcastAggregationRepository extends ServiceSupport
                     tPersistentCache.put(exchange.getExchangeId(), removedHolder);
 
                     tCtx.commitTransaction();
-                    LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+                    LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(),
+                            key);
                     LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
                             exchange.getExchangeId(), key);
                 } catch (Throwable throwable) {
                     tCtx.rollbackTransaction();
 
-                    final String msg = String.format("Transaction with ID %s was rolled back for remove operation with a key %s and an Exchange ID %s.",
+                    final String msg = String.format(
+                            "Transaction with ID %s was rolled back for remove operation with a key %s and an Exchange ID %s.",
                             tCtx.getTxnId(), key, exchange.getExchangeId());
                     LOG.warn(msg, throwable);
                     throw new RuntimeException(msg, throwable);
@@ -406,7 +425,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
             throw new IllegalArgumentException("Recovery interval must be zero or a positive integer.");
         }
         StringHelper.notEmpty(mapName, "repositoryName");
-        if (useLocalHzInstance)  {
+        if (useLocalHzInstance) {
             Config cfg = new XmlConfigBuilder().build();
             cfg.setProperty("hazelcast.version.check.enabled", "false");
             hzInstance = Hazelcast.newHazelcastInstance(cfg);

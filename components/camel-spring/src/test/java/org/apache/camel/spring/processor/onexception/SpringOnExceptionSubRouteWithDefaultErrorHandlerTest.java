@@ -27,6 +27,7 @@ public class SpringOnExceptionSubRouteWithDefaultErrorHandlerTest extends Spring
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "/org/apache/camel/spring/processor/onexception/onExceptionSubRouteWithDefaultErrorHandlerTest.xml");
+        return createSpringCamelContext(this,
+                "/org/apache/camel/spring/processor/onexception/onExceptionSubRouteWithDefaultErrorHandlerTest.xml");
     }
 }

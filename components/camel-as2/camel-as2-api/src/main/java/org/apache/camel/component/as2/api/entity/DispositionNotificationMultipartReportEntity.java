@@ -30,7 +30,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.util.Args;
 
 public class DispositionNotificationMultipartReportEntity extends MultipartReportEntity {
-    
+
     protected DispositionNotificationMultipartReportEntity(String boundary, boolean isMainBody) {
         this.boundary = boundary;
         this.isMainBody = isMainBody;
@@ -52,17 +52,19 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
                                                         boolean isMainBody,
                                                         PrivateKey decryptingPrivateKey,
                                                         String mdnMessage)
-            throws HttpException {
+                                                                           throws HttpException {
         super(charset, isMainBody, boundary);
         removeHeaders(AS2Header.CONTENT_TYPE);
         setContentType(getContentTypeValue(boundary));
         Args.notNull(dispositionMode, "dispositionMode");
         Args.notNull(dispositionType, "dispositionType");
-        Args.notNull(mdnMessage, "mdnMessageTemplate"); 
+        Args.notNull(mdnMessage, "mdnMessageTemplate");
 
         addPart(buildPlainTextReport(mdnMessage));
-        addPart(new AS2MessageDispositionNotificationEntity(request, response, dispositionMode, dispositionType,
-                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false, decryptingPrivateKey));
+        addPart(new AS2MessageDispositionNotificationEntity(
+                request, response, dispositionMode, dispositionType,
+                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false,
+                decryptingPrivateKey));
     }
 
     public String getMainMessageContentType() {
@@ -76,8 +78,8 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
 
     protected String getContentTypeValue(String boundary) {
         ContentType contentType = ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
-                + "report-type=disposition-notification; boundary=\"" + boundary + "\"");
+                                                    + "report-type=disposition-notification; boundary=\"" + boundary + "\"");
         return contentType.toString();
     }
-    
+
 }

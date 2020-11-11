@@ -17,5 +17,6 @@
 package org.apache.camel.component.jolt;
 
 public enum JoltInputOutputType {
-    Hydrated, JsonString
+    Hydrated,
+    JsonString
 }

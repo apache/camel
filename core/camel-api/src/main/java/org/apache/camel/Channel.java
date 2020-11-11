@@ -16,7 +16,10 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.spi.RouteContext;
+import java.util.List;
+
+import org.apache.camel.spi.ErrorHandler;
+import org.apache.camel.spi.InterceptStrategy;
 
 /**
  * Channel acts as a channel between {@link Processor}s in the route graph.
@@ -26,11 +29,39 @@ import org.apache.camel.spi.RouteContext;
 public interface Channel extends AsyncProcessor, Navigate<Processor> {
 
     /**
-     * Gets the {@link org.apache.camel.processor.ErrorHandler} this Channel uses.
+     * Initializes the channel. If the initialized output definition contained outputs (children) then the
+     * childDefinition will be set so we can leverage fine grained tracing
+     */
+    void initChannel(
+            Route route,
+            NamedNode definition,
+            NamedNode childDefinition,
+            List<InterceptStrategy> interceptors,
+            Processor nextProcessor,
+            NamedRoute routeDefinition,
+            boolean first)
+            throws Exception;
+
+    /**
+     * Post initializes the channel.
+     *
+     * @throws Exception is thrown if some error occurred
+     */
+    void postInitChannel() throws Exception;
+
+    /**
+     * Gets the {@link ErrorHandler} this Channel uses.
      *
      * @return the error handler, or <tt>null</tt> if no error handler is used.
      */
     Processor getErrorHandler();
+
+    /**
+     * Sets the {@link ErrorHandler} this Channel uses.
+     *
+     * @param errorHandler the error handler
+     */
+    void setErrorHandler(Processor errorHandler);
 
     /**
      * Gets the wrapped output that at runtime should be delegated to.
@@ -42,22 +73,15 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
     /**
      * Gets the next {@link Processor} to route to (not wrapped)
      *
-     * @return  the next processor
+     * @return the next processor
      */
     Processor getNextProcessor();
 
     /**
-     * Gets the {@link RouteContext}
+     * Gets the {@link Route}
      *
      * @return the route context
      */
-    RouteContext getRouteContext();
-
-    /**
-     * Gets the definition of the next processor
-     *
-     * @return the processor definition
-     */
-    NamedNode getProcessorDefinition();
+    Route getRoute();
 
 }

@@ -18,14 +18,10 @@ package ${package};
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultConsumer;
 
 import java.util.concurrent.ExecutorService;
 
-/**
- * The ${name} consumer.
- */
 public class ${name}Consumer extends DefaultConsumer {
     private final ${name}Endpoint endpoint;
     private final EventBusHelper eventBusHelper;

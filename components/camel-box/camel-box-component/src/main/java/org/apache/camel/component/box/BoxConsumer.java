@@ -31,20 +31,21 @@ import org.apache.camel.support.component.AbstractApiConsumer;
 import org.apache.camel.support.component.ApiConsumerHelper;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Box consumer.
  */
 public class BoxConsumer extends AbstractApiConsumer<BoxApiName, BoxConfiguration> implements EventListener {
 
+    private static final Logger LOG = LoggerFactory.getLogger(BoxConsumer.class);
+
     private static final String LISTENER_PROPERTY = "listener";
 
     private BoxAPIConnection boxConnection;
-
     private BoxEventsManager apiProxy;
-
     private final ApiMethod apiMethod;
-
     private final Map<String, Object> properties;
 
     public BoxConsumer(BoxEndpoint endpoint, Processor processor) {
@@ -52,15 +53,10 @@ public class BoxConsumer extends AbstractApiConsumer<BoxApiName, BoxConfiguratio
 
         apiMethod = ApiConsumerHelper.findMethod(endpoint, this);
 
-        // Add listener property to register this consumer as listener for
-        // events.
+        // Add listener property to register this consumer as listener for events.
         properties = new HashMap<>();
         properties.putAll(endpoint.getEndpointProperties());
         properties.put(LISTENER_PROPERTY, this);
-
-        boxConnection = endpoint.getBoxConnection();
-
-        apiProxy = new BoxEventsManager(boxConnection);
     }
 
     @Override
@@ -71,16 +67,15 @@ public class BoxConsumer extends AbstractApiConsumer<BoxApiName, BoxConfiguratio
     @Override
     public void onEvent(BoxEvent event) {
         try {
-            // Convert Events to exchange and process
-            log.debug("Processed {} event for {}", ApiConsumerHelper.getResultsProcessed(this, event, false),
-                    boxConnection);
+            ApiConsumerHelper.getResultsProcessed(this, event, false);
         } catch (Exception e) {
-            log.info("Received exception consuming event: ", e);
+            LOG.warn("Received exception consuming event: ", e);
         }
     }
 
     @Override
     public void onNextPosition(long position) {
+        // noop
     }
 
     @Override
@@ -90,17 +85,25 @@ public class BoxConsumer extends AbstractApiConsumer<BoxApiName, BoxConfiguratio
     }
 
     @Override
+    public BoxEndpoint getEndpoint() {
+        return (BoxEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
+        boxConnection = getEndpoint().getBoxConnection();
+        apiProxy = new BoxEventsManager(boxConnection);
         // invoke the API method to start listening
         ApiMethodHelper.invokeMethod(apiProxy, apiMethod, properties);
     }
 
     @Override
     protected void doStop() throws Exception {
-        apiProxy.stopListening();
-
+        if (apiProxy != null) {
+            apiProxy.stopListening();
+        }
         super.doStop();
     }
 

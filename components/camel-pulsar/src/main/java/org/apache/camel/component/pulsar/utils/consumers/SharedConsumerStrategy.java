@@ -19,9 +19,9 @@ package org.apache.camel.component.pulsar.utils.consumers;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.apache.camel.component.pulsar.PulsarConfiguration;
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
-import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -51,11 +51,13 @@ public class SharedConsumerStrategy implements ConsumerCreationStrategy {
         for (int i = 0; i < configuration.getNumberOfConsumers(); i++) {
             final String consumerName = configuration.getConsumerNamePrefix() + i;
             try {
-                ConsumerBuilder<byte[]> builder = CommonCreationStrategyImpl.create(consumerName, pulsarEndpoint, pulsarConsumer);
+                ConsumerBuilder<byte[]> builder
+                        = CommonCreationStrategyImpl.create(consumerName, pulsarEndpoint, pulsarConsumer);
 
                 consumers.add(builder.subscriptionType(SubscriptionType.Shared).subscribe());
             } catch (PulsarClientException exception) {
-                LOGGER.error("A PulsarClientException occurred when creating Consumer {}, {}", consumerName, exception);
+                LOGGER.error("A PulsarClientException occurred when creating Consumer {}, {}", consumerName,
+                        exception.getMessage(), exception);
             }
         }
         return consumers;

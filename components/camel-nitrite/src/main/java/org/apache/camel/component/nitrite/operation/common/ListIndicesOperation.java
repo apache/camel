@@ -22,7 +22,7 @@ import org.apache.camel.component.nitrite.NitriteEndpoint;
 import org.apache.camel.component.nitrite.operation.CommonOperation;
 
 /**
- *  List indexes in collection and stores {@code Collection<org.dizitart.no2.Index>} in message body
+ * List indexes in collection and stores {@code Collection<org.dizitart.no2.Index>} in message body
  */
 public class ListIndicesOperation extends AbstractNitriteOperation implements CommonOperation {
     public ListIndicesOperation() {

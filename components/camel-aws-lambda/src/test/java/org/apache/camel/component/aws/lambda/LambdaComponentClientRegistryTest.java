@@ -18,9 +18,13 @@ package org.apache.camel.component.aws.lambda;
 
 import com.amazonaws.services.lambda.AWSLambdaClient;
 import org.apache.camel.PropertyBindingException;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class LambdaComponentClientRegistryTest extends CamelTestSupport {
@@ -36,12 +40,37 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getConfiguration().getAwsLambdaClient());
     }
-    
-    @Test(expected = PropertyBindingException.class)
+
+    @Test
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
         LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
+        assertThrows(PropertyBindingException.class,
+                () -> component.createEndpoint(
+                        "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy"));
+    }
+
+    @Test
+    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
+
+        AWSLambdaClient awsLambdaClient = mock(AWSLambdaClient.class);
+        context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
+        LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
-                "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
+                "aws-lambda://myFunction?operation=getFunction&accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
+
+        assertNotSame(awsLambdaClient, endpoint.getConfiguration().getAwsLambdaClient());
+    }
+
+    @Test
+    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+
+        AWSLambdaClient awsLambdaClient = mock(AWSLambdaClient.class);
+        context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
+        LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
+        LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
+                "aws-lambda://myFunction?operation=getFunction&accessKey=xxx&secretKey=yyy");
+
+        assertSame(awsLambdaClient, endpoint.getConfiguration().getAwsLambdaClient());
     }
 }

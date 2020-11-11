@@ -36,7 +36,7 @@ public class FileToFtpTempFileNameTest extends FtpServerTestSupport {
 
         template.sendBodyAndHeader("file:target/in", "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
 
-        assertTrue(notify.matchesMockWaitTime());
+        assertTrue(notify.matchesWaitTime());
 
         File file = new File(FTP_ROOT_DIR + "/out/sub/hello.txt");
         assertTrue(file.exists(), "File should exists " + file);
@@ -48,7 +48,8 @@ public class FileToFtpTempFileNameTest extends FtpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/in?recursive=true")
-                    .to("ftp://admin:admin@localhost:" + getPort() + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");
+                        .to("ftp://admin:admin@localhost:" + getPort()
+                            + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");
             }
         };
     }

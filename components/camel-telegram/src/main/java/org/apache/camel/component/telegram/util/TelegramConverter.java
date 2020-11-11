@@ -28,6 +28,7 @@ import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.model.ReplyMarkup;
 import org.apache.camel.component.telegram.model.Update;
 
 /**
@@ -81,23 +82,22 @@ public final class TelegramConverter {
         OutgoingMessage result;
 
         switch (type) {
-        case TEXT: {
-            OutgoingTextMessage txt = new OutgoingTextMessage();
-            txt.setText(message);
+            case TEXT: {
+                OutgoingTextMessage txt = new OutgoingTextMessage();
+                txt.setText(message);
 
-            TelegramParseMode parseMode = getParseMode(exchange);
-            if (parseMode != null) {
-                txt.setParseMode(parseMode.getCode());
+                TelegramParseMode parseMode = getParseMode(exchange);
+                if (parseMode != null) {
+                    txt.setParseMode(parseMode.getCode());
+                }
+
+                result = txt;
+                break;
             }
-
-            result = txt;
-            break;
+            default: {
+                throw new IllegalArgumentException("Unsupported conversion from String to media type " + type);
+            }
         }
-        default: {
-            throw new IllegalArgumentException("Unsupported conversion from String to media type " + type);
-        }
-        }
-
 
         return result;
     }
@@ -119,63 +119,73 @@ public final class TelegramConverter {
 
         // If the message is a string, it will be converted to a OutgoingTextMessage
         if (type == null) {
-            throw new IllegalStateException("Binary message require the header " + TelegramConstants.TELEGRAM_MEDIA_TYPE + " to be set with an appropriate org.apache.camel.component.telegram"
-                    + ".TelegramMediaType object");
+            throw new IllegalStateException(
+                    "Binary message require the header " + TelegramConstants.TELEGRAM_MEDIA_TYPE
+                                            + " to be set with an appropriate org.apache.camel.component.telegram"
+                                            + ".TelegramMediaType object");
         }
 
         OutgoingMessage result;
 
         switch (type) {
-        case PHOTO_JPG:
-        case PHOTO_PNG: {
-            OutgoingPhotoMessage img = new OutgoingPhotoMessage();
-            String caption = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
-            String fileName = "photo." + type.getFileExtension();
+            case PHOTO_JPG:
+            case PHOTO_PNG: {
+                OutgoingPhotoMessage img = new OutgoingPhotoMessage();
+                String caption = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+                ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
+                String fileName = "photo." + type.getFileExtension();
 
-            img.setCaption(caption);
-            img.setFilenameWithExtension(fileName);
-            img.setPhoto(message);
+                img.setCaption(caption);
+                img.setFilenameWithExtension(fileName);
+                img.setPhoto(message);
+                img.setReplyMarkup(replyMarkup);
 
-            result = img;
-            break;
-        }
-        case AUDIO: {
-            OutgoingAudioMessage audio = new OutgoingAudioMessage();
-            String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
-            String fileName = "audio." + type.getFileExtension();
+                result = img;
+                break;
+            }
+            case AUDIO: {
+                OutgoingAudioMessage audio = new OutgoingAudioMessage();
+                String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+                ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
+                String fileName = "audio." + type.getFileExtension();
 
-            audio.setTitle(title);
-            audio.setFilenameWithExtension(fileName);
-            audio.setAudio(message);
+                audio.setTitle(title);
+                audio.setFilenameWithExtension(fileName);
+                audio.setAudio(message);
+                audio.setReplyMarkup(replyMarkup);
 
-            result = audio;
-            break;
-        }
-        case VIDEO: {
-            OutgoingVideoMessage video = new OutgoingVideoMessage();
-            String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
-            String fileName = "video." + type.getFileExtension();
+                result = audio;
+                break;
+            }
+            case VIDEO: {
+                OutgoingVideoMessage video = new OutgoingVideoMessage();
+                String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+                ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
+                String fileName = "video." + type.getFileExtension();
 
-            video.setCaption(title);
-            video.setFilenameWithExtension(fileName);
-            video.setVideo(message);
+                video.setCaption(title);
+                video.setFilenameWithExtension(fileName);
+                video.setVideo(message);
+                video.setReplyMarkup(replyMarkup);
 
-            result = video;
-            break;
-        }
-        case DOCUMENT:
-        default: {
-            // this can be any file
-            OutgoingDocumentMessage document = new OutgoingDocumentMessage();
-            String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+                result = video;
+                break;
+            }
+            case DOCUMENT:
+            default: {
+                // this can be any file
+                OutgoingDocumentMessage document = new OutgoingDocumentMessage();
+                String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+                ReplyMarkup replyMarkup = (ReplyMarkup) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_MARKUP);
 
-            document.setCaption(title);
-            document.setFilenameWithExtension("file");
-            document.setDocument(message);
+                document.setCaption(title);
+                document.setFilenameWithExtension("file");
+                document.setDocument(message);
+                document.setReplyMarkup(replyMarkup);
 
-            result = document;
-            break;
-        }
+                result = document;
+                break;
+            }
         }
 
         return result;
@@ -192,6 +202,5 @@ public final class TelegramConverter {
 
         return mode;
     }
-
 
 }

@@ -25,21 +25,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.jpa.MessageProcessed;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * Unit test using jpa idempotent repository for the file consumer.
  */
 public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
 
-    protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
+    protected static final String SELECT_ALL_STRING
+            = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "FileConsumer";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/idempotent");
         super.setUp();
@@ -50,8 +53,9 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/idempotent/?idempotent=true&idempotentRepository=#jpaStore&move=done/${file:name}").routeId("foo").autoStartup(false)
-                    .to("mock:result");
+                from("file://target/idempotent/?idempotent=true&idempotentRepository=#jpaStore&move=done/${file:name}")
+                        .routeId("foo").autoStartup(false)
+                        .to("mock:result");
             }
         };
     }

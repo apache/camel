@@ -22,18 +22,26 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@CamelSpringTest
 @ContextConfiguration
-public class JettyJmsShutdownInProgressTest extends AbstractJUnit4SpringContextTests {
+public class JettyJmsShutdownInProgressTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
+
     private static int port = AvailablePortFinder.getNextAvailable();
-    private static final String URL = "http://localhost:" + port + "/test";
+    private static final String URL = "http://localhost:" + port + "/JettyJmsShutdownInProgressTest";
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 
@@ -47,7 +55,7 @@ public class JettyJmsShutdownInProgressTest extends AbstractJUnit4SpringContextT
     protected ProducerTemplate template;
 
     @Test
-    public void testShutdownInProgress() throws Exception {
+    void testShutdownInProgress() throws Exception {
         Future<String> reply1 = template.asyncRequestBody(URL, "World", String.class);
         Future<String> reply2 = template.asyncRequestBody(URL, "Camel", String.class);
 
@@ -69,15 +77,15 @@ public class JettyJmsShutdownInProgressTest extends AbstractJUnit4SpringContextT
         // this one should fail
         try {
             template.requestBody(URL, "Tiger", String.class);
-            Assert.fail("Should have thrown exception");
+            fail("Should have thrown exception");
         } catch (Exception e) {
             HttpOperationFailedException hofe = (HttpOperationFailedException) e.getCause();
-            Assert.assertEquals(503, hofe.getStatusCode());
+            assertEquals(503, hofe.getStatusCode());
         }
 
         // but the 2 first should still return valid replies
-        Assert.assertEquals("Bye World", reply1.get(10, TimeUnit.SECONDS));
-        Assert.assertEquals("Bye Camel", reply2.get(10, TimeUnit.SECONDS));
+        assertEquals("Bye World", reply1.get(10, TimeUnit.SECONDS));
+        assertEquals("Bye Camel", reply2.get(10, TimeUnit.SECONDS));
     }
 
 }

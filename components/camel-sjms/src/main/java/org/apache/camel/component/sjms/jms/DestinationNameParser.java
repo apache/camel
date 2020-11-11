@@ -27,7 +27,7 @@ public class DestinationNameParser {
         }
         return destinationName.startsWith("topic:");
     }
-    
+
     public boolean isNamedReplyToTopic(String namedReplyTo, boolean isDestinationTopic) {
         if (namedReplyTo == null) {
             throw new IllegalArgumentException("namedReplyTo is null");

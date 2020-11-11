@@ -28,7 +28,11 @@ import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.CommitStatus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class PullRequestStateProducerTest extends GitHubComponentTestBase {
     private String commitsha;
@@ -45,7 +49,6 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
                         .to("github://pullRequestState?state=success&username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
-
         };
     }
 
@@ -59,24 +62,23 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
         exchange.getIn().setBody(text);
         Exchange response = template.send(stateProducerEndpoint, exchange);
 
-        assertNotNull(response.getOut().getBody());
+        assertNotNull(response.getMessage().getBody());
 
-        if (!(response.getOut().getBody() instanceof CommitStatus)) {
+        if (!(response.getMessage().getBody() instanceof CommitStatus)) {
             fail("Expecting CommitStatus");
         }
 
-        CommitStatus status = response.getOut().getBody(CommitStatus.class);
+        CommitStatus status = response.getMessage().getBody(CommitStatus.class);
 
         // Check status set on commit service
         if (commitService.getCommitStatus(commitsha) != status) {
             fail("Commit status sent to service is different from response");
         }
 
-        assertEquals(status.getState(), "success");
+        assertEquals("success", status.getState());
 
         assertEquals(status.getDescription(), text);
     }
-
 
     public class MockPullRequestStateProducerProcessor implements Processor {
         @Override
@@ -86,6 +88,5 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
             headers.put(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, commitsha);
         }
     }
-
 
 }

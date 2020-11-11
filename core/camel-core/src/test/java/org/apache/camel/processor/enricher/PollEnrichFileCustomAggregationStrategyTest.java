@@ -23,13 +23,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/enrich");
         deleteDirectory("target/data/enrichdata");
@@ -64,14 +66,16 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
             @Override
             public void configure() throws Exception {
                 from("file://target/data/enrich?initialDelay=0&delay=10&move=.done").to("mock:start")
-                    .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done", 10000, new ReplaceAggregationStrategy()).to("mock:result");
+                        .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done",
+                                10000, new ReplaceAggregationStrategy())
+                        .to("mock:result");
             }
         };
     }
 
     private static void assertFileDoesNotExists(String filename) {
         File file = new File(filename);
-        assertFalse("File " + filename + " should not exist, it should have been deleted after being processed", file.exists());
+        assertFalse(file.exists(), "File " + filename + " should not exist, it should have been deleted after being processed");
     }
 
     class ReplaceAggregationStrategy implements AggregationStrategy {
@@ -80,7 +84,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         public Exchange aggregate(Exchange original, Exchange resource) {
             Object resourceResponse = resource.getIn().getBody();
             if (original.getPattern().isOutCapable()) {
-                original.getOut().setBody(resourceResponse);
+                original.getMessage().setBody(resourceResponse);
                 original.getProperties().putAll(resource.getProperties());
             } else {
                 original.getIn().setBody(resourceResponse);

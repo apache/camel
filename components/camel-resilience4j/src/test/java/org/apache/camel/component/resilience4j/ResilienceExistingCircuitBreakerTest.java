@@ -20,8 +20,11 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CircuitBreakerConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
 
@@ -52,8 +55,10 @@ public class ResilienceExistingCircuitBreakerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:start").circuitBreaker().resilience4jConfiguration().circuitBreakerRef("myCircuitBreaker").end()
-                    .throwException(new IllegalArgumentException("Forced")).onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");
+                from("direct:start").to("log:start").circuitBreaker().resilience4jConfiguration()
+                        .circuitBreakerRef("myCircuitBreaker").end()
+                        .throwException(new IllegalArgumentException("Forced")).onFallback().transform()
+                        .constant("Fallback message").end().to("log:result").to("mock:result");
             }
         };
     }

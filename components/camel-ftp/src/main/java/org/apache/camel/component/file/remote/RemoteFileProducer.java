@@ -20,25 +20,28 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic remote file producer for all the FTP variations.
  */
 public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(RemoteFileProducer.class);
     private boolean loggedIn;
-    
+
     private transient String remoteFileProducerToString;
-    
+
     protected RemoteFileProducer(RemoteFileEndpoint<T> endpoint, RemoteFileOperations<T> operations) {
         super(endpoint, operations);
     }
-    
+
     @Override
     public String getFileSeparator() {
         return "/";
     }
-    
+
     @Override
     public String normalizePath(String name) {
         return name;
@@ -55,7 +58,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         try {
             processExchange(exchange, target);
         } finally {
-            // remove the write file name header as we only want to use it once (by design)
+            // remove the write file name header as we only want to use it once
+            // (by design)
             exchange.getIn().removeHeader(Exchange.OVERRULE_FILE_NAME);
             // and restore existing file name
             exchange.getIn().setHeader(Exchange.FILE_NAME, existing);
@@ -80,14 +84,14 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         loggedIn = false;
         if (isStopping() || isStopped()) {
             // if we are stopping then ignore any exception during a poll
-            log.debug("Exception occurred during stopping: {}", exception.getMessage());
+            LOG.debug("Exception occurred during stopping: {}", exception.getMessage());
         } else {
-            log.warn("Writing file failed with: {}", exception.getMessage());
+            LOG.warn("Writing file failed with: {}", exception.getMessage());
             try {
                 disconnect();
             } catch (Exception e) {
                 // ignore exception
-                log.debug("Ignored exception during disconnect: {}", e.getMessage());
+                LOG.debug("Ignored exception during disconnect: {}", e.getMessage());
             }
             // rethrow the original exception*/
             throw exception;
@@ -97,14 +101,15 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     public void disconnect() throws GenericFileOperationFailedException {
         loggedIn = false;
         if (getOperations().isConnected()) {
-            log.debug("Disconnecting from: {}", getEndpoint());
+            LOG.debug("Disconnecting from: {}", getEndpoint());
             getOperations().disconnect();
         }
     }
 
     @Override
     public void preWriteCheck(Exchange exchange) throws Exception {
-        // before writing send a noop to see if the connection is alive and works
+        // before writing send a noop to see if the connection is alive and
+        // works
         boolean noop = false;
         if (loggedIn) {
             if (getEndpoint().getConfiguration().isSendNoop()) {
@@ -116,11 +121,12 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
                     // mark as not logged in, since the noop failed
                     loggedIn = false;
                 }
-                log.trace("preWriteCheck send noop success: {}", noop);
+                LOG.trace("preWriteCheck send noop success: {}", noop);
             } else {
-                // okay send noop is disabled then we would regard the op as success
+                // okay send noop is disabled then we would regard the op as
+                // success
                 noop = true;
-                log.trace("preWriteCheck send noop disabled");
+                LOG.trace("preWriteCheck send noop disabled");
             }
         }
 
@@ -142,23 +148,24 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         try {
             boolean isLast = exchange.getProperty(Exchange.BATCH_COMPLETE, false, Boolean.class);
             if (isLast && getEndpoint().isDisconnectOnBatchComplete()) {
-                log.trace("postWriteCheck disconnect on batch complete from: {}", getEndpoint());
+                LOG.trace("postWriteCheck disconnect on batch complete from: {}", getEndpoint());
                 disconnect();
             }
             if (getEndpoint().isDisconnect()) {
-                log.trace("postWriteCheck disconnect from: {}", getEndpoint());
+                LOG.trace("postWriteCheck disconnect from: {}", getEndpoint());
                 disconnect();
             }
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
-            log.warn("Exception occurred during disconnecting from: " + getEndpoint() + " " + e.getMessage());
+            LOG.warn("Exception occurred during disconnecting from: {} {}", getEndpoint(), e.getMessage());
         }
     }
 
     @Override
     protected void doStart() throws Exception {
-        log.debug("Starting");
-        // do not connect when component starts, just wait until we process as we will
+        LOG.debug("Starting");
+        // do not connect when component starts, just wait until we process as
+        // we will
         // connect at that time if needed
         super.doStart();
     }
@@ -168,26 +175,27 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         try {
             disconnect();
         } catch (Exception e) {
-            log.debug("Exception occurred during disconnecting from: " + getEndpoint() + " " + e.getMessage());
+            LOG.debug("Exception occurred during disconnecting from: {} {}", getEndpoint(), e.getMessage());
         }
         super.doStop();
     }
 
     protected void connectIfNecessary(Exchange exchange) throws GenericFileOperationFailedException {
         if (!loggedIn || !getOperations().isConnected()) {
-            log.debug("Not already connected/logged in. Connecting to: {}", getEndpoint());
+            LOG.debug("Not already connected/logged in. Connecting to: {}", getEndpoint());
             RemoteFileConfiguration config = getEndpoint().getConfiguration();
             loggedIn = getOperations().connect(config, exchange);
             if (!loggedIn) {
                 return;
             }
-            log.debug("Connected and logged in to: {}", getEndpoint());
+            LOG.debug("Connected and logged in to: {}", getEndpoint());
         }
     }
 
     @Override
     public boolean isSingleton() {
-        // this producer is stateful because the remote file operations is not thread safe
+        // this producer is stateful because the remote file operations is not
+        // thread safe
         return false;
     }
 

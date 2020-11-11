@@ -21,13 +21,15 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CBORDataFormatTest extends CamelTestSupport {
-    
+
     @Test
-    public void testMarshalAndUnmarshalMap() throws Exception {
+    void testMarshalAndUnmarshalMap() throws Exception {
         Map<String, Object> in = new HashMap<>();
         in.put("name", "Camel");
 
@@ -42,9 +44,9 @@ public class CBORDataFormatTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
-    
+
     @Test
-    public void testMarshalAndUnmarshalAuthor() throws Exception {
+    void testMarshalAndUnmarshalAuthor() throws Exception {
         Author auth = new Author();
         auth.setName("Don");
         auth.setSurname("Winslow");
@@ -56,7 +58,7 @@ public class CBORDataFormatTest extends CamelTestSupport {
         Object marshalled = template.requestBody("direct:in-auth", auth);
 
         template.sendBody("direct:back-auth", marshalled);
-        
+
         Author authReturned = mock.getExchanges().get(0).getIn().getBody(Author.class);
         assertEquals("Don", authReturned.getName());
         assertEquals("Winslow", authReturned.getSurname());
@@ -65,20 +67,20 @@ public class CBORDataFormatTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 CBORDataFormat format = new CBORDataFormat();
                 format.useMap();
 
                 from("direct:in").marshal(format);
                 from("direct:back").unmarshal(format).to("mock:reverse");
-                
+
                 CBORDataFormat spec = new CBORDataFormat();
                 spec.setUnmarshalType(Author.class);
-                
+
                 from("direct:in-auth").marshal(spec);
                 from("direct:back-auth").unmarshal(spec).to("mock:reverse-auth");
             }

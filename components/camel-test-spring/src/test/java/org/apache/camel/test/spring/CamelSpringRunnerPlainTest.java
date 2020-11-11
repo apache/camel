@@ -49,19 +49,19 @@ import static org.junit.Assert.assertTrue;
 // Camel context and mock endpoints between test methods automatically.
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class CamelSpringRunnerPlainTest {
-    
+
     @Autowired
     protected CamelContext camelContext;
-    
+
     @EndpointInject(value = "mock:a")
     protected MockEndpoint mockA;
-    
+
     @EndpointInject(value = "mock:b")
     protected MockEndpoint mockB;
-    
+
     @Produce(value = "direct:start")
     protected ProducerTemplate start;
-    
+
     @Test
     public void testPositive() throws Exception {
         assertEquals(ServiceStatus.Started, camelContext.getStatus());
@@ -73,31 +73,31 @@ public class CamelSpringRunnerPlainTest {
 
         MockEndpoint.assertIsSatisfied(camelContext);
     }
-    
+
     @Test
     public void testJmx() throws Exception {
         assertEquals(DefaultManagementStrategy.class, camelContext.getManagementStrategy().getClass());
     }
-    
+
     @Test
     public void testShutdownTimeout() throws Exception {
         assertEquals(10, camelContext.getShutdownStrategy().getTimeout());
         assertEquals(TimeUnit.SECONDS, camelContext.getShutdownStrategy().getTimeUnit());
     }
-    
+
     @Test
     public void testStopwatch() {
         StopWatch stopWatch = StopWatchTestExecutionListener.getStopWatch();
-        
+
         assertNotNull(stopWatch);
         assertTrue(stopWatch.taken() < 100);
     }
-    
+
     @Test
     public void testExcludedRoute() {
         assertNotNull(camelContext.getRoute("excludedRoute"));
     }
-    
+
     @Test
     public void testProvidesBreakpoint() {
         assertNull(camelContext.getDebugger());
@@ -110,4 +110,3 @@ public class CamelSpringRunnerPlainTest {
 
 }
 // end::example[]
-

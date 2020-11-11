@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * consumes tweets
  */
 public class UserTimeLineDirectTest extends CamelTwitterConsumerTestSupport {
-   
+
     @Override
     protected String getUri() {
         return "twitter-timeline://user?type=direct&user=brettemeyer&";

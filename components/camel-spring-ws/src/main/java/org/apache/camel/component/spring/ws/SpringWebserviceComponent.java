@@ -34,6 +34,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.xml.xpath.XPathExpression;
 import org.springframework.xml.xpath.XPathExpressionFactory;
@@ -44,15 +46,10 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
 @Component("spring-ws")
 public class SpringWebserviceComponent extends DefaultComponent implements SSLContextParametersAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
+
     @Metadata(label = "security")
     private boolean useGlobalSslContextParameters;
-
-    @Override
-    @Deprecated
-    protected String preProcessUri(String uri) {
-        String[] u = uri.split("\\?");
-        return u[0].replaceAll("%7B", "(").replaceAll("%7D", ")") + (u.length > 1 ? "?" + u[1] : "");
-    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -72,10 +69,11 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
         return endpoint;
     }
 
-    private void addConsumerConfiguration(String remaining, Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
+    private void addConsumerConfiguration(
+            String remaining, Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
         EndpointMappingType type = EndpointMappingType.getTypeFromUriPrefix(remaining);
         if (type != null) {
-            log.debug("Building Spring Web Services consumer of type {}", type);
+            LOG.debug("Building Spring Web Services consumer of type {}", type);
             String lookupKey = getLookupKey(remaining, type);
             if (EndpointMappingType.BEANNAME.equals(type)) {
                 addEndpointDispatcherToConfiguration(configuration, lookupKey);
@@ -94,9 +92,10 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
         }
     }
 
-    private void configureProducerConfiguration(String remaining, SpringWebserviceConfiguration configuration) throws URISyntaxException {
+    private void configureProducerConfiguration(String remaining, SpringWebserviceConfiguration configuration)
+            throws URISyntaxException {
         if (configuration.getEndpointMapping() == null && configuration.getEndpointDispatcher() == null) {
-            log.debug("Building Spring Web Services producer");
+            LOG.debug("Building Spring Web Services producer");
             URI webServiceEndpointUri = new URI(UnsafeUriCharactersEncoder.encode(remaining));
 
             // Obtain a WebServiceTemplate from the registry when specified by
@@ -136,12 +135,15 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
         return expression;
     }
 
-    private void addEndpointMappingToConfiguration(Map<String, Object> parameters,
-                                                   SpringWebserviceConfiguration configuration) {
+    private void addEndpointMappingToConfiguration(
+            Map<String, Object> parameters,
+            SpringWebserviceConfiguration configuration) {
         // Obtain generic CamelSpringWSEndpointMapping from registry
-        CamelSpringWSEndpointMapping endpointMapping = resolveAndRemoveReferenceParameter(parameters, "endpointMapping", CamelSpringWSEndpointMapping.class, null);
+        CamelSpringWSEndpointMapping endpointMapping
+                = resolveAndRemoveReferenceParameter(parameters, "endpointMapping", CamelSpringWSEndpointMapping.class, null);
         if (endpointMapping == null && configuration.getEndpointDispatcher() == null) {
-            throw new IllegalArgumentException("No instance of CamelSpringWSEndpointMapping found in Spring ApplicationContext."
+            throw new IllegalArgumentException(
+                    "No instance of CamelSpringWSEndpointMapping found in Spring ApplicationContext."
                                                + " This bean is required for Spring-WS consumer support (unless the 'spring-ws:beanname:' URI scheme is used)");
         }
         configuration.setEndpointMapping(endpointMapping);
@@ -149,20 +151,22 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
 
     private void addEndpointDispatcherToConfiguration(SpringWebserviceConfiguration configuration, String lookupKey) {
         // Obtain CamelEndpointDispatcher with the given name from registry
-        CamelEndpointDispatcher endpoint = CamelContextHelper.mandatoryLookup(getCamelContext(), lookupKey, CamelEndpointDispatcher.class);
+        CamelEndpointDispatcher endpoint
+                = CamelContextHelper.mandatoryLookup(getCamelContext(), lookupKey, CamelEndpointDispatcher.class);
         configuration.setEndpointDispatcher(endpoint);
     }
 
     /**
-     * Configures the messageFilter's factory. The factory is looked up in the endpoint's URI and then in the Spring's context.
-     * The bean search mechanism looks for a bean with the name messageFilter.
-     * The endpoint's URI search mechanism looks for the URI's key parameter name messageFilter, for instance like this:
+     * Configures the messageFilter's factory. The factory is looked up in the endpoint's URI and then in the Spring's
+     * context. The bean search mechanism looks for a bean with the name messageFilter. The endpoint's URI search
+     * mechanism looks for the URI's key parameter name messageFilter, for instance like this:
      * spring-ws:http://yourdomain.com?messageFilter=<beanName>
      */
     private void configureMessageFilter(SpringWebserviceConfiguration configuration) {
         if (configuration.getMessageFilter() == null) {
             // try to lookup a global filter to use
-            final MessageFilter globalMessageFilter = EndpointHelper.resolveReferenceParameter(getCamelContext(), "messageFilter", MessageFilter.class, false);
+            final MessageFilter globalMessageFilter
+                    = EndpointHelper.resolveReferenceParameter(getCamelContext(), "messageFilter", MessageFilter.class, false);
             if (globalMessageFilter != null) {
                 configuration.setMessageFilter(globalMessageFilter);
             } else {

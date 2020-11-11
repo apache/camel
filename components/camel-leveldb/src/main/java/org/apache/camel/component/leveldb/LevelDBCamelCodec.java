@@ -21,67 +21,46 @@ import java.io.IOException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.DefaultExchangeHolder;
-import org.fusesource.hawtbuf.Buffer;
-import org.fusesource.hawtbuf.DataByteArrayInputStream;
-import org.fusesource.hawtbuf.DataByteArrayOutputStream;
-import org.fusesource.hawtbuf.codec.Codec;
-import org.fusesource.hawtbuf.codec.ObjectCodec;
-import org.fusesource.hawtbuf.codec.StringCodec;
+import org.apache.camel.ExtendedExchange;
+import org.apache.camel.component.leveldb.serializer.DefaultLevelDBSerializer;
 
 public final class LevelDBCamelCodec {
 
-    private Codec<String> keyCodec = new StringCodec();
-    private Codec<DefaultExchangeHolder> exchangeCodec = new ObjectCodec<>();
+    private final LevelDBSerializer serializer;
 
-    public Buffer marshallKey(String key) throws IOException {
-        DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
-        keyCodec.encode(key, baos);
-        return baos.toBuffer();
-    }
-
-    public String unmarshallKey(Buffer buffer) throws IOException {
-        DataByteArrayInputStream bais = new DataByteArrayInputStream(buffer);
-        String key = keyCodec.decode(bais);
-        return key;
-    }
-
-    public Buffer marshallExchange(CamelContext camelContext, Exchange exchange, boolean allowSerializedHeaders) throws IOException {
-        DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
-        // use DefaultExchangeHolder to marshal to a serialized object
-        DefaultExchangeHolder pe = DefaultExchangeHolder.marshal(exchange, false, allowSerializedHeaders);
-        // add the aggregated size and timeout property as the only properties we want to retain
-        DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_SIZE, exchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class));
-        DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_TIMEOUT, exchange.getProperty(Exchange.AGGREGATED_TIMEOUT, Long.class));
-        // add the aggregated completed by property to retain
-        DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_COMPLETED_BY, exchange.getProperty(Exchange.AGGREGATED_COMPLETED_BY, String.class));
-        // add the aggregated correlation key property to retain
-        DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_CORRELATION_KEY, exchange.getProperty(Exchange.AGGREGATED_CORRELATION_KEY, String.class));
-        // and a guard property if using the flexible toolbox aggregator
-        DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_COLLECTION_GUARD, exchange.getProperty(Exchange.AGGREGATED_COLLECTION_GUARD, String.class));
-        // persist the from endpoint as well
-        if (exchange.getFromEndpoint() != null) {
-            DefaultExchangeHolder.addProperty(pe, "CamelAggregatedFromEndpoint", exchange.getFromEndpoint().getEndpointUri());
+    public LevelDBCamelCodec(LevelDBSerializer serializer) {
+        if (serializer == null) {
+            this.serializer = new DefaultLevelDBSerializer();
+        } else {
+            this.serializer = serializer;
         }
-        exchangeCodec.encode(pe, baos);
-        return baos.toBuffer();
     }
 
-    public Exchange unmarshallExchange(CamelContext camelContext, Buffer buffer) throws IOException {
-        DataByteArrayInputStream bais = new DataByteArrayInputStream(buffer);
-        DefaultExchangeHolder pe = exchangeCodec.decode(bais);
-        Exchange answer = new DefaultExchange(camelContext);
-        DefaultExchangeHolder.unmarshal(answer, pe);
+    public byte[] marshallKey(String key) throws IOException {
+        return serializer.serializeKey(key);
+    }
+
+    public String unmarshallKey(byte[] buffer) throws IOException {
+        return serializer.deserializeKey(buffer);
+    }
+
+    public byte[] marshallExchange(CamelContext camelContext, Exchange exchange, boolean allowSerializedHeaders)
+            throws IOException {
+
+        return serializer.serializeExchange(camelContext, exchange, allowSerializedHeaders);
+    }
+
+    public Exchange unmarshallExchange(CamelContext camelContext, byte[] buffer) throws IOException {
+        Exchange answer = serializer.deserializeExchange(camelContext, buffer);
+
         // restore the from endpoint
         String fromEndpointUri = (String) answer.removeProperty("CamelAggregatedFromEndpoint");
         if (fromEndpointUri != null) {
             Endpoint fromEndpoint = camelContext.hasEndpoint(fromEndpointUri);
             if (fromEndpoint != null) {
-                answer.setFromEndpoint(fromEndpoint);
+                answer.adapt(ExtendedExchange.class).setFromEndpoint(fromEndpoint);
             }
         }
         return answer;
     }
-
 }

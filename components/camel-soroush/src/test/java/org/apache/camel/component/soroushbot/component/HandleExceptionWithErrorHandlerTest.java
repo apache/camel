@@ -25,8 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.soroushbot.models.SoroushAction;
 import org.apache.camel.component.soroushbot.models.SoroushMessage;
 import org.apache.camel.component.soroushbot.support.SoroushBotTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class HandleExceptionWithErrorHandlerTest extends SoroushBotTestSupport {
     @Override
@@ -39,7 +40,7 @@ public class HandleExceptionWithErrorHandlerTest extends SoroushBotTestSupport {
                         .process(exchange -> {
                             SoroushMessage body = exchange.getIn().getBody(SoroushMessage.class);
                             File file = new File("badFile-ShouldNotExits");
-                            Assert.assertFalse("file should not exists for this test", file.exists());
+                            assertFalse(file.exists(), "file should not exists for this test");
                             body.setFile(file);
                             body.setTo(body.getFrom());
                         })

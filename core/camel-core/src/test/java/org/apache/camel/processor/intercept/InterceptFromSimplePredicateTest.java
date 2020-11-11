@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testing http://camel.apache.org/dsl.html
@@ -52,7 +52,8 @@ public class InterceptFromSimplePredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                interceptFrom().when(header("usertype").isEqualTo("test")).process(new MyTestServiceProcessor()).to("mock:intercepted");
+                interceptFrom().when(header("usertype").isEqualTo("test")).process(new MyTestServiceProcessor())
+                        .to("mock:intercepted");
 
                 // and here is our route
                 from("direct:start").to("seda:bar").to("mock:result");

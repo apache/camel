@@ -21,9 +21,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DigitalOceanTestSupport extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(DigitalOceanTestSupport.class);
 
     protected final Properties properties;
 
@@ -34,7 +37,7 @@ public class DigitalOceanTestSupport extends CamelTestSupport {
         try {
             inStream = url.openStream();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("I/O error opening the stream: {}", e.getMessage(), e);
             throw new IllegalAccessError("test-options.properties could not be found");
         }
 
@@ -42,7 +45,7 @@ public class DigitalOceanTestSupport extends CamelTestSupport {
         try {
             properties.load(inStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("I/O error reading the stream: {}", e.getMessage(), e);
             throw new IllegalAccessError("test-options.properties could not be found");
         }
     }

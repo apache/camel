@@ -39,28 +39,28 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
     public void roleChanged(Role role) {
         LOG.debug("Role received {}.", role);
         switch (role) {
-        case Leader:
-            if (!jgroupsRaftClusterView.isMaster()) {
-                jgroupsRaftClusterView.setMaster(true);
-                jgroupsRaftClusterView.fireLeadershipChangedEvent(Optional.ofNullable(jgroupsRaftClusterView.getLocalMember()));
-            }
-            break;
-        case Follower:
-            if (jgroupsRaftClusterView.isMaster()) {
-                jgroupsRaftClusterView.setMaster(false);
-                jgroupsRaftClusterView.fireLeadershipChangedEvent(Optional.empty());
-            }
-            break;
-        case Candidate:
-            if (jgroupsRaftClusterView.isMaster()) {
-                jgroupsRaftClusterView.setMaster(false);
-                jgroupsRaftClusterView.fireLeadershipChangedEvent(Optional.empty());
-            }
-            break;
-        default:
-            LOG.error("Role {} unknown.", role);
-            throw new UnsupportedOperationException("Role " + role + " unknown.");
+            case Leader:
+                if (!jgroupsRaftClusterView.isMaster()) {
+                    jgroupsRaftClusterView.setMaster(true);
+                    jgroupsRaftClusterView
+                            .fireLeadershipChangedEvent(Optional.ofNullable(jgroupsRaftClusterView.getLocalMember()));
+                }
+                break;
+            case Follower:
+                if (jgroupsRaftClusterView.isMaster()) {
+                    jgroupsRaftClusterView.setMaster(false);
+                    jgroupsRaftClusterView.fireLeadershipChangedEvent(Optional.empty());
+                }
+                break;
+            case Candidate:
+                if (jgroupsRaftClusterView.isMaster()) {
+                    jgroupsRaftClusterView.setMaster(false);
+                    jgroupsRaftClusterView.fireLeadershipChangedEvent(Optional.empty());
+                }
+                break;
+            default:
+                LOG.error("Role {} unknown.", role);
+                throw new UnsupportedOperationException("Role " + role + " unknown.");
         }
     }
 }
-

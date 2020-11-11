@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JmsRouteUsingSpringAndJmsNameTest extends JmsRouteUsingSpringTest {
@@ -27,7 +27,7 @@ public class JmsRouteUsingSpringAndJmsNameTest extends JmsRouteUsingSpringTest {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         componentName = "jms";
         super.setUp();

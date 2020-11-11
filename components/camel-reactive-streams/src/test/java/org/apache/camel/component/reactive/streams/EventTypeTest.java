@@ -21,9 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventTypeTest extends CamelTestSupport {
 
@@ -32,7 +34,7 @@ public class EventTypeTest extends CamelTestSupport {
 
         new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers?forwardOnComplete=true")
                         .to("mock:endpoint");
             }
@@ -42,14 +44,13 @@ public class EventTypeTest extends CamelTestSupport {
 
         context.start();
 
-        Flowable.<Integer>empty()
+        Flowable.<Integer> empty()
                 .subscribe(numbers);
-
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(1);
         endpoint.expectedHeaderReceived(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onComplete");
-        endpoint.expectedBodiesReceived(new Object[]{null});
+        endpoint.expectedBodiesReceived(new Object[] { null });
         endpoint.assertIsSatisfied();
     }
 
@@ -58,7 +59,7 @@ public class EventTypeTest extends CamelTestSupport {
 
         new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers")
                         .to("mock:endpoint");
             }
@@ -68,9 +69,8 @@ public class EventTypeTest extends CamelTestSupport {
 
         context.start();
 
-        Flowable.<Integer>empty()
+        Flowable.<Integer> empty()
                 .subscribe(numbers);
-
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(0);
@@ -82,7 +82,7 @@ public class EventTypeTest extends CamelTestSupport {
 
         new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers")
                         .to("mock:endpoint");
             }
@@ -109,7 +109,7 @@ public class EventTypeTest extends CamelTestSupport {
 
         new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers?forwardOnError=true")
                         .to("mock:endpoint");
             }
@@ -130,7 +130,6 @@ public class EventTypeTest extends CamelTestSupport {
                 })
                 .subscribe(numbers);
 
-
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(1);
         endpoint.expectedHeaderReceived(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onError");
@@ -145,7 +144,7 @@ public class EventTypeTest extends CamelTestSupport {
 
         new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:numbers")
                         .to("mock:endpoint");
             }
@@ -165,7 +164,6 @@ public class EventTypeTest extends CamelTestSupport {
                     return n;
                 })
                 .subscribe(numbers);
-
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(0);

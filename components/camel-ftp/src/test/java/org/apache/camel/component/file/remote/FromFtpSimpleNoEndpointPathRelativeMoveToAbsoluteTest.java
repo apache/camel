@@ -26,7 +26,7 @@ public class FromFtpSimpleNoEndpointPathRelativeMoveToAbsoluteTest extends FtpSe
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "?password=admin&recursive=true&binary=false"
-                + "&move=/.done&initialDelay=2500&delay=5000";
+               + "&move=/.done&initialDelay=2500&delay=5000";
     }
 
     @Override
@@ -52,7 +52,7 @@ public class FromFtpSimpleNoEndpointPathRelativeMoveToAbsoluteTest extends FtpSe
         template.sendBodyAndHeader(getFtpUrl(), "Bye", Exchange.FILE_NAME, "sub/bye.txt");
         template.sendBodyAndHeader(getFtpUrl(), "Goodday", Exchange.FILE_NAME, "sub/sub2/goodday.txt");
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

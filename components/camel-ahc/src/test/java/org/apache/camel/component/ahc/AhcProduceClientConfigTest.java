@@ -26,7 +26,8 @@ import org.junit.jupiter.api.Test;
 public class AhcProduceClientConfigTest extends BaseAhcTest {
 
     @BindToRegistry("myConfig")
-    DefaultAsyncHttpClientConfig config = new DefaultAsyncHttpClientConfig.Builder().setFollowRedirect(true).setMaxRequestRetry(3).build();
+    DefaultAsyncHttpClientConfig config
+            = new DefaultAsyncHttpClientConfig.Builder().setFollowRedirect(true).setMaxRequestRetry(3).build();
 
     @Test
     public void testAhcProduceClientConfig() throws Exception {
@@ -36,7 +37,7 @@ public class AhcProduceClientConfigTest extends BaseAhcTest {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected String getAhcEndpointUri() {
         return super.getAhcEndpointUri() + "?clientConfig=#myConfig";
@@ -48,15 +49,15 @@ public class AhcProduceClientConfigTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // redirect to test the client config worked as we told it to follow redirects
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "301");
-                                exchange.getOut().setHeader("Location", getTestServerEndpointTwoUrl());
+                                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, "301");
+                                exchange.getMessage().setHeader("Location", getTestServerEndpointTwoUrl());
                             }
                         });
 

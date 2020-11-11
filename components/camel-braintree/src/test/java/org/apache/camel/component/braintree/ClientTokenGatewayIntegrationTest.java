@@ -19,7 +19,9 @@ package org.apache.camel.component.braintree;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.ClientTokenGatewayApiMethod;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClientTokenGatewayIntegrationTest extends AbstractBraintreeTestSupport {
     private static final String PATH_PREFIX = getApiNameAsString(ClientTokenGatewayApiMethod.class);
@@ -36,7 +38,7 @@ public class ClientTokenGatewayIntegrationTest extends AbstractBraintreeTestSupp
         return new RouteBuilder() {
             public void configure() {
                 from("direct://GENERATE")
-                    .to("braintree://" + PATH_PREFIX + "/generate");
+                        .to("braintree://" + PATH_PREFIX + "/generate");
             }
         };
     }

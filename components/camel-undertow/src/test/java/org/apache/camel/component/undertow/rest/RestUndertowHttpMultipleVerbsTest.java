@@ -19,10 +19,10 @@ package org.apache.camel.component.undertow.rest;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RestUndertowHttpMultipleVerbsTest extends BaseUndertowTest {
-    
+
     @Test
     public void testProducerGetPut() throws Exception {
         getMockEndpoint("mock:get").expectedMessageCount(1);
@@ -34,7 +34,8 @@ public class RestUndertowHttpMultipleVerbsTest extends BaseUndertowTest {
 
         getMockEndpoint("mock:get").expectedMessageCount(0);
         getMockEndpoint("mock:put").expectedMessageCount(1);
-        template.requestBodyAndHeader("undertow:http://localhost:{{port}}/example/456", "Hello World", Exchange.HTTP_METHOD, "PUT");
+        template.requestBodyAndHeader("undertow:http://localhost:{{port}}/example/456", "Hello World", Exchange.HTTP_METHOD,
+                "PUT");
         assertMockEndpointsSatisfied();
     }
 
@@ -47,8 +48,8 @@ public class RestUndertowHttpMultipleVerbsTest extends BaseUndertowTest {
                 restConfiguration().component("undertow").host("localhost").port(getPort());
 
                 rest("/example")
-                    .get("{pathParamHere}").to("mock:get")
-                    .put("{pathParamHere}").to("mock:put");
+                        .get("{pathParamHere}").to("mock:get")
+                        .put("{pathParamHere}").to("mock:put");
             }
         };
     }

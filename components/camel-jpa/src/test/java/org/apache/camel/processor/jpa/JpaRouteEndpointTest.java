@@ -19,20 +19,22 @@ package org.apache.camel.processor.jpa;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jpa.JpaComponent;
 import org.apache.camel.component.jpa.JpaEndpoint;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringRouteBuilder;
 
 public class JpaRouteEndpointTest extends JpaRouteTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() throws Exception {
                 JpaEndpoint jpa = new JpaEndpoint();
+                jpa.setComponent(new JpaComponent());
                 jpa.setCamelContext(context);
                 jpa.setEntityType(SendEmail.class);
-                jpa.setEntityManagerFactory(context.getRegistry().lookupByNameAndType("entityManagerFactory", EntityManagerFactory.class));
+                jpa.setEntityManagerFactory(
+                        context.getRegistry().lookupByNameAndType("entityManagerFactory", EntityManagerFactory.class));
 
                 from("direct:start").to(jpa).to("mock:result");
             }

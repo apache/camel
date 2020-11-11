@@ -2,7 +2,7 @@
 = Error Handler
 
 Camel supports pluggable
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/ErrorHandler.html[ErrorHandler]
+https://www.javadoc.io/doc/org.apache.camel/camel-base/current/org/apache/camel/processor/ErrorHandler.html[ErrorHandler]
 strategies to deal with errors processing an
 Event Driven Consumer. An alternative
 is to specify the error handling directly in the DSL
@@ -34,7 +34,7 @@ The current implementations Camel provides out of the box are:
 * DefaultErrorHandler is the default
 error handler in Camel. This error handler does not support a dead
 letter queue, it will propagate exceptions back to the caller, as if
-there where no error handler at all. It has a limited set of features.
+there were no error handler at all. It has a limited set of features.
 * Dead Letter Channel which supports
 attempting to redeliver the message exchange a number of times before
 sending it to a dead letter endpoint
@@ -58,7 +58,7 @@ a single RouteBuilder
 === DefaultErrorHandler
 
 The DefaultErrorHandler is the default
-error handler in Camel. Unlike xref:dead-letter-channel.adoc[Dead Letter
+error handler in Camel. Unlike xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter
 Channel] it does not have any dead letter queue, and do *not* handle
 exceptions by default.
 
@@ -277,7 +277,7 @@ and use another error handler.
 [[ErrorHandler-Springbasedconfigurationsample]]
 === Spring based configuration sample
 
-In this sample we configure a xref:dead-letter-channel.adoc[Dead Letter
+In this sample we configure a xref:{eip-vc}:eips:dead-letter-channel.adoc[Dead Letter
 Channel] on the route that should redeliver at most 3 times and use a
 little delay before retrying. First we configure the reference to *myDeadLetterErrorHandler* using
 the `errorHandlerRef` attribute on the `route` tag.

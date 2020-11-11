@@ -22,13 +22,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class MySimpleToDRoute extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
 
         String uri = "log:c";
 
         from("direct:start")
-            .toD("log:a", true)
-            .to(ExchangePattern.InOnly, "log:b")
-            .to(uri);
+                .toD("log:a", true)
+                .to(ExchangePattern.InOnly, "log:b")
+                .to(uri);
     }
 }

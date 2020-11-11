@@ -30,7 +30,7 @@ public class LuceneComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private LuceneConfiguration config;
-    
+
     public LuceneComponent() {
         config = new LuceneConfiguration();
     }
@@ -39,13 +39,13 @@ public class LuceneComponent extends DefaultComponent {
         super(context);
         config = new LuceneConfiguration();
     }
-    
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-        throws Exception {
+            throws Exception {
         config.parseURI(new URI(uri), parameters, this);
         LuceneEndpoint luceneEndpoint = new LuceneEndpoint(uri, this, config);
-        setProperties(luceneEndpoint.getConfig(), parameters);
+        setProperties(luceneEndpoint, parameters);
         return luceneEndpoint;
     }
 

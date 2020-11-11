@@ -56,7 +56,8 @@ public class CamelContinuationServlet extends CamelServlet {
     private final Map<String, String> expiredExchanges = new ConcurrentHashMap<>();
 
     @Override
-    protected void doService(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    protected void doService(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
         log.trace("Service: {}", request);
 
         // is there a consumer registered for the request.
@@ -64,7 +65,8 @@ public class CamelContinuationServlet extends CamelServlet {
         if (consumer == null) {
             // okay we cannot process this requires so return either 404 or 405.
             // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
-            boolean hasAnyMethod = METHODS.stream().anyMatch(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers()));
+            boolean hasAnyMethod = METHODS.stream()
+                    .anyMatch(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers()));
             if (hasAnyMethod) {
                 log.debug("No consumer to service request {} as method {} is not allowed", request, request.getMethod());
                 response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -74,7 +76,7 @@ public class CamelContinuationServlet extends CamelServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-        }       
+        }
 
         // figure out if continuation is enabled and what timeout to use
         boolean useContinuation = false;
@@ -96,16 +98,20 @@ public class CamelContinuationServlet extends CamelServlet {
             }
         }
         if (useContinuation) {
-            log.trace("Start request with continuation timeout of {}", continuationTimeout != null ? continuationTimeout : "jetty default");
+            log.trace("Start request with continuation timeout of {}",
+                    continuationTimeout != null ? continuationTimeout : "jetty default");
         } else {
-            log.trace("Usage of continuation is disabled, either by component or endpoint configuration, fallback to normal servlet processing instead");
+            log.trace(
+                    "Usage of continuation is disabled, either by component or endpoint configuration, fallback to normal servlet processing instead");
             super.doService(request, response);
             return;
         }
 
         // if its an OPTIONS request then return which method is allowed
         if ("OPTIONS".equals(request.getMethod()) && !consumer.isOptionsEnabled()) {
-            String allowedMethods = METHODS.stream().filter(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers())).collect(Collectors.joining(","));
+            String allowedMethods = METHODS.stream()
+                    .filter(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers()))
+                    .collect(Collectors.joining(","));
             if (allowedMethods == null && consumer.getEndpoint().getHttpMethodRestrict() != null) {
                 allowedMethods = consumer.getEndpoint().getHttpMethodRestrict();
             }
@@ -144,11 +150,12 @@ public class CamelContinuationServlet extends CamelServlet {
 
         // we do not support java serialized objects unless explicit enabled
         String contentType = request.getContentType();
-        if (HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType) && !consumer.getEndpoint().getComponent().isAllowJavaSerializedObject()) {
+        if (HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)
+                && !consumer.getEndpoint().getComponent().isAllowJavaSerializedObject()) {
             response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
             return;
         }
-        
+
         final Exchange result = (Exchange) request.getAttribute(EXCHANGE_ATTRIBUTE_NAME);
         if (result == null) {
             // no asynchronous result so leverage continuation
@@ -183,9 +190,9 @@ public class CamelContinuationServlet extends CamelServlet {
             if (consumer.getEndpoint().isDisableStreamCache()) {
                 exchange.setProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.TRUE);
             }
-            
+
             HttpHelper.setCharsetFromContentType(request.getContentType(), exchange);
-            
+
             exchange.setIn(new HttpMessage(exchange, consumer.getEndpoint(), request, response));
             // set context path as header
             String contextPath = consumer.getEndpoint().getPath();
@@ -215,7 +222,7 @@ public class CamelContinuationServlet extends CamelServlet {
                 log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
             }
             // use the asynchronous API to process the exchange
-            
+
             consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // check if the exchange id is already expired
@@ -236,7 +243,7 @@ public class CamelContinuationServlet extends CamelServlet {
             if (oldTccl != null) {
                 restoreTccl(exchange, oldTccl);
             }
-            
+
             // return to let Jetty continuation to work as it will resubmit and invoke the service
             // method again when its resumed
             return;

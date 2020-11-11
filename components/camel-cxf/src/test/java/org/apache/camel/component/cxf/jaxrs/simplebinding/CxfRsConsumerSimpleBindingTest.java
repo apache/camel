@@ -35,7 +35,7 @@ import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerList;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Order;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Product;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
@@ -51,9 +51,15 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for the Simple Binding style of CXF JAX-RS consumers.
@@ -61,33 +67,33 @@ import org.junit.Test;
 public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
     private static final String PORT_PATH = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
     private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT_PATH
-        + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceResource&bindingStyle=SimpleConsumer";
-    
+                                                      + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceResource&bindingStyle=SimpleConsumer";
+
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;
-    
+
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         httpclient = HttpClientBuilder.create().build();
         jaxb = JAXBContext.newInstance(CustomerList.class, Customer.class, Order.class, Product.class);
     }
-    
+
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         httpclient.close();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI)
-                    .recipientList(simple("direct:${header.operationName}"));
-                    
+                        .recipientList(simple("direct:${header.operationName}"));
+
                 from("direct:getCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertNotNull(exchange.getIn().getHeader("id"));
@@ -95,16 +101,16 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         if (id == 123) {
                             assertEquals("123", exchange.getIn().getHeader("id"));
                             assertEquals(MessageContentsList.class, exchange.getIn().getBody().getClass());
-                            exchange.getOut().setBody(new Customer(123, "Raul"));
-                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                            exchange.getMessage().setBody(new Customer(123, "Raul"));
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                         } else if (id == 456) {
-                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);                                        
+                            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                         } else {
                             fail();
                         }
                     }
                 });
-                            
+
                 from("direct:updateCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("123", exchange.getIn().getHeader("id"));
@@ -113,7 +119,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertNotNull(c);
                     }
                 });
-                        
+
                 from("direct:newCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Customer c = exchange.getIn().getBody(Customer.class);
@@ -121,7 +127,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertEquals(123, c.getId());
                     }
                 });
-                
+
                 from("direct:listVipCustomers").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("gold", exchange.getIn().getHeader("status", String.class));
@@ -132,10 +138,10 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         list.add(new Customer(123, "Raul"));
                         list.add(new Customer(456, "Raul2"));
                         response.setCustomers(list);
-                        exchange.getOut().setBody(response);
+                        exchange.getMessage().setBody(response);
                     }
                 });
-                
+
                 from("direct:updateVipCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("gold", exchange.getIn().getHeader("status", String.class));
@@ -145,14 +151,14 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertNotNull(c);
                     }
                 });
-                
+
                 from("direct:deleteVipCustomer").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("gold", exchange.getIn().getHeader("status", String.class));
                         assertEquals("123", exchange.getIn().getHeader("id"));
                     }
                 });
-                
+
                 from("direct:uploadImageInputStream").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("123", exchange.getIn().getHeader("id"));
@@ -160,10 +166,10 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertTrue(InputStream.class.isAssignableFrom(exchange.getIn().getBody().getClass()));
                         InputStream is = exchange.getIn().getBody(InputStream.class);
                         is.close();
-                        exchange.getOut().setBody(null);
+                        exchange.getMessage().setBody(null);
                     }
                 });
-                
+
                 from("direct:uploadImageDataHandler").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("123", exchange.getIn().getHeader("id"));
@@ -172,10 +178,10 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         DataHandler dh = exchange.getIn().getBody(DataHandler.class);
                         assertEquals("image/jpeg", dh.getContentType());
                         dh.getInputStream().close();
-                        exchange.getOut().setBody(null);
+                        exchange.getMessage().setBody(null);
                     }
                 });
-                
+
                 from("direct:multipartPostWithParametersAndPayload").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("abcd", exchange.getIn().getHeader("query"));
@@ -185,10 +191,10 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertNull(exchange.getIn().getHeader("part1"));
                         assertNull(exchange.getIn().getHeader("part2"));
                         assertEquals(Customer.class, exchange.getIn().getHeader("body").getClass());
-                        exchange.getOut().setBody(null);
+                        exchange.getMessage().setBody(null);
                     }
                 });
-                
+
                 from("direct:multipartPostWithoutParameters").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertNotNull(exchange.getIn(AttachmentMessage.class).getAttachment("part1"));
@@ -196,13 +202,13 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         assertNull(exchange.getIn().getHeader("part1"));
                         assertNull(exchange.getIn().getHeader("part2"));
                         assertEquals(Customer.class, exchange.getIn().getHeader("body").getClass());
-                        exchange.getOut().setBody(null);
+                        exchange.getMessage().setBody(null);
                     }
                 });
             }
         };
     }
-    
+
     @Test
     public void testGetCustomerOnlyHeaders() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/123");
@@ -212,7 +218,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         Customer entity = (Customer) jaxb.createUnmarshaller().unmarshal(response.getEntity().getContent());
         assertEquals(123, entity.getId());
     }
-    
+
     @Test
     public void testGetCustomerHttp404CustomStatus() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/456");
@@ -220,7 +226,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(get);
         assertEquals(404, response.getStatusLine().getStatusCode());
     }
-    
+
     @Test
     public void testUpdateCustomerBodyAndHeaders() throws Exception {
         HttpPut put = new HttpPut("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/123");
@@ -232,7 +238,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(put);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
-    
+
     @Test
     public void testNewCustomerOnlyBody() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers");
@@ -244,7 +250,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(post);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
-    
+
     @Test
     public void testListVipCustomers() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/vip/gold");
@@ -252,7 +258,8 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         get.addHeader("Accept", "text/xml");
         HttpResponse response = httpclient.execute(get);
         assertEquals(200, response.getStatusLine().getStatusCode());
-        CustomerList cl = (CustomerList) jaxb.createUnmarshaller().unmarshal(new StringReader(EntityUtils.toString(response.getEntity())));
+        CustomerList cl = (CustomerList) jaxb.createUnmarshaller()
+                .unmarshal(new StringReader(EntityUtils.toString(response.getEntity())));
         List<Customer> vips = cl.getCustomers();
         assertEquals(2, vips.size());
         assertEquals(123, vips.get(0).getId());
@@ -270,7 +277,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(put);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
-    
+
     @Test
     public void testDeleteVipCustomer() throws Exception {
         HttpDelete delete = new HttpDelete("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/vip/gold/123");
@@ -278,7 +285,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(delete);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
-    
+
     @Test
     public void testUploadInputStream() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/123/image_inputstream");
@@ -288,7 +295,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(post);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
-    
+
     @Test
     public void testUploadDataHandler() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/123/image_datahandler");
@@ -298,13 +305,16 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(post);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
-    
+
     @Test
     public void testMultipartPostWithParametersAndPayload() throws Exception {
-        HttpPost post = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/multipart/123?query=abcd");
+        HttpPost post
+                = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/multipart/123?query=abcd");
         MultipartEntityBuilder builder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.STRICT);
-        builder.addBinaryBody("part1", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), ContentType.create("image/jpeg"), "java.jpg");
-        builder.addBinaryBody("part2", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), ContentType.create("image/jpeg"), "java.jpg");
+        builder.addBinaryBody("part1", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()),
+                ContentType.create("image/jpeg"), "java.jpg");
+        builder.addBinaryBody("part2", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()),
+                ContentType.create("image/jpeg"), "java.jpg");
         StringWriter sw = new StringWriter();
         jaxb.createMarshaller().marshal(new Customer(123, "Raul"), sw);
         builder.addTextBody("body", sw.toString(), ContentType.create("text/xml", Consts.UTF_8));
@@ -312,13 +322,16 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(post);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
-    
+
     @Test
     public void testMultipartPostWithoutParameters() throws Exception {
-        HttpPost post = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/multipart/withoutParameters");
+        HttpPost post
+                = new HttpPost("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/multipart/withoutParameters");
         MultipartEntityBuilder builder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.STRICT);
-        builder.addBinaryBody("part1", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), ContentType.create("image/jpeg"), "java.jpg");
-        builder.addBinaryBody("part2", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()), ContentType.create("image/jpeg"), "java.jpg");
+        builder.addBinaryBody("part1", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()),
+                ContentType.create("image/jpeg"), "java.jpg");
+        builder.addBinaryBody("part2", new File(this.getClass().getClassLoader().getResource("java.jpg").toURI()),
+                ContentType.create("image/jpeg"), "java.jpg");
         StringWriter sw = new StringWriter();
         jaxb.createMarshaller().marshal(new Customer(123, "Raul"), sw);
         builder.addTextBody("body", sw.toString(), ContentType.create("text/xml", Consts.UTF_8));
@@ -326,5 +339,5 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(post);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
-    
+
 }

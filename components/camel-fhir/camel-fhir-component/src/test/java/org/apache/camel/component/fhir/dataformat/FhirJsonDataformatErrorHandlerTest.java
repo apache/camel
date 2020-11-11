@@ -26,31 +26,37 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.FhirJsonDataFormat;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
 
-    private static final String INPUT = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
+    private static final String INPUT
+            = "{\"resourceType\":\"Patient\",\"extension\":[ {\"valueDateTime\":\"2011-01-02T11:13:15\"} ]}";
 
     private MockEndpoint mockEndpoint;
     private final FhirContext fhirContext = FhirContext.forDstu3();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         mockEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
     }
 
-    @Test(expected = DataFormatException.class)
+    @Test
     public void unmarshalParserErrorHandler() throws Throwable {
         try {
             template.sendBody("direct:unmarshalErrorHandlerStrict", INPUT);
+            fail("Expected a DataFormatException");
         } catch (CamelExecutionException e) {
-            throw e.getCause();
+            assertTrue(e.getCause() instanceof DataFormatException);
         }
     }
 
@@ -66,7 +72,8 @@ public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
         Patient patient = (Patient) exchange.getIn().getBody();
         assertEquals(1, patient.getExtension().size());
         assertEquals(null, patient.getExtension().get(0).getUrl());
-        assertEquals("2011-01-02T11:13:15", patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());    }
+        assertEquals("2011-01-02T11:13:15", patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {

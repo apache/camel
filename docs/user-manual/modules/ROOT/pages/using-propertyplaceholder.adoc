@@ -11,7 +11,7 @@ limitation that prevents third-party frameworks from fully leveraging
 Spring property placeholders.
 
 For more details see:
-xref:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
+xref:faq:how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do
 I use Spring Property Placeholder with Camel XML].
 
 [[UsingPropertyPlaceholder-BridgingSpringandCamelPropertyPlaceholders]]
@@ -40,7 +40,7 @@ property component
 == Format
 
 The value of a Camel property can be obtained by specifying its key name
-within a property placeholder, using the following format: `{\{key\}}`
+within a property placeholder, using the following format: `{\{key}}`
 
 For example:
 ....
@@ -80,7 +80,7 @@ The list of prefixes is:
 |Prefix |Description
 |`ref:` |Lookup in the xref:registry.adoc[Registry.]
 
-|`file:` |Load the from file system.
+|`file:` |Load from the file system.
 
 |`classpath:` |Load from the classpath (this is also the default if no
 prefix is provided).
@@ -293,9 +293,9 @@ template.sendBody("{{cool.start}}", "Hello World");
 
 
 [[UsingPropertyPlaceholder-Examplewithlanguage]]
-== Example with xref:simple-language.adoc[Simple] language
+== Example with xref:components:languages:simple-language.adoc[Simple] language
 
-The xref:simple-language.adoc[Simple] language now also support using property
+The xref:components:languages:simple-language.adoc[Simple] language now also support using property
 placeholders, for example in the route below:
 
 
@@ -308,7 +308,7 @@ cheese.quote=Camel rocks
     .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
 ----
 
-You can also specify the location in the xref:simple-language.adoc[Simple]
+You can also specify the location in the xref:components:languages:simple-language.adoc[Simple]
 language for example:
 
 
@@ -384,7 +384,7 @@ placeholder namespace.
 In the example below we use the `prop` prefix for the namespace
 `\http://camel.apache.org/schema/placeholder` by which we can use the
 `prop` prefix in the attributes in the XML DSLs. Notice how we use
-that in the xref:multicast-eip.adoc[Multicast] to indicate that the option
+that in the xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] to indicate that the option
 `stopOnException` should be the value of the placeholder with the key
 `stop`.
 
@@ -822,10 +822,10 @@ the `${}` notation. And in the Camel routes we use the Camel
 placeholder notation with `{{ }}`.
 
 [[UsingPropertyPlaceholder-ClashingSpringPropertyPlaceholderswithCamelsLanguage]]
-== Clashing Spring Property Placeholders with Camels xref:simple-language.adoc[Simple] Language
+== Clashing Spring Property Placeholders with Camels xref:components:languages:simple-language.adoc[Simple] Language
 
 Take notice when using Spring bridging placeholder then the
-spring `${}` syntax clashes with the xref:simple-language.adoc[Simple] in
+spring `${}` syntax clashes with the xref:components:languages:simple-language.adoc[Simple] in
 Camel, and therefore take care.
 
 Example:
@@ -838,7 +838,7 @@ Example:
 ----
 
 clashes with Spring property placeholders, and you should
-use `$simple{}` to indicate using the xref:simple-language.adoc[Simple]
+use `$simple{}` to indicate using the xref:components:languages:simple-language.adoc[Simple]
 language in Camel.
 
 
@@ -1083,7 +1083,7 @@ public static final class MyBeerFunction implements PropertiesFunction {
 ----
 
 The function must implement
-the `org.apache.camel.component.properties.PropertiesFunction`
+the `org.apache.camel.spi.PropertiesFunction`
 interface. The method `getName` is  the name of the function, e.g.,
 `beer`. And the `apply` method is where we implement the custom
 logic to do. As the sample code is from an unit test, it just returns a
@@ -1093,7 +1093,7 @@ To register a custom function from Java code is as shown below:
 
 [source,java]
 ----
-PropertiesComponent pc = (org.apache.camel.componennt.properties.PropertiesComponent) context.getPropertiesComponent();
+PropertiesComponent pc = context.getPropertiesComponent();
 pc.addFunction(new MyBeerFunction());
 ----
 

@@ -21,7 +21,9 @@ import java.lang.reflect.Method;
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupport {
 

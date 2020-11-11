@@ -31,16 +31,16 @@ public interface AttachmentMessage extends Message {
     /**
      * Returns the attachment specified by the id
      *
-     * @param id the id under which the attachment is stored
-     * @return the data handler for this attachment or <tt>null</tt>
+     * @param  id the id under which the attachment is stored
+     * @return    the data handler for this attachment or <tt>null</tt>
      */
     DataHandler getAttachment(String id);
 
     /**
      * Returns the attachment specified by the id
      *
-     * @param id the id under which the attachment is stored
-     * @return the attachment or <tt>null</tt>
+     * @param  id the id under which the attachment is stored
+     * @return    the attachment or <tt>null</tt>
      */
     Attachment getAttachmentObject(String id);
 
@@ -54,23 +54,23 @@ public interface AttachmentMessage extends Message {
     /**
      * Removes the attachment specified by the id
      *
-     * @param id   the id of the attachment to remove
+     * @param id the id of the attachment to remove
      */
     void removeAttachment(String id);
 
     /**
      * Adds an attachment to the message using the id
      *
-     * @param id        the id to store the attachment under
-     * @param content   the data handler for the attachment
+     * @param id      the id to store the attachment under
+     * @param content the data handler for the attachment
      */
     void addAttachment(String id, DataHandler content);
 
     /**
      * Adds an attachment to the message using the id
      *
-     * @param id        the id to store the attachment under
-     * @param content   the attachment
+     * @param id      the id to store the attachment under
+     * @param content the attachment
      */
     void addAttachmentObject(String id, Attachment content);
 

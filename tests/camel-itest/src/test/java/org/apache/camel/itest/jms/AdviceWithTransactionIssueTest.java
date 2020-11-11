@@ -16,15 +16,19 @@
  */
 package org.apache.camel.itest.jms;
 
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.reifier.RouteReifier;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 
 public class AdviceWithTransactionIssueTest extends CamelSpringTestSupport {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -37,10 +41,10 @@ public class AdviceWithTransactionIssueTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testAdviceWithWeaveById() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+    void testAdviceWithWeaveById() throws Exception {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveById("mock-b*").after().to("mock:last");
             }
         });
@@ -56,10 +60,10 @@ public class AdviceWithTransactionIssueTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testAdviceWithAddLast() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+    void testAdviceWithAddLast() throws Exception {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 weaveAddLast().to("mock:last");
             }
         });

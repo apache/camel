@@ -22,10 +22,12 @@ import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -42,10 +44,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The aws-s3 component is used for storing and retrieving object from Amazon S3
- * Storage Service.
+ * Store and retrieve objects from AWS S3 Storage Service.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3://bucketNameOrArn", label = "cloud,file")
+@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3://bucketNameOrArn",
+             category = { Category.CLOUD, Category.FILE })
 public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
@@ -84,7 +86,9 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        s3Client = configuration.getAmazonS3Client() != null ? configuration.getAmazonS3Client() : S3ClientFactory.getAWSS3Client(configuration, getMaxConnections()).getS3Client();
+        s3Client = configuration.getAmazonS3Client() != null
+                ? configuration.getAmazonS3Client()
+                : S3ClientFactory.getAWSS3Client(configuration, getMaxConnections()).getS3Client();
 
         String fileName = getConfiguration().getFileName();
 
@@ -115,7 +119,8 @@ public class S3Endpoint extends ScheduledPollEndpoint {
             // creates the new bucket because it doesn't exist yet
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(getConfiguration().getBucketName());
 
-            LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", configuration.getBucketName(), configuration.getRegion(), createBucketRequest);
+            LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", configuration.getBucketName(),
+                    configuration.getRegion(), createBucketRequest);
 
             s3Client.createBucket(createBucketRequest);
 
@@ -180,16 +185,15 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         message.setHeader(S3Constants.STORAGE_CLASS, objectMetadata.getStorageClass());
 
         /**
-         * If includeBody != true, it is safe to close the object here. If
-         * includeBody == true, the caller is responsible for closing the stream
-         * and object once the body has been fully consumed. As of 2.17, the
-         * consumer does not close the stream or object on commit.
+         * If includeBody != true, it is safe to close the object here. If includeBody == true, the caller is
+         * responsible for closing the stream and object once the body has been fully consumed. As of 2.17, the consumer
+         * does not close the stream or object on commit.
          */
         if (!configuration.isIncludeBody()) {
             IOHelper.close(s3Object);
         } else {
             if (configuration.isAutocloseBody()) {
-                exchange.addOnCompletion(new SynchronizationAdapter() {
+                exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
                     @Override
                     public void onDone(Exchange exchange) {
                         IOHelper.close(s3Object);
@@ -224,9 +228,8 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Gets the maximum number of messages as a limit to poll at each polling.
-     * The default value is 10. Use 0 or a negative number to set it as
-     * unlimited.
+     * Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a
+     * negative number to set it as unlimited.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;

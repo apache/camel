@@ -43,19 +43,18 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 import org.apache.olingo.odata2.api.servicedocument.Collection;
 import org.apache.olingo.odata2.api.servicedocument.ServiceDocument;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Integration test for
- * {@link org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl} using the
- * sample Olingo2 Server dynamically downloaded and started during the test.
+ * Integration test for {@link org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl} using the sample Olingo2
+ * Server dynamically downloaded and started during the test.
  */
 public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
@@ -65,14 +64,14 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
     private static Olingo2SampleServer server;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         startServers(PORT);
         Olingo2SampleServer.generateSampleData(TEST_SERVICE_URL);
         setupClient();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         if (olingoApp != null) {
             olingoApp.close();
@@ -117,11 +116,11 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         final ServiceDocument serviceDocument = responseHandler.await();
         final List<Collection> collections = serviceDocument.getAtomInfo().getWorkspaces().get(0).getCollections();
-        assertEquals("Service Atom Collections", 3, collections.size());
+        assertEquals(3, collections.size(), "Service Atom Collections");
         LOG.info("Service Atom Collections:  {}", collections);
 
         final List<EdmEntitySetInfo> entitySetsInfo = serviceDocument.getEntitySetsInfo();
-        assertEquals("Service Entity Sets", 3, entitySetsInfo.size());
+        assertEquals(3, entitySetsInfo.size(), "Service Entity Sets");
         LOG.info("Service Document Entries:  {}", entitySetsInfo);
     }
 
@@ -132,7 +131,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         olingoApp.read(edm, MANUFACTURERS, null, null, responseHandler);
 
         final ODataFeed dataFeed = responseHandler.await();
-        assertNotNull("Data feed", dataFeed);
+        assertNotNull(dataFeed, "Data feed");
         LOG.info("Entries:  {}", prettyPrint(dataFeed));
     }
 
@@ -143,9 +142,10 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         olingoApp.uread(edm, MANUFACTURERS, null, null, responseHandler);
 
         final InputStream rawfeed = responseHandler.await();
-        assertNotNull("Data feed", rawfeed);
+        assertNotNull(rawfeed, "Data feed");
         // for this test, we just let EP to verify the stream data
-        final ODataFeed dataFeed = EntityProvider.readFeed(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), rawfeed, EntityProviderReadProperties.init().build());
+        final ODataFeed dataFeed = EntityProvider.readFeed(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), rawfeed,
+                EntityProviderReadProperties.init().build());
         LOG.info("Entries:  {}", prettyPrint(dataFeed));
     }
 
@@ -179,14 +179,16 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         olingoApp.uread(edm, TEST_MANUFACTURER, null, null, responseHandler);
         InputStream rawentry = responseHandler.await();
-        ODataEntry entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), rawentry, EntityProviderReadProperties.init().build());
+        ODataEntry entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), rawentry,
+                EntityProviderReadProperties.init().build());
         LOG.info("Single Entry:  {}", prettyPrint(entry));
 
         responseHandler.reset();
 
         olingoApp.uread(edm, TEST_CAR, null, null, responseHandler);
         rawentry = responseHandler.await();
-        entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(CARS), rawentry, EntityProviderReadProperties.init().build());
+        entry = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(CARS), rawentry,
+                EntityProviderReadProperties.init().build());
         LOG.info("Single Entry:  {}", prettyPrint(entry));
 
         responseHandler.reset();
@@ -196,7 +198,8 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         olingoApp.uread(edm, TEST_MANUFACTURER, queryParams, null, responseHandler);
 
         rawentry = responseHandler.await();
-        ODataEntry entryExpanded = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), rawentry, EntityProviderReadProperties.init().build());
+        ODataEntry entryExpanded = EntityProvider.readEntry(TEST_FORMAT_STRING, edmEntitySetMap.get(MANUFACTURERS), rawentry,
+                EntityProviderReadProperties.init().build());
         LOG.info("Single Entry with expanded Cars relation:  {}", prettyPrint(entryExpanded));
     }
 
@@ -207,7 +210,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         olingoApp.read(edm, TEST_MANUFACTURER_FOUNDED_PROPERTY, null, null, propertyHandler);
 
-        Calendar founded = (Calendar)propertyHandler.await().get(FOUNDED_PROPERTY);
+        Calendar founded = (Calendar) propertyHandler.await().get(FOUNDED_PROPERTY);
         LOG.info("Founded property {}", founded);
 
         final TestOlingo2ResponseHandler<Calendar> valueHandler = new TestOlingo2ResponseHandler<>();
@@ -221,7 +224,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         final HashMap<String, Object> properties = new HashMap<>();
         properties.put(FOUNDED_PROPERTY, new Date());
 
-//        olingoApp.update(edm, TEST_MANUFACTURER_FOUNDED_PROPERTY, properties, statusHandler);
+        //        olingoApp.update(edm, TEST_MANUFACTURER_FOUNDED_PROPERTY, properties, statusHandler);
         // requires a plain Date for XML
         olingoApp.update(edm, TEST_MANUFACTURER_FOUNDED_PROPERTY, null, new Date(), statusHandler);
 
@@ -245,13 +248,13 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         address.clear();
         // Olingo2 sample server MERGE/PATCH behaves like PUT!!!
-//        address.put("Street", "Main Street");
+        //        address.put("Street", "Main Street");
         address.put("Street", "Star Street 137");
         address.put("City", "Stuttgart");
         address.put("ZipCode", "70173");
         address.put("Country", "Germany");
 
-//        olingoApp.patch(edm, TEST_MANUFACTURER_ADDRESS_PROPERTY, address, statusHandler);
+        //        olingoApp.patch(edm, TEST_MANUFACTURER_ADDRESS_PROPERTY, address, statusHandler);
         olingoApp.merge(edm, TEST_MANUFACTURER_ADDRESS_PROPERTY, null, address, statusHandler);
 
         LOG.info("Address property updated with status {}", statusHandler.await().getStatusCode());
@@ -274,7 +277,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         final String link = linkHandler.await();
         LOG.info("Read link: {}", link);
 
-//Deleting relationships through links is not supported in Olingo2 at the time of writing this test
+        //Deleting relationships through links is not supported in Olingo2 at the time of writing this test
         /*
          * final TestOlingo2ResponseHandler<HttpStatusCodes> statusHandler = new
          * TestOlingo2ResponseHandler<HttpStatusCodes>(); final
@@ -346,7 +349,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         Map<String, Object> data = getEntityData();
         @SuppressWarnings("unchecked")
-        Map<String, Object> address = (Map<String, Object>)data.get(ADDRESS);
+        Map<String, Object> address = (Map<String, Object>) data.get(ADDRESS);
 
         data.put("Name", "MyCarManufacturer Renamed");
         address.put("Street", "Main Street");
@@ -406,16 +409,18 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
 
         // create
         final Map<String, Object> data = getEntityData();
-        batchParts.add(Olingo2BatchChangeRequest.resourcePath(MANUFACTURERS).contentId(TEST_RESOURCE_CONTENT_ID).operation(Operation.CREATE).body(data).build());
+        batchParts.add(Olingo2BatchChangeRequest.resourcePath(MANUFACTURERS).contentId(TEST_RESOURCE_CONTENT_ID)
+                .operation(Operation.CREATE).body(data).build());
 
         // update
         final Map<String, Object> updateData = new HashMap<>(data);
         @SuppressWarnings("unchecked")
-        Map<String, Object> address = (Map<String, Object>)updateData.get(ADDRESS);
+        Map<String, Object> address = (Map<String, Object>) updateData.get(ADDRESS);
         updateData.put("Name", "MyCarManufacturer Renamed");
         address.put("Street", "Main Street");
 
-        batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.UPDATE).body(updateData).build());
+        batchParts.add(
+                Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.UPDATE).body(updateData).build());
 
         // delete
         batchParts.add(Olingo2BatchChangeRequest.resourcePath(TEST_RESOURCE).operation(Operation.DELETE).build());
@@ -428,22 +433,22 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         olingoApp.batch(edm, null, batchParts, responseHandler);
 
         final List<Olingo2BatchResponse> responseParts = responseHandler.await(15, TimeUnit.MINUTES);
-        assertEquals("Batch responses expected", 8, responseParts.size());
+        assertEquals(8, responseParts.size(), "Batch responses expected");
 
         assertNotNull(responseParts.get(0).getBody());
-        final ODataFeed feed = (ODataFeed)responseParts.get(1).getBody();
+        final ODataFeed feed = (ODataFeed) responseParts.get(1).getBody();
         assertNotNull(feed);
         LOG.info("Batch feed:  {}", prettyPrint(feed));
 
-        ODataEntry dataEntry = (ODataEntry)responseParts.get(2).getBody();
+        ODataEntry dataEntry = (ODataEntry) responseParts.get(2).getBody();
         assertNotNull(dataEntry);
         LOG.info("Batch read entry:  {}", prettyPrint(dataEntry));
 
-        dataEntry = (ODataEntry)responseParts.get(3).getBody();
+        dataEntry = (ODataEntry) responseParts.get(3).getBody();
         assertNotNull(dataEntry);
         LOG.info("Batch read entry with expand:  {}", prettyPrint(dataEntry));
 
-        dataEntry = (ODataEntry)responseParts.get(4).getBody();
+        dataEntry = (ODataEntry) responseParts.get(4).getBody();
         assertNotNull(dataEntry);
         LOG.info("Batch create entry:  {}", prettyPrint(dataEntry));
 
@@ -451,7 +456,7 @@ public class Olingo2AppAPITest extends AbstractOlingo2AppAPITestSupport {
         assertEquals(HttpStatusCodes.NO_CONTENT.getStatusCode(), responseParts.get(6).getStatusCode());
 
         assertEquals(HttpStatusCodes.NOT_FOUND.getStatusCode(), responseParts.get(7).getStatusCode());
-        final Exception exception = (Exception)responseParts.get(7).getBody();
+        final Exception exception = (Exception) responseParts.get(7).getBody();
         assertNotNull(exception);
         LOG.info("Batch retrieve deleted entry:  {}", exception);
     }

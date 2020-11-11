@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.braintree.internal;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.braintree.BraintreeConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
@@ -26,13 +27,13 @@ public final class BraintreePropertiesHelper extends ApiMethodPropertiesHelper<B
 
     private static BraintreePropertiesHelper helper;
 
-    private BraintreePropertiesHelper() {
-        super(BraintreeConfiguration.class, BraintreeConstants.PROPERTY_PREFIX);
+    private BraintreePropertiesHelper(CamelContext context) {
+        super(context, BraintreeConfiguration.class, BraintreeConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized BraintreePropertiesHelper getHelper() {
+    public static synchronized BraintreePropertiesHelper getHelper(CamelContext context) {
         if (helper == null) {
-            helper = new BraintreePropertiesHelper();
+            helper = new BraintreePropertiesHelper(context);
         }
         return helper;
     }

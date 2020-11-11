@@ -17,36 +17,42 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicRawQueryValidationHandler;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.Exchange.HTTP_QUERY;
+import static org.apache.camel.Exchange.HTTP_RAW_QUERY;
+import static org.apache.camel.Exchange.HTTP_URI;
+import static org.apache.camel.http.common.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class HttpBridgeEndpointTest extends BaseHttpTest {
 
     private HttpServer localServer;
+    private String url;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/", new BasicValidationHandler("GET", null, null, getExpectedContent())).
-                registerHandler("/query", new BasicRawQueryValidationHandler("GET", "x=%3B", null, getExpectedContent())).create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .registerHandler("/query", new BasicRawQueryValidationHandler(GET.name(), "x=%3B", null, getExpectedContent()))
+                .create();
         localServer.start();
+
+        url = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -58,33 +64,25 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
 
     @Test
     public void notBridgeEndpoint() throws Exception {
-        Exchange exchange = template.request("http://host/?bridgeEndpoint=false", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_URI, "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/");
-            }
-        });
+        Exchange exchange = template.request("http://host/?bridgeEndpoint=false",
+                exchange1 -> exchange1.getIn().setHeader(HTTP_URI, url + "/"));
 
         assertExchange(exchange);
     }
 
     @Test
     public void bridgeEndpoint() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?bridgeEndpoint=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
-            }
-        });
+        Exchange exchange = template.request(url + "/?bridgeEndpoint=true",
+                exchange1 -> exchange1.getIn().setHeader(HTTP_URI, "http://host:8080/"));
 
         assertExchange(exchange);
     }
 
     @Test
     public void bridgeEndpointWithQuery() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/query?bridgeEndpoint=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
-                exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=%3B");
-            }
+        Exchange exchange = template.request(url + "/query?bridgeEndpoint=true", exchange1 -> {
+            exchange1.getIn().setHeader(HTTP_URI, "http://host:8080/");
+            exchange1.getIn().setHeader(HTTP_QUERY, "x=%3B");
         });
 
         assertExchange(exchange);
@@ -92,12 +90,10 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
 
     @Test
     public void bridgeEndpointWithRawQueryAndQuery() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/query?bridgeEndpoint=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_URI, "http://host:8080/");
-                exchange.getIn().setHeader(Exchange.HTTP_RAW_QUERY, "x=%3B");
-                exchange.getIn().setHeader(Exchange.HTTP_QUERY, "x=;");
-            }
+        Exchange exchange = template.request(url + "/query?bridgeEndpoint=true", exchange1 -> {
+            exchange1.getIn().setHeader(HTTP_URI, "http://host:8080/");
+            exchange1.getIn().setHeader(HTTP_RAW_QUERY, "x=%3B");
+            exchange1.getIn().setHeader(HTTP_QUERY, "x=;");
         });
 
         assertExchange(exchange);
@@ -105,12 +101,8 @@ public class HttpBridgeEndpointTest extends BaseHttpTest {
 
     @Test
     public void unsafeCharsInHttpURIHeader() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?bridgeEndpoint=true", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_URI, "/<>{}");
-            }
-        });
+        Exchange exchange
+                = template.request(url + "/?bridgeEndpoint=true", exchange1 -> exchange1.getIn().setHeader(HTTP_URI, "/<>{}"));
 
         assertNull(exchange.getException());
         assertExchange(exchange);

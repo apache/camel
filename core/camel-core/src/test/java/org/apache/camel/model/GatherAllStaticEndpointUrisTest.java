@@ -20,7 +20,10 @@ import java.util.Set;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GatherAllStaticEndpointUrisTest extends ContextTestSupport {
 
@@ -46,7 +49,8 @@ public class GatherAllStaticEndpointUrisTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").routeId("foo").to("seda:bar").log("Hello World").wireTap("mock:tap").to("mock:foo").enrich("seda:stuff");
+                from("direct:foo").routeId("foo").to("seda:bar").log("Hello World").wireTap("mock:tap").to("mock:foo")
+                        .enrich("seda:stuff");
 
                 from("seda:bar").routeId("bar").log("Bye World").to("mock:bar");
             }

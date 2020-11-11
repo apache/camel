@@ -40,6 +40,9 @@ public class OutgoingVideoMessage extends OutgoingMessage {
 
     private String caption;
 
+    @JsonProperty("reply_markup")
+    private ReplyMarkup replyMarkup;
+
     public OutgoingVideoMessage() {
     }
 
@@ -91,6 +94,18 @@ public class OutgoingVideoMessage extends OutgoingMessage {
         this.caption = caption;
     }
 
+    public ReplyMarkup getReplyMarkup() {
+        return replyMarkup;
+    }
+
+    public void setReplyMarkup(ReplyMarkup replyMarkup) {
+        this.replyMarkup = replyMarkup;
+    }
+
+    public String replyMarkupJson() {
+        return replyMarkup == null ? null : replyMarkup.toJson();
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("OutgoingVideoMessage{");
@@ -100,6 +115,7 @@ public class OutgoingVideoMessage extends OutgoingMessage {
         sb.append(", width=").append(width);
         sb.append(", height=").append(height);
         sb.append(", caption='").append(caption).append('\'');
+        sb.append(", replyMarkup='").append(replyMarkup).append('\'');
         sb.append('}');
         sb.append(' ');
         sb.append(super.toString());

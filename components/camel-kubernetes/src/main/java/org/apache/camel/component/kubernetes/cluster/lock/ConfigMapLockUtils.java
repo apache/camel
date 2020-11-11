@@ -42,14 +42,17 @@ public final class ConfigMapLockUtils {
     }
 
     public static ConfigMap createNewConfigMap(String configMapName, LeaderInfo leaderInfo) {
-        return new ConfigMapBuilder().withNewMetadata().withName(configMapName).addToLabels("provider", "camel").addToLabels("kind", "locks").endMetadata()
-            .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
-            .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp())).build();
+        return new ConfigMapBuilder().withNewMetadata().withName(configMapName).addToLabels("provider", "camel")
+                .addToLabels("kind", "locks").endMetadata()
+                .addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
+                .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp()))
+                .build();
     }
 
     public static ConfigMap getConfigMapWithNewLeader(ConfigMap configMap, LeaderInfo leaderInfo) {
         return new ConfigMapBuilder(configMap).addToData(LEADER_PREFIX + leaderInfo.getGroupName(), leaderInfo.getLeader())
-            .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp())).build();
+                .addToData(LOCAL_TIMESTAMP_PREFIX + leaderInfo.getGroupName(), formatDate(leaderInfo.getLocalTimestamp()))
+                .build();
     }
 
     public static LeaderInfo getLeaderInfo(ConfigMap configMap, Set<String> members, String group) {
@@ -67,7 +70,7 @@ public final class ConfigMapLockUtils {
         try {
             return new SimpleDateFormat(DATE_TIME_FORMAT).format(date);
         } catch (Exception e) {
-            LOG.warn("Unable to format date '" + date + "' using format " + DATE_TIME_FORMAT, e);
+            LOG.warn("Unable to format date '{}' using format {}", date, DATE_TIME_FORMAT, e);
         }
 
         return null;
@@ -82,7 +85,7 @@ public final class ConfigMapLockUtils {
         try {
             return new SimpleDateFormat(DATE_TIME_FORMAT).parse(timestamp);
         } catch (Exception e) {
-            LOG.warn("Unable to parse time string '" + timestamp + "' using format " + DATE_TIME_FORMAT, e);
+            LOG.warn("Unable to parse time string '{}' using format {}", timestamp, DATE_TIME_FORMAT, e);
         }
 
         return null;

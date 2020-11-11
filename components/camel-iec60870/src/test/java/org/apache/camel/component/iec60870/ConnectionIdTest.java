@@ -16,49 +16,53 @@
  */
 package org.apache.camel.component.iec60870;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConnectionIdTest {
     @Test
     public void testNotEqual1() {
         ConnectionId id1 = new ConnectionId("host", 1202, "id1");
         ConnectionId id2 = new ConnectionId("host", 1202, "id2");
-        Assert.assertFalse("Must be different", id1.equals(id2));
+        assertNotEquals(id1, id2, "Must be different");
     }
 
     @Test
     public void testNotEqual2() {
         ConnectionId id1 = new ConnectionId("host1", 1202, "id");
         ConnectionId id2 = new ConnectionId("host2", 1202, "id");
-        Assert.assertFalse("Must be different", id1.equals(id2));
+        assertNotEquals(id1, id2, "Must be different");
     }
 
     @Test
     public void testNotEqual3() {
         ConnectionId id1 = new ConnectionId("host", 1202_1, "id");
         ConnectionId id2 = new ConnectionId("host", 1202_2, "id");
-        Assert.assertFalse("Must be different", id1.equals(id2));
+        assertNotEquals(id1, id2, "Must be different");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegal1() {
-        new ConnectionId("host", -1, "id");
+        assertThrows(IllegalArgumentException.class,
+                () -> new ConnectionId("host", -1, "id"));
     }
 
     @Test
     public void testGetters() {
         ConnectionId id = new ConnectionId("host", 1202, "id");
-        Assert.assertEquals("host", id.getHost());
-        Assert.assertEquals(1202, id.getPort());
-        Assert.assertEquals("id", id.getConnectionId());
+        assertEquals("host", id.getHost());
+        assertEquals(1202, id.getPort());
+        assertEquals("id", id.getConnectionId());
     }
 
     @Test
     public void testEqual1() {
         ConnectionId id1 = new ConnectionId("host", 1202, "id");
         ConnectionId id2 = new ConnectionId("host", 1202, "id");
-        Assert.assertTrue("Must be equal", id1.equals(id2));
+        assertEquals(id1, id2, "Must be equal");
     }
 
     @Test
@@ -66,6 +70,6 @@ public class ConnectionIdTest {
         ConnectionId id1 = new ConnectionId("host", 1202, "id");
         ConnectionId id2 = new ConnectionId("host", 1202, "id");
 
-        Assert.assertTrue("Hash code must be equal", id1.hashCode() == id2.hashCode());
+        assertEquals(id1.hashCode(), id2.hashCode(), "Hash code must be equal");
     }
 }

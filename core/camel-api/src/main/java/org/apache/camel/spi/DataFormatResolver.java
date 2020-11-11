@@ -22,22 +22,12 @@ import org.apache.camel.CamelContext;
  * Represents a resolver of data formats.
  */
 public interface DataFormatResolver {
-
-    /**
-     * Resolves the given data format given its name.
-     *
-     * @param name the name of the data format to lookup in {@link org.apache.camel.spi.Registry} or create
-     * @param context the camel context
-     * @return the data format or <tt>null</tt> if not possible to resolve
-     */
-    DataFormat resolveDataFormat(String name, CamelContext context);
-
     /**
      * Creates the given data format given its name.
      *
-     * @param name the name of the data format factory to lookup in {@link org.apache.camel.spi.Registry} or create
-     * @param context the camel context
-     * @return the data format or <tt>null</tt> if not possible to resolve
+     * @param  name    the name of the data format factory to lookup in {@link org.apache.camel.spi.Registry} or create
+     * @param  context the camel context
+     * @return         the data format or <tt>null</tt> if not possible to resolve
      */
     DataFormat createDataFormat(String name, CamelContext context);
 }

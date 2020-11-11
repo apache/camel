@@ -38,13 +38,14 @@ import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class LumberjackUtil {
     private LumberjackUtil() {
     }
 
-    static List<Integer> sendMessages(int port, SSLContextParameters sslContextParameters) throws InterruptedException {
+    static List<Integer> sendMessages(int port, SSLContextParameters sslContextParameters, List<Integer> windows)
+            throws InterruptedException {
         NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         try {
             // This list will hold the acknowledgment response sequence numbers
@@ -82,11 +83,8 @@ final class LumberjackUtil {
                     .handler(initializer)                         //
                     .connect("127.0.0.1", port).sync().channel(); //
 
-            // Send the 2 window frames
-            TimeUnit.MILLISECONDS.sleep(500);
-            channel.writeAndFlush(readSample("io/window10"));
-            TimeUnit.MILLISECONDS.sleep(500);
-            channel.writeAndFlush(readSample("io/window15"));
+            // send 5 frame windows, without pausing
+            windows.stream().forEach(window -> channel.writeAndFlush(readSample(String.format("io/window%s", window))));
             TimeUnit.MILLISECONDS.sleep(500);
 
             channel.close();

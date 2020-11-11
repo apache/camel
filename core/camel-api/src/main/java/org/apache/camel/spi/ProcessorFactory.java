@@ -16,59 +16,65 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 
 /**
  * A factory to create {@link Processor} based on the {@link org.apache.camel.model.ProcessorDefinition definition}.
  * <p/>
- * This allows you to implement a custom factory in which you can control the creation of the processors.
- * It also allows you to manipulate the {@link org.apache.camel.model.ProcessorDefinition definition}s for example to
- * configure or change options. Its also possible to add new steps in the route by adding outputs to
+ * This allows you to implement a custom factory in which you can control the creation of the processors. It also allows
+ * you to manipulate the {@link org.apache.camel.model.ProcessorDefinition definition}s for example to configure or
+ * change options. Its also possible to add new steps in the route by adding outputs to
  * {@link org.apache.camel.model.ProcessorDefinition definition}s.
  * <p/>
- * <b>Important:</b> By returning <tt>null</tt> from the create methods you fallback to let the default implementation in Camel create
- * the {@link Processor}. You want to do this if you <i>only</i> want to manipulate the
- * {@link org.apache.camel.model.ProcessorDefinition definition}s.
+ * <b>Important:</b> A custom ProcessorFactory should extend the default implementation
+ * <tt>org.apache.camel.processor.DefaultProcessorFactory</tt> and in the overridden methods, super should be called to
+ * let the default implementation create the processor when custom processors is not created.
  */
 public interface ProcessorFactory {
+
+    /**
+     * Service factory key.
+     */
+    String FACTORY = "processor-factory";
 
     /**
      * Creates the child processor.
      * <p/>
      * The child processor is an output from the given definition, for example the sub route in a splitter EIP.
      *
-     * @param routeContext  the route context
-     * @param definition    the definition which represents the processor
-     * @param mandatory     whether or not the child is mandatory
-     * @return the created processor, or <tt>null</tt> to let the default implementation in Camel create the processor.
-     * @throws Exception can be thrown if error creating the processor
+     * @param  route      the route context
+     * @param  definition the definition which represents the processor
+     * @param  mandatory  whether or not the child is mandatory
+     * @return            the created processor, or <tt>null</tt> to let the default implementation in Camel create the
+     *                    processor.
+     * @throws Exception  can be thrown if error creating the processor
      */
-    Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception;
+    Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception;
 
     /**
      * Creates the processor.
      *
-     * @param routeContext  the route context
-     * @param definition    the definition which represents the processor
-     * @return the created processor, or <tt>null</tt> to let the default implementation in Camel create the processor.
-     * @throws Exception can be thrown if error creating the processor
+     * @param  route      the route context
+     * @param  definition the definition which represents the processor
+     * @return            the created processor, or <tt>null</tt> to let the default implementation in Camel create the
+     *                    processor.
+     * @throws Exception  can be thrown if error creating the processor
      */
-    Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception;
+    Processor createProcessor(Route route, NamedNode definition) throws Exception;
 
     /**
-     * Creates a processor by the name of the definition. This should only be used in some special situations
-     * where the processor is used internally in some features such as camel-cloud.
+     * Creates a processor by the name of the definition. This should only be used in some special situations where the
+     * processor is used internally by Camel itself and some component such as camel-cloud, camel-seda.
      *
-     * @param camelContext     the camel context
-     * @param definitionName   the name of the definition that represents the processor
-     * @param args             arguments for creating the processor (name=vale pairs)
-     * @return the created processor, or <tt>null</tt> if this situation is not yet implemented.
-     * @throws Exception can be thrown if error creating the processor
+     * @param  camelContext   the camel context
+     * @param  definitionName the name of the definition that represents the processor
+     * @param  args           arguments for creating the processor (optimized to use fixed order of parameters)
+     * @return                the created processor, or <tt>null</tt> if this situation is not yet implemented.
+     * @throws Exception      can be thrown if error creating the processor
      */
-    Processor createProcessor(CamelContext camelContext, String definitionName, Map<String, Object> args) throws Exception;
+    Processor createProcessor(CamelContext camelContext, String definitionName, Object[] args) throws Exception;
 
 }

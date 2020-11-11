@@ -23,15 +23,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport {
 
     private String body = "Hello World this file will NOT be moved";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/movefile");
         super.setUp();
@@ -48,11 +50,11 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
         mock.expectedMinimumMessageCount(1);
 
         mock.assertIsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // assert the file is not moved
         File file = new File("target/data/movefile/hello.txt");
-        assertTrue("The file should NOT have been moved", file.exists());
+        assertTrue(file.exists(), "The file should NOT have been moved");
     }
 
     @Override

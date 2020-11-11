@@ -27,9 +27,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-/**
- * Represents the component that manages {@link GoogleCalendarStreamEndpoint}.
- */
 @Component("google-calendar-stream")
 public class GoogleCalendarStreamComponent extends DefaultComponent {
 
@@ -37,7 +34,7 @@ public class GoogleCalendarStreamComponent extends DefaultComponent {
     private Calendar client;
     @Metadata(label = "advanced")
     private GoogleCalendarClientFactory clientFactory;
-    @Metadata(label = "advanced")
+    @Metadata
     private GoogleCalendarStreamConfiguration configuration;
 
     public GoogleCalendarStreamComponent() {
@@ -52,9 +49,10 @@ public class GoogleCalendarStreamComponent extends DefaultComponent {
 
     public Calendar getClient(GoogleCalendarStreamConfiguration endpointConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(endpointConfiguration.getClientId(), endpointConfiguration.getClientSecret(), endpointConfiguration.getScopes(),
-                                                    endpointConfiguration.getApplicationName(), endpointConfiguration.getRefreshToken(),
-                                                    endpointConfiguration.getAccessToken(), null, null, "me");
+            client = getClientFactory().makeClient(endpointConfiguration.getClientId(), endpointConfiguration.getClientSecret(),
+                    endpointConfiguration.getScopes(),
+                    endpointConfiguration.getApplicationName(), endpointConfiguration.getRefreshToken(),
+                    endpointConfiguration.getAccessToken(), null, null, "me");
         }
         return client;
     }

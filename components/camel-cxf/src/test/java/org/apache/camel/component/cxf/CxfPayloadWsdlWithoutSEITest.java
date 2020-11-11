@@ -23,13 +23,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.cxf.binding.soap.SoapFault;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void startService() {
         Object implementor = new PersonImpl();
         String address = "http://localhost:" + getPort1() + "/CxfPayloadWsdlWithoutSEITest/PersonService/";
@@ -45,21 +49,22 @@ public class CxfPayloadWsdlWithoutSEITest extends AbstractCxfWsdlFirstTest {
     @Override
     public void testInvokingServiceWithCamelProducer() {
         Exchange exchange = sendJaxWsMessage("hello");
-        assertEquals("The request should be handled sucessfully ", exchange.isFailed(), false);
-        org.apache.camel.Message out = exchange.getOut();
-        String result =  out.getBody(String.class);
+        assertEquals(false, exchange.isFailed(), "The request should be handled sucessfully");
+        org.apache.camel.Message out = exchange.getMessage();
+        String result = out.getBody(String.class);
         assertStringContains(result, "Bonjour");
 
         exchange = sendJaxWsMessage("");
-        assertEquals("We should get a fault here", exchange.isFailed(), true);
+        assertEquals(true, exchange.isFailed(), "We should get a fault here");
         Throwable ex = exchange.getException();
-        assertTrue("We should get a SoapFault here", ex instanceof SoapFault);
+        assertTrue(ex instanceof SoapFault, "We should get a SoapFault here");
     }
 
     private Exchange sendJaxWsMessage(final String personIdString) {
         Exchange exchange = template.send("direct:producer", new Processor() {
             public void process(final Exchange exchange) {
-                String body = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>" + personIdString + "</personId></GetPerson>\n";
+                String body = "<GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\"><personId>" + personIdString
+                              + "</personId></GetPerson>\n";
                 exchange.getIn().setBody(body);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "GetPerson");
             }

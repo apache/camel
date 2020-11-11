@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -57,36 +58,36 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
 
         switch (cacheOperationFor(exchange)) {
 
-        case GET:
-            doGet(in, out);
-            break;
+            case GET:
+                doGet(in, out);
+                break;
 
-        case PUT:
-            doPut(in, out);
-            break;
+            case PUT:
+                doPut(in, out);
+                break;
 
-        case QUERY:
-            doQuery(in, out, exchange);
-            break;
+            case QUERY:
+                doQuery(in, out, exchange);
+                break;
 
-        case REMOVE:
-            doRemove(in, out);
-            break;
+            case REMOVE:
+                doRemove(in, out);
+                break;
 
-        case CLEAR:
-            doClear(in, out);
-            break;
+            case CLEAR:
+                doClear(in, out);
+                break;
 
-        case SIZE:
-            doSize(in, out);
-            break;
+            case SIZE:
+                doSize(in, out);
+                break;
 
-        case REBALANCE:
-            doRebalance(in, out);
-            break;
+            case REBALANCE:
+                doRebalance(in, out);
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         callback.done(false);
@@ -116,7 +117,9 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
         Object cacheKey = in.getHeader(IgniteConstants.IGNITE_CACHE_KEY);
 
         if (cacheKey == null) {
-            throw new RuntimeCamelException("Cache PUT operation requires the cache key in the CamelIgniteCacheKey header, " + "or a payload of type Map.");
+            throw new RuntimeCamelException(
+                    "Cache PUT operation requires the cache key in the CamelIgniteCacheKey header, "
+                                            + "or a payload of type Map.");
         }
 
         cache.put(cacheKey, in.getBody());
@@ -141,7 +144,7 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
 
         out.setBody(cursor.iterator());
 
-        exchange.addOnCompletion(new Synchronization() {
+        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
             @Override
             public void onFailure(Exchange exchange) {
                 cursor.close();
@@ -203,7 +206,8 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
     }
 
     private IgniteCacheOperation cacheOperationFor(Exchange exchange) {
-        return exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_OPERATION, endpoint.getOperation(), IgniteCacheOperation.class);
+        return exchange.getIn().getHeader(IgniteConstants.IGNITE_CACHE_OPERATION, endpoint.getOperation(),
+                IgniteCacheOperation.class);
     }
 
 }

@@ -16,36 +16,38 @@
  */
 package org.apache.camel.component.aws.xray.json;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
 
 public class JsonTest {
 
     @Test
     public void testJsonParse() {
         JsonStructure json = JsonParser.parse("{\n"
-                + "  \"test\": \"some string\",\n"
-                + "  \"otherKey\": true,\n"
-                + "  \"nextKey\": 1234,\n"
-                + "  \"doubleKey\": 1234.567,\n"
-                + "  \"subElement\": {\n"
-                + "    \"subKey\": \"some other string\",\n"
-                + "    \"complexString\": \"String with JSON syntax elements like .,\\\" { or }\"\n"
-                + "  },\n"
-                + "  \"arrayElement\": [\n"
-                + "    {\n"
-                + "      \"id\": 1,\n"
-                + "      \"name\": \"test1\"\n"
-                + "    },\n"
-                + "    {\n"
-                + "      \"id\": 2,\n"
-                + "      \"name\": \"test2\"\n"
-                + "    }\n"
-                + "  ]\n"
-                + "}");
+                                              + "  \"test\": \"some string\",\n"
+                                              + "  \"otherKey\": true,\n"
+                                              + "  \"nextKey\": 1234,\n"
+                                              + "  \"doubleKey\": 1234.567,\n"
+                                              + "  \"subElement\": {\n"
+                                              + "    \"subKey\": \"some other string\",\n"
+                                              + "    \"complexString\": \"String with JSON syntax elements like .,\\\" { or }\"\n"
+                                              + "  },\n"
+                                              + "  \"arrayElement\": [\n"
+                                              + "    {\n"
+                                              + "      \"id\": 1,\n"
+                                              + "      \"name\": \"test1\"\n"
+                                              + "    },\n"
+                                              + "    {\n"
+                                              + "      \"id\": 2,\n"
+                                              + "      \"name\": \"test2\"\n"
+                                              + "    }\n"
+                                              + "  ]\n"
+                                              + "}");
 
         assertThat(json, is(notNullValue()));
         assertThat(json, is(instanceOf(JsonObject.class)));
@@ -76,23 +78,23 @@ public class JsonTest {
     public void testJsonParseSample() {
 
         JsonStructure json = JsonParser.parse("{"
-                + "  \"name\":\"b\","
-                + "  \"id\":\"6ae1778525198ce8\","
-                + "  \"start_time\":1.50947752281E9,"
-                + "  \"trace_id\":\"1-59f8cc92-4819a77b4109de34405a5643\","
-                + "  \"end_time\":1.50947752442E9,"
-                + "  \"aws\":{"
-                + "    \"xray\":{"
-                + "      \"sdk_version\":\"1.2.0\","
-                + "      \"sdk\":\"X-Ray for Java\""
-                + "    }"
-                + "  },"
-                + "  \"service\":{"
-                + "    \"runtime\":\"Java HotSpot(TM) 64-Bit Server VM\","
-                + "    \"runtime_version\":\"1.8.0_144\""
-                + "  }"
-                + "}"
-                + "}");
+                                              + "  \"name\":\"b\","
+                                              + "  \"id\":\"6ae1778525198ce8\","
+                                              + "  \"start_time\":1.50947752281E9,"
+                                              + "  \"trace_id\":\"1-59f8cc92-4819a77b4109de34405a5643\","
+                                              + "  \"end_time\":1.50947752442E9,"
+                                              + "  \"aws\":{"
+                                              + "    \"xray\":{"
+                                              + "      \"sdk_version\":\"1.2.0\","
+                                              + "      \"sdk\":\"X-Ray for Java\""
+                                              + "    }"
+                                              + "  },"
+                                              + "  \"service\":{"
+                                              + "    \"runtime\":\"Java HotSpot(TM) 64-Bit Server VM\","
+                                              + "    \"runtime_version\":\"1.8.0_144\""
+                                              + "  }"
+                                              + "}"
+                                              + "}");
 
         assertThat(json, is(notNullValue()));
         JsonObject jsonObj = (JsonObject) json;
@@ -117,30 +119,30 @@ public class JsonTest {
     @Test
     public void testJsonParseWithArray() {
         JsonStructure json = JsonParser.parse("{"
-                + "  \"name\":\"c\","
-                + "  \"id\":\"6ada7c7013b2c681\","
-                + "  \"start_time\":1.509484895232E9,"
-                + "  \"trace_id\":\"1-59f8e935-11c64d09c90803f69534c9af\","
-                + "  \"end_time\":1.509484901458E9,"
-                + "  \"subsegments\":["
-                + "    {"
-                + "      \"name\":\"SendingTo_log_test\","
-                + "      \"id\":\"545118f5c69e2973\","
-                + "      \"start_time\":1.509484895813E9,"
-                + "      \"end_time\":1.509484896709E9"
-                + "    }"
-                + "  ],"
-                + "  \"aws\":{"
-                + "    \"xray\":{"
-                + "      \"sdk_version\":\"1.2.0\","
-                + "      \"sdk\":\"X-Ray for Java\""
-                + "    }"
-                + "  },"
-                + "  \"service\":{"
-                + "    \"runtime\":\"Java HotSpot(TM) 64-Bit Server VM\","
-                + "    \"runtime_version\":\"1.8.0_144\""
-                + "  }"
-                + "}\u0000\u0000");
+                                              + "  \"name\":\"c\","
+                                              + "  \"id\":\"6ada7c7013b2c681\","
+                                              + "  \"start_time\":1.509484895232E9,"
+                                              + "  \"trace_id\":\"1-59f8e935-11c64d09c90803f69534c9af\","
+                                              + "  \"end_time\":1.509484901458E9,"
+                                              + "  \"subsegments\":["
+                                              + "    {"
+                                              + "      \"name\":\"SendingTo_log_test\","
+                                              + "      \"id\":\"545118f5c69e2973\","
+                                              + "      \"start_time\":1.509484895813E9,"
+                                              + "      \"end_time\":1.509484896709E9"
+                                              + "    }"
+                                              + "  ],"
+                                              + "  \"aws\":{"
+                                              + "    \"xray\":{"
+                                              + "      \"sdk_version\":\"1.2.0\","
+                                              + "      \"sdk\":\"X-Ray for Java\""
+                                              + "    }"
+                                              + "  },"
+                                              + "  \"service\":{"
+                                              + "    \"runtime\":\"Java HotSpot(TM) 64-Bit Server VM\","
+                                              + "    \"runtime_version\":\"1.8.0_144\""
+                                              + "  }"
+                                              + "}\u0000\u0000");
 
         assertThat(json, is(notNullValue()));
         JsonObject jsonObj = (JsonObject) json;

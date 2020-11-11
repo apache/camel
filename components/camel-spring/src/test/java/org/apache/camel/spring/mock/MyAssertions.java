@@ -18,12 +18,12 @@ package org.apache.camel.spring.mock;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
 import org.springframework.beans.factory.InitializingBean;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
- * An example bean which adds some expectations on some mock endpoints and then
- * asserts that the expectactions are met.
+ * An example bean which adds some expectations on some mock endpoints and then asserts that the expectactions are met.
  */
 // START SNIPPET: example
 public class MyAssertions implements InitializingBean {
@@ -42,8 +42,8 @@ public class MyAssertions implements InitializingBean {
 
     public void assertEndpointsValid() throws Exception {
         // now lets perform some assertions that the test worked as we expect
-        Assert.assertNotNull("Should have a matched endpoint", matched);
-        Assert.assertNotNull("Should have a notMatched endpoint", notMatched);
+        assertNotNull(matched, "Should have a matched endpoint");
+        assertNotNull(notMatched, "Should have a notMatched endpoint");
         MockEndpoint.assertIsSatisfied(matched, notMatched);
     }
 }

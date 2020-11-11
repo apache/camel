@@ -37,9 +37,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.file.GenericFileHelper.asExclusiveReadLockKey;
 
 /**
- * Acquires exclusive read lock to the given file. Will wait until the lock is granted.
- * After granting the read lock it is released, we just want to make sure that when we start
- * consuming the file its not currently in progress of being written by third party.
+ * Acquires exclusive read lock to the given file. Will wait until the lock is granted. After granting the read lock it
+ * is released, we just want to make sure that when we start consuming the file its not currently in progress of being
+ * written by third party.
  */
 public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(FileLockExclusiveReadLockStrategy.class);
@@ -53,7 +53,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // must call super
         if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
             return false;
@@ -83,21 +84,25 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                     if (delta > timeout) {
                         CamelLogger.log(LOG, readLockLoggingLevel,
                                 "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
-                        // we could not get the lock within the timeout period, so return false
+                        // we could not get the lock within the timeout period,
+                        // so return false
                         return false;
                     }
                 }
 
                 if (!target.exists()) {
-                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
+                    CamelLogger.log(LOG, readLockLoggingLevel,
+                            "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
                     return false;
                 }
 
-                // get the lock using either try lock or not depending on if we are using timeout or not
+                // get the lock using either try lock or not depending on if we
+                // are using timeout or not
                 try {
                     lock = timeout > 0 ? channel.tryLock() : channel.lock();
                 } catch (IllegalStateException ex) {
-                    // Also catch the OverlappingFileLockException here. Do nothing here
+                    // Also catch the OverlappingFileLockException here. Do
+                    // nothing here
                 }
                 if (lock != null) {
                     LOG.trace("Acquired exclusive read lock: {} to file: {}", lock, target);
@@ -105,14 +110,17 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 } else {
                     boolean interrupted = sleep();
                     if (interrupted) {
-                        // we were interrupted while sleeping, we are likely being shutdown so return false
+                        // we were interrupted while sleeping, we are likely
+                        // being shutdown so return false
                         return false;
                     }
                 }
             }
         } catch (IOException e) {
-            // must handle IOException as some apps on Windows etc. will still somehow hold a lock to a file
-            // such as AntiVirus or MS Office that has special locks for it's supported files
+            // must handle IOException as some apps on Windows etc. will still
+            // somehow hold a lock to a file
+            // such as AntiVirus or MS Office that has special locks for it's
+            // supported files
             if (timeout == 0) {
                 // if not using timeout, then we cant retry, so return false
                 return false;
@@ -120,7 +128,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
             LOG.debug("Cannot acquire read lock. Will try again.", e);
             boolean interrupted = sleep();
             if (interrupted) {
-                // we were interrupted while sleeping, we are likely being shutdown so return false
+                // we were interrupted while sleeping, we are likely being
+                // shutdown so return false
                 return false;
             }
         } finally {
@@ -144,14 +153,16 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     }
 
     @Override
-    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations,
-                                              GenericFile<File> file, Exchange exchange) throws Exception {
+    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         // must call super
         super.doReleaseExclusiveReadLock(operations, file, exchange);
 
         FileLock lock = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), FileLock.class);
-        RandomAccessFile rac = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
-        Channel channel = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
+        RandomAccessFile rac
+                = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_EXCLUSIVE_LOCK), RandomAccessFile.class);
+        Channel channel
+                = exchange.getProperty(asExclusiveReadLockKey(file, Exchange.FILE_LOCK_CHANNEL_FILE), FileChannel.class);
 
         String target = file.getFileName();
         if (lock != null) {

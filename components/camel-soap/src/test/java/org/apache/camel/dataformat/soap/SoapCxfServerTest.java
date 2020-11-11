@@ -28,17 +28,19 @@ import org.apache.camel.Produce;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Checks for interoperability between a CXF server that is attached using 
- * the Camel transport for CXF and a dynamic proxy using the SOAP data format
+ * Checks for interoperability between a CXF server that is attached using the Camel transport for CXF and a dynamic
+ * proxy using the SOAP data format
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@CamelSpringTest
 @ContextConfiguration
 public class SoapCxfServerTest extends RouteBuilder {
     @Produce("direct:camelClient")
@@ -49,10 +51,10 @@ public class SoapCxfServerTest extends RouteBuilder {
         GetCustomersByName request = new GetCustomersByName();
         request.setName("test");
         GetCustomersByNameResponse response = customerServiceProxy.getCustomersByName(request);
-        Assert.assertNotNull(response);
+        assertNotNull(response);
         List<Customer> customers = response.getReturn();
-        Assert.assertEquals(1, customers.size());
-        Assert.assertEquals("test", customers.get(0).getName());
+        assertEquals(1, customers.size());
+        assertEquals("test", customers.get(0).getName());
     }
 
     @Test
@@ -61,10 +63,10 @@ public class SoapCxfServerTest extends RouteBuilder {
         request.setName("none");
         try {
             customerServiceProxy.getCustomersByName(request);
-            Assert.fail("NoSuchCustomerException expected");
+            fail("NoSuchCustomerException expected");
         } catch (NoSuchCustomerException e) {
             NoSuchCustomer info = e.getFaultInfo();
-            Assert.assertEquals("none", info.getCustomerId());
+            assertEquals("none", info.getCustomerId());
         }
     }
 
@@ -74,9 +76,9 @@ public class SoapCxfServerTest extends RouteBuilder {
         ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, true);
         SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
         from("direct:camelClient") //
-            .marshal(soapDataFormat) //
-            .to("direct:cxfEndpoint") //
-            .unmarshal(soapDataFormat);
+                .marshal(soapDataFormat) //
+                .to("direct:cxfEndpoint") //
+                .unmarshal(soapDataFormat);
     }
 
 }

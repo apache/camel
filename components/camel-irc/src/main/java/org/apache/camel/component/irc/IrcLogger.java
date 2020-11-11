@@ -40,67 +40,67 @@ public class IrcLogger extends IRCEventAdapter {
 
     @Override
     public void onError(int num, String msg) {
-        log.error("Server: " + server + " - onError num=" + num + " msg=\"" + msg + "\"");
+        log.error("Server: {} - onError num={} msg=\"{}\"", server, num, msg);
     }
 
     @Override
     public void onError(String msg) {
-        log.error("Server: " + server + " - onError msg=\"" + msg + "\"");
+        log.error("Server: {} - onError msg=\"{}\"", server, msg);
     }
 
     @Override
     public void onInvite(String chan, IRCUser user, String passiveNick) {
-        log.debug("Server: " + server + " - onInvite chan=" + chan + " user=" + user + " passiveNick=" + passiveNick);
+        log.debug("Server: {} - onInvite chan={} user={} passiveNick={}", server, chan, user, passiveNick);
     }
 
     @Override
     public void onJoin(String chan, IRCUser user) {
-        log.debug("Server: " + server + " - onJoin chan=" + chan + " user=" + user);
+        log.debug("Server: {} - onJoin chan={} user={}", server, chan, user);
     }
 
     @Override
     public void onKick(String chan, IRCUser user, String passiveNick, String msg) {
-        log.debug("Server: " + server + " - onKick chan=" + chan + " user=" + user + " passiveNick=" + passiveNick + " msg=\"" + msg + "\"");
+        log.debug("Server: {} - onKick chan={} user={} passiveNick={} msg=\"{}\"", server, chan, user, passiveNick, msg);
     }
 
     @Override
     public void onMode(String chan, IRCUser user, IRCModeParser ircModeParser) {
-        log.info("Server: " + server + " - onMode chan=" + chan + " user=" + user + " ircModeParser=" + ircModeParser);
+        log.info("Server: {} - onMode chan={} user={} ircModeParser={}", server, chan, user, ircModeParser);
     }
 
     @Override
     public void onMode(IRCUser user, String passiveNick, String mode) {
-        log.info("Server: " + server + " - onMode user=" + user + " passiveNick=" + passiveNick + " mode=" + mode);
+        log.info("Server: {} - onMode user={} passiveNick={} mode={}", server, user, passiveNick, mode);
     }
 
     @Override
     public void onNick(IRCUser user, String newNick) {
-        log.debug("Server: " + server + " - onNick user=" + user + " newNick=" + newNick);
+        log.debug("Server: {} - onNick user={} newNick={}", server, user, newNick);
     }
 
     @Override
     public void onNotice(String target, IRCUser user, String msg) {
-        log.debug("Server: " + server + " - onNotice target=" + target + " user=" + user + " msg=\"" + msg + "\"");
+        log.debug("Server: {} - onNotice target={} user={} msg=\"{}\"", server, target, user, msg);
     }
 
     @Override
     public void onPart(String chan, IRCUser user, String msg) {
-        log.debug("Server: " + server + " - onPart chan=" + chan + " user=" + user + " msg=\"" + msg + "\"");
+        log.debug("Server: {} - onPart chan={} user={} msg=\"{}\"", server, chan, user, msg);
     }
 
     @Override
     public void onPing(String ping) {
-        log.info("Server: " + server + " - onPing ping=" + ping);
+        log.info("Server: {} - onPing ping={}", server, ping);
     }
 
     @Override
     public void onPrivmsg(String target, IRCUser user, String msg) {
-        log.debug("Server: " + server + " - onPrivmsg target=" + target + " user=" + user + " msg=\"" + msg + "\"");
+        log.debug("Server: {} - onPrivmsg target={} user={} msg=\"{}\"", server, target, user, msg);
     }
 
     @Override
     public void onQuit(IRCUser user, String msg) {
-        log.debug("Server: " + server + " - onQuit user=" + user + " msg=\"" + msg + "\"");
+        log.debug("Server: {} - onQuit user={} msg=\"{}\"", server, user, msg);
     }
 
     @Override
@@ -110,16 +110,17 @@ public class IrcLogger extends IRCEventAdapter {
 
     @Override
     public void onReply(int num, String value, String msg) {
-        log.debug("Server: " + server + " - onReply num=" + num + " value=\"" + value + "\" msg=\"" + msg + "\"");
-    }    
+        log.debug("Server: {} - onReply num={} value=\"{}\" msg=\"{}\"", server, num, value, msg);
+    }
 
     @Override
     public void onTopic(String chan, IRCUser user, String topic) {
-        log.debug("Server: " + server + " - onTopic chan=" + chan + " user=" + user + " topic=" + topic);
+        log.debug("Server: {} - onTopic chan={} user={} topic={}", server, chan, user, topic);
     }
 
     @Override
     public void unknown(String prefix, String command, String middle, String trailing) {
-        log.info("Server: " + server + " - unknown prefix=" + prefix + " command=" + command + " middle=" + middle + " trailing=" + trailing);
+        log.info("Server: {} - unknown prefix={} command={} middle={} trailing={}", server, prefix, command,
+                middle, trailing);
     }
 }

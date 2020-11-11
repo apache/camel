@@ -25,17 +25,20 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ironmq.IronMQConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Integration test that requires ironmq account.")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("Integration test that requires ironmq account.")
 public class IronMQFIFOTest extends CamelTestSupport {
     private String projectId = "replace-this";
     private String token = "replace-this";
 
-    private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token + "&maxMessagesPerPoll=20&ironMQCloud=https://mq-v3-aws-us-east-1.iron.io";
+    private final String ironMQEndpoint = "ironmq:testqueue?projectId=" + projectId + "&token=" + token
+                                          + "&maxMessagesPerPoll=20&ironMQCloud=https://mq-v3-aws-us-east-1.iron.io";
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -43,7 +46,7 @@ public class IronMQFIFOTest extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @Before
+    @BeforeEach
     public void clearQueue() {
         template.sendBodyAndHeader(ironMQEndpoint, "fo", IronMQConstants.OPERATION, IronMQConstants.CLEARQUEUE);
         for (int i = 1; i <= 50; i++) {

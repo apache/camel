@@ -2,13 +2,13 @@
 = Bean Binding
 
 Bean Binding in Camel defines both which methods are invoked and also
-how the xref:message.adoc[Message] is converted into the parameters of
+how the xref:{eip-vc}:eips:message.adoc[Message] is converted into the parameters of
 the method when it is invoked.
 
 [[BeanBinding-Choosingthemethodtoinvoke]]
 == Choosing the method to invoke
 
-The binding of a Camel xref:message.adoc[Message] to a bean method call
+The binding of a Camel xref:{eip-vc}:eips:message.adoc[Message] to a bean method call
 can occur in different ways, in the following order of importance:
 
 * if the message contains the header *CamelBeanMethodName* then that
@@ -169,12 +169,12 @@ See the following sections for more detail.
 
 You can use the xref:parameter-binding-annotations.adoc[Parameter
 Binding Annotations] to customize how parameter values are created from
-the xref:message.adoc[Message]
+the xref:{eip-vc}:eips:message.adoc[Message]
 
 [[BeanBinding-Examples]]
 === Examples
 
-For example, a xref:bean-eip.adoc[Bean] such as:
+For example, a xref:{eip-vc}:eips:bean-eip.adoc[Bean] such as:
 
 [source,syntaxhighlighter-pre]
 ----
@@ -231,15 +231,15 @@ the method option
 * The value is a numeric value such as `123` or `7`
 * The value is a String enclosed with either single or double quotes
 * The value is null which denotes a `null` value
-* It can be evaluated using the xref:simple-language.adoc[Simple] language, which
+* It can be evaluated using the xref:components:languages:simple-language.adoc[Simple] language, which
 means you can use, e.g., body, header.foo and other
-xref:simple-language.adoc[Simple] tokens. Notice the tokens must be enclosed with
-$\{ }.
+xref:components:languages:simple-language.adoc[Simple] tokens. Notice the tokens must be enclosed with
+${ }.
 
 Any other value is consider to be a type declaration instead - see the
 next section about specifying types for overloaded methods.
 
-When invoking a xref:bean-eip.adoc[Bean] you can instruct Camel to invoke a
+When invoking a xref:{eip-vc}:eips:bean-eip.adoc[Bean] you can instruct Camel to invoke a
 specific method by providing the method name:
 
 [source,syntaxhighlighter-pre]
@@ -276,8 +276,8 @@ body as shown:
 .bean(OrderService.class, "doSomething(${body}, true)") 
 ----
 
-The syntax of the parameters is using the xref:simple-language.adoc[Simple]
-expression language so we have to use $\{ } placeholders in the body to
+The syntax of the parameters is using the xref:components:languages:simple-language.adoc[Simple]
+expression language so we have to use ${ } placeholders in the body to
 refer to the message body.
 
 If you want to pass in a `null` value, then you can explicit define this
@@ -312,7 +312,7 @@ first has the content 'World' (without quotes), and the 2nd has the
 value of 5.
 Camel will automatically convert these values to the parameters' types.
 
-Having the power of the xref:simple-language.adoc[Simple] language allows us to
+Having the power of the xref:components:languages:simple-language.adoc[Simple] language allows us to
 bind to message headers and other values such as:
 
 [source,syntaxhighlighter-pre]
@@ -320,7 +320,7 @@ bind to message headers and other values such as:
 .bean(OrderService.class, "doSomething(${body}, ${header.high})") 
 ----
 
-You can also use the OGNL support of the xref:simple-language.adoc[Simple]
+You can also use the OGNL support of the xref:components:languages:simple-language.adoc[Simple]
 expression language. Now suppose the message body is an object which has
 a method named `asXml`. To invoke the `asXml` method we can do as
 follows:
@@ -343,7 +343,7 @@ use `.to` instead as shown:
 
 *Since Camel 2.8*
 
-If you have a xref:bean-eip.adoc[Bean] with overloaded methods, you can now
+If you have a xref:{eip-vc}:eips:bean-eip.adoc[Bean] with overloaded methods, you can now
 specify parameter types in the method name so Camel can match the method
 you intend to use.
 

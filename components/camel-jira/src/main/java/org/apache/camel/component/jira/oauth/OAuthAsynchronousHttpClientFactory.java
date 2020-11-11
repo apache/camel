@@ -41,13 +41,15 @@ import org.slf4j.LoggerFactory;
  */
 public class OAuthAsynchronousHttpClientFactory {
 
-    private static final String JIRA_REST_CLIENT_VERSION = MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-client-api");
+    private static final String JIRA_REST_CLIENT_VERSION
+            = MavenUtils.getVersion("com.atlassian.jira", "jira-rest-java-client-api");
 
     @SuppressWarnings("unchecked")
     public DisposableHttpClient createClient(final URI serverUri, final AuthenticationHandler authenticationHandler) {
         final HttpClientOptions options = new HttpClientOptions();
 
-        final DefaultHttpClientFactory defaultHttpClientFactory = new DefaultHttpClientFactory(new NoOpEventPublisher(),
+        final DefaultHttpClientFactory defaultHttpClientFactory = new DefaultHttpClientFactory(
+                new NoOpEventPublisher(),
                 new RestClientApplicationProperties(serverUri),
                 new ThreadLocalContextManager() {
                     @Override
@@ -167,11 +169,12 @@ public class OAuthAsynchronousHttpClientFactory {
         static String getVersion(String groupId, String artifactId) {
             final Properties props = new Properties();
             String pomProps = String.format("/META-INF/maven/%s/%s/pom.properties", groupId, artifactId);
-            try (InputStream resourceAsStream  = AuthenticationHandler.class.getResourceAsStream(pomProps)) {
+            try (InputStream resourceAsStream = AuthenticationHandler.class.getResourceAsStream(pomProps)) {
                 props.load(resourceAsStream);
                 return props.getProperty("version", UNKNOWN_VERSION);
             } catch (Exception e) {
-                LOG.debug("Could not find version for Jira Rest Java Client maven artifact {}:{}. Error: {}", groupId, artifactId, e.getMessage());
+                LOG.debug("Could not find version for Jira Rest Java Client maven artifact {}:{}. Error: {}", groupId,
+                        artifactId, e.getMessage());
                 return UNKNOWN_VERSION;
             }
         }

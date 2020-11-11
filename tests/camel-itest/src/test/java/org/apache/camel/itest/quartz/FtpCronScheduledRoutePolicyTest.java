@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
@@ -31,32 +31,33 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-/**
- *
- */
-@Ignore("Manual test")
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+
+@Disabled("Manual test")
 public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
 
     protected FtpServer ftpServer;
-    private String ftp = "ftp:localhost:20128/myapp?password=admin&username=admin&delay=5s&idempotent=false&localWorkDirectory=target/tmp";
+    private String ftp
+            = "ftp:localhost:20128/myapp?password=admin&username=admin&delay=5000&idempotent=false&localWorkDirectory=target/tmp";
 
     @Test
-    public void testFtpCronScheduledRoutePolicyTest() throws Exception {
+    void testFtpCronScheduledRoutePolicyTest() throws Exception {
         template.sendBodyAndHeader("file:res/home/myapp", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         Thread.sleep(10 * 1000 * 60);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
                 policy.setRouteStartTime("* 0/2 * * * ?");
                 policy.setRouteStopTime("* 1/2 * * * ?");
@@ -64,15 +65,15 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setTimeUnit(TimeUnit.SECONDS);
 
                 from(ftp)
-                    .noAutoStartup().routePolicy(policy).shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                    .log("Processing ${file:name}")
-                    .to("log:done");
+                        .noAutoStartup().routePolicy(policy).shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
+                        .log("Processing ${file:name}")
+                        .to("log:done");
             }
         };
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("res");
@@ -82,14 +83,14 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         ftpServer.stop();
         ftpServer = null;
     }
 
-    protected void initFtpServer() throws Exception {
+    protected void initFtpServer() {
         FtpServerFactory serverFactory = new FtpServerFactory();
 
         // setup user management to read our users.properties and use clear text passwords

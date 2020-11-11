@@ -21,10 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.service.ServiceHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -36,7 +35,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
     private CamelContext context4;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -44,31 +43,27 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
         context3 = new DefaultCamelContext();
         context4 = new DefaultCamelContext();
 
-        ServiceHelper.startService(context2);
-        ServiceHelper.startService(context3);
-        ServiceHelper.startService(context4);
+        context2.start();
+        context3.start();
+        context4.start();
 
         // add routes after CamelContext has been started
         RouteBuilder routeBuilder = createRouteBuilderCamelContext2();
-        if (routeBuilder != null) {
-            context2.addRoutes(routeBuilder);
-        }
+        context2.addRoutes(routeBuilder);
 
         routeBuilder = createRouteBuilderCamelContext3();
-        if (routeBuilder != null) {
-            context3.addRoutes(routeBuilder);
-        }
+        context3.addRoutes(routeBuilder);
 
         routeBuilder = createRouteBuilderCamelContext4();
-        if (routeBuilder != null) {
-            context4.addRoutes(routeBuilder);
-        }
+        context4.addRoutes(routeBuilder);
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(context2, context3, context4);
+        context2.stop();
+        context3.stop();
+        context4.stop();
         super.tearDown();
     }
 

@@ -24,8 +24,9 @@ public class ChoiceWithSimpleExpressionTest extends ChoiceTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice().when(simple("${header.foo} == 'bar'")).to("mock:x").when(simple("${in.header.foo} == 'cheese'")).to("mock:y").otherwise().to("mock:z")
-                    .end().to("mock:end");
+                from("direct:start").choice().when(simple("${header.foo} == 'bar'")).to("mock:x")
+                        .when(simple("${in.header.foo} == 'cheese'")).to("mock:y").otherwise().to("mock:z")
+                        .end().to("mock:end");
             }
         };
     }

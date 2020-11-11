@@ -40,17 +40,18 @@ public final class ZooKeeperCuratorHelper {
             RetryPolicy retryPolicy = configuration.getRetryPolicy();
             if (retryPolicy == null) {
                 retryPolicy = new ExponentialBackoffRetry(
-                    (int)configuration.getReconnectBaseSleepTimeUnit().toMillis(configuration.getReconnectBaseSleepTime()),
-                    (int)configuration.getReconnectMaxSleepTimeUnit().toMillis(configuration.getReconnectMaxSleepTime()),
-                    configuration.getReconnectMaxRetries());
+                        (int) configuration.getReconnectBaseSleepTimeUnit().toMillis(configuration.getReconnectBaseSleepTime()),
+                        configuration.getReconnectMaxRetries(),
+                        (int) configuration.getReconnectMaxSleepTimeUnit().toMillis(configuration.getReconnectMaxSleepTime()));
             }
 
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-                .connectString(String.join(",", configuration.getNodes()))
-                .sessionTimeoutMs((int) configuration.getSessionTimeoutUnit().toMillis(configuration.getSessionTimeout()))
-                .connectionTimeoutMs((int) configuration.getConnectionTimeoutUnit().toMillis(configuration.getConnectionTimeout()))
-                .maxCloseWaitMs((int) configuration.getMaxCloseWaitUnit().toMillis(configuration.getMaxCloseWait()))
-                .retryPolicy(retryPolicy);
+                    .connectString(String.join(",", configuration.getNodes()))
+                    .sessionTimeoutMs((int) configuration.getSessionTimeoutUnit().toMillis(configuration.getSessionTimeout()))
+                    .connectionTimeoutMs(
+                            (int) configuration.getConnectionTimeoutUnit().toMillis(configuration.getConnectionTimeout()))
+                    .maxCloseWaitMs((int) configuration.getMaxCloseWaitUnit().toMillis(configuration.getMaxCloseWait()))
+                    .retryPolicy(retryPolicy);
 
             Optional.ofNullable(configuration.getNamespace()).ifPresent(builder::namespace);
             Optional.ofNullable(configuration.getAuthInfoList()).ifPresent(builder::authorization);
@@ -61,11 +62,12 @@ public final class ZooKeeperCuratorHelper {
         return curator;
     }
 
-    public static <T> ServiceDiscovery<T> createServiceDiscovery(ZooKeeperCuratorConfiguration configuration, CuratorFramework curator, Class<T> payloadType) {
+    public static <T> ServiceDiscovery<T> createServiceDiscovery(
+            ZooKeeperCuratorConfiguration configuration, CuratorFramework curator, Class<T> payloadType) {
         return ServiceDiscoveryBuilder.builder(payloadType)
-            .client(curator)
-            .basePath(configuration.getBasePath())
-            .serializer(new JsonInstanceSerializer<>(payloadType))
-            .build();
+                .client(curator)
+                .basePath(configuration.getBasePath())
+                .serializer(new JsonInstanceSerializer<>(payloadType))
+                .build();
     }
 }

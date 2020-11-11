@@ -21,18 +21,19 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * To test that using polling consumer with file will not keep scheduled file
- * consumer keep running in the background. It should suspend/resume the
- * consumer on demand instead.
+ * To test that using polling consumer with file will not keep scheduled file consumer keep running in the background.
+ * It should suspend/resume the consumer on demand instead.
  */
 public class FilePollingConsumerTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/enrich");
         super.setUp();
@@ -60,7 +61,7 @@ public class FilePollingConsumerTest extends ContextTestSupport {
         Thread.sleep(1000);
 
         File file = new File("target/data/enrich/bye.txt");
-        assertTrue("File should exist " + file, file.exists());
+        assertTrue(file.exists(), "File should exist " + file);
 
         consumer.stop();
     }

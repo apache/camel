@@ -19,6 +19,8 @@ package org.apache.camel.component.twitter.timeline;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 
@@ -26,6 +28,8 @@ import twitter4j.StatusUpdate;
  * Produces text as a status update.
  */
 public class UserProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserProducer.class);
 
     private TwitterEndpoint endpoint;
 
@@ -60,15 +64,15 @@ public class UserProducer extends DefaultProducer {
 
     private Status updateStatus(StatusUpdate status) throws Exception {
         Status response = endpoint.getProperties().getTwitter().updateStatus(status);
-        log.debug("Updated status: {}", status);
-        log.debug("Status id: {}", response.getId());
+        LOG.debug("Updated status: {}", status);
+        LOG.debug("Status id: {}", response.getId());
         return response;
     }
 
     private Status updateStatus(String status) throws Exception {
         Status response = endpoint.getProperties().getTwitter().updateStatus(status);
-        log.debug("Updated status: {}", status);
-        log.debug("Status id: {}", response.getId());
+        LOG.debug("Updated status: {}", status);
+        LOG.debug("Status id: {}", response.getId());
         return response;
     }
 }

@@ -19,10 +19,12 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -31,14 +33,14 @@ public class AdviceWithTwoRoutesOnExceptionIssueTest extends ContextTestSupport 
 
     @Test
     public void testAdviceWith() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinition("a"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition("a"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint().to("mock:error");
             }
         });
 
-        RouteReifier.adviceWith(context.getRouteDefinition("b"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition("b"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:b").skipSendToOriginalEndpoint().to("mock:error");

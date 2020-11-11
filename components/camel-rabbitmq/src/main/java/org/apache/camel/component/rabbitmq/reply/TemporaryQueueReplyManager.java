@@ -24,14 +24,19 @@ import com.rabbitmq.client.AMQP.Queue.DeclareOk;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.impl.recovery.AutorecoveringConnection;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link ReplyManager} when using temporary queues.
  */
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TemporaryQueueReplyManager.class);
 
     private RabbitConsumer consumer;
 
@@ -40,14 +45,16 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     }
 
     @Override
-    protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                              String originalCorrelationId, String correlationId, long requestTimeout) {
+    protected ReplyHandler createReplyHandler(
+            ReplyManager replyManager, Exchange exchange, AsyncCallback callback, String originalCorrelationId,
+            String correlationId,
+            long requestTimeout) {
         return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
     @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
-        log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
+        LOG.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
 
         ReplyHandler handler = correlation.remove(correlationId);
         if (handler != null) {
@@ -65,34 +72,50 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             correlation.remove(correlationID);
             handler.onReply(correlationID, properties, message);
         } else {
-            // we could not correlate the received reply message to a matching request and therefore
+            // we could not correlate the received reply message to a matching
+            // request and therefore
             // we cannot continue routing the unknown message
             // log a warn and then ignore the message
-            log.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
+            LOG.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
         }
     }
 
     @Override
     protected Connection createListenerContainer() throws Exception {
 
-        log.trace("Creating connection");
+        LOG.trace("Creating connection");
         Connection conn = endpoint.connect(executorService);
 
-        log.trace("Creating channel");
+        LOG.trace("Creating channel");
         Channel channel = conn.createChannel();
         // setup the basicQos
         if (endpoint.isPrefetchEnabled()) {
-            channel.basicQos(endpoint.getPrefetchSize(), endpoint.getPrefetchCount(),
-                            endpoint.isPrefetchGlobal());
+            channel.basicQos(endpoint.getPrefetchSize(), endpoint.getPrefetchCount(), endpoint.isPrefetchGlobal());
         }
 
-        //Let the server pick a random name for us
+        // Let the server pick a random name for us
         DeclareOk result = channel.queueDeclare();
-        log.debug("Using temporary queue name: {}", result.getQueue());
+        LOG.debug("Using temporary queue name: {}", result.getQueue());
         setReplyTo(result.getQueue());
 
-        //TODO check for the RabbitMQConstants.EXCHANGE_NAME header
+        // TODO check for the RabbitMQConstants.EXCHANGE_NAME header
         channel.queueBind(getReplyTo(), endpoint.getExchangeName(), getReplyTo());
+
+        //Add QueueRecoveryListener to notify when temporary queue name changes due to recovery
+        if (conn instanceof AutorecoveringConnection) {
+            ((AutorecoveringConnection) conn).addQueueRecoveryListener((oldName, newName) -> {
+                LOG.debug("Temporary queue name {} was changed to {}. Updating replyTo.", oldName, newName);
+                setReplyTo(newName);
+
+                LOG.debug("Trying to rebind the new temporary queue to update routingKey");
+                try {
+                    channel.queueBind(newName, endpoint.getExchangeName(), newName);
+                    channel.queueUnbind(newName, endpoint.getExchangeName(), oldName);
+                } catch (IOException e) {
+                    LOG.warn("Failed to bind or unbind a queue. This exception is ignored.", e);
+                }
+            });
+        }
 
         consumer = new RabbitConsumer(this, channel);
         consumer.start();
@@ -106,7 +129,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         consumer.stop();
     }
 
-    //TODO combine with class in RabbitMQConsumer
+    // TODO combine with class in RabbitMQConsumer
     class RabbitConsumer extends com.rabbitmq.client.DefaultConsumer {
 
         private final TemporaryQueueReplyManager consumer;
@@ -114,8 +137,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         private String tag;
 
         /**
-         * Constructs a new instance and records its association to the
-         * passed-in channel.
+         * Constructs a new instance and records its association to the passed-in channel.
          *
          * @param channel the channel to which this consumer is attached
          */
@@ -126,8 +148,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
 
         @Override
-        public void handleDelivery(String consumerTag, Envelope envelope,
-                                   AMQP.BasicProperties properties, byte[] body) throws IOException {
+        public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
+                throws IOException {
             consumer.onMessage(properties, body);
         }
 

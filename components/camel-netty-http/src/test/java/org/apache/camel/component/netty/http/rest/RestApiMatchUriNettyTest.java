@@ -19,9 +19,16 @@ package org.apache.camel.component.netty.http.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.rest.RestParamType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestApiMatchUriNettyTest extends BaseNettyTest {
+
+    protected Logger log = LoggerFactory.getLogger(RestApiMatchUriNettyTest.class);
 
     @Test
     public void testApi() throws Exception {
@@ -40,11 +47,12 @@ public class RestApiMatchUriNettyTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 restConfiguration().component("netty-http").host("localhost").port(getPort()).apiContextPath("/api-doc")
-                    .endpointProperty("matchOnUriPrefix", "true")
-                    .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3");
+                        .endpointProperty("matchOnUriPrefix", "true")
+                        .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing")
+                        .apiProperty("api.version", "1.2.3");
 
                 rest("/hello").consumes("application/json").produces("application/json")
-                    .get("/hi/{name}").description("Saying hi")
+                        .get("/hi/{name}").description("Saying hi")
                         .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").endParam()
                         .to("log:hi");
             }

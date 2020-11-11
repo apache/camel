@@ -24,10 +24,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.debugger.DefaultDebugger;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.support.BreakpointSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DebugSingleStepConditionTest extends ContextTestSupport {
 
@@ -36,7 +40,7 @@ public class DebugSingleStepConditionTest extends ContextTestSupport {
     private Condition beerCondition;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

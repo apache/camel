@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
@@ -25,18 +26,21 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled
 public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
     @EndpointInject("kafka:" + TOPIC
-            + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false&allowManualCommit=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                    + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false&allowManualCommit=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -44,17 +48,19 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
-    @Before
+    @BeforeEach
     public void before() {
         Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
     }
 
-    @After
+    @AfterEach
     public void after() {
         if (producer != null) {
             producer.close();
         }
+        // clean all test topics
+        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
     }
 
     @Override
@@ -63,13 +69,11 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
             @Override
             public void configure() throws Exception {
-                from(from).routeId("foo")
-                    .to(to)
-                    .process(e -> {
-                        KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-                        assertNotNull(manual);
-                        manual.commitSync();
-                    });
+                from(from).routeId("foo").to(to).process(e -> {
+                    KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                    assertNotNull(manual);
+                    manual.commitSync();
+                });
             }
         };
     }
@@ -78,7 +82,8 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
     public void kafkaManualCommit() throws InterruptedException, IOException {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
-        // The LAST_RECORD_BEFORE_COMMIT header should include a value as we use manual commit
+        // The LAST_RECORD_BEFORE_COMMIT header should include a value as we use
+        // manual commit
         to.allMessages().header(KafkaConstants.LAST_RECORD_BEFORE_COMMIT).isNotNull();
 
         for (int k = 0; k < 5; k++) {
@@ -89,8 +94,8 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
         to.assertIsSatisfied(3000);
 
-        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false).count());
+        assertEquals(5, StreamSupport.stream(MockConsumerInterceptor.recordsCaptured.get(0).records(TOPIC).spliterator(), false)
+                .count());
     }
 
 }
-

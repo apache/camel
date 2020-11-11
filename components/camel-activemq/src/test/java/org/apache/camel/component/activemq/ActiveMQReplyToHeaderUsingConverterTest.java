@@ -30,12 +30,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.activemq.converter.ActiveMQConverter;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit5.TestSupport.assertMessageHeader;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * 
@@ -82,7 +85,7 @@ public class ActiveMQReplyToHeaderUsingConverterTest extends CamelTestSupport {
         LOG.info("Reply to is: " + replyTo);
         if (useReplyToHeader) {
             Destination destination = assertIsInstanceOf(Destination.class, replyTo);
-            assertEquals("ReplyTo", replyQueueName, destination.toString());
+            assertEquals(replyQueueName, destination.toString(), "ReplyTo");
         }
 
         assertMessageHeader(in, "cheese", 123);

@@ -1,0 +1,25 @@
+[[Process-Manager]]
+= Process Manager
+
+Camel supports the
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/ProcessManager.html[Process Manager]
+from the xref:enterprise-integration-patterns.adoc[EIP patterns] book.
+
+The xref:routingSlip-eip.adoc[Routing Slip] demonstrates how a message can be routed through a dynamic series of processing steps.
+The solution of the Routing Slip is based on two key assumptions: the sequence of processing steps has
+to be determined up-front and the sequence is linear. In many cases, these assumptions may not be fulfilled.
+For example, routing decisions might have to be made based on intermediate results.
+Or, the processing steps may not be sequential, but multiple steps might be executed in parallel.
+
+How do we route a message through multiple processing steps when the required steps may not be known
+at design-time and may not be sequential?
+
+image::eip/ProcessManager.gif[image]
+
+Use a central processing unit, a Process Manager, to maintain the state of the sequence and determine
+the next processing step based on intermediate results.
+
+With Camel this pattern is implemented by using the xref:dynamicRouter-eip.adoc[Dynamic Router] pattern.
+Camel's implementation of the dynamic router maintains the state of the sequence, and allows
+to determine the next processing step based dynamically.
+

@@ -20,11 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for expression option for file consumer.
@@ -32,15 +30,15 @@ import static org.apache.camel.language.simple.SimpleLanguage.simple;
 public class FileConsumerFileExpressionTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filelanguage");
         super.setUp();
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("counter", new MyGuidGenerator());
         return jndi;
     }
@@ -54,7 +52,8 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/filelanguage/bean/" + "?initialDelay=0&delay=10&fileName=${bean:counter.next}.txt&delete=true").to("mock:result");
+                from("file://target/data/filelanguage/bean/"
+                     + "?initialDelay=0&delay=10&fileName=${bean:counter.next}.txt&delete=true").to("mock:result");
             }
         });
 
@@ -68,15 +67,20 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
 
     @Test
     public void testConsumeFileBasedOnDatePattern() throws Exception {
-        template.sendBodyAndHeader("file://target/data/filelanguage/date", "Bye World", Exchange.FILE_NAME, "myfile-20081128.txt");
-        template.sendBodyAndHeader("file://target/data/filelanguage/date", "Hello World", Exchange.FILE_NAME, "myfile-20081129.txt");
-        template.sendBodyAndHeader("file://target/data/filelanguage/date", "Goodday World", Exchange.FILE_NAME, simple("myfile-${date:now:yyyyMMdd}.txt"));
+        template.sendBodyAndHeader("file://target/data/filelanguage/date", "Bye World", Exchange.FILE_NAME,
+                "myfile-20081128.txt");
+        template.sendBodyAndHeader("file://target/data/filelanguage/date", "Hello World", Exchange.FILE_NAME,
+                "myfile-20081129.txt");
+        template.sendBodyAndHeader("file://target/data/filelanguage/date", "Goodday World", Exchange.FILE_NAME,
+                context.resolveLanguage("simple").createExpression("myfile-${date:now:yyyyMMdd}.txt"));
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("file://target/data/filelanguage/date/" + "?initialDelay=0&delay=10&fileName=myfile-${date:now:yyyyMMdd}.txt").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/filelanguage/date/"
+                     + "?initialDelay=0&delay=10&fileName=myfile-${date:now:yyyyMMdd}.txt").convertBodyTo(String.class)
+                             .to("mock:result");
                 // END SNIPPET: e1
             }
         });

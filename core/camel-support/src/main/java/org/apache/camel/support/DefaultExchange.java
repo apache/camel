@@ -17,32 +17,37 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A default implementation of {@link Exchange}
+ * The default and only implementation of {@link Exchange}.
  */
-public final class DefaultExchange implements Exchange {
+public final class DefaultExchange implements ExtendedExchange {
 
-    protected final CamelContext context;
-    private Map<String, Object> properties;
+    private final CamelContext context;
+    private final long created;
+    // optimize to create properties always and with a reasonable small size
+    private final Map<String, Object> properties = new ConcurrentHashMap<>(8);
     private Message in;
     private Message out;
     private Exception exception;
@@ -52,45 +57,67 @@ public final class DefaultExchange implements Exchange {
     private Endpoint fromEndpoint;
     private String fromRouteId;
     private List<Synchronization> onCompletions;
+    private Boolean externalRedelivered;
+    private String historyNodeId;
+    private String historyNodeLabel;
+    private boolean transacted;
+    private boolean routeStop;
+    private boolean rollbackOnly;
+    private boolean rollbackOnlyLast;
+    private boolean notifyEvent;
+    private boolean interrupted;
+    private boolean interruptable = true;
+    private boolean redeliveryExhausted;
+    private Boolean errorHandlerHandled;
 
     public DefaultExchange(CamelContext context) {
-        this(context, ExchangePattern.InOnly);
+        this.context = context;
+        this.pattern = ExchangePattern.InOnly;
+        this.created = System.currentTimeMillis();
     }
 
     public DefaultExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
         this.pattern = pattern;
+        this.created = System.currentTimeMillis();
     }
 
     public DefaultExchange(Exchange parent) {
-        this(parent.getContext(), parent.getPattern());
+        this.context = parent.getContext();
+        this.pattern = parent.getPattern();
+        this.created = parent.getCreated();
         this.fromEndpoint = parent.getFromEndpoint();
         this.fromRouteId = parent.getFromRouteId();
         this.unitOfWork = parent.getUnitOfWork();
     }
 
     public DefaultExchange(Endpoint fromEndpoint) {
-        this(fromEndpoint, ExchangePattern.InOnly);
+        this.context = fromEndpoint.getCamelContext();
+        this.pattern = ExchangePattern.InOnly;
+        this.created = System.currentTimeMillis();
+        this.fromEndpoint = fromEndpoint;
     }
 
     public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
-        this(fromEndpoint.getCamelContext(), pattern);
+        this.context = fromEndpoint.getCamelContext();
+        this.pattern = pattern;
+        this.created = System.currentTimeMillis();
         this.fromEndpoint = fromEndpoint;
     }
 
     @Override
     public String toString() {
         // do not output information about the message as it may contain sensitive information
-        return String.format("Exchange[%s]", exchangeId == null ? "" : exchangeId);
+        if (exchangeId != null) {
+            return "Exchange[" + exchangeId + "]";
+        } else {
+            return "Exchange[]";
+        }
     }
 
     @Override
-    public Date getCreated() {
-        if (hasProperties()) {
-            return getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
-        } else {
-            return null;
-        }
+    public long getCreated() {
+        return created;
     }
 
     @Override
@@ -110,11 +137,17 @@ public final class DefaultExchange implements Exchange {
             }
         }
 
-        exchange.setException(getException());
+        exchange.setException(exception);
+        exchange.setRouteStop(routeStop);
+        exchange.setRollbackOnly(rollbackOnly);
+        exchange.setRollbackOnlyLast(rollbackOnlyLast);
+        exchange.setNotifyEvent(notifyEvent);
+        exchange.setRedeliveryExhausted(redeliveryExhausted);
+        exchange.setErrorHandlerHandled(errorHandlerHandled);
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
-            exchange.setProperties(safeCopyProperties(getProperties()));
+            safeCopyProperties(getProperties(), exchange.getProperties());
         }
 
         return exchange;
@@ -125,24 +158,28 @@ public final class DefaultExchange implements Exchange {
             return null;
         }
 
-        return context.getHeadersMapFactory().newMap(headers);
+        if (context != null) {
+            ExtendedCamelContext ecc = (ExtendedCamelContext) context;
+            HeadersMapFactory factory = ecc.getHeadersMapFactory();
+            if (factory != null) {
+                return factory.newMap(headers);
+            }
+        }
+        // should not really happen but some tests dont start camel context
+        return new HashMap<>(headers);
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
-        if (properties == null) {
-            return null;
+    private void safeCopyProperties(Map<String, Object> source, Map<String, Object> target) {
+        target.putAll(source);
+        if (getContext().isMessageHistory()) {
+            // safe copy message history using a defensive copy
+            List<MessageHistory> history = (List<MessageHistory>) target.remove(Exchange.MESSAGE_HISTORY);
+            if (history != null) {
+                // use thread-safe list as message history may be accessed concurrently
+                target.put(Exchange.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
+            }
         }
-
-        Map<String, Object> answer = createProperties(properties);
-
-        // safe copy message history using a defensive copy
-        List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
-        if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
-        }
-
-        return answer;
     }
 
     @Override
@@ -152,10 +189,7 @@ public final class DefaultExchange implements Exchange {
 
     @Override
     public Object getProperty(String name) {
-        if (properties != null) {
-            return properties.get(name);
-        }
-        return null;
+        return properties.get(name);
     }
 
     @Override
@@ -188,7 +222,10 @@ public final class DefaultExchange implements Exchange {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Object defaultValue, Class<T> type) {
-        Object value = getProperty(name, defaultValue);
+        Object value = getProperty(name);
+        if (value == null) {
+            value = defaultValue;
+        }
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class == type) {
@@ -210,13 +247,19 @@ public final class DefaultExchange implements Exchange {
     public void setProperty(String name, Object value) {
         if (value != null) {
             // avoid the NullPointException
-            getProperties().put(name, value);
+            properties.put(name, value);
         } else {
             // if the value is null, we just remove the key from the map
             if (name != null) {
-                getProperties().remove(name);
+                properties.remove(name);
             }
         }
+    }
+
+    @Override
+    public void setProperties(Map<String, Object> properties) {
+        this.properties.clear();
+        this.properties.putAll(properties);
     }
 
     @Override
@@ -224,7 +267,7 @@ public final class DefaultExchange implements Exchange {
         if (!hasProperties()) {
             return null;
         }
-        return getProperties().remove(name);
+        return properties.remove(name);
     }
 
     @Override
@@ -265,19 +308,12 @@ public final class DefaultExchange implements Exchange {
 
     @Override
     public Map<String, Object> getProperties() {
-        if (properties == null) {
-            properties = createProperties();
-        }
         return properties;
     }
 
     @Override
     public boolean hasProperties() {
-        return properties != null && !properties.isEmpty();
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+        return !properties.isEmpty();
     }
 
     @Override
@@ -314,7 +350,7 @@ public final class DefaultExchange implements Exchange {
         // lazy create
         if (out == null) {
             out = (in instanceof MessageSupport)
-                ? ((MessageSupport)in).newInstance() : new DefaultMessage(getContext());
+                    ? ((MessageSupport) in).newInstance() : new DefaultMessage(getContext());
             configureMessage(out);
         }
         return out;
@@ -368,7 +404,6 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
-
     @Override
     public Exception getException() {
         return exception;
@@ -391,8 +426,13 @@ public final class DefaultExchange implements Exchange {
         }
         if (t instanceof InterruptedException) {
             // mark the exchange as interrupted due to the interrupt exception
-            setProperty(Exchange.INTERRUPTED, Boolean.TRUE);
+            setInterrupted(true);
         }
+    }
+
+    @Override
+    public <T extends Exchange> T adapt(Class<T> type) {
+        return type.cast(this);
     }
 
     @Override
@@ -445,43 +485,60 @@ public final class DefaultExchange implements Exchange {
 
     @Override
     public boolean isTransacted() {
-        UnitOfWork uow = getUnitOfWork();
-        if (uow != null) {
-            return uow.isTransacted();
-        } else {
-            return false;
-        }
+        return transacted;
     }
 
     @Override
-    public Boolean isExternalRedelivered() {
-        Boolean answer = null;
+    public void setTransacted(boolean transacted) {
+        this.transacted = true;
+    }
 
-        // check property first, as the implementation details to know if the message
-        // was externally redelivered is message specific, and thus the message implementation
-        // could potentially change during routing, and therefore later we may not know if the
-        // original message was externally redelivered or not, therefore we store this detail
-        // as a exchange property to keep it around for the lifecycle of the exchange
-        if (hasProperties()) {
-            answer = getProperty(Exchange.EXTERNAL_REDELIVERED, null, Boolean.class);
-        }
-        
-        if (answer == null) {
+    @Override
+    public boolean isRouteStop() {
+        return routeStop;
+    }
+
+    @Override
+    public void setRouteStop(boolean routeStop) {
+        this.routeStop = routeStop;
+    }
+
+    @Override
+    public boolean isExternalRedelivered() {
+        if (externalRedelivered == null) {
             // lets avoid adding methods to the Message API, so we use the
             // DefaultMessage to allow component specific messages to extend
             // and implement the isExternalRedelivered method.
             Message msg = getIn();
             if (msg instanceof DefaultMessage) {
-                answer = ((DefaultMessage) msg).isTransactedRedelivered();
+                externalRedelivered = ((DefaultMessage) msg).isTransactedRedelivered();
+            }
+            // not from a transactional resource so mark it as false by default
+            if (externalRedelivered == null) {
+                externalRedelivered = false;
             }
         }
-
-        return answer;
+        return externalRedelivered;
     }
 
     @Override
     public boolean isRollbackOnly() {
-        return Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY)) || Boolean.TRUE.equals(getProperty(Exchange.ROLLBACK_ONLY_LAST));
+        return rollbackOnly;
+    }
+
+    @Override
+    public void setRollbackOnly(boolean rollbackOnly) {
+        this.rollbackOnly = rollbackOnly;
+    }
+
+    @Override
+    public boolean isRollbackOnlyLast() {
+        return rollbackOnlyLast;
+    }
+
+    @Override
+    public void setRollbackOnlyLast(boolean rollbackOnlyLast) {
+        this.rollbackOnlyLast = rollbackOnlyLast;
     }
 
     @Override
@@ -534,7 +591,7 @@ public final class DefaultExchange implements Exchange {
     public void handoverCompletions(Exchange target) {
         if (onCompletions != null) {
             for (Synchronization onCompletion : onCompletions) {
-                target.addOnCompletion(onCompletion);
+                target.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
             }
             // cleanup the temporary on completion list as they have been handed over
             onCompletions.clear();
@@ -556,12 +613,88 @@ public final class DefaultExchange implements Exchange {
         return answer;
     }
 
+    @Override
+    public String getHistoryNodeId() {
+        return historyNodeId;
+    }
+
+    @Override
+    public void setHistoryNodeId(String historyNodeId) {
+        this.historyNodeId = historyNodeId;
+    }
+
+    @Override
+    public String getHistoryNodeLabel() {
+        return historyNodeLabel;
+    }
+
+    @Override
+    public void setHistoryNodeLabel(String historyNodeLabel) {
+        this.historyNodeLabel = historyNodeLabel;
+    }
+
+    @Override
+    public boolean isNotifyEvent() {
+        return notifyEvent;
+    }
+
+    @Override
+    public void setNotifyEvent(boolean notifyEvent) {
+        this.notifyEvent = notifyEvent;
+    }
+
+    @Override
+    public boolean isInterrupted() {
+        return interrupted;
+    }
+
+    @Override
+    public void setInterrupted(boolean interrupted) {
+        if (interruptable) {
+            this.interrupted = interrupted;
+        }
+    }
+
+    @Override
+    public void setInterruptable(boolean interruptable) {
+        this.interruptable = interruptable;
+    }
+
+    @Override
+    public boolean isRedeliveryExhausted() {
+        return redeliveryExhausted;
+    }
+
+    @Override
+    public void setRedeliveryExhausted(boolean redeliveryExhausted) {
+        this.redeliveryExhausted = redeliveryExhausted;
+    }
+
+    public Boolean getErrorHandlerHandled() {
+        return errorHandlerHandled;
+    }
+
+    @Override
+    public boolean isErrorHandlerHandledSet() {
+        return errorHandlerHandled != null;
+    }
+
+    @Override
+    public boolean isErrorHandlerHandled() {
+        return errorHandlerHandled;
+    }
+
+    @Override
+    public void setErrorHandlerHandled(Boolean errorHandlerHandled) {
+        this.errorHandlerHandled = errorHandlerHandled;
+    }
+
     /**
      * Configures the message after it has been set on the exchange
      */
     protected void configureMessage(Message message) {
         if (message instanceof MessageSupport) {
-            MessageSupport messageSupport = (MessageSupport)message;
+            MessageSupport messageSupport = (MessageSupport) message;
             messageSupport.setExchange(this);
             messageSupport.setCamelContext(getContext());
         }
@@ -569,14 +702,6 @@ public final class DefaultExchange implements Exchange {
 
     protected String createExchangeId() {
         return context.getUuidGenerator().generateUuid();
-    }
-
-    protected Map<String, Object> createProperties() {
-        return new ConcurrentHashMap<>();
-    }
-
-    protected Map<String, Object> createProperties(Map<String, Object> properties) {
-        return new ConcurrentHashMap<>(properties);
     }
 
 }

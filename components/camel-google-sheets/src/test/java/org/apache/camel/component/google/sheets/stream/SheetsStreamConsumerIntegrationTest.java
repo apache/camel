@@ -25,8 +25,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.google.sheets.server.GoogleSheetsApiTestServerAssert.assertThatGoogleApi;
 import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.MAJOR_DIMENSION;
@@ -34,6 +33,8 @@ import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStream
 import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.RANGE_INDEX;
 import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.SPREADSHEET_ID;
 import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.VALUE_INDEX;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStreamTestSupport {
 
@@ -52,8 +53,7 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
 
         List<List<Object>> data = Arrays.asList(
                 Arrays.asList("a1", "b1"),
-                Arrays.asList("a2", "b2")
-        );
+                Arrays.asList("a2", "b2"));
 
         assertThatGoogleApi(getGoogleApiTestServer())
                 .updateValuesRequest(spreadsheetId, range, data)
@@ -72,21 +72,21 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(SPREADSHEET_ID));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(RANGE));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(RANGE_INDEX));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(MAJOR_DIMENSION));
-        Assert.assertEquals(testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
-        Assert.assertEquals(range, exchange.getIn().getHeaders().get(RANGE));
-        Assert.assertEquals(1, exchange.getIn().getHeaders().get(RANGE_INDEX));
-        Assert.assertEquals("ROWS", exchange.getIn().getHeaders().get(MAJOR_DIMENSION));
+        assertTrue(exchange.getIn().getHeaders().containsKey(SPREADSHEET_ID));
+        assertTrue(exchange.getIn().getHeaders().containsKey(RANGE));
+        assertTrue(exchange.getIn().getHeaders().containsKey(RANGE_INDEX));
+        assertTrue(exchange.getIn().getHeaders().containsKey(MAJOR_DIMENSION));
+        assertEquals(testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
+        assertEquals(range, exchange.getIn().getHeaders().get(RANGE));
+        assertEquals(1, exchange.getIn().getHeaders().get(RANGE_INDEX));
+        assertEquals("ROWS", exchange.getIn().getHeaders().get(MAJOR_DIMENSION));
 
         ValueRange values = (ValueRange) exchange.getIn().getBody();
-        Assert.assertEquals(2L, values.getValues().size());
-        Assert.assertEquals("a1", values.getValues().get(0).get(0));
-        Assert.assertEquals("b1", values.getValues().get(0).get(1));
-        Assert.assertEquals("a2", values.getValues().get(1).get(0));
-        Assert.assertEquals("b2", values.getValues().get(1).get(1));
+        assertEquals(2L, values.getValues().size());
+        assertEquals("a1", values.getValues().get(0).get(0));
+        assertEquals("b1", values.getValues().get(0).get(1));
+        assertEquals("a2", values.getValues().get(1).get(0));
+        assertEquals("b2", values.getValues().get(1).get(1));
     }
 
     @Test
@@ -102,8 +102,7 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
 
         List<List<Object>> data = Arrays.asList(
                 Arrays.asList("a1", "b1"),
-                Arrays.asList("a2", "b2")
-        );
+                Arrays.asList("a2", "b2"));
 
         assertThatGoogleApi(getGoogleApiTestServer())
                 .updateValuesRequest(spreadsheetId, range, data)
@@ -123,45 +122,47 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getReceivedExchanges().get(0);
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(SPREADSHEET_ID));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(RANGE));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(RANGE_INDEX));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(VALUE_INDEX));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(MAJOR_DIMENSION));
-        Assert.assertEquals(testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
-        Assert.assertEquals(range, exchange.getIn().getHeaders().get(RANGE));
-        Assert.assertEquals(1, exchange.getIn().getHeaders().get(RANGE_INDEX));
-        Assert.assertEquals(1, exchange.getIn().getHeaders().get(VALUE_INDEX));
-        Assert.assertEquals("ROWS", exchange.getIn().getHeaders().get(MAJOR_DIMENSION));
+        assertTrue(exchange.getIn().getHeaders().containsKey(SPREADSHEET_ID));
+        assertTrue(exchange.getIn().getHeaders().containsKey(RANGE));
+        assertTrue(exchange.getIn().getHeaders().containsKey(RANGE_INDEX));
+        assertTrue(exchange.getIn().getHeaders().containsKey(VALUE_INDEX));
+        assertTrue(exchange.getIn().getHeaders().containsKey(MAJOR_DIMENSION));
+        assertEquals(testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
+        assertEquals(range, exchange.getIn().getHeaders().get(RANGE));
+        assertEquals(1, exchange.getIn().getHeaders().get(RANGE_INDEX));
+        assertEquals(1, exchange.getIn().getHeaders().get(VALUE_INDEX));
+        assertEquals("ROWS", exchange.getIn().getHeaders().get(MAJOR_DIMENSION));
 
         List<?> values = (List) exchange.getIn().getBody();
-        Assert.assertEquals(2L, values.size());
-        Assert.assertEquals("a1", values.get(0));
-        Assert.assertEquals("b1", values.get(1));
+        assertEquals(2L, values.size());
+        assertEquals("a1", values.get(0));
+        assertEquals("b1", values.get(1));
 
         exchange = mock.getReceivedExchanges().get(1);
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(SPREADSHEET_ID));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(RANGE));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(RANGE_INDEX));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(VALUE_INDEX));
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(MAJOR_DIMENSION));
-        Assert.assertEquals(testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
-        Assert.assertEquals(1, exchange.getIn().getHeaders().get(RANGE_INDEX));
-        Assert.assertEquals(2, exchange.getIn().getHeaders().get(VALUE_INDEX));
+        assertTrue(exchange.getIn().getHeaders().containsKey(SPREADSHEET_ID));
+        assertTrue(exchange.getIn().getHeaders().containsKey(RANGE));
+        assertTrue(exchange.getIn().getHeaders().containsKey(RANGE_INDEX));
+        assertTrue(exchange.getIn().getHeaders().containsKey(VALUE_INDEX));
+        assertTrue(exchange.getIn().getHeaders().containsKey(MAJOR_DIMENSION));
+        assertEquals(testSheet.getSpreadsheetId(), exchange.getIn().getHeaders().get(SPREADSHEET_ID));
+        assertEquals(1, exchange.getIn().getHeaders().get(RANGE_INDEX));
+        assertEquals(2, exchange.getIn().getHeaders().get(VALUE_INDEX));
 
         values = (List) exchange.getIn().getBody();
-        Assert.assertEquals(2L, values.size());
-        Assert.assertEquals("a2", values.get(0));
-        Assert.assertEquals("b2", values.get(1));
+        assertEquals(2L, values.size());
+        assertEquals("a2", values.get(0));
+        assertEquals("b2", values.get(1));
     }
 
     private RouteBuilder createGoogleStreamRouteBuilder(String spreadsheetId, boolean splitResults) throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(String.format("google-sheets-stream://data?spreadsheetId=%s&range=%s&delay=20000&maxResults=5&splitResults=%s", spreadsheetId, range, splitResults))
-                        .routeId("google-stream-test")
-                        .to("mock:result");
+                from(String.format(
+                        "google-sheets-stream://data?spreadsheetId=%s&range=%s&delay=20000&maxResults=5&splitResults=%s",
+                        spreadsheetId, range, splitResults))
+                                .routeId("google-stream-test")
+                                .to("mock:result");
             }
         };
     }

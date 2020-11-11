@@ -18,7 +18,7 @@ package org.apache.camel.test.testcontainers;
 
 import java.util.List;
 
-import org.apache.camel.component.properties.PropertiesFunction;
+import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.testcontainers.containers.GenericContainer;
@@ -67,8 +67,7 @@ public class ContainerPropertiesFunction implements PropertiesFunction {
             }
 
             return Integer.toString(
-                Containers.lookup(containers, name).getMappedPort(Integer.parseInt(port))
-            );
+                    Containers.lookup(containers, name).getMappedPort(Integer.parseInt(port)));
         }
 
         throw new IllegalArgumentException("Unsupported type: " + type);

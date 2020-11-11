@@ -21,26 +21,29 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.params.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test issue with leveldb file store growing to large
  */
-@Ignore("Run this test manually")
-public class LevelDBBigPayloadTest extends CamelTestSupport {
+@Disabled("Run this test manually")
+public class LevelDBBigPayloadTest extends LevelDBTestSupport {
 
     private static final long TIME = 60 * 1000;
     private static final AtomicLong NUMBER = new AtomicLong();
-    private LevelDBAggregationRepository repo;
+    private Logger log = LoggerFactory.getLogger(getClass());
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         deleteDirectory("target/data");
-        repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
         super.setUp();
     }
 
@@ -52,11 +55,11 @@ public class LevelDBBigPayloadTest extends CamelTestSupport {
 
         // assert the file size of the repo is not big < 32mb
         File file = new File("target/data/leveldb.dat");
-        assertTrue(file + " should exists", file.exists());
+        assertTrue(file.exists(), file + " should exists");
         long size = file.length();
         log.info(file + " size is " + size);
         // should be about 32mb, so we say 34 just in case
-        assertTrue(file + " should not be so big in size, was: " + size, size < 34 * 1024 * 1024);
+        assertTrue(size < 34 * 1024 * 1024, file + " should not be so big in size, was: " + size);
     }
 
     @Override
@@ -65,9 +68,9 @@ public class LevelDBBigPayloadTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("timer:foo")
-                    .bean(BigPayload.class)
-                    .aggregate(method(LevelDBBigPayloadTest.class, "number"), new UseLatestAggregationStrategy())
-                        .aggregationRepository(repo)
+                        .bean(BigPayload.class)
+                        .aggregate(method(LevelDBBigPayloadTest.class, "number"), new UseLatestAggregationStrategy())
+                        .aggregationRepository(getRepo())
                         .completionSize(2).completionTimeout(5000)
                         .log("Aggregated key ${header.CamelAggregatedCorrelationKey}");
             }

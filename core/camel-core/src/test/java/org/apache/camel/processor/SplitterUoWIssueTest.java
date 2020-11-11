@@ -19,13 +19,13 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SplitterUoWIssueTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/splitter");
         super.setUp();
@@ -57,8 +57,9 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name").split(body().tokenize(",")).to("seda:queue").end()
-                    .log("End of file ${file:name}").to("mock:result");
+                from("file:target/data/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name")
+                        .split(body().tokenize(",")).to("seda:queue").end()
+                        .log("End of file ${file:name}").to("mock:result");
 
                 from("seda:queue").log("Token: ${body}").to("mock:foo");
             }

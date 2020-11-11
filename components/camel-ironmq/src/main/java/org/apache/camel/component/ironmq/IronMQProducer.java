@@ -21,14 +21,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The IronMQ producer.
  */
 public class IronMQProducer extends DefaultProducer {
 
+    private static final Logger LOG = LoggerFactory.getLogger(IronMQProducer.class);
+
     private final Queue ironQueue;
-    
+
     public IronMQProducer(IronMQEndpoint endpoint, Queue ironQueue) {
         super(endpoint);
         this.ironQueue = ironQueue;
@@ -43,17 +47,17 @@ public class IronMQProducer extends DefaultProducer {
             Object messageId = null;
             Object body = exchange.getIn().getBody();
             if (body instanceof String[]) {
-                messageId = this.ironQueue.pushMessages((String[])body, configuration.getVisibilityDelay());
+                messageId = this.ironQueue.pushMessages((String[]) body, configuration.getVisibilityDelay());
             } else if (body instanceof String) {
                 if (configuration.isPreserveHeaders()) {
                     body = GsonUtil.getBodyFromMessage(exchange.getIn());
                 }
-                messageId = this.ironQueue.push((String)body, configuration.getVisibilityDelay());
+                messageId = this.ironQueue.push((String) body, configuration.getVisibilityDelay());
             } else {
                 throw new InvalidPayloadException(exchange, String.class);
             }
-            log.trace("Send request [{}] from exchange [{}]...", body, exchange);
-            log.trace("Received messageId [{}]", messageId);
+            LOG.trace("Send request [{}] from exchange [{}]...", body, exchange);
+            LOG.trace("Received messageId [{}]", messageId);
             Message message = getMessageForResponse(exchange);
             message.setHeader(IronMQConstants.MESSAGE_ID, messageId);
         }
@@ -71,7 +75,7 @@ public class IronMQProducer extends DefaultProducer {
 
     @Override
     public IronMQEndpoint getEndpoint() {
-        return (IronMQEndpoint)super.getEndpoint();
+        return (IronMQEndpoint) super.getEndpoint();
     }
 
 }

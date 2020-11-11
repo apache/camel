@@ -28,8 +28,8 @@ public class JsonPathPojoTransformTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().jsonpath("$.type")
-                    .to("mock:type");
+                        .transform().jsonpath("$.type")
+                        .to("mock:type");
             }
         };
     }

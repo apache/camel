@@ -25,8 +25,8 @@ public interface ExpressionFactory {
     /**
      * Creates an expression
      *
-     * @param camelContext the camel context
-     * @return the created expression.
+     * @param  camelContext the camel context
+     * @return              the created expression.
      */
     Expression createExpression(CamelContext camelContext);
 

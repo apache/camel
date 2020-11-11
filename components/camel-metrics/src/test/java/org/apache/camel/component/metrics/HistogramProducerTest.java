@@ -20,21 +20,22 @@ import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class HistogramProducerTest {
 
     private static final String METRICS_NAME = "metrics.name";
@@ -59,12 +60,12 @@ public class HistogramProducerTest {
 
     private InOrder inOrder;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         producer = new HistogramProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, registry, histogram, exchange, in);
-        when(registry.histogram(METRICS_NAME)).thenReturn(histogram);
-        when(exchange.getIn()).thenReturn(in);
+        lenient().when(registry.histogram(METRICS_NAME)).thenReturn(histogram);
+        lenient().when(exchange.getIn()).thenReturn(in);
     }
 
     @Test

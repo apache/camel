@@ -25,16 +25,21 @@ import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Sjms2EndpointConnectionSettingsTest extends CamelTestSupport {
-    private final ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+    private final ActiveMQConnectionFactory connectionFactory
+            = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
     private final ConnectionResource connectionResource = new ConnectionFactoryResource(2, connectionFactory);
 
     @Test
     public void testConnectionFactory() {
-        Endpoint endpoint = context.getEndpoint("sjms2:queue:test?connectionFactory=activemq");
+        Endpoint endpoint = context.getEndpoint("sjms2:queue:test?connectionFactory=#activemq");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
         Sjms2Endpoint qe = (Sjms2Endpoint) endpoint;
@@ -43,7 +48,7 @@ public class Sjms2EndpointConnectionSettingsTest extends CamelTestSupport {
 
     @Test
     public void testConnectionResource() {
-        Endpoint endpoint = context.getEndpoint("sjms2:queue:test?connectionResource=connresource");
+        Endpoint endpoint = context.getEndpoint("sjms2:queue:test?connectionResource=#connresource");
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Sjms2Endpoint);
         Sjms2Endpoint qe = (Sjms2Endpoint) endpoint;

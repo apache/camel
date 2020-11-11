@@ -24,15 +24,15 @@ import java.util.Map;
 
 import facebook4j.Reading;
 import org.apache.camel.component.facebook.FacebookConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Test {@link ReadingBuilder}. 
+ * Test {@link ReadingBuilder}.
  */
 public class ReadingBuilderTest {
 
@@ -48,16 +48,16 @@ public class ReadingBuilderTest {
         source.since(new Date());
         source.until(new Date());
         source.withLocation();
-        
+
         Reading copy = ReadingBuilder.copy(source, false);
-        assertNotNull("Null copy", copy);
-        assertEquals("Copy not equal", source.toString(), copy.toString());
+        assertNotNull(copy, "Null copy");
+        assertEquals(source.toString(), copy.toString(), "Copy not equal");
 
         // skip since and until
         copy = ReadingBuilder.copy(source, true);
         assertNotEquals("Copy equal", source.toString(), copy.toString());
-        assertFalse("since", copy.toString().contains("since="));
-        assertFalse("until", copy.toString().contains("until="));
+        assertFalse(copy.toString().contains("since="), "since");
+        assertFalse(copy.toString().contains("until="), "until");
     }
 
     @Test

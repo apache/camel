@@ -60,244 +60,210 @@ public final class HazelcastConstants {
     public static final String OPERATION = "CamelHazelcastOperationType";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#PUT}
+     * @deprecated use {@link HazelcastOperation#PUT}
      */
     @Deprecated
     public static final String PUT_OPERATION = "put";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#DELETE}
+     * @deprecated use {@link HazelcastOperation#DELETE}
      */
     @Deprecated
     public static final String DELETE_OPERATION = "delete";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#GET}
+     * @deprecated use {@link HazelcastOperation#GET}
      */
     @Deprecated
     public static final String GET_OPERATION = "get";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#UPDATE}
+     * @deprecated use {@link HazelcastOperation#UPDATE}
      */
     @Deprecated
     public static final String UPDATE_OPERATION = "update";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#QUERY}
+     * @deprecated use {@link HazelcastOperation#QUERY}
      */
     @Deprecated
     public static final String QUERY_OPERATION = "query";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#GET_ALL}
+     * @deprecated use {@link HazelcastOperation#GET_ALL}
      */
     @Deprecated
     public static final String GET_ALL_OPERATION = "getAll";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#CLEAR}
+     * @deprecated use {@link HazelcastOperation#CLEAR}
      */
     @Deprecated
     public static final String CLEAR_OPERATION = "clear";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#PUT_IF_ABSENT}
+     * @deprecated use {@link HazelcastOperation#PUT_IF_ABSENT}
      */
     @Deprecated
     public static final String PUT_IF_ABSENT_OPERATION = "putIfAbsent";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#ADD_ALL}
+     * @deprecated use {@link HazelcastOperation#ADD_ALL}
      */
     @Deprecated
     public static final String ADD_ALL_OPERATION = "addAll";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#REMOVE_ALL}
+     * @deprecated use {@link HazelcastOperation#REMOVE_ALL}
      */
     @Deprecated
     public static final String REMOVE_ALL_OPERATION = "removeAll";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#RETAIN_ALL}
+     * @deprecated use {@link HazelcastOperation#RETAIN_ALL}
      */
     @Deprecated
     public static final String RETAIN_ALL_OPERATION = "retailAll";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#EVICT}
+     * @deprecated use {@link HazelcastOperation#EVICT}
      */
     @Deprecated
     public static final String EVICT_OPERATION = "evict";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#EVICT_ALL}
+     * @deprecated use {@link HazelcastOperation#EVICT_ALL}
      */
     @Deprecated
     public static final String EVICT_ALL_OPERATION = "evictAll";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#VALUE_COUNT}
+     * @deprecated use {@link HazelcastOperation#VALUE_COUNT}
      */
     @Deprecated
     public static final String VALUE_COUNT_OPERATION = "valueCount";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#CONTAINS_KEY}
+     * @deprecated use {@link HazelcastOperation#CONTAINS_KEY}
      */
     @Deprecated
     public static final String CONTAINS_KEY_OPERATION = "containsKey";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#CONTAINS_VALUE}
+     * @deprecated use {@link HazelcastOperation#CONTAINS_VALUE}
      */
     @Deprecated
     public static final String CONTAINS_VALUE_OPERATION = "containsValue";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#GET_KEYS}
+     * @deprecated use {@link HazelcastOperation#GET_KEYS}
      */
     @Deprecated
     public static final String GET_KEYS_OPERATION = "keySet";
-    
+
     // multimap
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#REMOVE_VALUE}
+     * @deprecated use {@link HazelcastOperation#REMOVE_VALUE}
      */
     @Deprecated
     public static final String REMOVEVALUE_OPERATION = "removevalue";
 
     // atomic numbers
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#INCREMENT}
+     * @deprecated use {@link HazelcastOperation#INCREMENT}
      */
     @Deprecated
     public static final String INCREMENT_OPERATION = "increment";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#DECREMENT}
+     * @deprecated use {@link HazelcastOperation#DECREMENT}
      */
     @Deprecated
     public static final String DECREMENT_OPERATION = "decrement";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#SET_VALUE}
+     * @deprecated use {@link HazelcastOperation#SET_VALUE}
      */
     @Deprecated
     public static final String SETVALUE_OPERATION = "setvalue";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#DESTROY}
+     * @deprecated use {@link HazelcastOperation#DESTROY}
      */
     @Deprecated
     public static final String DESTROY_OPERATION = "destroy";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#COMPARE_AND_SET}
+     * @deprecated use {@link HazelcastOperation#COMPARE_AND_SET}
      */
     @Deprecated
     public static final String COMPARE_AND_SET_OPERATION = "compareAndSet";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#GET_AND_ADD}
+     * @deprecated use {@link HazelcastOperation#GET_AND_ADD}
      */
     @Deprecated
     public static final String GET_AND_ADD_OPERATION = "getAndAdd";
 
     // queue
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#ADD}
+     * @deprecated use {@link HazelcastOperation#ADD}
      */
     @Deprecated
     public static final String ADD_OPERATION = "add";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#OFFER}
+     * @deprecated use {@link HazelcastOperation#OFFER}
      */
     @Deprecated
     public static final String OFFER_OPERATION = "offer";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#PEEK}
+     * @deprecated use {@link HazelcastOperation#PEEK}
      */
     @Deprecated
     public static final String PEEK_OPERATION = "peek";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#POLL}
+     * @deprecated use {@link HazelcastOperation#POLL}
      */
     @Deprecated
     public static final String POLL_OPERATION = "poll";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#REMAINING_CAPACITY}
+     * @deprecated use {@link HazelcastOperation#REMAINING_CAPACITY}
      */
     @Deprecated
     public static final String REMAINING_CAPACITY_OPERATION = "remainingCapacity";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#DRAIN_TO}
+     * @deprecated use {@link HazelcastOperation#DRAIN_TO}
      */
     @Deprecated
     public static final String DRAIN_TO_OPERATION = "drainTo";
 
     // topic
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#PUBLISH}
+     * @deprecated use {@link HazelcastOperation#PUBLISH}
      */
     @Deprecated
     public static final String PUBLISH_OPERATION = "publish";
-    
+
     // ring_buffer
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#READ_ONCE_HEAD}
+     * @deprecated use {@link HazelcastOperation#READ_ONCE_HEAD}
      */
     @Deprecated
     public static final String READ_ONCE_HEAD_OPERATION = "readOnceHead";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#READ_ONCE_TAIL}
+     * @deprecated use {@link HazelcastOperation#READ_ONCE_TAIL}
      */
     @Deprecated
     public static final String READ_ONCE_TAIL_OPERATION = "readOnceTail";
 
     /**
-     * @deprecated
-     * use {@link HazelcastOperation#CAPACITY}
+     * @deprecated use {@link HazelcastOperation#CAPACITY}
      */
     @Deprecated
     public static final String GET_CAPACITY_OPERATION = "capacity";
@@ -309,6 +275,7 @@ public final class HazelcastConstants {
     // listener actions
     public static final String REMOVED = "removed";
     public static final String EVICTED = "evicted";
+    public static final String EXPIRED = "expired";
     public static final String UPDATED = "updated";
     public static final String ADDED = "added";
 
@@ -332,11 +299,10 @@ public final class HazelcastConstants {
     public static final String HAZELCAST_INSTANCE_PARAM = "hazelcastInstance";
     public static final String HAZELCAST_CONFIGU_PARAM = "hazelcastConfig";
     public static final String HAZELCAST_CONFIGU_URI_PARAM = "hazelcastConfigUri";
-    
+
     // Hazelcast mode
     public static final String HAZELCAST_NODE_MODE = "node";
     public static final String HAZELCAST_CLIENT_MODE = "client";
-
 
     private HazelcastConstants() {
     }

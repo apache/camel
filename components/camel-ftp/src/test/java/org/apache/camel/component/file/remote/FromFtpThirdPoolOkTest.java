@@ -71,9 +71,7 @@ public class FromFtpThirdPoolOkTest extends FtpServerTestSupport {
             public void configure() throws Exception {
                 // no redeliveries as we want the ftp consumer to try again
                 // use no delay for fast unit testing
-                onException(IllegalArgumentException.class)
-                        .logStackTrace(false)
-                        .to("mock:error");
+                onException(IllegalArgumentException.class).logStackTrace(false).to("mock:error");
 
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

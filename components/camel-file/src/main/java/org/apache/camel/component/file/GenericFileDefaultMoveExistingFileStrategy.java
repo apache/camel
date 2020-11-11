@@ -25,8 +25,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.file.MoveExistingFileStrategyUtils.completePartialRelativePath;
+
 public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExistingStrategy {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileDefaultMoveExistingFileStrategy.class);
 
     /**
@@ -36,8 +38,10 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
     public boolean moveExistingFile(GenericFileEndpoint endpoint, GenericFileOperations operations, String fileName)
             throws GenericFileOperationFailedException {
 
-        // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
-        // create a dummy exchange as Exchange is needed for expression evaluation
+        // need to evaluate using a dummy and simulate the file first, to have
+        // access to all the file attributes
+        // create a dummy exchange as Exchange is needed for expression
+        // evaluation
         // we support only the following 3 tokens.
         Exchange dummy = endpoint.createExchange();
         String parent = FileUtil.onlyPath(fileName);
@@ -47,13 +51,20 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
         dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
 
         String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
-        // we must normalize it (to avoid having both \ and / in the name which confuses java.io.File)
-        to = FileUtil.normalizePath(to);
+
         if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
+            throw new GenericFileOperationFailedException(
+                    "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
         }
 
-        // ensure any paths is created before we rename as the renamed file may be in a different path (which may be non exiting)
+        to = completePartialRelativePath(to, onlyName, parent);
+
+        // we must normalize it (to avoid having both \ and / in the name which
+        // confuses java.io.File)
+        to = FileUtil.normalizePath(to);
+
+        // ensure any paths is created before we rename as the renamed file may
+        // be in a different path (which may be non exiting)
         // use java.io.File to compute the file path
         File toFile = new File(to);
         String directory = toFile.getParent();
@@ -72,7 +83,9 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
                     throw new GenericFileOperationFailedException("Cannot delete file: " + to);
                 }
             } else {
-                throw new GenericFileOperationFailedException("Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: " + to);
+                throw new GenericFileOperationFailedException(
+                        "Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: "
+                                                              + to);
             }
         }
 
@@ -80,7 +93,7 @@ public class GenericFileDefaultMoveExistingFileStrategy implements FileMoveExist
         if (!operations.renameFile(fileName, to)) {
             throw new GenericFileOperationFailedException("Cannot rename file from: " + fileName + " to: " + to);
         }
-    
+
         return true;
     }
 

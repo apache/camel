@@ -23,11 +23,10 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
- * To test CAMEL-4118 support for completing all aggregation groups with a
- * signal message
+ * To test CAMEL-4118 support for completing all aggregation groups with a signal message
  */
 public class AggregateForceCompletionHeaderTest extends ContextTestSupport {
 
@@ -47,10 +46,11 @@ public class AggregateForceCompletionHeaderTest extends ContextTestSupport {
         getMockEndpoint("mock:aggregated").expectedBodiesReceivedInAnyOrder("test1test3", "test2test4");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
         getMockEndpoint("mock:aggregated").allMessages().header(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS).isNull();
+        getMockEndpoint("mock:aggregated").allMessages().exchangeProperty(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS).isNull();
 
         // now send the signal message to trigger completion of all groups,
         // message should NOT be aggregated
-        template.sendBodyAndHeader("direct:start", "test5", Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
+        template.sendBodyAndProperty("direct:start", "test5", Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
 
         assertMockEndpointsSatisfied();
     }
@@ -89,7 +89,8 @@ public class AggregateForceCompletionHeaderTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(10).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionSize(10)
+                        .to("mock:aggregated");
             }
         };
     }

@@ -58,8 +58,7 @@ import org.xml.sax.SAXException;
 import org.apache.camel.util.IOHelper;
 
 /**
- * Helps to construct the transformations and the canonicalization methods for
- * the XML Signature generator.
+ * Helps to construct the transformations and the canonicalization methods for the XML Signature generator.
  */
 public final class XmlSignatureHelper {
     private XmlSignatureHelper() {
@@ -69,11 +68,9 @@ public final class XmlSignatureHelper {
     /**
      * Returns a configuration for a canonicalization algorithm.
      * 
-     * @param algorithm
-     *            algorithm URI
-     * @return canonicalization
-     * @throws IllegalArgumentException
-     *             if <tt>algorithm</tt> is <code>null</code>
+     * @param  algorithm                algorithm URI
+     * @return                          canonicalization
+     * @throws IllegalArgumentException if <tt>algorithm</tt> is <code>null</code>
      */
     public static AlgorithmMethod getCanonicalizationMethod(String algorithm) {
         return getCanonicalizationMethod(algorithm, null);
@@ -82,15 +79,11 @@ public final class XmlSignatureHelper {
     /**
      * Returns a configuration for a canonicalization algorithm.
      * 
-     * @param algorithm
-     *            algorithm URI
-     * @param inclusiveNamespacePrefixes
-     *            namespace prefixes which should be treated like in the
-     *            inclusive canonicalization, only relevant if the algorithm is
-     *            exclusive
-     * @return canonicalization
-     * @throws IllegalArgumentException
-     *             if <tt>algorithm</tt> is <code>null</code>
+     * @param  algorithm                  algorithm URI
+     * @param  inclusiveNamespacePrefixes namespace prefixes which should be treated like in the inclusive
+     *                                    canonicalization, only relevant if the algorithm is exclusive
+     * @return                            canonicalization
+     * @throws IllegalArgumentException   if <tt>algorithm</tt> is <code>null</code>
      */
     public static AlgorithmMethod getCanonicalizationMethod(String algorithm, List<String> inclusiveNamespacePrefixes) {
         if (algorithm == null) {
@@ -120,28 +113,22 @@ public final class XmlSignatureHelper {
     /**
      * Returns a configuration for an XPATH transformation.
      * 
-     * @param xpath
-     *            XPATH expression
-     * @return XPATH transformation
-     * @throws IllegalArgumentException
-     *             if <tt>xpath</tt> is <code>null</code>
+     * @param  xpath                    XPATH expression
+     * @return                          XPATH transformation
+     * @throws IllegalArgumentException if <tt>xpath</tt> is <code>null</code>
      */
     public static AlgorithmMethod getXPathTransform(String xpath) {
         return getXPathTransform(xpath, null);
     }
 
     /**
-     * Returns a configuration for an XPATH transformation which needs a
-     * namespace map.
+     * Returns a configuration for an XPATH transformation which needs a namespace map.
      * 
-     * @param xpath
-     *            XPATH expression
-     * @param namespaceMap
-     *            namespace map, key is the prefix, value is the namespace, can
-     *            be <code>null</code>
-     * @throws IllegalArgumentException
-     *             if <tt>xpath</tt> is <code>null</code>
-     * @return XPATH transformation
+     * @param  xpath                    XPATH expression
+     * @param  namespaceMap             namespace map, key is the prefix, value is the namespace, can be
+     *                                  <code>null</code>
+     * @throws IllegalArgumentException if <tt>xpath</tt> is <code>null</code>
+     * @return                          XPATH transformation
      */
     public static AlgorithmMethod getXPathTransform(String xpath, Map<String, String> namespaceMap) {
         if (xpath == null) {
@@ -155,8 +142,10 @@ public final class XmlSignatureHelper {
     }
 
     public static XPathFilterParameterSpec getXpathFilter(String xpath, Map<String, String> namespaceMap) {
-        XPathFilterParameterSpec params = namespaceMap == null ? new XPathFilterParameterSpec(xpath) : new XPathFilterParameterSpec(xpath,
-                namespaceMap);
+        XPathFilterParameterSpec params = namespaceMap == null
+                ? new XPathFilterParameterSpec(xpath) : new XPathFilterParameterSpec(
+                        xpath,
+                        namespaceMap);
         return params;
     }
 
@@ -216,33 +205,24 @@ public final class XmlSignatureHelper {
     /**
      * Returns a configuration for an XPATH2 transformation.
      * 
-     * @param xpath
-     *            XPATH expression
-     * @param filter
-     *            possible values are "intersect", "subtract", "union"
-     * @throws IllegalArgumentException
-     *             if <tt>xpath</tt> or <tt>filter</tt> is <code>null</code>, or
-     *             is neither "intersect", nor "subtract", nor "union"
-     * @return XPATH transformation
+     * @param  xpath                    XPATH expression
+     * @param  filter                   possible values are "intersect", "subtract", "union"
+     * @throws IllegalArgumentException if <tt>xpath</tt> or <tt>filter</tt> is <code>null</code>, or is neither
+     *                                  "intersect", nor "subtract", nor "union"
+     * @return                          XPATH transformation
      */
     public static AlgorithmMethod getXPath2Transform(String xpath, String filter) {
         return getXPath2Transform(xpath, filter, null);
     }
 
     /**
-     * Returns a configuration for an XPATH2 transformation which consists of
-     * several XPATH expressions.
+     * Returns a configuration for an XPATH2 transformation which consists of several XPATH expressions.
      * 
-     * @param xpathAndFilterList
-     *            list of XPATH expressions with their filters
-     * @param namespaceMap
-     *            namespace map, key is the prefix, value is the namespace, can
-     *            be <code>null</code>
-     * @throws IllegalArgumentException
-     *             if <tt>xpathAndFilterList</tt> is <code>null</code> or empty,
-     *             or the specified filter values are neither "intersect", nor
-     *             "subtract", nor "union"
-     * @return XPATH transformation
+     * @param  namespaceMap             namespace map, key is the prefix, value is the namespace, can be
+     *                                  <code>null</code>
+     * @throws IllegalArgumentException if <tt>xpathAndFilterList</tt> is <code>null</code> or empty, or the specified
+     *                                  filter values are neither "intersect", nor "subtract", nor "union"
+     * @return                          XPATH transformation
      */
     public static AlgorithmMethod getXPath2Transform(String xpath, String filter, Map<String, String> namespaceMap) {
         XPathAndFilter xpathAndFilter = new XPathAndFilter();
@@ -254,21 +234,17 @@ public final class XmlSignatureHelper {
     }
 
     /**
-     * Returns a configuration for an XPATH2 transformation which consists of
-     * several XPATH expressions.
+     * Returns a configuration for an XPATH2 transformation which consists of several XPATH expressions.
      * 
-     * @param xpathAndFilterList
-     *            list of XPATH expressions with their filters
-     * @param namespaceMap
-     *            namespace map, key is the prefix, value is the namespace, can
-     *            be <code>null</code>
-     * @throws IllegalArgumentException
-     *             if <tt>xpathAndFilterList</tt> is <code>null</code> or empty,
-     *             or the specified filter values are neither "intersect", nor
-     *             "subtract", nor "union"
-     * @return XPATH transformation
+     * @param  xpathAndFilterList       list of XPATH expressions with their filters
+     * @param  namespaceMap             namespace map, key is the prefix, value is the namespace, can be
+     *                                  <code>null</code>
+     * @throws IllegalArgumentException if <tt>xpathAndFilterList</tt> is <code>null</code> or empty, or the specified
+     *                                  filter values are neither "intersect", nor "subtract", nor "union"
+     * @return                          XPATH transformation
      */
-    public static AlgorithmMethod getXPath2Transform(List<XPathAndFilter> xpathAndFilterList, Map<String, String> namespaceMap) {
+    public static AlgorithmMethod getXPath2Transform(
+            List<XPathAndFilter> xpathAndFilterList, Map<String, String> namespaceMap) {
         if (xpathAndFilterList == null) {
             throw new IllegalArgumentException("xpathAndFilterList is null");
         }
@@ -292,28 +268,26 @@ public final class XmlSignatureHelper {
             } else if (XPathType.Filter.UNION.toString().equals(xpathAndFilter.getFilter())) {
                 xpathFilter = XPathType.Filter.UNION;
             } else {
-                throw new IllegalStateException(String.format("XPATH %s has a filter %s not supported", xpathAndFilter.getXpath(),
-                        xpathAndFilter.getFilter()));
+                throw new IllegalStateException(
+                        String.format("XPATH %s has a filter %s not supported", xpathAndFilter.getXpath(),
+                                xpathAndFilter.getFilter()));
             }
 
-            XPathType xpathtype = namespaceMap == null ? new XPathType(xpathAndFilter.getXpath(), xpathFilter) : new XPathType(
-                    xpathAndFilter.getXpath(), xpathFilter, namespaceMap);
+            XPathType xpathtype = namespaceMap == null
+                    ? new XPathType(xpathAndFilter.getXpath(), xpathFilter) : new XPathType(
+                            xpathAndFilter.getXpath(), xpathFilter, namespaceMap);
             list.add(xpathtype);
         }
         return list;
     }
 
     /**
-     * Returns a configuration for an XPATH2 transformation which consists of
-     * several XPATH expressions.
+     * Returns a configuration for an XPATH2 transformation which consists of several XPATH expressions.
      * 
-     * @param xpathAndFilterList
-     *            list of XPATH expressions with their filters
-     * @throws IllegalArgumentException
-     *             if <tt>xpathAndFilterList</tt> is <code>null</code> or empty,
-     *             or the specified filte values are neither "intersect", nor
-     *             "subtract", nor "union"
-     * @return XPATH transformation
+     * @param  xpathAndFilterList       list of XPATH expressions with their filters
+     * @throws IllegalArgumentException if <tt>xpathAndFilterList</tt> is <code>null</code> or empty, or the specified
+     *                                  filte values are neither "intersect", nor "subtract", nor "union"
+     * @return                          XPATH transformation
      */
     public static AlgorithmMethod getXPath2Transform(List<XPathAndFilter> xpathAndFilterList) {
         return getXPath2Transform(xpathAndFilterList, null);
@@ -322,17 +296,13 @@ public final class XmlSignatureHelper {
     /**
      * Returns a configuration for an XSL transformation.
      * 
-     * @param path
-     *            path to the XSL file in the classpath
-     * @return XSL transform
-     * @throws IllegalArgumentException
-     *             if <tt>path</tt> is <code>null</code>
-     * @throws IllegalStateException
-     *             if the XSL file cannot be found
-     * @throws Exception
-     *             if an error during the reading of the XSL file occurs
+     * @param  path                     path to the XSL file in the classpath
+     * @return                          XSL transform
+     * @throws IllegalArgumentException if <tt>path</tt> is <code>null</code>
+     * @throws IllegalStateException    if the XSL file cannot be found
+     * @throws Exception                if an error during the reading of the XSL file occurs
      */
-    public static AlgorithmMethod getXslTransform(String path) throws Exception { //NOPMD
+    public static AlgorithmMethod getXslTransform(String path) throws Exception {
         InputStream is = readXslTransform(path);
         if (is == null) {
             throw new IllegalStateException(String.format("XSL file %s not found", path));
@@ -347,15 +317,13 @@ public final class XmlSignatureHelper {
     /**
      * Returns a configuration for an XSL transformation.
      * 
-     * @param is
-     *            input stream of the XSL
-     * @return XSL transform
-     * @throws IllegalArgumentException
-     *             if <tt>is</tt> is <code>null</code>
-     * @throws Exception
-     *             if an error during the reading of the XSL file occurs
+     * @param  is                       input stream of the XSL
+     * @return                          XSL transform
+     * @throws IllegalArgumentException if <tt>is</tt> is <code>null</code>
+     * @throws Exception                if an error during the reading of the XSL file occurs
      */
-    public static AlgorithmMethod getXslTranform(InputStream is) throws SAXException, IOException, ParserConfigurationException {
+    public static AlgorithmMethod getXslTranform(InputStream is)
+            throws SAXException, IOException, ParserConfigurationException {
         if (is == null) {
             throw new IllegalArgumentException("is must not be null");
         }
@@ -368,7 +336,7 @@ public final class XmlSignatureHelper {
         return transformXslt;
     }
 
-    protected static InputStream readXslTransform(String path) throws Exception { //NOPMD
+    protected static InputStream readXslTransform(String path) throws Exception {
         if (path == null) {
             throw new IllegalArgumentException("path is null");
         }
@@ -402,7 +370,8 @@ public final class XmlSignatureHelper {
         return newDocumentBuilder(disallowDoctypeDecl, null);
     }
 
-    public static DocumentBuilder newDocumentBuilder(Boolean disallowDoctypeDecl, Schema schema) throws ParserConfigurationException {
+    public static DocumentBuilder newDocumentBuilder(Boolean disallowDoctypeDecl, Schema schema)
+            throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         dbf.setValidating(false);
@@ -420,7 +389,8 @@ public final class XmlSignatureHelper {
         return dbf.newDocumentBuilder();
     }
 
-    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration, String encoding) throws Exception { //NOPMD
+    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration, String encoding)
+            throws Exception {
 
         if (node.getNodeType() == Node.TEXT_NODE) {
             byte[] bytes = tranformTextNodeToByteArray(node, encoding);
@@ -431,11 +401,10 @@ public final class XmlSignatureHelper {
     }
 
     /**
-     * Use {@link #transformToOutputStream(Node, OutputStream, boolean, String)}
-     * instead.
+     * Use {@link #transformToOutputStream(Node, OutputStream, boolean, String)} instead.
      */
     @Deprecated
-    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception { //NOPMD
+    public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception {
 
         if (node.getNodeType() == Node.TEXT_NODE) {
             byte[] bytes = tranformTextNodeToByteArray(node);
@@ -446,31 +415,27 @@ public final class XmlSignatureHelper {
     }
 
     /**
-     * Use
-     * {@link #transformNonTextNodeToOutputStream(Node, OutputStream, boolean, String)}
-     * instead.
+     * Use {@link #transformNonTextNodeToOutputStream(Node, OutputStream, boolean, String)} instead.
      */
     @Deprecated
-    public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration) throws Exception { //NOPMD
+    public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration)
+            throws Exception {
         transformNonTextNodeToOutputStream(node, os, omitXmlDeclaration, null);
     }
 
     /**
      * Serializes a node using a certain character encoding.
      * 
-     * @param node
-     *            DOM node to serialize
-     * @param os
-     *            output stream, to which the node is serialized
-     * @param omitXmlDeclaration
-     *            indicator whether to omit the XML declaration or not
-     * @param encoding
-     *            character encoding, can be <code>null</code>, if
-     *            <code>null</code> then "UTF-8" is used
+     * @param  node               DOM node to serialize
+     * @param  os                 output stream, to which the node is serialized
+     * @param  omitXmlDeclaration indicator whether to omit the XML declaration or not
+     * @param  encoding           character encoding, can be <code>null</code>, if <code>null</code> then "UTF-8" is
+     *                            used
      * @throws Exception
      */
-    public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration, String encoding)
-        throws Exception { //NOPMD
+    public static void transformNonTextNodeToOutputStream(
+            Node node, OutputStream os, boolean omitXmlDeclaration, String encoding)
+            throws Exception {
         // previously we used javax.xml.transform.Transformer, however the JDK xalan implementation did not work correctly with a specified encoding
         // therefore we switched to DOMImplementationLS
         if (encoding == null) {
@@ -495,14 +460,11 @@ public final class XmlSignatureHelper {
     /**
      * Trannsforms a text node to byte array using a certain character encoding.
      * 
-     * @param node
-     *            text node
-     * @param encoding
-     *            character encoding, can be <code>null</code>, if
-     *            <code>null</code> then UTF-8 is used
-     * @return byte array, <code>null</code> if the node has not text content
-     * @throws IllegalStateException
-     *             if the encoding is not supported
+     * @param  node                  text node
+     * @param  encoding              character encoding, can be <code>null</code>, if <code>null</code> then UTF-8 is
+     *                               used
+     * @return                       byte array, <code>null</code> if the node has not text content
+     * @throws IllegalStateException if the encoding is not supported
      */
     public static byte[] tranformTextNodeToByteArray(Node node, String encoding) {
         if (encoding == null) {

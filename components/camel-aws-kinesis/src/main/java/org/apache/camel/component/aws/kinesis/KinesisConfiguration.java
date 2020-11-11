@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class KinesisConfiguration implements Cloneable {
-    
+
     @UriPath(description = "Name of the stream")
     @Metadata(required = true)
     private String streamName;
@@ -35,30 +35,39 @@ public class KinesisConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Secret Key")
     private String secretKey;
-    @UriParam(description = "The region in which Kinesis client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)" 
-              + "You'll need to use the name Regions.EU_WEST_1.name()")
+    @UriParam(description = "The region in which Kinesis client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)"
+                            + "You'll need to use the name Regions.EU_WEST_1.name()")
     private String region;
     @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
     private AmazonKinesis amazonKinesisClient;
-    @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll", defaultValue = "1")
+    @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll",
+              defaultValue = "1")
     private int maxResultsPerRequest = 1;
-    @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records", defaultValue = "TRIM_HORIZON")
+    @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records",
+              defaultValue = "TRIM_HORIZON")
     private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
     @UriParam(label = "consumer", description = "Defines which shardId in the Kinesis stream to get records from")
     private String shardId = "";
-    @UriParam(label = "consumer", description = "The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER")
+    @UriParam(label = "consumer",
+              description = "The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER")
     private String sequenceNumber = "";
-    @UriParam(label = "consumer", defaultValue = "ignore", description = "Define what will be the behavior in case of shard closed. Possible value are ignore, silent and fail."
-                                                                         + " In case of ignore a message will be logged and the consumer will restart from the beginning,"
-                                                                         + "in case of silent there will be no logging and the consumer will start from the beginning,"
-                                                                         + "in case of fail a ReachedClosedStateException will be raised")
+    @UriParam(label = "consumer", defaultValue = "ignore",
+              description = "Define what will be the behavior in case of shard closed. Possible value are ignore, silent and fail."
+                            + " In case of ignore a message will be logged and the consumer will restart from the beginning,"
+                            + "in case of silent there will be no logging and the consumer will start from the beginning,"
+                            + "in case of fail a ReachedClosedStateException will be raised")
     private KinesisShardClosedStrategyEnum shardClosed;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the Kinesis client")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS",
+              description = "To define a proxy protocol when instantiating the Kinesis client")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(description = "To define a proxy host when instantiating the Kinesis client")
     private String proxyHost;
     @UriParam(description = "To define a proxy port when instantiating the Kinesis client")
     private Integer proxyPort;
+    @UriParam(label = "common", defaultValue = "true",
+              description = "Setting the autoDiscoverClient mechanism, if true, the component will "
+                            + " look for a client instance in the registry automatically otherwise it will skip that checking")
+    private boolean autoDiscoverClient = true;
 
     public AmazonKinesis getAmazonKinesisClient() {
         return amazonKinesisClient;
@@ -115,7 +124,7 @@ public class KinesisConfiguration implements Cloneable {
     public void setShardClosed(KinesisShardClosedStrategyEnum shardClosed) {
         this.shardClosed = shardClosed;
     }
-    
+
     public String getAccessKey() {
         return accessKey;
     }
@@ -139,14 +148,14 @@ public class KinesisConfiguration implements Cloneable {
     public void setRegion(String region) {
         this.region = region;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
 
     public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
-    }    
+    }
 
     public String getProxyHost() {
         return proxyHost;
@@ -162,15 +171,23 @@ public class KinesisConfiguration implements Cloneable {
 
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
-    }   
-    
+    }
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
+    }
+
     // *************************************************
     //
     // *************************************************
 
     public KinesisConfiguration copy() {
         try {
-            return (KinesisConfiguration)super.clone();
+            return (KinesisConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

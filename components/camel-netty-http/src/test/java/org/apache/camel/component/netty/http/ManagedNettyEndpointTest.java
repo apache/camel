@@ -24,7 +24,11 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.isPlatform;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class ManagedNettyEndpointTest extends BaseNettyTest {
 
@@ -46,21 +50,21 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
     @Test
     public void testManagement() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
-            return;
-        }
+        assumeFalse(isPlatform("aix"));
 
         // should not add 10 endpoints
         getMockEndpoint("mock:foo").expectedMessageCount(10);
         for (int i = 0; i < 10; i++) {
-            String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?param" + i + "=value" + i, "Hello World", String.class);
+            String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?param" + i + "=value" + i,
+                    "Hello World", String.class);
             assertEquals("param" + i + "=value" + i, out);
         }
         assertMockEndpointsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"http://0.0.0.0:" + getPort() + "/foo\"");
+        ObjectName on = ObjectName
+                .getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"http://0.0.0.0:" + getPort() + "/foo\"");
         mbeanServer.isRegistered(on);
 
         // should only be 2 endpoints in JMX
@@ -74,8 +78,8 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:foo")
-                    .transform().header(Exchange.HTTP_QUERY);
+                        .to("mock:foo")
+                        .transform().header(Exchange.HTTP_QUERY);
             }
         };
     }

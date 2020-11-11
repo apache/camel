@@ -17,6 +17,8 @@
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * An outgoing document message.
  */
@@ -28,6 +30,9 @@ public class OutgoingDocumentMessage extends OutgoingMessage {
     private String filenameWithExtension;
 
     private String caption;
+
+    @JsonProperty("reply_markup")
+    private ReplyMarkup replyMarkup;
 
     public OutgoingDocumentMessage() {
     }
@@ -56,12 +61,25 @@ public class OutgoingDocumentMessage extends OutgoingMessage {
         this.caption = caption;
     }
 
+    public ReplyMarkup getReplyMarkup() {
+        return replyMarkup;
+    }
+
+    public void setReplyMarkup(ReplyMarkup replyMarkup) {
+        this.replyMarkup = replyMarkup;
+    }
+
+    public String replyMarkupJson() {
+        return replyMarkup == null ? null : replyMarkup.toJson();
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("OutgoingDocumentMessage{");
         sb.append("document(length)=").append(document != null ? document.length : null);
         sb.append(", filenameWithExtension='").append(filenameWithExtension).append('\'');
         sb.append(", caption='").append(caption).append('\'');
+        sb.append(", replyMarkup='").append(replyMarkup).append('\'');
         sb.append('}');
         sb.append(' ');
         sb.append(super.toString());

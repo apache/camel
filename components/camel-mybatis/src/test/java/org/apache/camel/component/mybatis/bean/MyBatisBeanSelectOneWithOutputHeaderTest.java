@@ -21,7 +21,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mybatis.Account;
 import org.apache.camel.component.mybatis.MyBatisConstants;
 import org.apache.camel.component.mybatis.MyBatisTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisBeanSelectOneWithOutputHeaderTest extends MyBatisTestSupport {
 
@@ -50,11 +52,10 @@ public class MyBatisBeanSelectOneWithOutputHeaderTest extends MyBatisTestSupport
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mybatis-bean:AccountService:selectBeanAccountById?outputHeader=" + TEST_CASE_HEADER_NAME)
-                    .to("mock:result");
+                        .to("mybatis-bean:AccountService:selectBeanAccountById?outputHeader=" + TEST_CASE_HEADER_NAME)
+                        .to("mock:result");
             }
         };
     }
-
 
 }

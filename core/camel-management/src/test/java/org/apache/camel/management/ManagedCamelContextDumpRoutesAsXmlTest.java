@@ -23,7 +23,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSupport {
 
@@ -63,7 +66,7 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[]{true}, new String[]{"boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[] { true }, new String[] { "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
@@ -88,7 +91,8 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[]{true, true}, new String[]{"boolean", "boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[] { true, true },
+                new String[] { "boolean", "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
@@ -116,13 +120,13 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
                 bindToRegistry("bar", bar);
 
                 from("direct:start").routeId("myRoute")
-                    .log("Got ${body}")
-                    .to("{{result}}");
+                        .log("Got ${body}")
+                        .to("{{result}}");
 
                 from("seda:bar").routeId("myOtherRoute")
-                    .filter().header("bar")
+                        .filter().header("bar")
                         .to("ref:bar")
-                    .end();
+                        .end();
             }
         };
     }

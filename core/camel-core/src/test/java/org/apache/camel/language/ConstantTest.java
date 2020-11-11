@@ -17,7 +17,7 @@
 package org.apache.camel.language;
 
 import org.apache.camel.LanguageTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConstantTest extends LanguageTestSupport {
 

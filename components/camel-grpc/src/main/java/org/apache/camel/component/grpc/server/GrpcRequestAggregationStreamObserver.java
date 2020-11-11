@@ -26,13 +26,14 @@ import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcEndpoint;
 
 /**
- * gRPC request stream observer which is collecting received objects every
- * onNext() call into the list and processing them in onCompleted()
+ * gRPC request stream observer which is collecting received objects every onNext() call into the list and processing
+ * them in onCompleted()
  */
 public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStreamObserver {
     private List<Object> requestList = new LinkedList<>();
 
-    public GrpcRequestAggregationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer, StreamObserver<Object> responseObserver, Map<String, Object> headers) {
+    public GrpcRequestAggregationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
+                                                StreamObserver<Object> responseObserver, Map<String, Object> headers) {
         super(endpoint, consumer, responseObserver, headers);
         exchange = endpoint.createExchange();
     }
@@ -50,26 +51,20 @@ public class GrpcRequestAggregationStreamObserver extends GrpcRequestAbstractStr
     @Override
     public void onCompleted() {
         CountDownLatch latch = new CountDownLatch(1);
-        Object responseBody = null;
-        
+
         exchange.getIn().setBody(requestList);
         exchange.getIn().setHeaders(headers);
 
         consumer.process(exchange, doneSync -> {
             latch.countDown();
         });
-        
+
         try {
             latch.await();
-            
-            if (exchange.hasOut()) {
-                responseBody = exchange.getOut().getBody();
-            } else {
-                responseBody = exchange.getIn().getBody();
-            }
 
+            Object responseBody = exchange.getMessage().getBody();
             if (responseBody instanceof List) {
-                List<?> responseList = (List<?>)responseBody;
+                List<?> responseList = (List<?>) responseBody;
                 responseList.forEach(responseObserver::onNext);
             } else {
                 responseObserver.onNext(responseBody);

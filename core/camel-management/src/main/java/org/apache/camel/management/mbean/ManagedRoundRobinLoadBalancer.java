@@ -27,7 +27,8 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 public class ManagedRoundRobinLoadBalancer extends ManagedProcessor implements ManagedRoundRobinLoadBalancerMBean {
     private final RoundRobinLoadBalancer processor;
 
-    public ManagedRoundRobinLoadBalancer(CamelContext context, RoundRobinLoadBalancer processor, LoadBalanceDefinition definition) {
+    public ManagedRoundRobinLoadBalancer(CamelContext context, RoundRobinLoadBalancer processor,
+                                         LoadBalanceDefinition definition) {
         super(context, processor, definition);
         this.processor = processor;
     }

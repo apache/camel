@@ -35,9 +35,9 @@ public class JsonPathSplitTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .split().jsonpath("$.store.book[*]")
-                    .to("mock:authors")
-                    .convertBodyTo(String.class);
+                        .split().jsonpath("$.store.book[*]")
+                        .to("mock:authors")
+                        .convertBodyTo(String.class);
             }
         };
     }

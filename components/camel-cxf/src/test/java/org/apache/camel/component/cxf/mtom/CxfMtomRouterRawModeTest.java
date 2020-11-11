@@ -24,21 +24,21 @@ import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ContextConfiguration
 public class CxfMtomRouterRawModeTest extends CxfMtomRouterPayloadModeTest {
     @Override
     protected Hello getPort() {
         URL wsdl = getClass().getResource("/mtom.wsdl");
-        assertNotNull("WSDL is null", wsdl);
+        assertNotNull(wsdl, "WSDL is null");
 
         HelloService service = new HelloService(wsdl, HelloService.SERVICE);
-        assertNotNull("Service is null ", service);
+        assertNotNull(service, "Service is null");
         Hello port = service.getHelloPort();
-        ((BindingProvider)port).getRequestContext()
-            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + port1 + "/CxfMtomRouterRawModeTest/jaxws-mtom/hello");
+        ((BindingProvider) port).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        "http://localhost:" + port1 + "/CxfMtomRouterRawModeTest/jaxws-mtom/hello");
         return port;
     }
 

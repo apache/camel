@@ -18,9 +18,11 @@ package org.apache.camel.spring;
 
 import javax.management.ObjectName;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test that verifies JMX can be disabled via Spring.
@@ -28,12 +30,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  */
 public class DisableJmxAgentTest extends DefaultJMXAgentTest {
-    
+
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");            
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");
     }
-   
+
     @Override
     @Test
     public void testQueryMbeans() throws Exception {
@@ -45,7 +47,7 @@ public class DisableJmxAgentTest extends DefaultJMXAgentTest {
 
         int after = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 
-        assertEquals("Should not have added consumer to JMX", before, after);
+        assertEquals(before, after, "Should not have added consumer to JMX");
     }
 
 }

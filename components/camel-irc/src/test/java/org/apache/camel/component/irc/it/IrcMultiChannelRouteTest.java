@@ -23,9 +23,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IrcMultiChannelRouteTest extends IrcIntegrationTestSupport {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IrcMultiChannelRouteTest.class);
+
     protected String body1 = "Message One";
     protected String body2 = "Message Two";
     protected String body3 = "Message Three";
@@ -33,12 +38,12 @@ public class IrcMultiChannelRouteTest extends IrcIntegrationTestSupport {
     @EndpointInject("mock:joined")
     private MockEndpoint joined;
 
-
     @Test
     public void testIrcMessages() throws Exception {
         resetMock(joined);
         joined.expectedMessageCount(2);
-        joined.expectedHeaderValuesReceivedInAnyOrder(IrcConstants.IRC_TARGET, properties.get("channel1"), properties.get("channel2"));
+        joined.expectedHeaderValuesReceivedInAnyOrder(IrcConstants.IRC_TARGET, properties.get("channel1"),
+                properties.get("channel2"));
         joined.assertIsSatisfied();
 
         sendMessages();
@@ -50,24 +55,21 @@ public class IrcMultiChannelRouteTest extends IrcIntegrationTestSupport {
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
-            log.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
+            LOGGER.info("Received exchange: " + exchange + " headers: " + exchange.getIn().getHeaders());
         }
-    }   
-    
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fromUri()).
-                        choice().
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("direct:mock").
-                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to(joined);
+                from(fromUri()).choice().when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("direct:mock")
+                        .when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to(joined);
 
                 from("direct:mock").filter(e -> !e.getIn().getBody(String.class).contains("VERSION")).to(resultEndpoint);
             }
         };
     }
-
 
     /**
      * Lets send messages once the consumer has joined

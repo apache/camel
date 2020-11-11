@@ -17,21 +17,23 @@
 package org.apache.camel.component.sql.stored;
 
 import org.apache.camel.component.sql.stored.template.TemplateParser;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class TemplateCacheTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.DERBY).addScript("sql/storedProcedureTest.sql").build();
@@ -39,7 +41,7 @@ public class TemplateCacheTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         db.shutdown();
@@ -48,7 +50,8 @@ public class TemplateCacheTest extends CamelTestSupport {
     @Test
     public void shouldCacheTemplateFunctions() throws InterruptedException {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(db);
-        CallableStatementWrapperFactory fac = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(context.getClassResolver()), false);
+        CallableStatementWrapperFactory fac
+                = new CallableStatementWrapperFactory(jdbcTemplate, new TemplateParser(context.getClassResolver()), false);
 
         BatchCallableStatementCreatorFactory batchFactory1 = fac.getTemplateForBatch("FOO()");
         BatchCallableStatementCreatorFactory batchFactory2 = fac.getTemplateForBatch("FOO()");

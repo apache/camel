@@ -19,7 +19,7 @@ package org.apache.camel.component.infinispan;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InfinispanSyncConsumerTest extends InfinispanTestSupport {
 
@@ -40,11 +40,10 @@ public class InfinispanSyncConsumerTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan:default?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
                         .delayer(500)
                         .to("mock:result");
             }
         };
     }
 }
-

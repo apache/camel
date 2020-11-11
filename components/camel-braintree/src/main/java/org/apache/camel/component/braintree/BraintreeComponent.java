@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
@@ -32,6 +33,10 @@ import org.apache.camel.support.component.AbstractApiComponent;
  */
 @Component("braintree")
 public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, BraintreeConfiguration, BraintreeApiCollection> {
+
+    @Metadata
+    private BraintreeConfiguration configuration;
+
     private final Map<String, BraintreeGateway> gateways;
 
     public BraintreeComponent() {
@@ -45,28 +50,17 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     }
 
     @Override
-    protected BraintreeApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return BraintreeApiName.fromValue(apiNameStr);
+    protected BraintreeApiName getApiName(String apiNameStr) {
+        return getCamelContext().getTypeConverter().convertTo(BraintreeApiName.class, apiNameStr);
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
+        this.configuration = endpointConfiguration;
         return new BraintreeEndpoint(uri, this, apiName, methodName, endpointConfiguration);
-    }
-
-    /**
-     * To use the shared configuration
-     */
-    @Override
-    public void setConfiguration(BraintreeConfiguration configuration) {
-        super.setConfiguration(configuration);
-    }
-
-    @Override
-    public BraintreeConfiguration getConfiguration() {
-        return super.getConfiguration();
     }
 
     public synchronized BraintreeGateway getGateway(BraintreeConfiguration configuration) {

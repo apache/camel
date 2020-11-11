@@ -22,7 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestJettyPostJsonPojoListTest extends BaseJettyTest {
 
@@ -40,10 +43,10 @@ public class RestJettyPostJsonPojoListTest extends BaseJettyTest {
         assertNotNull(list);
         assertEquals(2, list.size());
 
-        UserPojo user = (UserPojo)list.get(0);
+        UserPojo user = (UserPojo) list.get(0);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());
-        user = (UserPojo)list.get(1);
+        user = (UserPojo) list.get(1);
         assertEquals(456, user.getId());
         assertEquals("John Doe", user.getName());
     }

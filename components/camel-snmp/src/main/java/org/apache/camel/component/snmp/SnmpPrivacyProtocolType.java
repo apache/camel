@@ -17,5 +17,9 @@
 package org.apache.camel.component.snmp;
 
 public enum SnmpPrivacyProtocolType {
-    DES, TRIDES, AES128, AES192, AES256; 
+    DES,
+    TRIDES,
+    AES128,
+    AES192,
+    AES256;
 }

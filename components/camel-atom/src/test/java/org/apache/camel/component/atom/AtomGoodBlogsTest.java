@@ -23,13 +23,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Example for wiki documentation
  */
-public class AtomGoodBlogsTest extends TestSupport {
+public class AtomGoodBlogsTest {
 
     // START SNIPPET: e1
 
@@ -54,9 +53,9 @@ public class AtomGoodBlogsTest extends TestSupport {
     /**
      * This is the route builder where we create our routes using the Camel DSL
      */
-    protected RouteBuilder createMyRoutes() throws Exception {
+    protected RouteBuilder createMyRoutes() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 // We pool the atom feeds from the source for further processing in the seda queue
                 // we set the delay to 1 second for each pool as this is a unit test also and we can
                 // not wait the default poll interval of 60 seconds.
@@ -83,7 +82,7 @@ public class AtomGoodBlogsTest extends TestSupport {
      * This is the actual junit test method that does the assertion that our routes is working as expected
      */
     @Test
-    public void testFiltering() throws Exception {
+    void testFiltering() throws Exception {
         // create and start Camel
         context = createCamelContext();
         context.start();

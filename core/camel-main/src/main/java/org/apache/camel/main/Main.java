@@ -34,7 +34,7 @@ public class Main extends MainCommandLineSupport {
     public Main() {
     }
 
-    public Main(Class... configurationClass) {
+    public Main(Class<?>... configurationClass) {
         super(configurationClass);
     }
 
@@ -56,10 +56,9 @@ public class Main extends MainCommandLineSupport {
     }
 
     /**
-     * Binds the given <code>name</code> to the <code>bean</code> object, so
-     * that it can be looked up inside the CamelContext this command line tool
-     * runs with.
-     * 
+     * Binds the given <code>name</code> to the <code>bean</code> object, so that it can be looked up inside the
+     * CamelContext this command line tool runs with.
+     *
      * @param name the used name through which we do bind
      * @param bean the object to bind
      */
@@ -68,9 +67,9 @@ public class Main extends MainCommandLineSupport {
     }
 
     /**
-     * Using the given <code>name</code> does lookup for the bean being already
-     * bound using the {@link #bind(String, Object)} method.
-     * 
+     * Using the given <code>name</code> does lookup for the bean being already bound using the
+     * {@link #bind(String, Object)} method.
+     *
      * @see Registry#lookupByName(String)
      */
     public Object lookup(String name) {
@@ -78,10 +77,9 @@ public class Main extends MainCommandLineSupport {
     }
 
     /**
-     * Using the given <code>name</code> and <code>type</code> does lookup for
-     * the bean being already bound using the {@link #bind(String, Object)}
-     * method.
-     * 
+     * Using the given <code>name</code> and <code>type</code> does lookup for the bean being already bound using the
+     * {@link #bind(String, Object)} method.
+     *
      * @see Registry#lookupByNameAndType(String, Class)
      */
     public <T> T lookup(String name, Class<T> type) {
@@ -89,9 +87,9 @@ public class Main extends MainCommandLineSupport {
     }
 
     /**
-     * Using the given <code>type</code> does lookup for the bean being already
-     * bound using the {@link #bind(String, Object)} method.
-     * 
+     * Using the given <code>type</code> does lookup for the bean being already bound using the
+     * {@link #bind(String, Object)} method.
+     *
      * @see Registry#findByTypeWithName(Class)
      */
     public <T> Map<String, T> lookupByType(Class<T> type) {
@@ -100,7 +98,6 @@ public class Main extends MainCommandLineSupport {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-
 
     @Override
     protected void doInit() throws Exception {
@@ -143,6 +140,12 @@ public class Main extends MainCommandLineSupport {
     @Override
     protected CamelContext createCamelContext() {
         return new DefaultCamelContext(registry);
+        // TODO: LightweightCamelContext is not ready yet
+        //if (mainConfigurationProperties.isLightweight()) {
+        //    return new LightweightCamelContext(registry);
+        //} else {
+        //    return new DefaultCamelContext(registry);
+        //}
     }
 
 }

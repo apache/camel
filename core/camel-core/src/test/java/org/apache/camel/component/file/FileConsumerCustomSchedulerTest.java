@@ -24,24 +24,26 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
     private MyScheduler scheduler = new MyScheduler();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myScheduler", scheduler);
         return jndi;
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/file/custom");
         super.setUp();
@@ -67,7 +69,8 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/file/custom?scheduler=#myScheduler&scheduler.foo=bar&initialDelay=0&delay=10").routeId("foo").noAutoStartup().to("mock:result");
+                from("file:target/data/file/custom?scheduler=#myScheduler&scheduler.foo=bar&initialDelay=0&delay=10")
+                        .routeId("foo").noAutoStartup().to("mock:result");
             }
         };
     }

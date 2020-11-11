@@ -23,8 +23,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KuduScanTest extends AbstractKuduTest {
 
@@ -45,16 +48,16 @@ public class KuduScanTest extends AbstractKuduTest {
 
                 //integration test route
                 from("direct:scan").to("kudu:localhost:7051/" + TABLE + "?operation=scan")
-                    .to("mock:result");
+                        .to("mock:result");
 
                 from("direct:scan2")
-                    .to("kudu:localhost:7051/TestTable?operation=scan")
-                    .to("mock:result");
+                        .to("kudu:localhost:7051/TestTable?operation=scan")
+                        .to("mock:result");
             }
         };
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         deleteTestTable(TABLE);
         createTestTable(TABLE);
@@ -69,7 +72,7 @@ public class KuduScanTest extends AbstractKuduTest {
         successEndpoint.expectedMessageCount(1);
 
         sendBody("direct:scan", null);
-        
+
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
 
@@ -78,7 +81,7 @@ public class KuduScanTest extends AbstractKuduTest {
 
         List<Map<String, Object>> results = exchanges.get(0).getIn().getBody(List.class);
 
-        assertEquals("Wrong number of results.", 2, results.size());
+        assertEquals(2, results.size(), "Wrong number of results.");
 
         Map<String, Object> row = results.get(0);
 
@@ -118,9 +121,9 @@ public class KuduScanTest extends AbstractKuduTest {
         successEndpoint.assertIsSatisfied();
 
         List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
-                                                                            .get(0).getIn().getBody(List.class);
+                .get(0).getIn().getBody(List.class);
 
-        assertEquals("Wrong number of results.", results.size(), 1);
+        assertEquals(1, results.size(), "Wrong number of results.");
 
         Map<String, Object> row = results.get(0);
 

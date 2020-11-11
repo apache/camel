@@ -25,7 +25,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for the HL7MLLPNetty Codec.
@@ -54,23 +56,25 @@ public class HL7MLLPNettyRouteToTest extends HL7TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").to("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder")
-                    // because HL7 message contains a bunch of control chars
-                    // then the logger do not log all of the data
-                    .log("HL7 message: ${body}").to("mock:result");
+                from("direct:start")
+                        .to("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder")
+                        // because HL7 message contains a bunch of control chars
+                        // then the logger do not log all of the data
+                        .log("HL7 message: ${body}").to("mock:result");
 
-                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoder=#hl7decoder&encoder=#hl7encoder").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Message input = exchange.getIn().getBody(Message.class);
+                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&decoders=#hl7decoder&encoders=#hl7encoder")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Message input = exchange.getIn().getBody(Message.class);
 
-                        assertEquals("2.4", input.getVersion());
-                        QRD qrd = (QRD)input.get("QRD");
-                        assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
+                                assertEquals("2.4", input.getVersion());
+                                QRD qrd = (QRD) input.get("QRD");
+                                assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
 
-                        Message response = createHL7AsMessage();
-                        exchange.getOut().setBody(response);
-                    }
-                });
+                                Message response = createHL7AsMessage();
+                                exchange.getOut().setBody(response);
+                            }
+                        });
             }
         };
     }

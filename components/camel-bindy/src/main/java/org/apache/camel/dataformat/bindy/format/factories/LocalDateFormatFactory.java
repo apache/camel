@@ -62,7 +62,6 @@ public class LocalDateFormatFactory extends AbstractFormatFactory {
             date = LocalDate.parse(string, df);
             return date;
         }
-       
 
         DateTimeFormatter getDateFormat() {
             DateTimeFormatter result;

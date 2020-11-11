@@ -24,9 +24,18 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedCamelHealthMBean {
-    
-    @ManagedAttribute(description = "Application Health")
-    boolean getIsHealthy();
+
+    @ManagedAttribute(description = "Whether Health Check is enabled globally")
+    boolean isEnabled();
+
+    @ManagedAttribute(description = "Application Health (all checks)")
+    boolean isHealthy();
+
+    @ManagedAttribute(description = "Application Health (only readiness checks)")
+    boolean isHealthyReadiness();
+
+    @ManagedAttribute(description = "Application Health (only liveness checks)")
+    boolean isHealthyLiveness();
 
     @ManagedAttribute(description = "Registered Health Checks IDs")
     Collection<String> getHealthChecksIDs();
@@ -36,4 +45,11 @@ public interface ManagedCamelHealthMBean {
 
     @ManagedOperation(description = "Invoke an Health Check by ID")
     String invoke(String id);
+
+    @ManagedOperation(description = "Enables an Health Check by ID")
+    void enableById(String id);
+
+    @ManagedOperation(description = "Disables an Health Check by ID")
+    void disableById(String id);
+
 }

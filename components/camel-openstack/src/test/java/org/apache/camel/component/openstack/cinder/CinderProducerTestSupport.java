@@ -17,15 +17,15 @@
 package org.apache.camel.component.openstack.cinder;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.openstack4j.api.storage.BlockStorageService;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class CinderProducerTestSupport extends AbstractProducerTestSupport {
 
     @Mock
@@ -34,7 +34,7 @@ public class CinderProducerTestSupport extends AbstractProducerTestSupport {
     @Mock
     protected BlockStorageService blockStorageService;
 
-    @Before
+    @BeforeEach
     public void setUpComputeService() {
         when(client.blockStorage()).thenReturn(blockStorageService);
     }

@@ -23,7 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AbstractListAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -47,9 +50,9 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         // the list will be stored as the message body by default
         List<Integer> numbers = result.getExchanges().get(0).getIn().getBody(List.class);
         assertNotNull(numbers);
-        assertEquals(Integer.valueOf("100"), numbers.get(0));
-        assertEquals(Integer.valueOf("150"), numbers.get(1));
-        assertEquals(Integer.valueOf("130"), numbers.get(2));
+        assertEquals(Integer.valueOf("100"), (Object) numbers.get(0));
+        assertEquals(Integer.valueOf("150"), (Object) numbers.get(1));
+        assertEquals(Integer.valueOf("130"), (Object) numbers.get(2));
     }
 
     @Override
@@ -57,8 +60,9 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/batch?initialDelay=0&delay=10&sortBy=file:name").routeId("foo").noAutoStartup().aggregate(new MyListOfNumbersStrategy()).constant(true)
-                    .completionFromBatchConsumer().to("mock:result");
+                from("file:target/data/batch?initialDelay=0&delay=10&sortBy=file:name").routeId("foo").noAutoStartup()
+                        .aggregate(new MyListOfNumbersStrategy()).constant(true)
+                        .completionFromBatchConsumer().to("mock:result");
             }
         };
     }

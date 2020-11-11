@@ -1,0 +1,16 @@
+[[Whatplatformsaresupported-Whatplatformsaresupported]]
+= What platforms are supported?
+
+- Camel 2.x supports JDK 8
+- Camel 3.0 - 3.4 supports JDK 8 and 11
+- Camel 3.5 or higher supports JDK 8, 11 and 14
+
+We regularly test Camel on Linux, Windows and OS X. If you have a
+platform that is not listed contact one of the companies that provide
+xref:ROOT:support.adoc[commercial support].
+
+You can have a look at our builds by looking at the following CI Server jobs
+
+- https://ci-builds.apache.org/job/Camel/job/Apache%20Camel/[JDK 8]
+- https://ci-builds.apache.org/job/Camel/job/Camel%20JDK11/[JDK 11]
+- https://ci-builds.apache.org/job/Camel/job/Camel%20JDK14/[JDK 14]

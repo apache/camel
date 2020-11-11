@@ -16,10 +16,12 @@
  */
 package org.apache.camel.itest.issues;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
 
@@ -29,7 +31,7 @@ public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testCallBean() throws Exception {
+    void testCallBean() {
         DerivedClass derived = context.getRegistry().lookupByNameAndType("derived", DerivedClass.class);
 
         template.sendBody("direct:start", "Hello World");

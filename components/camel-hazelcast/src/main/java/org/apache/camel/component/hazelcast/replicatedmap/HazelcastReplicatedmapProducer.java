@@ -19,7 +19,7 @@ package org.apache.camel.component.hazelcast.replicatedmap;
 import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ReplicatedMap;
+import com.hazelcast.replicatedmap.ReplicatedMap;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
@@ -31,7 +31,8 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
 
     private final ReplicatedMap<Object, Object> cache;
 
-    public HazelcastReplicatedmapProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
+    public HazelcastReplicatedmapProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint,
+                                          String cacheName) {
         super(endpoint);
         this.cache = hazelcastInstance.getReplicatedMap(cacheName);
     }
@@ -51,32 +52,34 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
         final HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
-        case PUT:
-            this.put(oid, exchange);
-            break;
+            case PUT:
+                this.put(oid, exchange);
+                break;
 
-        case GET:
-            this.get(oid, exchange);
-            break;
+            case GET:
+                this.get(oid, exchange);
+                break;
 
-        case DELETE:
-            this.delete(oid);
-            break;
+            case DELETE:
+                this.delete(oid);
+                break;
 
-        case CLEAR:
-            this.clear(exchange);
-            break;
-            
-        case CONTAINS_KEY:
-            this.containsKey(oid, exchange);
-            break;
-            
-        case CONTAINS_VALUE:
-            this.containsValue(exchange);
-            break;
-            
-        default:
-            throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation, HazelcastConstants.OPERATION));
+            case CLEAR:
+                this.clear(exchange);
+                break;
+
+            case CONTAINS_KEY:
+                this.containsKey(oid, exchange);
+                break;
+
+            case CONTAINS_VALUE:
+                this.containsValue(exchange);
+                break;
+
+            default:
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the MULTIMAP cache.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers
@@ -89,7 +92,7 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
     }
 
     private void get(Object oid, Exchange exchange) {
-        exchange.getOut().setBody(this.cache.get(oid));
+        exchange.getMessage().setBody(this.cache.get(oid));
     }
 
     private void delete(Object oid) {
@@ -99,13 +102,13 @@ public class HazelcastReplicatedmapProducer extends HazelcastDefaultProducer {
     private void clear(Exchange exchange) {
         this.cache.clear();
     }
-    
+
     private void containsKey(Object oid, Exchange exchange) {
-        exchange.getOut().setBody(this.cache.containsKey(oid));
+        exchange.getMessage().setBody(this.cache.containsKey(oid));
     }
 
     private void containsValue(Exchange exchange) {
         Object body = exchange.getIn().getBody();
-        exchange.getOut().setBody(this.cache.containsValue(body));
+        exchange.getMessage().setBody(this.cache.containsValue(body));
     }
 }

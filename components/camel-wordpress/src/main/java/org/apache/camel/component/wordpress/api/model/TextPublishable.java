@@ -163,7 +163,8 @@ public abstract class TextPublishable extends Publishable {
     // @formatter:off
     @Override
     public String toString() {
-        return toStringHelper(this).add("ID", this.getId()).add("Status", this.getStatus()).addValue(this.guid).addValue(this.getTitle()).toString();
+        return toStringHelper(this).add("ID", this.getId()).add("Status", this.getStatus()).addValue(this.guid)
+                .addValue(this.getTitle()).toString();
     }
     // @formatter:on
 }

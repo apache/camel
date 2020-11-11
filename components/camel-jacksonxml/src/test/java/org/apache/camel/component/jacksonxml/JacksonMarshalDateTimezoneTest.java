@@ -22,8 +22,10 @@ import java.util.TimeZone;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonMarshalDateTimezoneTest extends CamelTestSupport {
 
@@ -37,7 +39,7 @@ public class JacksonMarshalDateTimezoneTest extends CamelTestSupport {
         Object marshalled = template.requestBody("direct:in", in.getTime());
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
         assertEquals("<Date>1493139610000</Date>", marshalledAsString);
-        
+
         mock.expectedMessageCount(1);
 
         mock.assertIsSatisfied();

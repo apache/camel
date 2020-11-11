@@ -26,7 +26,7 @@ import io.smallrye.metrics.exporters.JsonExporter;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.microprofile.metrics.gauge.AtomicIntegerGauge;
 import org.apache.camel.component.microprofile.metrics.gauge.SimpleGauge;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.microprofile.metrics.ConcurrentGauge;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Histogram;
@@ -37,6 +37,8 @@ import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper.findMetric;
 import static org.eclipse.microprofile.metrics.MetricRegistry.Type;
@@ -49,12 +51,14 @@ public class MicroProfileMetricsTestSupport extends CamelTestSupport {
     private MetricRegistries registries = new MetricRegistries();
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         metricRegistry = registries.getApplicationRegistry();
         super.setUp();
     }
 
     @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         registries.cleanUp();

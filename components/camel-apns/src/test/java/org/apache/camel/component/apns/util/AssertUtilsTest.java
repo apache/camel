@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.apns.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AssertUtilsTest {
 
@@ -30,9 +32,9 @@ public class AssertUtilsTest {
     public void testAssertIsTrueInvalid() {
         try {
             AssertUtils.isTrue(false, "message");
-            Assert.fail("Should have thrown exception");
+            fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("[Assert is true] message", e.getMessage());
+            assertEquals("[Assert is true] message", e.getMessage());
         }
     }
 
@@ -45,9 +47,9 @@ public class AssertUtilsTest {
     public void testAssertNotNullInvalid() {
         try {
             AssertUtils.notNull(null, "message");
-            Assert.fail("Should have thrown exception");
+            fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("[Assert not null] message", e.getMessage());
+            assertEquals("[Assert not null] message", e.getMessage());
         }
     }
 

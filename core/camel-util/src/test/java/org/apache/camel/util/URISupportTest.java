@@ -24,15 +24,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class URISupportTest {
 
@@ -103,8 +103,8 @@ public class URISupportTest {
         String out1 = URISupport.normalizeUri("http://www.google.com?q=Camel");
         String out2 = URISupport.normalizeUri("http:www.google.com?q=Camel");
         assertEquals(out1, out2);
-        assertTrue("Should have //", out1.startsWith("http://"));
-        assertTrue("Should have //", out2.startsWith("http://"));
+        assertTrue(out1.startsWith("http://"), "Should have //");
+        assertTrue(out2.startsWith("http://"), "Should have //");
 
     }
 
@@ -240,8 +240,20 @@ public class URISupportTest {
     }
 
     @Test
+    public void testNormalizeEndpointUriSort() throws Exception {
+        String out1 = URISupport.normalizeUri("smtp://localhost?to=foo&from=me");
+        assertEquals("smtp://localhost?from=me&to=foo", out1);
+
+        String out2 = URISupport.normalizeUri("smtp://localhost?from=me&to=foo");
+        assertEquals("smtp://localhost?from=me&to=foo", out2);
+
+        assertEquals(out1, out2);
+    }
+
+    @Test
     public void testSanitizeAccessToken() throws Exception {
-        String out1 = URISupport.sanitizeUri("google-sheets-stream://spreadsheets?accessToken=MY_TOKEN&clientId=foo&clientSecret=MY_SECRET");
+        String out1 = URISupport
+                .sanitizeUri("google-sheets-stream://spreadsheets?accessToken=MY_TOKEN&clientId=foo&clientSecret=MY_SECRET");
         assertEquals("google-sheets-stream://spreadsheets?accessToken=xxxxxx&clientId=foo&clientSecret=xxxxxx", out1);
     }
 
@@ -304,6 +316,13 @@ public class URISupportTest {
     }
 
     @Test
+    public void testSanitizeSaslJaasConfig() throws Exception {
+        String out1 = URISupport.sanitizeUri(
+                "kafka://MY-TOPIC-NAME?saslJaasConfig=org.apache.kafka.common.security.plain.PlainLoginModule required username=scott password=tiger");
+        assertEquals("kafka://MY-TOPIC-NAME?saslJaasConfig=xxxxxx", out1);
+    }
+
+    @Test
     public void testNormalizeEndpointUriWithUserInfoSpecialSign() throws Exception {
         String out1 = URISupport.normalizeUri("ftp://us%40r:t%st@localhost:21000/tmp3/camel?foo=us@r");
         assertEquals("ftp://us%40r:t%25st@localhost:21000/tmp3/camel?foo=us%40r", out1);
@@ -320,28 +339,35 @@ public class URISupportTest {
 
     @Test
     public void testSpecialUriFromXmppComponent() throws Exception {
-        String out1 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
+        String out1 = URISupport
+                .normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
         assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat", out1);
     }
 
     @Test
     public void testRawParameter() throws Exception {
-        String out = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat");
+        String out = URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some chat");
         assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(++?w0rd)&serviceName=some+chat", out);
 
-        String out2 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat");
+        String out2 = URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %% bar)&serviceName=some chat");
         // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %25%25 bar)&serviceName=some+chat", out2);
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW(foo %25%25 bar)&serviceName=some+chat",
+                out2);
     }
 
     @Test
     public void testRawParameterCurly() throws Exception {
-        String out = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some chat");
+        String out = URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some chat");
         assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some+chat", out);
 
-        String out2 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %% bar}&serviceName=some chat");
+        String out2 = URISupport.normalizeUri(
+                "xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %% bar}&serviceName=some chat");
         // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
-        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %25%25 bar}&serviceName=some+chat", out2);
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %25%25 bar}&serviceName=some+chat",
+                out2);
     }
 
     @Test
@@ -360,7 +386,7 @@ public class URISupportTest {
         assertEquals(2, map.size());
         assertEquals("RAW(++?)w&rd)", map.get("password"));
         assertEquals("somechat", map.get("serviceName"));
-        
+
         map = URISupport.parseQuery("password=RAW(%2520w&rd)&serviceName=somechat");
         assertEquals(2, map.size());
         assertEquals("RAW(%2520w&rd)", map.get("password"));
@@ -541,4 +567,14 @@ public class URISupportTest {
         assertThat(URISupport.joinPaths("/a/", null, null, null)).isEqualTo("/a/");
         assertThat(URISupport.joinPaths("a/", "/b", null, null)).isEqualTo("a/b");
     }
+
+    @Test
+    public void testExtractQuery() throws Exception {
+        assertEquals(null, URISupport.extractQuery(null));
+        assertEquals(null, URISupport.extractQuery(""));
+        assertEquals(null, URISupport.extractQuery("file:foo"));
+        assertEquals("recursive=true", URISupport.extractQuery("file:foo?recursive=true"));
+        assertEquals("recursive=true&delete=true", URISupport.extractQuery("file:foo?recursive=true&delete=true"));
+    }
+
 }

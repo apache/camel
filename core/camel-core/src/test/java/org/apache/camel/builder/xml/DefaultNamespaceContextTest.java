@@ -24,7 +24,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.language.xpath.DefaultNamespaceContext;
 import org.apache.camel.language.xpath.XPathBuilder;
 import org.apache.camel.support.builder.Namespaces;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultNamespaceContextTest extends ContextTestSupport {
 
@@ -65,7 +67,8 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
 
     @Test
     public void testDefaultNamespaceContextDualNamespaces() throws Exception {
-        XPathBuilder builder = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese").namespace("bar", "http://acme/bar");
+        XPathBuilder builder
+                = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese").namespace("bar", "http://acme/bar");
         builder.start();
         DefaultNamespaceContext context = builder.getNamespaceContext();
         assertNotNull(context);

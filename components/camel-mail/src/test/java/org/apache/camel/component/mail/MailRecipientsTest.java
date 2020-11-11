@@ -22,9 +22,12 @@ import java.util.Map;
 import javax.mail.Message;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for recipients (To, CC, BCC)
@@ -134,8 +137,10 @@ public class MailRecipientsTest extends CamelTestSupport {
                 String recipients = "&to=camel@riders.org,easy@riders.org&cc=me@you.org&bcc=someone@somewhere.org";
 
                 from("direct:a").to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
-                from("direct:b").removeHeaders("*").to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
-                from("direct:c").removeHeaders("cc").to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
+                from("direct:b").removeHeaders("*")
+                        .to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
+                from("direct:c").removeHeaders("cc")
+                        .to("smtp://you@mymailserver.com?password=secret&from=you@apache.org" + recipients);
                 // END SNIPPET: e1
             }
         };

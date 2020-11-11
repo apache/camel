@@ -26,19 +26,20 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 
 /**
- * Provides support for mapping a Camel expression to a target field in a 
- * mapping.  Expressions have the following format:
- * <br><br>
- * [language]:[expression]
- * <br><br>
+ * Provides support for mapping a Camel expression to a target field in a mapping. Expressions have the following
+ * format: <br>
+ * <br>
+ * [language]:[expression] <br>
+ * <br>
  */
 public class ExpressionMapper extends BaseConverter {
-    
+
     private ThreadLocal<Exchange> currentExchange = new ThreadLocal<>();
-    
+
     @Override
-    public Object convert(Object existingDestinationFieldValue, 
-            Object sourceFieldValue, 
+    public Object convert(
+            Object existingDestinationFieldValue,
+            Object sourceFieldValue,
             Class<?> destinationClass,
             Class<?> sourceClass) {
         try {
@@ -53,7 +54,8 @@ public class ExpressionMapper extends BaseConverter {
             Exchange exchange = currentExchange.get();
             Language expLang = exchange.getContext().resolveLanguage(getLanguagePart());
             String scheme = getSchemePart();
-            if (scheme != null && (scheme.equalsIgnoreCase("classpath") || scheme.equalsIgnoreCase("file") || scheme.equalsIgnoreCase("http"))) {
+            if (scheme != null && (scheme.equalsIgnoreCase("classpath") || scheme.equalsIgnoreCase("file")
+                    || scheme.equalsIgnoreCase("http"))) {
                 String path = getPathPart();
                 try {
                     exp = expLang.createExpression(resolveScript(scheme + ":" + path));
@@ -69,12 +71,12 @@ public class ExpressionMapper extends BaseConverter {
             done();
         }
     }
-    
+
     /**
      * Resolves the script.
      *
-     * @param script script or uri for a script to load
-     * @return the script
+     * @param  script      script or uri for a script to load
+     * @return             the script
      * @throws IOException is thrown if error loading the script
      */
     protected String resolveScript(String script) throws IOException {
@@ -89,49 +91,49 @@ public class ExpressionMapper extends BaseConverter {
 
         return answer;
     }
-    
+
     /**
      * Loads the given resource.
      *
-     * @param uri uri of the resource.
-     * @return the loaded resource
+     * @param  uri         uri of the resource.
+     * @return             the loaded resource
      * @throws IOException is thrown if resource is not found or cannot be loaded
      */
     protected InputStream loadResource(String uri) throws IOException {
         return ResourceHelper.resolveMandatoryResourceAsInputStream(currentExchange.get().getContext(), uri);
     }
-    
+
     /**
-     * Used as the source field for Dozer mappings. 
+     * Used as the source field for Dozer mappings.
      */
     public String getExpression() {
         return getParameter();
     }
-    
+
     /**
      * The actual expression, without the language prefix.
      */
     public String getExpressionPart() {
-        return getParameter().substring(getParameter().indexOf(":") + 1);
+        return getParameter().substring(getParameter().indexOf(':') + 1);
     }
-    
+
     /**
      * The expression language used for this mapping.
      */
     public String getLanguagePart() {
-        return getParameter().substring(0, getParameter().indexOf(":"));
+        return getParameter().substring(0, getParameter().indexOf(':'));
     }
-    
+
     /**
-     * Sets the Camel exchange reference for this mapping.  The exchange 
-     * reference is stored in a thread-local which is cleaned up after the 
-     * mapping has been performed via the done() method.
+     * Sets the Camel exchange reference for this mapping. The exchange reference is stored in a thread-local which is
+     * cleaned up after the mapping has been performed via the done() method.
+     * 
      * @param exchange
      */
     public void setCurrentExchange(Exchange exchange) {
         currentExchange.set(exchange);
     }
-    
+
     /**
      * The scheme used for this mapping's resource file (classpath, file, http).
      */
@@ -160,5 +162,5 @@ public class ExpressionMapper extends BaseConverter {
         }
         return part;
     }
-    
+
 }

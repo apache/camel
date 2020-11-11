@@ -22,17 +22,19 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class IrcProducerTest {
 
+    private IrcComponent component;
     private IRCConnection connection;
     private IrcEndpoint endpoint;
     private IrcConfiguration configuration;
@@ -41,8 +43,9 @@ public class IrcProducerTest {
     private Exchange exchange;
     private Message message;
 
-    @Before
+    @BeforeEach
     public void doSetup() {
+        component = mock(IrcComponent.class);
         connection = mock(IRCConnection.class);
         endpoint = mock(IrcEndpoint.class);
         configuration = mock(IrcConfiguration.class);
@@ -54,16 +57,19 @@ public class IrcProducerTest {
         channels.add(new IrcChannel("#chan1", null));
         channels.add(new IrcChannel("#chan2", "chan2key"));
 
-        when(configuration.getChannels()).thenReturn(channels);
+        when(configuration.getChannelList()).thenReturn(channels);
         when(endpoint.getConfiguration()).thenReturn(configuration);
+        when(endpoint.getComponent()).thenReturn(component);
+        when(component.getIRCConnection(configuration)).thenReturn(connection);
 
-        producer = new IrcProducer(endpoint, connection);
+        producer = new IrcProducer(endpoint);
         producer.setListener(listener);
+        producer.start();
     }
 
     @Test
     public void doStopTest() throws Exception {
-        producer.doStop();
+        producer.stop();
         verify(connection).doPart("#chan1");
         verify(connection).doPart("#chan2");
         verify(connection).removeIRCEventListener(listener);
@@ -71,7 +77,7 @@ public class IrcProducerTest {
 
     @Test
     public void doStartTest() throws Exception {
-        producer.doStart();
+        producer.start();
 
         verify(connection).addIRCEventListener(listener);
         verify(endpoint).joinChannels();
@@ -100,7 +106,7 @@ public class IrcProducerTest {
         verify(connection).doPrivmsg("#chan2", "foo");
     }
 
-    @Test (expected = RuntimeCamelException.class)
+    @Test
     public void processTestException() throws Exception {
 
         when(exchange.getIn()).thenReturn(message);
@@ -109,6 +115,7 @@ public class IrcProducerTest {
 
         when(connection.isConnected()).thenReturn(false);
 
-        producer.process(exchange);
+        assertThrows(RuntimeCamelException.class,
+                () -> producer.process(exchange));
     }
 }

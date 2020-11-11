@@ -20,7 +20,11 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedUnregisterEndpointTest extends ManagementTestSupport {
 
@@ -35,13 +39,13 @@ public class ManagedUnregisterEndpointTest extends ManagementTestSupport {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("mock://result", uri);
 
         context.stop();
 
-        assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
+        assertFalse(mbeanServer.isRegistered(on), "Should no longer be registered");
     }
 
     @Override

@@ -23,39 +23,45 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Parameters;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
-@RunWith(Parameterized.class)
+@Parameterized
 public abstract class SolrComponentTestSupport extends SolrTestSupport {
     protected static final String TEST_ID = "test1";
     protected static final String TEST_ID2 = "test2";
 
-    private SolrFixtures solrFixtures;
+    @Parameter
+    SolrFixtures.TestServerType serverToTest;
 
-    public SolrComponentTestSupport(SolrFixtures.TestServerType serverToTest) {
-        this.solrFixtures = new SolrFixtures(serverToTest);
-    }
+    SolrFixtures solrFixtures;
 
     protected void solrInsertTestEntry() {
         solrInsertTestEntry(TEST_ID);
     }
 
     protected static Collection<Object[]> secureOrNot() {
-        return Arrays.asList(new Object[][] {{true}, {false}});
+        return Arrays.asList(new Object[][] { { true }, { false } });
+    }
+
+    SolrFixtures getSolrFixtures() {
+        if (solrFixtures == null) {
+            solrFixtures = new SolrFixtures(serverToTest);
+        }
+        return solrFixtures;
     }
 
     String solrRouteUri() {
-        return solrFixtures.solrRouteUri();
+        return getSolrFixtures().solrRouteUri();
     }
 
     protected void solrInsertTestEntry(String id) {
@@ -74,16 +80,16 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
         solrQuery.setQuery(query);
         QueryRequest queryRequest = new QueryRequest(solrQuery);
         queryRequest.setBasicAuthCredentials("solr", "SolrRocks");
-        SolrClient solrServer = solrFixtures.getServer();
+        SolrClient solrServer = getSolrFixtures().getServer();
         return queryRequest.process(solrServer, "collection1");
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         SolrFixtures.createSolrFixtures();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() throws Exception {
         SolrFixtures.teardownSolrFixtures();
     }
@@ -95,24 +101,25 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
             public void configure() throws Exception {
                 from("direct:start").to(solrRouteUri());
                 from("direct:splitThenCommit")
-                    .split(body())
+                        .split(body())
                         .to(solrRouteUri())
-                    .end()
-                    .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_COMMIT))
-                    .to(solrRouteUri());
+                        .end()
+                        .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_COMMIT))
+                        .to(solrRouteUri());
             }
         };
     }
 
     @Parameters
     public static Collection<Object[]> serverTypes() {
-        Object[][] serverTypes = {{SolrFixtures.TestServerType.USE_CLOUD},
-                                  {SolrFixtures.TestServerType.USE_HTTPS},
-                                  {SolrFixtures.TestServerType.USE_HTTP}};
+        Object[][] serverTypes = {
+                { SolrFixtures.TestServerType.USE_CLOUD },
+                { SolrFixtures.TestServerType.USE_HTTPS },
+                { SolrFixtures.TestServerType.USE_HTTP } };
         return Arrays.asList(serverTypes);
     }
 
-    @Before
+    @BeforeEach
     public void clearIndex() throws Exception {
         SolrFixtures.clearIndex();
     }

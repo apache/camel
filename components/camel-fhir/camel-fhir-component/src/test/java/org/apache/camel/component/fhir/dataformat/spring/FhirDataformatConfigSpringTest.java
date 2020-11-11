@@ -26,17 +26,21 @@ import ca.uhn.fhir.parser.LenientErrorHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.fhir.FhirDataFormat;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.hl7.fhir.dstu3.model.IdType;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FhirDataformatConfigSpringTest extends CamelSpringTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
     }
@@ -83,7 +87,8 @@ public class FhirDataformatConfigSpringTest extends CamelSpringTestSupport {
 
     private FhirDataFormat getDataformat(String name) {
         CamelContext camelContext = context();
-        return (FhirDataFormat) DataFormatReifier.getDataFormat(camelContext, null, name);
+        // TODO: Do not use reifier directly
+        return (FhirDataFormat) DataFormatReifier.getDataFormat(camelContext, name);
     }
 
     @Override

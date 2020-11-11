@@ -26,11 +26,15 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Language producer.
  */
 public class LanguageProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LanguageProducer.class);
 
     public LanguageProducer(LanguageEndpoint endpoint) {
         super(endpoint);
@@ -104,7 +108,7 @@ public class LanguageProducer extends DefaultProducer {
         if (exp != null) {
             try {
                 result = exp.evaluate(exchange, Object.class);
-                log.debug("Evaluated expression as: {} with: {}", result, exchange);
+                LOG.debug("Evaluated expression as: {} with: {}", result, exchange);
             } finally {
                 if (!getEndpoint().isCacheScript()) {
                     // some languages add themselves as a service which we then need to remove if we are not cached

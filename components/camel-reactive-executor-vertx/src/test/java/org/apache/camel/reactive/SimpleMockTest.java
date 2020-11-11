@@ -16,19 +16,26 @@
  */
 package org.apache.camel.reactive;
 
+import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.reactive.vertx.VertXReactiveExecutor;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SimpleMockTest extends CamelTestSupport {
+
+    private final Vertx vertx = Vertx.vertx();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.setReactiveExecutor(new VertXReactiveExecutor());
+
+        VertXReactiveExecutor re = (VertXReactiveExecutor) context.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        re.setVertx(vertx);
+
         return context;
     }
 

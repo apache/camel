@@ -68,7 +68,7 @@ public class ConsulClusterConfiguration extends ConsulClientConfiguration {
     @Override
     public ConsulClusterConfiguration copy() {
         try {
-            return (ConsulClusterConfiguration)super.clone();
+            return (ConsulClusterConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

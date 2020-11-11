@@ -40,7 +40,8 @@ class SyntheticBean<T> extends SyntheticBeanAttributes<T> implements Bean<T>, Pa
 
     private final Function<Bean<T>, String> toString;
 
-    SyntheticBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type, InjectionTarget<T> target, Function<Bean<T>, String> toString) {
+    SyntheticBean(BeanManager manager, SyntheticAnnotated annotated, Class<?> type, InjectionTarget<T> target,
+                  Function<Bean<T>, String> toString) {
         super(manager, annotated);
         this.type = type;
         this.target = target;
@@ -94,10 +95,10 @@ class SyntheticBean<T> extends SyntheticBeanAttributes<T> implements Bean<T>, Pa
     @Override
     public String getId() {
         return new StringJoiner("%")
-            .add("CAMEL-CDI")
-            .add(getClass().getSimpleName())
-            .add(type.getName())
-            .add(createBeanId(this))
-            .toString();
+                .add("CAMEL-CDI")
+                .add(getClass().getSimpleName())
+                .add(type.getName())
+                .add(createBeanId(this))
+                .toString();
     }
 }

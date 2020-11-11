@@ -23,13 +23,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerPreMoveTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/premove");
         super.setUp();
@@ -53,7 +55,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/data/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset and drop the same file again
         mock.reset();
@@ -68,7 +70,8 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10").process(new MyPreMoveCheckerProcessor()).to("mock:result");
+                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10")
+                        .process(new MyPreMoveCheckerProcessor()).to("mock:result");
             }
         };
     }
@@ -78,7 +81,7 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             File pre = new File("target/data/premove/work/work-hello.txt");
-            assertTrue("Pre move file should exist", pre.exists());
+            assertTrue(pre.exists(), "Pre move file should exist");
         }
     }
 }

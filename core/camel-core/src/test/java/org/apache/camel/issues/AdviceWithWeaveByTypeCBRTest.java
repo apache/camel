@@ -17,17 +17,17 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ChoiceDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AdviceWithWeaveByTypeCBRTest extends ContextTestSupport {
 
     @Test
     public void testWeaveByType() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByType(ChoiceDefinition.class).replace().to("mock:baz");
@@ -46,8 +46,9 @@ public class AdviceWithWeaveByTypeCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").transform(simple("Hello ${body}")).log("Got ${body}").to("mock:result").choice().when(header("foo").isEqualTo("bar")).to("mock:resultA")
-                    .otherwise().to("mock:resultB");
+                from("direct:start").transform(simple("Hello ${body}")).log("Got ${body}").to("mock:result").choice()
+                        .when(header("foo").isEqualTo("bar")).to("mock:resultA")
+                        .otherwise().to("mock:resultB");
             }
         };
     }

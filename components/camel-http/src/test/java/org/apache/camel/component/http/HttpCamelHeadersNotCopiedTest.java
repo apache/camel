@@ -21,17 +21,21 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.http.HttpStatus;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 public class HttpCamelHeadersNotCopiedTest extends HttpCamelHeadersTest {
 
     @Override
     protected void assertHeaders(Map<String, Object> headers) {
-        assertEquals("Should return " + HttpStatus.SC_OK, HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Should return mocked 12 CL", "12", headers.get("Content-Length"));
+        assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE), "Should return " + HttpStatus.SC_OK);
+        assertEquals("12", headers.get("Content-Length"), "Should return mocked 12 CL");
 
-        assertNotNull("Should have any Content-Type header propagated", headers.get("Content-Type"));
+        assertNotNull(headers.get("Content-Type"), "Should have any Content-Type header propagated");
 
-        assertNull("Should not copy TestHeader from in to out", headers.get("TestHeader"));
-        assertNull("Should not copy Accept-Language from in to out", headers.get("Accept-Language"));
+        assertNull(headers.get("TestHeader"), "Should not copy TestHeader from in to out");
+        assertNull(headers.get("Accept-Language"), "Should not copy Accept-Language from in to out");
     }
 
     @Override

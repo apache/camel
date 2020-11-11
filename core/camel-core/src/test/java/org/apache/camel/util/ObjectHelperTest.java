@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.MyOtherFooBean;
 import org.apache.camel.component.bean.MyOtherFooBean.AbstractClassSize;
 import org.apache.camel.component.bean.MyOtherFooBean.Clazz;
@@ -44,38 +45,43 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ObjectHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ObjectHelperTest extends Assert {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ObjectHelperTest {
 
     @Test
     public void testLoadResourceAsStream() {
-        InputStream res1 = org.apache.camel.util.ObjectHelper.loadResourceAsStream("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
-        InputStream res2 = org.apache.camel.util.ObjectHelper.loadResourceAsStream("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+        InputStream res1 = org.apache.camel.util.ObjectHelper
+                .loadResourceAsStream("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+        InputStream res2 = org.apache.camel.util.ObjectHelper
+                .loadResourceAsStream("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
 
-        assertNotNull("Cannot load resource without leading \"/\"", res1);
-        assertNotNull("Cannot load resource with leading \"/\"", res2);
+        assertNotNull(res1, "Cannot load resource without leading \"/\"");
+        assertNotNull(res2, "Cannot load resource with leading \"/\"");
 
         IOHelper.close(res1, res2);
     }
 
     @Test
     public void testLoadResource() {
-        URL url1 = org.apache.camel.util.ObjectHelper.loadResourceAsURL("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
-        URL url2 = org.apache.camel.util.ObjectHelper.loadResourceAsURL("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+        URL url1 = org.apache.camel.util.ObjectHelper
+                .loadResourceAsURL("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
+        URL url2 = org.apache.camel.util.ObjectHelper
+                .loadResourceAsURL("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
 
-        assertNotNull("Cannot load resource without leading \"/\"", url1);
-        assertNotNull("Cannot load resource with leading \"/\"", url2);
+        assertNotNull(url1, "Cannot load resource without leading \"/\"");
+        assertNotNull(url2, "Cannot load resource with leading \"/\"");
     }
 
     @Test
     public void testGetPropertyName() throws Exception {
         Method method = getClass().getMethod("setCheese", String.class);
-        assertNotNull("should have found a method!", method);
+        assertNotNull(method, "should have found a method!");
 
         String name = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-        assertEquals("Property name", "cheese", name);
+        assertEquals("cheese", name, "Property name");
     }
 
     public void setCheese(String cheese) {
@@ -84,44 +90,69 @@ public class ObjectHelperTest extends Assert {
 
     @Test
     public void testContains() throws Exception {
-        String[] array = {"foo", "bar"};
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+        TypeConverter tc = context.getTypeConverter();
+
+        String[] array = { "foo", "bar" };
         Collection<String> collection = Arrays.asList(array);
 
-        assertTrue(ObjectHelper.contains(array, "foo"));
-        assertTrue(ObjectHelper.contains(collection, "foo"));
-        assertTrue(ObjectHelper.contains("foo", "foo"));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, array, "foo", true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, array, "FOO", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, array, "FOO", false));
 
-        assertFalse(ObjectHelper.contains(array, "xyz"));
-        assertFalse(ObjectHelper.contains(collection, "xyz"));
-        assertFalse(ObjectHelper.contains("foo", "xyz"));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "foo", true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, collection, "FOO", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "FOO", false));
+
+        assertTrue(ObjectHelper.typeCoerceContains(tc, "foo", "foo", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, array, "xyz", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, collection, "xyz", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, "foo", "xyz", true));
+
+        context.stop();
     }
 
     @Test
     public void testContainsStringBuilder() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+        TypeConverter tc = context.getTypeConverter();
+
         StringBuilder sb = new StringBuilder();
         sb.append("Hello World");
 
-        assertTrue(ObjectHelper.contains(sb, "World"));
-        assertTrue(ObjectHelper.contains(sb, new StringBuffer("World")));
-        assertTrue(ObjectHelper.contains(sb, new StringBuilder("World")));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World", true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "WORLD", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "WORLD", false));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World"), true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World"), true));
 
-        assertFalse(ObjectHelper.contains(sb, "Camel"));
-        assertFalse(ObjectHelper.contains(sb, new StringBuffer("Camel")));
-        assertFalse(ObjectHelper.contains(sb, new StringBuilder("Camel")));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel"), true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel"), true));
+
+        context.stop();
     }
 
     @Test
     public void testContainsStringBuffer() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+        TypeConverter tc = context.getTypeConverter();
+
         StringBuffer sb = new StringBuffer();
         sb.append("Hello World");
 
-        assertTrue(ObjectHelper.contains(sb, "World"));
-        assertTrue(ObjectHelper.contains(sb, new StringBuffer("World")));
-        assertTrue(ObjectHelper.contains(sb, new StringBuilder("World")));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, "World", true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("World"), true));
+        assertTrue(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("World"), true));
 
-        assertFalse(ObjectHelper.contains(sb, "Camel"));
-        assertFalse(ObjectHelper.contains(sb, new StringBuffer("Camel")));
-        assertFalse(ObjectHelper.contains(sb, new StringBuilder("Camel")));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, "Camel", true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuffer("Camel"), true));
+        assertFalse(ObjectHelper.typeCoerceContains(tc, sb, new StringBuilder("Camel"), true));
+
+        context.stop();
     }
 
     @Test
@@ -140,12 +171,12 @@ public class ObjectHelperTest extends Assert {
         assertFalse(org.apache.camel.util.ObjectHelper.equal(true, false));
         assertFalse(org.apache.camel.util.ObjectHelper.equal(new Object(), new Object()));
 
-        byte[] a = new byte[] {40, 50, 60};
-        byte[] b = new byte[] {40, 50, 60};
+        byte[] a = new byte[] { 40, 50, 60 };
+        byte[] b = new byte[] { 40, 50, 60 };
         assertTrue(org.apache.camel.util.ObjectHelper.equal(a, b));
 
-        a = new byte[] {40, 50, 60};
-        b = new byte[] {40, 50, 60, 70};
+        a = new byte[] { 40, 50, 60 };
+        b = new byte[] { 40, 50, 60, 70 };
         assertFalse(org.apache.camel.util.ObjectHelper.equal(a, b));
     }
 
@@ -154,38 +185,39 @@ public class ObjectHelperTest extends Assert {
         assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray("Hello".getBytes(), "Hello".getBytes()));
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray("Hello".getBytes(), "World".getBytes()));
 
-        assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray("Hello Thai Elephant \u0E08".getBytes(), "Hello Thai Elephant \u0E08".getBytes()));
+        assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray("Hello Thai Elephant \u0E08".getBytes(),
+                "Hello Thai Elephant \u0E08".getBytes()));
         assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray(null, null));
 
         byte[] empty = new byte[0];
         assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray(empty, empty));
 
-        byte[] a = new byte[] {40, 50, 60};
-        byte[] b = new byte[] {40, 50, 60};
+        byte[] a = new byte[] { 40, 50, 60 };
+        byte[] b = new byte[] { 40, 50, 60 };
         assertTrue(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] {40, 50, 60};
-        b = new byte[] {40, 50, 60, 70};
+        a = new byte[] { 40, 50, 60 };
+        b = new byte[] { 40, 50, 60, 70 };
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] {40, 50, 60, 70};
-        b = new byte[] {40, 50, 60};
+        a = new byte[] { 40, 50, 60, 70 };
+        b = new byte[] { 40, 50, 60 };
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] {40, 50, 60};
+        a = new byte[] { 40, 50, 60 };
         b = new byte[0];
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
         a = new byte[0];
-        b = new byte[] {40, 50, 60};
+        b = new byte[] { 40, 50, 60 };
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
-        a = new byte[] {40, 50, 60};
+        a = new byte[] { 40, 50, 60 };
         b = null;
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
         a = null;
-        b = new byte[] {40, 50, 60};
+        b = new byte[] { 40, 50, 60 };
         assertFalse(org.apache.camel.util.ObjectHelper.equalByteArray(a, b));
 
         a = null;
@@ -197,7 +229,7 @@ public class ObjectHelperTest extends Assert {
     public void testCreateIterator() {
         List<String> list = new ArrayList<>();
         Iterator<String> iterator = list.iterator();
-        assertSame("Should return the same iterator", iterator, ObjectHelper.createIterator(iterator));
+        assertSame(iterator, ObjectHelper.createIterator(iterator), "Should return the same iterator");
     }
 
     @Test
@@ -285,8 +317,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[B@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 4"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[B@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 4"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new byte[] {}, null);
@@ -296,8 +328,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[B@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 0"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[B@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new short[] {13, Short.MAX_VALUE, 7, Short.MIN_VALUE}, null);
@@ -315,8 +347,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[S@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 4"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[S@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 4"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new short[] {}, null);
@@ -326,8 +358,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[S@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 0"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[S@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new int[] {13, Integer.MAX_VALUE, 7, Integer.MIN_VALUE}, null);
@@ -345,8 +377,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[I@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 4"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[I@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 4"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new int[] {}, null);
@@ -356,8 +388,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[I@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 0"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[I@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new long[] {13L, Long.MAX_VALUE, 7L, Long.MIN_VALUE}, null);
@@ -375,8 +407,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[J@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 4"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[J@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 4"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new long[] {}, null);
@@ -386,8 +418,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[J@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 0"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[J@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new float[] {13.7F, Float.MAX_VALUE, 7.13F, Float.MIN_VALUE}, null);
@@ -405,8 +437,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[F@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 4"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[F@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 4"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new float[] {}, null);
@@ -416,8 +448,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[F@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 0"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[F@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new double[] {13.7D, Double.MAX_VALUE, 7.13D, Double.MIN_VALUE}, null);
@@ -435,8 +467,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[D@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 4"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[D@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 4"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new double[] {}, null);
@@ -446,8 +478,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[D@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 0"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[D@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new char[] {'C', 'a', 'm', 'e', 'l'}, null);
@@ -467,8 +499,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[C@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 5"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[C@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 5"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new char[] {}, null);
@@ -478,8 +510,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[C@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 0"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[C@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new boolean[] {false, true, false, true, true}, null);
@@ -499,8 +531,8 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[Z@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 5"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[Z@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 5"), nsee.getMessage());
         }
 
         it = ObjectHelper.createIterator(new boolean[] {}, null);
@@ -510,24 +542,24 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for '[Z@"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 0"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for '[Z@"), nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 0"), nsee.getMessage());
         }
     }
     // CHECKSTYLE:ON
 
     @Test
     public void testArrayAsIterator() throws Exception {
-        String[] data = {"a", "b"};
+        String[] data = { "a", "b" };
 
         Iterator<?> iter = ObjectHelper.createIterator(data);
-        assertTrue("should have next", iter.hasNext());
+        assertTrue(iter.hasNext(), "should have next");
         Object a = iter.next();
-        assertEquals("a", "a", a);
-        assertTrue("should have next", iter.hasNext());
+        assertEquals("a", a, "a");
+        assertTrue(iter.hasNext(), "should have next");
         Object b = iter.next();
-        assertEquals("b", "b", b);
-        assertFalse("should not have a next", iter.hasNext());
+        assertEquals("b", b, "b");
+        assertFalse(iter.hasNext(), "should not have a next");
     }
 
     @Test
@@ -639,8 +671,9 @@ public class ObjectHelperTest extends Assert {
             fail("Should have thrown exception");
         } catch (NoSuchElementException nsee) {
             // expected
-            assertTrue(nsee.getMessage(), nsee.getMessage().startsWith("no more element available for 'org.apache.camel.util.ObjectHelperTest$"));
-            assertTrue(nsee.getMessage(), nsee.getMessage().endsWith("at the index 1"));
+            assertTrue(nsee.getMessage().startsWith("no more element available for 'org.apache.camel.util.ObjectHelperTest$"),
+                    nsee.getMessage());
+            assertTrue(nsee.getMessage().endsWith("at the index 1"), nsee.getMessage());
         }
     }
 
@@ -653,9 +686,9 @@ public class ObjectHelperTest extends Assert {
         properties.put("camel.object.test", "test");
 
         Properties result = CamelContextHelper.getCamelPropertiesWithPrefix("camel.object.helper.", context);
-        assertEquals("Get a wrong size properties", 2, result.size());
-        assertEquals("It should contain the test1", "test1", result.get("test1"));
-        assertEquals("It should contain the test2", "test2", result.get("test2"));
+        assertEquals(2, result.size(), "Get a wrong size properties");
+        assertEquals("test1", result.get("test1"), "It should contain the test1");
+        assertEquals("test2", result.get("test2"), "It should contain the test2");
     }
 
     @Test
@@ -709,21 +742,30 @@ public class ObjectHelperTest extends Assert {
 
     @Test
     public void testConvertPrimitiveTypeToWrapper() {
-        assertEquals("java.lang.Integer", org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(int.class).getName());
-        assertEquals("java.lang.Long", org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(long.class).getName());
-        assertEquals("java.lang.Double", org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(double.class).getName());
-        assertEquals("java.lang.Float", org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(float.class).getName());
-        assertEquals("java.lang.Short", org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(short.class).getName());
-        assertEquals("java.lang.Byte", org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(byte.class).getName());
-        assertEquals("java.lang.Boolean", org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(boolean.class).getName());
-        assertEquals("java.lang.Character", org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(char.class).getName());
+        assertEquals("java.lang.Integer",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(int.class).getName());
+        assertEquals("java.lang.Long",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(long.class).getName());
+        assertEquals("java.lang.Double",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(double.class).getName());
+        assertEquals("java.lang.Float",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(float.class).getName());
+        assertEquals("java.lang.Short",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(short.class).getName());
+        assertEquals("java.lang.Byte",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(byte.class).getName());
+        assertEquals("java.lang.Boolean",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(boolean.class).getName());
+        assertEquals("java.lang.Character",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(char.class).getName());
         // non primitive just fall through
-        assertEquals("java.lang.Object", org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(Object.class).getName());
+        assertEquals("java.lang.Object",
+                org.apache.camel.util.ObjectHelper.convertPrimitiveTypeToWrapperType(Object.class).getName());
     }
 
     @Test
     public void testAsString() {
-        String[] args = new String[] {"foo", "bar"};
+        String[] args = new String[] { "foo", "bar" };
         String out = org.apache.camel.util.ObjectHelper.asString(args);
         assertNotNull(out);
         assertEquals("{foo, bar}", out);
@@ -895,10 +937,10 @@ public class ObjectHelperTest extends Assert {
     public void testNotNull() {
         Long expected = 3L;
         Long actual = org.apache.camel.util.ObjectHelper.notNull(expected, "expected");
-        assertSame("Didn't get the same object back!", expected, actual);
+        assertSame(expected, actual, "Didn't get the same object back!");
 
         Long actual2 = org.apache.camel.util.ObjectHelper.notNull(expected, "expected", "holder");
-        assertSame("Didn't get the same object back!", expected, actual2);
+        assertSame(expected, actual2, "Didn't get the same object back!");
 
         Long expected2 = null;
         try {
@@ -961,16 +1003,19 @@ public class ObjectHelperTest extends Assert {
     public void testAsList() {
         List<Object> out0 = org.apache.camel.util.ObjectHelper.asList(null);
         assertNotNull(out0);
-        assertTrue(out0 instanceof List && out0.size() == 0);
+        boolean b2 = out0 instanceof List && out0.size() == 0;
+        assertTrue(b2);
 
         List<Object> out1 = org.apache.camel.util.ObjectHelper.asList(new Object[0]);
         assertNotNull(out1);
-        assertTrue(out1 instanceof List && out1.size() == 0);
+        boolean b1 = out1 instanceof List && out1.size() == 0;
+        assertTrue(b1);
 
-        String[] args = new String[] {"foo", "bar"};
+        String[] args = new String[] { "foo", "bar" };
         List<Object> out2 = org.apache.camel.util.ObjectHelper.asList(args);
         assertNotNull(out2);
-        assertTrue(out2 instanceof List && out2.size() == 2);
+        boolean b = out2 instanceof List && out2.size() == 2;
+        assertTrue(b);
         assertEquals("foo", out2.get(0));
         assertEquals("bar", out2.get(1));
     }

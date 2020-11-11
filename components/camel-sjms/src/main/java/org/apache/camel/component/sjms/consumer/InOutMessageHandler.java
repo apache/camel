@@ -36,8 +36,7 @@ import org.apache.camel.component.sjms.jms.JmsConstants;
 import org.apache.camel.spi.Synchronization;
 
 /**
- * cache manager to store and purge unused cashed producers or we will have a
- * memory leak
+ * cache manager to store and purge unused cashed producers or we will have a memory leak
  */
 public class InOutMessageHandler extends AbstractMessageHandler {
 
@@ -62,9 +61,11 @@ public class InOutMessageHandler extends AbstractMessageHandler {
                 if (isDestination(obj)) {
                     replyTo = (Destination) obj;
                 } else if (obj instanceof String) {
-                    replyTo = getEndpoint().getDestinationCreationStrategy().createDestination(getSession(), (String)obj, isTopic());
+                    replyTo = getEndpoint().getDestinationCreationStrategy().createDestination(getSession(), (String) obj,
+                            isTopic());
                 } else {
-                    throw new Exception("The value of JMSReplyTo must be a valid Destination or String.  Value provided: " + obj);
+                    throw new Exception(
+                            "The value of JMSReplyTo must be a valid Destination or String.  Value provided: " + obj);
                 }
 
                 String destinationName = getDestinationName(replyTo);
@@ -93,7 +94,8 @@ public class InOutMessageHandler extends AbstractMessageHandler {
             } else {
                 if (isTransacted() || isSynchronous()) {
                     // must process synchronous if transacted or configured to do so
-                    log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
+                    log.debug("Synchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(),
+                            getEndpoint().getEndpointUri());
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
@@ -104,7 +106,8 @@ public class InOutMessageHandler extends AbstractMessageHandler {
                 } else {
                     // process asynchronous using the async routing engine
                     if (log.isDebugEnabled()) {
-                        log.debug("Asynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(), getEndpoint().getEndpointUri());
+                        log.debug("Asynchronous processing: Message[{}], Destination[{}] ", exchange.getIn().getBody(),
+                                getEndpoint().getEndpointUri());
                     }
                     getProcessor().process(exchange, callback);
                 }
@@ -124,7 +127,8 @@ public class InOutMessageHandler extends AbstractMessageHandler {
             try {
                 entry.getValue().close();
             } catch (JMSException e) {
-                log.debug("Cached MessageProducer with key: " + entry.getKey() + " threw an unexpected exception. This exception is ignored.", e);
+                log.debug("Cached MessageProducer with key: {} threw an unexpected exception. This exception is ignored.",
+                        entry.getKey(), e);
             }
         }
         producerCache.clear();
@@ -159,7 +163,8 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         public void done(boolean sync) {
             try {
                 org.apache.camel.Message msg = exchange.getMessage();
-                Message response = getEndpoint().getBinding().makeJmsMessage(exchange, msg.getBody(), msg.getHeaders(), getSession(), null);
+                Message response = getEndpoint().getBinding().makeJmsMessage(exchange, msg.getBody(), msg.getHeaders(),
+                        getSession(), null);
                 response.setJMSCorrelationID(exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class));
                 localProducer.send(response);
             } catch (Exception e) {

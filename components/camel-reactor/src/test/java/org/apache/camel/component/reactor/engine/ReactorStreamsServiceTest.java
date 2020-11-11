@@ -33,11 +33,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport {
 
@@ -62,7 +66,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:reactive")
-                    .to("reactive-streams:numbers");
+                        .to("reactive-streams:numbers");
             }
         });
 
@@ -72,8 +76,8 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         AtomicInteger value = new AtomicInteger(0);
 
         Flux.from(crs.fromStream("numbers", Integer.class))
-            .doOnNext(res -> Assert.assertEquals(value.incrementAndGet(), res.intValue()))
-            .subscribe();
+                .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue()))
+                .subscribe();
 
         template.sendBody("direct:reactive", 1);
         template.sendBody("direct:reactive", 2);
@@ -86,9 +90,9 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
             @Override
             public void configure() throws Exception {
                 from("timer:tick?period=5&repeatCount=30")
-                    .setBody()
+                        .setBody()
                         .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:tick");
+                        .to("reactive-streams:tick");
             }
         });
 
@@ -97,15 +101,15 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         final AtomicInteger value = new AtomicInteger(0);
 
         Flux.from(crs.fromStream("tick", Integer.class))
-            .doOnNext(res -> Assert.assertEquals(value.incrementAndGet(), res.intValue()))
-            .doOnNext(n -> latch.countDown())
-            .subscribe();
+                .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue()))
+                .doOnNext(n -> latch.countDown())
+                .subscribe();
 
         context.start();
 
         latch.await(5, TimeUnit.SECONDS);
 
-        Assert.assertEquals(num, value.get());
+        assertEquals(num, value.get());
     }
 
     @Test
@@ -115,25 +119,25 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:reactive")
-                    .to("reactive-streams:direct");
+                        .to("reactive-streams:direct");
             }
         });
 
         CountDownLatch latch1 = new CountDownLatch(2);
         Flux.from(crs.fromStream("direct", Integer.class))
-            .doOnNext(res -> latch1.countDown())
-            .subscribe();
+                .doOnNext(res -> latch1.countDown())
+                .subscribe();
 
         CountDownLatch latch2 = new CountDownLatch(2);
         Flux.from(crs.fromStream("direct", Integer.class))
-            .doOnNext(res -> latch2.countDown())
-            .subscribe();
+                .doOnNext(res -> latch2.countDown())
+                .subscribe();
 
         template.sendBody("direct:reactive", 1);
         template.sendBody("direct:reactive", 2);
 
-        Assert.assertTrue(latch1.await(5, TimeUnit.SECONDS));
-        Assert.assertTrue(latch2.await(5, TimeUnit.SECONDS));
+        assertTrue(latch1.await(5, TimeUnit.SECONDS));
+        assertTrue(latch2.await(5, TimeUnit.SECONDS));
     }
 
     @Test
@@ -142,8 +146,8 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
             @Override
             public void configure() throws Exception {
                 from("timer:tick?period=50")
-                    .setBody().header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:tick");
+                        .setBody().header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:tick");
             }
         });
 
@@ -184,12 +188,12 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         CountDownLatch latch = new CountDownLatch(3);
 
         Flux.from(timer)
-            .map(exchange -> ExchangeHelper.getHeaderOrProperty(exchange, Exchange.TIMER_COUNTER, Integer.class))
-            .doOnNext(res -> Assert.assertEquals(value.incrementAndGet(), res.intValue()))
-            .doOnNext(res -> latch.countDown())
-            .subscribe();
+                .map(exchange -> ExchangeHelper.getHeaderOrProperty(exchange, Exchange.TIMER_COUNTER, Integer.class))
+                .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue()))
+                .doOnNext(res -> latch.countDown())
+                .subscribe();
 
-        Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
     }
 
     // ************************************************
@@ -203,29 +207,25 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:source")
-                    .to("direct:stream")
-                    .setBody()
+                        .to("direct:stream")
+                        .setBody()
                         .simple("after stream: ${body}");
             }
         });
 
         crs.process("direct:stream",
-            publisher ->
-                Flux.from(publisher)
-                    .map(e -> {
-                        int i = e.getIn().getBody(Integer.class);
-                        e.getOut().setBody(-i);
+                publisher -> Flux.from(publisher)
+                        .map(e -> {
+                            int i = e.getIn().getBody(Integer.class);
+                            e.getOut().setBody(-i);
 
-                        return e;
-                    }
-                )
-        );
+                            return e;
+                        }));
 
         for (int i = 1; i <= 3; i++) {
-            Assert.assertEquals(
-                "after stream: " + (-i),
-                template.requestBody("direct:source", i, String.class)
-            );
+            assertEquals(
+                    "after stream: " + (-i),
+                    template.requestBody("direct:source", i, String.class));
         }
     }
 
@@ -236,23 +236,20 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:source")
-                    .to("direct:stream")
-                    .setBody()
+                        .to("direct:stream")
+                        .setBody()
                         .simple("after stream: ${body}");
             }
         });
 
         crs.process("direct:stream",
-            Integer.class,
-            publisher ->
-                Flux.from(publisher).map(Math::negateExact)
-        );
+                Integer.class,
+                publisher -> Flux.from(publisher).map(Math::negateExact));
 
         for (int i = 1; i <= 3; i++) {
-            Assert.assertEquals(
-                "after stream: " + (-i),
-                template.requestBody("direct:source", i, String.class)
-            );
+            assertEquals(
+                    "after stream: " + (-i),
+                    template.requestBody("direct:source", i, String.class));
         }
     }
 
@@ -265,7 +262,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("reactive-streams:reactive")
-                    .setBody().constant("123");
+                        .setBody().constant("123");
             }
         });
 
@@ -274,12 +271,12 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         Publisher<Exchange> publisher = crs.toStream("reactive", new DefaultExchange(context));
         Exchange res = Flux.from(publisher).blockFirst();
 
-        Assert.assertNotNull(res);
+        assertNotNull(res);
 
         String content = res.getIn().getBody(String.class);
 
-        Assert.assertNotNull(content);
-        Assert.assertEquals("123", content);
+        assertNotNull(content);
+        assertEquals("123", content);
     }
 
     @Test
@@ -290,13 +287,13 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         CountDownLatch latch = new CountDownLatch(3);
 
         Flux.just(1, 2, 3)
-            .flatMap(e -> crs.to("bean:hello", e, String.class))
-            .doOnNext(res -> values.add(res))
-            .doOnNext(res -> latch.countDown())
-            .subscribe();
+                .flatMap(e -> crs.to("bean:hello", e, String.class))
+                .doOnNext(values::add)
+                .doOnNext(res -> latch.countDown())
+                .subscribe();
 
-        Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
-        Assert.assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
     }
 
     @Test
@@ -307,15 +304,15 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         CountDownLatch latch = new CountDownLatch(3);
 
         Flux.just(1, 2, 3)
-            .flatMap(e -> crs.to("bean:hello", e))
-            .map(e -> e.getOut())
-            .map(e -> e.getBody(String.class))
-            .doOnNext(res -> values.add(res))
-            .doOnNext(res -> latch.countDown())
-            .subscribe();
+                .flatMap(e -> crs.to("bean:hello", e))
+                .map(Exchange::getMessage)
+                .map(e -> e.getBody(String.class))
+                .doOnNext(values::add)
+                .doOnNext(res -> latch.countDown())
+                .subscribe();
 
-        Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
-        Assert.assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
     }
 
     @Test
@@ -327,13 +324,13 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         Function<Object, Publisher<String>> fun = crs.to("bean:hello", String.class);
 
         Flux.just(1, 2, 3)
-            .flatMap(fun)
-            .doOnNext(res -> values.add(res))
-            .doOnNext(res -> latch.countDown())
-            .subscribe();
+                .flatMap(fun)
+                .doOnNext(values::add)
+                .doOnNext(res -> latch.countDown())
+                .subscribe();
 
-        Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
-        Assert.assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
     }
 
     @Test
@@ -345,15 +342,15 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         Function<Object, Publisher<Exchange>> fun = crs.to("bean:hello");
 
         Flux.just(1, 2, 3)
-            .flatMap(fun)
-            .map(e -> e.getOut())
-            .map(e -> e.getBody(String.class))
-            .doOnNext(res -> values.add(res))
-            .doOnNext(res -> latch.countDown())
-            .subscribe();
+                .flatMap(fun)
+                .map(Exchange::getMessage)
+                .map(e -> e.getBody(String.class))
+                .doOnNext(values::add)
+                .doOnNext(res -> latch.countDown())
+                .subscribe();
 
-        Assert.assertTrue(latch.await(2, TimeUnit.SECONDS));
-        Assert.assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertEquals(new TreeSet<>(Arrays.asList("Hello 1", "Hello 2", "Hello 3")), values);
     }
 
     // ************************************************
@@ -367,12 +364,12 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:reactor")
-                    .to("mock:result");
+                        .to("mock:result");
             }
         });
 
         Flux.just(1, 2, 3)
-            .subscribe(crs.subscriber("direct:reactor", Integer.class));
+                .subscribe(crs.subscriber("direct:reactor", Integer.class));
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
@@ -380,7 +377,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         int idx = 1;
         for (Exchange ex : mock.getExchanges()) {
-            Assert.assertEquals(new Integer(idx++), ex.getIn().getBody(Integer.class));
+            assertEquals(Integer.valueOf(idx++), ex.getIn().getBody(Integer.class));
         }
     }
 
@@ -388,18 +385,19 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     // misc
     // ************************************************
 
-    @Test(expected = FailedToStartRouteException.class)
+    @Test
     public void testOnlyOneCamelProducerPerPublisher() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:one")
-                    .to("reactive-streams:stream");
+                        .to("reactive-streams:stream");
                 from("direct:two")
-                    .to("reactive-streams:stream");
+                        .to("reactive-streams:stream");
             }
         });
 
-        context.start();
+        assertThrows(FailedToStartRouteException.class,
+                () -> context.start());
     }
 }

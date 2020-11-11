@@ -16,18 +16,8 @@
  */
 package org.apache.camel.component.rabbitmq.qpid;
 
-import org.apache.camel.component.rabbitmq.RabbitMQSupendResumeIntTest;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.apache.camel.component.rabbitmq.integration.RabbitMQSupendResumeIntTest;
 
 public class RabbitMQSupendResumeQpidTest extends RabbitMQSupendResumeIntTest {
-    @BeforeClass
-    public static void startBroker() throws Exception {
-        systemLauncher.startup(createQpidSystemConfig());
-    }
 
-    @AfterClass
-    public static void stopBroker() {
-        systemLauncher.shutdown();
-    }
 }

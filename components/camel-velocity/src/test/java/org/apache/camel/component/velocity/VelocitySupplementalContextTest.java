@@ -24,8 +24,8 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class VelocitySupplementalContextTest extends CamelTestSupport {
 
@@ -60,9 +60,9 @@ public class VelocitySupplementalContextTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:input")
-                    .setHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT).constant(supplementalContext)
-                    .to("velocity:template-in-header")
-                    .to("mock:results");
+                        .setHeader(VelocityConstants.VELOCITY_SUPPLEMENTAL_CONTEXT).constant(supplementalContext)
+                        .to("velocity:template-in-header?allowTemplateFromHeader=true&allowContextMapAll=true")
+                        .to("mock:results");
             }
         };
     }

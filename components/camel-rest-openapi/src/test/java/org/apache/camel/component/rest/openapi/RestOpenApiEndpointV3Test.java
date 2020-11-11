@@ -36,12 +36,11 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.spi.RestConfiguration;
-import org.junit.Test;
-
-
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,17 +50,19 @@ public class RestOpenApiEndpointV3Test {
 
     URI endpointUri = URI.create("endpoint.json");
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldComplainForUnknownOperations() throws Exception {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
         final RestOpenApiComponent component = new RestOpenApiComponent(camelContext);
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("rest-openapi:unknown", "unknown", component,
-            Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:unknown", "unknown", component,
+                Collections.emptyMap());
 
-        endpoint.createProducer();
+        assertThrows(IllegalArgumentException.class,
+                () -> endpoint.createProducer());
     }
 
     @Test
@@ -79,10 +80,10 @@ public class RestOpenApiEndpointV3Test {
         Oas30Parameter oas30Parameter = new Oas30Parameter("q");
         oas30Parameter.required = true;
         assertThat(RestOpenApiEndpoint.queryParameterExpression(oas30Parameter))
-            .isEqualTo("q={q}");
+                .isEqualTo("q={q}");
         oas30Parameter.required = false;
         assertThat(RestOpenApiEndpoint.queryParameterExpression(oas30Parameter))
-            .isEqualTo("q={q?}");
+                .isEqualTo("q={q?}");
     }
 
     @Test
@@ -90,36 +91,36 @@ public class RestOpenApiEndpointV3Test {
         final RestConfiguration restConfiguration = new RestConfiguration();
 
         final CamelContext camelContext = mock(CamelContext.class);
-        when(camelContext.getRestConfiguration("rest-openapi", true)).thenReturn(restConfiguration);
+        when(camelContext.getRestConfiguration()).thenReturn(restConfiguration);
 
         final Oas30Document openapi = new Oas30Document();
 
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setCamelContext(camelContext);
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("rest-openapi:getPetById", "getPetById", component,
-            Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:getPetById", "getPetById", component,
+                Collections.emptyMap());
 
         assertThat(endpoint.determineBasePath(openapi))
-            .as("When no base path is specified on component, endpoint or rest configuration it should default to `/`")
-            .isEqualTo("/");
+                .as("When no base path is specified on component, endpoint or rest configuration it should default to `/`")
+                .isEqualTo("/");
 
         restConfiguration.setContextPath("/rest");
         assertThat(endpoint.determineBasePath(openapi)).as(
-            "When base path is specified in REST configuration and not specified in component the base path should be from the REST configuration")
-            .isEqualTo("/rest");
+                "When base path is specified in REST configuration and not specified in component the base path should be from the REST configuration")
+                .isEqualTo("/rest");
 
         openapi.addServer("http://petstore.openapi.io", "v3 test");
-        
 
         component.setBasePath("/component");
         assertThat(endpoint.determineBasePath(openapi)).as(
-            "When base path is specified on the component it should take precedence over OpenApi specification and REST configuration")
-            .isEqualTo("/component");
+                "When base path is specified on the component it should take precedence over OpenApi specification and REST configuration")
+                .isEqualTo("/component");
 
         endpoint.setBasePath("/endpoint");
         assertThat(endpoint.determineBasePath(openapi))
-            .as("When base path is specified on the endpoint it should take precedence over any other")
-            .isEqualTo("/endpoint");
+                .as("When base path is specified on the endpoint it should take precedence over any other")
+                .isEqualTo("/endpoint");
     }
 
     @Test
@@ -129,20 +130,20 @@ public class RestOpenApiEndpointV3Test {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setCamelContext(camelContext);
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("uri", "remaining", component,
-            Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "uri", "remaining", component,
+                Collections.emptyMap());
         endpoint.setHost("http://petstore.openapi.io");
 
         final Oas30Document openapi = new Oas30Document();
         final Oas30Operation operation = new Oas30Operation("get");
         operation.createParameter();
         assertThat(endpoint.determineEndpointParameters(openapi, operation))
-            .containsOnly(entry("host", "http://petstore.openapi.io"));
-       
+                .containsOnly(entry("host", "http://petstore.openapi.io"));
 
         component.setComponentName("xyz");
         assertThat(endpoint.determineEndpointParameters(openapi, operation))
-            .containsOnly(entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "xyz"));
+                .containsOnly(entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "xyz"));
 
         List<String> consumers = new ArrayList<String>();
         consumers.add("application/json");
@@ -153,52 +154,52 @@ public class RestOpenApiEndpointV3Test {
         operation.responses.addResponse("200", operation.responses.createResponse("200"));
         for (String consumer : consumers) {
             operation.requestBody.content.put(consumer, operation.requestBody.createMediaType(consumer));
-            
+
         }
         for (String produce : produces) {
             for (OasResponse response : operation.responses.getResponses()) {
-                Oas30Response oas30Response = (Oas30Response)response;
+                Oas30Response oas30Response = (Oas30Response) response;
                 oas30Response.content.put(produce, oas30Response.createMediaType(produce));
             }
         }
-        
+
         assertThat(endpoint.determineEndpointParameters(openapi, operation)).containsOnly(
-            entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "xyz"),
-            entry("consumes", "application/xml"), entry("produces", "application/json"));
+                entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "xyz"),
+                entry("consumes", "application/xml"), entry("produces", "application/json"));
 
         component.setProduces("application/json");
         component.setConsumes("application/atom+xml");
         assertThat(endpoint.determineEndpointParameters(openapi, operation)).containsOnly(
-            entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "xyz"),
-            entry("consumes", "application/atom+xml"), entry("produces", "application/json"));
+                entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "xyz"),
+                entry("consumes", "application/atom+xml"), entry("produces", "application/json"));
 
         endpoint.setProduces("application/atom+xml");
         endpoint.setConsumes("application/json");
         assertThat(endpoint.determineEndpointParameters(openapi, operation)).containsOnly(
-            entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "xyz"),
-            entry("consumes", "application/json"), entry("produces", "application/atom+xml"));
+                entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "xyz"),
+                entry("consumes", "application/json"), entry("produces", "application/atom+xml"));
 
         endpoint.setComponentName("zyx");
         assertThat(endpoint.determineEndpointParameters(openapi, operation)).containsOnly(
-            entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "zyx"),
-            entry("consumes", "application/json"), entry("produces", "application/atom+xml"));
+                entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "zyx"),
+                entry("consumes", "application/json"), entry("produces", "application/atom+xml"));
 
         Oas30Parameter oas30Parameter = new Oas30Parameter("q");
         oas30Parameter.in = "query";
         oas30Parameter.required = true;
         operation.addParameter(oas30Parameter);
         assertThat(endpoint.determineEndpointParameters(openapi, operation)).containsOnly(
-            entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "zyx"),
-            entry("consumes", "application/json"), entry("produces", "application/atom+xml"),
-            entry("queryParameters", "q={q}"));
+                entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "zyx"),
+                entry("consumes", "application/json"), entry("produces", "application/atom+xml"),
+                entry("queryParameters", "q={q}"));
 
         oas30Parameter = new Oas30Parameter("o");
         oas30Parameter.in = "query";
         operation.addParameter(oas30Parameter);
         assertThat(endpoint.determineEndpointParameters(openapi, operation)).containsOnly(
-            entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "zyx"),
-            entry("consumes", "application/json"), entry("produces", "application/atom+xml"),
-            entry("queryParameters", "q={q}&o={o?}"));
+                entry("host", "http://petstore.openapi.io"), entry("producerComponentName", "zyx"),
+                entry("consumes", "application/json"), entry("produces", "application/atom+xml"),
+                entry("queryParameters", "q={q}&o={o?}"));
     }
 
     @Test
@@ -235,8 +236,9 @@ public class RestOpenApiEndpointV3Test {
     public void shouldDetermineHostFromSpecification() {
         final RestOpenApiComponent component = new RestOpenApiComponent();
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("rest-openapi:http://some-uri#getPetById",
-            "http://some-uri#getPetById", component, Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:http://some-uri#getPetById",
+                "http://some-uri#getPetById", component, Collections.emptyMap());
 
         final Oas30Document openapi = new Oas30Document();
         openapi.addServer("http://petstore.openapi.io", "v3 test");
@@ -254,20 +256,20 @@ public class RestOpenApiEndpointV3Test {
         assertThat(RestOpenApiEndpoint.determineOption(null, null, null, null)).isNull();
 
         assertThat(RestOpenApiEndpoint.determineOption(Collections.emptyList(), Collections.emptyList(), "", ""))
-            .isNull();
+                .isNull();
 
         assertThat(RestOpenApiEndpoint.determineOption(Arrays.asList("specification"), null, null, null))
-            .isEqualTo("specification");
+                .isEqualTo("specification");
 
         assertThat(
-            RestOpenApiEndpoint.determineOption(Arrays.asList("specification"), Arrays.asList("operation"), null, null))
-                .isEqualTo("operation");
+                RestOpenApiEndpoint.determineOption(Arrays.asList("specification"), Arrays.asList("operation"), null, null))
+                        .isEqualTo("operation");
 
         assertThat(RestOpenApiEndpoint.determineOption(Arrays.asList("specification"), Arrays.asList("operation"),
-            "component", null)).isEqualTo("component");
+                "component", null)).isEqualTo("component");
 
         assertThat(RestOpenApiEndpoint.determineOption(Arrays.asList("specification"), Arrays.asList("operation"),
-            "component", "operation")).isEqualTo("operation");
+                "component", "operation")).isEqualTo("operation");
     }
 
     @Test
@@ -275,8 +277,9 @@ public class RestOpenApiEndpointV3Test {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setSpecificationUri(componentJsonUri);
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("rest-openapi:getPetById", "getPetById", component,
-            Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:getPetById", "getPetById", component,
+                Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(componentJsonUri);
     }
@@ -286,8 +289,9 @@ public class RestOpenApiEndpointV3Test {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setSpecificationUri(componentJsonUri);
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("rest-openapi:endpoint.json#getPetById",
-            "endpoint.json#getPetById", component, Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:endpoint.json#getPetById",
+                "endpoint.json#getPetById", component, Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(endpointUri);
     }
@@ -296,24 +300,20 @@ public class RestOpenApiEndpointV3Test {
     public void shouldHonourHostPrecedence() {
         final RestConfiguration globalRestConfiguration = new RestConfiguration();
 
-        final RestConfiguration componentRestConfiguration = new RestConfiguration();
-        final RestConfiguration specificRestConfiguration = new RestConfiguration();
-
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getRestConfiguration()).thenReturn(globalRestConfiguration);
-        when(camelContext.getRestConfiguration("rest-openapi", false)).thenReturn(componentRestConfiguration);
-        when(camelContext.getRestConfiguration("petstore", false)).thenReturn(specificRestConfiguration);
 
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setCamelContext(camelContext);
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("petstore:http://specification-uri#getPetById",
-            "http://specification-uri#getPetById", component, Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "petstore:http://specification-uri#getPetById",
+                "http://specification-uri#getPetById", component, Collections.emptyMap());
 
         final Oas30Document openapi = new Oas30Document();
-        
+
         assertThat(endpoint.determineHost(openapi)).isEqualTo("http://specification-uri");
-        
+
         globalRestConfiguration.setHost("global-rest");
         globalRestConfiguration.setScheme("http");
         assertThat(endpoint.determineHost(openapi)).isEqualTo("http://global-rest");
@@ -321,12 +321,6 @@ public class RestOpenApiEndpointV3Test {
         globalRestConfiguration.setHost("component-rest");
         globalRestConfiguration.setScheme("http");
         assertThat(endpoint.determineHost(openapi)).isEqualTo("http://component-rest");
-
-        specificRestConfiguration.setHost("specific-rest");
-        specificRestConfiguration.setScheme("http");
-        assertThat(endpoint.determineHost(openapi)).isEqualTo("http://specific-rest");
-
-        
 
         component.setHost("http://component");
         assertThat(endpoint.determineHost(openapi)).isEqualTo("http://component");
@@ -342,8 +336,9 @@ public class RestOpenApiEndpointV3Test {
         final RestOpenApiComponent component = new RestOpenApiComponent();
         component.setCamelContext(camelContext);
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("uri", "remaining", component,
-            Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "uri", "remaining", component,
+                Collections.emptyMap());
         endpoint.setHost("http://petstore.openapi.io");
 
         final Oas30Document openapi = new Oas30Document();
@@ -351,25 +346,24 @@ public class RestOpenApiEndpointV3Test {
         apiKeys.name = "key";
         apiKeys.in = "header";
         openapi.components = openapi.createComponents();
-        
+
         openapi.components.addSecurityScheme("apiKeys", apiKeys);
-        
+
         final Oas30Operation operation = new Oas30Operation("get");
         Oas30Parameter oas30Parameter = new Oas30Parameter("q");
         oas30Parameter.in = "query";
         oas30Parameter.required = true;
         operation.addParameter(oas30Parameter);
-        SecurityRequirement securityRequirement =  operation.createSecurityRequirement();
+        SecurityRequirement securityRequirement = operation.createSecurityRequirement();
         securityRequirement.addSecurityRequirementItem("apiKeys", Collections.emptyList());
         operation.addSecurityRequirement(securityRequirement);
-        
-        
+
         assertThat(endpoint.determineEndpointParameters(openapi, operation))
-            .containsOnly(entry("host", "http://petstore.openapi.io"), entry("queryParameters", "q={q}"));
+                .containsOnly(entry("host", "http://petstore.openapi.io"), entry("queryParameters", "q={q}"));
 
         apiKeys.in = "query";
         assertThat(endpoint.determineEndpointParameters(openapi, operation))
-            .containsOnly(entry("host", "http://petstore.openapi.io"), entry("queryParameters", "key={key}&q={q}"));
+                .containsOnly(entry("host", "http://petstore.openapi.io"), entry("queryParameters", "key={key}&q={q}"));
     }
 
     @Test
@@ -378,14 +372,14 @@ public class RestOpenApiEndpointV3Test {
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
         assertThat(
-            RestOpenApiEndpoint.loadSpecificationFrom(camelContext, RestOpenApiComponent.DEFAULT_SPECIFICATION_URI))
-                .isNotNull();
+                RestOpenApiEndpoint.loadSpecificationFrom(camelContext, RestOpenApiComponent.DEFAULT_SPECIFICATION_URI))
+                        .isNotNull();
     }
 
     @Test
     public void shouldPickBestScheme() {
         assertThat(RestOpenApiEndpoint.pickBestScheme("http", Arrays.asList("http", "https")))
-            .isEqualTo("https");
+                .isEqualTo("https");
 
         assertThat(RestOpenApiEndpoint.pickBestScheme("https", Arrays.asList("http"))).isEqualTo("http");
 
@@ -398,12 +392,13 @@ public class RestOpenApiEndpointV3Test {
         assertThat(RestOpenApiEndpoint.pickBestScheme(null, null)).isNull();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldRaiseExceptionsForMissingSpecifications() throws IOException {
         final CamelContext camelContext = mock(CamelContext.class);
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
-        RestOpenApiEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json"));
+        assertThrows(IllegalArgumentException.class,
+                () -> RestOpenApiEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json")));
     }
 
     @Test
@@ -422,7 +417,7 @@ public class RestOpenApiEndpointV3Test {
         assertThat(endpoint.resolveUri("/{param1}/path/{param2}", pathParameters)).isEqualTo("/value1/path/{param2}");
         assertThat(endpoint.resolveUri("/{param1}/{param2}", pathParameters)).isEqualTo("/value1/{param2}");
         assertThat(endpoint.resolveUri("/path/{param1}/to/{param2}/rest", pathParameters))
-            .isEqualTo("/path/value1/to/{param2}/rest");
+                .isEqualTo("/path/value1/to/{param2}/rest");
     }
 
     @Test
@@ -443,8 +438,9 @@ public class RestOpenApiEndpointV3Test {
     public void shouldUseDefaultSpecificationUri() throws Exception {
         final RestOpenApiComponent component = new RestOpenApiComponent();
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("rest-openapi:getPetById", "getPetById", component,
-            Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:getPetById", "getPetById", component,
+                Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(RestOpenApiComponent.DEFAULT_SPECIFICATION_URI);
     }
@@ -453,8 +449,9 @@ public class RestOpenApiEndpointV3Test {
     public void shouldUseDefaultSpecificationUriEvenIfHashIsPresent() throws Exception {
         final RestOpenApiComponent component = new RestOpenApiComponent();
 
-        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint("rest-openapi:#getPetById", "#getPetById",
-            component, Collections.emptyMap());
+        final RestOpenApiEndpoint endpoint = new RestOpenApiEndpoint(
+                "rest-openapi:#getPetById", "#getPetById",
+                component, Collections.emptyMap());
 
         assertThat(endpoint.getSpecificationUri()).isEqualTo(RestOpenApiComponent.DEFAULT_SPECIFICATION_URI);
     }

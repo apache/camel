@@ -21,9 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConstants;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestSupport {
 
@@ -33,7 +34,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers?forwardOnComplete=true")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -41,12 +42,12 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
 
         context.start();
 
-        Flowable.<Integer>empty().subscribe(numbers);
+        Flowable.<Integer> empty().subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(1);
         endpoint.expectedHeaderReceived(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onComplete");
-        endpoint.expectedBodiesReceived(new Object[]{null});
+        endpoint.expectedBodiesReceived(new Object[] { null });
         endpoint.assertIsSatisfied();
     }
 
@@ -56,7 +57,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -64,7 +65,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
 
         context.start();
 
-        Flowable.<Integer>empty().subscribe(numbers);
+        Flowable.<Integer> empty().subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(0);
@@ -77,7 +78,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -93,7 +94,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
         endpoint.assertIsSatisfied();
 
         Exchange ex = endpoint.getExchanges().get(0);
-        Assert.assertEquals(1, ex.getIn().getBody());
+        assertEquals(1, ex.getIn().getBody());
     }
 
     @Test
@@ -102,7 +103,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers?forwardOnError=true")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -113,14 +114,13 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
         RuntimeException ex = new RuntimeException("1");
 
         Flowable.just(1)
-            .map(n -> {
-                if (n == 1) {
-                    throw ex;
-                }
-                return n;
-            })
-            .subscribe(numbers);
-
+                .map(n -> {
+                    if (n == 1) {
+                        throw ex;
+                    }
+                    return n;
+                })
+                .subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(1);
@@ -128,7 +128,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
         endpoint.assertIsSatisfied();
 
         Exchange exch = endpoint.getExchanges().get(0);
-        Assert.assertEquals(ex, exch.getIn().getBody());
+        assertEquals(ex, exch.getIn().getBody());
     }
 
     @Test
@@ -137,7 +137,7 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
             @Override
             public void configure() throws Exception {
                 from("reactive-streams:numbers")
-                    .to("mock:endpoint");
+                        .to("mock:endpoint");
             }
         });
 
@@ -148,14 +148,13 @@ public class RxJavaStreamsServiceEventTypeTest extends RxJavaStreamsServiceTestS
         RuntimeException ex = new RuntimeException("1");
 
         Flowable.just(1)
-            .map(n -> {
-                if (n == 1) {
-                    throw ex;
-                }
-                return n;
-            })
-            .subscribe(numbers);
-
+                .map(n -> {
+                    if (n == 1) {
+                        throw ex;
+                    }
+                    return n;
+                })
+                .subscribe(numbers);
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(0);

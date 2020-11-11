@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
     private static String beforeThreadName;
@@ -33,7 +34,7 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/JmsTransacted-context.xml");
     }
-    
+
     @Test
     public void testAsyncEndpointOK() throws Exception {
         getMockEndpoint("mock:tap").expectedBodiesReceived("Hi Camel");
@@ -44,7 +45,7 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
 
         // the tapped exchange is not transacted
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -55,29 +56,19 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("activemq:queue:inbox")
-                    .transacted()
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertTrue("Exchange should be transacted", exchange.isTransacted());
-                            }
-                        })
+                        .transacted()
+                        .process(exchange -> assertTrue(exchange.isTransacted(), "Exchange should be transacted"))
                         .to("async:bye:camel")
                         .wireTap("direct:tap")
                         .to("mock:result");
 
                 from("direct:tap")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                                assertFalse("Exchange should NOT be transacted", exchange.isTransacted());
-                            }
+                        .process(exchange -> {
+                            beforeThreadName = Thread.currentThread().getName();
+                            assertFalse(exchange.isTransacted(), "Exchange should NOT be transacted");
                         })
                         .to("async:hi:camel")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
+                        .process(exchange -> afterThreadName = Thread.currentThread().getName())
                         .to("mock:tap");
             }
         };

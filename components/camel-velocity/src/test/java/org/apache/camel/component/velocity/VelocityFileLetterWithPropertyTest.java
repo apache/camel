@@ -19,14 +19,14 @@ package org.apache.camel.component.velocity;
 import org.apache.camel.builder.RouteBuilder;
 
 public class VelocityFileLetterWithPropertyTest extends VelocityLetterTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                
+
                 System.setProperty("ENV", "src/test/resources/");
-                
+
                 from("direct:a").to("velocity:file:{{ENV}}org/apache/camel/component/velocity/letter.vm").to("mock:result");
             }
         };

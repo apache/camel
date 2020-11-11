@@ -17,9 +17,11 @@
 package org.apache.camel.spring.produce.generics;
 
 import org.apache.camel.spring.SpringRunWithTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 public class MyServiceTest extends SpringRunWithTestSupport {
@@ -33,7 +35,7 @@ public class MyServiceTest extends SpringRunWithTestSupport {
         Double actual = invoker.invokeService(value);
         Double expected = Math.sqrt(value);
 
-        assertEquals("The result should be the square root", expected, actual);
+        assertEquals(expected, actual, "The result should be the square root");
     }
 
 }

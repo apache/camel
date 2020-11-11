@@ -19,7 +19,10 @@ package org.apache.camel.processor.onexception;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OnExceptionRouteIdTest extends ContextTestSupport {
 
@@ -42,7 +45,8 @@ public class OnExceptionRouteIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).id("myError").maximumRedeliveries(0).handled(true).setHeader("error", constant("true")).end().stop();
+                onException(Exception.class).id("myError").maximumRedeliveries(0).handled(true)
+                        .setHeader("error", constant("true")).end().stop();
 
                 from("direct:foo").routeId("foo").to("mock:foo").end();
             }

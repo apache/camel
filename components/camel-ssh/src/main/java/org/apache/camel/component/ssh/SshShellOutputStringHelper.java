@@ -27,15 +27,12 @@ public final class SshShellOutputStringHelper {
         // empty const
     }
 
-   /**
-     * Returns the string before the given token
-     * If this token is repeating, than return all text
-     * before the last token
+    /**
+     * Returns the string before the given token If this token is repeating, than return all text before the last token
      *
-     * @param text the text
-     * @param before the token which is expected to be repeated
-     * @return the text before the last token, or <tt>null</tt> if text does not
-     *         contain the token
+     * @param  text   the text
+     * @param  before the token which is expected to be repeated
+     * @return        the text before the last token, or <tt>null</tt> if text does not contain the token
      */
     public static String beforeLast(String text, String before) {
         if (!text.contains(before)) {
@@ -43,33 +40,31 @@ public final class SshShellOutputStringHelper {
         }
         return text.substring(0, text.lastIndexOf(before));
     }
-    
-    
+
     /**
      * Returns an object before the given last token
      *
-     * @param text  the text
-     * @param before the last token
-     * @param mapper a mapping function to convert the string before the token to type T
-     * @return an Optional describing the result of applying a mapping function to the text before the token.
+     * @param  text       the text
+     * @param  beforeLast the last token
+     * @param  mapper     a mapping function to convert the string before the token to type T
+     * @return            an Optional describing the result of applying a mapping function to the text before the token.
      */
     public static <T> Optional<T> beforeLast(String text, String beforeLast, Function<String, T> mapper) {
         String result = beforeLast(text, beforeLast);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }
     }
-    
-    
+
     /**
      * Returns the string between the given tokens
      *
-     * @param text  the text
-     * @param after is the starting token to skip the text before that.
-     * @param before the last token
-     * @return the text between the tokens, or <tt>null</tt> if text does not contain the tokens
+     * @param  text       the text
+     * @param  after      is the starting token to skip the text before that.
+     * @param  beforeLast the last token
+     * @return            the text between the tokens, or <tt>null</tt> if text does not contain the tokens
      */
     public static String betweenBeforeLast(String text, String after, String beforeLast) {
         text = StringHelper.after(text, after);
@@ -78,21 +73,20 @@ public final class SshShellOutputStringHelper {
         }
         return beforeLast(text, beforeLast);
     }
-    
 
     /**
      * Returns an object between the given token
      *
-     * @param text  the text
-     * @param after the before last token
-     * @param before the after token
-     * @param mapper a mapping function to convert the string between the token to type T
-     * @return an Optional describing the result of applying a mapping function to the text between the token.
+     * @param  text   the text
+     * @param  after  the before last token
+     * @param  before the after token
+     * @param  mapper a mapping function to convert the string between the token to type T
+     * @return        an Optional describing the result of applying a mapping function to the text between the token.
      */
     public static <T> Optional<T> betweenBeforeLast(String text, String after, String before, Function<String, T> mapper) {
         String result = betweenBeforeLast(text, after, before);
         if (result == null) {
-            return Optional.empty();            
+            return Optional.empty();
         } else {
             return Optional.ofNullable(mapper.apply(result));
         }

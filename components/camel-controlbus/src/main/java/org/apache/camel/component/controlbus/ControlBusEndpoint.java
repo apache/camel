@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.controlbus;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.LoggingLevel;
@@ -31,14 +32,17 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+ * Manage and monitor Camel routes.
  *
- * For example, by sending a message to an Endpoint you can control the lifecycle of routes, or gather performance statistics.
+ * For example, by sending a message to an Endpoint you can control the lifecycle of routes, or gather performance
+ * statistics.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, label = "core,monitoring")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language",
+             producerOnly = true, category = { Category.CORE, Category.MONITORING })
 public class ControlBusEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Command can be either route or language", enums = "route,language") @Metadata(required = true)
+    @UriPath(description = "Command can be either route or language", enums = "route,language")
+    @Metadata(required = true)
     private String command;
     @UriPath(enums = "bean,constant,el,exchangeProperty,file,groovy,header,jsonpath,mvel,ognl,ref,simple,spel,sql,terser,tokenize,xpath,xquery,xtokenize")
     private Language language;
@@ -53,25 +57,25 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "INFO")
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
 
+    private transient CamelLogger logger;
+
     public ControlBusEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 
     @Override
+    protected void doInit() throws Exception {
+        this.logger = new CamelLogger(ControlBusProducer.class.getName(), loggingLevel);
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
-        CamelLogger logger = new CamelLogger(ControlBusProducer.class.getName(), loggingLevel);
         return new ControlBusProducer(this, logger);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("Cannot consume from a ControlBusEndpoint: " + getEndpointUri());
-    }
-
-    @Override
-    public boolean isSingleton() {
-        // we dont want to be enlisted in JMX, so lets just be non-singleton
-        return false;
     }
 
     @Override
@@ -84,8 +88,8 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Allows you to specify the name of a Language to use for evaluating the message body.
-     * If there is any result from the evaluation, then the result is put in the message body.
+     * Allows you to specify the name of a Language to use for evaluating the message body. If there is any result from
+     * the evaluation, then the result is put in the message body.
      */
     public void setLanguage(Language language) {
         this.language = language;
@@ -96,8 +100,7 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * To specify a route by its id.
-     * The special keyword "current" indicates the current route.
+     * To specify a route by its id. The special keyword "current" indicates the current route.
      */
     public void setRouteId(String routeId) {
         this.routeId = routeId;
@@ -110,11 +113,11 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     /**
      * To denote an action that can be either: start, stop, or status.
      * <p/>
-     * To either start or stop a route, or to get the status of the route as output in the message body.
-     * You can use suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route.
-     * And from Camel 2.11.1 onwards you can use stats to get performance statics returned in XML format;
-     * the routeId option can be used to define which route to get the performance stats for, if routeId is not defined,
-     * then you get statistics for the entire CamelContext. The restart action will restart the route.
+     * To either start or stop a route, or to get the status of the route as output in the message body. You can use
+     * suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route. And from Camel 2.11.1 onwards
+     * you can use stats to get performance statics returned in XML format; the routeId option can be used to define
+     * which route to get the performance stats for, if routeId is not defined, then you get statistics for the entire
+     * CamelContext. The restart action will restart the route.
      */
     public void setAction(String action) {
         this.action = action;
@@ -138,8 +141,8 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     /**
      * Whether to execute the control bus task asynchronously.
      * <p/>
-     * Important: If this option is enabled, then any result from the task is not set on the Exchange.
-     * This is only possible if executing tasks synchronously.
+     * Important: If this option is enabled, then any result from the task is not set on the Exchange. This is only
+     * possible if executing tasks synchronously.
      */
     public void setAsync(boolean async) {
         this.async = async;

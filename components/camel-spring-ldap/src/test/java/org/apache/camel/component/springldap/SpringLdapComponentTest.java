@@ -28,23 +28,24 @@ import javax.naming.directory.SearchControls;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public class SpringLdapComponentTest extends CamelSpringTestSupport {
 
     private LdapTemplate ldapTemplate;
@@ -75,8 +76,9 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
         initializeTest(dnToUnbind);
 
         producer.sendBody("spring-ldap:"
-                + SpringLdapTestConfiguration.LDAP_MOCK_NAME
-                + "?operation=unbind", body);
+                          + SpringLdapTestConfiguration.LDAP_MOCK_NAME
+                          + "?operation=unbind",
+                body);
 
         verify(ldapTemplate).unbind(dnCaptor.capture());
         assertEquals(dnToUnbind, dnCaptor.getValue());
@@ -93,8 +95,9 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
         body.put(SpringLdapProducer.ATTRIBUTES, attributes);
 
         producer.sendBody("spring-ldap:"
-                + SpringLdapTestConfiguration.LDAP_MOCK_NAME
-                + "?operation=bind", body);
+                          + SpringLdapTestConfiguration.LDAP_MOCK_NAME
+                          + "?operation=bind",
+                body);
 
         verify(ldapTemplate).bind(dnCaptor.capture(), objectToBindCaptor.capture(), attributesCaptor.capture());
         assertEquals(dnToBind, dnCaptor.getValue());
@@ -112,16 +115,17 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
         body.put(SpringLdapProducer.FILTER, filter);
 
         List<String> searchResult = Collections.singletonList("some search result");
-        when(ldapTemplate.search(any(String.class), any(String.class), any(Integer.class), ArgumentMatchers.<AttributesMapper<String>> any())).thenReturn(searchResult);
+        when(ldapTemplate.search(any(String.class), any(String.class), any(Integer.class),
+                ArgumentMatchers.<AttributesMapper<String>> any())).thenReturn(searchResult);
 
-        MockEndpoint resultEndpoint = (MockEndpoint)context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived(Collections.singletonList(searchResult));
 
         producer.sendBody("direct:start", body);
 
         verify(ldapTemplate).search(dnCaptor.capture(), filterCaptor.capture(), scopeCaptor.capture(), mapperCaptor.capture());
         assertEquals(dnToSearch, dnCaptor.getValue());
-        assertEquals((Integer)SearchControls.ONELEVEL_SCOPE, scopeCaptor.getValue());
+        assertEquals((Integer) SearchControls.ONELEVEL_SCOPE, scopeCaptor.getValue());
         assertEquals(filter, filterCaptor.getValue());
 
         resultEndpoint.assertIsSatisfied();
@@ -140,8 +144,8 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
 
         return new RouteBuilder() {
             private String ldapUriForSearchTest = "spring-ldap:"
-                    + SpringLdapTestConfiguration.LDAP_MOCK_NAME
-                    + "?operation=search&scope=onelevel";
+                                                  + SpringLdapTestConfiguration.LDAP_MOCK_NAME
+                                                  + "?operation=search&scope=onelevel";
 
             public void configure() {
                 from("direct:start").to(ldapUriForSearchTest).to("mock:result");
@@ -150,7 +154,8 @@ public class SpringLdapComponentTest extends CamelSpringTestSupport {
     }
 
     private void initializeTest(String dn) {
-        ldapTemplate = context.getRegistry().lookupByNameAndType(SpringLdapTestConfiguration.LDAP_MOCK_NAME, LdapTemplate.class);
+        ldapTemplate
+                = context.getRegistry().lookupByNameAndType(SpringLdapTestConfiguration.LDAP_MOCK_NAME, LdapTemplate.class);
 
         producer = context.createProducerTemplate();
 

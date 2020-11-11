@@ -16,35 +16,29 @@
  */
 package org.apache.camel.component.file;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
-import org.apache.camel.spi.SendDynamicAware;
+import org.apache.camel.support.component.SendDynamicAwareSupport;
 import org.apache.camel.util.URISupport;
 
-public abstract class GenericFileSendDynamicAware implements SendDynamicAware {
-
-    private String scheme;
+public abstract class GenericFileSendDynamicAware extends SendDynamicAwareSupport {
 
     @Override
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
+    public boolean isOnlyDynamicQueryParameters() {
+        return true;
     }
 
     @Override
-    public String getScheme() {
-        return scheme;
+    public boolean isLenientProperties() {
+        return false;
     }
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri, String originalUri) throws Exception {
-        RuntimeCamelCatalog catalog = exchange.getContext().getExtension(RuntimeCamelCatalog.class);
-        Map<String, String> properties = catalog.endpointProperties(uri);
-        Map<String, String> lenient = catalog.endpointLenientProperties(uri);
-        return new DynamicAwareEntry(uri, originalUri, properties, lenient);
+        Map<String, Object> properties = endpointProperties(exchange, uri);
+        return new DynamicAwareEntry(uri, originalUri, properties, null);
     }
 
     @Override
@@ -59,9 +53,9 @@ public abstract class GenericFileSendDynamicAware implements SendDynamicAware {
         // if any of the above are in use, then they should not be pre evaluated
         // and we need to rebuild a new uri with them as-is
         if (fileName || tempFileName || idempotentKey || move || moveFailed || preMove || moveExisting) {
-            Map<String, String> params = new LinkedHashMap<>(entry.getProperties());
+            Map<String, Object> params = entry.getProperties();
 
-            Map<String, Object> originalParams = URISupport.parseQuery(entry.getOriginalUri());
+            Map<String, Object> originalParams = URISupport.parseQuery(URISupport.extractQuery(entry.getOriginalUri()));
             if (fileName) {
                 Object val = originalParams.get("fileName");
                 if (val != null) {
@@ -105,8 +99,7 @@ public abstract class GenericFileSendDynamicAware implements SendDynamicAware {
                 }
             }
 
-            RuntimeCamelCatalog catalog = exchange.getContext().getExtension(RuntimeCamelCatalog.class);
-            return catalog.asEndpointUri(scheme, params, false);
+            return asEndpointUri(exchange, entry.getUri(), params);
         } else {
             return entry.getUri();
         }

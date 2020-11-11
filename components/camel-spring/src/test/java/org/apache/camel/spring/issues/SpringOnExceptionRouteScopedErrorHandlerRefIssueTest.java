@@ -28,7 +28,8 @@ public class SpringOnExceptionRouteScopedErrorHandlerRefIssueTest extends OnExce
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/issues/SpringOnExceptionRouteScopedErrorHandlerRefIssueTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/issues/SpringOnExceptionRouteScopedErrorHandlerRefIssueTest.xml");
     }
 
 }

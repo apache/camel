@@ -22,17 +22,20 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 import static org.apache.camel.component.mail.SearchTermBuilder.Comparison;
 import static org.apache.camel.component.mail.SearchTermBuilder.Op.or;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class SearchTermBuilderTest extends Assert {
+public class SearchTermBuilderTest {
 
     @Test
     public void testSearchTermBuilderFromAndSubject() throws Exception {
@@ -49,13 +52,13 @@ public class SearchTermBuilderTest extends Assert {
         msg.setSubject("Yeah Camel rocks");
         msg.setText("Apache Camel is a cool project. Have a fun ride.");
         msg.setFrom(new InternetAddress("someone@somewhere.com"));
-        assertTrue("Should match message", st.match(msg));
+        assertTrue(st.match(msg), "Should match message");
 
         MimeMessage msg2 = new MimeMessage(sender.getSession());
         msg2.setSubject("Apache Camel is fantastic");
         msg2.setText("I like Camel.");
         msg2.setFrom(new InternetAddress("donotreply@somewhere.com"));
-        assertFalse("Should not match message, as from doesn't match", st.match(msg2));
+        assertFalse(st.match(msg2), "Should not match message, as from doesn't match");
     }
 
     @Test
@@ -73,13 +76,13 @@ public class SearchTermBuilderTest extends Assert {
         msg.setSubject("Yeah Camel rocks");
         msg.setText("Apache Camel is a cool project. Have a fun ride.");
         msg.setFrom(new InternetAddress("someone@somewhere.com"));
-        assertTrue("Should match message", st.match(msg));
+        assertTrue(st.match(msg), "Should match message");
 
         MimeMessage msg2 = new MimeMessage(sender.getSession());
         msg2.setSubject("Beware");
         msg2.setText("This is from the administrator.");
         msg2.setFrom(new InternetAddress("admin@apache.org"));
-        assertTrue("Should match message, as its from admin", st.match(msg2));
+        assertTrue(st.match(msg2), "Should match message, as its from admin");
     }
 
     @Test
@@ -99,7 +102,7 @@ public class SearchTermBuilderTest extends Assert {
         msg.setText("Apache Camel is a cool project. Have a fun ride.");
         msg.setFrom(new InternetAddress("someone@somewhere.com"));
         msg.setSentDate(new Date());
-        assertTrue("Should match message", st.match(msg));
+        assertTrue(st.match(msg), "Should match message");
 
         MimeMessage msg2 = new MimeMessage(sender.getSession());
         msg2.setSubject("Camel in Action");
@@ -110,7 +113,7 @@ public class SearchTermBuilderTest extends Assert {
         long time = new Date().getTime() - twoDays;
         msg2.setSentDate(new Date(time));
 
-        assertFalse("Should not match message as its too old", st.match(msg2));
+        assertFalse(st.match(msg2), "Should not match message as its too old");
     }
 
     @Test

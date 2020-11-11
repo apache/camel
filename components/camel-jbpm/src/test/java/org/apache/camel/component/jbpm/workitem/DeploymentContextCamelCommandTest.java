@@ -16,27 +16,29 @@
  */
 package org.apache.camel.component.jbpm.workitem;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jbpm.JBPMConstants;
 import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.services.api.service.ServiceRegistry;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.kie.api.executor.Command;
 import org.kie.api.executor.CommandContext;
 import org.kie.api.executor.ExecutionResults;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DeploymentContextCamelCommandTest {
 
     @Mock
@@ -49,7 +51,7 @@ public class DeploymentContextCamelCommandTest {
     Message outMessage;
 
     @Mock
-    CamelContext camelContext;
+    ExtendedCamelContext camelContext;
 
     @Mock
     RuntimeManager runtimeManager;
@@ -77,7 +79,8 @@ public class DeploymentContextCamelCommandTest {
 
         // Register the RuntimeManager bound camelcontext.
         try {
-            ServiceRegistry.get().register(deploymentId + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX, camelContext);
+            ServiceRegistry.get().register(deploymentId + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX,
+                    camelContext);
 
             WorkItemImpl workItem = new WorkItemImpl();
             workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);

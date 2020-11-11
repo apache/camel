@@ -37,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is a Quartz Job that is scheduled by QuartzEndpoint's Consumer and will call it to
- * produce a QuartzMessage sending to a route.
+ * This is a Quartz Job that is scheduled by QuartzEndpoint's Consumer and will call it to produce a QuartzMessage
+ * sending to a route.
  */
 public class CamelJob implements Job {
     private static final Logger LOG = LoggerFactory.getLogger(CamelJob.class);
@@ -88,7 +88,8 @@ public class CamelJob implements Job {
     protected CamelContext getCamelContext(JobExecutionContext context) throws JobExecutionException {
         SchedulerContext schedulerContext = getSchedulerContext(context);
         String camelContextName = context.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
-        CamelContext result = (CamelContext)schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName);
+        CamelContext result
+                = (CamelContext) schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName);
         if (result == null) {
             throw new JobExecutionException("No CamelContext could be found with name: " + camelContextName);
         }
@@ -103,10 +104,11 @@ public class CamelJob implements Job {
         }
     }
 
-    protected QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
+    protected QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext)
+            throws JobExecutionException {
         TriggerKey triggerKey = quartzContext.getTrigger().getKey();
         JobDetail jobDetail = quartzContext.getJobDetail();
-        JobKey jobKey =  jobDetail.getKey();
+        JobKey jobKey = jobDetail.getKey();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Looking up existing QuartzEndpoint with triggerKey={}", triggerKey);
         }
@@ -116,7 +118,7 @@ public class CamelJob implements Job {
         for (Route route : camelContext.getRoutes()) {
             Endpoint endpoint = route.getEndpoint();
             if (endpoint instanceof DelegateEndpoint) {
-                endpoint = ((DelegateEndpoint)endpoint).getEndpoint();
+                endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
             }
             if (endpoint instanceof QuartzEndpoint) {
                 QuartzEndpoint quartzEndpoint = (QuartzEndpoint) endpoint;
@@ -125,7 +127,8 @@ public class CamelJob implements Job {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);
                 }
                 if (triggerKey.equals(checkTriggerKey)
-                    || (jobDetail.requestsRecovery() && jobKey.getGroup().equals(checkTriggerKey.getGroup()) && jobKey.getName().equals(checkTriggerKey.getName()))) {
+                        || (jobDetail.requestsRecovery() && jobKey.getGroup().equals(checkTriggerKey.getGroup())
+                                && jobKey.getName().equals(checkTriggerKey.getName()))) {
                     return quartzEndpoint;
                 }
             }

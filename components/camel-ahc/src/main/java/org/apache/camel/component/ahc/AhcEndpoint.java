@@ -24,10 +24,11 @@ import javax.net.ssl.SSLContext;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.JdkSslContext;
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -43,13 +44,15 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
 /**
- * To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
+ * Call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.8.0", scheme = "ahc", title = "Async HTTP Client (AHC)", syntax = "ahc:httpUri",
+             producerOnly = true, category = { Category.HTTP }, lenientProperties = true)
 public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private URI httpUri;
     @UriParam
     private boolean bridgeEndpoint;
@@ -167,8 +170,8 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     /**
-     * If the option is true, then the Exchange.HTTP_URI header is ignored, and use the endpoint's URI for request.
-     * You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back.
+     * If the option is true, then the Exchange.HTTP_URI header is ignored, and use the endpoint's URI for request. You
+     * may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back.
      */
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
@@ -191,27 +194,27 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     /**
-     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized
-     * in the response as a application/x-java-serialized-object content type (for example using Jetty or Servlet Camel components).
-     * On the producer side the exception will be deserialized and thrown as is, instead of the AhcOperationFailedException.
-     * The caused exception is required to be serialized.
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back
+     * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
+     * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is, instead of
+     * the AhcOperationFailedException. The caused exception is required to be serialized.
      * <p/>
-     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
-     * data from the request to Java and that can be a potential security risk.
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from
+     * the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
-    
+
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
 
     /**
-     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
-     * This reference overrides any configured SSLContextParameters at the component level.
-     * See Using the JSSE Configuration Utility.
-     * Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry. This reference overrides any
+     * configured SSLContextParameters at the component level. See Using the JSSE Configuration Utility. Note that
+     * configuring this option will override any SSL/TLS configuration options provided through the clientConfig option
+     * at the endpoint or component level.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -253,7 +256,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     public boolean isConnectionClose() {
         return connectionClose;
     }
-    
+
     /**
      * Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default
      */
@@ -276,18 +279,18 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     protected void doStart() throws Exception {
         super.doStart();
         if (client == null) {
-            
+
             AsyncHttpClientConfig config;
-            
+
             if (clientConfig != null) {
                 DefaultAsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
-                
+
                 if (sslContextParameters != null) {
                     SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
                     JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
                     builder.setSslContext(ssl);
                 }
-                
+
                 config = builder.build();
             } else {
                 DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();

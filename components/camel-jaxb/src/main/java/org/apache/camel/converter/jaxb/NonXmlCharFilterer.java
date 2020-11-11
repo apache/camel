@@ -20,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides filtering of characters that do fall into <a
- * href="http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char">range defined by
- * XML 1.0 spec</a>. <i>Filtering</i> here means replacement with space char.
+ * Provides filtering of characters that do fall into
+ * <a href="http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char">range defined by XML 1.0 spec</a>. <i>Filtering</i>
+ * here means replacement with space char.
  * 
  */
 class NonXmlCharFilterer {
@@ -44,12 +44,10 @@ class NonXmlCharFilterer {
     }
 
     /**
-     * Filter specified char array by replacing non-XML chars with space. Only
-     * part of array specified by <code>offset</code> and <code>length</code> is
-     * affected.
+     * Filter specified char array by replacing non-XML chars with space. Only part of array specified by
+     * <code>offset</code> and <code>length</code> is affected.
      * 
-     * @return <code>true</code> if <code>content</code> was modified,
-     *         <code>false</code> otherwise.
+     * @return <code>true</code> if <code>content</code> was modified, <code>false</code> otherwise.
      */
     public boolean filter(char[] content, int offset, int length) {
         if (content == null) {
@@ -87,8 +85,7 @@ class NonXmlCharFilterer {
         }
 
         String filtered = new String(chars);
-        LOG.warn("Illegal characters were filtered; original => \"" + original
-                + "\", filtered => \"" + filtered + "\"");
+        LOG.warn("Illegal characters were filtered; original => \"{}\", filtered => \"{}\"", original, filtered);
         return filtered;
     }
 

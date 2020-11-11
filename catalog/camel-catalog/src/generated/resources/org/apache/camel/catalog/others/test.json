@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "test",
+    "title": "Test",
+    "description": "Camel unit testing",
+    "deprecated": false,
+    "firstVersion": "2.9.0",
+    "label": "testing,java",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-test",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

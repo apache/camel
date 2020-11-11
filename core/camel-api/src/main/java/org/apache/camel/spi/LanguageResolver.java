@@ -27,9 +27,9 @@ public interface LanguageResolver {
     /**
      * Resolves the given language.
      *
-     * @param name    the name of the language
-     * @param context the camel context
-     * @return the resolved language
+     * @param  name                    the name of the language
+     * @param  context                 the camel context
+     * @return                         the resolved language
      * @throws NoSuchLanguageException is thrown if language could not be resolved
      */
     Language resolveLanguage(String name, CamelContext context) throws NoSuchLanguageException;

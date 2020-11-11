@@ -29,8 +29,12 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AtomixValueProducerTest extends AtomixClientTestSupport {
     private static final String VALUE_NAME = UUID.randomUUID().toString();
@@ -59,9 +63,11 @@ public class AtomixValueProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        value.close();
+        if (value != null) {
+            value.close();
+        }
 
         super.tearDown();
     }
@@ -71,58 +77,57 @@ public class AtomixValueProducerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Test
-    public void test() throws Exception {
+    void test() {
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
 
         Message result;
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.SET)
-            .withBody(val1)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.SET)
+                .withBody(val1)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val1, value.get().join());
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.COMPARE_AND_SET)
-            .withHeader(AtomixClientConstants.RESOURCE_OLD_VALUE, val1)
-            .withBody(val2)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.COMPARE_AND_SET)
+                .withHeader(AtomixClientConstants.RESOURCE_OLD_VALUE, val1)
+                .withBody(val2)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val2, value.get().join());
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.GET)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.GET)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val2, result.getBody());
         assertEquals(val2, value.get().join());
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.GET_AND_SET)
-            .withBody(val1)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixValue.Action.GET_AND_SET)
+                .withBody(val1)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(val2, result.getBody());
         assertEquals(val1, value.get().join());
     }
 
-
     // ************************************
     // Routes
     // ************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .toF("atomix-value:%s", VALUE_NAME);
+                        .toF("atomix-value:%s", VALUE_NAME);
             }
         };
     }

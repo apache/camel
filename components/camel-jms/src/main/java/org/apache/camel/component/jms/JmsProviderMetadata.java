@@ -16,25 +16,22 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 
 import org.springframework.jms.core.JmsOperations;
-import org.springframework.jms.core.SessionCallback;
 
 /**
- * A class which represents some metadata about the underlying JMS provider
- * so that we can properly bridge JMS providers such as for dealing with temporary destinations.
+ * A class which represents some metadata about the underlying JMS provider so that we can properly bridge JMS providers
+ * such as for dealing with temporary destinations.
  */
 public class JmsProviderMetadata {
     private Class<? extends TemporaryQueue> temporaryQueueType;
     private Class<? extends TemporaryTopic> temporaryTopicType;
 
     /**
-     * Lazily loads the temporary queue type if one has not been explicitly configured
-     * via calling the {@link #setTemporaryQueueType(Class)}
+     * Lazily loads the temporary queue type if one has not been explicitly configured via calling the
+     * {@link #setTemporaryQueueType(Class)}
      */
     public Class<? extends TemporaryQueue> getTemporaryQueueType(JmsOperations template) {
         Class<? extends TemporaryQueue> answer = getTemporaryQueueType();
@@ -46,8 +43,8 @@ public class JmsProviderMetadata {
     }
 
     /**
-     * Lazily loads the temporary topic type if one has not been explicitly configured
-     * via calling the {@link #setTemporaryTopicType(Class)}
+     * Lazily loads the temporary topic type if one has not been explicitly configured via calling the
+     * {@link #setTemporaryTopicType(Class)}
      */
     public Class<? extends TemporaryTopic> getTemporaryTopicType(JmsOperations template) {
         Class<? extends TemporaryTopic> answer = getTemporaryTopicType();
@@ -83,18 +80,16 @@ public class JmsProviderMetadata {
         if (template == null) {
             throw new IllegalArgumentException("No JmsTemplate supplied!");
         }
-        template.execute(new SessionCallback<Object>() {
-            public Object doInJms(Session session) throws JMSException {
-                TemporaryQueue queue = session.createTemporaryQueue();
-                setTemporaryQueueType(queue.getClass());
+        template.execute(session -> {
+            TemporaryQueue queue = session.createTemporaryQueue();
+            setTemporaryQueueType(queue.getClass());
 
-                TemporaryTopic topic = session.createTemporaryTopic();
-                setTemporaryTopicType(topic.getClass());
+            TemporaryTopic topic = session.createTemporaryTopic();
+            setTemporaryTopicType(topic.getClass());
 
-                queue.delete();
-                topic.delete();
-                return null;
-            }
+            queue.delete();
+            topic.delete();
+            return null;
         });
     }
 }

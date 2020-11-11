@@ -31,7 +31,7 @@ in the other camel modules
 |spi |Service provider interfaces. Strategy APIs for implementors to extend
 Camel
 
-|camel |Base package for camel. Defintions like Message and CamelContext can be
+|camel |Base package for camel. Definitions like Message and CamelContext can be
 found there
 |=======================================================================
 

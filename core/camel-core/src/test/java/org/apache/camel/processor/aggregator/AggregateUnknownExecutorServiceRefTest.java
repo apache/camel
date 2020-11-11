@@ -19,7 +19,10 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -38,8 +41,8 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
-                        // use an unknown executor service ref should fail
-                        .completionSize(3).executorServiceRef("myUnknownProfile").to("log:foo").to("mock:aggregated");
+                            // use an unknown executor service ref should fail
+                            .completionSize(3).executorServiceRef("myUnknownProfile").to("log:foo").to("mock:aggregated");
                 }
             });
             context.start();

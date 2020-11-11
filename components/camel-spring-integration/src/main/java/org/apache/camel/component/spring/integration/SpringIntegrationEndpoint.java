@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spring.integration;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,13 +29,15 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.springframework.messaging.MessageChannel;
 
 /**
- * Bridges Camel with Spring Integration.
+ * Bridge Camel with Spring Integration.
  */
-@UriEndpoint(firstVersion = "1.4.0", scheme = "spring-integration", title = "Spring Integration", syntax = "spring-integration:defaultChannel",
-        label = "spring,eventbus")
+@UriEndpoint(firstVersion = "1.4.0", scheme = "spring-integration", title = "Spring Integration",
+             syntax = "spring-integration:defaultChannel",
+             category = { Category.SPRING, Category.EVENTBUS })
 public class SpringIntegrationEndpoint extends DefaultEndpoint {
     private MessageChannel messageChannel;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String defaultChannel;
     @UriParam(label = "consumer")
     private String inputChannel;
@@ -83,8 +86,9 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The default channel name which is used by the Spring Integration Spring context.
-     * It will equal to the inputChannel name for the Spring Integration consumer and the outputChannel name for the Spring Integration provider.
+     * The default channel name which is used by the Spring Integration Spring context. It will equal to the
+     * inputChannel name for the Spring Integration consumer and the outputChannel name for the Spring Integration
+     * provider.
      */
     public void setDefaultChannel(String defaultChannel) {
         this.defaultChannel = defaultChannel;
@@ -99,14 +103,9 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint {
         return messageChannel;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     /**
-     * The exchange pattern that the Spring integration endpoint should use.
-     * If inOut=true then a reply channel is expected, either from the Spring Integration Message header or configured on the endpoint.
+     * The exchange pattern that the Spring integration endpoint should use. If inOut=true then a reply channel is
+     * expected, either from the Spring Integration Message header or configured on the endpoint.
      */
     public void setInOut(boolean inOut) {
         this.inOut = inOut;

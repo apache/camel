@@ -26,13 +26,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class StopRouteFromRouteTest extends Assert {
+public class StopRouteFromRouteTest {
 
     final CountDownLatch latch = new CountDownLatch(1);
 
@@ -44,8 +45,8 @@ public class StopRouteFromRouteTest extends Assert {
         context.addRoutes(createMyRoutes());
         context.start();
 
-        assertTrue("Route myRoute should be started", context.getRouteController().getRouteStatus("myRoute").isStarted());
-        assertTrue("Route bar should be started", context.getRouteController().getRouteStatus("bar").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("myRoute").isStarted(), "Route myRoute should be started");
+        assertTrue(context.getRouteController().getRouteStatus("bar").isStarted(), "Route bar should be started");
 
         // setup mock expectations for unit test
         MockEndpoint start = context.getEndpoint("mock:start", MockEndpoint.class);
@@ -61,8 +62,8 @@ public class StopRouteFromRouteTest extends Assert {
         latch.await(5, TimeUnit.SECONDS);
 
         // the route should now be stopped
-        assertTrue("Route myRoute should be stopped", context.getRouteController().getRouteStatus("myRoute").isStopped());
-        assertTrue("Route bar should be started", context.getRouteController().getRouteStatus("bar").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("myRoute").isStopped(), "Route myRoute should be stopped");
+        assertTrue(context.getRouteController().getRouteStatus("bar").isStarted(), "Route bar should be started");
 
         // stop camel
         context.stop();

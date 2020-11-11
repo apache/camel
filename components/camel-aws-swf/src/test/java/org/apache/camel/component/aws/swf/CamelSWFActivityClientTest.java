@@ -19,8 +19,8 @@ package org.apache.camel.component.aws.swf;
 import com.amazonaws.services.simpleworkflow.flow.DynamicActivitiesClient;
 import com.amazonaws.services.simpleworkflow.flow.core.Promise;
 import com.amazonaws.services.simpleworkflow.model.ActivityType;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -32,7 +32,7 @@ public class CamelSWFActivityClientTest {
     private DynamicActivitiesClient actClient;
     private CamelSWFActivityClient camelSWFActivityClient;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         actClient = mock(DynamicActivitiesClient.class);
         camelSWFActivityClient = new CamelSWFActivityClient(new SWFConfiguration()) {
@@ -47,6 +47,7 @@ public class CamelSWFActivityClientTest {
     public void testScheduleActivity() throws Exception {
         camelSWFActivityClient.scheduleActivity("eventName", "version", "input");
 
-        verify(actClient).scheduleActivity(any(ActivityType.class), ArgumentMatchers.<Promise<?>[]> any(), ArgumentMatchers.isNull(), ArgumentMatchers.<Class<?>> any(), ArgumentMatchers.isNull());
+        verify(actClient).scheduleActivity(any(ActivityType.class), ArgumentMatchers.<Promise<?>[]> any(),
+                ArgumentMatchers.isNull(), ArgumentMatchers.<Class<?>> any(), ArgumentMatchers.isNull());
     }
 }

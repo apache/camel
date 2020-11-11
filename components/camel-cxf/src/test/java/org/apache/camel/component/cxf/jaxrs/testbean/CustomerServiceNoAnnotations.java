@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cxf.jaxrs.testbean;
 
-
-
 // START SNIPPET: example
 public interface CustomerServiceNoAnnotations {
 

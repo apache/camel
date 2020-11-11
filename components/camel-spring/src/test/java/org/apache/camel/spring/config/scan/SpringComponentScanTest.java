@@ -22,18 +22,20 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringComponentScanTest extends ContextTestSupport {
 
     private AbstractApplicationContext applicationContext;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         if (context != null) {
@@ -45,7 +47,7 @@ public class SpringComponentScanTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         // we're done so let's properly close the application context
         IOHelper.close(applicationContext);
@@ -59,7 +61,7 @@ public class SpringComponentScanTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:definitelyShouldNeverReceiveExchange");
         mock.expectedMessageCount(0);
 
-        sendBody("seda:shouldNeverRecieveExchange", "dropped like a hot rock");
+        sendBody("seda:shouldNeverReceiveExchange", "dropped like a hot rock");
         mock.await(500, TimeUnit.MILLISECONDS);
         mock.assertIsSatisfied();
     }

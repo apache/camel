@@ -29,8 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class InsertIdTest extends BigQueryTestSupport {
     private static final String TABLE_ID = "insertId";
@@ -42,11 +42,11 @@ public class InsertIdTest extends BigQueryTestSupport {
     private Endpoint directIn;
 
     @EndpointInject("google-bigquery:{{project.id}}:{{bigquery.datasetId}}:"
-            + TABLE_ID + "?useAsInsertId=col1")
+                    + TABLE_ID + "?useAsInsertId=col1")
     private Endpoint bigqueryEndpointWithInsertId;
 
     @EndpointInject("google-bigquery:{{project.id}}:{{bigquery.datasetId}}:"
-            + TABLE_ID)
+                    + TABLE_ID)
     private Endpoint bigqueryEndpoint;
 
     @EndpointInject("mock:sendResult")
@@ -61,7 +61,7 @@ public class InsertIdTest extends BigQueryTestSupport {
     @Produce("direct:in")
     private ProducerTemplate producer;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         createBqTable(TABLE_ID);
     }
@@ -83,7 +83,6 @@ public class InsertIdTest extends BigQueryTestSupport {
         };
     }
 
-
     @Test
     public void sendTwoMessagesExpectOneRowUsingConfig() throws Exception {
 
@@ -103,7 +102,6 @@ public class InsertIdTest extends BigQueryTestSupport {
         object.put("col2", uuid2Col2);
         exchange2.getIn().setBody(object);
 
-
         sendResultWithInsertId.expectedMessageCount(2);
         producerWithInsertId.send(exchange);
         producerWithInsertId.send(exchange2);
@@ -111,7 +109,6 @@ public class InsertIdTest extends BigQueryTestSupport {
 
         assertRowExist(TABLE_ID, object);
     }
-
 
     @Test
     public void sendTwoMessagesExpectOneRowUsingExchange() throws Exception {
@@ -141,6 +138,5 @@ public class InsertIdTest extends BigQueryTestSupport {
 
         assertRowExist(TABLE_ID, object);
     }
-
 
 }

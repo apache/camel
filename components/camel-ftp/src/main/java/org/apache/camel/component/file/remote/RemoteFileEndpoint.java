@@ -29,23 +29,41 @@ import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Remote file endpoint.
  */
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
-    @UriParam(label = "advanced")
+    private static final Logger LOG = LoggerFactory.getLogger(RemoteFileEndpoint.class);
+
+    @UriParam(label = "advanced", description = "Specifies the maximum reconnect attempts Camel performs when it "
+                                                + "tries to connect to the remote FTP server. Use 0 to disable this behavior.")
     private int maximumReconnectAttempts = 3;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", description = "Delay in millis Camel will wait before performing a reconnect attempt.",
+              javaType = "java.time.Duration")
     private long reconnectDelay = 1000;
-    @UriParam(label = "common")
+    @UriParam(label = "common", description = "Whether or not to disconnect from remote FTP server right after use. "
+                                              + "Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which "
+                                              + "you want to stop, then you need to stop the consumer/route instead.")
     private boolean disconnect;
-    @UriParam(label = "producer,advanced")
-    private boolean disconnectOnBatchComplete;   
-    @UriParam(label = "common,advanced")
+    @UriParam(label = "producer,advanced", description = "Whether or not to disconnect from remote FTP server right "
+                                                         + "after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection "
+                                                         + "to the FTP server.")
+    private boolean disconnectOnBatchComplete;
+    @UriParam(label = "common,advanced", description = "If set this option to be true, camel-ftp will use the list "
+                                                       + "file directly to check if the file exists. Since some FTP server may not support to list the file "
+                                                       + "directly, if the option is false, camel-ftp will use the old way to list the directory and check if the "
+                                                       + "file exists. This option also influences readLock=changed to control whether it performs a fast check "
+                                                       + "to update file information or not. This can be used to speed up the process if the FTP server has a lot "
+                                                       + "of files.")
     private boolean fastExistsCheck;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "consumer,advanced", description = "Whether the FTP consumer should download the file. If this "
+                                                         + "option is set to false, then the message body will be null, but the consumer will still trigger a Camel "
+                                                         + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
+                                                         + "not be downloaded.")
     private boolean download = true;
 
     public RemoteFileEndpoint() {
@@ -70,6 +88,13 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     @Override
+    public boolean isSingletonProducer() {
+        // this producer is stateful because the remote file operations is not
+        // thread safe
+        return false;
+    }
+
+    @Override
     public RemoteFileConfiguration getConfiguration() {
         return (RemoteFileConfiguration) this.configuration;
     }
@@ -87,6 +112,10 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     public GenericFileProducer<T> createProducer() throws Exception {
         afterPropertiesSet();
 
+        // you cannot use temp file and file exists append
+        if (getFileExist() == GenericFileExist.Append && ((getTempPrefix() != null) || (getTempFileName() != null))) {
+            throw new IllegalArgumentException("You cannot set both fileExist=Append and tempPrefix/tempFileName options");
+        }
         // ensure fileExist and moveExisting is configured correctly if in use
         if (getFileExist() == GenericFileExist.Move && getMoveExisting() == null) {
             throw new IllegalArgumentException("You must configure moveExisting option when fileExist=Move");
@@ -108,18 +137,19 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
         // if noop=true then idempotent should also be configured
         if (isNoop() && !isIdempotentSet()) {
-            log.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
+            LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
             setIdempotent(true);
         }
 
         // if idempotent and no repository set then create a default one
         if (isIdempotentSet() && isIdempotent() && idempotentRepository == null) {
-            log.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            LOG.info("Using default memory based idempotent repository with cache max size: {}", DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
         if (!getConfiguration().isUseList() && getFileName() == null) {
-            throw new IllegalArgumentException("Endpoint is configured with useList=false, then fileName must be configured also");
+            throw new IllegalArgumentException(
+                    "Endpoint is configured with useList=false, then fileName must be configured also");
         }
 
         // set max messages per poll
@@ -132,12 +162,14 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
-                getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                    getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(),
+                    getPollingConsumerBlockTimeout());
         }
         GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
-        // should not call configurePollingConsumer when its GenericFilePollingConsumer
+        // should not call configurePollingConsumer when its
+        // GenericFilePollingConsumer
         result.setBlockWhenFull(isPollingConsumerBlockWhenFull());
         result.setBlockTimeout(getPollingConsumerBlockTimeout());
 
@@ -165,8 +197,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     /**
      * Remote File Endpoints, impl this method to create a custom consumer specific to their "protocol" etc.
      *
-     * @param processor  the processor
-     * @return the created consumer
+     * @param  processor the processor
+     * @return           the created consumer
      */
     protected abstract RemoteFileConsumer<T> buildConsumer(Processor processor);
 
@@ -180,7 +212,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     /**
      * Creates the operations to be used by the consumer or producer.
      *
-     * @return a new created operations
+     * @return           a new created operations
      * @throws Exception is thrown if error creating operations.
      */
     public abstract RemoteFileOperations<T> createRemoteFileOperations() throws Exception;
@@ -191,14 +223,14 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     public String remoteServerInformation() {
         return ((RemoteFileConfiguration) configuration).remoteServerInformation();
     }
-    
+
     @Override
-    public char getFileSeparator() {       
+    public char getFileSeparator() {
         return '/';
     }
-    
+
     @Override
-    public boolean isAbsolute(String name) {        
+    public boolean isAbsolute(String name) {
         return name.startsWith("/");
     }
 
@@ -207,7 +239,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     /**
-     * Specifies the maximum reconnect attempts Camel performs when it tries to connect to the remote FTP server. Use 0 to disable this behavior.
+     * Specifies the maximum reconnect attempts Camel performs when it tries to connect to the remote FTP server. Use 0
+     * to disable this behavior.
      */
     public void setMaximumReconnectAttempts(int maximumReconnectAttempts) {
         this.maximumReconnectAttempts = maximumReconnectAttempts;
@@ -229,9 +262,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     /**
-     * Whether or not to disconnect from remote FTP server right after use.
-     * Disconnect will only disconnect the current connection to the FTP server.
-     * If you have a consumer which you want to stop, then you need to stop the consumer/route instead.
+     * Whether or not to disconnect from remote FTP server right after use. Disconnect will only disconnect the current
+     * connection to the FTP server. If you have a consumer which you want to stop, then you need to stop the
+     * consumer/route instead.
      */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
@@ -254,26 +287,27 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     /**
-     * If set this option to be true, camel-ftp will use the list file directly to check if the file exists.
-     * Since some FTP server may not support to list the file directly, if the option is false,
-     * camel-ftp will use the old way to list the directory and check if the file exists.
-     * This option also influences readLock=changed to control whether it performs a fast check to update file information or not.
-     * This can be used to speed up the process if the FTP server has a lot of files.
+     * If set this option to be true, camel-ftp will use the list file directly to check if the file exists. Since some
+     * FTP server may not support to list the file directly, if the option is false, camel-ftp will use the old way to
+     * list the directory and check if the file exists. This option also influences readLock=changed to control whether
+     * it performs a fast check to update file information or not. This can be used to speed up the process if the FTP
+     * server has a lot of files.
      */
     public void setFastExistsCheck(boolean fastExistsCheck) {
         this.fastExistsCheck = fastExistsCheck;
     }
-    
+
     public boolean isDownload() {
         return this.download;
     }
 
     /**
-     * Whether the FTP consumer should download the file.
-     * If this option is set to false, then the message body will be null, but the consumer will still trigger a Camel
-     * Exchange that has details about the file such as file name, file size, etc. It's just that the file will not be downloaded.
+     * Whether the FTP consumer should download the file. If this option is set to false, then the message body will be
+     * null, but the consumer will still trigger a Camel Exchange that has details about the file such as file name,
+     * file size, etc. It's just that the file will not be downloaded.
      */
     public void setDownload(boolean download) {
         this.download = download;
     }
+
 }

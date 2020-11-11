@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -40,7 +42,7 @@ public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTes
         context.getRouteController().stopRoute("foo");
         watch.taken();
 
-        assertTrue("Should stop route faster, was " + watch.taken(), watch.taken() < 4000);
+        assertTrue(watch.taken() < 4000, "Should stop route faster, was " + watch.taken());
     }
 
     @Override
@@ -54,7 +56,8 @@ public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTes
                 // with 1 second between.
                 // however if we are stopping then do not allow any redeliver
                 // attempts.
-                errorHandler(defaultErrorHandler().allowRedeliveryWhileStopping(false).maximumRedeliveries(20).redeliveryDelay(1000).retryAttemptedLogLevel(LoggingLevel.INFO));
+                errorHandler(defaultErrorHandler().allowRedeliveryWhileStopping(false).maximumRedeliveries(20)
+                        .redeliveryDelay(1000).retryAttemptedLogLevel(LoggingLevel.INFO));
 
                 from("seda:foo").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced"));
                 // END SNIPPET: e1

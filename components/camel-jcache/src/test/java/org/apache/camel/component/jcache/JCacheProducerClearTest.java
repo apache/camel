@@ -22,7 +22,9 @@ import java.util.Map;
 import javax.cache.Cache;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class JCacheProducerClearTest extends JCacheComponentTestSupport {
 
@@ -45,7 +47,7 @@ public class JCacheProducerClearTest extends JCacheComponentTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:clear")
-                    .to("jcache://test-cache");
+                        .to("jcache://test-cache");
             }
         };
     }

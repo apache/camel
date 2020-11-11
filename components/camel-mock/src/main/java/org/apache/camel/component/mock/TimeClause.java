@@ -27,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents time based clauses for setting expectations on the mocks.
- * Such as time constrains for the received messages.
+ * Represents time based clauses for setting expectations on the mocks. Such as time constrains for the received
+ * messages.
  */
 public class TimeClause implements BinaryPredicate {
 
@@ -197,7 +197,8 @@ public class TimeClause implements BinaryPredicate {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Evaluated time clause [{}] with current: {}, other: {} -> {}", toString(), currentDate, otherDate, answer);
+            LOG.debug("Evaluated time clause [{}] with current: {}, other: {} -> {}", toString(), currentDate, otherDate,
+                    answer);
         }
 
         return answer;
@@ -217,8 +218,9 @@ public class TimeClause implements BinaryPredicate {
         if (timeFrom == null) {
             return "no later than " + timeTo + " " + getOperationText() + " (" + was + ")";
         } else {
-            return "between " + timeFrom.getNumber() + "-" + timeTo.getNumber() + " " + timeTo.getTimeUnit().toString().toLowerCase(Locale.ENGLISH)
-                    + " " + getOperationText() + " (" + was + ")";
+            return "between " + timeFrom.getNumber() + "-" + timeTo.getNumber() + " "
+                   + timeTo.getTimeUnit().toString().toLowerCase(Locale.ENGLISH)
+                   + " " + getOperationText() + " (" + was + ")";
         }
     }
 }

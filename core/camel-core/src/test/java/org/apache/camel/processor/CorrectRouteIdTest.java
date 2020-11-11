@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CorrectRouteIdTest extends ContextTestSupport {
 
@@ -38,7 +38,8 @@ public class CorrectRouteIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").routeId("foo").setHeader("foo").simple("${routeId}").to("mock:foo").to("seda:bar").to("mock:result");
+                from("direct:foo").routeId("foo").setHeader("foo").simple("${routeId}").to("mock:foo").to("seda:bar")
+                        .to("mock:result");
 
                 from("seda:bar").routeId("bar").setHeader("bar").simple("${routeId}").to("mock:bar").to("direct:baz");
 

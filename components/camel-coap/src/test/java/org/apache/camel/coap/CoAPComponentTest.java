@@ -26,7 +26,9 @@ import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.CoAP;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CoAPComponentTest extends CoAPTestSupport {
 
@@ -39,51 +41,46 @@ public class CoAPComponentTest extends CoAPTestSupport {
     protected ProducerTemplate tcpSender;
 
     @Test
-    public void testCoAPComponent() throws Exception {
+    void testCoAPComponent() throws Exception {
         CoapClient client = createClient("/TestResource");
         CoapResponse response = client.post("Camel", MediaTypeRegistry.TEXT_PLAIN);
         assertEquals("Hello Camel", response.getResponseText());
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         sender.sendBody("Camel CoAP");
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testCoAPComponentTLS() throws Exception {
+    void testCoAPComponentTLS() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE, MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(Exchange.CONTENT_TYPE,
+                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
         mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
         tcpSender.sendBody("Camel CoAP");
         assertMockEndpointsSatisfied();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                fromF("coap://localhost:%d/TestResource", PORT)
-                    .convertBodyTo(String.class)
-                    .transform(body().prepend("Hello "));
+            public void configure() {
+                fromF("coap://localhost:%d/TestResource", PORT).convertBodyTo(String.class).transform(body().prepend("Hello "));
 
-                fromF("coap+tcp://localhost:%d/TestResource", TCP_PORT)
-                    .convertBodyTo(String.class)
-                    .transform(body().prepend("Hello "));
+                fromF("coap+tcp://localhost:%d/TestResource", TCP_PORT).convertBodyTo(String.class)
+                        .transform(body().prepend("Hello "));
 
-                from("direct:start")
-                    .toF("coap://localhost:%d/TestResource", PORT)
-                    .to("mock:result");
+                from("direct:start").toF("coap://localhost:%d/TestResource", PORT).to("mock:result");
 
-                from("direct:starttcp")
-                    .toF("coap+tcp://localhost:%d/TestResource", TCP_PORT)
-                    .to("mock:result");
+                from("direct:starttcp").toF("coap+tcp://localhost:%d/TestResource", TCP_PORT).to("mock:result");
             }
         };
     }

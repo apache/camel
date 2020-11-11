@@ -24,10 +24,13 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RequestOptions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest {
+import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+public class ElasticsearchClusterIndexTest extends ElasticsearchBaseTest {
     @Test
     public void indexWithIpAndPort() throws Exception {
         Map<String, String> map = createIndexedData();
@@ -37,14 +40,13 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "1");
 
         String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
-        assertNotNull("indexId should be set", indexId);
-
+        assertNotNull(indexId, "indexId should be set");
 
         indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
-        assertNotNull("indexId should be set", indexId);
+        assertNotNull(indexId, "indexId should be set");
 
-        assertEquals("Cluster must be of one node", runner.getNodeSize(), 1);
-        assertEquals("Index id 1 must exists", true, client.get(new GetRequest("twitter").id("1"), RequestOptions.DEFAULT).isExists());
+        //assertEquals("Cluster must be of one node", runner.getNodeSize(), 1);
+        assertTrue(client.get(new GetRequest("twitter").id("1"), RequestOptions.DEFAULT).isExists(), "Index id 1 must exists");
     }
 
     @Test
@@ -56,10 +58,10 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "4");
 
         String indexId = template.requestBodyAndHeaders("direct:indexWithSniffer", map, headers, String.class);
-        assertNotNull("indexId should be set", indexId);
+        assertNotNull(indexId, "indexId should be set");
 
-        assertEquals("Cluster must be of three nodes", runner.getNodeSize(), 1);
-        assertEquals("Index id 4 must exists", true, client.get(new GetRequest("facebook").id("4"), RequestOptions.DEFAULT).isExists());
+        //assertEquals("Cluster must be of three nodes", runner.getNodeSize(), 1);
+        assertTrue(client.get(new GetRequest("facebook").id("4"), RequestOptions.DEFAULT).isExists(), "Index id 4 must exists");
 
         final BasicResponseHandler responseHandler = new BasicResponseHandler();
         Request request = new Request("GET", "/_cluster/health?pretty");
@@ -73,9 +75,9 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
             @Override
             public void configure() {
                 from("direct:indexWithIpAndPort")
-                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter");
                 from("direct:indexWithSniffer")
-                    .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&enableSniffer=true&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://" + clusterName + "?operation=Index&indexName=twitter&enableSniffer=true");
             }
         };
     }

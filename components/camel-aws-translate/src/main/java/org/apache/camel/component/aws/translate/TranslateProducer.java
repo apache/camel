@@ -28,12 +28,16 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon Translate Service
- * <a href="http://aws.amazon.com/translate/">AWS Translate</a>
+ * A Producer which sends messages to the Amazon Translate Service <a href="http://aws.amazon.com/translate/">AWS
+ * Translate</a>
  */
 public class TranslateProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TranslateProducer.class);
 
     private transient String translateProducerToString;
 
@@ -44,11 +48,11 @@ public class TranslateProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case translateText:
-            translateText(getEndpoint().getTranslateClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case translateText:
+                translateText(getEndpoint().getTranslateClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -74,17 +78,19 @@ public class TranslateProducer extends DefaultProducer {
 
     @Override
     public TranslateEndpoint getEndpoint() {
-        return (TranslateEndpoint)super.getEndpoint();
+        return (TranslateEndpoint) super.getEndpoint();
     }
 
     private void translateText(AmazonTranslate translateClient, Exchange exchange) {
         TranslateTextRequest request = new TranslateTextRequest();
         if (!getConfiguration().isAutodetectSourceLanguage()) {
-            if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage()) && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
+            if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage())
+                    && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
                 String source = exchange.getIn().getHeader(TranslateConstants.SOURCE_LANGUAGE, String.class);
                 String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
                 if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                    throw new IllegalArgumentException("Source and target language must be specified as headers or endpoint options");
+                    throw new IllegalArgumentException(
+                            "Source and target language must be specified as headers or endpoint options");
                 }
                 request.setSourceLanguageCode(source);
                 request.setTargetLanguageCode(target);
@@ -97,7 +103,8 @@ public class TranslateProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
                 String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
                 if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
-                    throw new IllegalArgumentException("Target language must be specified when autodetection of source language is enabled");
+                    throw new IllegalArgumentException(
+                            "Target language must be specified when autodetection of source language is enabled");
                 }
                 request.setSourceLanguageCode(source);
                 request.setTargetLanguageCode(target);
@@ -107,7 +114,8 @@ public class TranslateProducer extends DefaultProducer {
             }
         }
         if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class))) {
-            Collection<String> terminologies = exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class);
+            Collection<String> terminologies
+                    = exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class);
             request.setTerminologyNames(terminologies);
         }
         request.setText(exchange.getMessage().getBody(String.class));
@@ -115,7 +123,7 @@ public class TranslateProducer extends DefaultProducer {
         try {
             result = translateClient.translateText(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Translate Text command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Translate Text command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -123,11 +131,6 @@ public class TranslateProducer extends DefaultProducer {
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 }

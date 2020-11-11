@@ -36,7 +36,7 @@ public class BonitaAPIConfig {
 
     public String getProcessFileUploadBaseURI(String processName, String processVersion) {
         return getBaseBonitaURI() + "portal/resource/process/" + processName + "/" + processVersion
-                + "/API/formFileUpload";
+               + "/API/formFileUpload";
     }
 
     public String getHostname() {

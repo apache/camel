@@ -30,7 +30,9 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SamplingThrottlerTest extends ContextTestSupport {
 
@@ -45,7 +47,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         List<Exchange> sentExchanges = new ArrayList<>();
         sendExchangesThroughDroppingThrottler(sentExchanges, 15);
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
         mock.assertIsSatisfied();
 
         validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
@@ -68,7 +70,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         // send another 5 now
         sendExchangesThroughDroppingThrottler(sentExchanges, 5);
 
-        notify.matchesMockWaitTime();
+        notify.matchesWaitTime();
         mock.assertIsSatisfied();
 
         validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
@@ -146,8 +148,8 @@ public class SamplingThrottlerTest extends ContextTestSupport {
     private void validateDroppedExchanges(List<Exchange> sentExchanges, int expectedNotDroppedCount) {
         int notDropped = 0;
         for (Exchange e : sentExchanges) {
-            Boolean stopped = e.getProperty(Exchange.ROUTE_STOP, Boolean.class);
-            if (stopped == null) {
+            boolean stopped = e.isRouteStop();
+            if (!stopped) {
                 notDropped++;
             }
         }
@@ -163,7 +165,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
 
                 from("direct:sample-configured").sample(1, TimeUnit.SECONDS).to("mock:result");
 
-                from("direct:sample-configured-via-dsl").sample().samplePeriod(1).timeUnits(TimeUnit.SECONDS).to("mock:result");
+                from("direct:sample-configured-via-dsl").sample(1, TimeUnit.SECONDS).to("mock:result");
 
                 from("direct:sample-messageFrequency").sample(10).to("mock:result");
 

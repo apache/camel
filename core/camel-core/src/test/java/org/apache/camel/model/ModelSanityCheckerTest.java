@@ -27,16 +27,16 @@ import javax.xml.bind.annotation.XmlElementRef;
 
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.support.IntrospectionSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
- * Performs sanity check on the model classes that their JAXB annotations and
- * getter/setter match up.
+ * Performs sanity check on the model classes that their JAXB annotations and getter/setter match up.
  */
-public class ModelSanityCheckerTest extends Assert {
+public class ModelSanityCheckerTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ModelSanityCheckerTest.class);
 
@@ -51,7 +51,7 @@ public class ModelSanityCheckerTest extends Assert {
     public void testSanity() throws Exception {
         Set<Class<?>> classes = discoverJaxbClasses();
         assertNotNull(classes);
-        assertTrue("There should be > 140 classes, was: " + classes.size(), classes.size() > 140);
+        assertTrue(classes.size() > 140, "There should be > 140 classes, was: " + classes.size());
 
         // check each class is okay
         for (Class<?> clazz : classes) {
@@ -77,7 +77,8 @@ public class ModelSanityCheckerTest extends Assert {
                 // only one of those 3 is allowed, so check that we don't have
                 // 2+ of them
                 if ((attribute && element) || (attribute && elementRef) || (element && elementRef)) {
-                    fail("Class " + clazz.getName() + " has field " + field.getName() + " which has 2+ annotations that are not allowed together.");
+                    fail("Class " + clazz.getName() + " has field " + field.getName()
+                         + " which has 2+ annotations that are not allowed together.");
                 }
 
                 // check getter/setter
@@ -86,8 +87,8 @@ public class ModelSanityCheckerTest extends Assert {
                     Method getter = IntrospectionSupport.getPropertyGetter(clazz, field.getName());
                     Method setter = IntrospectionSupport.getPropertySetter(clazz, field.getName());
 
-                    assertNotNull("Getter " + field.getName() + " on class " + clazz.getName() + " is missing", getter);
-                    assertNotNull("Setter " + field.getName() + " on class " + clazz.getName() + " is missing", setter);
+                    assertNotNull(getter, "Getter " + field.getName() + " on class " + clazz.getName() + " is missing");
+                    assertNotNull(setter, "Setter " + field.getName() + " on class " + clazz.getName() + " is missing");
                 }
             }
 
@@ -106,9 +107,13 @@ public class ModelSanityCheckerTest extends Assert {
                 boolean element = method.getAnnotation(XmlElement.class) != null;
                 boolean elementRef = method.getAnnotation(XmlElementRef.class) != null;
 
-                assertFalse("Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlAttribute annotation", attribute);
-                assertFalse("Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlElement annotation", element);
-                assertFalse("Class " + clazz.getName() + " has method " + method.getName() + " should not have @XmlElementRef annotation", elementRef);
+                assertFalse(attribute, "Class " + clazz.getName() + " has method " + method.getName()
+                                       + " should not have @XmlAttribute annotation");
+                assertFalse(element, "Class " + clazz.getName() + " has method " + method.getName()
+                                     + " should not have @XmlElement annotation");
+                boolean b = elementRef && !"setOutputs".equals(method.getName());
+                assertFalse(b, "Class " + clazz.getName() + " has method " + method.getName()
+                               + " should not have @XmlElementRef annotation");
             }
         }
 

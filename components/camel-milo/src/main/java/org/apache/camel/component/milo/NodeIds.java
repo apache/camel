@@ -42,13 +42,13 @@ public final class NodeIds {
         final Object id = nodeId.getIdentifier();
 
         if (id instanceof String) {
-            return new NodeId(namespaceIndex, (String)id);
+            return new NodeId(namespaceIndex, (String) id);
         } else if (id instanceof UInteger) {
-            return new NodeId(namespaceIndex, (UInteger)id);
+            return new NodeId(namespaceIndex, (UInteger) id);
         } else if (id instanceof ByteString) {
-            return new NodeId(namespaceIndex, (ByteString)id);
+            return new NodeId(namespaceIndex, (ByteString) id);
         } else if (id instanceof UUID) {
-            return new NodeId(namespaceIndex, (UUID)id);
+            return new NodeId(namespaceIndex, (UUID) id);
         }
 
         throw new IllegalStateException("Invalid id type: " + id);
@@ -61,9 +61,9 @@ public final class NodeIds {
     /**
      * Create an attribute value for the "node" attribute
      * 
-     * @param namespace the namespace to use
-     * @param node the node ID
-     * @return the value ready to append to a "node" URI attribute
+     * @param  namespace the namespace to use
+     * @param  node      the node ID
+     * @return           the value ready to append to a "node" URI attribute
      */
     public static String nodeValue(final String namespace, final String node) {
         Objects.requireNonNull(namespace);
@@ -80,9 +80,9 @@ public final class NodeIds {
     /**
      * Create an attribute value for the "node" attribute
      * 
-     * @param namespace the namespace to use
-     * @param node the node ID
-     * @return the value ready to append to a "node" URI attribute
+     * @param  namespace the namespace to use
+     * @param  node      the node ID
+     * @return           the value ready to append to a "node" URI attribute
      */
     public static String nodeValue(final String namespace, final int node) {
         Objects.requireNonNull(namespace);
@@ -98,9 +98,9 @@ public final class NodeIds {
     /**
      * Create an attribute value for the "node" attribute
      * 
-     * @param namespace the namespace to use
-     * @param node the node ID
-     * @return the value ready to append to a "node" URI attribute
+     * @param  namespace the namespace to use
+     * @param  node      the node ID
+     * @return           the value ready to append to a "node" URI attribute
      */
     public static String nodeValue(final String namespace, final UUID node) {
         Objects.requireNonNull(namespace);
@@ -117,9 +117,9 @@ public final class NodeIds {
     /**
      * Create an attribute value for the "node" attribute
      * 
-     * @param namespace the namespace to use
-     * @param node the node ID
-     * @return the value ready to append to a "node" URI attribute
+     * @param  namespace the namespace to use
+     * @param  node      the node ID
+     * @return           the value ready to append to a "node" URI attribute
      */
     public static String nodeValue(final String namespace, final ByteString node) {
         Objects.requireNonNull(namespace);
@@ -136,9 +136,9 @@ public final class NodeIds {
     /**
      * Create an attribute value for the "node" attribute
      * 
-     * @param namespace the namespace to use
-     * @param node the node ID
-     * @return the value ready to append to a "node" URI attribute
+     * @param  namespace the namespace to use
+     * @param  node      the node ID
+     * @return           the value ready to append to a "node" URI attribute
      */
     public static String nodeValue(final int namespace, final String node) {
         Objects.requireNonNull(namespace);
@@ -155,9 +155,9 @@ public final class NodeIds {
     /**
      * Create an attribute value for the "node" attribute
      * 
-     * @param namespace the namespace to use
-     * @param node the node ID
-     * @return the value ready to append to a "node" URI attribute
+     * @param  namespace the namespace to use
+     * @param  node      the node ID
+     * @return           the value ready to append to a "node" URI attribute
      */
     public static String nodeValue(final int namespace, final int node) {
         Objects.requireNonNull(namespace);
@@ -173,9 +173,9 @@ public final class NodeIds {
     /**
      * Create an attribute value for the "node" attribute
      * 
-     * @param namespace the namespace to use
-     * @param node the node ID
-     * @return the value ready to append to a "node" URI attribute
+     * @param  namespace the namespace to use
+     * @param  node      the node ID
+     * @return           the value ready to append to a "node" URI attribute
      */
     public static String nodeValue(final int namespace, final UUID node) {
         Objects.requireNonNull(namespace);
@@ -192,9 +192,9 @@ public final class NodeIds {
     /**
      * Create an attribute value for the "node" attribute
      * 
-     * @param namespace the namespace to use
-     * @param node the node ID
-     * @return the value ready to append to a "node" URI attribute
+     * @param  namespace the namespace to use
+     * @param  node      the node ID
+     * @return           the value ready to append to a "node" URI attribute
      */
     public static String nodeValue(final int namespace, final ByteString node) {
         Objects.requireNonNull(namespace);

@@ -18,7 +18,9 @@ package org.apache.camel.component.jetty.rest.producer;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyRestProducerApiDocTest extends BaseJettyTest {
 
@@ -34,7 +36,8 @@ public class JettyRestProducerApiDocTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").producerComponent("http").host("localhost").port(getPort()).producerApiDoc("hello-api.json");
+                restConfiguration().component("jetty").producerComponent("http").host("localhost").port(getPort())
+                        .producerApiDoc("hello-api.json");
 
                 from("direct:start").to("rest:get:api:hello/hi/{name}");
 

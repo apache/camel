@@ -21,6 +21,7 @@ package org.apache.camel.component.ignite.messaging;
  */
 public enum IgniteMessagingSendMode {
 
-    ORDERED, UNORDERED
+    ORDERED,
+    UNORDERED
 
 }

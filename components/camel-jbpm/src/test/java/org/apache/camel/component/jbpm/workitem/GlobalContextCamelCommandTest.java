@@ -16,27 +16,30 @@
  */
 package org.apache.camel.component.jbpm.workitem;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jbpm.JBPMConstants;
 import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.services.api.service.ServiceRegistry;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.kie.api.executor.Command;
 import org.kie.api.executor.CommandContext;
 import org.kie.api.executor.ExecutionResults;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GlobalContextCamelCommandTest {
 
     @Mock
@@ -49,7 +52,7 @@ public class GlobalContextCamelCommandTest {
     Message outMessage;
 
     @Mock
-    CamelContext camelContext;
+    ExtendedCamelContext camelContext;
 
     @Mock
     RuntimeManager runtimeManager;
@@ -59,7 +62,7 @@ public class GlobalContextCamelCommandTest {
 
     @Test
     public void testExecuteGlobalCommand() throws Exception {
-    
+
         String camelEndpointId = "testCamelRoute";
         String camelRouteUri = "direct:" + camelEndpointId;
 

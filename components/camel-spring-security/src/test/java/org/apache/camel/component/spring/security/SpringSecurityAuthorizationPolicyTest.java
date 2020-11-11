@@ -24,8 +24,8 @@ import javax.security.auth.Subject;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,6 +33,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSupport {
 
@@ -53,7 +56,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             fail("we should get the access deny exception here");
         } catch (Exception exception) {
             // the exception should be caused by CamelAuthorizationException
-            assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
+            assertTrue(exception.getCause() instanceof CamelAuthorizationException, "Expect CamelAuthorizationException here");
         }
         end.assertIsSatisfied();
     }
@@ -67,11 +70,11 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             fail("we should get the access deny exception here");
         } catch (Exception exception) {
             // the exception should be caused by CamelAuthorizationException
-            assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
+            assertTrue(exception.getCause() instanceof CamelAuthorizationException, "Expect CamelAuthorizationException here");
         }
         end.assertIsSatisfied();
     }
-    
+
     @Test
     public void testGetAuthorizationTokenFromSecurityContextHolder() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
@@ -81,9 +84,9 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         template.sendBody("direct:start", "hello world");
         end.assertIsSatisfied();
         SecurityContextHolder.getContext().setAuthentication(null);
-        
+
     }
-    
+
     @Test
     public void testAuthorizationFailedWithWrongExplicitRole() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
@@ -92,7 +95,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_BAD"));
 
             Authentication authToken = new UsernamePasswordAuthenticationToken("jim", "jimspassword", authorities);
-            
+
             Subject subject = new Subject();
             subject.getPrincipals().add(authToken);
 
@@ -100,7 +103,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
             fail("we should get the access deny exception here");
         } catch (Exception exception) {
             // the exception should be caused by CamelAuthorizationException
-            assertTrue("Expect CamelAuthorizationException here", exception.getCause() instanceof CamelAuthorizationException);
+            assertTrue(exception.getCause() instanceof CamelAuthorizationException, "Expect CamelAuthorizationException here");
         }
         end.assertIsSatisfied();
     }
@@ -108,7 +111,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
     private void sendMessageWithAuthentication(String username, String password) {
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(username, password);
-        
+
         Subject subject = new Subject();
         subject.getPrincipals().add(authToken);
 

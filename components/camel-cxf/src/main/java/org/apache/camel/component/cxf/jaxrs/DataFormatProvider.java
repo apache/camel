@@ -50,13 +50,15 @@ public class DataFormatProvider<T> implements MessageBodyWriter<T>, MessageBodyR
     }
 
     @Override
-    public T readFrom(Class<T> cls, Type type, Annotation[] anns, MediaType mt,
-                      MultivaluedMap<String, String> headers, InputStream is) throws IOException,
-        WebApplicationException {
+    public T readFrom(
+            Class<T> cls, Type type, Annotation[] anns, MediaType mt,
+            MultivaluedMap<String, String> headers, InputStream is)
+            throws IOException,
+            WebApplicationException {
         DataFormat format = getValidDataFormat(mt);
         try {
             @SuppressWarnings("unchecked")
-            T result = (T)format.unmarshal(null, is);
+            T result = (T) format.unmarshal(null, is);
             return result;
         } catch (Exception ex) {
             throw new BadRequestException(ex);
@@ -69,9 +71,11 @@ public class DataFormatProvider<T> implements MessageBodyWriter<T>, MessageBodyR
     }
 
     @Override
-    public void writeTo(T obj, Class<?> cls, Type type, Annotation[] anns, MediaType mt,
-                        MultivaluedMap<String, Object> headers, OutputStream os) throws IOException,
-        WebApplicationException {
+    public void writeTo(
+            T obj, Class<?> cls, Type type, Annotation[] anns, MediaType mt,
+            MultivaluedMap<String, Object> headers, OutputStream os)
+            throws IOException,
+            WebApplicationException {
         DataFormat format = getValidDataFormat(mt);
         try {
             format.marshal(null, obj, os);

@@ -40,15 +40,16 @@ final class HaConfigurationBuilder {
     }
 
     /**
-     * Generates the correct HA configuration (normally read from xml) based on the namedNodes:
-     * All named nodes have to be qualified: configuration.set("dfs.ha.namenodes.hfdsNamedService","namenode1,namenode2");
-     * For each named node the following entries is added
+     * Generates the correct HA configuration (normally read from xml) based on the namedNodes: All named nodes have to
+     * be qualified: configuration.set("dfs.ha.namenodes.hfdsNamedService","namenode1,namenode2"); For each named node
+     * the following entries is added
      * <p>
      * configuration.set("dfs.namenode.rpc-address.hfdsNamedService.namenode1", "namenode1:1234");
      * <p>
      * Finally the proxy provider has to be specified:
      * <p>
-     * configuration.set("dfs.client.failover.proxy.provider.hfdsNamedService", "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
+     * configuration.set("dfs.client.failover.proxy.provider.hfdsNamedService",
+     * "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
      * <p>
      *
      * @param configuration  - hdfs configuration that will be setup with the HA settings
@@ -56,41 +57,43 @@ final class HaConfigurationBuilder {
      */
     static void withClusterConfiguration(Configuration configuration, HdfsConfiguration endpointConfig) {
         String haNamedService = getSanitizedClusterName(endpointConfig.getHostName());
-        withClusterConfiguration(configuration, haNamedService, endpointConfig.getNamedNodeList(), endpointConfig.getReplication());
+        withClusterConfiguration(configuration, haNamedService, endpointConfig.getNamedNodeList(),
+                endpointConfig.getReplication());
     }
 
     /**
-     * Generates the correct HA configuration (normally read from xml) based on the namedNodes:
-     * All named nodes have to be qualified: configuration.set("dfs.ha.namenodes.hfdsNamedService","namenode1,namenode2");
-     * For each named node the following entries is added
+     * Generates the correct HA configuration (normally read from xml) based on the namedNodes: All named nodes have to
+     * be qualified: configuration.set("dfs.ha.namenodes.hfdsNamedService","namenode1,namenode2"); For each named node
+     * the following entries is added
      * <p>
      * configuration.set("dfs.namenode.rpc-address.hfdsNamedService.namenode1", "namenode1:1234");
      * <p>
      * Finally the proxy provider has to be specified:
      * <p>
-     * configuration.set("dfs.client.failover.proxy.provider.hfdsNamedService", "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
+     * configuration.set("dfs.client.failover.proxy.provider.hfdsNamedService",
+     * "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider");
      * <p>
      *
      * @param configuration     - hdfs configuration that will be setup with the HA settings
-     * @param haNamedService    - how the ha named service that represents the cluster will be named (used to resolve the FS)
+     * @param haNamedService    - how the ha named service that represents the cluster will be named (used to resolve
+     *                          the FS)
      * @param namedNodes        - All named nodes from the hadoop cluster
      * @param replicationFactor - dfs replication factor
      */
-    static void withClusterConfiguration(Configuration configuration, String haNamedService, List<String> namedNodes, int replicationFactor) {
+    static void withClusterConfiguration(
+            Configuration configuration, String haNamedService, List<String> namedNodes, int replicationFactor) {
         configuration.set(DFSConfigKeys.DFS_REPLICATION_KEY, Integer.toString(replicationFactor));
         configuration.set(DFSConfigKeys.DFS_NAMESERVICES, haNamedService);
         configuration.set(
                 DFSUtil.addKeySuffixes(DFS_HA_NAMENODES_KEY_PREFIX, haNamedService),
-                nodeToString(namedNodes.stream().map(HaConfigurationBuilder::nodeToString).collect(Collectors.joining(",")))
-        );
+                nodeToString(namedNodes.stream().map(HaConfigurationBuilder::nodeToString).collect(Collectors.joining(","))));
 
-        namedNodes.forEach(nodeName ->
-                configuration.set(
-                        DFSUtil.addKeySuffixes(DFS_NAMENODE_RPC_ADDRESS_KEY, haNamedService, nodeToString(nodeName)),
-                        nodeName)
-        );
+        namedNodes.forEach(nodeName -> configuration.set(
+                DFSUtil.addKeySuffixes(DFS_NAMENODE_RPC_ADDRESS_KEY, haNamedService, nodeToString(nodeName)),
+                nodeName));
 
-        configuration.set(DFS_CLIENT_FAILOVER_PROXY_PROVIDER_KEY_PREFIX + "." + haNamedService, ConfiguredFailoverProxyProvider.class.getName());
+        configuration.set(DFS_CLIENT_FAILOVER_PROXY_PROVIDER_KEY_PREFIX + "." + haNamedService,
+                ConfiguredFailoverProxyProvider.class.getName());
 
         configuration.set(HFDS_FS, "hdfs://" + haNamedService);
 
@@ -100,7 +103,7 @@ final class HaConfigurationBuilder {
         String clusterName = HFDS_NAMED_SERVICE;
 
         if (StringUtils.isNotEmpty(rawClusterName)) {
-            clusterName = rawClusterName.replaceAll("\\.", HFDS_NAMED_SERVICE_SEPARATOR);
+            clusterName = rawClusterName.replace(".", HFDS_NAMED_SERVICE_SEPARATOR);
         }
 
         return clusterName;

@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -33,18 +34,19 @@ import org.apache.johnzon.mapper.MapperBuilder;
 import org.apache.johnzon.mapper.reflection.JohnzonParameterizedType;
 
 /**
- * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
- * using <a href="http://johnzon.apache.org/">Johnzon</a> to marshal to and from JSON.
+ * Marshal POJOs to JSON and back using <a href="http://johnzon.apache.org/">Johnzon</a>
  */
 @Dataformat("json-johnzon")
+@Metadata(includeProperties = "unmarshalTypeName,objectMapper,prettyPrint")
 public class JohnzonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;
     private Mapper objectMapper;
+    private String unmarshalTypeName;
     private Class<?> unmarshalType;
     private JohnzonParameterizedType parameterizedType;
     private Comparator<String> attributeOrder;
-    private boolean pretty;
+    private boolean prettyPrint;
     private String encoding;
     private boolean skipEmptyArray;
     private boolean skipNull;
@@ -52,27 +54,25 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
     public JohnzonDataFormat() {
         this(Object.class);
     }
-    
+
     /**
-     * Use the default Johnzon {@link Mapper} and with a custom
-     * unmarshal type
+     * Use the default Johnzon {@link Mapper} and with a custom unmarshal type
      *
      * @param unmarshalType the custom unmarshal type
      */
     public JohnzonDataFormat(Class<?> unmarshalType) {
         this(null, unmarshalType);
     }
-    
+
     /**
-     * Use the default Johnzon {@link Mapper} and with a custom
-     * unmarshal type
+     * Use the default Johnzon {@link Mapper} and with a custom parameterized type
      *
-     * @param unmarshalType the custom unmarshal type
+     * @param parameterizedType the custom parameterized type
      */
     public JohnzonDataFormat(JohnzonParameterizedType parameterizedType) {
         this(null, parameterizedType);
     }
-    
+
     /**
      * Use a custom Johnzon mapper and unmarshal type
      *
@@ -83,28 +83,28 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.objectMapper = mapper;
         this.unmarshalType = unmarshalType;
     }
-    
+
     /**
      * Use a custom Johnzon mapper and unmarshal type
      *
-     * @param mapper        the custom mapper
+     * @param mapper            the custom mapper
      * @param parameterizedType the JohnzonParameterizedType type
      */
     public JohnzonDataFormat(Mapper mapper, JohnzonParameterizedType parameterizedType) {
         this.objectMapper = mapper;
         this.parameterizedType = parameterizedType;
     }
-    
+
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
-    
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
-    
+
     @Override
     public String getDataFormatName() {
         return "json-johnzon";
@@ -126,6 +126,14 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.unmarshalType = unmarshalType;
     }
 
+    public String getUnmarshalTypeName() {
+        return unmarshalTypeName;
+    }
+
+    public void setUnmarshalTypeName(String unmarshalTypeName) {
+        this.unmarshalTypeName = unmarshalTypeName;
+    }
+
     public JohnzonParameterizedType getParameterizedType() {
         return parameterizedType;
     }
@@ -134,12 +142,12 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.parameterizedType = parameterizedType;
     }
 
-    public boolean isPretty() {
-        return pretty;
+    public boolean isPrettyPrint() {
+        return prettyPrint;
     }
 
-    public void setPretty(boolean pretty) {
-        this.pretty = pretty;
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
     }
 
     public String getEncoding() {
@@ -178,7 +186,7 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         objectMapper.writeObject(graph, stream);
     }
-    
+
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         // is there a header with the unmarshal type?
@@ -195,10 +203,17 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     @Override
+    protected void doInit() throws Exception {
+        if (unmarshalTypeName != null && (unmarshalType == null || unmarshalType == Object.class)) {
+            unmarshalType = camelContext.getClassResolver().resolveClass(unmarshalTypeName);
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         if (objectMapper == null) {
             MapperBuilder builder = new MapperBuilder();
-            builder.setPretty(pretty);
+            builder.setPretty(prettyPrint);
             builder.setSkipNull(skipNull);
             builder.setSkipEmptyArray(skipEmptyArray);
             if (ObjectHelper.isNotEmpty(encoding)) {

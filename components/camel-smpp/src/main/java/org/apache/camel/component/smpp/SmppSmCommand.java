@@ -49,18 +49,18 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
             // Message body is split into multiple parts,
             // check if this is permitted
             SmppSplittingPolicy policy = getSplittingPolicy(message);
-            switch(policy) {
-            case ALLOW:
-                return segments;
-            case TRUNCATE:
-                return new byte[][] {java.util.Arrays.copyOfRange(shortMessage, 0, segments[0].length)};
-            case REJECT:
-                // FIXME - JSMPP needs to have an enum of the negative response
-                // codes instead of just using them like this
-                NegativeResponseException nre = new NegativeResponseException(SMPP_NEG_RESPONSE_MSG_TOO_LONG);
-                throw new SmppException(nre);
-            default:
-                throw new SmppException("Unknown splitting policy: " + policy);
+            switch (policy) {
+                case ALLOW:
+                    return segments;
+                case TRUNCATE:
+                    return new byte[][] { java.util.Arrays.copyOfRange(shortMessage, 0, segments[0].length) };
+                case REJECT:
+                    // FIXME - JSMPP needs to have an enum of the negative response
+                    // codes instead of just using them like this
+                    NegativeResponseException nre = new NegativeResponseException(SMPP_NEG_RESPONSE_MSG_TOO_LONG);
+                    throw new SmppException(nre);
+                default:
+                    throw new SmppException("Unknown splitting policy: " + policy);
             }
         } else {
             return segments;
@@ -148,12 +148,12 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
             return result;
         }
 
-        if (providedAlphabet == Alphabet.ALPHA_UCS2.value() 
-            || (providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value())) {
+        if (providedAlphabet == Alphabet.ALPHA_UCS2.value()
+                || (providedAlphabet == SmppConstants.UNKNOWN_ALPHABET && determinedAlphabet == Alphabet.ALPHA_UCS2.value())) {
             // change charset to use multilang messages
-            return Charset.forName(SmppConstants.UCS2_ENCODING); 
+            return Charset.forName(SmppConstants.UCS2_ENCODING);
         }
-        
+
         return defaultCharset;
     }
 

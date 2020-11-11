@@ -16,12 +16,7 @@
  */
 package org.apache.camel.util;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.Duration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,55 +27,78 @@ import org.slf4j.LoggerFactory;
 public final class TimeUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimeUtils.class);
-    private static final Pattern NUMBERS_ONLY_STRING_PATTERN = Pattern.compile("^[-]?(\\d)+$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern HOUR_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))h(our(s)?)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern MINUTES_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))m(in(ute(s)?)?)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern SECONDS_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))s(ec(ond)?(s)?)?", Pattern.CASE_INSENSITIVE);
 
     private TimeUtils() {
+    }
+
+    public static boolean isPositive(Duration dur) {
+        return dur.getSeconds() > 0 || dur.getNano() != 0;
+    }
+
+    public static String printDuration(Duration uptime) {
+        return printDuration(uptime.toMillis(), true);
     }
 
     /**
      * Prints the duration in a human readable format as X days Y hours Z minutes etc.
      *
-     * @param uptime the uptime in millis
-     * @return the time used for displaying on screen or in logs
+     * @param  uptime the uptime in millis
+     * @return        the time used for displaying on screen or in logs
      */
-    public static String printDuration(double uptime) {
-        // Code taken from Karaf
-        // https://svn.apache.org/repos/asf/karaf/trunk/shell/commands/src/main/java/org/apache/karaf/shell/commands/impl/InfoAction.java
+    public static String printDuration(long uptime) {
+        return printDuration(uptime, false);
+    }
 
-        NumberFormat fmtI = new DecimalFormat("###,###", new DecimalFormatSymbols(Locale.ENGLISH));
-        NumberFormat fmtD = new DecimalFormat("###,##0.000", new DecimalFormatSymbols(Locale.ENGLISH));
+    /**
+     * Prints the duration in a human readable format as X days Y hours Z minutes etc.
+     *
+     * @param  uptime  the uptime in millis
+     * @param  precise whether to be precise and include all details including milli seconds
+     * @return         the time used for displaying on screen or in logs
+     */
+    public static String printDuration(long uptime, boolean precise) {
+        if (uptime <= 0) {
+            return "0ms";
+        }
 
-        uptime /= 1000;
-        if (uptime < 60) {
-            return fmtD.format(uptime) + " seconds";
+        StringBuilder sb = new StringBuilder();
+
+        long seconds = uptime / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        long millis = 0;
+        if (uptime > 1000) {
+            millis = uptime % 1000;
+        } else if (uptime < 1000) {
+            millis = uptime;
         }
-        uptime /= 60;
-        if (uptime < 60) {
-            long minutes = (long) uptime;
-            String s = fmtI.format(minutes) + (minutes > 1 ? " minutes" : " minute");
-            return s;
+
+        if (days > 0) {
+            sb.append(days).append("d").append(hours % 24).append("h").append(minutes % 60).append("m").append(seconds % 60)
+                    .append("s");
+        } else if (hours > 0) {
+            sb.append(hours % 24).append("h").append(minutes % 60).append("m").append(seconds % 60).append("s");
+        } else if (minutes > 0) {
+            sb.append(minutes % 60).append("m").append(seconds % 60).append("s");
+        } else if (seconds > 0) {
+            sb.append(seconds % 60).append("s");
+            // lets include millis when there are only seconds by default
+            precise = true;
+        } else if (millis > 0) {
+            precise = false;
+            sb.append(millis).append("ms");
         }
-        uptime /= 60;
-        if (uptime < 24) {
-            long hours = (long) uptime;
-            long minutes = (long) ((uptime - hours) * 60);
-            String s = fmtI.format(hours) + (hours > 1 ? " hours" : " hour");
-            if (minutes != 0) {
-                s += " " + fmtI.format(minutes) + (minutes > 1 ? " minutes" : " minute");
-            }
-            return s;
+
+        if (precise & millis > 0) {
+            sb.append(millis).append("ms");
         }
-        uptime /= 24;
-        long days = (long) uptime;
-        long hours = (long) ((uptime - days) * 24);
-        String s = fmtI.format(days) + (days > 1 ? " days" : " day");
-        if (hours != 0) {
-            s += " " + fmtI.format(hours) + (hours > 1 ? " hours" : " hour");
-        }
-        return s;
+
+        return sb.toString();
+    }
+
+    public static Duration toDuration(String source) throws IllegalArgumentException {
+        return Duration.ofMillis(toMilliSeconds(source));
     }
 
     public static long toMilliSeconds(String source) throws IllegalArgumentException {
@@ -99,92 +117,76 @@ public final class TimeUtils {
             }
         }
         if (digit) {
-            return Long.valueOf(source);
+            return Long.parseLong(source);
         }
 
-        long milliseconds = 0;
-        boolean foundFlag = false;
+        long days = 0;
+        long hours = 0;
+        long minutes = 0;
+        long seconds = 0;
+        long millis = 0;
 
-        checkCorrectnessOfPattern(source);
-        Matcher matcher;
+        int pos = source.indexOf('d');
+        if (pos != -1) {
+            String s = source.substring(0, pos);
+            days = Long.parseLong(s);
+            source = source.substring(pos + 1);
+        }
 
-        matcher = createMatcher(NUMBERS_ONLY_STRING_PATTERN, source);
-        if (matcher.find()) {
-            // Note: This will also be used for regular numeric strings.
-            //       This String -> long converter will be used for all strings.
-            milliseconds = Long.valueOf(source);
-        } else {
-            matcher = createMatcher(HOUR_REGEX_PATTERN, source);
-            if (matcher.find()) {
-                milliseconds = milliseconds + (3600000 * Long.valueOf(matcher.group(1)));
-                foundFlag = true;
+        pos = source.indexOf('h');
+        if (pos != -1) {
+            String s = source.substring(0, pos);
+            hours = Long.parseLong(s);
+            source = source.substring(pos + 1);
+        }
+
+        pos = source.indexOf('m');
+        if (pos != -1) {
+            boolean valid;
+            if (source.length() - 1 <= pos) {
+                valid = true;
+            } else {
+                // beware of minutes and not milli seconds
+                valid = source.charAt(pos + 1) != 's';
             }
-
-            matcher = createMatcher(MINUTES_REGEX_PATTERN, source);
-            if (matcher.find()) {
-                long minutes = Long.valueOf(matcher.group(1));
-                if ((minutes > 59) && foundFlag) {
-                    throw new IllegalArgumentException("Minutes should contain a valid value between 0 and 59: " + source);
-                }
-                foundFlag = true;
-                milliseconds = milliseconds + (60000 * minutes);
-            }
-
-            matcher = createMatcher(SECONDS_REGEX_PATTERN, source);
-            if (matcher.find()) {
-                long seconds = Long.valueOf(matcher.group(1));
-                if ((seconds > 59) && foundFlag) {
-                    throw new IllegalArgumentException("Seconds should contain a valid value between 0 and 59: " + source);
-                }
-                foundFlag = true;
-                milliseconds = milliseconds + (1000 * seconds);
-            }
-
-            // No pattern matched... initiating fallback check and conversion (if required).
-            // The source at this point may contain illegal values or special characters
-            if (!foundFlag) {
-                milliseconds = Long.valueOf(source);
+            if (valid) {
+                String s = source.substring(0, pos);
+                minutes = Long.parseLong(s);
+                source = source.substring(pos + 1);
             }
         }
 
-        LOG.trace("source: [{}], milliseconds: {}", source, milliseconds);
-
-        return milliseconds;
-    }
-
-    private static void checkCorrectnessOfPattern(String source) {
-        //replace only numbers once
-        Matcher matcher = createMatcher(NUMBERS_ONLY_STRING_PATTERN, source);
-        String replaceSource = matcher.replaceFirst("");
-
-        //replace hour string once
-        matcher = createMatcher(HOUR_REGEX_PATTERN, replaceSource);
-        if (matcher.find() && matcher.find()) {
-            throw new IllegalArgumentException("Hours should not be specified more then once: " + source);
+        pos = source.indexOf('s');
+        // beware of seconds and not milli seconds
+        if (pos != -1 && source.charAt(pos - 1) != 'm') {
+            String s = source.substring(0, pos);
+            seconds = Long.parseLong(s);
+            source = source.substring(pos + 1);
         }
-        replaceSource = matcher.replaceFirst("");
 
-        //replace minutes once
-        matcher = createMatcher(MINUTES_REGEX_PATTERN, replaceSource);
-        if (matcher.find() && matcher.find()) {
-            throw new IllegalArgumentException("Minutes should not be specified more then once: " + source);
+        pos = source.indexOf("ms");
+        if (pos != -1) {
+            String s = source.substring(0, pos);
+            millis = Long.parseLong(s);
         }
-        replaceSource = matcher.replaceFirst("");
 
-        //replace seconds once
-        matcher = createMatcher(SECONDS_REGEX_PATTERN, replaceSource);
-        if (matcher.find() && matcher.find()) {
-            throw new IllegalArgumentException("Seconds should not be specified more then once: " + source);
+        long answer = millis;
+        if (seconds > 0) {
+            answer += 1000 * seconds;
         }
-        replaceSource = matcher.replaceFirst("");
-
-        if (replaceSource.length() > 0) {
-            throw new IllegalArgumentException("Illegal characters: " + source);
+        if (minutes > 0) {
+            answer += 60000 * minutes;
         }
-    }
+        if (hours > 0) {
+            answer += 3600000 * hours;
+        }
+        if (days > 0) {
+            answer += 86400000 * days;
+        }
 
-    private static Matcher createMatcher(Pattern pattern, String source) {
-        return pattern.matcher(source);
+        LOG.trace("source: [{}], milliseconds: {}", source, answer);
+
+        return answer;
     }
 
 }

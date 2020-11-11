@@ -19,10 +19,10 @@ package org.apache.camel.component.aws.ddb;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UpdateTableCommandTest {
 
@@ -30,8 +30,8 @@ public class UpdateTableCommandTest {
     private AmazonDDBClientMock ddbClient;
     private DdbConfiguration configuration;
     private Exchange exchange;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         ddbClient = new AmazonDDBClientMock();
         configuration = new DdbConfiguration();
@@ -39,14 +39,14 @@ public class UpdateTableCommandTest {
         configuration.setReadCapacity(20L);
         configuration.setWriteCapacity(30L);
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new UpdateTableCommand(ddbClient, configuration, exchange);
     }
 
     @Test
     public void testExecute() {
         command.execute();
-        
+
         assertEquals("DOMAIN1", ddbClient.updateTableRequest.getTableName());
         assertEquals(Long.valueOf(20), ddbClient.updateTableRequest.getProvisionedThroughput().getReadCapacityUnits());
         assertEquals(Long.valueOf(30), ddbClient.updateTableRequest.getProvisionedThroughput().getWriteCapacityUnits());

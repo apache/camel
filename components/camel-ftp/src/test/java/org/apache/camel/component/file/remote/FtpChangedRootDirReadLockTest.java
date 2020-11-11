@@ -36,7 +36,8 @@ public class FtpChangedRootDirReadLockTest extends FtpServerTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FtpChangedRootDirReadLockTest.class);
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/?password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
+        return "ftp://admin@localhost:" + getPort()
+               + "/?password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
     }
 
     @Test

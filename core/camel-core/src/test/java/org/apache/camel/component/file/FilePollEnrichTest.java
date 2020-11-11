@@ -24,13 +24,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class FilePollEnrichTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/pollenrich");
         super.setUp();
@@ -45,11 +47,11 @@ public class FilePollEnrichTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/pollenrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // file should be moved
         File file = new File("target/data/pollenrich/hello.txt");
-        assertFalse("File should have been moved", file.exists());
+        assertFalse(file.exists(), "File should have been moved");
     }
 
     @Override
@@ -57,14 +59,15 @@ public class FilePollEnrichTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?period=1000").routeId("foo").log("Trigger timer foo").pollEnrich("file:target/data/pollenrich?move=done", 5000).convertBodyTo(String.class)
-                    .log("Polled filed ${file:name}").to("mock:result").process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // force stop route after use to prevent firing
-                            // timer again
-                            exchange.getContext().getRouteController().stopRoute("foo", 100, TimeUnit.MILLISECONDS);
-                        }
-                    });
+                from("timer:foo?period=1000").routeId("foo").log("Trigger timer foo")
+                        .pollEnrich("file:target/data/pollenrich?move=done", 5000).convertBodyTo(String.class)
+                        .log("Polled filed ${file:name}").to("mock:result").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // force stop route after use to prevent firing
+                                // timer again
+                                exchange.getContext().getRouteController().stopRoute("foo", 100, TimeUnit.MILLISECONDS);
+                            }
+                        });
             }
         };
     }

@@ -16,40 +16,28 @@
  */
 package org.apache.camel.itest.ftp;
 
-import java.io.File;
-
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.itest.utils.extensions.FtpServiceExtension;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.ftpserver.FtpServer;
-import org.apache.ftpserver.FtpServerFactory;
-import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
-import org.apache.ftpserver.ftplet.UserManager;
-import org.apache.ftpserver.listener.ListenerFactory;
-import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
-import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-/**
- *
- */
 public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends CamelTestSupport {
-    protected static int ftpPort;
+    @RegisterExtension
+    public static FtpServiceExtension ftpServiceExtension = new FtpServiceExtension();
+
     protected static int httpPort;
-    protected FtpServer ftpServer;
-    
-    
-    @BeforeClass
+
+    @BeforeAll
     public static void initPort() throws Exception {
-        ftpPort = AvailablePortFinder.getNextAvailable();
         httpPort = AvailablePortFinder.getNextAvailable();
     }
 
     @Test
-    public void testFtpAndHttpIssue() throws Exception {
-        String ftp = "ftp:localhost:" + ftpPort + "/myapp?password=admin&username=admin";
+    void testFtpAndHttpIssue() throws Exception {
+        String ftp = ftpServiceExtension.getAddress();
         String http = "http://localhost:" + httpPort + "/myapp";
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -62,56 +50,22 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 interceptSendToEndpoint("(ftp|http|seda):.*")
-                    .to("mock:intercept");
+                        .to("mock:intercept");
 
                 from("direct:start")
-                    .recipientList(header("foo"))
-                    .to("mock:result");
+                        .recipientList(header("foo"))
+                        .to("mock:result");
 
                 from("jetty:http://0.0.0.0:" + httpPort + "/myapp")
-                    .transform().constant("Bye World");
+                        .transform().constant("Bye World");
 
                 from("seda:foo").to("mock:foo");
             }
         };
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        initFtpServer();
-        ftpServer.start();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        ftpServer.stop();
-        ftpServer = null;
-    }
-
-    protected void initFtpServer() throws Exception {
-        FtpServerFactory serverFactory = new FtpServerFactory();
-
-        // setup user management to read our users.properties and use clear text passwords
-        File file = new File("src/test/resources/users.properties");
-        UserManager uman = new PropertiesUserManager(new ClearTextPasswordEncryptor(), file, "admin");
-        serverFactory.setUserManager(uman);
-
-        NativeFileSystemFactory fsf = new NativeFileSystemFactory();
-        fsf.setCreateHome(true);
-        serverFactory.setFileSystem(fsf);
-
-        ListenerFactory factory = new ListenerFactory();
-        factory.setPort(ftpPort);
-        serverFactory.addListener("default", factory.createListener());
-
-        ftpServer = serverFactory.createServer();
     }
 }

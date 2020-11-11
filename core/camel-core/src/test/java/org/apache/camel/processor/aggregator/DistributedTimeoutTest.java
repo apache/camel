@@ -24,9 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DistributedTimeoutTest extends AbstractDistributedTest {
 
@@ -83,8 +85,10 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).aggregationRepository(sharedAggregationRepository).optimisticLocking()
-                    .discardOnCompletionTimeout().completionSize(3).completionTimeout(200).completionTimeoutCheckerInterval(10).to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregationRepository(sharedAggregationRepository).optimisticLocking()
+                        .discardOnCompletionTimeout().completionSize(3).completionTimeout(200)
+                        .completionTimeoutCheckerInterval(10).to("mock:aggregated");
             }
         };
     }

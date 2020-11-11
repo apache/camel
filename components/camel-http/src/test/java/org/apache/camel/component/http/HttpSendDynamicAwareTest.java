@@ -21,32 +21,32 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.DrinkValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpSendDynamicAwareTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-            setHttpProcessor(getBasicHttpProcessor()).
-            setConnectionReuseStrategy(getConnectionReuseStrategy()).
-            setResponseFactory(getHttpResponseFactory()).
-            setExpectationVerifier(getHttpExpectationVerifier()).
-            setSslContext(getSSLContext()).
-            registerHandler("/moes", new DrinkValidationHandler("GET", null, null, "drink")).
-            registerHandler("/joes", new DrinkValidationHandler("GET", null, null, "drink")).
-            create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/moes", new DrinkValidationHandler(GET.name(), null, null, "drink"))
+                .registerHandler("/joes", new DrinkValidationHandler(GET.name(), null, null, "drink")).create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -62,10 +62,12 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:moes")
-                    .toD("http://localhost:" + localServer.getLocalPort() + "/moes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD("http://localhost:" + localServer.getLocalPort()
+                             + "/moes?throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("direct:joes")
-                    .toD("http://localhost:" + localServer.getLocalPort() + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
+                        .toD("http://localhost:" + localServer.getLocalPort()
+                             + "/joes?throwExceptionOnFailure=false&drink=${header.drink}");
             }
         };
     }
@@ -79,8 +81,9 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
         assertEquals("Drinking wine", out);
 
         // and there should only be one http endpoint as they are both on same host
-        boolean found = context.getEndpointMap().containsKey("http://localhost:" + localServer.getLocalPort() + "?throwExceptionOnFailure=false");
-        assertTrue("Should find static uri", found);
+        boolean found = context.getEndpointMap()
+                .containsKey("http://localhost:" + localServer.getLocalPort() + "?throwExceptionOnFailure=false");
+        assertTrue(found, "Should find static uri");
 
         // we only have 2xdirect and 1xhttp
         assertEquals(3, context.getEndpointMap().size());

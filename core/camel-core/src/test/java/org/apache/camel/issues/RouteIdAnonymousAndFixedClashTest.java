@@ -18,7 +18,10 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
 
@@ -27,8 +30,8 @@ public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
         // should create the 2 routes
         assertEquals(2, context.getRoutes().size());
 
-        assertNotNull("Should have route1 (fixed id", context.getRoute("route1"));
-        assertNotNull("Should have route2 (auto assigned id)", context.getRoute("route2"));
+        assertNotNull(context.getRoute("route1"), "Should have route1 (fixed id");
+        assertNotNull(context.getRoute("route2"), "Should have route2 (auto assigned id)");
     }
 
     @Override
@@ -37,7 +40,7 @@ public class RouteIdAnonymousAndFixedClashTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in1").id("route1") // Note the name
-                    .to("mock:test1");
+                        .to("mock:test1");
 
                 from("direct:in2").to("mock:test2");
             }

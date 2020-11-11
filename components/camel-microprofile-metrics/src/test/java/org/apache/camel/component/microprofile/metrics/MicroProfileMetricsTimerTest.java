@@ -19,9 +19,12 @@ package org.apache.camel.component.microprofile.metrics;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.microprofile.metrics.Timer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_TIMER_ACTION;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicroProfileMetricsTimerTest extends MicroProfileMetricsTestSupport {
 
@@ -56,16 +59,16 @@ public class MicroProfileMetricsTimerTest extends MicroProfileMetricsTestSupport
             @Override
             public void configure() throws Exception {
                 from("direct:timer")
-                    .to("microprofile-metrics:timer:test-timer?action=start")
-                    .delayer(DELAY)
-                    .to("microprofile-metrics:timer:test-timer?action=stop");
+                        .to("microprofile-metrics:timer:test-timer?action=start")
+                        .delayer(DELAY)
+                        .to("microprofile-metrics:timer:test-timer?action=stop");
 
                 from("direct:timerFromHeader")
-                    .setHeader(HEADER_TIMER_ACTION, constant(TimerAction.START))
-                    .to("microprofile-metrics:timer:test-timer-header")
-                    .delayer(DELAY)
-                    .setHeader(HEADER_TIMER_ACTION, constant(TimerAction.STOP))
-                    .to("microprofile-metrics:timer:test-timer-header");
+                        .setHeader(HEADER_TIMER_ACTION, constant(TimerAction.START))
+                        .to("microprofile-metrics:timer:test-timer-header")
+                        .delayer(DELAY)
+                        .setHeader(HEADER_TIMER_ACTION, constant(TimerAction.STOP))
+                        .to("microprofile-metrics:timer:test-timer-header");
             }
         };
     }

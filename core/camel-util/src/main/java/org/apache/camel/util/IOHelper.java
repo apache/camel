@@ -56,99 +56,63 @@ public final class IOHelper {
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
     private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
-    private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
     // allows to turn on backwards compatible to turn off regarding the first
     // read byte with value zero (0b0) as EOL.
     // See more at CAMEL-11672
-    private static final boolean ZERO_BYTE_EOL_ENABLED = "true".equalsIgnoreCase(System.getProperty("camel.zeroByteEOLEnabled", "true"));
+    private static final boolean ZERO_BYTE_EOL_ENABLED
+            = "true".equalsIgnoreCase(System.getProperty("camel.zeroByteEOLEnabled", "true"));
 
     private IOHelper() {
         // Utility Class
     }
 
     /**
-     * Use this function instead of new String(byte[]) to avoid surprises from
-     * non-standard default encodings.
-     */
-    public static String newStringFromBytes(byte[] bytes) {
-        try {
-            return new String(bytes, UTF8_CHARSET.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Impossible failure: Charset.forName(\"UTF-8\") returns invalid name.", e);
-        }
-    }
-
-    /**
-     * Use this function instead of new String(byte[], int, int) to avoid
-     * surprises from non-standard default encodings.
-     */
-    public static String newStringFromBytes(byte[] bytes, int start, int length) {
-        try {
-            return new String(bytes, start, length, UTF8_CHARSET.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Impossible failure: Charset.forName(\"UTF-8\") returns invalid name.", e);
-        }
-    }
-
-    /**
-     * Wraps the passed <code>in</code> into a {@link BufferedInputStream}
-     * object and returns that. If the passed <code>in</code> is already an
-     * instance of {@link BufferedInputStream} returns the same passed
-     * <code>in</code> reference as is (avoiding double wrapping).
+     * Wraps the passed <code>in</code> into a {@link BufferedInputStream} object and returns that. If the passed
+     * <code>in</code> is already an instance of {@link BufferedInputStream} returns the same passed <code>in</code>
+     * reference as is (avoiding double wrapping).
      *
-     * @param in the wrapee to be used for the buffering support
-     * @return the passed <code>in</code> decorated through a
-     *         {@link BufferedInputStream} object as wrapper
+     * @param  in the wrapee to be used for the buffering support
+     * @return    the passed <code>in</code> decorated through a {@link BufferedInputStream} object as wrapper
      */
     public static BufferedInputStream buffered(InputStream in) {
-        ObjectHelper.notNull(in, "in");
-        return (in instanceof BufferedInputStream) ? (BufferedInputStream)in : new BufferedInputStream(in);
+        return (in instanceof BufferedInputStream) ? (BufferedInputStream) in : new BufferedInputStream(in);
     }
 
     /**
-     * Wraps the passed <code>out</code> into a {@link BufferedOutputStream}
-     * object and returns that. If the passed <code>out</code> is already an
-     * instance of {@link BufferedOutputStream} returns the same passed
-     * <code>out</code> reference as is (avoiding double wrapping).
+     * Wraps the passed <code>out</code> into a {@link BufferedOutputStream} object and returns that. If the passed
+     * <code>out</code> is already an instance of {@link BufferedOutputStream} returns the same passed <code>out</code>
+     * reference as is (avoiding double wrapping).
      *
-     * @param out the wrapee to be used for the buffering support
-     * @return the passed <code>out</code> decorated through a
-     *         {@link BufferedOutputStream} object as wrapper
+     * @param  out the wrapee to be used for the buffering support
+     * @return     the passed <code>out</code> decorated through a {@link BufferedOutputStream} object as wrapper
      */
     public static BufferedOutputStream buffered(OutputStream out) {
-        ObjectHelper.notNull(out, "out");
-        return (out instanceof BufferedOutputStream) ? (BufferedOutputStream)out : new BufferedOutputStream(out);
+        return (out instanceof BufferedOutputStream) ? (BufferedOutputStream) out : new BufferedOutputStream(out);
     }
 
     /**
-     * Wraps the passed <code>reader</code> into a {@link BufferedReader} object
-     * and returns that. If the passed <code>reader</code> is already an
-     * instance of {@link BufferedReader} returns the same passed
-     * <code>reader</code> reference as is (avoiding double wrapping).
+     * Wraps the passed <code>reader</code> into a {@link BufferedReader} object and returns that. If the passed
+     * <code>reader</code> is already an instance of {@link BufferedReader} returns the same passed <code>reader</code>
+     * reference as is (avoiding double wrapping).
      *
-     * @param reader the wrapee to be used for the buffering support
-     * @return the passed <code>reader</code> decorated through a
-     *         {@link BufferedReader} object as wrapper
+     * @param  reader the wrapee to be used for the buffering support
+     * @return        the passed <code>reader</code> decorated through a {@link BufferedReader} object as wrapper
      */
     public static BufferedReader buffered(Reader reader) {
-        ObjectHelper.notNull(reader, "reader");
-        return (reader instanceof BufferedReader) ? (BufferedReader)reader : new BufferedReader(reader);
+        return (reader instanceof BufferedReader) ? (BufferedReader) reader : new BufferedReader(reader);
     }
 
     /**
-     * Wraps the passed <code>writer</code> into a {@link BufferedWriter} object
-     * and returns that. If the passed <code>writer</code> is already an
-     * instance of {@link BufferedWriter} returns the same passed
-     * <code>writer</code> reference as is (avoiding double wrapping).
+     * Wraps the passed <code>writer</code> into a {@link BufferedWriter} object and returns that. If the passed
+     * <code>writer</code> is already an instance of {@link BufferedWriter} returns the same passed <code>writer</code>
+     * reference as is (avoiding double wrapping).
      *
-     * @param writer the wrapee to be used for the buffering support
-     * @return the passed <code>writer</code> decorated through a
-     *         {@link BufferedWriter} object as wrapper
+     * @param  writer the writer to be used for the buffering support
+     * @return        the passed <code>writer</code> decorated through a {@link BufferedWriter} object as wrapper
      */
     public static BufferedWriter buffered(Writer writer) {
-        ObjectHelper.notNull(writer, "writer");
-        return (writer instanceof BufferedWriter) ? (BufferedWriter)writer : new BufferedWriter(writer);
+        return (writer instanceof BufferedWriter) ? (BufferedWriter) writer : new BufferedWriter(writer);
     }
 
     public static String toString(Reader reader) throws IOException {
@@ -179,7 +143,16 @@ public final class IOHelper {
         return copy(input, output, bufferSize, false);
     }
 
-    public static int copy(final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite) throws IOException {
+    public static int copy(final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite)
+            throws IOException {
+        return copy(input, output, bufferSize, flushOnEachWrite, -1);
+    }
+
+    public static int copy(
+            final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite,
+            long maxSize)
+            throws IOException {
+
         if (input instanceof ByteArrayInputStream) {
             // optimized for byte array as we only need the max size it can be
             input.mark(0);
@@ -198,7 +171,8 @@ public final class IOHelper {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Copying InputStream: {} -> OutputStream: {} with buffer: {} and flush on each write {}", input, output, bufferSize, flushOnEachWrite);
+            LOG.trace("Copying InputStream: {} -> OutputStream: {} with buffer: {} and flush on each write {}", input, output,
+                    bufferSize, flushOnEachWrite);
         }
 
         int total = 0;
@@ -221,6 +195,9 @@ public final class IOHelper {
                     output.flush();
                 }
                 total += n;
+                if (maxSize > 0 && total > maxSize) {
+                    throw new IOException("The InputStream entry being copied exceeds the maximum allowed size");
+                }
                 n = input.read(buffer);
             }
         }
@@ -265,13 +242,12 @@ public final class IOHelper {
     }
 
     /**
-     * Forces any updates to this channel's file to be written to the storage
-     * device that contains it.
+     * Forces any updates to this channel's file to be written to the storage device that contains it.
      *
      * @param channel the file channel
-     * @param name the name of the resource
-     * @param log the log to use when reporting warnings, will use this class's
-     *            own {@link Logger} if <tt>log == null</tt>
+     * @param name    the name of the resource
+     * @param log     the log to use when reporting warnings, will use this class's own {@link Logger} if
+     *                <tt>log == null</tt>
      */
     public static void force(FileChannel channel, String name, Logger log) {
         try {
@@ -292,13 +268,12 @@ public final class IOHelper {
     }
 
     /**
-     * Forces any updates to a FileOutputStream be written to the storage device
-     * that contains it.
+     * Forces any updates to a FileOutputStream be written to the storage device that contains it.
      *
-     * @param os the file output stream
+     * @param os   the file output stream
      * @param name the name of the resource
-     * @param log the log to use when reporting warnings, will use this class's
-     *            own {@link Logger} if <tt>log == null</tt>
+     * @param log  the log to use when reporting warnings, will use this class's own {@link Logger} if
+     *             <tt>log == null</tt>
      */
     public static void force(FileOutputStream os, String name, Logger log) {
         try {
@@ -319,16 +294,15 @@ public final class IOHelper {
     }
 
     /**
-     * Closes the given writer, logging any closing exceptions to the given log.
-     * An associated FileOutputStream can optionally be forced to disk.
+     * Closes the given writer, logging any closing exceptions to the given log. An associated FileOutputStream can
+     * optionally be forced to disk.
      *
      * @param writer the writer to close
-     * @param os an underlying FileOutputStream that will to be forced to disk
-     *            according to the force parameter
-     * @param name the name of the resource
-     * @param log the log to use when reporting warnings, will use this class's
-     *            own {@link Logger} if <tt>log == null</tt>
-     * @param force forces the FileOutputStream to disk
+     * @param os     an underlying FileOutputStream that will to be forced to disk according to the force parameter
+     * @param name   the name of the resource
+     * @param log    the log to use when reporting warnings, will use this class's own {@link Logger} if
+     *               <tt>log == null</tt>
+     * @param force  forces the FileOutputStream to disk
      */
     public static void close(Writer writer, FileOutputStream os, String name, Logger log, boolean force) {
         if (writer != null && force) {
@@ -352,13 +326,12 @@ public final class IOHelper {
     }
 
     /**
-     * Closes the given resource if it is available, logging any closing
-     * exceptions to the given log.
+     * Closes the given resource if it is available, logging any closing exceptions to the given log.
      *
      * @param closeable the object to close
-     * @param name the name of the resource
-     * @param log the log to use when reporting closure warnings, will use this
-     *            class's own {@link Logger} if <tt>log == null</tt>
+     * @param name      the name of the resource
+     * @param log       the log to use when reporting closure warnings, will use this class's own {@link Logger} if
+     *                  <tt>log == null</tt>
      */
     public static void close(Closeable closeable, String name, Logger log) {
         if (closeable != null) {
@@ -379,10 +352,9 @@ public final class IOHelper {
     }
 
     /**
-     * Closes the given resource if it is available and don't catch the
-     * exception
+     * Closes the given resource if it is available and don't catch the exception
      *
-     * @param closeable the object to close
+     * @param  closeable   the object to close
      * @throws IOException
      */
     public static void closeWithException(Closeable closeable) throws IOException {
@@ -392,15 +364,14 @@ public final class IOHelper {
     }
 
     /**
-     * Closes the given channel if it is available, logging any closing
-     * exceptions to the given log. The file's channel can optionally be forced
-     * to disk.
+     * Closes the given channel if it is available, logging any closing exceptions to the given log. The file's channel
+     * can optionally be forced to disk.
      *
      * @param channel the file channel
-     * @param name the name of the resource
-     * @param log the log to use when reporting warnings, will use this class's
-     *            own {@link Logger} if <tt>log == null</tt>
-     * @param force forces the file channel to disk
+     * @param name    the name of the resource
+     * @param log     the log to use when reporting warnings, will use this class's own {@link Logger} if
+     *                <tt>log == null</tt>
+     * @param force   forces the file channel to disk
      */
     public static void close(FileChannel channel, String name, Logger log, boolean force) {
         if (force) {
@@ -413,7 +384,7 @@ public final class IOHelper {
      * Closes the given resource if it is available.
      *
      * @param closeable the object to close
-     * @param name the name of the resource
+     * @param name      the name of the resource
      */
     public static void close(Closeable closeable, String name) {
         close(closeable, name, LOG);
@@ -441,10 +412,10 @@ public final class IOHelper {
 
     public static void closeIterator(Object it) throws IOException {
         if (it instanceof Closeable) {
-            IOHelper.closeWithException((Closeable)it);
+            IOHelper.closeWithException((Closeable) it);
         }
         if (it instanceof java.util.Scanner) {
-            IOException ioException = ((java.util.Scanner)it).ioException();
+            IOException ioException = ((java.util.Scanner) it).ioException();
             if (ioException != null) {
                 throw ioException;
             }
@@ -464,8 +435,7 @@ public final class IOHelper {
     /**
      * Loads the entire stream into memory as a String and returns it.
      * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
-     * terminator at the of the text.
+     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
      * <p/>
      * Warning, don't use for crazy big streams :)
      */
@@ -492,8 +462,8 @@ public final class IOHelper {
     /**
      * Get the charset name from the content type string
      *
-     * @param contentType
-     * @return the charset name, or <tt>UTF-8</tt> if no found
+     * @param  contentType
+     * @return             the charset name, or <tt>UTF-8</tt> if no found
      */
     public static String getCharsetNameFromContentType(String contentType) {
         String[] values = contentType.split(";");
@@ -501,7 +471,9 @@ public final class IOHelper {
 
         for (String value : values) {
             value = value.trim();
-            if (value.toLowerCase().startsWith("charset=")) {
+            // Perform a case insensitive "startsWith" check that works for different locales
+            String prefix = "charset=";
+            if (value.regionMatches(true, 0, prefix, 0, prefix.length())) {
                 // Take the charset name
                 charset = value.substring(8);
             }
@@ -532,8 +504,7 @@ public final class IOHelper {
     }
 
     /**
-     * Lookup the OS environment variable in a safe manner by
-     * using upper case keys and underscore instead of dash.
+     * Lookup the OS environment variable in a safe manner by using upper case keys and underscore instead of dash.
      */
     public static String lookupEnvironmentVariable(String key) {
         // lookup OS env with upper case key
@@ -574,7 +545,7 @@ public final class IOHelper {
         @Override
         public int read() throws IOException {
             if (bufferBytes == null || bufferBytes.remaining() <= 0) {
-                bufferedChars.clear();
+                BufferCaster.cast(bufferedChars).clear();
                 int len = reader.read(bufferedChars);
                 bufferedChars.flip();
                 if (len == -1) {
@@ -582,7 +553,7 @@ public final class IOHelper {
                 }
                 bufferBytes = defaultStreamCharset.encode(bufferedChars);
             }
-            return bufferBytes.get();
+            return bufferBytes.get() & 0xFF;
         }
 
         @Override
@@ -591,7 +562,7 @@ public final class IOHelper {
         }
 
         @Override
-        public void reset() throws IOException {
+        public synchronized void reset() throws IOException {
             reader.reset();
         }
 
@@ -608,10 +579,11 @@ public final class IOHelper {
         private final FileInputStream in;
 
         /**
-         * @param in file to read
+         * @param in      file to read
          * @param charset character set to use
          */
-        public EncodingFileReader(FileInputStream in, String charset) throws FileNotFoundException, UnsupportedEncodingException {
+        public EncodingFileReader(FileInputStream in, String charset) throws FileNotFoundException,
+                                                                      UnsupportedEncodingException {
             super(in, charset);
             this.in = in;
         }
@@ -634,10 +606,11 @@ public final class IOHelper {
         private final FileOutputStream out;
 
         /**
-         * @param out file to write
+         * @param out     file to write
          * @param charset character set to use
          */
-        public EncodingFileWriter(FileOutputStream out, String charset) throws FileNotFoundException, UnsupportedEncodingException {
+        public EncodingFileWriter(FileOutputStream out, String charset) throws FileNotFoundException,
+                                                                        UnsupportedEncodingException {
             super(out, charset);
             this.out = out;
         }
@@ -655,9 +628,9 @@ public final class IOHelper {
     /**
      * Converts the given {@link File} with the given charset to {@link InputStream} with the JVM default charset
      *
-     * @param file the file to be converted
-     * @param charset the charset the file is read with
-     * @return the input stream with the JVM default charset
+     * @param  file    the file to be converted
+     * @param  charset the charset the file is read with
+     * @return         the input stream with the JVM default charset
      */
     public static InputStream toInputStream(File file, String charset) throws IOException {
         if (charset != null) {

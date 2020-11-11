@@ -23,9 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSdbCommand {
-    
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    
+
     protected AmazonSimpleDB sdbClient;
     protected SdbConfiguration configuration;
     protected Exchange exchange;
@@ -42,7 +42,7 @@ public abstract class AbstractSdbCommand {
         String domainName = exchange.getIn().getHeader(SdbConstants.DOMAIN_NAME, String.class);
         return domainName != null ? domainName : configuration.getDomainName();
     }
-    
+
     protected String determineItemName() {
         String key = exchange.getIn().getHeader(SdbConstants.ITEM_NAME, String.class);
         if (key == null) {
@@ -50,15 +50,15 @@ public abstract class AbstractSdbCommand {
         }
         return key;
     }
-    
+
     protected Boolean determineConsistentRead() {
         return exchange.getIn().getHeader(SdbConstants.CONSISTENT_READ, this.configuration.isConsistentRead(), Boolean.class);
     }
-    
+
     protected UpdateCondition determineUpdateCondition() {
         return exchange.getIn().getHeader(SdbConstants.UPDATE_CONDITION, UpdateCondition.class);
     }
-    
+
     protected String determineNextToken() {
         return exchange.getIn().getHeader(SdbConstants.NEXT_TOKEN, String.class);
     }

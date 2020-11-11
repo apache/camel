@@ -21,15 +21,20 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.createDirectory;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
 
     private String body = "12345678901234567890123456789012345678901234567890";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/cachedir");
         createDirectory("target/cachedir");
@@ -46,7 +51,7 @@ public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
         // the temporary files should have been deleted
         File file = new File("target/cachedir");
         String[] files = file.list();
-        assertEquals("There should be no files", 0, files.length);
+        assertEquals(0, files.length, "There should be no files");
 
         assertMockEndpointsSatisfied();
     }
@@ -68,15 +73,15 @@ public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
                         // there should be a temp cache file
                         File file = new File("target/cachedir");
                         String[] files = file.list();
-                        assertTrue("There should be a temp cache file", files.length > 0);
+                        assertTrue(files.length > 0, "There should be a temp cache file");
                     }
                 })
-                    // TODO: CAMEL-3839: need to convert the body to a String as
-                    // the tmp file will be deleted
-                    // before the producer template can convert the result back
-                    .convertBodyTo(String.class)
-                    // mark the exchange to stop continue routing
-                    .stop().to("mock:result");
+                        // TODO: CAMEL-3839: need to convert the body to a String as
+                        // the tmp file will be deleted
+                        // before the producer template can convert the result back
+                        .convertBodyTo(String.class)
+                        // mark the exchange to stop continue routing
+                        .stop().to("mock:result");
 
                 from("jetty://http://localhost:{{port}}/myserver").transform().constant(body);
             }

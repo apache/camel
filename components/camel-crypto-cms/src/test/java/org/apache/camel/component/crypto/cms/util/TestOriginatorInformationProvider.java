@@ -26,7 +26,7 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.OriginatorInfoGenerator;
 import org.bouncycastle.cms.OriginatorInformation;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestOriginatorInformationProvider implements OriginatorInformationProvider {
 
@@ -36,7 +36,7 @@ public class TestOriginatorInformationProvider implements OriginatorInformationP
         try {
             KeyStoreParameters keyStorePas = KeystoreUtil.getKeyStoreParameters("test.jks");
             assertNotNull(keyStorePas);
-            X509Certificate cert = (X509Certificate)keyStorePas.createKeyStore().getCertificate("test user keystore test");
+            X509Certificate cert = (X509Certificate) keyStorePas.createKeyStore().getCertificate("test user keystore test");
             assertNotNull(cert);
             X509CertificateHolder origCert = new X509CertificateHolder(cert.getEncoded());
             return new OriginatorInfoGenerator(origCert).generate();

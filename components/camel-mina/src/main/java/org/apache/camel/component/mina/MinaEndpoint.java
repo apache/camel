@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -29,9 +30,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.core.session.IoSession;
 
 /**
- * Socket level networking using TCP or UDP with the Apache Mina 2.x library.
+ * Socket level networking using TCP or UDP with Apache Mina 2.x.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port", label = "networking,tcp,udp")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port",
+             category = { Category.NETWORKING, Category.TCP, Category.UDP })
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam
@@ -43,6 +45,13 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     public MinaEndpoint(String endpointUri, Component component, MinaConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
+    }
+
+    @Override
+    public boolean isSingletonProducer() {
+        // the producer should not be singleton otherwise cannot use concurrent producers and safely
+        // use request/reply with correct correlation
+        return !configuration.isSync();
     }
 
     @Override

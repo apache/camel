@@ -19,6 +19,7 @@ package org.apache.camel.component.exec;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.w3c.dom.Document;
 
@@ -26,22 +27,22 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.apache.camel.component.exec.ExecBinding.EXEC_COMMAND_OUT_FILE;
-import static org.apache.commons.io.IOUtils.LINE_SEPARATOR;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
-public class ExecOutFileTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+@ContextConfiguration(locations = { "exec-mock-executor-context.xml" })
+public class ExecOutFileTest {
 
     private static final String FILE_CONTENT = buildFileContent();
 
@@ -50,13 +51,13 @@ public class ExecOutFileTest extends AbstractJUnit4SpringContextTests {
     @Produce("direct:input")
     private ProducerTemplate producerTemplate;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         FILE.createNewFile();
-        FileUtils.writeStringToFile(FILE, FILE_CONTENT);
+        FileUtils.writeStringToFile(FILE, FILE_CONTENT, Charset.defaultCharset());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         FileUtils.deleteQuietly(FILE);
     }
@@ -69,7 +70,7 @@ public class ExecOutFileTest extends AbstractJUnit4SpringContextTests {
         assertNotNull(result);
         File outFile = result.getCommand().getOutFile();
         assertNotNull(outFile);
-        assertEquals(FILE_CONTENT, FileUtils.readFileToString(outFile));
+        assertEquals(FILE_CONTENT, FileUtils.readFileToString(outFile, Charset.defaultCharset()));
     }
 
     @Test
@@ -78,7 +79,7 @@ public class ExecOutFileTest extends AbstractJUnit4SpringContextTests {
         Exchange e = sendWithMockedExecutor();
         InputStream body = e.getIn().getBody(InputStream.class);
         assertNotNull(body);
-        assertEquals(FILE_CONTENT, IOUtils.toString(body));
+        assertEquals(FILE_CONTENT, IOUtils.toString(body, Charset.defaultCharset()));
     }
 
     @Test
@@ -116,12 +117,12 @@ public class ExecOutFileTest extends AbstractJUnit4SpringContextTests {
 
     private static String buildFileContent() {
         StringBuilder builder = new StringBuilder();
-        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>").append(LINE_SEPARATOR);
-        builder.append("<data>").append(LINE_SEPARATOR);
-        builder.append("<element>data1</element>").append(LINE_SEPARATOR);
-        builder.append("<element>data2</element>").append(LINE_SEPARATOR);
-        builder.append("</data>").append(LINE_SEPARATOR);
-        builder.append(LINE_SEPARATOR);
+        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>").append(System.lineSeparator());
+        builder.append("<data>").append(System.lineSeparator());
+        builder.append("<element>data1</element>").append(System.lineSeparator());
+        builder.append("<element>data2</element>").append(System.lineSeparator());
+        builder.append("</data>").append(System.lineSeparator());
+        builder.append(System.lineSeparator());
         return builder.toString();
     }
 }

@@ -32,12 +32,11 @@ public class BlobServiceConsumer extends ScheduledPollConsumer {
     public BlobServiceConsumer(BlobServiceEndpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
     }
-    
+
     @Override
     protected int poll() throws Exception {
         Exchange exchange = super.getEndpoint().createExchange();
         try {
-            log.trace("Getting the blob content");
             getBlob(exchange);
             super.getAsyncProcessor().process(exchange);
             return 1;
@@ -49,11 +48,11 @@ public class BlobServiceConsumer extends ScheduledPollConsumer {
             }
         }
     }
-    
+
     private void getBlob(Exchange exchange) throws Exception {
         BlobServiceUtil.getBlob(exchange, getConfiguration());
     }
-        
+
     protected BlobServiceConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }

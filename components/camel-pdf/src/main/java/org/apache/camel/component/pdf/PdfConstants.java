@@ -20,5 +20,6 @@ public final class PdfConstants {
     public static final int PDF_PIXEL_SIZE = 1000;
     public static final int MIN_CONTENT_WIDTH = 20;
 
-    private PdfConstants() { }
+    private PdfConstants() {
+    }
 }

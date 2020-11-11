@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateSimpleSizeTest extends ContextTestSupport {
 
@@ -41,13 +41,13 @@ public class AggregateSimpleSizeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // aggregate all exchanges correlated by the id header.
-                    // Aggregate them using the BodyInAggregatingStrategy
-                    // strategy which
-                    // and after 3 messages has been aggregated then complete
-                    // the aggregation
-                    // and send it to mock:aggregated
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3).to("mock:aggregated");
+                        // aggregate all exchanges correlated by the id header.
+                        // Aggregate them using the BodyInAggregatingStrategy
+                        // strategy which
+                        // and after 3 messages has been aggregated then complete
+                        // the aggregation
+                        // and send it to mock:aggregated
+                        .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3).to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

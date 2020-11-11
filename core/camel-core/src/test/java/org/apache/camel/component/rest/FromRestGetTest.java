@@ -20,18 +20,21 @@ import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FromRestGetTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         return jndi;
     }
@@ -111,12 +114,17 @@ public class FromRestGetTest extends ContextTestSupport {
                 restConfiguration().host("localhost");
                 rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye").get().consumes("application/json").param().type(RestParamType.header).description("header param description1").dataType("integer")
-                    .allowableValues("1", "2", "3", "4").defaultValue("1").name("header_count").required(true).endParam().param().type(RestParamType.query)
-                    .description("header param description2").dataType("string").allowableValues("a", "b", "c", "d").defaultValue("b").collectionFormat(CollectionFormat.multi)
-                    .name("header_letter").required(false).endParam().responseMessage().code(300).message("test msg").responseModel(Integer.class).header("rate")
-                    .description("Rate limit").dataType("integer").endHeader().endResponseMessage().responseMessage().code("error").message("does not work").endResponseMessage()
-                    .to("direct:bye").post().to("mock:update");
+                rest("/say/bye").get().consumes("application/json").param().type(RestParamType.header)
+                        .description("header param description1").dataType("integer")
+                        .allowableValues("1", "2", "3", "4").defaultValue("1").name("header_count").required(true).endParam()
+                        .param().type(RestParamType.query)
+                        .description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
+                        .defaultValue("b").collectionFormat(CollectionFormat.multi)
+                        .name("header_letter").required(false).endParam().responseMessage().code(300).message("test msg")
+                        .responseModel(Integer.class).header("rate")
+                        .description("Rate limit").dataType("integer").endHeader().endResponseMessage().responseMessage()
+                        .code("error").message("does not work").endResponseMessage()
+                        .to("direct:bye").post().to("mock:update");
 
                 from("direct:hello").transform().constant("Hello World");
 

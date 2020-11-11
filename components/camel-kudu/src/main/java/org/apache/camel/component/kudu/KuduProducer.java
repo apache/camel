@@ -54,17 +54,17 @@ public class KuduProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String table = endpoint.getTableName();
         switch (endpoint.getOperation()) {
-        case INSERT:
-            doInsert(exchange, table);
-            break;
-        case CREATE_TABLE:
-            doCreateTable(exchange, table);
-            break;
-        case SCAN:
-            doScan(exchange, table);
-            break;
-        default:
-            throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
+            case INSERT:
+                doInsert(exchange, table);
+                break;
+            case CREATE_TABLE:
+                doCreateTable(exchange, table);
+                break;
+            case SCAN:
+                doScan(exchange, table);
+                break;
+            default:
+                throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
         }
     }
 
@@ -72,7 +72,6 @@ public class KuduProducer extends DefaultProducer {
         LOG.trace("Insert on table {}", tableName);
         KuduClient connection = endpoint.getKuduClient();
         KuduTable table = connection.openTable(tableName);
-
 
         Insert insert = table.newInsert();
         PartialRow row = insert.getRow();
@@ -96,9 +95,8 @@ public class KuduProducer extends DefaultProducer {
         KuduClient connection = endpoint.getKuduClient();
 
         Schema schema = (Schema) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCHEMA);
-        CreateTableOptions builder = (CreateTableOptions)
-                                         exchange.getIn()
-                                             .getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
+        CreateTableOptions builder = (CreateTableOptions) exchange.getIn()
+                .getHeader(KuduConstants.CAMEL_KUDU_TABLE_OPTIONS);
         connection.createTable(tableName, schema, builder);
 
     }

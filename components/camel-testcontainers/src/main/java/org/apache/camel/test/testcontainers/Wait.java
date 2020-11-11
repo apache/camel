@@ -33,9 +33,9 @@ public class Wait extends org.testcontainers.containers.wait.strategy.Wait {
     /**
      * Convenience method to return a WaitStrategy for log messages using a predicate.
      *
-     * @param predicate the predicate to apply to log messages
-     * @param times the number of times the pattern is expected
-     * @return WaitStrategy
+     * @param  predicate the predicate to apply to log messages
+     * @param  times     the number of times the pattern is expected
+     * @return           WaitStrategy
      */
     public static WaitStrategy forLogPredicate(Predicate<OutputFrame> predicate, int times) {
         return new AbstractWaitStrategy() {
@@ -48,11 +48,10 @@ public class Wait extends org.testcontainers.containers.wait.strategy.Wait {
 
                 try {
                     waitingConsumer.waitUntil(
-                        predicate,
-                        startupTimeout.getSeconds(),
-                        TimeUnit.SECONDS,
-                        times
-                    );
+                            predicate,
+                            startupTimeout.getSeconds(),
+                            TimeUnit.SECONDS,
+                            times);
                 } catch (TimeoutException e) {
                     throw new ContainerLaunchException("Timed out");
                 }
@@ -63,9 +62,9 @@ public class Wait extends org.testcontainers.containers.wait.strategy.Wait {
     /**
      * Convenience method to return a WaitStrategy for log messages.
      *
-     * @param text the text to find
-     * @param times the number of times the pattern is expected
-     * @return WaitStrategy
+     * @param  text  the text to find
+     * @param  times the number of times the pattern is expected
+     * @return       WaitStrategy
      */
     public static WaitStrategy forLogMessageContaining(String text, int times) {
         return forLogPredicate(u -> u.getUtf8String().contains(text), times);

@@ -18,7 +18,10 @@ package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to verify end-user exceptions for miss configuration
@@ -35,7 +38,8 @@ public class ProcessorTypeConfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown IllegalArgumentException");
         } catch (Exception e) {
-            assertEquals("No bean could be found in the registry for: hello of type: org.apache.camel.Processor", e.getCause().getMessage());
+            assertEquals("No bean could be found in the registry for: hello of type: org.apache.camel.Processor",
+                    e.getCause().getMessage());
         }
     }
 

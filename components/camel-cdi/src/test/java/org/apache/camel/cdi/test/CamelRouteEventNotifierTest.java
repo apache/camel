@@ -43,13 +43,13 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 public class CamelRouteEventNotifierTest {
@@ -69,187 +69,190 @@ public class CamelRouteEventNotifierTest {
     @ApplicationScoped
     private List<CamelEvent> otherFiredEvents = new ArrayList<>();
 
-    private void onRouteAddedEventEventAll(@Observes RouteAddedEvent event,
-                                           @Named("all") List<CamelEvent> events) {
+    private void onRouteAddedEventEventAll(
+            @Observes RouteAddedEvent event,
+            @Named("all") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteAddedEventEventSimple(@Observes @Named("simple") RouteAddedEvent event,
-                                              @Named("simple") List<CamelEvent> events) {
+    private void onRouteAddedEventEventSimple(
+            @Observes @Named("simple") RouteAddedEvent event,
+            @Named("simple") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteAddedEventEventOther(@Observes @Named("other") RouteAddedEvent event,
-                                             @Named("other") List<CamelEvent> events) {
+    private void onRouteAddedEventEventOther(
+            @Observes @Named("other") RouteAddedEvent event,
+            @Named("other") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteStartedEventEventAll(@Observes RouteStartedEvent event,
-                                             @Named("all") List<CamelEvent> events) {
+    private void onRouteStartedEventEventAll(
+            @Observes RouteStartedEvent event,
+            @Named("all") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteStartedEventEventSimple(@Observes @Named("simple") RouteStartedEvent event,
-                                                @Named("simple") List<CamelEvent> events) {
+    private void onRouteStartedEventEventSimple(
+            @Observes @Named("simple") RouteStartedEvent event,
+            @Named("simple") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteStartedEventEventOther(@Observes @Named("other") RouteStartedEvent event,
-                                               @Named("other") List<CamelEvent> events) {
+    private void onRouteStartedEventEventOther(
+            @Observes @Named("other") RouteStartedEvent event,
+            @Named("other") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteStoppedEventEventAll(@Observes RouteStoppedEvent event,
-                                             @Named("all") List<CamelEvent> events) {
+    private void onRouteStoppedEventEventAll(
+            @Observes RouteStoppedEvent event,
+            @Named("all") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteStoppedEventEventSimple(@Observes @Named("simple") RouteStoppedEvent event,
-                                                @Named("simple") List<CamelEvent> events) {
+    private void onRouteStoppedEventEventSimple(
+            @Observes @Named("simple") RouteStoppedEvent event,
+            @Named("simple") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteStoppedEventEventOther(@Observes @Named("other") RouteStoppedEvent event,
-                                               @Named("other") List<CamelEvent> events) {
+    private void onRouteStoppedEventEventOther(
+            @Observes @Named("other") RouteStoppedEvent event,
+            @Named("other") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteRemovedEventEventAll(@Observes RouteRemovedEvent event,
-                                             @Named("all") List<CamelEvent> events) {
+    private void onRouteRemovedEventEventAll(
+            @Observes RouteRemovedEvent event,
+            @Named("all") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteRemovedEventEventSimple(@Observes @Named("simple") RouteRemovedEvent event,
-                                                @Named("simple") List<CamelEvent> events) {
+    private void onRouteRemovedEventEventSimple(
+            @Observes @Named("simple") RouteRemovedEvent event,
+            @Named("simple") List<CamelEvent> events) {
         events.add(event);
     }
 
-    private void onRouteRemovedEventEventOther(@Observes @Named("other") RouteRemovedEvent event,
-                                               @Named("other") List<CamelEvent> events) {
+    private void onRouteRemovedEventEventOther(
+            @Observes @Named("other") RouteRemovedEvent event,
+            @Named("other") List<CamelEvent> events) {
         events.add(event);
     }
 
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test classes
-            .addClasses(SimpleCamelRoute.class, OtherCamelRoute.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test classes
+                .addClasses(SimpleCamelRoute.class, OtherCamelRoute.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
     @InSequence(1)
-    public void startedCamelContext(@Named("all") List<CamelEvent> all,
-                                    @Named("simple") List<CamelEvent> simple,
-                                    @Named("other") List<CamelEvent> other) {
+    public void startedCamelContext(
+            @Named("all") List<CamelEvent> all,
+            @Named("simple") List<CamelEvent> simple,
+            @Named("other") List<CamelEvent> other) {
         assertThat("Events fired are incorrect!", all,
-            contains(
-                both(
-                    instanceOf(RouteAddedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
-                both(
-                    instanceOf(RouteAddedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
-                both(
-                    instanceOf(RouteStartedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
-                both(
-                    instanceOf(RouteStartedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))
-            )
-        );
+                contains(
+                        both(
+                                instanceOf(RouteAddedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                        both(
+                                instanceOf(RouteAddedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                        both(
+                                instanceOf(RouteStartedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                        both(
+                                instanceOf(RouteStartedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))));
         assertThat("Events fired are incorrect!", simple,
-            contains(
-                both(
-                    instanceOf(RouteAddedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
-                both(
-                    instanceOf(RouteStartedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))
-            )
-        );
+                contains(
+                        both(
+                                instanceOf(RouteAddedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                        both(
+                                instanceOf(RouteStartedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))));
         assertThat("Events fired are incorrect!", other,
-            contains(
-                both(
-                    instanceOf(RouteAddedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
-                both(
-                    instanceOf(RouteStartedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))
-            )
-        );
+                contains(
+                        both(
+                                instanceOf(RouteAddedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                        both(
+                                instanceOf(RouteStartedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))));
     }
 
     @Test
     @InSequence(3)
-    public void stopCamelContext(CamelContext context,
-                                 @Named("all") List<CamelEvent> all,
-                                 @Named("simple") List<CamelEvent> simple,
-                                 @Named("other") List<CamelEvent> other) throws Exception {
+    public void stopCamelContext(
+            CamelContext context,
+            @Named("all") List<CamelEvent> all,
+            @Named("simple") List<CamelEvent> simple,
+            @Named("other") List<CamelEvent> other)
+            throws Exception {
         context.stop();
 
         assertThat("Events fired are incorrect!", all,
-            contains(
-                both(
-                    instanceOf(RouteAddedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
-                both(
-                    instanceOf(RouteAddedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
-                both(
-                    instanceOf(RouteStartedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
-                both(
-                    instanceOf(RouteStartedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
-                both(
-                    instanceOf(RouteStoppedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
-                both(
-                    instanceOf(RouteRemovedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
-                both(
-                    instanceOf(RouteStoppedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
-                both(
-                    instanceOf(RouteRemovedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))
-            )
-        );
+                contains(
+                        both(
+                                instanceOf(RouteAddedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                        both(
+                                instanceOf(RouteAddedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                        both(
+                                instanceOf(RouteStartedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                        both(
+                                instanceOf(RouteStartedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                        both(
+                                instanceOf(RouteStoppedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                        both(
+                                instanceOf(RouteRemovedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                        both(
+                                instanceOf(RouteStoppedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                        both(
+                                instanceOf(RouteRemovedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))));
         assertThat("Events fired are incorrect!", simple,
-            contains(
-                both(
-                    instanceOf(RouteAddedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
-                both(
-                    instanceOf(RouteStartedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
-                both(
-                    instanceOf(RouteStoppedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
-                both(
-                    instanceOf(RouteRemovedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))
-            )
-        );
+                contains(
+                        both(
+                                instanceOf(RouteAddedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                        both(
+                                instanceOf(RouteStartedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                        both(
+                                instanceOf(RouteStoppedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                        both(
+                                instanceOf(RouteRemovedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))));
         assertThat("Events fired are incorrect!", other,
-            contains(
-                both(
-                    instanceOf(RouteAddedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
-                both(
-                    instanceOf(RouteStartedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
-                both(
-                    instanceOf(RouteStoppedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
-                both(
-                    instanceOf(RouteRemovedEvent.class))
-                    .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))
-            )
-        );
+                contains(
+                        both(
+                                instanceOf(RouteAddedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                        both(
+                                instanceOf(RouteStartedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                        both(
+                                instanceOf(RouteStoppedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                        both(
+                                instanceOf(RouteRemovedEvent.class))
+                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))));
     }
 }

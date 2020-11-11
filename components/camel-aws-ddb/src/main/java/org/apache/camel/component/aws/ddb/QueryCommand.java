@@ -42,14 +42,14 @@ public class QueryCommand extends AbstractDdbCommand {
                 .withExclusiveStartKey(determineStartKey())
                 .withLimit(determineLimit())
                 .withScanIndexForward(determineScanIndexForward());
-        
+
         // Check if we have set an Index Name
         if (exchange.getIn().getHeader(DdbConstants.INDEX_NAME, String.class) != null) {
             query.withIndexName(exchange.getIn().getHeader(DdbConstants.INDEX_NAME, String.class));
         }
-        
+
         QueryResult result = ddbClient.query(query);
-        
+
         Map tmp = new HashMap<>();
         tmp.put(DdbConstants.ITEMS, result.getItems());
         tmp.put(DdbConstants.LAST_EVALUATED_KEY, result.getLastEvaluatedKey());
@@ -58,7 +58,7 @@ public class QueryCommand extends AbstractDdbCommand {
         addToResults(tmp);
     }
 
-    private  Map<String, AttributeValue> determineStartKey() {
+    private Map<String, AttributeValue> determineStartKey() {
         return exchange.getIn().getHeader(DdbConstants.START_KEY, Map.class);
     }
 
@@ -68,9 +68,5 @@ public class QueryCommand extends AbstractDdbCommand {
 
     private Map determineKeyConditions() {
         return exchange.getIn().getHeader(DdbConstants.KEY_CONDITIONS, Map.class);
-    }
-
-    private Integer determineLimit() {
-        return exchange.getIn().getHeader(DdbConstants.LIMIT, Integer.class);
     }
 }

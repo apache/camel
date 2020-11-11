@@ -23,7 +23,8 @@ public class SpringCamelContextThreadPoolProfilesWithPlaceholderTest extends Spr
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextThreadPoolProfilesWithPlaceholderTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/SpringCamelContextThreadPoolProfilesWithPlaceholderTest.xml");
     }
 
 }

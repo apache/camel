@@ -32,10 +32,13 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("Requires a running Kubernetes Cluster")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Disabled("Requires a running Kubernetes Cluster")
 public class KubernetesReplicationControllersConsumerTest extends KubernetesTestSupport {
 
     @EndpointInject("mock:result")
@@ -47,43 +50,38 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
             return;
         }
 
-        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED", "DELETED", "MODIFIED", "MODIFIED", "MODIFIED");
-        Exchange ex = template.request("direct:createReplicationController", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
-                Map<String, String> labels = new HashMap<>();
-                labels.put("this", "rocks");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
-                ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
-                rcSpec.setReplicas(2);
-                PodTemplateSpecBuilder builder = new PodTemplateSpecBuilder();
-                PodTemplateSpec t = builder.withNewMetadata().withName("nginx-template").addToLabels("server", "nginx").endMetadata().withNewSpec().addNewContainer()
-                    .withName("wildfly").withImage("jboss/wildfly").addNewPort().withContainerPort(80).endPort().endContainer().endSpec().build();
-                rcSpec.setTemplate(t);
-                Map<String, String> selectorMap = new HashMap<>();
-                selectorMap.put("server", "nginx");
-                rcSpec.setSelector(selectorMap);
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_SPEC, rcSpec);
-            }
+        mockResultEndpoint.expectedHeaderValuesReceivedInAnyOrder(KubernetesConstants.KUBERNETES_EVENT_ACTION, "ADDED",
+                "DELETED", "MODIFIED", "MODIFIED", "MODIFIED");
+        Exchange ex = template.request("direct:createReplicationController", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
+            Map<String, String> labels = new HashMap<>();
+            labels.put("this", "rocks");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
+            ReplicationControllerSpec rcSpec = new ReplicationControllerSpec();
+            rcSpec.setReplicas(2);
+            PodTemplateSpecBuilder builder = new PodTemplateSpecBuilder();
+            PodTemplateSpec t = builder.withNewMetadata().withName("nginx-template").addToLabels("server", "nginx")
+                    .endMetadata().withNewSpec().addNewContainer()
+                    .withName("wildfly").withImage("jboss/wildfly").addNewPort().withContainerPort(80).endPort().endContainer()
+                    .endSpec().build();
+            rcSpec.setTemplate(t);
+            Map<String, String> selectorMap = new HashMap<>();
+            selectorMap.put("server", "nginx");
+            rcSpec.setSelector(selectorMap);
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_SPEC, rcSpec);
         });
 
-        ReplicationController rc = ex.getOut().getBody(ReplicationController.class);
+        ReplicationController rc = ex.getMessage().getBody(ReplicationController.class);
 
         assertEquals(rc.getMetadata().getName(), "test");
 
-        ex = template.request("direct:deleteReplicationController", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
-            }
+        ex = template.request("direct:deleteReplicationController", exchange -> {
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
+            exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "test");
         });
 
-        boolean rcDeleted = ex.getOut().getBody(Boolean.class);
+        boolean rcDeleted = ex.getMessage().getBody(Boolean.class);
 
         assertTrue(rcDeleted);
 
@@ -97,21 +95,33 @@ public class KubernetesReplicationControllersConsumerTest extends KubernetesTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllers", host, authToken);
-                from("direct:listByLabels").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllersByLabels", host, authToken);
-                from("direct:getReplicationController").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=getReplicationController", host, authToken);
-                from("direct:createReplicationController").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=createReplicationController", host, authToken);
-                from("direct:deleteReplicationController").toF("kubernetes-replication-controllers://%s?oauthToken=%s&operation=deleteReplicationController", host, authToken);
-                fromF("kubernetes-replication-controllers://%s?oauthToken=%s&resourceName=wildfly", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
+                from("direct:list").toF(
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllers", host,
+                        authToken);
+                from("direct:listByLabels").toF(
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=listReplicationControllersByLabels",
+                        host, authToken);
+                from("direct:getReplicationController").toF(
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=getReplicationController", host,
+                        authToken);
+                from("direct:createReplicationController").toF(
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=createReplicationController", host,
+                        authToken);
+                from("direct:deleteReplicationController").toF(
+                        "kubernetes-replication-controllers://%s?oauthToken=%s&operation=deleteReplicationController", host,
+                        authToken);
+                fromF("kubernetes-replication-controllers://%s?oauthToken=%s&resourceName=wildfly", host, authToken)
+                        .process(new KubernetesProcessor()).to(mockResultEndpoint);
             }
         };
     }
 
-    public class KubernertesProcessor implements Processor {
+    public class KubernetesProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
-            log.info("Got event with body: " + in.getBody() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with body: " + in.getBody() + " and action "
+                     + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

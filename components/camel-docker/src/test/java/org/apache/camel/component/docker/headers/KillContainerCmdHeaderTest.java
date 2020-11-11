@@ -21,7 +21,7 @@ import java.util.Map;
 import com.github.dockerjava.api.command.KillContainerCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
@@ -37,7 +37,7 @@ public class KillContainerCmdHeaderTest extends BaseDockerHeaderTest<KillContain
     private KillContainerCmd mockObject;
 
     @Test
-    public void stopContainerHeaderTest() {
+    void stopContainerHeaderTest() {
 
         String containerId = "9c09acd48a25";
         String signal = "signal";

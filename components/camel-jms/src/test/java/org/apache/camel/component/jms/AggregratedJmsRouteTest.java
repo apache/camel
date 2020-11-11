@@ -18,19 +18,19 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AggregratedJmsRouteTest extends CamelTestSupport {
 
@@ -87,16 +87,14 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from(timeOutEndpointUri).to("jms:queue:test.b");
 
-                from("jms:queue:test.b").aggregate(header("cheese"), new AggregationStrategy() {
-                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            LOG.error("aggregration delay sleep inturrepted", e);
-                            fail("aggregration delay sleep inturrepted");
-                        }
-                        return newExchange;
+                from("jms:queue:test.b").aggregate(header("cheese"), (oldExchange, newExchange) -> {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        LOG.error("aggregration delay sleep inturrepted", e);
+                        fail("aggregration delay sleep inturrepted");
                     }
+                    return newExchange;
                 }).completionTimeout(2000L).to("mock:result");
 
                 from(multicastEndpointUri).to("jms:queue:point1", "jms:queue:point2", "jms:queue:point3");
@@ -104,10 +102,11 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
                 from("jms:queue:point2").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:point3").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:reply").aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionSize(3)
-                    .to("mock:reply");
+                        .to("mock:reply");
             }
         };
     }
+
     private static class MyProcessor implements Processor {
 
         @Override

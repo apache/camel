@@ -23,8 +23,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.jooq.Result;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JooqPlainSQLTest extends BaseJooqTest {
 
@@ -40,7 +42,7 @@ public class JooqPlainSQLTest extends BaseJooqTest {
         producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, bookStoreRecord);
 
         assertMockEndpointsSatisfied();
-        Assert.assertEquals(bookStoreRecord, mockResult.getExchanges().get(0).getMessage().getBody());
+        assertEquals(bookStoreRecord, mockResult.getExchanges().get(0).getMessage().getBody());
     }
 
     @Test
@@ -52,16 +54,17 @@ public class JooqPlainSQLTest extends BaseJooqTest {
         producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, bookStoreRecord);
 
         // Select
-        Result actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
-        Assert.assertEquals(bookStoreRecord, actual.get(0));
+        Result actual
+                = (Result) producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
+        assertEquals(bookStoreRecord, actual.get(0));
 
         // Delete
         actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:deleteSQL"), ExchangePattern.InOut, null);
-        Assert.assertNull(actual);
+        assertNull(actual);
 
         // Select
         actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:selectSQL"), ExchangePattern.InOut, null);
-        Assert.assertEquals(0, actual.size());
+        assertEquals(0, actual.size());
     }
 
     @Override

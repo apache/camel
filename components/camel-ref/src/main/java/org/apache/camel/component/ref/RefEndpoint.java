@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ref;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateEndpoint;
@@ -29,14 +30,16 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The ref component is used for lookup of existing endpoints bound in the Registry.
+ * Route messages to an endpoint looked up dynamically by name in the Camel Registry.
  */
-@UriEndpoint(firstVersion = "1.2.0", scheme = "ref", title = "Ref", syntax = "ref:name", label = "core,endpoint")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "ref", title = "Ref", syntax = "ref:name",
+             category = { Category.CORE, Category.ENDPOINT })
 public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String name;
 
     public RefEndpoint(String endpointUri, Component component) {

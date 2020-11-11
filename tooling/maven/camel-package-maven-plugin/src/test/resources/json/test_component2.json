@@ -1,0 +1,24 @@
+{
+  "component": {
+    "kind": "component",
+    "scheme": "kafka",
+    "syntax": "kafka:topic",
+    "title": "Kafka",
+    "description": "The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.",
+    "label": "messaging",
+    "deprecated": false,
+    "deprecationNote": "",
+    "async": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "javaType": "org.apache.camel.component.dummy.ComponentsDslMetadataRegistryTest",
+    "firstVersion": "2.13.0",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kafka",
+    "version": "3.4.0-SNAPSHOT"
+  },
+  "componentProperties": {},
+  "properties": {}
+}
+

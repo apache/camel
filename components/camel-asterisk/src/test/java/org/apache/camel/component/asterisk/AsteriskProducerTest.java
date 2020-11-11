@@ -20,11 +20,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("CAMEL-10321: Set host, username and password test asterisk producer.")
+@Disabled("CAMEL-10321: Set host, username and password test asterisk producer.")
 public class AsteriskProducerTest extends CamelTestSupport {
 
     private String hostname = "192.168.0.254";
@@ -33,7 +33,7 @@ public class AsteriskProducerTest extends CamelTestSupport {
     private String action = AsteriskAction.EXTENSION_STATE.name();
 
     @Test
-    public void testSnmpProducer() throws Exception {
+    void testSnmpProducer() throws Exception {
         template.sendBody("direct:in", "");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -43,11 +43,14 @@ public class AsteriskProducerTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in").to("asterisk://myVoIP?hostname=" + hostname + "&username=" + username + "&password=" + password + "&action=" + action).log("${body}")
-                    .to("mock:result");
+                from("direct:in")
+                        .to("asterisk://myVoIP?hostname=" + hostname + "&username=" + username + "&password=" + password
+                            + "&action=" + action)
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

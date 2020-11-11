@@ -20,8 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LRAOptionsIT extends AbstractLRATestSupport {
 
@@ -48,19 +49,16 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
         compensate.expectedHeaderReceived("name", "Nicola");
         compensate.expectedMessagesMatches(ex -> ex.getIn().getHeader(Exchange.SAGA_LONG_RUNNING_ACTION) != null);
 
-        try {
-            template.sendBodyAndHeader("direct:workflow", "compensate", "myname", "Nicola");
-            Assert.fail("Should throw an exception");
-        } catch (Exception ex) {
-            // OK
-        }
+        assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:workflow", "compensate", "myname", "Nicola"));
 
         compensate.assertIsSatisfied();
     }
 
-    @Test(expected = RuntimeCamelException.class)
+    @Test
     public void testRouteDoesNotHangOnOptionError() throws Exception {
-        template.sendBody("direct:wrong-expression", "Hello");
+        assertThrows(RuntimeCamelException.class,
+                () -> template.sendBody("direct:wrong-expression", "Hello"));
     }
 
     @Override

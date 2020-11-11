@@ -26,6 +26,6 @@ import org.apache.camel.support.component.AbstractApiProducer;
 public class BoxProducer extends AbstractApiProducer<BoxApiName, BoxConfiguration> {
 
     public BoxProducer(BoxEndpoint endpoint) {
-        super(endpoint, BoxPropertiesHelper.getHelper());
+        super(endpoint, BoxPropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
 }

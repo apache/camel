@@ -17,36 +17,29 @@
 package org.apache.camel.component.yammer;
 
 import java.io.InputStream;
-import java.util.Collection;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
+import org.apache.camel.CamelContext;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
 public abstract class YammerComponentTestSupport extends CamelTestSupport {
 
     protected YammerComponent yammerComponent;
     private String messages;
-    
+
     public YammerComponentTestSupport() {
     }
 
     @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        
-        InputStream is = getClass().getResourceAsStream(jsonFile());        
-        setMessages(context.getTypeConverter().convertTo(String.class, is));    
-        
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        InputStream is = getClass().getResourceAsStream(jsonFile());
+        setMessages(context.getTypeConverter().convertTo(String.class, is));
+
         yammerComponent = context.getComponent("yammer", YammerComponent.class);
-        
-        Collection<Endpoint> endpoints = context.getEndpoints();
-        for (Endpoint endpoint : endpoints) {
-            if (endpoint instanceof YammerEndpoint) {
-                ((YammerEndpoint)endpoint).getConfig().setRequestor(new TestApiRequestor(getMessages()));
-            }
-        }
+        yammerComponent.getConfiguration().setRequestor(new TestApiRequestor(getMessages()));
+
+        return context;
     }
 
     protected String jsonFile() {

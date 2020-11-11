@@ -20,11 +20,12 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-public abstract class CommonBindyTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public abstract class CommonBindyTest {
 
     public static final String URI_MOCK_RESULT = "mock:result";
     public static final String URI_MOCK_ERROR = "mock:error";

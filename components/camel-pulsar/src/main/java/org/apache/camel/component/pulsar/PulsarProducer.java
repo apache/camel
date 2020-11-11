@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
 import org.apache.camel.support.DefaultProducer;
@@ -32,8 +31,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.ProducerBuilder;
 import org.apache.pulsar.client.api.TypedMessageBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PulsarProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PulsarProducer.class);
 
     private final PulsarEndpoint pulsarEndpoint;
     private Producer<byte[]> producer;
@@ -63,7 +66,8 @@ public class PulsarProducer extends DefaultProducer {
             messageBuilder.key(key);
         }
 
-        Map<String, String> properties = CastUtils.cast(exchange.getIn().getHeader(PulsarMessageHeaders.PROPERTIES_OUT, Map.class));
+        Map<String, String> properties
+                = CastUtils.cast(exchange.getIn().getHeader(PulsarMessageHeaders.PROPERTIES_OUT, Map.class));
         if (ObjectHelper.isNotEmpty(properties)) {
             messageBuilder.properties(properties);
         }
@@ -82,10 +86,15 @@ public class PulsarProducer extends DefaultProducer {
             PulsarConfiguration configuration = pulsarEndpoint.getPulsarConfiguration();
             String producerName = configuration.getProducerName();
             final ProducerBuilder<byte[]> producerBuilder = pulsarEndpoint.getPulsarClient().newProducer().topic(topicUri)
-                .sendTimeout(configuration.getSendTimeoutMs(), TimeUnit.MILLISECONDS).blockIfQueueFull(configuration.isBlockIfQueueFull())
-                .maxPendingMessages(configuration.getMaxPendingMessages()).maxPendingMessagesAcrossPartitions(configuration.getMaxPendingMessagesAcrossPartitions())
-                .batchingMaxPublishDelay(configuration.getBatchingMaxPublishDelayMicros(), TimeUnit.MICROSECONDS).batchingMaxMessages(configuration.getMaxPendingMessages())
-                .enableBatching(configuration.isBatchingEnabled()).initialSequenceId(configuration.getInitialSequenceId()).compressionType(configuration.getCompressionType());
+                    .sendTimeout(configuration.getSendTimeoutMs(), TimeUnit.MILLISECONDS)
+                    .blockIfQueueFull(configuration.isBlockIfQueueFull())
+                    .maxPendingMessages(configuration.getMaxPendingMessages())
+                    .maxPendingMessagesAcrossPartitions(configuration.getMaxPendingMessagesAcrossPartitions())
+                    .batchingMaxPublishDelay(configuration.getBatchingMaxPublishDelayMicros(), TimeUnit.MICROSECONDS)
+                    .batchingMaxMessages(configuration.getMaxPendingMessages())
+                    .enableBatching(configuration.isBatchingEnabled()).batcherBuilder(configuration.getBatcherBuilder())
+                    .initialSequenceId(configuration.getInitialSequenceId())
+                    .compressionType(configuration.getCompressionType());
             if (ObjectHelper.isNotEmpty(configuration.getMessageRouter())) {
                 producerBuilder.messageRouter(configuration.getMessageRouter());
             } else {
@@ -100,7 +109,7 @@ public class PulsarProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        log.debug("Starting producer: {}", this);
+        LOG.debug("Starting producer: {}", this);
         if (producer == null) {
             createProducer();
         }
@@ -108,7 +117,7 @@ public class PulsarProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        log.debug("Stopping producer: {}", this);
+        LOG.debug("Stopping producer: {}", this);
         if (producer != null) {
             producer.close();
             producer = null;

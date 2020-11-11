@@ -36,7 +36,8 @@ public class AtmosConfiguration {
 
     @UriPath
     private String name;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private AtmosOperation operation;
     @UriParam(label = "security", secret = true)
     private String secretKey;
@@ -58,7 +59,7 @@ public class AtmosConfiguration {
     public void setClient(AtmosApi client) {
         this.client = client;
     }
-    
+
     public AtmosApi getClient() {
         return client;
     }
@@ -75,12 +76,12 @@ public class AtmosConfiguration {
         } catch (URISyntaxException use) {
             throw new AtmosException("wrong syntax for Atmos URI!", use);
         }
-        
+
         if (!sslValidation) {
             config.setDisableSslValidation(true);
         }
         AtmosApi atmosclient = new AtmosApiClient(config);
-        
+
         this.client = atmosclient;
     }
 
@@ -105,7 +106,7 @@ public class AtmosConfiguration {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
     public String getLocalPath() {
         return localPath;
     }
@@ -116,7 +117,7 @@ public class AtmosConfiguration {
     public void setLocalPath(String localPath) {
         this.localPath = localPath;
     }
-    
+
     public String getRemotePath() {
         return remotePath;
     }
@@ -127,7 +128,7 @@ public class AtmosConfiguration {
     public void setRemotePath(String remotePath) {
         this.remotePath = remotePath;
     }
-    
+
     public String getNewRemotePath() {
         return newRemotePath;
     }
@@ -138,7 +139,7 @@ public class AtmosConfiguration {
     public void setNewRemotePath(String newRemotePath) {
         this.newRemotePath = newRemotePath;
     }
-    
+
     public String getQuery() {
         return query;
     }
@@ -149,7 +150,7 @@ public class AtmosConfiguration {
     public void setQuery(String query) {
         this.query = query;
     }
-    
+
     public String getFullTokenId() {
         return fullTokenId;
     }
@@ -160,7 +161,7 @@ public class AtmosConfiguration {
     public void setFullTokenId(String fullTokenId) {
         this.fullTokenId = fullTokenId;
     }
-    
+
     public AtmosOperation getOperation() {
         return operation;
     }
@@ -178,11 +179,11 @@ public class AtmosConfiguration {
     public void setUri(String uri) {
         this.uri = uri;
     }
-    
+
     public String getUri() {
         return uri;
     }
-    
+
     public boolean isSslValidation() {
         return sslValidation;
     }
@@ -193,5 +194,5 @@ public class AtmosConfiguration {
     public void setSslValidation(boolean sslValidation) {
         this.sslValidation = sslValidation;
     }
-    
+
 }

@@ -21,9 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.dataformat.protobuf.generated.AddressBookProtos;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProtobufConverterTest {
 
@@ -51,7 +53,8 @@ public class ProtobufConverterTest {
         input.put("nicknames", Arrays.asList("awesome1", "awesome2"));
         input.put("address", address);
 
-        final AddressBookProtos.Person message = (AddressBookProtos.Person) ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
+        final AddressBookProtos.Person message
+                = (AddressBookProtos.Person) ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
 
         // assert primitives types and strings
         assertEquals("Martin", message.getName());
@@ -73,7 +76,7 @@ public class ProtobufConverterTest {
         assertEquals("awesome2", message.getNicknames(1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIfThrowsErrorInCaseNestedMessageNotMap() {
         final Map<String, Object> input = new HashMap<>();
 
@@ -81,10 +84,11 @@ public class ProtobufConverterTest {
         input.put("id", 1234);
         input.put("address", "wrong address");
 
-        final AddressBookProtos.Person message = (AddressBookProtos.Person) ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
+        assertThrows(IllegalArgumentException.class,
+                () -> ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIfThrowsErrorInCaseRepeatedFieldIsNotList() {
         final Map<String, Object> input = new HashMap<>();
 
@@ -92,7 +96,8 @@ public class ProtobufConverterTest {
         input.put("id", 1234);
         input.put("nicknames", "wrong nickname");
 
-        final AddressBookProtos.Person message = (AddressBookProtos.Person) ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
+        assertThrows(IllegalArgumentException.class,
+                () -> ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance()));
     }
 
     @Test
@@ -119,7 +124,8 @@ public class ProtobufConverterTest {
         input.put("nicknames", Arrays.asList("awesome1", "awesome2"));
         input.put("address", address);
 
-        final AddressBookProtos.Person message = (AddressBookProtos.Person) ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
+        final AddressBookProtos.Person message
+                = (AddressBookProtos.Person) ProtobufConverter.toProto(input, AddressBookProtos.Person.getDefaultInstance());
 
         final Map<String, Object> resultedMessageMap = ProtobufConverter.toMap(message);
 

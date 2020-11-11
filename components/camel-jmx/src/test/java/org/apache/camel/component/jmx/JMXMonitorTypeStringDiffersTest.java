@@ -22,12 +22,12 @@ import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.jupiter.api.Test;
 
 public class JMXMonitorTypeStringDiffersTest extends SimpleBeanFixture {
-    
+
     @Test
     public void differs() throws Exception {
 
         ISimpleMXBean simpleBean = getSimpleMXBean();
-        
+
         simpleBean.setStringValue("changed");
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/stringDiffers.xml"));
@@ -36,9 +36,9 @@ public class JMXMonitorTypeStringDiffersTest extends SimpleBeanFixture {
     @Override
     protected JMXUriBuilder buildFromURI() {
         return super.buildFromURI().withMonitorType("string")
-                                   .withGranularityPeriod(500)
-                                   .withObservedAttribute("StringValue")
-                                   .withStringToCompare("initial")
-                                   .withNotifyDiffer(true);
+                .withGranularityPeriod(500)
+                .withObservedAttribute("StringValue")
+                .withStringToCompare("initial")
+                .withNotifyDiffer(true);
     }
 }

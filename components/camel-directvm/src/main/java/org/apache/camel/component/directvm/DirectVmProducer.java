@@ -21,11 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Direct-VM producer.
  */
 public class DirectVmProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DirectVmProducer.class);
 
     private DirectVmEndpoint endpoint;
 
@@ -38,51 +42,68 @@ public class DirectVmProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // send to consumer
         DirectVmConsumer consumer = endpoint.getComponent().getConsumer(endpoint);
-        
+
         if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
-                exchange.setException(new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
+                exchange.setException(
+                        new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
             } else {
-                log.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+                LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
             callback.done(true);
             return true;
         }
-        
-        final HeaderFilterStrategy headerFilterStrategy = endpoint.getHeaderFilterStrategy();
 
-        // Only clone the Exchange if we actually need to filter out properties or headers.
-        final Exchange submitted = (!endpoint.isPropagateProperties() || headerFilterStrategy != null) ? exchange.copy() : exchange;
+        try {
+            final HeaderFilterStrategy headerFilterStrategy = endpoint.getHeaderFilterStrategy();
 
-        // Clear properties in the copy if we are not propagating them.
-        if (!endpoint.isPropagateProperties()) {
-            submitted.getProperties().clear();
-        }
-        
-        // Filter headers by Header Filter Strategy if there is one set.
-        if (headerFilterStrategy != null) {
-            submitted.getIn().getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToCamelHeaders(e.getKey(), e.getValue(), submitted));
-        }
-        
-        return consumer.getAsyncProcessor().process(submitted, done -> {
-            Message msg = submitted.getMessage();
+            // Only clone the Exchange if we actually need to filter out properties or headers.
+            final Exchange submitted
+                    = (!endpoint.isPropagateProperties() || headerFilterStrategy != null) ? exchange.copy() : exchange;
 
+            // Clear properties in the copy if we are not propagating them.
+            if (!endpoint.isPropagateProperties()) {
+                submitted.getProperties().clear();
+            }
+
+            // Filter headers by Header Filter Strategy if there is one set.
             if (headerFilterStrategy != null) {
-                msg.getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(), submitted));
+                submitted.getIn().getHeaders().entrySet()
+                        .removeIf(e -> headerFilterStrategy.applyFilterToCamelHeaders(e.getKey(), e.getValue(), submitted));
             }
 
-            if (exchange != submitted) {
-                // only need to copy back if they are different
-                exchange.setException(submitted.getException());
-                exchange.getOut().copyFrom(msg);
-            }
+            return consumer.getAsyncProcessor().process(submitted, done -> {
+                try {
+                    Message msg = submitted.getMessage();
 
-            if (endpoint.isPropagateProperties()) {
-                exchange.getProperties().putAll(submitted.getProperties());
-            }
+                    if (headerFilterStrategy != null) {
+                        msg.getHeaders().entrySet()
+                                .removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(),
+                                        submitted));
+                    }
 
-            callback.done(done);
-        });
+                    if (exchange != submitted) {
+                        // only need to copy back if they are different
+                        exchange.setException(submitted.getException());
+                        exchange.getOut().copyFrom(msg);
+                    }
+
+                    if (endpoint.isPropagateProperties()) {
+                        exchange.getProperties().putAll(submitted.getProperties());
+                    }
+                } catch (Throwable e) {
+                    exchange.setException(e);
+                } finally {
+                    callback.done(done);
+                }
+            });
+
+        } catch (Throwable e) {
+            exchange.setException(e);
+        }
+
+        callback.done(true);
+        return true;
     }
-    
+
 }

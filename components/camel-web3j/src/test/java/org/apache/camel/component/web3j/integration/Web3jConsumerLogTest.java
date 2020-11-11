@@ -18,13 +18,13 @@ package org.apache.camel.component.web3j.integration;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.web3j.Web3jConstants.ETH_LOG_OBSERVABLE;
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 
-@Ignore("Requires Ganache instance with few transactions")
+@Disabled("Requires Ganache instance with few transactions")
 public class Web3jConsumerLogTest extends Web3jIntegrationTestSupport {
 
     @Test
@@ -41,11 +41,11 @@ public class Web3jConsumerLogTest extends Web3jIntegrationTestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("web3j://" + getUrl()
-                        + OPERATION.toLowerCase() + "=" + ETH_LOG_OBSERVABLE + "&"
-                        + "fromBlock=earliest&"
-                        + "toBlock=latest&"
-                        + "address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952")
-                        .to("mock:result");
+                     + OPERATION.toLowerCase() + "=" + ETH_LOG_OBSERVABLE + "&"
+                     + "fromBlock=earliest&"
+                     + "toBlock=latest&"
+                     + "address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952")
+                             .to("mock:result");
             }
         };
     }

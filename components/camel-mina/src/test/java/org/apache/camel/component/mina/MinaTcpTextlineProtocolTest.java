@@ -18,7 +18,7 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MinaTcpTextlineProtocolTest extends BaseMinaTest {
 
@@ -28,7 +28,8 @@ public class MinaTcpTextlineProtocolTest extends BaseMinaTest {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader(String.format("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort()), body, "cheese", 123);
+        template.sendBodyAndHeader(String.format("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort()), body,
+                "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }
@@ -39,9 +40,9 @@ public class MinaTcpTextlineProtocolTest extends BaseMinaTest {
 
             public void configure() {
                 from(String.format("mina:tcp://localhost:%1$s?textline=true&sync=false", getPort()))
-                    .to("log:before?showAll=true")
-                    .to("mock:result")
-                    .to("log:after?showAll=true");
+                        .to("log:before?showAll=true")
+                        .to("mock:result")
+                        .to("log:after?showAll=true");
             }
         };
     }

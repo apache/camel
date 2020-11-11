@@ -28,8 +28,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
 /**
- * A {@link BeanRepository} implementation which looks up the objects in the Spring
- * {@link ApplicationContext}
+ * A {@link BeanRepository} implementation which looks up the objects in the Spring {@link ApplicationContext}
  */
 public class ApplicationContextBeanRepository implements BeanRepository {
     private ApplicationContext applicationContext;
@@ -42,15 +41,14 @@ public class ApplicationContextBeanRepository implements BeanRepository {
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object answer;
         try {
-            answer = applicationContext.getBean(name, type);
+            if (applicationContext.containsBean(name)) {
+                answer = applicationContext.getBean(name, type);
+            } else {
+                return null;
+            }
         } catch (NoSuchBeanDefinitionException e) {
             return null;
         } catch (BeanNotOfRequiredTypeException e) {
-            return null;
-        }
-
-        // just to be safe
-        if (answer == null) {
             return null;
         }
 
@@ -58,7 +56,7 @@ public class ApplicationContextBeanRepository implements BeanRepository {
             return type.cast(answer);
         } catch (Throwable e) {
             String msg = "Found bean: " + name + " in ApplicationContext: " + applicationContext
-                    + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+                         + " of type: " + answer.getClass().getName() + " expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);
         }
     }
@@ -66,7 +64,11 @@ public class ApplicationContextBeanRepository implements BeanRepository {
     @Override
     public Object lookupByName(String name) {
         try {
-            return applicationContext.getBean(name);
+            if (applicationContext.containsBean(name)) {
+                return applicationContext.getBean(name);
+            } else {
+                return null;
+            }
         } catch (NoSuchBeanDefinitionException e) {
             return null;
         }

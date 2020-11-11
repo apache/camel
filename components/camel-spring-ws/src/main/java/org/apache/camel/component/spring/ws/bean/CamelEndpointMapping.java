@@ -51,10 +51,8 @@ import org.springframework.ws.transport.context.TransportContextHolder;
 import org.springframework.xml.xpath.XPathExpression;
 
 /**
- * Spring {@link EndpointMapping} for mapping messages to corresponding Camel
- * endpoints. This class needs to be registered in the Spring
- * <tt>ApplicationContext</tt> when consuming messages using any of the
- * following URI schemes:
+ * Spring {@link EndpointMapping} for mapping messages to corresponding Camel endpoints. This class needs to be
+ * registered in the Spring <tt>ApplicationContext</tt> when consuming messages using any of the following URI schemes:
  * <p/>
  * <ul>
  * <li><tt>spring-ws:rootqname:</tt><br/>
@@ -73,14 +71,15 @@ import org.springframework.xml.xpath.XPathExpression;
  * Equivalent to endpoint mappings specified through
  * {@link org.springframework.ws.server.endpoint.mapping.XPathPayloadEndpointMapping}
  * </ul>
- * 
+ *
  * @see org.springframework.ws.server.endpoint.mapping.AbstractEndpointMapping
  * @see org.springframework.ws.server.endpoint.mapping.PayloadRootQNameEndpointMapping
  * @see org.springframework.ws.server.endpoint.mapping.UriEndpointMapping
  * @see org.springframework.ws.server.endpoint.mapping.XPathPayloadEndpointMapping
  * @see org.springframework.ws.soap.server.endpoint.mapping.SoapActionEndpointMapping
  */
-public class CamelEndpointMapping extends AbstractEndpointMapping implements InitializingBean, CamelSpringWSEndpointMapping, SoapEndpointMapping, CamelContextAware {
+public class CamelEndpointMapping extends AbstractEndpointMapping
+        implements InitializingBean, CamelSpringWSEndpointMapping, SoapEndpointMapping, CamelContextAware {
 
     private static final String DOUBLE_QUOTE = "\"";
     private static final String URI_PATH_WILDCARD = "*";
@@ -107,32 +106,33 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
         for (EndpointMappingKey key : endpoints.keySet()) {
             String messageKey;
             switch (key.getType()) {
-            case ROOT_QNAME:
-                messageKey = getRootQName(messageContext);
-                break;
-            case SOAP_ACTION:
-                messageKey = getSoapAction(messageContext);
-                break;
-            case XPATHRESULT:
-                messageKey = getXPathResult(messageContext, key.getExpression());
-                break;
-            case URI:
-                messageKey = getUri();
-                break;
-            case URI_PATH:
-                messageKey = getUriPath();
+                case ROOT_QNAME:
+                    messageKey = getRootQName(messageContext);
+                    break;
+                case SOAP_ACTION:
+                    messageKey = getSoapAction(messageContext);
+                    break;
+                case XPATHRESULT:
+                    messageKey = getXPathResult(messageContext, key.getExpression());
+                    break;
+                case URI:
+                    messageKey = getUri();
+                    break;
+                case URI_PATH:
+                    messageKey = getUriPath();
 
-                if (messageKey != null && key.getLookupKey().endsWith(URI_PATH_WILDCARD)) {
-                    String lookupKey = key.getLookupKey().substring(0, key.getLookupKey().length() - 1);
+                    if (messageKey != null && key.getLookupKey().endsWith(URI_PATH_WILDCARD)) {
+                        String lookupKey = key.getLookupKey().substring(0, key.getLookupKey().length() - 1);
 
-                    if (messageKey.startsWith(lookupKey)) {
-                        return endpoints.get(key);
+                        if (messageKey.startsWith(lookupKey)) {
+                            return endpoints.get(key);
+                        }
                     }
-                }
 
-                break;
-            default:
-                throw new RuntimeCamelException("Invalid mapping type specified. Supported types are: root QName, SOAP action, XPath expression and URI");
+                    break;
+                default:
+                    throw new RuntimeCamelException(
+                            "Invalid mapping type specified. Supported types are: root QName, SOAP action, XPath expression and URI");
             }
             if (key.getLookupKey().equals(messageKey)) {
                 return endpoints.get(key);
@@ -142,7 +142,8 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
     }
 
     @Override
-    protected final EndpointInvocationChain createEndpointInvocationChain(MessageContext messageContext, Object endpoint, EndpointInterceptor[] interceptors) {
+    protected final EndpointInvocationChain createEndpointInvocationChain(
+            MessageContext messageContext, Object endpoint, EndpointInterceptor[] interceptors) {
         for (EndpointMappingKey key : endpoints.keySet()) {
             if (EndpointMappingType.SOAP_ACTION.equals(key.getType())) {
                 Object messageKey = getSoapAction(messageContext);
@@ -156,7 +157,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
 
     private String getSoapAction(MessageContext messageContext) {
         if (messageContext.getRequest() instanceof SoapMessage) {
-            SoapMessage request = (SoapMessage)messageContext.getRequest();
+            SoapMessage request = (SoapMessage) messageContext.getRequest();
             String soapAction = request.getSoapAction();
             if (StringUtils.hasLength(soapAction) && soapAction.startsWith(DOUBLE_QUOTE) && soapAction.endsWith(DOUBLE_QUOTE)) {
                 return soapAction.substring(1, soapAction.length() - 1);
@@ -201,7 +202,8 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
 
     private String getXPathResult(MessageContext messageContext, XPathExpression expression) {
         if (expression != null) {
-            Node domNode = camelContext.getTypeConverter().convertTo(Node.class, messageContext.getRequest().getPayloadSource());
+            Node domNode
+                    = camelContext.getTypeConverter().convertTo(Node.class, messageContext.getRequest().getPayloadSource());
             if (domNode != null) {
                 return expression.evaluateAsString(domNode.getFirstChild());
             }
@@ -250,7 +252,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
     @Override
     public final void setActorOrRole(String actorOrRole) {
         Assert.notNull(actorOrRole, "actorOrRole must not be null");
-        actorsOrRoles = new String[] {actorOrRole};
+        actorsOrRoles = new String[] { actorOrRole };
     }
 
     @Override

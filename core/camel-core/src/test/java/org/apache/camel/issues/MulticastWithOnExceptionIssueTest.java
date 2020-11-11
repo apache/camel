@@ -21,7 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MulticastWithOnExceptionIssueTest extends ContextTestSupport {
 
@@ -102,7 +104,8 @@ public class MulticastWithOnExceptionIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(Exception.class).handled(true).to("log:onException").to("mock:end4").transform(constant("Stop!"));
 
-                from("direct:start").multicast().to("mock:end1", "mock:end2").end().to("mock:end3").transform(constant("Hello to you too!"));
+                from("direct:start").multicast().to("mock:end1", "mock:end2").end().to("mock:end3")
+                        .transform(constant("Hello to you too!"));
             }
         };
     }

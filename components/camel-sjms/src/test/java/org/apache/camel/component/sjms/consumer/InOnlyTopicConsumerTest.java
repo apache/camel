@@ -19,12 +19,12 @@ package org.apache.camel.component.sjms.consumer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InOnlyTopicConsumerTest extends JmsTestSupport {
-    
+
     private static final String TEST_DESTINATION_NAME = "sjms:topic:in.only.topic.consumer.test";
-    
+
     @Override
     protected boolean useJmx() {
         return false;
@@ -39,13 +39,13 @@ public class InOnlyTopicConsumerTest extends JmsTestSupport {
         mock.expectedBodiesReceived(expectedBody);
 
         template.sendBody("direct:start", expectedBody);
-        
+
         mock.assertIsSatisfied();
 
     }
 
     /**
-     * @see org.apache.camel.test.junit4.CamelTestSupport#createRouteBuilder()
+     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
      *
      * @return
      * @throws Exception
@@ -55,10 +55,10 @@ public class InOnlyTopicConsumerTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to(TEST_DESTINATION_NAME);
-                
+                        .to(TEST_DESTINATION_NAME);
+
                 from(TEST_DESTINATION_NAME)
-                    .to("log:test.log.1?showBody=true", "mock:result");
+                        .to("log:test.log.1?showBody=true", "mock:result");
             }
         };
     }

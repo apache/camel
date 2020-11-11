@@ -19,14 +19,12 @@ package org.apache.camel.component.solr;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.test.junit5.params.Test;
 import org.apache.solr.client.solrj.beans.Field;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SolrAddBeansTest extends SolrComponentTestSupport {
-
-    public SolrAddBeansTest(SolrFixtures.TestServerType serverToTest) {
-        super(serverToTest);
-    }
 
     @Test
     public void testAddBeans() throws Exception {
@@ -36,22 +34,22 @@ public class SolrAddBeansTest extends SolrComponentTestSupport {
         //add bean1
         Item item1 = new Item();
         item1.id = TEST_ID;
-        item1.categories =  new String[] {"aaa", "bbb", "ccc"};
+        item1.categories = new String[] { "aaa", "bbb", "ccc" };
         beans.add(item1);
 
         //add bean2
         Item item2 = new Item();
         item2.id = TEST_ID2;
-        item2.categories =  new String[] {"aaa", "bbb", "ccc"};
+        item2.categories = new String[] { "aaa", "bbb", "ccc" };
         beans.add(item2);
 
         template.sendBodyAndHeader("direct:start", beans, SolrConstants.OPERATION, SolrConstants.OPERATION_ADD_BEANS);
         template.sendBodyAndHeader("direct:start", null, SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
 
         //verify
-        assertEquals("wrong number of entries found", 1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
-        assertEquals("wrong number of entries found", 1, executeSolrQuery("id:" + TEST_ID2).getResults().getNumFound());
-        assertEquals("wrong number of entries found", 2, executeSolrQuery("*:*").getResults().getNumFound());
+        assertEquals(1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound(), "wrong number of entries found");
+        assertEquals(1, executeSolrQuery("id:" + TEST_ID2).getResults().getNumFound(), "wrong number of entries found");
+        assertEquals(2, executeSolrQuery("*:*").getResults().getNumFound(), "wrong number of entries found");
     }
 
     public class Item {

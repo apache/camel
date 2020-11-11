@@ -32,8 +32,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DdbStreamConsumer.class);
 
     private final ShardIteratorHandler shardIteratorHandler;
     private String lastSeenSequenceNumber;
@@ -41,7 +45,7 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
     public DdbStreamConsumer(DdbStreamEndpoint endpoint, Processor processor) {
         this(endpoint, processor, new ShardIteratorHandler(endpoint));
     }
-    
+
     DdbStreamConsumer(DdbStreamEndpoint endpoint, Processor processor, ShardIteratorHandler shardIteratorHandler) {
         super(endpoint, processor);
         this.shardIteratorHandler = shardIteratorHandler;
@@ -52,14 +56,14 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
         GetRecordsResult result;
         try {
             GetRecordsRequest req = new GetRecordsRequest()
-                        .withShardIterator(shardIteratorHandler.getShardIterator(null))
-                        .withLimit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
+                    .withShardIterator(shardIteratorHandler.getShardIterator(null))
+                    .withLimit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
             result = getClient().getRecords(req);
         } catch (ExpiredIteratorException e) {
-            log.warn("Expired Shard Iterator, attempting to resume from {}", lastSeenSequenceNumber, e);
+            LOG.warn("Expired Shard Iterator, attempting to resume from {}", lastSeenSequenceNumber, e);
             GetRecordsRequest req = new GetRecordsRequest()
-                        .withShardIterator(shardIteratorHandler.getShardIterator(lastSeenSequenceNumber))
-                        .withLimit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
+                    .withShardIterator(shardIteratorHandler.getShardIterator(lastSeenSequenceNumber))
+                    .withLimit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
             result = getClient().getRecords(req);
         }
         List<Record> records = result.getRecords();
@@ -81,11 +85,11 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
         while (!exchanges.isEmpty()) {
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
 
-            log.trace("Processing exchange [{}] started.", exchange);
+            LOG.trace("Processing exchange [{}] started.", exchange);
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    log.trace("Processing exchange [{}] done.", exchange);
+                    LOG.trace("Processing exchange [{}] done.", exchange);
                 }
             });
             processedExchanges++;
@@ -110,16 +114,18 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
             providedSeqNum = new BigInteger(lastSeenSequenceNumber);
             condition = BigIntComparisons.Conditions.LT;
         }
-        switch(getEndpoint().getConfiguration().getIteratorType()) {
-        case AFTER_SEQUENCE_NUMBER:
-            condition = BigIntComparisons.Conditions.LT;
-            providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
-            break;
-        case AT_SEQUENCE_NUMBER:
-            condition = BigIntComparisons.Conditions.LTEQ;
-            providedSeqNum = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
-            break;
-        default:
+        switch (getEndpoint().getConfiguration().getIteratorType()) {
+            case AFTER_SEQUENCE_NUMBER:
+                condition = BigIntComparisons.Conditions.LT;
+                providedSeqNum
+                        = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
+                break;
+            case AT_SEQUENCE_NUMBER:
+                condition = BigIntComparisons.Conditions.LTEQ;
+                providedSeqNum
+                        = new BigInteger(getEndpoint().getConfiguration().getSequenceNumberProvider().getSequenceNumber());
+                break;
+            default:
         }
         for (Record record : records) {
             BigInteger recordSeqNum = new BigInteger(record.getDynamodb().getSequenceNumber());

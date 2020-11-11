@@ -26,9 +26,13 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(JCachePolicyProcessorTest.class);
@@ -212,10 +216,10 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
         //Send
         Exchange response = this.template().request("direct:cached-invalidkey",
-            e -> e.getMessage().setBody(body));
+                e -> e.getMessage().setBody(body));
 
         //Exception is on the exchange, cache is empty, onException was called.
-        assertIsInstanceOf(SimpleIllegalSyntaxException.class, response.getException().getCause());
+        assertIsInstanceOf(SimpleIllegalSyntaxException.class, response.getException());
         assertEquals("exception-" + body, response.getMessage().getBody());
         assertEquals(0, mock.getExchanges().size());
         assertFalse(cache.iterator().hasNext());
@@ -252,7 +256,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
         //Send
         Exchange response = this.template().request("direct:cached-exception",
-            e -> e.getMessage().setBody(key));
+                e -> e.getMessage().setBody(key));
 
         //Exception is on the exchange, cache is empty
         assertEquals("unexpected", response.getException().getMessage());
@@ -260,7 +264,6 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
         assertFalse(cache.iterator().hasNext());
 
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -274,29 +277,29 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                 jcachePolicy.setCache(cache);
 
                 from("direct:cached-simple")
-                    .policy(jcachePolicy)
-                    .to("mock:value");
+                        .policy(jcachePolicy)
+                        .to("mock:value");
 
                 //Example to wrap only part of the route
                 from("direct:cached-partial")
-                    .policy(jcachePolicy)
+                        .policy(jcachePolicy)
                         .log(LoggingLevel.DEBUG, LOG, "Executing route, not found in cache. body:${body}")
                         .to("mock:value")
-                    .end()
-                    .log(LoggingLevel.DEBUG, LOG, "This is always called. body:${body}")
-                    .to("mock:unwrapped");
+                        .end()
+                        .log(LoggingLevel.DEBUG, LOG, "This is always called. body:${body}")
+                        .to("mock:unwrapped");
 
                 //Cache after exception handling
                 from("direct:cached-exception")
-                    .onException(Exception.class)
-                    .onWhen(exceptionMessage().isEqualTo("test"))
-                    .handled(true)
-                    .setBody(simple("handled-${body}"))
-                    .end()
+                        .onException(Exception.class)
+                        .onWhen(exceptionMessage().isEqualTo("test"))
+                        .handled(true)
+                        .setBody(simple("handled-${body}"))
+                        .end()
 
-                    .policy(jcachePolicy)
-                    .to("mock:value")
-                    .throwException(new Exception("test"));
+                        .policy(jcachePolicy)
+                        .to("mock:value")
+                        .throwException(new Exception("test"));
 
                 //Closed cache
                 cache = cacheManager.createCache("closed", new MutableConfiguration<>());
@@ -305,9 +308,8 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                 jcachePolicy.setCache(cache);
 
                 from("direct:cached-closed")
-                    .policy(jcachePolicy)
-                    .to("mock:value");
-
+                        .policy(jcachePolicy)
+                        .to("mock:value");
 
                 //Use ${header.mykey} as the key
                 jcachePolicy = new JCachePolicy();
@@ -315,8 +317,8 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                 jcachePolicy.setKeyExpression(simple("${header.mykey}"));
 
                 from("direct:cached-byheader")
-                    .policy(jcachePolicy)
-                    .to("mock:value");
+                        .policy(jcachePolicy)
+                        .to("mock:value");
 
                 //Use an invalid keyExpression
                 jcachePolicy = new JCachePolicy();
@@ -324,12 +326,12 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                 jcachePolicy.setKeyExpression(simple("${unexpected}"));
 
                 from("direct:cached-invalidkey")
-                    .onException(Exception.class)
-                    .setBody(simple("exception-${body}"))
-                    .end()
+                        .onException(Exception.class)
+                        .setBody(simple("exception-${body}"))
+                        .end()
 
-                    .policy(jcachePolicy)
-                    .to("mock:value");
+                        .policy(jcachePolicy)
+                        .to("mock:value");
             }
         };
     }

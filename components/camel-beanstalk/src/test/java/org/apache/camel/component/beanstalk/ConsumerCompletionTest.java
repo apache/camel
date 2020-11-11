@@ -25,8 +25,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.atLeast;
@@ -36,10 +39,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisabledOnOs(OS.WINDOWS)
 public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
-    private String testMessage = "hello, world";
+    private final String testMessage = "hello, world";
     private boolean shouldIdie;
-    private Processor processor = new Processor() {
+    private final Processor processor = new Processor() {
         @Override
         public void process(Exchange exchange) throws InterruptedException {
             if (shouldIdie) {
@@ -49,10 +53,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
     };
 
     @Test
-    public void testDeleteOnComplete() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+    void testDeleteOnComplete() throws Exception {
 
         final long jobId = 111;
         final byte[] payload = Helper.stringToBytes(testMessage);
@@ -82,7 +83,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
     }
 
     @Test
-    public void testReleaseOnFailure() throws Exception {
+    void testReleaseOnFailure() throws Exception {
         shouldIdie = true;
         final long jobId = 111;
         final long priority = BeanstalkComponent.DEFAULT_PRIORITY;
@@ -113,10 +114,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
     }
 
     @Test
-    public void testBeanstalkException() throws Exception {
-        if (!canTest()) {
-            return;
-        }
+    void testBeanstalkException() throws Exception {
 
         shouldIdie = false;
         final Job jobMock = mock(Job.class);

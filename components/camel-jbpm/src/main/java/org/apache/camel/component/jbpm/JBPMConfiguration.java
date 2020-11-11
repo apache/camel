@@ -161,8 +161,7 @@ public class JBPMConfiguration {
     }
 
     /**
-     * the data associated with this event when signalEvent operation is
-     * performed
+     * the data associated with this event when signalEvent operation is performed
      */
     public void setEvent(Object event) {
         this.event = event;
@@ -393,8 +392,7 @@ public class JBPMConfiguration {
     }
 
     /**
-     * Sets if event produced by emitter should be sent as single items or
-     * complete collection
+     * Sets if event produced by emitter should be sent as single items or complete collection
      */
     public void setEmitterSendItems(Boolean emiterSendItems) {
         this.emitterSendItems = emiterSendItems;
@@ -402,11 +400,16 @@ public class JBPMConfiguration {
 
     @Override
     public String toString() {
-        return "JBPMConfiguration [connectionURL=" + connectionURL + ", operation=" + operation + ", deploymentId=" + deploymentId + ", processInstanceId=" + processInstanceId
-               + ", value=" + value + ", processId=" + processId + ", eventType=" + eventType + ", event=" + event + ", maxNumber=" + maxNumber + ", identifier=" + identifier
-               + ", workItemId=" + workItemId + ", taskId=" + taskId + ", userId=" + userId + ", page=" + page + ", pageSize=" + pageSize + ", targetUserId=" + targetUserId
-               + ", attachmentId=" + attachmentId + ", contentId=" + contentId + ", task=" + task + ", entities=" + entities + ", statuses=" + statuses + ", userName=" + userName
-               + ", password=" + password + ", timeout=" + timeout + ", parameters=" + parameters + ", extraJaxbClasses=" + Arrays.toString(extraJaxbClasses)
+        return "JBPMConfiguration [connectionURL=" + connectionURL + ", operation=" + operation + ", deploymentId="
+               + deploymentId + ", processInstanceId=" + processInstanceId
+               + ", value=" + value + ", processId=" + processId + ", eventType=" + eventType + ", event=" + event
+               + ", maxNumber=" + maxNumber + ", identifier=" + identifier
+               + ", workItemId=" + workItemId + ", taskId=" + taskId + ", userId=" + userId + ", page=" + page + ", pageSize="
+               + pageSize + ", targetUserId=" + targetUserId
+               + ", attachmentId=" + attachmentId + ", contentId=" + contentId + ", task=" + task + ", entities=" + entities
+               + ", statuses=" + statuses + ", userName=" + userName
+               + ", password=" + password + ", timeout=" + timeout + ", parameters=" + parameters + ", extraJaxbClasses="
+               + Arrays.toString(extraJaxbClasses)
                + ", eventListenerType=" + eventListenerType + "]";
     }
 }

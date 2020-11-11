@@ -16,25 +16,38 @@
  */
 package org.apache.camel.management;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
+import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A JMX capable {@link org.apache.camel.spi.ManagementStrategy} that Camel by default uses if possible.
  * <p/>
- * Camel detects whether its possible to use this JMX capable strategy and if <b>not</b> then Camel
- * will fallback to the {@link DefaultManagementStrategy} instead.
+ * Camel detects whether its possible to use this JMX capable strategy and if <b>not</b> then Camel will fallback to the
+ * {@link DefaultManagementStrategy} instead.
  *
  * @see org.apache.camel.spi.ManagementStrategy
  */
+@ManagedResource(description = "Managed JmxManagementStrategy")
 public class JmxManagementStrategy extends DefaultManagementStrategy {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmxManagementStrategy.class);
+
+    private final List<Object> managed = new ArrayList<>();
+    private int counter;
 
     public JmxManagementStrategy() {
     }
@@ -47,17 +60,27 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
 
     @Override
     public void manageObject(Object managedObject) throws Exception {
+        if (!isStartingOrStarted()) {
+            managed.add(managedObject);
+            return;
+        }
         ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
             getManagementAgent().register(managedObject, objectName);
+            counter++;
         }
     }
 
     @Override
     public void unmanageObject(Object managedObject) throws Exception {
+        if (!isStartingOrStarted()) {
+            managed.remove(managedObject);
+            return;
+        }
         ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
             getManagementAgent().unregister(objectName);
+            counter--;
         }
     }
 
@@ -69,7 +92,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
                 return getManagementAgent().isRegistered(name);
             }
         } catch (Exception e) {
-            log.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
+            LOG.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
         }
         return false;
     }
@@ -81,7 +104,7 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
                 return getManagementAgent().isRegistered((ObjectName) name);
             }
         } catch (Exception e) {
-            log.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
+            LOG.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
         }
         return false;
     }
@@ -91,10 +114,23 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
         return true;
     }
 
+    @ManagedAttribute(description = "Number of managed MBean instances")
+    public int getManagedCount() {
+        return counter;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        LOG.info("JMX is enabled");
+        super.doInit();
+    }
+
     @Override
     protected void doStart() throws Exception {
-        log.info("JMX is enabled");
-        doStartManagementStrategy();
+        super.doStart();
+        for (Object o : managed) {
+            manageObject(o);
+        }
     }
 
     @Override

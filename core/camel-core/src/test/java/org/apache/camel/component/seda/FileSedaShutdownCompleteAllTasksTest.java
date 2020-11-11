@@ -25,15 +25,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
 
     private String url = "file:target/data/seda?initialDelay=0&delay=10";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/seda");
         super.setUp();
@@ -54,8 +56,8 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(url).routeId("route1")
-                    // let it complete all tasks during shutdown
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").to("seda:foo");
+                        // let it complete all tasks during shutdown
+                        .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("log:bar").to("mock:bar").process(new Processor() {
                     boolean first = true;
@@ -85,7 +87,7 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
         context.stop();
 
         // should route all 5
-        assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
+        assertEquals(5, bar.getReceivedCounter(), "Should complete all messages");
     }
 
 }

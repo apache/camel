@@ -19,7 +19,9 @@ package org.apache.camel.component.mina;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinaMaxLineLengthTest extends BaseMinaTest {
 
@@ -31,7 +33,9 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
         }
 
         // START SNIPPET: e3
-        String out = (String) template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000", getPort()), request);
+        String out = (String) template.requestBody(String.format(
+                "mina:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000",
+                getPort()), request);
         assertEquals(request, out);
         // END SNIPPET: e3
     }
@@ -46,7 +50,9 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
                 // lets setup a server on port %1$s
                 // we set the sync option so we will send a reply
                 // and we let the request-reply be processed in the MyServerProcessor
-                from(String.format("mina:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000", getPort())).process(new MyServerProcessor());
+                from(String.format(
+                        "mina:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000",
+                        getPort())).process(new MyServerProcessor());
                 // END SNIPPET: e1
             }
         };
@@ -60,7 +66,7 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
             // get the input from the IN body
             String request = exchange.getIn().getBody(String.class);
             // echo back the response on the OUT body
-            exchange.getOut().setBody(request);
+            exchange.getMessage().setBody(request);
         }
     }
     // END SNIPPET: e2

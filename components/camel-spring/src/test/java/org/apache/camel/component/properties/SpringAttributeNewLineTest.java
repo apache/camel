@@ -17,9 +17,11 @@
 package org.apache.camel.component.properties;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringAttributeNewLineTest extends SpringTestSupport {
 
@@ -37,7 +39,7 @@ public class SpringAttributeNewLineTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
 
         Object stub = context.hasEndpoint("stub:GET    /v1/phonebook/companies/{companyCode}?oauth=OPTIONAL");
-        assertNotNull("Should have stub endpoint with double spaces", stub);
+        assertNotNull(stub, "Should have stub endpoint with double spaces");
     }
 
 }

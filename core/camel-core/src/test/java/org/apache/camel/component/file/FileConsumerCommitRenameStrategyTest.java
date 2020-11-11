@@ -24,8 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for the FileRenameStrategy using move options
@@ -33,7 +35,7 @@ import org.junit.Test;
 public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/done");
         deleteDirectory("target/data/reports");
@@ -71,18 +73,19 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // content of file should be Hello London
         String content = IOConverter.toString(new File("target/data/done/london.txt"), null);
-        assertEquals("The file should have been renamed replacing any existing files", "Hello London", content);
+        assertEquals("Hello London", content, "The file should have been renamed replacing any existing files");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/reports?move=../done/${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:report");
+                from("file://target/data/reports?move=../done/${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class)
+                        .to("mock:report");
             }
         };
     }

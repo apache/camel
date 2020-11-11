@@ -21,9 +21,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractVmTestSupport extends CamelTestSupport {
 
@@ -31,13 +31,14 @@ public abstract class AbstractVmTestSupport extends CamelTestSupport {
     protected ProducerTemplate template2;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context2 = new DefaultCamelContext();
         template2 = context2.createProducerTemplate();
 
-        ServiceHelper.startService(template2, context2);
+        ServiceHelper.startService(template2);
+        context2.start();
 
         // add routes after CamelContext has been started
         RouteBuilder routeBuilder = createRouteBuilderForSecondContext();
@@ -47,13 +48,14 @@ public abstract class AbstractVmTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        ServiceHelper.stopService(context2, template2);
+        ServiceHelper.stopService(template2);
+        context2.stop();
         super.tearDown();
     }
 
-    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+    protected RouteBuilder createRouteBuilderForSecondContext() {
         return null;
     }
 }

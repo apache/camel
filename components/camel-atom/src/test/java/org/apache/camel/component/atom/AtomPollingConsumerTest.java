@@ -23,8 +23,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for AtomPollingConsumer
@@ -32,7 +36,7 @@ import org.junit.Test;
 public class AtomPollingConsumerTest extends CamelTestSupport {
 
     @Test
-    public void testNoSplitEntries() throws Exception {
+    void testNoSplitEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.assertIsSatisfied();
@@ -51,22 +55,22 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testUsingAtomUriParameter() throws Exception {
+    void testUsingAtomUriParameter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedMessageCount(1);
         mock.assertIsSatisfied();
     }
 
     @Test
-    public void testNoCamelParametersInFeedUri() throws Exception {
+    void testNoCamelParametersInFeedUri() {
         AtomEndpoint endpoint = context.getEndpoint("atom:file:src/test/data/feed.atom?splitEntries=false", AtomEndpoint.class);
         assertEquals("file:src/test/data/feed.atom", endpoint.getFeedUri());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
+            public void configure() {
                 from("atom:file:src/test/data/feed.atom?splitEntries=false").to("mock:result");
 
                 // this is a bit weird syntax that normally is not used using the feedUri parameter

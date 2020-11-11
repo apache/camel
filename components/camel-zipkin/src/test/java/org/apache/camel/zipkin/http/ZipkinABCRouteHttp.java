@@ -24,16 +24,20 @@ import zipkin2.reporter.urlconnection.URLConnectionSender;
 /**
  * Integration test requires running Zipkin running
  *
- * <p>The easiest way to run is locally:
- * <pre>{@code
+ * <p>
+ * The easiest way to run is locally:
+ * 
+ * <pre>
+ * {@code
  * curl -sSL https://zipkin.io/quickstart.sh | bash -s
  * java -jar zipkin.jar
- * }</pre>
+ * }
+ * </pre>
  */
 public class ZipkinABCRouteHttp extends ZipkinABCRouteTest {
-    @Override protected void setSpanReporter(ZipkinTracer zipkin) {
+    @Override
+    protected void setSpanReporter(ZipkinTracer zipkin) {
         zipkin.setSpanReporter(
-            AsyncReporter.create(URLConnectionSender.create("http://locahost:9411/api/v2/spans"))
-        );
+                AsyncReporter.create(URLConnectionSender.create("http://locahost:9411/api/v2/spans")));
     }
 }

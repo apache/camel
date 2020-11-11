@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.sqs.integration;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.amazonaws.services.sqs.AmazonSQS;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,12 +28,24 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.sqs.SqsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.infra.aws.common.SystemPropertiesAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws.common.TestAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.aws.services.AWSServiceFactory;
+import org.apache.camel.test.infra.common.SharedNameGenerator;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SqsProducerBatchSendFifoIntegrationTest extends CamelTestSupport {
+
+    @SuppressWarnings("unused")
+    @RegisterExtension
+    public static AWSService<AmazonSQS> service = AWSServiceFactory.createSQSService();
+
+    @RegisterExtension
+    public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -61,15 +74,28 @@ public class SqsProducerBatchSendFifoIntegrationTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final String sqsEndpointUri = String.format("aws-sqs://camel-1.fifo?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&messageGroupIdStrategy=useExchangeId"
-                                                    + "&messageDeduplicationIdStrategy=useContentBasedDeduplication");
+        TestAWSCredentialsProvider awsCredentialsProvider = new SystemPropertiesAWSCredentialsProvider();
+
+        final String sqsEndpointUri = String.format(
+                "aws-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=EU_WEST_1&messageGroupIdStrategy=useExchangeId"
+                                                    + "&messageDeduplicationIdStrategy=useContentBasedDeduplication&configuration=#class:%s",
+                sharedNameGenerator.getName(),
+                awsCredentialsProvider.getCredentials().getAWSAccessKeyId(),
+                awsCredentialsProvider.getCredentials().getAWSSecretKey(),
+                TestSqsConfiguration.class.getName());
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").startupOrder(2).setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage")).to(sqsEndpointUri);
+                from("direct:start").startupOrder(2).setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage"))
+                        .to(sqsEndpointUri);
 
-                from("aws-sqs://camel-1.fifo?accessKey=RAW(xxx)&secretKey=RAW(xxxx)&region=EU_WEST_1&deleteAfterRead=false").startupOrder(1).log("${body}").to("mock:result");
+                fromF("aws-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=EU_WEST_1&deleteAfterRead=false&configuration=#class:%s",
+                        sharedNameGenerator.getName(),
+                        awsCredentialsProvider.getCredentials().getAWSAccessKeyId(),
+                        awsCredentialsProvider.getCredentials().getAWSSecretKey(),
+                        TestSqsConfiguration.class.getName())
+                                .startupOrder(1).log("${body}").to("mock:result");
             }
         };
     }

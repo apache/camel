@@ -22,15 +22,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.chatscript.ChatScriptMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChatScriptComponentTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(ChatScriptComponentTest.class);
 
     @Test
     public void testChatScript() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
+        mock.expectedMinimumMessageCount(1);
         Thread.sleep(100);
         assertMockEndpointsSatisfied();
     }
@@ -47,23 +50,23 @@ public class ChatScriptComponentTest extends CamelTestSupport {
                 String rq2 = "";
                 String rq3 = "";
                 try {
-                        rq = new ObjectMapper().writeValueAsString(rqMsg);
-                        rq2 = new ObjectMapper().writeValueAsString(rq2Msg);
-                        rq3 = new ObjectMapper().writeValueAsString(rq3Msg);
+                    rq = new ObjectMapper().writeValueAsString(rqMsg);
+                    rq2 = new ObjectMapper().writeValueAsString(rq2Msg);
+                    rq3 = new ObjectMapper().writeValueAsString(rq3Msg);
                 } catch (JsonProcessingException e) {
-                        e.printStackTrace();
+                    LOG.warn("Failed processing JSON: {}", e.getMessage(), e);
                 }
                 from("timer://foo?repeatCount=1")
-                .setBody(new SimpleExpression(rq))
-                .to("chatscript://localhost:1024/Harry?resetchat=true")
-                .log("Response 2 = ${body}")
-                .setBody(new SimpleExpression(rq2))
-                .to("chatscript://localhost:1024/Harry")
-                .log("Response 3 = ${body}")
-                .setBody(new SimpleExpression(rq3))
-                .to("chatscript://localhost:1024/Harry")
-                .log("Response 4 = ${body}")
-                    .to("mock:result");
+                        .setBody(new SimpleExpression(rq))
+                        .to("chatscript://localhost:1024/Harry?resetchat=true")
+                        .log("Response 2 = ${body}")
+                        .setBody(new SimpleExpression(rq2))
+                        .to("chatscript://localhost:1024/Harry")
+                        .log("Response 3 = ${body}")
+                        .setBody(new SimpleExpression(rq3))
+                        .to("chatscript://localhost:1024/Harry")
+                        .log("Response 4 = ${body}")
+                        .to("mock:result");
             }
         };
     }

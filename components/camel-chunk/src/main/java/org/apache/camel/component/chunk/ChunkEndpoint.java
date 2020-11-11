@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.x5.template.Chunk;
 import com.x5.template.Theme;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -41,26 +42,30 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_RESOURCE_URI
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 
 /**
- * Transforms the message using a Chunk template.
+ * Transform messages using Chunk templating engine.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true,
+             category = { Category.TRANSFORMATION })
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;
     private Chunk chunk;
-    
+
+    @UriParam(defaultValue = "false")
+    private boolean allowTemplateFromHeader;
+
     @UriParam(description = "Define the encoding of the body")
     private String encoding;
-    
+
     @UriParam(description = "Define the themes folder to scan")
     private String themeFolder;
-    
+
     @UriParam(description = "Define the themes subfolder to scan")
     private String themeSubfolder;
-    
+
     @UriParam(description = "Define the theme layer to elaborate")
     private String themeLayer;
-    
+
     @UriParam(description = "Define the file extension of the template")
     private String extension;
 
@@ -90,9 +95,16 @@ public class ChunkEndpoint extends ResourceEndpoint {
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         boolean fromTemplate;
-        String newResourceUri = exchange.getIn().getHeader(CHUNK_RESOURCE_URI, String.class);
+
+        String newResourceUri = null;
+        if (allowTemplateFromHeader) {
+            newResourceUri = exchange.getIn().getHeader(CHUNK_RESOURCE_URI, String.class);
+        }
         if (newResourceUri == null) {
-            String newTemplate = exchange.getIn().getHeader(CHUNK_TEMPLATE, String.class);
+            String newTemplate = null;
+            if (allowTemplateFromHeader) {
+                newTemplate = exchange.getIn().getHeader(CHUNK_TEMPLATE, String.class);
+            }
             Chunk newChunk;
             if (newTemplate == null) {
                 fromTemplate = false;
@@ -104,7 +116,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
             }
 
             // Execute Chunk
-            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange, isAllowContextMapAll());
             StringWriter writer = new StringWriter();
             newChunk.putAll(variableMap);
             newChunk.render(writer);
@@ -116,7 +128,8 @@ public class ChunkEndpoint extends ResourceEndpoint {
             out.setHeaders(exchange.getIn().getHeaders());
         } else {
             exchange.getIn().removeHeader(ChunkConstants.CHUNK_RESOURCE_URI);
-            ChunkEndpoint newEndpoint = getCamelContext().getEndpoint(CHUNK_ENDPOINT_URI_PREFIX + newResourceUri, ChunkEndpoint.class);
+            ChunkEndpoint newEndpoint
+                    = getCamelContext().getEndpoint(CHUNK_ENDPOINT_URI_PREFIX + newResourceUri, ChunkEndpoint.class);
             newEndpoint.onExchange(exchange);
         }
     }
@@ -124,9 +137,9 @@ public class ChunkEndpoint extends ResourceEndpoint {
     /**
      * Create a Chunk template
      *
-     * @param resourceReader Reader used to get template
-     * @param theme The theme
-     * @return Chunk
+     * @param  resourceReader Reader used to get template
+     * @param  theme          The theme
+     * @return                Chunk
      */
     private Chunk createChunk(Reader resourceReader, Theme theme, boolean fromTemplate) throws IOException {
         ClassLoader oldcl = Thread.currentThread().getContextClassLoader();
@@ -157,11 +170,11 @@ public class ChunkEndpoint extends ResourceEndpoint {
         }
         return chunk;
     }
-    
+
     private Theme getOrCreateTheme() throws IOException {
         if (theme == null) {
             if (themeFolder == null && themeSubfolder == null) {
-                theme = new Theme(); 
+                theme = new Theme();
             } else if (themeFolder != null && themeSubfolder == null) {
                 URL url = getCamelContext().getClassResolver().loadResourceAsURL(themeFolder);
                 theme = new Theme(url.getPath(), "");
@@ -190,7 +203,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
             return uri;
         }
     }
-    
+
     private String getResourceUriExtended() throws IOException {
         return themeLayer == null
                 ? getResourceUri()
@@ -212,7 +225,7 @@ public class ChunkEndpoint extends ResourceEndpoint {
     public void setThemeFolder(String themeFolder) {
         this.themeFolder = themeFolder;
     }
-    
+
     public String getThemeSubfolder() {
         return themeSubfolder;
     }
@@ -228,13 +241,27 @@ public class ChunkEndpoint extends ResourceEndpoint {
     public void setThemeLayer(String themeLayer) {
         this.themeLayer = themeLayer;
     }
-    
+
     public String getExtension() {
         return extension;
     }
 
     public void setExtension(String extension) {
         this.extension = extension;
+    }
+
+    public boolean isAllowTemplateFromHeader() {
+        return allowTemplateFromHeader;
+    }
+
+    /**
+     * Whether to allow to use resource template from header or not (default false).
+     *
+     * Enabling this allows to specify dynamic templates via message header. However this can be seen as a potential
+     * security vulnerability if the header is coming from a malicious user, so use this with care.
+     */
+    public void setAllowTemplateFromHeader(boolean allowTemplateFromHeader) {
+        this.allowTemplateFromHeader = allowTemplateFromHeader;
     }
 
     @Override

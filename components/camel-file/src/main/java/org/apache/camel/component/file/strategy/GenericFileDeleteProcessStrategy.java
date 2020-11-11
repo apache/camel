@@ -22,14 +22,20 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.support.ExchangeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFileDeleteProcessStrategy.class);
 
     private GenericFileRenamer<T> failureRenamer;
     private GenericFileRenamer<T> beginRenamer;
 
     @Override
-    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public boolean begin(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
 
         // must invoke super
         boolean result = super.begin(operations, endpoint, exchange, file);
@@ -39,7 +45,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
         // okay we got the file then execute the begin renamer
         if (beginRenamer != null) {
-            GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
+            GenericFile<T> newName = beginRenamer.renameFile(operations, exchange, file);
             GenericFile<T> to = renameFile(operations, file, newName);
             if (to != null) {
                 to.bindToExchange(exchange);
@@ -50,9 +56,12 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
     }
 
     @Override
-    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void commit(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
 
-        // special for file lock strategy as we must release that lock first before we can delete the file
+        // special for file lock strategy as we must release that lock first
+        // before we can delete the file
         boolean releaseEager = exclusiveReadLockStrategy instanceof FileLockExclusiveReadLockStrategy;
 
         if (releaseEager) {
@@ -75,13 +84,14 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
                     break;
                 }
 
-                // some OS can report false when deleting but the file is still deleted
+                // some OS can report false when deleting but the file is still
+                // deleted
                 // use exists to check instead
                 boolean exits = operations.existsFile(file.getAbsoluteFilePath());
                 if (!exits) {
                     deleted = true;
                 } else {
-                    log.trace("File was not deleted at this attempt will try again in 1 sec.: {}", file);
+                    LOG.trace("File was not deleted at this attempt will try again in 1 sec.: {}", file);
                     // sleep a bit and try again
                     Thread.sleep(1000);
                 }
@@ -98,21 +108,24 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
     }
 
     @Override
-    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+    public void rollback(
+            GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file)
+            throws Exception {
         try {
             deleteLocalWorkFile(exchange);
             operations.releaseRetrievedFileResources(exchange);
 
             // moved the failed file if specifying the moveFailed option
             if (failureRenamer != null) {
-                // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+                // create a copy and bind the file to the exchange to be used by
+                // the renamer to evaluate the file name
                 Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 file.bindToExchange(copy);
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
 
-                GenericFile<T> newName = failureRenamer.renameFile(copy, file);
+                GenericFile<T> newName = failureRenamer.renameFile(operations, copy, file);
                 renameFile(operations, file, newName);
             }
         } finally {

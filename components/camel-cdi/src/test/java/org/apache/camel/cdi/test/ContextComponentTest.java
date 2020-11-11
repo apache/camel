@@ -52,17 +52,17 @@ public class ContextComponentTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test classes
-            .addClasses(
-                DefaultCamelContextBean.class,
-                FirstNamedCamelContextBean.class,
-                FirstNamedCamelContextRoute.class,
-                SecondNamedCamelContextBean.class,
-                SecondNamedCamelContextRoute.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test classes
+                .addClasses(
+                        DefaultCamelContextBean.class,
+                        FirstNamedCamelContextBean.class,
+                        FirstNamedCamelContextRoute.class,
+                        SecondNamedCamelContextBean.class,
+                        SecondNamedCamelContextRoute.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -80,8 +80,10 @@ public class ContextComponentTest {
 
     @Test
     @InSequence(2)
-    public void sendMessageToInbound(@Uri("direct:inbound") ProducerTemplate inbound,
-                                     @Uri("mock:outbound") MockEndpoint outbound) throws InterruptedException {
+    public void sendMessageToInbound(
+            @Uri("direct:inbound") ProducerTemplate inbound,
+            @Uri("mock:outbound") MockEndpoint outbound)
+            throws InterruptedException {
         outbound.expectedMessageCount(1);
         outbound.expectedBodiesReceived("second-first-test");
 

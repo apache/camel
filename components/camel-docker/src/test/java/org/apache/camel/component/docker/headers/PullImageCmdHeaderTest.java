@@ -22,9 +22,11 @@ import com.github.dockerjava.api.command.PullImageCmd;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -34,15 +36,16 @@ import static org.mockito.ArgumentMatchers.eq;
  * Validates Pull Image Request headers are applied properly
  */
 public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
+    private static final Logger LOG = LoggerFactory.getLogger(PullImageCmdHeaderTest.class);
 
     @Mock
     private PullImageCmd mockObject;
 
     @Mock
     private PullImageResultCallback callback;
-    
+
     @Test
-    public void pullImageHeaderTest() {
+    void pullImageHeaderTest() {
 
         String repository = "docker/empty";
         String tag = "1.0";
@@ -52,7 +55,6 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
         headers.put(DockerConstants.DOCKER_REPOSITORY, repository);
         headers.put(DockerConstants.DOCKER_TAG, tag);
         headers.put(DockerConstants.DOCKER_REGISTRY, registry);
-
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 
@@ -69,7 +71,7 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
         try {
             Mockito.when(callback.awaitCompletion()).thenReturn(callback);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.warn("Interrupted while setting up mocks", e);
         }
     }
 

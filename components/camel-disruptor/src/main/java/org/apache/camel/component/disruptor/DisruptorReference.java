@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Holder for Disruptor references.
  * <p/>
- * This is used to keep track of the usages of the Disruptors, so we know when a Disruptor is no longer in use, and
- * can safely be discarded.
+ * This is used to keep track of the usages of the Disruptors, so we know when a Disruptor is no longer in use, and can
+ * safely be discarded.
  */
 public class DisruptorReference {
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorReference.class);
@@ -129,14 +129,16 @@ public class DisruptorReference {
         publishExchangeOnRingBuffer(exchange, getCurrentDisruptor().getRingBuffer());
     }
 
-    private void publishExchangeOnRingBuffer(final Exchange exchange,
-                                                             final RingBuffer<ExchangeEvent> ringBuffer) {
+    private void publishExchangeOnRingBuffer(
+            final Exchange exchange,
+            final RingBuffer<ExchangeEvent> ringBuffer) {
         final long sequence = ringBuffer.next();
         ringBuffer.get(sequence).setExchange(exchange, uniqueConsumerCount);
         ringBuffer.publish(sequence);
     }
 
-    private void tryPublishExchangeOnRingBuffer(final Exchange exchange, final RingBuffer<ExchangeEvent> ringBuffer) throws InsufficientCapacityException {
+    private void tryPublishExchangeOnRingBuffer(final Exchange exchange, final RingBuffer<ExchangeEvent> ringBuffer)
+            throws InsufficientCapacityException {
         final long sequence = ringBuffer.tryNext();
         ringBuffer.get(sequence).setExchange(exchange, uniqueConsumerCount);
         ringBuffer.publish(sequence);
@@ -198,7 +200,8 @@ public class DisruptorReference {
         uniqueConsumerCount = 0;
 
         for (final DisruptorEndpoint endpoint : endpoints) {
-            final Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> consumerEventHandlers = endpoint.createConsumerEventHandlers();
+            final Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> consumerEventHandlers
+                    = endpoint.createConsumerEventHandlers();
 
             if (consumerEventHandlers != null) {
                 uniqueConsumerCount += consumerEventHandlers.keySet().size();
@@ -218,8 +221,9 @@ public class DisruptorReference {
         return newDisruptor;
     }
 
-    private void handleEventsWith(Disruptor<ExchangeEvent> newDisruptor,
-                                  final LifecycleAwareExchangeEventHandler[] newHandlers) {
+    private void handleEventsWith(
+            Disruptor<ExchangeEvent> newDisruptor,
+            final LifecycleAwareExchangeEventHandler[] newHandlers) {
         if (newHandlers == null || newHandlers.length == 0) {
             handlers = new LifecycleAwareExchangeEventHandler[1];
             handlers[0] = new BlockingExchangeEventHandler();
@@ -257,7 +261,7 @@ public class DisruptorReference {
         } else if (executor instanceof ThreadPoolExecutor) {
             LOGGER.debug("Resizing existing executor to {} threads", newSize);
             //our thread pool executor is of type ThreadPoolExecutor, we know how to resize it
-            final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor)executor;
+            final ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
             //Java 9 support, checkout http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setCorePoolSize-int- 
             // and http://download.java.net/java/jdk9/docs/api/java/util/concurrent/ThreadPoolExecutor.html#setMaximumPoolSize-int-
             //for more information
@@ -289,7 +293,7 @@ public class DisruptorReference {
                     && handlers[0] instanceof BlockingExchangeEventHandler) {
                 // yes we did, unblock it so we can get rid of our backlog,
                 // The eventhandler will empty its pending exchanges in our temporary buffer
-                final BlockingExchangeEventHandler blockingExchangeEventHandler = (BlockingExchangeEventHandler)handlers[0];
+                final BlockingExchangeEventHandler blockingExchangeEventHandler = (BlockingExchangeEventHandler) handlers[0];
                 blockingExchangeEventHandler.unblock();
             }
 
@@ -349,7 +353,7 @@ public class DisruptorReference {
     public int getPendingExchangeCount() {
         try {
             if (!hasNullReference()) {
-                return (int)(getBufferSize() - getRemainingCapacity() + temporaryExchangeBuffer.size());
+                return (int) (getBufferSize() - getRemainingCapacity() + temporaryExchangeBuffer.size());
             }
         } catch (DisruptorNotStartedException e) {
             //fall through...
@@ -358,13 +362,13 @@ public class DisruptorReference {
     }
 
     public synchronized void addEndpoint(final DisruptorEndpoint disruptorEndpoint) {
-        LOGGER.debug("Adding Endpoint: " + disruptorEndpoint);
+        LOGGER.debug("Adding Endpoint: {}", disruptorEndpoint);
         endpoints.add(disruptorEndpoint);
         LOGGER.debug("Endpoint added: {}, new total endpoints {}", disruptorEndpoint, endpoints.size());
     }
 
     public synchronized void removeEndpoint(final DisruptorEndpoint disruptorEndpoint) {
-        LOGGER.debug("Removing Endpoint: " + disruptorEndpoint);
+        LOGGER.debug("Removing Endpoint: {}", disruptorEndpoint);
         if (getEndpointCount() == 1) {
             LOGGER.debug("Last Endpoint removed, shutdown disruptor");
             //Shutdown our disruptor
@@ -415,14 +419,15 @@ public class DisruptorReference {
     }
 
     /**
-     * When a consumer is added or removed, we need to create a new Disruptor due to its static configuration. However, we
-     * would like to reuse our thread pool executor and only add or remove the threads we need. On a reconfiguraion of the
-     * Disruptor, we need to atomically swap the current RingBuffer with a new and fully configured one in order to keep
-     * the producers operational without the risk of losing messages. Configuration of a RingBuffer by the Disruptor's
-     * start method has a side effect that immediately starts execution of the event processors (consumers) on the
-     * Executor passed as a constructor argument which is stored in a final field. In order to be able to delay actual
-     * execution of the event processors until the event processors of the previous RingBuffer are done processing and the
-     * thread pool executor has been resized to match the new consumer count, we delay their execution using this class.
+     * When a consumer is added or removed, we need to create a new Disruptor due to its static configuration. However,
+     * we would like to reuse our thread pool executor and only add or remove the threads we need. On a reconfiguraion
+     * of the Disruptor, we need to atomically swap the current RingBuffer with a new and fully configured one in order
+     * to keep the producers operational without the risk of losing messages. Configuration of a RingBuffer by the
+     * Disruptor's start method has a side effect that immediately starts execution of the event processors (consumers)
+     * on the Executor passed as a constructor argument which is stored in a final field. In order to be able to delay
+     * actual execution of the event processors until the event processors of the previous RingBuffer are done
+     * processing and the thread pool executor has been resized to match the new consumer count, we delay their
+     * execution using this class.
      */
     private static class DelayedExecutor implements Executor {
 

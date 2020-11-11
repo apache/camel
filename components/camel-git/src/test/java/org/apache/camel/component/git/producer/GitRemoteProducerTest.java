@@ -26,12 +26,15 @@ import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.Repository;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GitRemoteProducerTest extends GitTestSupport {
 
-    @Ignore("Require a remote git repository")
+    @Disabled("Require a remote git repository")
     @Test
     public void pushTest() throws Exception {
 
@@ -47,7 +50,7 @@ public class GitRemoteProducerTest extends GitTestSupport {
             }
         });
         File gitDir = new File(gitLocalRepo, ".git");
-        assertEquals(gitDir.exists(), true);
+        assertEquals(true, gitDir.exists());
 
         Status status = new Git(repository).status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
@@ -71,7 +74,8 @@ public class GitRemoteProducerTest extends GitTestSupport {
             public void configure() throws Exception {
                 from("direct:add").to("git://" + gitLocalRepo + "?operation=add");
                 from("direct:commit").to("git://" + gitLocalRepo + "?operation=commit");
-                from("direct:push").to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx");
+                from("direct:push")
+                        .to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx");
             }
         };
     }

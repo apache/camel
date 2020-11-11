@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -100,7 +103,8 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
     public void testControlBusStatusLevelWarn() throws Exception {
         assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
 
-        String status = template.requestBody("controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
+        String status
+                = template.requestBody("controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
         assertEquals("Stopped", status);
 
         context.getRouteController().startRoute("foo");
@@ -115,7 +119,8 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo").routeId("foo").noAutoStartup().to("mock:foo");
-                from("seda:current").routeId("current").to("controlbus:route?routeId=current&action=status&loggingLevel=WARN").to("mock:current");
+                from("seda:current").routeId("current").to("controlbus:route?routeId=current&action=status&loggingLevel=WARN")
+                        .to("mock:current");
             }
         };
     }

@@ -22,7 +22,7 @@ public class AhcProduceSSLContextParametersGetTest extends AhcProduceGetTest {
     protected String getTestServerEndpointUri() {
         return super.getTestServerEndpointUri() + "?sslContextParameters=#sslContextParameters";
     }
-    
+
     @Override
     protected String getAhcEndpointUri() {
         return super.getAhcEndpointUri() + "?sslContextParameters=#sslContextParameters";

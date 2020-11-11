@@ -22,16 +22,18 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainIoCNewRouteBuilderTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class MainIoCNewRouteBuilderTest {
 
     @Test
     public void testMainIoC() throws Exception {
         Main main = new Main();
-        main.addConfiguration(new MyConfiguration());
-        main.addRoutesBuilder(new MyRouteBuilder());
+        main.configure().addConfiguration(new MyConfiguration());
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -44,7 +46,8 @@ public class MainIoCNewRouteBuilderTest extends Assert {
 
         endpoint.assertIsSatisfied();
 
-        MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean mcb = (MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
+        MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean mcb
+                = (MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
         assertNotNull(mcb);
         assertEquals("Tiger", mcb.getName());
 
@@ -92,7 +95,7 @@ public class MainIoCNewRouteBuilderTest extends Assert {
     public static class MyRouteBuilder extends RouteBuilder {
 
         @BindToRegistry("bar")
-        public MyBar createBar(@PropertyInject(value = "hello") String hello) {
+        public MyBar createBar(@PropertyInject("hello") String hello) {
             return new MyBar(hello);
         }
 

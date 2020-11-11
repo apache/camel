@@ -24,9 +24,9 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.spring.ws.utils.TestUtil;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.client.WebServiceIOException;
@@ -34,6 +34,8 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.version.Addressing10;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport {
 
@@ -69,7 +71,7 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     private WebServiceTemplate webServiceTemplate;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
@@ -78,7 +80,8 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     @Test
     public void testWSAddressingAction() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback("http://www.stockquotes.edu/myUniqueAction"), TestUtil.NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback("http://www.stockquotes.edu/myUniqueAction"),
+                TestUtil.NOOP_SOURCE_EXTRACTOR);
         // here is localhost as to by default
         resultEndpointAction.expectedMinimumMessageCount(1);
         resultEndpointAction.assertIsSatisfied();
@@ -87,8 +90,11 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     @Test
     public void testWSAddressingTo() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback(new URI("http://www.stockquotes.edu/does-not-matter"), new Addressing10(),
-                                                                           new URI("http://myUniqueToUrl")), TestUtil.NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(source,
+                new ActionCallback(
+                        new URI("http://www.stockquotes.edu/does-not-matter"), new Addressing10(),
+                        new URI("http://myUniqueToUrl")),
+                TestUtil.NOOP_SOURCE_EXTRACTOR);
 
         resultEndpointTo.expectedMinimumMessageCount(1);
         resultEndpointTo.assertIsSatisfied();
@@ -97,8 +103,9 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     @Test
     public void testWSAddressingActionAndTo() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback(new URI("http://actionAndTo"), new Addressing10(), new URI("http://url4.to")),
-                                                TestUtil.NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(source,
+                new ActionCallback(new URI("http://actionAndTo"), new Addressing10(), new URI("http://url4.to")),
+                TestUtil.NOOP_SOURCE_EXTRACTOR);
         resultEndpointActionAndTo.expectedMinimumMessageCount(1);
         resultEndpointActionAndTo.assertIsSatisfied();
     }
@@ -106,8 +113,9 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     @Test
     public void testWSAddressingToAndAction() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback(new URI("http://toAndAction"), new Addressing10(), new URI("http://url3.to")),
-                                                TestUtil.NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(source,
+                new ActionCallback(new URI("http://toAndAction"), new Addressing10(), new URI("http://url3.to")),
+                TestUtil.NOOP_SOURCE_EXTRACTOR);
 
         resultEndpointToAndAction.expectedMinimumMessageCount(1);
         resultEndpointToAndAction.assertIsSatisfied();
@@ -116,8 +124,9 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     @Test
     public void testWSAddressingResolveToMoreSpecif() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback(new URI("http://action1"), new Addressing10(), new URI("http://url1.to")),
-                                                TestUtil.NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(source,
+                new ActionCallback(new URI("http://action1"), new Addressing10(), new URI("http://url1.to")),
+                TestUtil.NOOP_SOURCE_EXTRACTOR);
 
         resultEndpointToMoreSpecific.expectedMinimumMessageCount(1);
         resultEndpointToMoreSpecific.assertIsSatisfied();
@@ -129,8 +138,9 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     @Test
     public void testWSAddressingResolveActionMoreSpecif() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback(new URI("http://action2"), new Addressing10(), new URI("http://url2.to")),
-                                                TestUtil.NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(source,
+                new ActionCallback(new URI("http://action2"), new Addressing10(), new URI("http://url2.to")),
+                TestUtil.NOOP_SOURCE_EXTRACTOR);
 
         resultEndpointToMoreSpecific.expectedMinimumMessageCount(0);
         resultEndpointToMoreSpecific.assertIsSatisfied();
@@ -142,7 +152,8 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     @Test
     public void testWSAddressingActionResponseActions() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback("http://www.stockquotes.edu/WSAddresingActionReply"), TestUtil.NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback("http://www.stockquotes.edu/WSAddresingActionReply"),
+                TestUtil.NOOP_SOURCE_EXTRACTOR);
         resultOutputAndFault.expectedMinimumMessageCount(1);
         resultOutputAndFault.assertIsSatisfied();
     }
@@ -150,23 +161,29 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
     @Test
     public void testWSAddressingToResponseActions() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback(new URI("http://doesn-not-matter.com"), new Addressing10(), new URI("http://urlOutputAndFault2.to")),
-                                                TestUtil.NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(source,
+                new ActionCallback(
+                        new URI("http://doesn-not-matter.com"), new Addressing10(), new URI("http://urlOutputAndFault2.to")),
+                TestUtil.NOOP_SOURCE_EXTRACTOR);
         resultOutputAndFault2.expectedMinimumMessageCount(1);
         resultOutputAndFault2.assertIsSatisfied();
     }
 
-    @Test(expected = WebServiceIOException.class)
+    @Test
     public void testWrongWSAddressingAction() throws Exception {
-        StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new ActionCallback("http://this-is-a-wrong-ws-addressing-action"), TestUtil.NOOP_SOURCE_EXTRACTOR);
-        resultEndpointAction.assertIsSatisfied();
+        assertThrows(WebServiceIOException.class, () -> {
+            StreamSource source = new StreamSource(new StringReader(xmlBody));
+            webServiceTemplate.sendSourceAndReceive(source, new ActionCallback("http://this-is-a-wrong-ws-addressing-action"),
+                    TestUtil.NOOP_SOURCE_EXTRACTOR);
+            resultEndpointAction.assertIsSatisfied();
+        });
     }
 
     @Test
     public void testClassicalSoapHttpHeaderInterference() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlBody));
-        webServiceTemplate.sendSourceAndReceive(source, new SoapActionCallback("http://www.stockquotes.edu/soapHttpHeaderAction"), TestUtil.NOOP_SOURCE_EXTRACTOR);
+        webServiceTemplate.sendSourceAndReceive(source,
+                new SoapActionCallback("http://www.stockquotes.edu/soapHttpHeaderAction"), TestUtil.NOOP_SOURCE_EXTRACTOR);
 
         resultSoapAction.expectedMinimumMessageCount(1);
         resultSoapAction.assertIsSatisfied();
@@ -174,6 +191,8 @@ public class ConsumerWSAEndpointMappingRouteTest extends CamelSpringTestSupport 
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/component/spring/ws/addresing/ConsumerWSAEndpointMappingRouteTest-context.xml"});
+        return new ClassPathXmlApplicationContext(
+                new String[] {
+                        "org/apache/camel/component/spring/ws/addresing/ConsumerWSAEndpointMappingRouteTest-context.xml" });
     }
 }

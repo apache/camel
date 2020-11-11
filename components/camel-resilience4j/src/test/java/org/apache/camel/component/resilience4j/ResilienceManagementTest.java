@@ -20,8 +20,10 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ResilienceManagementTest extends CamelTestSupport {
 
@@ -53,23 +55,23 @@ public class ResilienceManagementTest extends CamelTestSupport {
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myResilience\"");
 
         // should be on start
-        String routeId = (String)mbeanServer.getAttribute(on, "RouteId");
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("start", routeId);
 
-        Integer num = (Integer)mbeanServer.getAttribute(on, "CircuitBreakerMinimumNumberOfCalls");
+        Integer num = (Integer) mbeanServer.getAttribute(on, "CircuitBreakerMinimumNumberOfCalls");
         assertEquals("100", num.toString());
 
-        Integer totalRequests = (Integer)mbeanServer.getAttribute(on, "NumberOfSuccessfulCalls");
+        Integer totalRequests = (Integer) mbeanServer.getAttribute(on, "NumberOfSuccessfulCalls");
         assertEquals(1, totalRequests.intValue());
 
-        Integer errorCount = (Integer)mbeanServer.getAttribute(on, "NumberOfFailedCalls");
+        Integer errorCount = (Integer) mbeanServer.getAttribute(on, "NumberOfFailedCalls");
         assertEquals(0, errorCount.intValue());
 
-        String state = (String)mbeanServer.getAttribute(on, "CircuitBreakerState");
+        String state = (String) mbeanServer.getAttribute(on, "CircuitBreakerState");
         assertEquals("CLOSED", state);
 
         mbeanServer.invoke(on, "transitionToOpenState", null, null);
-        state = (String)mbeanServer.getAttribute(on, "CircuitBreakerState");
+        state = (String) mbeanServer.getAttribute(on, "CircuitBreakerState");
         assertEquals("OPEN", state);
     }
 
@@ -78,8 +80,9 @@ public class ResilienceManagementTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("start").circuitBreaker().id("myResilience").to("direct:foo").onFallback().transform().constant("Fallback message").end()
-                    .to("mock:result");
+                from("direct:start").routeId("start").circuitBreaker().id("myResilience").to("direct:foo").onFallback()
+                        .transform().constant("Fallback message").end()
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }

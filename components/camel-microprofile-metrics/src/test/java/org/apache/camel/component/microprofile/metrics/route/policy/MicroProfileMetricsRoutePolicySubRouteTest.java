@@ -23,7 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.microprofile.metrics.MicroProfileMetricsTestSupport;
 import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.Timer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MicroProfileMetricsRoutePolicySubRouteTest extends MicroProfileMetricsTestSupport {
 
@@ -49,22 +51,19 @@ public class MicroProfileMetricsRoutePolicySubRouteTest extends MicroProfileMetr
             @Override
             public void configure() {
                 from("direct:foo").routeId("foo")
-                    .to("direct:bar")
-                    .to("mock:foo");
+                        .to("direct:bar")
+                        .to("mock:foo");
 
                 from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
             }
         };
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        MicroProfileMetricsRoutePolicyFactory factory = new MicroProfileMetricsRoutePolicyFactory();
-        factory.setMetricRegistry(metricRegistry);
-
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addRoutePolicyFactory(factory);
+        camelContext.addRoutePolicyFactory(new MicroProfileMetricsRoutePolicyFactory());
         return camelContext;
     }
 }

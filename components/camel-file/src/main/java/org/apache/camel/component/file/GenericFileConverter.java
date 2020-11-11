@@ -16,18 +16,14 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.function.Supplier;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
@@ -41,8 +37,6 @@ import org.slf4j.LoggerFactory;
 @Converter(generateLoader = true)
 public final class GenericFileConverter {
 
-    static Supplier<Charset> defaultCharset = Charset::defaultCharset;
-
     private static final Logger LOG = LoggerFactory.getLogger(GenericFileConverter.class);
 
     private GenericFileConverter() {
@@ -51,9 +45,10 @@ public final class GenericFileConverter {
 
     @Converter(fallback = true)
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
-        throws IOException, NoTypeConversionAvailableException {
+            throws IOException {
 
-        // use a fallback type converter so we can convert the embedded body if the value is GenericFile
+        // use a fallback type converter so we can convert the embedded body if
+        // the value is GenericFile
         if (GenericFile.class.isAssignableFrom(value.getClass())) {
 
             GenericFile<?> file = (GenericFile<?>) value;
@@ -68,11 +63,15 @@ public final class GenericFileConverter {
             TypeConverter tc = registry.lookup(type, from);
             if (tc != null) {
                 Object body = file.getBody();
-                // if its a file and we have a charset then use a reader to ensure we read the content using the given charset
-                // this is a bit complicated, but a file consumer can be configured with an explicit charset, which means
-                // we should read the file content with that given charset, and ignore any other charset properties
+                // if its a file and we have a charset then use a reader to
+                // ensure we read the content using the given charset
+                // this is a bit complicated, but a file consumer can be
+                // configured with an explicit charset, which means
+                // we should read the file content with that given charset, and
+                // ignore any other charset properties
 
-                // if the desired type is InputStream or Reader we can use the optimized methods
+                // if the desired type is InputStream or Reader we can use the
+                // optimized methods
                 if (Reader.class.isAssignableFrom(type)) {
                     Reader reader = genericFileToReader(file, exchange);
                     if (reader != null) {
@@ -86,11 +85,14 @@ public final class GenericFileConverter {
                     }
                 }
 
-                // okay if the file has a charset configured then we must try to load the file using that charset
-                // which mean we have to use the Reader first, and then convert from there
+                // okay if the file has a charset configured then we must try to
+                // load the file using that charset
+                // which mean we have to use the Reader first, and then convert
+                // from there
                 if (body instanceof File && file.getCharset() != null) {
                     Reader reader = genericFileToReader(file, exchange);
-                    // we dont want a reader back, so use the type converter registry to find a suitable converter
+                    // we dont want a reader back, so use the type converter
+                    // registry to find a suitable converter
                     TypeConverter readerTc = registry.lookup(type, Reader.class);
                     if (readerTc != null) {
                         // use the reader based type converter
@@ -101,7 +103,7 @@ public final class GenericFileConverter {
                 return tc.convertTo(type, exchange, body);
             }
         }
-        
+
         return null;
     }
 
@@ -123,7 +125,8 @@ public final class GenericFileConverter {
             }
         }
         if (exchange != null) {
-            // otherwise ensure the body is loaded as we want the input stream of the body
+            // otherwise ensure the body is loaded as we want the input stream
+            // of the body
             file.getBinding().loadContent(exchange, file);
             return exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file.getBody());
         } else {
@@ -133,14 +136,32 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static String genericFileToString(GenericFile<?> file, Exchange exchange) throws IOException, NoTypeConversionAvailableException {
+    public static byte[] genericFileToByteArray(GenericFile<?> file, Exchange exchange) throws IOException {
+        String str = genericFileToString(file, exchange);
+        if (str != null) {
+            // and use charset if the exchange was explicit configured or the file was configured, and fallback to system
+            String charset = ExchangeHelper.getCharsetName(exchange, false);
+            if (charset != null) {
+                return str.getBytes(charset);
+            } else {
+                return str.getBytes();
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @Converter
+    public static String genericFileToString(GenericFile<?> file, Exchange exchange)
+            throws IOException {
         // use reader first as it supports the file charset
-        BufferedReader reader = genericFileToReader(file, exchange);
+        Reader reader = genericFileToReader(file, exchange);
         if (reader != null) {
             return IOHelper.toString(reader);
         }
         if (exchange != null) {
-            // otherwise ensure the body is loaded as we want the content of the body
+            // otherwise ensure the body is loaded as we want the content of the
+            // body
             file.getBinding().loadContent(exchange, file);
             return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, file.getBody());
         } else {
@@ -166,7 +187,8 @@ public final class GenericFileConverter {
         return null;
     }
 
-    private static BufferedReader genericFileToReader(GenericFile<?> file, Exchange exchange) throws IOException {
+    @Converter
+    public static Reader genericFileToReader(GenericFile<?> file, Exchange exchange) throws IOException {
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
             File f = (File) file.getFile();
@@ -174,7 +196,8 @@ public final class GenericFileConverter {
             if (!f.exists()) {
                 return null;
             }
-            // and use the charset if the file was explicit configured with a charset
+            // and use the charset if the file was explicit configured with a
+            // charset
             String charset = file.getCharset();
             if (charset != null) {
                 LOG.debug("Read file {} with charset {}", f, file.getCharset());

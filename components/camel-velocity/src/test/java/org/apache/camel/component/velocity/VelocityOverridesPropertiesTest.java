@@ -19,11 +19,13 @@ package org.apache.camel.component.velocity;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VelocityOverridesPropertiesTest extends CamelTestSupport {
-    
+
     @Test
     public void testOverridingProperties() throws Exception {
         Exchange exchange = template.request("direct:a", new Processor() {
@@ -35,8 +37,8 @@ public class VelocityOverridesPropertiesTest extends CamelTestSupport {
             }
         });
 
-        assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getOut().getBody());
-        assertEquals("Christian", exchange.getOut().getHeader("name"));
+        assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getMessage().getBody());
+        assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
     @Override
@@ -44,7 +46,7 @@ public class VelocityOverridesPropertiesTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:a")
-                    .to("velocity:org/apache/camel/component/velocity/example.vm?propertiesFile=org/apache/camel/component/velocity/velocity-logging.properties");
+                        .to("velocity:org/apache/camel/component/velocity/example.vm?propertiesFile=org/apache/camel/component/velocity/velocity-logging.properties&allowContextMapAll=true");
             }
         };
     }

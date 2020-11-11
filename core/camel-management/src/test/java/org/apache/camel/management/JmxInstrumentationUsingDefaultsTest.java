@@ -31,15 +31,18 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * This test verifies JMX is enabled by default and it uses local mbean
- * server to conduct the test as connector server is not enabled by default.
+ * This test verifies JMX is enabled by default and it uses local mbean server to conduct the test as connector server
+ * is not enabled by default.
  */
 public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
@@ -72,22 +75,22 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
-        assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
+        assertEquals(2, s.size(), "Could not find 2 endpoints: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null);
-        assertEquals("Could not find 1 context: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 context: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
-        assertEquals("Could not find 1 processors: " + s, 2, s.size());
+        assertEquals(2, s.size(), "Could not find 1 processors: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=consumers,*"), null);
-        assertEquals("Could not find 1 consumers: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 consumers: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=producers,*"), null);
-        assertEquals("Could not find 1 producers: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 producers: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
-        assertEquals("Could not find 1 route: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 route: " + s);
     }
 
     @Test
@@ -108,65 +111,57 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
     protected void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
         Set<ObjectName> s = beanServer.queryNames(name, null);
-        assertEquals("Found mbeans: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Found mbeans: " + s);
 
         Iterator<ObjectName> iter = s.iterator();
         ObjectName pcob = iter.next();
 
-        Long valueofNumExchanges = (Long)beanServer.getAttribute(pcob, "ExchangesTotal");
-        assertNotNull("Expected attribute found. MBean registered under a "
-            + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
-            valueofNumExchanges);
+        Long valueofNumExchanges = (Long) beanServer.getAttribute(pcob, "ExchangesTotal");
+        assertNotNull(valueofNumExchanges, "Expected attribute found. MBean registered under a "
+                                           + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertEquals(Long.valueOf(1), valueofNumExchanges);
 
-        Long valueofNumCompleted = (Long)beanServer.getAttribute(pcob, "ExchangesCompleted");
-        assertNotNull("Expected attribute found. MBean registered under a "
-            + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
-            valueofNumCompleted);
+        Long valueofNumCompleted = (Long) beanServer.getAttribute(pcob, "ExchangesCompleted");
+        assertNotNull(valueofNumCompleted, "Expected attribute found. MBean registered under a "
+                                           + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertEquals(Long.valueOf(1), valueofNumCompleted);
 
-        Long valueofNumFailed = (Long)beanServer.getAttribute(pcob, "ExchangesFailed");
-        assertNotNull("Expected attribute found. MBean registered under a "
-            + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
-            valueofNumFailed);
+        Long valueofNumFailed = (Long) beanServer.getAttribute(pcob, "ExchangesFailed");
+        assertNotNull(valueofNumFailed, "Expected attribute found. MBean registered under a "
+                                        + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertEquals(Long.valueOf(0), valueofNumFailed);
 
-        Long valueofMinProcessingTime = (Long)beanServer.getAttribute(pcob, "MinProcessingTime");
-        assertNotNull("Expected attribute found. MBean registered under a "
-            + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
-            valueofMinProcessingTime);
+        Long valueofMinProcessingTime = (Long) beanServer.getAttribute(pcob, "MinProcessingTime");
+        assertNotNull(valueofMinProcessingTime, "Expected attribute found. MBean registered under a "
+                                                + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(valueofMinProcessingTime >= 0);
 
-        Long valueofMaxProcessingTime = (Long)beanServer.getAttribute(pcob, "MaxProcessingTime");
-        assertNotNull("Expected attribute found. MBean registered under a "
-            + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
-            valueofMaxProcessingTime);
+        Long valueofMaxProcessingTime = (Long) beanServer.getAttribute(pcob, "MaxProcessingTime");
+        assertNotNull(valueofMaxProcessingTime, "Expected attribute found. MBean registered under a "
+                                                + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(valueofMaxProcessingTime >= 0);
 
-        Long valueofMeanProcessingTime = (Long)beanServer.getAttribute(pcob, "MeanProcessingTime");
-        assertNotNull("Expected attribute found. MBean registered under a "
-            + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
-            valueofMeanProcessingTime);
+        Long valueofMeanProcessingTime = (Long) beanServer.getAttribute(pcob, "MeanProcessingTime");
+        assertNotNull(valueofMeanProcessingTime, "Expected attribute found. MBean registered under a "
+                                                 + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(valueofMeanProcessingTime >= valueofMinProcessingTime
-            && valueofMeanProcessingTime <= valueofMaxProcessingTime);
+                && valueofMeanProcessingTime <= valueofMaxProcessingTime);
 
-        Long totalProcessingTime = (Long)beanServer.getAttribute(pcob, "TotalProcessingTime");
-        assertNotNull("Expected attribute found. MBean registered under a "
-            + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
-            totalProcessingTime);
+        Long totalProcessingTime = (Long) beanServer.getAttribute(pcob, "TotalProcessingTime");
+        assertNotNull(totalProcessingTime, "Expected attribute found. MBean registered under a "
+                                           + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(totalProcessingTime >= 0);
 
-        Long lastProcessingTime = (Long)beanServer.getAttribute(pcob, "LastProcessingTime");
-        assertNotNull("Expected attribute found. MBean registered under a "
-            + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
-            lastProcessingTime);
+        Long lastProcessingTime = (Long) beanServer.getAttribute(pcob, "LastProcessingTime");
+        assertNotNull(lastProcessingTime, "Expected attribute found. MBean registered under a "
+                                          + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class");
         assertTrue(lastProcessingTime >= 0);
 
-        assertNotNull("Expected first completion time to be available",
-            beanServer.getAttribute(pcob, "FirstExchangeCompletedTimestamp"));
+        assertNotNull(beanServer.getAttribute(pcob, "FirstExchangeCompletedTimestamp"),
+                "Expected first completion time to be available");
 
-        assertNotNull("Expected last completion time to be available",
-            beanServer.getAttribute(pcob, "LastExchangeCompletedTimestamp"));
+        assertNotNull(beanServer.getAttribute(pcob, "LastExchangeCompletedTimestamp"),
+                "Expected last completion time to be available");
     }
 
     @Override
@@ -181,7 +176,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         releaseMBeanServers();
         super.setUp();
@@ -193,7 +188,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         try {
             super.tearDown();
@@ -205,8 +200,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
             System.clearProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
             System.clearProperty(JmxSystemPropertyKeys.DOMAIN);
             System.clearProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN);
-            System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
-            System.clearProperty(JmxSystemPropertyKeys.REGISTRY_PORT);
         }
     }
 

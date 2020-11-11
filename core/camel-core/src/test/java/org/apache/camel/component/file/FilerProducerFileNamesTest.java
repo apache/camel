@@ -22,17 +22,18 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test for the how FileProducer behaves a bit strangely when generating
- * filenames
+ * Unit test for the how FileProducer behaves a bit strangely when generating filenames
  */
 public class FilerProducerFileNamesTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/reports");
         super.setUp();
@@ -51,14 +52,14 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
         template.send("direct:report", exchange);
 
         File file = new File("target/data/reports/" + id);
-        assertEquals("File should exists", true, file.exists());
+        assertEquals(true, file.exists(), "File should exists");
     }
 
     @Test
     public void testProducerWithHeaderFileName() throws Exception {
         template.sendBody("direct:report2", "This is super good report");
         File file = new File("target/report-super.txt");
-        assertEquals("File should exists", true, file.exists());
+        assertEquals(true, file.exists(), "File should exists");
     }
 
     @Override

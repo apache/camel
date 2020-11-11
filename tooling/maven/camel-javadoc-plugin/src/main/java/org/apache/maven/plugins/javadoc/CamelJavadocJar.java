@@ -53,20 +53,19 @@ import org.codehaus.plexus.archiver.jar.Manifest;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 
 /**
- * Bundles the Javadoc documentation for <code>main Java code</code> in an
- * <b>NON aggregator</b> project into a jar using the standard <a href=
- * "http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc
- * Tool</a>.
+ * Bundles the Javadoc documentation for <code>main Java code</code> in an <b>NON aggregator</b> project into a jar
+ * using the standard <a href= "http://docs.oracle.com/javase/7/docs/technotes/guides/javadoc/">Javadoc Tool</a>.
  *
  * @version $Id: JavadocJar.java 1752018 2016-07-09 16:35:25Z rfscholte $
- * @since 2.0
+ * @since   2.0
  */
-@Mojo(name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Mojo(name = "jar", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE,
+      threadSafe = true)
 public class CamelJavadocJar extends AbstractJavadocMojo {
     /**
      * Includes all generated Javadoc files
      */
-    private static final String[] DEFAULT_INCLUDES = new String[] {"**/**"};
+    private static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
 
     /**
      * Excludes all processing files.
@@ -77,23 +76,21 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
      * @see AbstractJavadocMojo#ARGFILE_FILE_NAME
      * @see AbstractJavadocMojo#FILES_FILE_NAME
      */
-    private static final String[] DEFAULT_EXCLUDES = new String[] {DEBUG_JAVADOC_SCRIPT_NAME, OPTIONS_FILE_NAME, PACKAGES_FILE_NAME, ARGFILE_FILE_NAME, FILES_FILE_NAME};
+    private static final String[] DEFAULT_EXCLUDES = new String[] {
+            DEBUG_JAVADOC_SCRIPT_NAME, OPTIONS_FILE_NAME, PACKAGES_FILE_NAME, ARGFILE_FILE_NAME, FILES_FILE_NAME };
 
     // ----------------------------------------------------------------------
     // Mojo components
     // ----------------------------------------------------------------------
 
     /**
-     * Specifies the destination directory where javadoc saves the generated
-     * HTML files. <br>
+     * Specifies the destination directory where javadoc saves the generated HTML files. <br>
      * 
-     * @see <a href=
-     *      "http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#d">d</a>
-     *      option
+     * @see <a href= "http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#d">d</a> option
      */
     @Parameter(defaultValue = "${project.build.directory}/apidocstmp", required = true)
     protected File intermediateDirectory;
-    
+
     /**
      * Used for attaching the artifact in the project.
      */
@@ -113,9 +110,8 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
     // ----------------------------------------------------------------------
 
     /**
-     * Specifies the destination directory where javadoc saves the generated
-     * HTML files. See <a href=
-     * "http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#d">d</a>.
+     * Specifies the destination directory where javadoc saves the generated HTML files. See
+     * <a href= "http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#d">d</a>.
      *
      * @deprecated
      */
@@ -130,23 +126,20 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
     private String jarOutputDirectory;
 
     /**
-     * Specifies the filename that will be used for the generated jar file.
-     * Please note that <code>-javadoc</code> or <code>-test-javadoc</code> will
-     * be appended to the file name.
+     * Specifies the filename that will be used for the generated jar file. Please note that <code>-javadoc</code> or
+     * <code>-test-javadoc</code> will be appended to the file name.
      */
     @Parameter(property = "project.build.finalName")
     private String finalName;
 
     /**
-     * Specifies whether to attach the generated artifact to the project helper.
-     * <br/>
+     * Specifies whether to attach the generated artifact to the project helper. <br/>
      */
     @Parameter(property = "attach", defaultValue = "true")
     private boolean attach;
 
     /**
-     * The archive configuration to use. See
-     * <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
+     * The archive configuration to use. See <a href="http://maven.apache.org/shared/maven-archiver/index.html">Maven
      * Archiver Reference</a>.
      *
      * @since 2.5
@@ -159,8 +152,8 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
     };
 
     /**
-     * Path to the default MANIFEST file to use. It will be used if
-     * <code>useDefaultManifestFile</code> is set to <code>true</code>.
+     * Path to the default MANIFEST file to use. It will be used if <code>useDefaultManifestFile</code> is set to
+     * <code>true</code>.
      *
      * @since 2.5
      */
@@ -168,8 +161,7 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
     private File defaultManifestFile;
 
     /**
-     * Set this to <code>true</code> to enable the use of the
-     * <code>defaultManifestFile</code>. <br/>
+     * Set this to <code>true</code> to enable the use of the <code>defaultManifestFile</code>. <br/>
      *
      * @since 2.5
      */
@@ -193,9 +185,9 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
         try {
             Field f = AbstractJavadocMojo.class.getDeclaredField("additionalOptions");
             f.setAccessible(true);
-            String[] additionalOptions = (String[])f.get(this);
+            String[] additionalOptions = (String[]) f.get(this);
             if (additionalOptions == null || additionalOptions.length == 0) {
-                additionalOptions = new String[] {"-notimestamp"};
+                additionalOptions = new String[] { "-notimestamp" };
             } else {
                 List<String> l = new ArrayList<>(Arrays.asList(additionalOptions));
                 l.add("-notimestamp");
@@ -343,8 +335,7 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
     // ----------------------------------------------------------------------
 
     /**
-     * @return the wanted classifier, i.e. <code>javadoc</code> or
-     *         <code>test-javadoc</code>
+     * @return the wanted classifier, i.e. <code>javadoc</code> or <code>test-javadoc</code>
      */
     protected String getClassifier() {
         return classifier;
@@ -357,12 +348,11 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
     /**
      * Method that creates the jar file
      *
-     * @param javadocFiles the directory where the generated jar file will be
-     *            put
-     * @param jarFileName the filename of the generated jar file
-     * @return a File object that contains the generated jar file
+     * @param  javadocFiles      the directory where the generated jar file will be put
+     * @param  jarFileName       the filename of the generated jar file
+     * @return                   a File object that contains the generated jar file
      * @throws ArchiverException {@link ArchiverException}
-     * @throws IOException {@link IOException}
+     * @throws IOException       {@link IOException}
      */
     private File generateArchive(File javadocFiles, String jarFileName) throws ArchiverException, IOException {
         File javadocJar = new File(jarOutputDirectory, jarFileName);

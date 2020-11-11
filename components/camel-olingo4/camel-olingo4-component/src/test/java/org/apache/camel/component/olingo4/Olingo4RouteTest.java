@@ -18,22 +18,25 @@ package org.apache.camel.component.olingo4;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Olingo4RouteTest extends CamelTestSupport {
     protected static final String TEST_SERVICE_BASE_URL = "http://services.odata.org/TripPinRESTierService";
 
     @SuppressWarnings("unchecked")
     protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
-        return (T)template().requestBody(endpoint, body);
+        return (T) template().requestBody(endpoint, body);
     }
 
     @Test
     public void testRead() throws Exception {
         // Read entity set of the People object
-        final ClientEntitySet entities = (ClientEntitySet)requestBody("direct:readentities", null);
+        final ClientEntitySet entities = (ClientEntitySet) requestBody("direct:readentities", null);
         assertNotNull(entities);
         assertEquals(20, entities.getEntities().size());
     }

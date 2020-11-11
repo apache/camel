@@ -19,19 +19,23 @@ package org.apache.camel.model;
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LoadRestFromXmlTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("dummy-rest", new DummyRestConsumerFactory());
         jndi.bind("dummy-rest-api", new DummyRestProcessorFactory());
         return jndi;
@@ -39,7 +43,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
 
     @Test
     public void testLoadRestFromXml() throws Exception {
-        assertNotNull("Existing foo route should be there", context.getRoute("foo"));
+        assertNotNull(context.getRoute("foo"), "Existing foo route should be there");
 
         assertEquals(2, context.getRoutes().size());
 
@@ -51,10 +55,11 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
 
         // load rest from XML and add them to the existing camel context
         InputStream is = getClass().getResourceAsStream("barRest.xml");
-        RestsDefinition rests = ModelHelper.loadRestsDefinition(context, is);
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(ecc, is);
         context.addRestDefinitions(rests.getRests(), true);
 
-        assertNotNull("Loaded rest route should be there", context.getRoute("route1"));
+        assertNotNull(context.getRoute("route1"), "Loaded rest route should be there");
         assertEquals(3, context.getRoutes().size());
 
         // test that loaded route works

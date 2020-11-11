@@ -18,7 +18,9 @@ package org.apache.camel.component.jetty.async;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyAsyncTryCatchFinallyTest extends BaseJettyTest {
 
@@ -42,8 +44,10 @@ public class JettyAsyncTryCatchFinallyTest extends BaseJettyTest {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("jetty:http://localhost:{{port}}/myservice").convertBodyTo(String.class).doTry().to("mock:try").throwException(new IllegalArgumentException("Damn"))
-                    .doCatch(IllegalArgumentException.class).to("mock:catch").to("async:bye:camel").doFinally().to("mock:finally").to("async:bye:world").end().to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice").convertBodyTo(String.class).doTry().to("mock:try")
+                        .throwException(new IllegalArgumentException("Damn"))
+                        .doCatch(IllegalArgumentException.class).to("mock:catch").to("async:bye:camel").doFinally()
+                        .to("mock:finally").to("async:bye:world").end().to("mock:result");
             }
         };
     }

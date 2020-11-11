@@ -59,12 +59,11 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
 
             if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
                 addServer(
-                    DefaultServiceDefinition.builder()
-                        .withName(serviceName)
-                        .withHost(host)
-                        .withPort(Integer.parseInt(port))
-                        .build()
-                );
+                        DefaultServiceDefinition.builder()
+                                .withName(serviceName)
+                                .withHost(host)
+                                .withPort(Integer.parseInt(port))
+                                .build());
             }
         }
     }
@@ -72,7 +71,8 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
     /**
      * Set the servers.
      *
-     * @param servers servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
+     * @param servers servers separated by comma in the format:
+     *                [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
      */
     public void setServers(String servers) {
         this.services.clear();
@@ -88,7 +88,9 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
 
     /**
      * Add a server to the known list of servers.
-     * @param serverString servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
+     * 
+     * @param serverString servers separated by comma in the format:
+     *                     [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
      */
     public void addServer(String serverString) {
         DefaultServiceDefinition.parse(serverString).forEach(this::addServer);
@@ -104,10 +106,9 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
     @Override
     public List<ServiceDefinition> getServices(String name) {
         return Collections.unmodifiableList(
-            services.stream()
-                .filter(s -> Objects.isNull(s.getName()) || Objects.equals(name, s.getName()))
-                .collect(Collectors.toList())
-        );
+                services.stream()
+                        .filter(s -> Objects.isNull(s.getName()) || Objects.equals(name, s.getName()))
+                        .collect(Collectors.toList()));
     }
 
     // *************************************************************************
@@ -116,7 +117,7 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
 
     public static StaticServiceDiscovery forServices(Collection<ServiceDefinition> definitions) {
         StaticServiceDiscovery discovery = new StaticServiceDiscovery();
-        for (ServiceDefinition definition: definitions) {
+        for (ServiceDefinition definition : definitions) {
             discovery.addServer(definition);
         }
 
@@ -125,7 +126,7 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
 
     public static StaticServiceDiscovery forServices(ServiceDefinition... definitions) {
         StaticServiceDiscovery discovery = new StaticServiceDiscovery();
-        for (ServiceDefinition definition: definitions) {
+        for (ServiceDefinition definition : definitions) {
             discovery.addServer(definition);
         }
 

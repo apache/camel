@@ -20,11 +20,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DirtiesContext
 public class ServiceCallFilterTest extends SpringTestSupport {
@@ -46,9 +49,9 @@ public class ServiceCallFilterTest extends SpringTestSupport {
     // *********************
 
     private void assertHeader(Exchange exchange, String header, Object expectedValue) {
-        Assert.assertNotNull(exchange);
-        Assert.assertTrue(exchange.getIn().getHeaders().containsKey(header));
-        Assert.assertEquals(expectedValue, exchange.getIn().getHeader(header));
+        assertNotNull(exchange);
+        assertTrue(exchange.getIn().getHeaders().containsKey(header));
+        assertEquals(expectedValue, exchange.getIn().getHeader(header));
     }
 
     private Processor emptyProcessor() {

@@ -27,18 +27,18 @@ import javax.xml.transform.OutputKeys;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.jsse.KeyStoreParameters;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test all available encryption algorithms
  */
 public class EncryptionAlgorithmTest extends CamelTestSupport {
-    
+
     TestHelper xmlsecTestHelper = new TestHelper();
-    
+
     public EncryptionAlgorithmTest() throws Exception {
         // BouncyCastle is required for some algorithms
         if (Security.getProvider("BC") == null) {
@@ -46,7 +46,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
             Class<?> c = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
             cons = c.getConstructor(new Class[] {});
 
-            Provider provider = (java.security.Provider)cons.newInstance();
+            Provider provider = (java.security.Provider) cons.newInstance();
             Security.insertProviderAt(provider, 2);
         }
     }
@@ -55,21 +55,21 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     public boolean isUseRouteBuilder() {
         return false;
     }
-    
-    @Override 
-    @Before
+
+    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
     }
-    
+
     @Test
     public void testAES128() throws Exception {
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
         keygen.init(128);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -79,21 +79,21 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testAES128GCM() throws Exception {
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
         keygen.init(128);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -103,26 +103,25 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
 
-    
     @Test
     public void testAES192() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }
-        
+
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
         keygen.init(192);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -132,25 +131,25 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testAES192GCM() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }
-        
+
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
         keygen.init(192);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -160,26 +159,25 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
 
-    
     @Test
     public void testAES256() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }
-        
+
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
         keygen.init(256);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -189,25 +187,25 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testAES256GCM() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }
-        
+
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
         keygen.init(256);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -217,9 +215,9 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -231,7 +229,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         KeyGenerator keygen = KeyGenerator.getInstance("DESede");
         keygen.init(192);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -241,21 +239,21 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testSEED128() throws Exception {
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("SEED");
         keygen.init(128);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -265,21 +263,21 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testCAMELLIA128() throws Exception {
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("CAMELLIA");
         keygen.init(128);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -289,25 +287,25 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testCAMELLIA192() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }
-        
+
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("CAMELLIA");
         keygen.init(192);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -317,25 +315,25 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testCAMELLIA256() throws Exception {
         if (!TestHelper.UNRESTRICTED_POLICIES_INSTALLED) {
             return;
         }
-        
+
         // Set up the Key
         KeyGenerator keygen = KeyGenerator.getInstance("CAMELLIA");
         keygen.init(256);
         SecretKey key = keygen.generateKey();
-        
+
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setPassPhrase(key.getEncoded());
         xmlEncDataFormat.setSecureTagContents(true);
@@ -345,9 +343,9 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(xmlEncDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(xmlEncDataFormat).to("mock:decrypted");
+                        .marshal(xmlEncDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(xmlEncDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
@@ -361,17 +359,17 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         sendingDataFormat.setXmlCipherAlgorithm(XMLCipher.AES_128);
         sendingDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_OAEP);
         sendingDataFormat.setRecipientKeyAlias("recipient");
-        
+
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
         sendingDataFormat.setKeyOrTrustStoreParameters(tsParameters);
-        
+
         final XMLSecurityDataFormat receivingDataFormat = new XMLSecurityDataFormat();
         receivingDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_OAEP);
         receivingDataFormat.setRecipientKeyAlias("recipient");
         receivingDataFormat.setSecureTag("//cheesesites/italy/cheese");
-        
+
         KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
         ksParameters.setResource("recipient.ks");
@@ -380,14 +378,14 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(sendingDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(receivingDataFormat).to("mock:decrypted");
+                        .marshal(sendingDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(receivingDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-    
+
     @Test
     public void testRSAv15KW() throws Exception {
         final XMLSecurityDataFormat sendingDataFormat = new XMLSecurityDataFormat();
@@ -396,17 +394,17 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         sendingDataFormat.setXmlCipherAlgorithm(XMLCipher.AES_128);
         sendingDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_v1dot5);
         sendingDataFormat.setRecipientKeyAlias("recipient");
-        
+
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
         sendingDataFormat.setKeyOrTrustStoreParameters(tsParameters);
-        
+
         final XMLSecurityDataFormat receivingDataFormat = new XMLSecurityDataFormat();
         receivingDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_v1dot5);
         receivingDataFormat.setRecipientKeyAlias("recipient");
         receivingDataFormat.setSecureTag("//cheesesites/italy/cheese");
-        
+
         KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
         ksParameters.setResource("recipient.ks");
@@ -415,14 +413,14 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(sendingDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(receivingDataFormat).to("mock:decrypted");
+                        .marshal(sendingDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(receivingDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);
     }
-     
+
     @Test
     public void testRSAOAEP11KW() throws Exception {
         final XMLSecurityDataFormat sendingDataFormat = new XMLSecurityDataFormat();
@@ -431,17 +429,17 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         sendingDataFormat.setXmlCipherAlgorithm(XMLCipher.AES_128);
         sendingDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_OAEP_11);
         sendingDataFormat.setRecipientKeyAlias("recipient");
-        
+
         KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
         sendingDataFormat.setKeyOrTrustStoreParameters(tsParameters);
-        
+
         final XMLSecurityDataFormat receivingDataFormat = new XMLSecurityDataFormat();
         receivingDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_OAEP_11);
         receivingDataFormat.setRecipientKeyAlias("recipient");
         receivingDataFormat.setSecureTag("//cheesesites/italy/cheese");
-        
+
         KeyStoreParameters ksParameters = new KeyStoreParameters();
         ksParameters.setPassword("password");
         ksParameters.setResource("recipient.ks");
@@ -450,9 +448,9 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal(sendingDataFormat).to("mock:encrypted")
-                    .log("Body: + ${body}")
-                    .unmarshal(receivingDataFormat).to("mock:decrypted");
+                        .marshal(sendingDataFormat).to("mock:encrypted")
+                        .log("Body: + ${body}")
+                        .unmarshal(receivingDataFormat).to("mock:decrypted");
             }
         });
         xmlsecTestHelper.testDecryption(context);

@@ -26,17 +26,18 @@ import org.apache.cxf.clustering.FailoverFeature;
 import org.apache.cxf.clustering.RandomStrategy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FailOverFeatureTest {
-    
-    private static int port1 = CXFTestSupport.getPort1(); 
+
+    private static int port1 = CXFTestSupport.getPort1();
     private static int port2 = CXFTestSupport.getPort2();
     private static int port3 = CXFTestSupport.getPort3();
-    private static int port4 = AvailablePortFinder.getNextAvailable(); 
-    
+    private static int port4 = AvailablePortFinder.getNextAvailable();
+
     private static final String SERVICE_ADDRESS = "http://localhost:" + port1 + "/FailOverFeatureTest";
     private static final String PAYLOAD_PROXY_ADDRESS = "http://localhost:" + port2 + "/FailOverFeatureTest/proxy";
     private static final String POJO_PROXY_ADDRESS = "http://localhost:" + port3 + "/FailOverFeatureTest/proxy";
@@ -44,7 +45,7 @@ public class FailOverFeatureTest {
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
 
         // publish a web-service
@@ -57,7 +58,7 @@ public class FailOverFeatureTest {
     @Test
     public void testPojo() throws Exception {
         startRoutePojo();
-        Assert.assertEquals("hello", tryFailover(POJO_PROXY_ADDRESS));
+        assertEquals("hello", tryFailover(POJO_PROXY_ADDRESS));
         if (context2 != null) {
             context2.stop();
         }
@@ -66,7 +67,7 @@ public class FailOverFeatureTest {
     @Test
     public void testPayload() throws Exception {
         startRoutePayload();
-        Assert.assertEquals("hello", tryFailover(PAYLOAD_PROXY_ADDRESS));
+        assertEquals("hello", tryFailover(PAYLOAD_PROXY_ADDRESS));
         if (context1 != null) {
             context1.stop();
         }
@@ -114,7 +115,7 @@ public class FailOverFeatureTest {
                 FailoverFeature ff = new FailoverFeature();
                 ff.setStrategy(strategy);
 
-                CxfEndpoint endpoint = (CxfEndpoint)(endpoint(real));
+                CxfEndpoint endpoint = (CxfEndpoint) (endpoint(real));
                 endpoint.getFeatures().add(ff);
 
                 from(proxy).to(endpoint);
@@ -131,7 +132,7 @@ public class FailOverFeatureTest {
         factory.setServiceClass(HelloService.class);
         factory.setAddress(url);
 
-        HelloService client = (HelloService)factory.create();
+        HelloService client = (HelloService) factory.create();
         return client.sayHello();
     }
 

@@ -31,9 +31,9 @@ public interface MicroProfileMetricsEventNotifierNamingStrategy {
 
     default Tag[] getTags(ExchangeEvent event, Endpoint endpoint) {
         return new Tag[] {
-            new Tag(CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName()),
-            new Tag(ENDPOINT_NAME, endpoint.getEndpointUri()),
-            new Tag(EVENT_TYPE_TAG, event.getClass().getSimpleName()),
+                new Tag(CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName()),
+                new Tag(ENDPOINT_NAME, endpoint.getEndpointUri()),
+                new Tag(EVENT_TYPE_TAG, event.getClass().getSimpleName()),
         };
     }
 }

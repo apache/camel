@@ -19,23 +19,22 @@ package org.apache.camel.component.jms;
 import java.io.Serializable;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
 import javax.jms.ObjectMessage;
-import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConsumeJmsObjectMessageTest extends CamelTestSupport {
     protected JmsTemplate jmsTemplate;
@@ -46,16 +45,14 @@ public class ConsumeJmsObjectMessageTest extends CamelTestSupport {
         endpoint.expectedMessageCount(1);
 
         jmsTemplate.setPubSubDomain(false);
-        jmsTemplate.send("test.object", new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                ObjectMessage msg = session.createObjectMessage();
+        jmsTemplate.send("test.object", session -> {
+            ObjectMessage msg = session.createObjectMessage();
 
-                MyUser user = new MyUser();
-                user.setName("Claus");
-                msg.setObject(user);
+            MyUser user = new MyUser();
+            user.setName("Claus");
+            msg.setObject(user);
 
-                return msg;
-            }
+            return msg;
         });
 
         endpoint.assertIsSatisfied();
@@ -87,7 +84,7 @@ public class ConsumeJmsObjectMessageTest extends CamelTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         endpoint = getMockEndpoint("mock:result");

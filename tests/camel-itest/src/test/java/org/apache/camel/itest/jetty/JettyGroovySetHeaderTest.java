@@ -19,17 +19,18 @@ package org.apache.camel.itest.jetty;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyGroovySetHeaderTest extends CamelTestSupport {
 
     private int port;
 
     @Test
-    public void testJettyGroovySetHeader() throws Exception {
+    void testJettyGroovySetHeader() throws Exception {
         getMockEndpoint("mock:before").message(0).header("beer").isNull();
 
         MockEndpoint result = getMockEndpoint("mock:result");
@@ -43,12 +44,12 @@ public class JettyGroovySetHeaderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("jetty:http://localhost:" + port + "/beer")
                         .convertBodyTo(String.class)
                         .to("mock:before")

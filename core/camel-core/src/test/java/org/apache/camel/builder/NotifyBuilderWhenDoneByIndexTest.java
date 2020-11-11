@@ -21,7 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
 
@@ -42,7 +44,7 @@ public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
 
         template.sendBody("seda:foo", "A,B,C");
 
-        assertEquals(true, notify.matchesMockWaitTime());
+        assertEquals(true, notify.matchesWaitTime());
 
         assertEquals(3, counter.get());
     }

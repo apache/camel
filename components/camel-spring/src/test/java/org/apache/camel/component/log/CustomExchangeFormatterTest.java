@@ -18,9 +18,13 @@ package org.apache.camel.component.log;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 public class CustomExchangeFormatterTest extends SpringTestSupport {
 
@@ -33,10 +37,10 @@ public class CustomExchangeFormatterTest extends SpringTestSupport {
                 continue;
             }
             LogEndpoint log = (LogEndpoint) ep;
-            aaa = "aaa".equals(log.getLoggerName()) ? (TestExchangeFormatter) log.getLocalFormatter() : aaa;
-            bbb = "bbb".equals(log.getLoggerName()) ? (TestExchangeFormatter) log.getLocalFormatter() : bbb;
+            aaa = "aaa".equals(log.getLoggerName()) ? (TestExchangeFormatter) log.getExchangeFormatter() : aaa;
+            bbb = "bbb".equals(log.getLoggerName()) ? (TestExchangeFormatter) log.getExchangeFormatter() : bbb;
         }
-        
+
         assertNotNull(aaa);
         assertNotNull(bbb);
         assertNotSame(aaa, bbb);

@@ -33,22 +33,18 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = {
-                BindySimpleFixedLengthObjectMarshallTest.Configuration.class},
-        loader = CamelSpringDelegatingTestContextLoader.class)
-public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4SpringContextTests {
-    
+                      classes = {
+                              BindySimpleFixedLengthObjectMarshallTest.Configuration.class })
+@CamelSpringTest
+public class BindySimpleFixedLengthObjectMarshallTest {
+
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
@@ -79,7 +75,7 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
                     BindyDataFormat bindy = new BindyDataFormat();
                     bindy.setLocale("en");
                     bindy.setClassType(Order.class);
-                    bindy.setType(BindyType.Fixed);
+                    bindy.type(BindyType.Fixed);
 
                     from(URI_DIRECT_START)
                             .marshal(bindy)
@@ -105,7 +101,7 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
     @DirtiesContext
     public void testMarshallList() throws Exception {
         expected = "10A9  PaulineM    ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n"
-                 + "10A9  MarcoolM    ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
+                   + "10A9  MarcoolM    ISINXD12345678BUYShare000002500.45USD01-08-2009\r\n";
         result.expectedBodiesReceived(expected);
         error.expectedMessageCount(0);
 
@@ -172,7 +168,6 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
 
         @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
-
 
         public int getOrderNr() {
             return orderNr;
@@ -264,11 +259,12 @@ public class BindySimpleFixedLengthObjectMarshallTest extends AbstractJUnit4Spri
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
                    + String.valueOf(this.orderDate);
         }
     }
-
 
 }

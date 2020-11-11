@@ -34,12 +34,24 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.TelegramService;
+import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
+import org.apache.camel.component.telegram.model.EditMessageDelete;
 import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
+import org.apache.camel.component.telegram.model.EditMessageMediaMessage;
+import org.apache.camel.component.telegram.model.EditMessageReplyMarkupMessage;
+import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
+import org.apache.camel.component.telegram.model.MessageResultGameScores;
+import org.apache.camel.component.telegram.model.OutgoingAnswerInlineQuery;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
+import org.apache.camel.component.telegram.model.OutgoingCallbackQueryMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
+import org.apache.camel.component.telegram.model.OutgoingGameMessage;
+import org.apache.camel.component.telegram.model.OutgoingGetGameHighScoresMessage;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
+import org.apache.camel.component.telegram.model.OutgoingSetGameScoreMessage;
+import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
@@ -77,7 +89,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     private final String baseUri;
 
     public TelegramServiceRestBotAPIAdapter(AsyncHttpClient asyncHttpClient, int bufferSize, String telegramBaseUri,
-            String authorizationToken) {
+                                            String authorizationToken) {
         this.asyncHttpClient = asyncHttpClient;
         this.baseUri = telegramBaseUri + "/bot" + authorizationToken;
         this.mapper = new ObjectMapper();
@@ -88,6 +100,9 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         m.put(OutgoingAudioMessage.class, new OutgoingAudioMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
         m.put(OutgoingVideoMessage.class, new OutgoingVideoMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
         m.put(OutgoingDocumentMessage.class, new OutgoingDocumentMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
+        m.put(OutgoingStickerMessage.class, new OutgoingStickerMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
+        m.put(OutgoingGameMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendGame"));
         m.put(SendLocationMessage.class,
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendLocation"));
         m.put(EditMessageLiveLocationMessage.class,
@@ -96,6 +111,24 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/stopMessageLiveLocation"));
         m.put(SendVenueMessage.class,
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendVenue"));
+        m.put(EditMessageTextMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageText"));
+        m.put(EditMessageCaptionMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageCaption"));
+        m.put(EditMessageMediaMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageMedia"));
+        m.put(EditMessageDelete.class, new OutgoingPlainMessageHandler(
+                asyncHttpClient, bufferSize, mapper, baseUri + "/deleteMessage"));
+        m.put(EditMessageReplyMarkupMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageReplyMarkup"));
+        m.put(OutgoingCallbackQueryMessage.class, new OutgoingPlainMessageHandler(
+                asyncHttpClient, bufferSize, mapper, baseUri + "/answerCallbackQuery"));
+        m.put(OutgoingSetGameScoreMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/setGameScore"));
+        m.put(OutgoingGetGameHighScoresMessage.class, new OutgoingPlainMessageHandler(
+                asyncHttpClient, bufferSize, mapper, baseUri + "/getGameHighScores", MessageResultGameScores.class));
+        m.put(OutgoingAnswerInlineQuery.class, new OutgoingPlainMessageHandler(
+                asyncHttpClient, bufferSize, mapper, baseUri + "/answerInlineQuery"));
         this.handlers = m;
     }
 
@@ -123,8 +156,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             if (code >= 200 && code < 300) {
                 try {
                     final String responseBody = response.getResponseBody();
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn("Received body for {} {}: {}", request.getMethod(), request.getUrl(), responseBody);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Received body for {} {}: {}", request.getMethod(), request.getUrl(), responseBody);
                     }
                     return mapper.readValue(responseBody, resultType);
                 } catch (IOException e) {
@@ -134,7 +167,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             } else {
                 throw new RuntimeException(
                         "Could not " + request.getMethod() + " " + request.getUrl() + ": " + response.getStatusCode() + " "
-                                + response.getStatusText());
+                                           + response.getStatusText());
             }
         } catch (ExecutionException e) {
             throw new RuntimeException("Could not request " + request.getMethod() + " " + request.getUrl(), e);
@@ -172,22 +205,27 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 .get(message.getClass());
         if (handler == null) {
             throw new IllegalArgumentException(
-                    "Unsupported message type " + (message != null ? message.getClass().getName() : null));
+                    "Unsupported message type " + (message.getClass().getName()));
         }
         handler.sendMessage(exchange, callback, message);
     }
 
     static class OutgoingPlainMessageHandler extends OutgoingMessageHandler<OutgoingMessage> {
 
-        public OutgoingPlainMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper, String uri) {
-            super(asyncHttpClient, bufferSize, mapper, uri, "application/json");
+        public OutgoingPlainMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
+                                           String uri, Class<? extends MessageResult> returnType) {
+            super(asyncHttpClient, bufferSize, mapper, uri, "application/json", returnType);
+        }
+
+        public OutgoingPlainMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
+                                           String uri) {
+            this(asyncHttpClient, bufferSize, mapper, uri, MessageResult.class);
         }
 
         @Override
         protected void addBody(RequestBuilder builder, OutgoingMessage message) {
             try {
                 final String body = mapper.writeValueAsString(message);
-                LOG.warn("sending " + body);
                 builder.setBody(body);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Could not serialize " + message);
@@ -199,8 +237,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     static class OutgoingAudioMessageHandler extends OutgoingMessageHandler<OutgoingAudioMessage> {
 
         public OutgoingAudioMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
-                String baseUri) {
-            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendAudio", null);
+                                           String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendAudio", null, MessageResult.class);
         }
 
         @Override
@@ -210,6 +248,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             buildTextPart(builder, "title", message.getTitle());
             buildTextPart(builder, "duration", message.getDurationSeconds());
             buildTextPart(builder, "performer", message.getPerformer());
+            buildTextPart(builder, "reply_markup", message.replyMarkupJson());
         }
 
     }
@@ -217,8 +256,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     static class OutgoingVideoMessageHandler extends OutgoingMessageHandler<OutgoingVideoMessage> {
 
         public OutgoingVideoMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
-                String baseUri) {
-            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendVideo", null);
+                                           String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendVideo", null, MessageResult.class);
         }
 
         @Override
@@ -229,6 +268,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             buildTextPart(builder, "duration", message.getDurationSeconds());
             buildTextPart(builder, "width", message.getWidth());
             buildTextPart(builder, "height", message.getHeight());
+            buildTextPart(builder, "reply_markup", message.replyMarkupJson());
         }
 
     }
@@ -236,8 +276,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     static class OutgoingDocumentMessageHandler extends OutgoingMessageHandler<OutgoingDocumentMessage> {
 
         public OutgoingDocumentMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
-                String baseUri) {
-            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendDocument", null);
+                                              String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendDocument", null, MessageResult.class);
         }
 
         @Override
@@ -245,6 +285,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             fillCommonMediaParts(builder, message);
             buildMediaPart(builder, "document", message.getFilenameWithExtension(), message.getDocument());
             buildTextPart(builder, "caption", message.getCaption());
+            buildTextPart(builder, "reply_markup", message.replyMarkupJson());
         }
 
     }
@@ -252,8 +293,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     static class OutgoingPhotoMessageHandler extends OutgoingMessageHandler<OutgoingPhotoMessage> {
 
         public OutgoingPhotoMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
-                String baseUri) {
-            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendPhoto", null);
+                                           String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendPhoto", null, MessageResult.class);
         }
 
         @Override
@@ -261,8 +302,26 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             fillCommonMediaParts(builder, message);
             buildMediaPart(builder, "photo", message.getFilenameWithExtension(), message.getPhoto());
             buildTextPart(builder, "caption", message.getCaption());
+            buildTextPart(builder, "reply_markup", message.replyMarkupJson());
         }
 
+    }
+
+    static class OutgoingStickerMessageHandler extends OutgoingMessageHandler<OutgoingStickerMessage> {
+        public OutgoingStickerMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
+                                             String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendSticker", null, MessageResult.class);
+        }
+
+        @Override
+        protected void addBody(RequestBuilder builder, OutgoingStickerMessage message) {
+            fillCommonMediaParts(builder, message);
+            if (message.getSticker() != null) {
+                buildTextPart(builder, "sticker", message.getSticker());
+            } else {
+                buildMediaPart(builder, "sticker", message.getFilenameWithExtension(), message.getStickerImage());
+            }
+        }
     }
 
     abstract static class OutgoingMessageHandler<T extends OutgoingMessage> {
@@ -271,9 +330,11 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         private final int bufferSize;
         private final String contentType;
         private final String uri;
+        private final Class<? extends MessageResult> resultClass;
 
         public OutgoingMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper, String uri,
-                String contentType) {
+                                      String contentType, Class<? extends MessageResult> resultClass) {
+            this.resultClass = resultClass;
             this.asyncHttpClient = asyncHttpClient;
             this.bufferSize = bufferSize;
             this.mapper = mapper;
@@ -290,7 +351,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             builder.setHeader("Accept", "application/json");
             addBody(builder, message);
             asyncHttpClient.executeRequest(builder.build(),
-                    new TelegramAsyncHandler(exchange, callback, uri, bufferSize, mapper));
+                    new TelegramAsyncHandler(exchange, callback, uri, bufferSize, mapper, resultClass));
         }
 
         protected abstract void addBody(RequestBuilder builder, T message);
@@ -326,9 +387,11 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         private String contentType;
         private String contentEncoding;
         private Charset charset;
+        private Class<? extends MessageResult> onCompletedType;
 
         private TelegramAsyncHandler(Exchange exchange, AsyncCallback callback, String url, int bufferSize,
-                ObjectMapper mapper) {
+                                     ObjectMapper mapper, Class<? extends MessageResult> onCompletedType) {
+            this.onCompletedType = onCompletedType;
             this.exchange = exchange;
             this.callback = callback;
             this.url = url;
@@ -339,7 +402,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         @Override
         public void onThrowable(Throwable t) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("{} onThrowable {}", exchange.getExchangeId(), t);
+                LOG.trace("{} onThrowable {}", exchange.getExchangeId(), t.getMessage(), t);
             }
             exchange.setException(t);
             callback.done(false);
@@ -356,17 +419,17 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 os.close();
                 final boolean success = statusCode >= 200 && statusCode < 300;
                 try (InputStream maybeGzStream = new ByteArrayInputStream(os.toByteArray());
-                        InputStream is = GZIPHelper.uncompressGzip(contentEncoding, maybeGzStream);
-                        Reader r = new InputStreamReader(is, charset)) {
+                     InputStream is = GZIPHelper.uncompressGzip(contentEncoding, maybeGzStream);
+                     Reader r = new InputStreamReader(is, charset)) {
 
                     if (success) {
                         final Object result;
                         if (LOG.isTraceEnabled()) {
                             final String body = IOHelper.toString(r);
                             LOG.trace("Received body for {}: {}", url, body);
-                            result = mapper.readValue(body, MessageResult.class);
+                            result = mapper.readValue(body, onCompletedType);
                         } else {
-                            result = mapper.readValue(r, MessageResult.class);
+                            result = mapper.readValue(r, onCompletedType);
                         }
 
                         exchange.getMessage().setBody(result);
@@ -403,8 +466,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         }
 
         @Override
-        public State onStatusReceived(HttpResponseStatus responseStatus)
-                throws Exception {
+        public State onStatusReceived(HttpResponseStatus responseStatus) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("{} onStatusReceived {}", exchange.getExchangeId(), responseStatus);
             }
@@ -414,7 +476,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         }
 
         @Override
-        public State onHeadersReceived(HttpHeaders headers) throws Exception {
+        public State onHeadersReceived(HttpHeaders headers) {
             contentEncoding = headers.get("Content-Encoding");
             contentType = headers.get("Content-Type");
             charset = withDefault(extractContentTypeCharsetAttribute(contentType), StandardCharsets.UTF_8);

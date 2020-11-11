@@ -17,13 +17,13 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 
 public class DataFormatServiceCustomRefTest extends DataFormatServiceTest {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myCustomDataFormat", my);
         return jndi;
     }
@@ -35,9 +35,9 @@ public class DataFormatServiceCustomRefTest extends DataFormatServiceTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:a")
-                    // myCustomDataFormat refers to the data format from the
-                    // Registry
-                    .marshal().custom("myCustomDataFormat").to("mock:a");
+                        // myCustomDataFormat refers to the data format from the
+                        // Registry
+                        .marshal().custom("myCustomDataFormat").to("mock:a");
 
                 from("direct:b").unmarshal().custom("myCustomDataFormat").to("mock:b");
                 // END SNIPPET: e1

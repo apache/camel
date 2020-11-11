@@ -23,19 +23,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 
 /**
- * Triggers the auto-mocking of endpoints whose URIs match the provided filter with the added provision
- * that the endpoints are also skipped.  The default filter is "*" which matches all endpoints.
- * See {@link InterceptSendToMockEndpointStrategy} for more details on the registration of the mock endpoints.
+ * Triggers the auto-mocking of endpoints whose URIs match the provided filter with the added provision that the
+ * endpoints are also skipped. The default filter is "*" which matches all endpoints. See
+ * {@link InterceptSendToMockEndpointStrategy} for more details on the registration of the mock endpoints.
  */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface MockEndpointsAndSkip {
-    
+
     /**
      * The pattern to use for matching endpoints to enable mocking on.
      */

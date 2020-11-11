@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.sqs.integration;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.services.sqs.AmazonSQS;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -24,15 +26,27 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.sqs.SqsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.infra.aws.common.SystemPropertiesAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws.common.TestAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.aws.services.AWSServiceFactory;
+import org.apache.camel.test.infra.common.SharedNameGenerator;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class SqsComponentIntegrationTest extends CamelTestSupport {
 
-    private String accessKey = "xxx";
-    private String secretKey = "yyy";
+    @SuppressWarnings("unused")
+    @RegisterExtension
+    public static AWSService<AmazonSQS> service = AWSServiceFactory.createSQSService();
+
+    @RegisterExtension
+    public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -84,18 +98,25 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ATTRIBUTES));
 
-        assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
+        assertNotNull(exchange.getMessage().getHeader(SqsConstants.MESSAGE_ID));
+        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getMessage().getHeader(SqsConstants.MD5_OF_BODY));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        TestAWSCredentialsProvider awsCredentialsProvider = new SystemPropertiesAWSCredentialsProvider();
+        AWSCredentials awsCredentials = awsCredentialsProvider.getCredentials();
+
         final String sqsEndpointUri = String
-            .format("aws-sqs://MyNewCamelQueue?accessKey=%s&secretKey=%s&messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s", accessKey, secretKey,
-                    "1209600", "65536", "60",
-                    "%7B%22Version%22%3A%222008-10-17%22%2C%22Id%22%3A%22%2F195004372649%2FMyNewCamelQueue%2FSQSDefaultPolicy%22%2C%22"
-                                              + "Statement%22%3A%5B%7B%22Sid%22%3A%22Queue1ReceiveMessage%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22AWS%22%3A%22*%22%7D%2C%22"
-                                              + "Action%22%3A%22SQS%3AReceiveMessage%22%2C%22Resource%22%3A%22%2F195004372649%2FMyNewCamelQueue%22%7D%5D%7D");
+                .format("aws-sqs://%s?accessKey=%s&secretKey=%s&messageRetentionPeriod=%s&maximumMessageSize=%s&visibilityTimeout=%s&policy=%s&region=US_EAST_1&configuration=%s",
+                        sharedNameGenerator.getName(),
+                        awsCredentials.getAWSAccessKeyId(),
+                        awsCredentials.getAWSSecretKey(),
+                        "1209600", "65536", "60",
+                        "%7B%22Version%22%3A%222008-10-17%22%2C%22Id%22%3A%22%2F195004372649%2FMyNewCamelQueue%2FSQSDefaultPolicy%22%2C%22"
+                                                  + "Statement%22%3A%5B%7B%22Sid%22%3A%22Queue1ReceiveMessage%22%2C%22Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22AWS%22%3A%22*%22%7D%2C%22"
+                                                  + "Action%22%3A%22SQS%3AReceiveMessage%22%2C%22Resource%22%3A%22%2F195004372649%2FMyNewCamelQueue%22%7D%5D%7D",
+                        "#class:" + TestSqsConfiguration.class.getName());
 
         return new RouteBuilder() {
             @Override

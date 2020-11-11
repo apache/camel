@@ -23,10 +23,11 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JmsPollingConsumerTest extends CamelTestSupport {
 
@@ -37,11 +38,9 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            public void run() {
-                String body = consumer.receiveBody("activemq:queue.start", String.class);
-                template.sendBody("activemq:queue.foo", body + " Claus");
-            }
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String body = consumer.receiveBody("activemq:queue.start", String.class);
+            template.sendBody("activemq:queue.foo", body + " Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -59,13 +58,11 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            public void run() {
-                String body = consumer.receiveBodyNoWait("activemq:queue.start", String.class);
-                assertNull("Should be null", body);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String body = consumer.receiveBodyNoWait("activemq:queue.start", String.class);
+            assertNull(body, "Should be null");
 
-                template.sendBody("activemq:queue.foo", "Hello Claus");
-            }
+            template.sendBody("activemq:queue.foo", "Hello Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -83,13 +80,11 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            public void run() {
-                String body = consumer.receiveBody("activemq:queue.start", 100, String.class);
-                assertNull("Should be null", body);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String body = consumer.receiveBody("activemq:queue.start", 100, String.class);
+            assertNull(body, "Should be null");
 
-                template.sendBody("activemq:queue.foo", "Hello Claus");
-            }
+            template.sendBody("activemq:queue.foo", "Hello Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -107,11 +102,9 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
 
         // use another thread for polling consumer to demonstrate that we can wait before
         // the message is sent to the queue
-        Executors.newSingleThreadExecutor().execute(new Runnable() {
-            public void run() {
-                String body = consumer.receiveBody("activemq:queue.start", 3000, String.class);
-                template.sendBody("activemq:queue.foo", body + " Claus");
-            }
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String body = consumer.receiveBody("activemq:queue.start", 3000, String.class);
+            template.sendBody("activemq:queue.foo", body + " Claus");
         });
 
         // wait a little to demonstrate we can start poll before we have a msg on the queue
@@ -121,7 +114,6 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

@@ -80,11 +80,11 @@ public final class UniVocityTsvDataFormatTest {
     @Test
     public void shouldConfigureHeaders() {
         UniVocityTsvDataFormat dataFormat = new UniVocityTsvDataFormat()
-                .setHeaders(new String[]{"A", "B", "C"});
+                .setHeaders(new String[] { "A", "B", "C" });
 
-        assertArrayEquals(new String[]{"A", "B", "C"}, dataFormat.getHeaders());
-        assertArrayEquals(new String[]{"A", "B", "C"}, dataFormat.createAndConfigureWriterSettings().getHeaders());
-        assertArrayEquals(new String[]{"A", "B", "C"}, dataFormat.createAndConfigureParserSettings().getHeaders());
+        assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.getHeaders());
+        assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.createAndConfigureWriterSettings().getHeaders());
+        assertArrayEquals(new String[] { "A", "B", "C" }, dataFormat.createAndConfigureParserSettings().getHeaders());
     }
 
     @Test

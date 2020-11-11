@@ -20,7 +20,9 @@ import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XmlRoutePropertiesTest extends XmlTestSupport {
 
@@ -32,7 +34,9 @@ public class XmlRoutePropertiesTest extends XmlTestSupport {
         assertEquals("route-id", route.getId());
         assertNotNull(route.getRouteProperties());
 
-        assertTrue(route.getRouteProperties().stream().anyMatch(p -> Objects.equals("key1", p.getKey()) && Objects.equals("val1", p.getValue())));
-        assertTrue(route.getRouteProperties().stream().anyMatch(p -> Objects.equals("key2", p.getKey()) && Objects.equals("val2", p.getValue())));
+        assertTrue(route.getRouteProperties().stream()
+                .anyMatch(p1 -> Objects.equals("key1", p1.getKey()) && Objects.equals("val1", p1.getValue())));
+        assertTrue(route.getRouteProperties().stream()
+                .anyMatch(p -> Objects.equals("key2", p.getKey()) && Objects.equals("val2", p.getValue())));
     }
 }

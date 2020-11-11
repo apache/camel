@@ -24,7 +24,7 @@ public enum ThriftNegotiationType {
      * No security negotiation defined
      */
     PLAINTEXT,
-        
+
     /**
      * SSL/TLS security negotiation
      */

@@ -71,28 +71,27 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
         }
 
         LockHelper.doWithWriteLock(
-            lock,
-            () -> {
-                listeners.add(listener);
+                lock,
+                () -> {
+                    listeners.add(listener);
 
-                if (isRunAllowed()) {
-                    // if the view has already been started, fire known events so
-                    // the consumer can catch up.
+                    if (isRunAllowed()) {
+                        // if the view has already been started, fire known events so
+                        // the consumer can catch up.
 
-                    if (CamelClusterEventListener.Leadership.class.isInstance(listener)) {
-                        CamelClusterEventListener.Leadership.class.cast(listener).leadershipChanged(this, getLeader());
-                    }
+                        if (CamelClusterEventListener.Leadership.class.isInstance(listener)) {
+                            CamelClusterEventListener.Leadership.class.cast(listener).leadershipChanged(this, getLeader());
+                        }
 
-                    if (CamelClusterEventListener.Membership.class.isInstance(listener)) {
-                        CamelClusterEventListener.Membership ml = CamelClusterEventListener.Membership.class.cast(listener);
+                        if (CamelClusterEventListener.Membership.class.isInstance(listener)) {
+                            CamelClusterEventListener.Membership ml = CamelClusterEventListener.Membership.class.cast(listener);
 
-                        for (CamelClusterMember member: getMembers()) {
-                            ml.memberAdded(this, member);
+                            for (CamelClusterMember member : getMembers()) {
+                                ml.memberAdded(this, member);
+                            }
                         }
                     }
-                }
-            }
-        );
+                });
     }
 
     @Override
@@ -110,37 +109,33 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
 
     private <T extends CamelClusterEventListener> void doWithListener(Class<T> type, Consumer<T> consumer) {
         LockHelper.doWithReadLock(
-            lock,
-            () -> {
-                for (int i = 0; i < listeners.size(); i++) {
-                    CamelClusterEventListener listener = listeners.get(i);
+                lock,
+                () -> {
+                    for (int i = 0; i < listeners.size(); i++) {
+                        CamelClusterEventListener listener = listeners.get(i);
 
-                    if (type.isInstance(listener)) {
-                        consumer.accept(type.cast(listener));
+                        if (type.isInstance(listener)) {
+                            consumer.accept(type.cast(listener));
+                        }
                     }
-                }
-            }
-        );
+                });
     }
 
     protected void fireLeadershipChangedEvent(Optional<CamelClusterMember> leader) {
         doWithListener(
-            CamelClusterEventListener.Leadership.class,
-            listener -> listener.leadershipChanged(this, leader)
-        );
+                CamelClusterEventListener.Leadership.class,
+                listener -> listener.leadershipChanged(this, leader));
     }
 
     protected void fireMemberAddedEvent(CamelClusterMember member) {
         doWithListener(
-            CamelClusterEventListener.Membership.class,
-            listener -> listener.memberAdded(this, member)
-        );
+                CamelClusterEventListener.Membership.class,
+                listener -> listener.memberAdded(this, member));
     }
 
     protected void fireMemberRemovedEvent(CamelClusterMember member) {
         doWithListener(
-            CamelClusterEventListener.Membership.class,
-            listener -> listener.memberRemoved(this, member)
-        );
+                CamelClusterEventListener.Membership.class,
+                listener -> listener.memberRemoved(this, member));
     }
 }

@@ -22,7 +22,10 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedDefaultReactiveExecutorTest extends ManagementTestSupport {
 
@@ -41,30 +44,30 @@ public class ManagedDefaultReactiveExecutorTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .to("log:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // check mbeans
-                            MBeanServer mbeanServer = getMBeanServer();
+                        .to("log:foo")
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // check mbeans
+                                MBeanServer mbeanServer = getMBeanServer();
 
-                            ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=DefaultReactiveExecutor");
-                            assertTrue("Should be registered", mbeanServer.isRegistered(on));
+                                ObjectName on = ObjectName.getInstance(
+                                        "org.apache.camel:context=camel-1,type=services,name=DefaultReactiveExecutor");
+                                assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
-                            // should be 1 running
-                            Integer running = (Integer) mbeanServer.getAttribute(on, "RunningWorkers");
-                            assertEquals(1, running.intValue());
+                                // should be 1 running
+                                Integer running = (Integer) mbeanServer.getAttribute(on, "RunningWorkers");
+                                assertEquals(1, running.intValue());
 
-                            // should be 0 pending
-                            Long pending = (Long) mbeanServer.getAttribute(on, "PendingTasks");
-                            assertEquals(0, pending.intValue());
-                        }
-                    })
-                    .to("log:bar")
-                    .to("mock:result");
+                                // should be 0 pending
+                                Integer pending = (Integer) mbeanServer.getAttribute(on, "PendingTasks");
+                                assertEquals(0, pending.intValue());
+                            }
+                        })
+                        .to("log:bar")
+                        .to("mock:result");
             }
         };
     }
-
 
 }

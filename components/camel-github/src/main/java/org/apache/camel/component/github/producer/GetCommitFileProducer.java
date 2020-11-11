@@ -71,8 +71,8 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
 
         // By default, if blob encoding is base64 then we convert to UTF-8. If
         // base64 encoding is required, then must be explicitly requested
-        if (response.getEncoding().equals(Blob.ENCODING_BASE64) 
-            && encoding != null && encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
+        if (response.getEncoding().equals(Blob.ENCODING_BASE64)
+                && encoding != null && encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
             text = new String(Base64.decodeBase64(text));
         }
 

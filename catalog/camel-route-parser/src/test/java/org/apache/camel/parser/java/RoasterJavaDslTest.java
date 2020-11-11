@@ -21,12 +21,15 @@ import java.util.List;
 
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.model.CamelNodeDetails;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RoasterJavaDslTest extends CamelTestSupport {
 
@@ -38,11 +41,12 @@ public class RoasterJavaDslTest extends CamelTestSupport {
     }
 
     @Test
-    public void parseTree() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java"));
+    void parseTree() throws Exception {
+        JavaClassSource clazz = (JavaClassSource) Roaster
+                .parse(new File("src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java"));
 
         List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, ".",
-            "src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java", true);
+                "src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         CamelNodeDetails details = list.get(0);
         assertEquals("src/test/java/org/apache/camel/parser/java/MyJavaDslRouteBuilder.java", details.getFileName());
@@ -67,7 +71,7 @@ public class RoasterJavaDslTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRouteCoverage() throws Exception {
+    void testRouteCoverage() throws Exception {
         context.addRoutes(new MyJavaDslRouteBuilder());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);

@@ -18,7 +18,9 @@ package org.apache.camel.component.jetty.async;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JettyAsyncFilterTest extends BaseJettyTest {
 
@@ -39,7 +41,8 @@ public class JettyAsyncFilterTest extends BaseJettyTest {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("jetty:http://localhost:{{port}}/myservice").convertBodyTo(String.class).filter(body().contains("Camel")).to("async:bye:world").end().to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice").convertBodyTo(String.class).filter(body().contains("Camel"))
+                        .to("async:bye:world").end().to("mock:result");
             }
         };
     }

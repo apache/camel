@@ -27,37 +27,45 @@ import mousio.etcd4j.responses.EtcdException;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.etcd.EtcdConfiguration;
 import org.apache.camel.component.etcd.EtcdHelper;
-import org.apache.camel.component.etcd.EtcdTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.camel.component.etcd.support.EtcdTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
     private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
-    private static final EtcdConfiguration CONFIGURATION = new EtcdConfiguration(null);
     private static final AtomicInteger PORT = new AtomicInteger(0);
 
     private EtcdClient client;
+    private EtcdConfiguration configuration;
 
     @Override
     public void doPreSetup() throws Exception {
+        configuration = new EtcdConfiguration();
+        configuration.setCamelContext(context);
+        configuration.setUris(getClientUri());
+
         client = getClient();
         try {
-            client.deleteDir(CONFIGURATION.getServicePath()).recursive().send().get();
+            client.deleteDir(configuration.getServicePath()).recursive().send().get();
         } catch (EtcdException e) {
             // Ignore
         }
     }
 
     @Override
-    @After
-    public void tearDown() throws Exception {
+    protected void cleanupResources() throws Exception {
         try {
-            client.deleteDir(CONFIGURATION.getServicePath()).recursive().send().get();
+            client.deleteDir(configuration.getServicePath()).recursive().send().get();
             client.close();
             client = null;
         } catch (EtcdException e) {
             // Ignore
         }
+
+        super.cleanupResources();
     }
 
     @Test
@@ -69,7 +77,7 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
             addServer(client, "serviceType-2");
         }
 
-        EtcdOnDemandServiceDiscovery strategy = new EtcdOnDemandServiceDiscovery(CONFIGURATION);
+        EtcdOnDemandServiceDiscovery strategy = new EtcdOnDemandServiceDiscovery(configuration);
         strategy.start();
 
         List<ServiceDefinition> type1 = strategy.getServices("serviceType-1");
@@ -95,7 +103,7 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
     public void testWatchDiscovery() throws Exception {
         addServer(client, "serviceType-3");
 
-        EtcdWatchServiceDiscovery strategy = new EtcdWatchServiceDiscovery(CONFIGURATION);
+        EtcdWatchServiceDiscovery strategy = new EtcdWatchServiceDiscovery(configuration);
         strategy.start();
 
         assertEquals(1, strategy.getServices("serviceType-3").size());
@@ -124,6 +132,6 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
         server.put("port", 8000 + port);
         server.put("tags", tags);
 
-        client.put(CONFIGURATION.getServicePath() + "service-" + port, MAPPER.writeValueAsString(server)).send().get();
+        client.put(configuration.getServicePath() + "service-" + port, MAPPER.writeValueAsString(server)).send().get();
     }
 }

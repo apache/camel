@@ -32,13 +32,19 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A file read lock that uses an {@link IdempotentRepository} and {@link FileChangedExclusiveReadLockStrategy changed} as the lock strategy.
- * This allows to plugin and use existing idempotent repositories that for example supports clustering.
- * The other read lock strategies that are using marker files or file locks, are not guaranteed to work in clustered setup with various platform and file systems.
+ * A file read lock that uses an {@link IdempotentRepository} and {@link FileChangedExclusiveReadLockStrategy changed}
+ * as the lock strategy. This allows to plugin and use existing idempotent repositories that for example supports
+ * clustering. The other read lock strategies that are using marker files or file locks, are not guaranteed to work in
+ * clustered setup with various platform and file systems.
  */
-public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupport implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
+public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupport
+        implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FileIdempotentChangedRepositoryReadLockStrategy.class);
 
     private final FileChangedExclusiveReadLockStrategy changed;
     private GenericFileEndpoint<File> endpoint;
@@ -63,14 +69,16 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
         this.endpoint = endpoint;
-        log.info("Using FileIdempotentRepositoryReadLockStrategy: {} on endpoint: {}", idempotentRepository, endpoint);
+        LOG.info("Using FileIdempotentRepositoryReadLockStrategy: {} on endpoint: {}", idempotentRepository, endpoint);
 
         changed.prepareOnStartup(operations, endpoint);
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
-        // in clustered mode then another node may have processed the file so we must check here again if the file exists
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
+        // in clustered mode then another node may have processed the file so we
+        // must check here again if the file exists
         File path = file.getFile();
         if (!path.exists()) {
             return false;
@@ -78,10 +86,10 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
 
         // check if we can begin on this file
         String key = asKey(file);
-        boolean answer = idempotentRepository.add(key);
+        boolean answer = idempotentRepository.add(exchange, key);
         if (!answer) {
             // another node is processing the file so skip
-            CamelLogger.log(log, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
+            CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
         }
 
         if (answer) {
@@ -89,40 +97,45 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
             answer = changed.acquireExclusiveReadLock(operations, file, exchange);
             if (!answer) {
                 // remove from idempontent as we did not acquire it from changed
-                idempotentRepository.remove(key);
+                idempotentRepository.remove(exchange, key);
             }
         }
         return answer;
     }
 
     @Override
-    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         changed.releaseExclusiveReadLockOnAbort(operations, file, exchange);
     }
 
     @Override
-    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnRollback(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         String key = asKey(file);
         Runnable r = () -> {
             if (removeOnRollback) {
-                idempotentRepository.remove(key);
+                idempotentRepository.remove(exchange, key);
             } else {
                 // okay we should not remove then confirm it instead
-                idempotentRepository.confirm(key);
+                idempotentRepository.confirm(exchange, key);
             }
 
             try {
                 changed.releaseExclusiveReadLockOnRollback(operations, file, exchange);
             } catch (Exception e) {
-                log.warn("Error during releasing exclusive readlock on rollback. This exception is ignored.", e);
+                LOG.warn("Error during releasing exclusive readlock on rollback. This exception is ignored.", e);
             }
         };
 
         if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
-            log.debug("Scheduling readlock release task to run asynchronous delayed after {} millis", readLockIdempotentReleaseDelay);
+            LOG.debug("Scheduling readlock release task to run asynchronous delayed after {} millis",
+                    readLockIdempotentReleaseDelay);
             readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
         } else if (readLockIdempotentReleaseDelay > 0) {
-            log.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
+            LOG.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
             Thread.sleep(readLockIdempotentReleaseDelay);
             r.run();
         } else {
@@ -131,28 +144,31 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     @Override
-    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnCommit(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         String key = asKey(file);
         Runnable r = () -> {
             if (removeOnCommit) {
-                idempotentRepository.remove(key);
+                idempotentRepository.remove(exchange, key);
             } else {
                 // confirm on commit
-                idempotentRepository.confirm(key);
+                idempotentRepository.confirm(exchange, key);
             }
 
             try {
                 changed.releaseExclusiveReadLockOnCommit(operations, file, exchange);
             } catch (Exception e) {
-                log.warn("Error during releasing exclusive readlock on rollback. This exception is ignored.", e);
+                LOG.warn("Error during releasing exclusive readlock on rollback. This exception is ignored.", e);
             }
         };
 
         if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
-            log.debug("Scheduling readlock release task to run asynchronous delayed after {} millis", readLockIdempotentReleaseDelay);
+            LOG.debug("Scheduling readlock release task to run asynchronous delayed after {} millis",
+                    readLockIdempotentReleaseDelay);
             readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
         } else if (readLockIdempotentReleaseDelay > 0) {
-            log.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
+            LOG.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
             Thread.sleep(readLockIdempotentReleaseDelay);
             r.run();
         } else {
@@ -295,7 +311,8 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     }
 
     protected String asKey(GenericFile<File> file) {
-        // use absolute file path as default key, but evaluate if an expression key was configured
+        // use absolute file path as default key, but evaluate if an expression
+        // key was configured
         String key = file.getAbsoluteFilePath();
         if (endpoint.getIdempotentKey() != null) {
             Exchange dummy = endpoint.createExchange(file);
@@ -310,8 +327,9 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
 
         if (readLockIdempotentReleaseAsync && readLockIdempotentReleaseExecutorService == null) {
-            readLockIdempotentReleaseExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(
-                this, "ReadLockChangedIdempotentReleaseTask", readLockIdempotentReleaseAsyncPoolSize);
+            readLockIdempotentReleaseExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this,
+                    "ReadLockChangedIdempotentReleaseTask",
+                    readLockIdempotentReleaseAsyncPoolSize);
             shutdownExecutorService = true;
         }
     }

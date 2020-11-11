@@ -27,11 +27,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.support.DefaultComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * JmxInstrumentationCustomMBeanTest will verify that all endpoints are registered
- * with the mbean server.
+ * JmxInstrumentationCustomMBeanTest will verify that all endpoints are registered with the mbean server.
  */
 public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDefaultsTest {
 
@@ -61,7 +62,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         resolveMandatoryEndpoint("custom://end", CustomEndpoint.class);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
-        assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
+        assertEquals(2, s.size(), "Could not find 2 endpoints: " + s);
 
         // get custom
         Iterator<ObjectName> it = s.iterator();
@@ -119,18 +120,17 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         assertDefaultDomain();
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
-        assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
+        assertEquals(2, s.size(), "Could not find 2 endpoints: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=context,*"), null);
-        assertEquals("Could not find 1 context: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 context: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
-        assertEquals("Could not find 1 processors: " + s, 2, s.size());
+        assertEquals(2, s.size(), "Could not find 1 processors: " + s);
 
         s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
-        assertEquals("Could not find 1 route: " + s, 1, s.size());
+        assertEquals(1, s.size(), "Could not find 1 route: " + s);
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -145,7 +145,8 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
     private static class CustomComponent extends DefaultComponent {
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
+                throws Exception {
             return new CustomEndpoint(uri, this);
         }
     }

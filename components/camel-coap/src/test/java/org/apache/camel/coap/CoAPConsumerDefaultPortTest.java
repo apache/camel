@@ -19,24 +19,25 @@ package org.apache.camel.coap;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CoAPConsumerDefaultPortTest extends CoAPTestSupport {
 
     @Test
-    public void testCoAPConsumerWithDefaultPort() throws Exception {
+    void testCoAPConsumerWithDefaultPort() throws Exception {
         CoapClient client = createClient("/greeting", CoAPComponent.DEFAULT_PORT);
         CoapResponse response = client.get();
         assertEquals("Hello World", response.getResponseText());
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                from("coap:localhost/greeting")
-                    .setBody(constant("Hello World"));
+            public void configure() {
+                from("coap:localhost/greeting").setBody(constant("Hello World"));
             }
         };
     }

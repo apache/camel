@@ -22,7 +22,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.InputStreamCache;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
 
@@ -33,9 +35,11 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     @Test
     public void testOnExceptionError() throws Exception {
         getMockEndpoint("mock:middle").expectedBodiesReceived(HELLO_WORLD);
-        getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:end").expectedBodiesReceived(HELLO_WORLD);
-        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
 
         template.sendBody("direct:a", "Hello World");
 
@@ -46,9 +50,11 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     public void testOnExceptionStreamReset() throws Exception {
 
         getMockEndpoint("mock:middle").expectedMessageCount(1);
-        getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:end").expectedMessageCount(1);
-        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
+        getMockEndpoint("mock:end").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT)
+                .isInstanceOf(IllegalArgumentException.class);
 
         InputStreamCache cache = new InputStreamCache(TEST_STRING.getBytes());
 

@@ -20,28 +20,29 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * https://issues.apache.org/jira/browse/CAMEL-10985
- *
- * CORS configuration is ignored and REST endpoints function as per normal
+ * https://issues.apache.org/jira/browse/CAMEL-10985 CORS configuration is ignored and REST endpoints function as per
+ * normal
  */
 public class CoAPCORSTest extends CoAPTestSupport {
     private static final String COAP_RESPONSE = "{ \"foo\": \"bar\" }";
 
     @Test
-    public void testEnableCors() throws Exception {
+    void testEnableCors() throws Exception {
         CoapClient client = createClient("/rest");
         CoapResponse response = client.get();
         assertEquals(COAP_RESPONSE, response.getResponseText());
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 restConfiguration().component("coap").port(PORT).enableCORS(true);
 
                 rest().get("/rest").route().setBody(constant(COAP_RESPONSE));

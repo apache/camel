@@ -21,7 +21,8 @@ import org.apache.camel.management.ManagedRouteRemoveRouteAndContextScopedErrorH
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-public class SpringManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest {
+public class SpringManagedRouteRemoveRouteAndContextScopedErrorHandlerTest
+        extends ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest {
 
     @Override
     protected boolean useJmx() {
@@ -30,7 +31,8 @@ public class SpringManagedRouteRemoveRouteAndContextScopedErrorHandlerTest exten
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteAndContextScopedErrorHandlerTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteAndContextScopedErrorHandlerTest.xml");
     }
 
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.customerrelations;
 
-
 public class CustomerServiceV1Impl implements CustomerServiceV1 {
     public Customer getCustomer(String customerNumber) {
         Customer result = null;

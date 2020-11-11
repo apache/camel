@@ -22,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.DefaultAggregateController;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AggregateControllerTest extends ContextTestSupport {
 
@@ -143,8 +145,9 @@ public class AggregateControllerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).aggregateController(getAggregateController()).completionSize(10).to("log:aggregated",
-                                                                                                                                                              "mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregateController(getAggregateController()).completionSize(10).to("log:aggregated",
+                                "mock:aggregated");
             }
         };
     }

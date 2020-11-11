@@ -28,8 +28,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Information about the receiver of an encrypted message. The encryption public
- * key is defined via an alias referencing an entry in a keystore.
+ * Information about the receiver of an encrypted message. The encryption public key is defined via an alias referencing
+ * an entry in a keystore.
  */
 @UriParams
 public class DefaultKeyTransRecipientInfo extends DefaultCryptoCmsConfiguration implements TransRecipientInfo {
@@ -47,8 +47,8 @@ public class DefaultKeyTransRecipientInfo extends DefaultCryptoCmsConfiguration 
     }
 
     /**
-     * Keytstore alias for looking up the X.509 certificate whose public key is
-     * used to encrypt the secret symmetric encryption key.
+     * Keytstore alias for looking up the X.509 certificate whose public key is used to encrypt the secret symmetric
+     * encryption key.
      * 
      * @param certificateAlias alias
      */
@@ -84,12 +84,15 @@ public class DefaultKeyTransRecipientInfo extends DefaultCryptoCmsConfiguration 
         try {
             cert = getKeyStore().getCertificate(alias);
         } catch (KeyStoreException e) {
-            throw new CryptoCmsException("Problem during reading the certificate with the alias '" + alias + "' from the keystore of the recipient " + this);
+            throw new CryptoCmsException(
+                    "Problem during reading the certificate with the alias '" + alias + "' from the keystore of the recipient "
+                                         + this);
         }
         if (cert instanceof X509Certificate) {
-            return (X509Certificate)cert;
+            return (X509Certificate) cert;
         }
-        throw new CryptoCmsNoKeyOrCertificateForAliasException("No X509 certificate found for the alias '" + alias + "' in the keystore of the recipient " + this);
+        throw new CryptoCmsNoKeyOrCertificateForAliasException(
+                "No X509 certificate found for the alias '" + alias + "' in the keystore of the recipient " + this);
     }
 
 }

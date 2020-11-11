@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.mail.stream;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,9 +25,9 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.ModifyMessageRequest;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
@@ -62,7 +61,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public GoogleMailStreamEndpoint getEndpoint() {
-        return (GoogleMailStreamEndpoint)super.getEndpoint();
+        return (GoogleMailStreamEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -108,7 +107,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             pendingExchanges = total - index - 1;
 
             // add on completion to handle after work when the exchange is done
-            exchange.addOnCompletion(new Synchronization() {
+            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
                     processCommit(exchange, unreadLabelId);
                 }
@@ -131,9 +130,6 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Strategy to delete the message after being processed.
-     *
-     * @param exchange the exchange
-     * @throws IOException
      */
     protected void processCommit(Exchange exchange, String unreadLabelId) {
         try {
@@ -145,7 +141,9 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
                 List<String> remove = new ArrayList<>();
                 remove.add(unreadLabelId);
                 ModifyMessageRequest mods = new ModifyMessageRequest().setRemoveLabelIds(remove);
-                getClient().users().messages().modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
+                getClient().users().messages()
+                        .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods)
+                        .execute();
 
                 LOG.trace("Marked email {} as read", id);
             }
@@ -157,9 +155,6 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Strategy when processing the exchange failed.
-     *
-     * @param exchange the exchange
-     * @throws IOException
      */
     protected void processRollback(Exchange exchange, String unreadLabelId) {
         try {
@@ -168,7 +163,8 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
             List<String> add = new ArrayList<>();
             add.add(unreadLabelId);
             ModifyMessageRequest mods = new ModifyMessageRequest().setAddLabelIds(add);
-            getClient().users().messages().modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
+            getClient().users().messages()
+                    .modify("me", exchange.getIn().getHeader(GoogleMailStreamConstants.MAIL_ID, String.class), mods).execute();
         } catch (Exception e) {
             getExceptionHandler().handleException("Error occurred mark as read mail. This exception is ignored.", exchange, e);
         }

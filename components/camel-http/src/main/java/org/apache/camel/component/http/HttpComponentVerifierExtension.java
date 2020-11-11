@@ -25,7 +25,7 @@ import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
-import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.client.config.RequestConfig;
@@ -48,7 +48,8 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
         // Default is success
-        final ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, ComponentVerifierExtension.Scope.PARAMETERS);
+        final ResultBuilder builder
+                = ResultBuilder.withStatusAndScope(Result.Status.OK, ComponentVerifierExtension.Scope.PARAMETERS);
         // Make a copy to avoid clashing with parent validation
         final HashMap<String, Object> verifyParams = new HashMap<>(parameters);
         // Check if validation is rest-related
@@ -75,7 +76,8 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
     @Override
     protected Result verifyConnectivity(Map<String, Object> parameters) {
         // Default is success
-        final ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, ComponentVerifierExtension.Scope.CONNECTIVITY);
+        final ResultBuilder builder
+                = ResultBuilder.withStatusAndScope(Result.Status.OK, ComponentVerifierExtension.Scope.CONNECTIVITY);
         // Make a copy to avoid clashing with parent validation
         final HashMap<String, Object> verifyParams = new HashMap<>(parameters);
         // Check if validation is rest-related
@@ -92,10 +94,9 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         String httpUri = getOption(verifyParams, "httpUri", String.class).orElse(null);
         if (ObjectHelper.isEmpty(httpUri)) {
             builder.error(
-                ResultErrorBuilder.withMissingOption("httpUri")
-                    .detail("rest", isRest)
-                    .build()
-            );
+                    ResultErrorBuilder.withMissingOption("httpUri")
+                            .detail("rest", isRest)
+                            .build());
         }
 
         try {
@@ -111,36 +112,33 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
                         // Unauthorized, add authUsername and authPassword to the list
                         // of parameters in error
                         builder.error(
-                            ResultErrorBuilder.withHttpCode(code)
-                                .description(response.getStatusLine().getReasonPhrase())
-                                .parameterKey("authUsername")
-                                .parameterKey("authPassword")
-                                .build()
-                        );
+                                ResultErrorBuilder.withHttpCode(code)
+                                        .description(response.getStatusLine().getReasonPhrase())
+                                        .parameterKey("authUsername")
+                                        .parameterKey("authPassword")
+                                        .build());
                     } else if (code >= 300 && code < 400) {
                         // redirect
                         builder.error(
-                            ResultErrorBuilder.withHttpCode(code)
-                                .description(response.getStatusLine().getReasonPhrase())
-                                .parameterKey("httpUri")
-                                .detail(VerificationError.HttpAttribute.HTTP_REDIRECT, () -> HttpUtil.responseHeaderValue(response, "location"))
-                                .build()
-                        );
+                                ResultErrorBuilder.withHttpCode(code)
+                                        .description(response.getStatusLine().getReasonPhrase())
+                                        .parameterKey("httpUri")
+                                        .detail(VerificationError.HttpAttribute.HTTP_REDIRECT,
+                                                () -> HttpUtil.responseHeaderValue(response, "location"))
+                                        .build());
                     } else if (code >= 400) {
                         // generic http error
                         builder.error(
-                            ResultErrorBuilder.withHttpCode(code)
-                                .description(response.getStatusLine().getReasonPhrase())
-                                .build()
-                        );
+                                ResultErrorBuilder.withHttpCode(code)
+                                        .description(response.getStatusLine().getReasonPhrase())
+                                        .build());
                     }
                 }
             } catch (UnknownHostException e) {
                 builder.error(
-                    ResultErrorBuilder.withException(e)
-                        .parameterKey("httpUri")
-                        .build()
-                );
+                        ResultErrorBuilder.withException(e)
+                                .parameterKey("httpUri")
+                                .build());
             }
         } catch (Exception e) {
             builder.error(ResultErrorBuilder.withException(e).build());
@@ -176,13 +174,11 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
             Optional<String> authHost = getOption(parameters, "authHost", String.class);
 
             return Optional.of(
-                new BasicAuthenticationHttpClientConfigurer(
-                    authUsername.get(),
-                    authPassword.get(),
-                    authDomain.orElse(null),
-                    authHost.orElse(null)
-                )
-            );
+                    new BasicAuthenticationHttpClientConfigurer(
+                            authUsername.get(),
+                            authPassword.get(),
+                            authDomain.orElse(null),
+                            authHost.orElse(null)));
         }
 
         return Optional.empty();
@@ -206,22 +202,20 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
 
             if (proxyAuthUsername != null && proxyAuthPassword != null) {
                 return Optional.of(
-                    new ProxyHttpClientConfigurer(
-                        proxyAuthHost.get(),
-                        proxyAuthPort.get(),
-                        proxyAuthScheme.get(),
-                        proxyAuthUsername.orElse(null),
-                        proxyAuthPassword.orElse(null),
-                        proxyAuthDomain.orElse(null),
-                        proxyAuthNtHost.orElse(null))
-                );
+                        new ProxyHttpClientConfigurer(
+                                proxyAuthHost.get(),
+                                proxyAuthPort.get(),
+                                proxyAuthScheme.get(),
+                                proxyAuthUsername.orElse(null),
+                                proxyAuthPassword.orElse(null),
+                                proxyAuthDomain.orElse(null),
+                                proxyAuthNtHost.orElse(null)));
             } else {
                 return Optional.of(
-                    new ProxyHttpClientConfigurer(
-                        proxyAuthHost.get(),
-                        proxyAuthPort.get(),
-                        proxyAuthScheme.get())
-                );
+                        new ProxyHttpClientConfigurer(
+                                proxyAuthHost.get(),
+                                proxyAuthPort.get(),
+                                proxyAuthScheme.get()));
             }
         }
 
@@ -243,6 +237,6 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         setProperties(requestConfigBuilder, "httpClient.", parameters);
 
         return builder.setDefaultRequestConfig(requestConfigBuilder.build())
-            .build();
+                .build();
     }
 }

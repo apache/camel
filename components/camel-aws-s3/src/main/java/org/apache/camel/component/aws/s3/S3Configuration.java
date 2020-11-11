@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.Protocol;
+import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
 import org.apache.camel.RuntimeCamelException;
@@ -34,6 +35,8 @@ public class S3Configuration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam
+    private EndpointConfiguration endpointConfiguration;
     @UriParam(label = "consumer")
     private String fileName;
     @UriParam(label = "consumer")
@@ -95,14 +98,15 @@ public class S3Configuration implements Cloneable {
     private boolean useIAMCredentials;
     @UriParam(label = "producer")
     private String keyName;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public long getPartSize() {
         return partSize;
     }
 
     /**
-     * Setup the partSize which is used in multi part upload, the default size
-     * is 25M.
+     * Setup the partSize which is used in multi part upload, the default size is 25M.
      */
     public void setPartSize(long partSize) {
         this.partSize = partSize;
@@ -113,8 +117,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * If it is true, camel will upload the file with multi part format, the
-     * part size is decided by the option of `partSize`
+     * If it is true, camel will upload the file with multi part format, the part size is decided by the option of
+     * `partSize`
      */
     public void setMultiPartUpload(boolean multiPartUpload) {
         this.multiPartUpload = multiPartUpload;
@@ -142,6 +146,17 @@ public class S3Configuration implements Cloneable {
         this.secretKey = secretKey;
     }
 
+    public EndpointConfiguration getEndpointConfiguration() {
+        return endpointConfiguration;
+    }
+
+    /**
+     * Amazon AWS Endpoint Configuration
+     */
+    public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
+        this.endpointConfiguration = endpointConfiguration;
+    }
+
     public AmazonS3 getAmazonS3Client() {
         return amazonS3Client;
     }
@@ -158,9 +173,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The prefix which is used in the
-     * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
-     * objects we are interested in.
+     * The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are
+     * interested in.
      */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
@@ -171,9 +185,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The delimiter which is used in the
-     * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
-     * objects we are interested in.
+     * The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we
+     * are interested in.
      */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter;
@@ -184,8 +197,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Name of the bucket. The bucket will be created if it doesn't already
-     * exists.
+     * Name of the bucket. The bucket will be created if it doesn't already exists.
      */
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
@@ -207,22 +219,18 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The region in which S3 client needs to work. When using this parameter,
-     * the configuration will expect the capitalized name of the region (for
-     * example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which S3 client needs to work. When using this parameter, the configuration will expect the
+     * capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
     }
 
     /**
-     * If it is true, the exchange body will be set to a stream to the contents
-     * of the file. If false, the headers will be set with the S3 object
-     * metadata, but the body will be null. This option is strongly related to
-     * autocloseBody option. In case of setting includeBody to true and
-     * autocloseBody to false, it will be up to the caller to close the S3Object
-     * stream. Setting autocloseBody to true, will close the S3Object stream
-     * automatically.
+     * If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will
+     * be set with the S3 object metadata, but the body will be null. This option is strongly related to autocloseBody
+     * option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close
+     * the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically.
      */
     public void setIncludeBody(boolean includeBody) {
         this.includeBody = includeBody;
@@ -237,15 +245,12 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Delete objects from S3 after they have been retrieved. The delete is only
-     * performed if the Exchange is committed. If a rollback occurs, the object
-     * is not deleted.
+     * Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed.
+     * If a rollback occurs, the object is not deleted.
      * <p/>
-     * If this option is false, then the same objects will be retrieve over and
-     * over again on the polls. Therefore you need to use the Idempotent
-     * Consumer EIP in the route to filter out duplicates. You can filter using
-     * the {@link S3Constants#BUCKET_NAME} and {@link S3Constants#KEY} headers,
-     * or only the {@link S3Constants#KEY} header.
+     * If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you
+     * need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the
+     * {@link S3Constants#BUCKET_NAME} and {@link S3Constants#KEY} headers, or only the {@link S3Constants#KEY} header.
      */
     public void setDeleteAfterRead(boolean deleteAfterRead) {
         this.deleteAfterRead = deleteAfterRead;
@@ -267,8 +272,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The policy for this queue to set in the
-     * `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method.
+     * The policy for this queue to set in the `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method.
      */
     public void setPolicy(String policy) {
         this.policy = policy;
@@ -279,8 +283,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The storage class to set in the
-     * `com.amazonaws.services.s3.model.PutObjectRequest` request.
+     * The storage class to set in the `com.amazonaws.services.s3.model.PutObjectRequest` request.
      */
     public void setStorageClass(String storageClass) {
         this.storageClass = storageClass;
@@ -291,8 +294,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Sets the server-side encryption algorithm when encrypting the object
-     * using AWS-managed keys. For example use <tt>AES256</tt>.
+     * Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys. For example use
+     * <tt>AES256</tt>.
      */
     public void setServerSideEncryption(String serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
@@ -314,7 +317,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the SQS client
+     * To define a proxy host when instantiating the S3 client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -358,12 +361,10 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * If this option is true and includeBody is true, then the S3Object.close()
-     * method will be called on exchange completion. This option is strongly
-     * related to includeBody option. In case of setting includeBody to true and
-     * autocloseBody to false, it will be up to the caller to close the S3Object
-     * stream. Setting autocloseBody to true, will close the S3Object stream
-     * automatically.
+     * If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange
+     * completion. This option is strongly related to includeBody option. In case of setting includeBody to true and
+     * autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true,
+     * will close the S3Object stream automatically.
      */
     public void setAutocloseBody(boolean autocloseBody) {
         this.autocloseBody = autocloseBody;
@@ -374,8 +375,7 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The encryption materials to use in case of Symmetric/Asymmetric client
-     * usage
+     * The encryption materials to use in case of Symmetric/Asymmetric client usage
      */
     public void setEncryptionMaterials(EncryptionMaterials encryptionMaterials) {
         this.encryptionMaterials = encryptionMaterials;
@@ -470,8 +470,8 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the S3 client should expect to load credentials on an EC2
-     * instance or to expect static credentials to be passed in.
+     * Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to
+     * be passed in.
      */
     public void setUseIAMCredentials(Boolean useIAMCredentials) {
         this.useIAMCredentials = useIAMCredentials;
@@ -497,11 +497,22 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * Setting the key name for an element in the bucket through endpoint
-     * parameter
+     * Setting the key name for an element in the bucket through endpoint parameter
      */
     public void setKeyName(String keyName) {
         this.keyName = keyName;
+    }
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     public boolean hasProxyConfiguration() {
@@ -514,7 +525,7 @@ public class S3Configuration implements Cloneable {
 
     public S3Configuration copy() {
         try {
-            return (S3Configuration)super.clone();
+            return (S3Configuration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

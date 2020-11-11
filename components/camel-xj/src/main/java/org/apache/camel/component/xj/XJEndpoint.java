@@ -26,13 +26,13 @@ import org.apache.camel.component.xslt.saxon.XsltSaxonEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * Transforms json/xml message back and forth using a XSLT.
+ * Transform JSON and XML message using a XSLT.
  */
 @ManagedResource(description = "Managed XJEndpoint")
-@UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "xj", title = "XJ", syntax = "xj:resourceUri", producerOnly = true,
+             label = "transformation")
 public class XJEndpoint extends XsltSaxonEndpoint {
 
     private final JsonFactory jsonFactory = new JsonFactory();
@@ -58,14 +58,14 @@ public class XJEndpoint extends XsltSaxonEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
-        if (ObjectHelper.isEmpty(getResourceUri())) {
+    protected void doInit() throws Exception {
+        if ("identity".equalsIgnoreCase(getResourceUri())) {
             // Using a stylesheet for "identity" transform is slow. but with a {@link TransformerFactory}
             // we can't get an identity transformer. But for now we leave it that way.
             setResourceUri("org/apache/camel/component/xj/identity.xsl");
         }
 
-        super.doStart();
+        super.doInit();
     }
 
     @Override
@@ -95,14 +95,14 @@ public class XJEndpoint extends XsltSaxonEndpoint {
      */
     protected void configureOutput(XsltBuilder xsltBuilder, String output) throws Exception {
         switch (this.transformDirection) {
-        case JSON2XML:
-            super.configureOutput(xsltBuilder, output);
-            break;
-        case XML2JSON:
-            configureJsonOutput(xsltBuilder, output);
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown transformation direction: " + this.transformDirection);
+            case JSON2XML:
+                super.configureOutput(xsltBuilder, output);
+                break;
+            case XML2JSON:
+                configureJsonOutput(xsltBuilder, output);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown transformation direction: " + this.transformDirection);
         }
     }
 

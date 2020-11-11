@@ -18,26 +18,26 @@ package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.messaging.support.MessageBuilder;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringIntegrationMessageTest {
 
     @Test
     public void testCopyFrom() {
         CamelContext camelContext = new DefaultCamelContext();
+        camelContext.start();
 
-        org.springframework.messaging.Message testSpringMessage =
-            MessageBuilder.withPayload("Test")
+        org.springframework.messaging.Message testSpringMessage = MessageBuilder.withPayload("Test")
                 .setHeader("header1", "value1")
                 .setHeader("header2", "value2")
                 .build();
 
         SpringIntegrationMessage original = new SpringIntegrationMessage(camelContext, testSpringMessage);
 
-        SpringIntegrationMessage copy = new SpringIntegrationMessage((CamelContext) null, testSpringMessage);
+        SpringIntegrationMessage copy = new SpringIntegrationMessage(camelContext, testSpringMessage);
 
         copy.copyFrom(original);
 

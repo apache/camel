@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FailOverLoadBalanceAutoStartupFalseTest extends ContextTestSupport {
 
@@ -39,7 +39,8 @@ public class FailOverLoadBalanceAutoStartupFalseTest extends ContextTestSupport 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").routeId("foo").noAutoStartup().loadBalance().failover(3, true, true).to("direct:x", "direct:y", "direct:z");
+                from("direct:start").routeId("foo").noAutoStartup().loadBalance().failover(3, true, true).to("direct:x",
+                        "direct:y", "direct:z");
 
                 from("direct:x").to("mock:x").throwException(new IllegalArgumentException("Forced"));
                 from("direct:y").to("mock:y").throwException(new IllegalArgumentException("Also Forced"));

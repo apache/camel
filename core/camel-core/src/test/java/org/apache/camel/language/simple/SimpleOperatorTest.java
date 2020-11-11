@@ -18,15 +18,18 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SimpleOperatorTest extends LanguageTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("generator", new MyFileNameGenerator());
         return jndi;
     }
@@ -88,7 +91,9 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     @Test
     public void testThreeAnd() throws Exception {
         exchange.getIn().setBody("Hello World");
-        assertPredicate("${in.header.foo} == 'abc' && ${in.header.bar} == 123 && ${body} == 'Hello World' && ${in.header.xx} == null", true);
+        assertPredicate(
+                "${in.header.foo} == 'abc' && ${in.header.bar} == 123 && ${body} == 'Hello World' && ${in.header.xx} == null",
+                true);
     }
 
     @Test
@@ -103,11 +108,21 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     @Test
     public void testThreeOr() throws Exception {
         exchange.getIn().setBody("Hello World");
-        assertPredicate("${in.header.foo} == 'xxx' || ${in.header.bar} == 44 || ${body} == 'Bye Moon' || ${body} contains 'World'", true);
-        assertPredicate("${in.header.foo} == 'xxx' || ${in.header.bar} == 44 || ${body} == 'Bye Moon' || ${body} contains 'Moon'", false);
-        assertPredicate("${in.header.foo} == 'abc' || ${in.header.bar} == 44 || ${body} == 'Bye Moon' || ${body} contains 'Moon'", true);
-        assertPredicate("${in.header.foo} == 'xxx' || ${in.header.bar} == 123 || ${body} == 'Bye Moon' || ${body} contains 'Moon'", true);
-        assertPredicate("${in.header.foo} == 'xxx' || ${in.header.bar} == 44 || ${body} == 'Hello World' || ${body} contains 'Moon'", true);
+        assertPredicate(
+                "${in.header.foo} == 'xxx' || ${in.header.bar} == 44 || ${body} == 'Bye Moon' || ${body} contains 'World'",
+                true);
+        assertPredicate(
+                "${in.header.foo} == 'xxx' || ${in.header.bar} == 44 || ${body} == 'Bye Moon' || ${body} contains 'Moon'",
+                false);
+        assertPredicate(
+                "${in.header.foo} == 'abc' || ${in.header.bar} == 44 || ${body} == 'Bye Moon' || ${body} contains 'Moon'",
+                true);
+        assertPredicate(
+                "${in.header.foo} == 'xxx' || ${in.header.bar} == 123 || ${body} == 'Bye Moon' || ${body} contains 'Moon'",
+                true);
+        assertPredicate(
+                "${in.header.foo} == 'xxx' || ${in.header.bar} == 44 || ${body} == 'Hello World' || ${body} contains 'Moon'",
+                true);
     }
 
     @Test
@@ -154,12 +169,27 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} == 'def'", false);
         assertPredicate("${in.header.foo} == '1'", false);
 
+        // no type converter needed from this point forward
+        context.getTypeConverterRegistry().getStatistics().setStatisticsEnabled(true);
+        context.getTypeConverterRegistry().getStatistics().reset();
+
+        // boolean to boolean comparison
+        exchange.getIn().setHeader("bool", true);
+        exchange.getIn().setHeader("booley", false);
+        assertPredicate("${in.header.bool} == true", true);
+        assertPredicate("${in.header.bool} == 'true'", true);
+        assertPredicate("${in.header.booley} == false", true);
+        assertPredicate("${in.header.booley} == 'false'", true);
+
         // integer to string comparison
         assertPredicate("${in.header.bar} == '123'", true);
         assertPredicate("${in.header.bar} == 123", true);
         assertPredicate("${in.header.bar} == '444'", false);
         assertPredicate("${in.header.bar} == 444", false);
         assertPredicate("${in.header.bar} == '1'", false);
+
+        // should not need type conversion
+        assertEquals(0, context.getTypeConverterRegistry().getStatistics().getAttemptCounter());
     }
 
     @Test
@@ -356,15 +386,23 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.strNumNegative} !contains '-123'", false);
         assertPredicate("${in.header.strNumNegative} ~~ '123'", true);
         assertPredicate("${in.header.strNumNegative} ~~ '-123'", true);
-
     }
 
     @Test
     public void testLessThanOrEqualOperator() throws Exception {
+        context.getTypeConverterRegistry().getStatistics().setStatisticsEnabled(true);
+        context.getTypeConverterRegistry().getStatistics().reset();
+
         // string to string comparison
         assertPredicate("${in.header.foo} <= 'aaa'", false);
         assertPredicate("${in.header.foo} <= 'abc'", true);
         assertPredicate("${in.header.foo} <= 'def'", true);
+
+        // string to string
+        exchange.getIn().setHeader("dude", "555");
+        exchange.getIn().setHeader("dude2", "0099");
+        assertPredicate("${in.header.dude} <= ${in.header.dude}", true);
+        assertPredicate("${in.header.dude2} <= ${in.header.dude}", true);
 
         // integer to string comparison
         assertPredicate("${in.header.bar} <= '100'", false);
@@ -372,6 +410,56 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} <= '123'", true);
         assertPredicate("${in.header.bar} <= 123", true);
         assertPredicate("${in.header.bar} <= '200'", true);
+
+        // should not need type conversion
+        assertEquals(0, context.getTypeConverterRegistry().getStatistics().getAttemptCounter());
+    }
+
+    @Test
+    public void testTypeCoerceNoConversionNeeded() throws Exception {
+        context.getTypeConverterRegistry().getStatistics().setStatisticsEnabled(true);
+        context.getTypeConverterRegistry().getStatistics().reset();
+
+        // int to int comparison
+        exchange.getIn().setHeader("num", 70);
+        assertPredicate("${in.header.num} > 100", false);
+        assertPredicate("${in.header.num} < 100", true);
+        assertPredicate("${in.header.num} == 70", true);
+        assertPredicate("${in.header.num} != 70", false);
+        assertPredicate("${in.header.num} > 100", false);
+        assertPredicate("${in.header.num} > 80", false);
+        assertPredicate("${in.header.num} > 800", false);
+        assertPredicate("${in.header.num} < 800", true);
+        assertPredicate("${in.header.num} > 1", true);
+        assertPredicate("${in.header.num} > 8", true);
+        assertPredicate("${in.header.num} > 48", true);
+        assertPredicate("${in.header.num} > 69", true);
+        assertPredicate("${in.header.num} > 71", false);
+        assertPredicate("${in.header.num} < 71", true);
+        assertPredicate("${in.header.num} > 88", false);
+        assertPredicate("${in.header.num} > 777", false);
+
+        // String to int comparison
+        exchange.getIn().setHeader("num", "70");
+        assertPredicate("${in.header.num} > 100", false);
+        assertPredicate("${in.header.num} < 100", true);
+        assertPredicate("${in.header.num} == 70", true);
+        assertPredicate("${in.header.num} != 70", false);
+        assertPredicate("${in.header.num} > 100", false);
+        assertPredicate("${in.header.num} > 80", false);
+        assertPredicate("${in.header.num} > 800", false);
+        assertPredicate("${in.header.num} < 800", true);
+        assertPredicate("${in.header.num} > 1", true);
+        assertPredicate("${in.header.num} > 8", true);
+        assertPredicate("${in.header.num} > 48", true);
+        assertPredicate("${in.header.num} > 69", true);
+        assertPredicate("${in.header.num} > 71", false);
+        assertPredicate("${in.header.num} < 71", true);
+        assertPredicate("${in.header.num} > 88", false);
+        assertPredicate("${in.header.num} > 777", false);
+
+        // should not need type conversion
+        assertEquals(0, context.getTypeConverterRegistry().getStatistics().getAttemptCounter());
     }
 
     @Test
@@ -408,6 +496,15 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} contains 'ab'", true);
         assertPredicate("${in.header.foo} contains 'abc'", true);
         assertPredicate("${in.header.foo} contains 'def'", false);
+    }
+
+    @Test
+    public void testContainsNumberInString() throws Exception {
+        exchange.getMessage().setBody("The answer is 42 and is the answer to life the universe and everything");
+        assertPredicate("${body} contains '42'", true);
+        assertPredicate("${body} contains 42", true);
+        assertPredicate("${body} contains '77'", false);
+        assertPredicate("${body} contains 77", false);
     }
 
     @Test

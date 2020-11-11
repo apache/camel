@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DeadLetterChannelLogExhaustedMessageHistoryWithBodyTest extends ContextTestSupport {
 
@@ -37,7 +37,8 @@ public class DeadLetterChannelLogExhaustedMessageHistoryWithBodyTest extends Con
             @Override
             public void configure() throws Exception {
                 // no delay to speedup test
-                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3).logExhaustedMessageHistory(true).logExhaustedMessageBody(true));
+                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3)
+                        .logExhaustedMessageHistory(true).logExhaustedMessageBody(true));
 
                 from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }

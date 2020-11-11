@@ -26,30 +26,36 @@ import org.apache.camel.component.syslog.netty.Rfc5425FrameDecoder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyRfc5425Test extends CamelTestSupport {
 
     private static String uri;
     private static String uriClient;
     private static int serverPort;
-    private final String rfc3164Message = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
-                                          + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n" + "         Conveyer1=OK, Conveyer2=OK # %%";
-    private final String rfc5424Message = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8";
+    private final String rfc3164Message
+            = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
+              + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n"
+              + "         Conveyer1=OK, Conveyer2=OK # %%";
+    private final String rfc5424Message
+            = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8";
     private final String rfc5424WithStructuredData = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 "
-        + "[exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"] BOM'su root' failed for lonvick on /dev/pts/8";
+                                                     + "[exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"] BOM'su root' failed for lonvick on /dev/pts/8";
 
     @BindToRegistry("decoder")
     private Rfc5425FrameDecoder decoder = new Rfc5425FrameDecoder();
     @BindToRegistry("encoder")
-    private Rfc5425Encoder encoder = new Rfc5425Encoder(); 
-    
-    @BeforeClass
+    private Rfc5425Encoder encoder = new Rfc5425Encoder();
+
+    @BeforeAll
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
-        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoder=#encoder";
+        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoders=#encoder";
         uriClient = uri + "&useByteBuf=true";
     }
 
@@ -67,12 +73,12 @@ public class NettyRfc5425Test extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testStructuredData() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:syslogReceiver");
         mock.expectedMessageCount(1);
-        
+
         template.sendBody("direct:checkStructuredData", rfc5424WithStructuredData);
     }
 
@@ -93,14 +99,14 @@ public class NettyRfc5425Test extends CamelTestSupport {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }
                 }).to("mock:syslogReceiver").marshal(syslogDataFormat).to("mock:syslogReceiver2");
-                
-                
+
                 from("direct:checkStructuredData").unmarshal(syslogDataFormat).process(new Processor() {
                     @Override
                     public void process(Exchange ex) {
                         Object body = ex.getIn().getBody();
                         assertTrue(body instanceof Rfc5424SyslogMessage);
-                        assertEquals("[exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"]", ((Rfc5424SyslogMessage)body).getStructuredData());
+                        assertEquals("[exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"]",
+                                ((Rfc5424SyslogMessage) body).getStructuredData());
                     }
                 }).to("mock:syslogReceiver");
             }

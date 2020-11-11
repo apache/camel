@@ -25,17 +25,20 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Rule;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     static final int RECEIVE_TIMEOUT = 1000;
     static final int READ_TIMEOUT = 500;
 
-    @Rule
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
-
 
     @EndpointInject("mock://result")
     MockEndpoint result;
@@ -56,12 +59,15 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     /**
      * Simulate a Load Balancer Probe
      * <p/>
-     * Load Balancers check the status of a port by establishing and closing a TCP connection periodically.  The time between these probes can normally be configured, but it is typically set to about
-     * 15-sec.  Since there could be a large number of port that are being probed, the logging from the connect/disconnect operations can drown-out more useful information.
+     * Load Balancers check the status of a port by establishing and closing a TCP connection periodically. The time
+     * between these probes can normally be configured, but it is typically set to about 15-sec. Since there could be a
+     * large number of port that are being probed, the logging from the connect/disconnect operations can drown-out more
+     * useful information.
      * <p/>
-     * Watch the logs when running this test to verify that the log output will be acceptable when a load balancer is probing the port.
+     * Watch the logs when running this test to verify that the log output will be acceptable when a load balancer is
+     * probing the port.
      * <p/>
-     * TODO:  Need to add a custom Log4j Appender that can verify the logging is acceptable
+     * TODO: Need to add a custom Log4j Appender that can verify the logging is acceptable
      *
      * @throws Exception
      */
@@ -148,10 +154,11 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             String routeId = "mllp-receiver-with-timeout";
 
             public void configure() {
-                fromF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&idleTimeout=%d", mllpClient.getMllpHost(), mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT, idleTimeout)
-                    .routeId(routeId)
-                    .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
-                    .to(result);
+                fromF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&idleTimeout=%d", mllpClient.getMllpHost(),
+                        mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT, idleTimeout)
+                                .routeId(routeId)
+                                .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
+                                .to(result);
             }
         };
 

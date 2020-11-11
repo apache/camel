@@ -22,7 +22,6 @@ import java.util.Iterator;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
-import org.junit.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.ws.client.core.SourceExtractor;
 import org.springframework.ws.soap.SoapHeader;
@@ -32,6 +31,8 @@ import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 import org.springframework.ws.soap.addressing.version.Addressing10;
 import org.springframework.ws.soap.addressing.version.Addressing200408;
 import org.springframework.ws.soap.addressing.version.AddressingVersion;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class TestUtil {
 
@@ -45,22 +46,19 @@ public final class TestUtil {
     }
 
     /**
-     * Compare the to string ignoring new lines symbol. Handy if you need to
-     * compare some text coming from 2 different OS.
+     * Compare the to string ignoring new lines symbol. Handy if you need to compare some text coming from 2 different
+     * OS.
      */
     public static void assertEqualsIgnoreNewLinesSymbol(String expected, String actual) {
-        Assert.assertEquals(StringUtils.deleteAny(expected, "\n\r"), StringUtils.deleteAny(actual, "\n\r"));
+        assertEquals(StringUtils.deleteAny(expected, "\n\r"), StringUtils.deleteAny(actual, "\n\r"));
 
     }
 
     /**
      * Retrieve a WS-Addressing properties from the soapMessage
-     * 
-     * @param messageContext
-     * @return
      */
     public static MessageAddressingProperties getWSAProperties(SoapMessage soapMessage) {
-        AddressingVersion[] versions = new AddressingVersion[] {new Addressing200408(), new Addressing10()};
+        AddressingVersion[] versions = new AddressingVersion[] { new Addressing200408(), new Addressing10() };
 
         for (AddressingVersion version : versions) {
             if (supports(version, soapMessage)) {

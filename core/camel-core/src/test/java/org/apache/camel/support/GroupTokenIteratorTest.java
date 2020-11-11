@@ -26,9 +26,11 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.Scanner;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -39,7 +41,7 @@ public class GroupTokenIteratorTest extends TestSupport {
     private Exchange exchange;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         context = new DefaultCamelContext();
@@ -49,7 +51,7 @@ public class GroupTokenIteratorTest extends TestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         context.stop();
         super.tearDown();

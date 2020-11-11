@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openstack.swift;
 
+import org.apache.camel.Category;
 import org.apache.camel.Producer;
 import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
 import org.apache.camel.component.openstack.swift.producer.ContainerProducer;
@@ -27,9 +28,10 @@ import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
 /**
- * The openstack-swift component allows messages to be sent to an OpenStack object storage services.
+ * Access OpenStack Swift object/blob store.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-swift", title = "OpenStack Swift", syntax = "openstack-swift:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-swift", title = "OpenStack Swift", syntax = "openstack-swift:host",
+             category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "objects,containers")
@@ -68,12 +70,12 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (subsystem) {
-        case SwiftConstants.SWIFT_SUBSYSTEM_OBJECTS:
-            return new ObjectProducer(this, createClient());
-        case SwiftConstants.SWIFT_SUBSYSTEM_CONTAINERS:
-            return new ContainerProducer(this, createClient());
-        default:
-            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+            case SwiftConstants.SWIFT_SUBSYSTEM_OBJECTS:
+                return new ObjectProducer(this, createClient());
+            case SwiftConstants.SWIFT_SUBSYSTEM_CONTAINERS:
+                return new ContainerProducer(this, createClient());
+            default:
+                throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
         }
     }
 
@@ -166,12 +168,11 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
     }
 
     /**
-     *OpenStack configuration
+     * OpenStack configuration
      */
     public void setConfig(Config config) {
         this.config = config;
     }
-
 
     @Override
     public String getApiVersion() {
@@ -185,5 +186,3 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
         this.apiVersion = apiVersion;
     }
 }
-
-

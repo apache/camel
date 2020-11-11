@@ -19,7 +19,9 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RecipientListParallelAggregateThreadPoolIssueTest extends ContextTestSupport {
 
@@ -44,7 +46,7 @@ public class RecipientListParallelAggregateThreadPoolIssueTest extends ContextTe
         // should be at least 10 + 1 other threads (10 in parallel pool + 1 in
         // aggregate pool)
         // we run unit test per jmv fork, so there may be a hanging thread
-        assertTrue("There should be 12 or more threads in use, was: " + diff, diff >= 11);
+        assertTrue(diff >= 11, "There should be 12 or more threads in use, was: " + diff);
     }
 
     @Override

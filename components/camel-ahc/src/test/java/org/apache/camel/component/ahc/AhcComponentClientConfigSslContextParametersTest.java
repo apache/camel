@@ -23,16 +23,17 @@ public class AhcComponentClientConfigSslContextParametersTest extends AhcCompone
     @Override
     public void configureComponent() {
         super.configureComponent();
-        
+
         AhcComponent component = context.getComponent("ahc", AhcComponent.class);
-        component.setSslContextParameters(context.getRegistry().lookupByNameAndType("sslContextParameters", SSLContextParameters.class));
+        component.setSslContextParameters(
+                context.getRegistry().lookupByNameAndType("sslContextParameters", SSLContextParameters.class));
     }
 
     @Override
     protected String getTestServerEndpointUri() {
         return super.getTestServerEndpointUri() + "?sslContextParameters=#sslContextParameters";
     }
-    
+
     @Override
     protected String getTestServerEndpointTwoUri() {
         return super.getTestServerEndpointTwoUri() + "?sslContextParameters=#sslContextParameters";

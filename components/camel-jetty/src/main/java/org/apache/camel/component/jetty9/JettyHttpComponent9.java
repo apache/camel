@@ -49,7 +49,8 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
     }
 
     @Override
-    protected AbstractConnector createConnectorJettyInternal(Server server, JettyHttpEndpoint endpoint, SslContextFactory sslcf) {
+    protected AbstractConnector createConnectorJettyInternal(
+            Server server, JettyHttpEndpoint endpoint, SslContextFactory sslcf) {
         try {
             String host = endpoint.getHttpUri().getHost();
             int port = endpoint.getPort();
@@ -99,14 +100,18 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
                     Map<String, Object> properties = new HashMap<>(getSslSocketConnectorProperties());
                     PropertyBindingSupport.bindProperties(getCamelContext(), sslcf, properties);
                     if (properties.size() > 0) {
-                        throw new IllegalArgumentException("There are " + properties.size() + " parameters that couldn't be set on the SocketConnector."
+                        throw new IllegalArgumentException(
+                                "There are " + properties.size() + " parameters that couldn't be set on the SocketConnector."
                                                            + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
                                                            + " Unknown parameters=[" + properties + "]");
                     }
                 }
 
-                LOG.info("Connector on port: {} is using includeCipherSuites: {} excludeCipherSuites: {} includeProtocols: {} excludeProtocols: {}", port,
-                         sslcf.getIncludeCipherSuites(), sslcf.getExcludeCipherSuites(), sslcf.getIncludeProtocols(), sslcf.getExcludeProtocols());
+                LOG.info(
+                        "Connector on port: {} is using includeCipherSuites: {} excludeCipherSuites: {} includeProtocols: {} excludeProtocols: {}",
+                        port,
+                        sslcf.getIncludeCipherSuites(), sslcf.getExcludeCipherSuites(), sslcf.getIncludeProtocols(),
+                        sslcf.getExcludeProtocols());
             }
 
             return result;

@@ -22,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OnExceptionContinueTwoPredicateTest extends OnExceptionContinueTwoTest {
 
@@ -64,9 +66,9 @@ public class OnExceptionContinueTwoPredicateTest extends OnExceptionContinueTwoT
                 }).to("mock:me");
 
                 from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:middle")
-                    // throw a second time to validate that the exchange is
-                    // reset appropriately
-                    .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
+                        // throw a second time to validate that the exchange is
+                        // reset appropriately
+                        .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
             }
         };
     }

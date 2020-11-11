@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSupport {
 
@@ -66,7 +66,7 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").transform().method(TypeConverterRegistryStatsPerformanceTest.class, "transformMe")
-                    .bean(TypeConverterRegistryStatsPerformanceTest.class, "transformMeAlso").to("mock:result");
+                        .bean(TypeConverterRegistryStatsPerformanceTest.class, "transformMeAlso").to("mock:result");
             }
         };
     }

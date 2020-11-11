@@ -18,5 +18,7 @@ package org.apache.camel.component.dummy;
 
 public enum Drinks {
 
-    Beer, GinTonic, Wine
+    Beer,
+    GinTonic,
+    Wine
 }

@@ -24,7 +24,11 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSupport {
 
@@ -56,7 +60,7 @@ public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSup
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("myRoute", routeId);
 
-        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[]{true}, new String[]{"boolean"});
+        String xml = (String) mbeanServer.invoke(on, "dumpRouteAsXml", new Object[] { true }, new String[] { "boolean" });
         assertNotNull(xml);
         log.info(xml);
 
@@ -79,8 +83,8 @@ public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSup
             @Override
             public void configure() throws Exception {
                 from("{{start}}").routeId("myRoute")
-                    .log("Got ${body}")
-                    .to("{{result}}");
+                        .log("Got ${body}")
+                        .to("{{result}}");
             }
         };
     }

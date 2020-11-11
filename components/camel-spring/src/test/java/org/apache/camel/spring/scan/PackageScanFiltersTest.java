@@ -30,10 +30,13 @@ import org.apache.camel.spring.scan.a.ScanTargetOne;
 import org.apache.camel.spring.scan.b.ScanTargetTwo;
 import org.apache.camel.spring.scan.c.ScanTargetThree;
 import org.apache.camel.util.CollectionHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class PackageScanFiltersTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class PackageScanFiltersTest {
 
     @Test
     public void testAssignableToPackageScanFilter() {
@@ -69,12 +72,15 @@ public class PackageScanFiltersTest extends Assert {
         validateFilter(filter, type);
         validateFilter(filter, ScanTargetThree.class);
 
-        assertEquals("annotated with any @[[interface org.apache.camel.spring.scan.ScannableOne, interface org.apache.camel.spring.scan.ScannableTwo]]", filter.toString());
+        assertEquals(
+                "annotated with any @[[interface org.apache.camel.spring.scan.ScannableOne, interface org.apache.camel.spring.scan.ScannableTwo]]",
+                filter.toString());
     }
 
     @Test
     public void testAnnotatedWithPackageScanFilter() {
-        AnnotatedWithPackageScanFilter filter = new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
+        AnnotatedWithPackageScanFilter filter
+                = new AnnotatedWithPackageScanFilter(org.apache.camel.spring.scan.ScannableOne.class);
         validateFilter(filter, ScanTargetOne.class);
         validateFilter(filter, ScanTargetTwo.class);
 
@@ -102,7 +108,8 @@ public class PackageScanFiltersTest extends Assert {
 
     @Test
     public void testInvertingFilter() {
-        InvertingPackageScanFilter filter = new InvertingPackageScanFilter(new AnnotatedWithPackageScanFilter(ScannableOne.class));
+        InvertingPackageScanFilter filter
+                = new InvertingPackageScanFilter(new AnnotatedWithPackageScanFilter(ScannableOne.class));
         validateFilter(filter, ScanTargetThree.class);
         assertEquals("![annotated with @ScannableOne]", filter.toString());
     }

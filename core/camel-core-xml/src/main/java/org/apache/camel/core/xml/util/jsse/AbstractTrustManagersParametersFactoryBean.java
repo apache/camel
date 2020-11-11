@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 
@@ -29,17 +30,23 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 public abstract class AbstractTrustManagersParametersFactoryBean extends AbstractJsseUtilFactoryBean<TrustManagersParameters> {
 
     @XmlAttribute
+    @Metadata(description = "The optional provider identifier for the TrustManagerFactory used to create"
+                            + " TrustManagers represented by this object's configuration.")
     protected String provider;
-    
+
     @XmlAttribute
+    @Metadata(description = "The optional algorithm name for the TrustManagerFactory used to"
+                            + " create the TrustManagers represented by this objects configuration."
+                            + " See the Java Secure Socket Extension Reference Guide for information about standard algorithm names.")
     protected String algorithm;
-    
+
     @XmlAttribute
+    @Metadata(description = "To use a existing configured trust manager instead of using TrustManagerFactory to get the TrustManager.")
     protected String trustManager;
 
     @XmlTransient
     private TrustManagersParameters instance;
-    
+
     public String getProvider() {
         return provider;
     }
@@ -67,23 +74,23 @@ public abstract class AbstractTrustManagersParametersFactoryBean extends Abstrac
     @Override
     public TrustManagersParameters getObject() throws Exception {
         if (isSingleton()) {
-            if (instance == null) { 
-                instance = createInstance();   
+            if (instance == null) {
+                instance = createInstance();
             }
             return instance;
         } else {
             return createInstance();
-        }   
+        }
     }
-    
+
     @Override
     public Class<TrustManagersParameters> getObjectType() {
         return TrustManagersParameters.class;
     }
-    
+
     protected TrustManagersParameters createInstance() throws Exception {
         TrustManagersParameters newInstance = new TrustManagersParameters();
-        
+
         newInstance.setAlgorithm(algorithm);
         if (getKeyStore() != null) {
             getKeyStore().setCamelContext(getCamelContext());
@@ -96,9 +103,9 @@ public abstract class AbstractTrustManagersParametersFactoryBean extends Abstrac
             TrustManager tm = CamelContextHelper.mandatoryLookup(getCamelContext(), trustManager, TrustManager.class);
             newInstance.setTrustManager(tm);
         }
-        
+
         return newInstance;
     }
-    
+
     protected abstract AbstractKeyStoreParametersFactoryBean getKeyStore();
 }

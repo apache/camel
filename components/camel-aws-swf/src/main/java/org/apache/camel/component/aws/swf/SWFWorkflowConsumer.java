@@ -33,7 +33,7 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     private SWFEndpoint endpoint;
     private final SWFConfiguration configuration;
     private GenericWorkflowWorker genericWorker;
-    
+
     private transient String swfWorkflowConsumerToString;
 
     public SWFWorkflowConsumer(SWFEndpoint endpoint, Processor processor, SWFConfiguration configuration) {
@@ -43,7 +43,7 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     }
 
     public Object processWorkflow(Object[] parameters, long startTime, boolean replaying) throws Exception {
-        LOGGER.debug("Processing workflow task: " + Arrays.toString(parameters));
+        LOGGER.debug("Processing workflow task: {}", Arrays.toString(parameters));
         Exchange exchange = endpoint.createExchange(parameters, SWFConstants.EXECUTE_ACTION);
         exchange.getIn().setHeader(SWFConstants.WORKFLOW_START_TIME, startTime);
         exchange.getIn().setHeader(SWFConstants.WORKFLOW_REPLAYING, replaying);
@@ -52,8 +52,8 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
         return endpoint.getResult(exchange);
     }
 
-    public void signalRecieved(Object[] parameters) throws Exception {
-        LOGGER.debug("signalRecieved: " + Arrays.toString(parameters));
+    public void signalReceived(Object[] parameters) throws Exception {
+        LOGGER.debug("signalReceived: {}", Arrays.toString(parameters));
 
         Exchange exchange = endpoint.createExchange(parameters, SWFConstants.SIGNAL_RECEIVED_ACTION);
         exchange.setPattern(InOnly);
@@ -61,7 +61,7 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     }
 
     public Object getWorkflowState(Object parameters) throws Exception {
-        LOGGER.debug("getWorkflowState: " + parameters);
+        LOGGER.debug("getWorkflowState: {}", parameters);
 
         Exchange exchange = endpoint.createExchange(parameters, SWFConstants.GET_STATE_ACTION);
         getProcessor().process(exchange);
@@ -71,7 +71,8 @@ public class SWFWorkflowConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         CamelWorkflowDefinitionFactoryFactory factoryFactory = new CamelWorkflowDefinitionFactoryFactory(this, configuration);
-        genericWorker = new GenericWorkflowWorker(endpoint.getSWClient(), configuration.getDomainName(), configuration.getWorkflowList());
+        genericWorker = new GenericWorkflowWorker(
+                endpoint.getSWClient(), configuration.getDomainName(), configuration.getWorkflowList());
         genericWorker.setWorkflowDefinitionFactoryFactory(factoryFactory);
         genericWorker.start();
         super.doStart();

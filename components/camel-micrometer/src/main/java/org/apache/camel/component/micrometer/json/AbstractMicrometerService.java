@@ -127,10 +127,12 @@ public class AbstractMicrometerService extends ServiceSupport {
         }
 
         // json mapper
-        this.mapper = new ObjectMapper().registerModule(new MicrometerModule(getDurationUnit(), getMatchingNames(), getMatchingTags()));
+        this.mapper = new ObjectMapper()
+                .registerModule(new MicrometerModule(getDurationUnit(), getMatchingNames(), getMatchingTags()));
         this.secondsMapper = getDurationUnit() == TimeUnit.SECONDS
                 ? this.mapper
-                : new ObjectMapper().registerModule(new MicrometerModule(TimeUnit.SECONDS, getMatchingNames(), getMatchingTags()));
+                : new ObjectMapper()
+                        .registerModule(new MicrometerModule(TimeUnit.SECONDS, getMatchingNames(), getMatchingTags()));
     }
 
     @Override

@@ -25,7 +25,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.rxjava.engine.support.TestSubscriber;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTestSupport {
 
@@ -37,9 +40,9 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
             @Override
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
-                    .setBody()
-                    .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:integers");
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers");
             }
         });
 
@@ -48,10 +51,10 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
         CountDownLatch latch = new CountDownLatch(1);
 
         Flowable.range(0, 50)
-            .zipWith(integers, (l, i) -> i)
-            .timeout(2000, TimeUnit.MILLISECONDS, Flowable.empty())
-            .doOnComplete(latch::countDown)
-            .subscribe(queue::add);
+                .zipWith(integers, (l, i) -> i)
+                .timeout(2000, TimeUnit.MILLISECONDS, Flowable.empty())
+                .doOnComplete(latch::countDown)
+                .subscribe(queue::add);
 
         context.start();
 
@@ -72,9 +75,9 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
             @Override
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
-                    .setBody()
-                    .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:integers");
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers");
             }
         });
 
@@ -119,9 +122,9 @@ public class RxJavaStreamsServiceBackpressureTest extends RxJavaStreamsServiceTe
             @Override
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
-                    .setBody()
-                    .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:integers");
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers");
             }
         });
 

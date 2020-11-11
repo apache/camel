@@ -28,12 +28,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 @XmlRootElement(name = "keyStoreParameters")
-public class KeyStoreParametersFactoryBean extends AbstractKeyStoreParametersFactoryBean 
+public class KeyStoreParametersFactoryBean extends AbstractKeyStoreParametersFactoryBean
         implements FactoryBean<KeyStoreParameters>, ApplicationContextAware {
-    
+
     @XmlTransient
     private ApplicationContext applicationContext;
-    
+
     @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);

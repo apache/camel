@@ -19,7 +19,7 @@ package org.apache.camel.component.facebook;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test preconfigured Facebook component.
@@ -35,7 +35,7 @@ public class FacebookEndpointTest extends CamelFacebookTestSupport {
         mockEndpoint.expectedMessageCount(1);
 
         template().requestBodyAndHeader("direct:testNoArgs", null,
-            FacebookConstants.FACEBOOK_PROPERTY_PREFIX + "userId", "me");
+                FacebookConstants.FACEBOOK_PROPERTY_PREFIX + "userId", "me");
 
         mockEndpoint.assertIsSatisfied();
     }
@@ -55,8 +55,8 @@ public class FacebookEndpointTest extends CamelFacebookTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:testNoArgs")
-                    .to("facebook:getuserlikes")
-                    .to("mock://testNoArgs");
+                        .to("facebook:getuserlikes")
+                        .to("mock://testNoArgs");
             }
         };
     }

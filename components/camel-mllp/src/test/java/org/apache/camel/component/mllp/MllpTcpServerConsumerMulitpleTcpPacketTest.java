@@ -26,16 +26,17 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.apache.camel.test.mllp.PassthroughProcessor;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport {
-    @Rule
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock://result")
@@ -59,7 +60,6 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
         mllpClient.setMllpHost("localhost");
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
 
-
         return new RouteBuilder() {
             String routeId = "mllp-receiver";
 
@@ -67,15 +67,16 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
             public void configure() throws Exception {
 
                 onCompletion()
-                    .log(LoggingLevel.INFO, routeId, "Test route complete");
+                        .log(LoggingLevel.INFO, routeId, "Test route complete");
 
                 fromF("mllp://%s:%d",
-                    mllpClient.getMllpHost(), mllpClient.getMllpPort())
-                    .routeId(routeId)
-                    .process(new PassthroughProcessor("Before send to result"))
-                    .to(result)
-                    .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval, groupActiveOnly)
-                    .log(LoggingLevel.DEBUG, routeId, "Test route received message");
+                        mllpClient.getMllpHost(), mllpClient.getMllpPort())
+                                .routeId(routeId)
+                                .process(new PassthroughProcessor("Before send to result"))
+                                .to(result)
+                                .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval,
+                                        groupActiveOnly)
+                                .log(LoggingLevel.DEBUG, routeId, "Test route received message");
 
             }
         };
@@ -93,9 +94,9 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
 
-        Assert.assertThat("Should be acknowledgment for message 1", acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|00001")));
+        assertThat("Should be acknowledgment for message 1", acknowledgement,
+                CoreMatchers.containsString(String.format("MSA|AA|00001")));
     }
-
 
     @Test
     public void testReceiveMultipleMessages() throws Exception {
@@ -110,7 +111,8 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
             result.message(i - 1).body().isEqualTo(testMessage);
             mllpClient.sendFramedDataInMultiplePackets(testMessage, (byte) '\r');
             String acknowledgement = mllpClient.receiveFramedData();
-            Assert.assertThat("Should be acknowledgment for message " + i, acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
+            assertThat("Should be acknowledgment for message " + i, acknowledgement,
+                    CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
         }
 
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);

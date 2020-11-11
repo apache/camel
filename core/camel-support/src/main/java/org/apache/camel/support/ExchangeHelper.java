@@ -21,9 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NoSuchBeanException;
@@ -45,8 +47,8 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.IOHelper;
@@ -68,9 +70,9 @@ public final class ExchangeHelper {
     /**
      * Extracts the Exchange.BINDING of the given type or null if not present
      *
-     * @param exchange the message exchange
-     * @param type     the expected binding type
-     * @return the binding object of the given type or null if it could not be found or converted
+     * @param  exchange the message exchange
+     * @param  type     the expected binding type
+     * @return          the binding object of the given type or null if it could not be found or converted
      */
     public static <T> T getBinding(Exchange exchange, Class<T> type) {
         return exchange != null ? exchange.getProperty(Exchange.BINDING, type) : null;
@@ -79,20 +81,77 @@ public final class ExchangeHelper {
     /**
      * Attempts to resolve the endpoint for the given value
      *
-     * @param exchange the message exchange being processed
-     * @param value    the value which can be an {@link Endpoint} or an object
-     *                 which provides a String representation of an endpoint via
-     *                 {@link #toString()}
-     * @return the endpoint
+     * @param  exchange                the message exchange being processed
+     * @param  value                   the value which can be an {@link Endpoint} or an object which provides a String
+     *                                 representation of an endpoint via {@link #toString()}
+     * @return                         the endpoint
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
     public static Endpoint resolveEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        return resolveEndpoint(exchange.getContext(), value);
+    }
+
+    /**
+     * Attempts to resolve the endpoint for the given value
+     *
+     * @param  context                 the camel context
+     * @param  value                   the value which can be an {@link Endpoint} or an object which provides a String
+     *                                 representation of an endpoint via {@link #toString()}
+     * @return                         the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolveEndpoint(CamelContext context, Object value) throws NoSuchEndpointException {
+        if (value == null) {
+            throw new NoSuchEndpointException("null");
+        }
         Endpoint endpoint;
         if (value instanceof Endpoint) {
             endpoint = (Endpoint) value;
+        } else if (value instanceof NormalizedEndpointUri) {
+            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+            endpoint = CamelContextHelper.getMandatoryEndpoint(context, nu);
         } else {
             String uri = value.toString().trim();
-            endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), uri);
+            endpoint = CamelContextHelper.getMandatoryEndpoint(context, uri);
+        }
+        return endpoint;
+    }
+
+    /**
+     * Attempts to resolve the endpoint (prototype scope) for the given value
+     *
+     * @param  exchange                the message exchange being processed
+     * @param  value                   the value which can be an {@link Endpoint} or an object which provides a String
+     *                                 representation of an endpoint via {@link #toString()}
+     * @return                         the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolvePrototypeEndpoint(Exchange exchange, Object value) throws NoSuchEndpointException {
+        return resolvePrototypeEndpoint(exchange.getContext(), value);
+    }
+
+    /**
+     * Attempts to resolve the endpoint (prototype scope) for the given value
+     *
+     * @param  context                 the camel context
+     * @param  value                   the value which can be an {@link Endpoint} or an object which provides a String
+     *                                 representation of an endpoint via {@link #toString()}
+     * @return                         the endpoint
+     * @throws NoSuchEndpointException if the endpoint cannot be resolved
+     */
+    public static Endpoint resolvePrototypeEndpoint(CamelContext context, Object value) throws NoSuchEndpointException {
+        if (value == null) {
+            throw new NoSuchEndpointException("null");
+        }
+        Endpoint endpoint;
+        if (value instanceof Endpoint) {
+            endpoint = (Endpoint) value;
+        } else if (value instanceof NormalizedEndpointUri) {
+            NormalizedEndpointUri nu = (NormalizedEndpointUri) value;
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(context, nu);
+        } else {
+            String uri = value.toString().trim();
+            endpoint = CamelContextHelper.getMandatoryPrototypeEndpoint(context, uri);
         }
         return endpoint;
     }
@@ -100,14 +159,15 @@ public final class ExchangeHelper {
     /**
      * Gets the mandatory property of the exchange of the correct type
      *
-     * @param exchange      the exchange
-     * @param propertyName  the property name
-     * @param type          the type
-     * @return the property value
+     * @param  exchange                the exchange
+     * @param  propertyName            the property name
+     * @param  type                    the type
+     * @return                         the property value
      * @throws TypeConversionException is thrown if error during type conversion
      * @throws NoSuchPropertyException is thrown if no property exists
      */
-    public static <T> T getMandatoryProperty(Exchange exchange, String propertyName, Class<T> type) throws NoSuchPropertyException {
+    public static <T> T getMandatoryProperty(Exchange exchange, String propertyName, Class<T> type)
+            throws NoSuchPropertyException {
         T result = exchange.getProperty(propertyName, type);
         if (result != null) {
             return result;
@@ -118,14 +178,15 @@ public final class ExchangeHelper {
     /**
      * Gets the mandatory inbound header of the correct type
      *
-     * @param exchange      the exchange
-     * @param headerName    the header name
-     * @param type          the type
-     * @return the header value
+     * @param  exchange                the exchange
+     * @param  headerName              the header name
+     * @param  type                    the type
+     * @return                         the header value
      * @throws TypeConversionException is thrown if error during type conversion
-     * @throws NoSuchHeaderException is thrown if no headers exists
+     * @throws NoSuchHeaderException   is thrown if no headers exists
      */
-    public static <T> T getMandatoryHeader(Exchange exchange, String headerName, Class<T> type) throws TypeConversionException, NoSuchHeaderException {
+    public static <T> T getMandatoryHeader(Exchange exchange, String headerName, Class<T> type)
+            throws TypeConversionException, NoSuchHeaderException {
         T answer = exchange.getIn().getHeader(headerName, type);
         if (answer == null) {
             throw new NoSuchHeaderException(exchange, headerName, type);
@@ -136,14 +197,15 @@ public final class ExchangeHelper {
     /**
      * Gets the mandatory inbound header of the correct type
      *
-     * @param message       the message
-     * @param headerName    the header name
-     * @param type          the type
-     * @return the header value
+     * @param  message                 the message
+     * @param  headerName              the header name
+     * @param  type                    the type
+     * @return                         the header value
      * @throws TypeConversionException is thrown if error during type conversion
-     * @throws NoSuchHeaderException is thrown if no headers exists
+     * @throws NoSuchHeaderException   is thrown if no headers exists
      */
-    public static <T> T getMandatoryHeader(Message message, String headerName, Class<T> type) throws TypeConversionException, NoSuchHeaderException {
+    public static <T> T getMandatoryHeader(Message message, String headerName, Class<T> type)
+            throws TypeConversionException, NoSuchHeaderException {
         T answer = message.getHeader(headerName, type);
         if (answer == null) {
             throw new NoSuchHeaderException(message.getExchange(), headerName, type);
@@ -154,12 +216,12 @@ public final class ExchangeHelper {
     /**
      * Gets an header or property of the correct type
      *
-     * @param exchange      the exchange
-     * @param name          the name of the header or the property
-     * @param type          the type
-     * @return the header or property value
+     * @param  exchange                the exchange
+     * @param  name                    the name of the header or the property
+     * @param  type                    the type
+     * @return                         the header or property value
      * @throws TypeConversionException is thrown if error during type conversion
-     * @throws NoSuchHeaderException is thrown if no headers exists
+     * @throws NoSuchHeaderException   is thrown if no headers exists
      */
     public static <T> T getHeaderOrProperty(Exchange exchange, String name, Class<T> type) throws TypeConversionException {
         T answer = exchange.getIn().getHeader(name, type);
@@ -172,42 +234,30 @@ public final class ExchangeHelper {
     /**
      * Converts the value to the given expected type or throws an exception
      *
-     * @return the converted value
-     * @throws TypeConversionException is thrown if error during type conversion
+     * @return                                     the converted value
+     * @throws TypeConversionException             is thrown if error during type conversion
      * @throws NoTypeConversionAvailableException} if no type converters exists to convert to the given type
      */
     public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value)
-        throws TypeConversionException, NoTypeConversionAvailableException {
-        CamelContext camelContext = exchange.getContext();
-        ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
-        TypeConverter converter = camelContext.getTypeConverter();
-        if (converter != null) {
-            return converter.mandatoryConvertTo(type, exchange, value);
-        }
-        throw new NoTypeConversionAvailableException(value, type);
+            throws TypeConversionException, NoTypeConversionAvailableException {
+        return exchange.getContext().getTypeConverter().mandatoryConvertTo(type, exchange, value);
     }
 
     /**
      * Converts the value to the given expected type
      *
-     * @return the converted value
+     * @return                                          the converted value
      * @throws org.apache.camel.TypeConversionException is thrown if error during type conversion
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) throws TypeConversionException {
-        CamelContext camelContext = exchange.getContext();
-        ObjectHelper.notNull(camelContext, "CamelContext of Exchange");
-        TypeConverter converter = camelContext.getTypeConverter();
-        if (converter != null) {
-            return converter.convertTo(type, exchange, value);
-        }
-        return null;
+        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
     }
 
     /**
-     * Creates a new instance and copies from the current message exchange so that it can be
-     * forwarded to another destination as a new instance. Unlike regular copy this operation
-     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
-     * for async messaging, where the original and copied exchange are independent.
+     * Creates a new instance and copies from the current message exchange so that it can be forwarded to another
+     * destination as a new instance. Unlike regular copy this operation will not share the same
+     * {@link org.apache.camel.spi.UnitOfWork} so its should be used for async messaging, where the original and copied
+     * exchange are independent.
      *
      * @param exchange original copy of the exchange
      * @param handover whether the on completion callbacks should be handed over to the new copy.
@@ -217,13 +267,13 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Creates a new instance and copies from the current message exchange so that it can be
-     * forwarded to another destination as a new instance. Unlike regular copy this operation
-     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
-     * for async messaging, where the original and copied exchange are independent.
+     * Creates a new instance and copies from the current message exchange so that it can be forwarded to another
+     * destination as a new instance. Unlike regular copy this operation will not share the same
+     * {@link org.apache.camel.spi.UnitOfWork} so its should be used for async messaging, where the original and copied
+     * exchange are independent.
      *
-     * @param exchange original copy of the exchange
-     * @param handover whether the on completion callbacks should be handed over to the new copy.
+     * @param exchange         original copy of the exchange
+     * @param handover         whether the on completion callbacks should be handed over to the new copy.
      * @param useSameMessageId whether to use same message id on the copy message.
      */
     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId) {
@@ -231,17 +281,18 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Creates a new instance and copies from the current message exchange so that it can be
-     * forwarded to another destination as a new instance. Unlike regular copy this operation
-     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
-     * for async messaging, where the original and copied exchange are independent.
+     * Creates a new instance and copies from the current message exchange so that it can be forwarded to another
+     * destination as a new instance. Unlike regular copy this operation will not share the same
+     * {@link org.apache.camel.spi.UnitOfWork} so its should be used for async messaging, where the original and copied
+     * exchange are independent.
      *
-     * @param exchange original copy of the exchange
-     * @param handover whether the on completion callbacks should be handed over to the new copy.
+     * @param exchange         original copy of the exchange
+     * @param handover         whether the on completion callbacks should be handed over to the new copy.
      * @param useSameMessageId whether to use same message id on the copy message.
-     * @param filter whether to handover the on completion
+     * @param filter           whether to handover the on completion
      */
-    public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId, Predicate<Synchronization> filter) {
+    public static Exchange createCorrelatedCopy(
+            Exchange exchange, boolean handover, boolean useSameMessageId, Predicate<Synchronization> filter) {
         String id = exchange.getExchangeId();
 
         // make sure to do a safe copy as the correlated copy can be routed independently of the source.
@@ -254,7 +305,9 @@ public final class ExchangeHelper {
             copy.getIn().setMessageId(null);
         }
         // do not share the unit of work
-        copy.setUnitOfWork(null);
+        ExtendedExchange ce = (ExtendedExchange) copy;
+        ce.setUnitOfWork(null);
+
         // do not reuse the message id
         // hand over on completion to the copy if we got any
         UnitOfWork uow = exchange.getUnitOfWork();
@@ -267,12 +320,12 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Creates a new instance and copies from the current message exchange so that it can be
-     * forwarded to another destination as a new instance.
+     * Creates a new instance and copies from the current message exchange so that it can be forwarded to another
+     * destination as a new instance.
      *
-     * @param exchange original copy of the exchange
-     * @param preserveExchangeId whether or not the exchange id should be preserved
-     * @return the copy
+     * @param  exchange           original copy of the exchange
+     * @param  preserveExchangeId whether or not the exchange id should be preserved
+     * @return                    the copy
      */
     public static Exchange createCopy(Exchange exchange, boolean preserveExchangeId) {
         Exchange copy = exchange.copy();
@@ -284,29 +337,29 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Copies the results of a message exchange from the source exchange to the result exchange
-     * which will copy the message contents, exchange properties and the exception.
-     * Notice the {@link ExchangePattern} is <b>not</b> copied/altered.
+     * Copies the results of a message exchange from the source exchange to the result exchange which will copy the
+     * message contents, exchange properties and the exception. Notice the {@link ExchangePattern} is <b>not</b>
+     * copied/altered.
      *
      * @param target the target exchange which will have the output and error state added (result)
      * @param source the source exchange which is not modified
      */
     public static void copyResults(Exchange target, Exchange source) {
-        doCopyResults(target, source, false);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, false);
     }
 
     /**
-     * Copies the <code>source</code> exchange to <code>target</code> exchange
-     * preserving the {@link ExchangePattern} of <code>target</code>.
+     * Copies the <code>source</code> exchange to <code>target</code> exchange preserving the {@link ExchangePattern} of
+     * <code>target</code>.
      *
      * @param target the target exchange which will have the output and error state added (result)
      * @param source source exchange.
      */
     public static void copyResultsPreservePattern(Exchange target, Exchange source) {
-        doCopyResults(target, source, true);
+        doCopyResults((ExtendedExchange) target, (ExtendedExchange) source, true);
     }
 
-    private static void doCopyResults(Exchange result, Exchange source, boolean preserverPattern) {
+    private static void doCopyResults(ExtendedExchange result, ExtendedExchange source, boolean preserverPattern) {
         if (result == source) {
             // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
             // and the result is not failed
@@ -353,15 +406,21 @@ public final class ExchangeHelper {
             result.getProperties().putAll(source.getProperties());
         }
 
+        // copy over state
+        result.setRouteStop(source.isRouteStop());
+        result.setRollbackOnly(source.isRollbackOnly());
+        result.setRollbackOnlyLast(source.isRollbackOnlyLast());
+        result.setNotifyEvent(source.isNotifyEvent());
+        result.setRedeliveryExhausted(source.isRedeliveryExhausted());
+        result.setErrorHandlerHandled(source.getErrorHandlerHandled());
         result.setException(source.getException());
     }
 
     /**
-     * Returns the message where to write results in an
-     * exchange-pattern-sensitive way.
+     * Returns the message where to write results in an exchange-pattern-sensitive way.
      *
-     * @param exchange message exchange.
-     * @return result message.
+     * @param  exchange message exchange.
+     * @return          result message.
      */
     public static Message getResultMessage(Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
@@ -374,9 +433,8 @@ public final class ExchangeHelper {
     /**
      * Returns true if the given exchange pattern (if defined) can support OUT messages
      *
-     * @param exchange the exchange to interrogate
-     * @return true if the exchange is defined as an {@link ExchangePattern} which supports
-     *         OUT messages
+     * @param  exchange the exchange to interrogate
+     * @return          true if the exchange is defined as an {@link ExchangePattern} which supports OUT messages
      */
     public static boolean isOutCapable(Exchange exchange) {
         ExchangePattern pattern = exchange.getPattern();
@@ -386,9 +444,9 @@ public final class ExchangeHelper {
     /**
      * Creates a new instance of the given type from the injector
      *
-     * @param exchange the exchange
-     * @param type     the given type
-     * @return the created instance of the given type
+     * @param  exchange the exchange
+     * @param  type     the given type
+     * @return          the created instance of the given type
      */
     public static <T> T newInstance(Exchange exchange, Class<T> type) {
         return exchange.getContext().getInjector().newInstance(type);
@@ -397,44 +455,50 @@ public final class ExchangeHelper {
     /**
      * Creates a Map of the variables which are made available to a script or template
      *
-     * @param exchange the exchange to make available
-     * @return a Map populated with the require variables
+     * @param  exchange           the exchange to make available
+     * @param  allowContextMapAll whether to allow access to all context map or not (prefer to use false due to security
+     *                            reasons preferred to only allow access to body/headers)
+     * @return                    a Map populated with the require variables
      */
-    public static Map<String, Object> createVariableMap(Exchange exchange) {
+    public static Map<String, Object> createVariableMap(Exchange exchange, boolean allowContextMapAll) {
         Map<String, Object> answer = new HashMap<>();
-        populateVariableMap(exchange, answer);
+        populateVariableMap(exchange, answer, allowContextMapAll);
         return answer;
     }
 
     /**
      * Populates the Map with the variables which are made available to a script or template
      *
-     * @param exchange the exchange to make available
-     * @param map      the map to populate
+     * @param exchange           the exchange to make available
+     * @param map                the map to populate
+     * @param allowContextMapAll whether to allow access to all context map or not (prefer to use false due to security
+     *                           reasons preferred to only allow access to body/headers)
      */
-    public static void populateVariableMap(Exchange exchange, Map<String, Object> map) {
-        map.put("exchange", exchange);
+    public static void populateVariableMap(Exchange exchange, Map<String, Object> map, boolean allowContextMapAll) {
         Message in = exchange.getIn();
-        map.put("in", in);
-        map.put("request", in);
         map.put("headers", in.getHeaders());
         map.put("body", in.getBody());
-        if (isOutCapable(exchange)) {
-            // if we are out capable then set out and response as well
-            // however only grab OUT if it exists, otherwise reuse IN
-            // this prevents side effects to alter the Exchange if we force creating an OUT message
-            Message msg = exchange.getMessage();
-            map.put("out", msg);
-            map.put("response", msg);
+        if (allowContextMapAll) {
+            map.put("in", in);
+            map.put("request", in);
+            map.put("exchange", exchange);
+            if (isOutCapable(exchange)) {
+                // if we are out capable then set out and response as well
+                // however only grab OUT if it exists, otherwise reuse IN
+                // this prevents side effects to alter the Exchange if we force creating an OUT message
+                Message msg = exchange.getMessage();
+                map.put("out", msg);
+                map.put("response", msg);
+            }
+            map.put("camelContext", exchange.getContext());
         }
-        map.put("camelContext", exchange.getContext());
     }
 
     /**
      * Returns the MIME content type on the input message or null if one is not defined
      *
-     * @param exchange the exchange
-     * @return the MIME content type
+     * @param  exchange the exchange
+     * @return          the MIME content type
      */
     public static String getContentType(Exchange exchange) {
         return MessageHelper.getContentType(exchange.getIn());
@@ -443,8 +507,8 @@ public final class ExchangeHelper {
     /**
      * Returns the MIME content encoding on the input message or null if one is not defined
      *
-     * @param exchange the exchange
-     * @return the MIME content encoding
+     * @param  exchange the exchange
+     * @return          the MIME content encoding
      */
     public static String getContentEncoding(Exchange exchange) {
         return MessageHelper.getContentEncoding(exchange.getIn());
@@ -453,9 +517,9 @@ public final class ExchangeHelper {
     /**
      * Performs a lookup in the registry of the mandatory bean name and throws an exception if it could not be found
      *
-     * @param exchange the exchange
-     * @param name     the bean name
-     * @return the bean
+     * @param  exchange            the exchange
+     * @param  name                the bean name
+     * @return                     the bean
      * @throws NoSuchBeanException if no bean could be found in the registry
      */
     public static Object lookupMandatoryBean(Exchange exchange, String name) throws NoSuchBeanException {
@@ -469,10 +533,10 @@ public final class ExchangeHelper {
     /**
      * Performs a lookup in the registry of the mandatory bean name and throws an exception if it could not be found
      *
-     * @param exchange the exchange
-     * @param name     the bean name
-     * @param type     the expected bean type
-     * @return the bean
+     * @param  exchange            the exchange
+     * @param  name                the bean name
+     * @param  type                the expected bean type
+     * @return                     the bean
      * @throws NoSuchBeanException if no bean could be found in the registry
      */
     public static <T> T lookupMandatoryBean(Exchange exchange, String name, Class<T> type) {
@@ -486,9 +550,9 @@ public final class ExchangeHelper {
     /**
      * Performs a lookup in the registry of the bean name
      *
-     * @param exchange the exchange
-     * @param name     the bean name
-     * @return the bean, or <tt>null</tt> if no bean could be found
+     * @param  exchange the exchange
+     * @param  name     the bean name
+     * @return          the bean, or <tt>null</tt> if no bean could be found
      */
     public static Object lookupBean(Exchange exchange, String name) {
         return exchange.getContext().getRegistry().lookupByName(name);
@@ -497,10 +561,10 @@ public final class ExchangeHelper {
     /**
      * Performs a lookup in the registry of the bean name and type
      *
-     * @param exchange the exchange
-     * @param name     the bean name
-     * @param type     the expected bean type
-     * @return the bean, or <tt>null</tt> if no bean could be found
+     * @param  exchange the exchange
+     * @param  name     the bean name
+     * @param  type     the expected bean type
+     * @return          the bean, or <tt>null</tt> if no bean could be found
      */
     public static <T> T lookupBean(Exchange exchange, String name, Class<T> type) {
         return exchange.getContext().getRegistry().lookupByNameAndType(name, type);
@@ -510,10 +574,13 @@ public final class ExchangeHelper {
      * Returns the first exchange in the given collection of exchanges which has the same exchange ID as the one given
      * or null if none could be found
      *
-     * @param exchanges  the exchanges
-     * @param exchangeId the exchangeId to find
-     * @return matching exchange, or <tt>null</tt> if none found
+     * @param      exchanges  the exchanges
+     * @param      exchangeId the exchangeId to find
+     * @return                matching exchange, or <tt>null</tt> if none found
+     *
+     * @deprecated            not in use, to be removed in a future Camel release
      */
+    @Deprecated
     public static Exchange getExchangeById(Iterable<Exchange> exchanges, String exchangeId) {
         for (Exchange exchange : exchanges) {
             String id = exchange.getExchangeId();
@@ -527,8 +594,8 @@ public final class ExchangeHelper {
     /**
      * Prepares the exchanges for aggregation.
      * <p/>
-     * This implementation will copy the OUT body to the IN body so when you do
-     * aggregation the body is <b>only</b> in the IN body to avoid confusing end users.
+     * This implementation will copy the OUT body to the IN body so when you do aggregation the body is <b>only</b> in
+     * the IN body to avoid confusing end users.
      *
      * @param oldExchange the old exchange
      * @param newExchange the new exchange
@@ -553,8 +620,8 @@ public final class ExchangeHelper {
     /**
      * Checks whether the exchange has been failure handed
      *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if failure handled, <tt>false</tt> otherwise
+     * @param  exchange the exchange
+     * @return          <tt>true</tt> if failure handled, <tt>false</tt> otherwise
      */
     public static boolean isFailureHandled(Exchange exchange) {
         return exchange.getProperty(Exchange.FAILURE_HANDLED, false, Boolean.class);
@@ -563,8 +630,8 @@ public final class ExchangeHelper {
     /**
      * Checks whether the exchange {@link UnitOfWork} is exhausted
      *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if exhausted, <tt>false</tt> otherwise
+     * @param  exchange the exchange
+     * @return          <tt>true</tt> if exhausted, <tt>false</tt> otherwise
      */
     public static boolean isUnitOfWorkExhausted(Exchange exchange) {
         return exchange.getProperty(Exchange.UNIT_OF_WORK_EXHAUSTED, false, Boolean.class);
@@ -573,7 +640,7 @@ public final class ExchangeHelper {
     /**
      * Sets the exchange to be failure handled.
      *
-     * @param exchange  the exchange
+     * @param exchange the exchange
      */
     public static void setFailureHandled(Exchange exchange) {
         exchange.setProperty(Exchange.FAILURE_HANDLED, Boolean.TRUE);
@@ -582,46 +649,25 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Checks whether the exchange is redelivery exhausted
-     *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if exhausted, <tt>false</tt> otherwise
-     */
-    public static boolean isRedeliveryExhausted(Exchange exchange) {
-        return exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
-    }
-
-    /**
      * Checks whether the exchange {@link UnitOfWork} is redelivered
      *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if redelivered, <tt>false</tt> otherwise
+     * @param  exchange the exchange
+     * @return          <tt>true</tt> if redelivered, <tt>false</tt> otherwise
      */
     public static boolean isRedelivered(Exchange exchange) {
         return exchange.getIn().hasHeaders() && exchange.getIn().getHeader(Exchange.REDELIVERED, false, Boolean.class);
     }
 
     /**
-     * Checks whether the exchange {@link UnitOfWork} has been interrupted during processing
-     *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if interrupted, <tt>false</tt> otherwise
-     */
-    public static boolean isInterrupted(Exchange exchange) {
-        Object value = exchange.getProperty(Exchange.INTERRUPTED);
-        return value != null && Boolean.TRUE == value;
-    }
-
-    /**
      * Check whether or not stream caching is enabled for the given route or globally.
      *
-     * @param exchange  the exchange
-     * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
+     * @param  exchange the exchange
+     * @return          <tt>true</tt> if enabled, <tt>false</tt> otherwise
      */
     public static boolean isStreamCachingEnabled(final Exchange exchange) {
         Route route = exchange.getContext().getRoute(exchange.getFromRouteId());
         if (route != null) {
-            return route.getRouteContext().isStreamCaching();
+            return route.isStreamCaching();
         } else {
             return exchange.getContext().getStreamCachingStrategy().isEnabled();
         }
@@ -630,12 +676,12 @@ public final class ExchangeHelper {
     /**
      * Extracts the body from the given exchange.
      * <p/>
-     * If the exchange pattern is provided it will try to honor it and retrieve the body
-     * from either IN or OUT according to the pattern.
+     * If the exchange pattern is provided it will try to honor it and retrieve the body from either IN or OUT according
+     * to the pattern.
      *
-     * @param exchange the exchange
-     * @param pattern  exchange pattern if given, can be <tt>null</tt>
-     * @return the result body, can be <tt>null</tt>.
+     * @param  exchange                the exchange
+     * @param  pattern                 exchange pattern if given, can be <tt>null</tt>
+     * @return                         the result body, can be <tt>null</tt>.
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      */
     public static Object extractResultBody(Exchange exchange, ExchangePattern pattern) {
@@ -673,24 +719,14 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Tests whether the exchange has already been handled by the error handler
-     *
-     * @param exchange the exchange
-     * @return <tt>true</tt> if handled already by error handler, <tt>false</tt> otherwise
-     */
-    public static boolean hasExceptionBeenHandledByErrorHandler(Exchange exchange) {
-        return Boolean.TRUE.equals(exchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
-    }
-
-    /**
      * Extracts the body from the given future, that represents a handle to an asynchronous exchange.
      * <p/>
      * Will wait until the future task is complete.
      *
-     * @param context the camel context
-     * @param future  the future handle
-     * @param type    the expected body response type
-     * @return the result body, can be <tt>null</tt>.
+     * @param  context                 the camel context
+     * @param  future                  the future handle
+     * @param  type                    the expected body response type
+     * @return                         the result body, can be <tt>null</tt>.
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      */
     public static <T> T extractFutureBody(CamelContext context, Future<?> future, Class<T> type) {
@@ -714,16 +750,17 @@ public final class ExchangeHelper {
      * <p/>
      * Will wait for the future task to complete, but waiting at most the timeout value.
      *
-     * @param context the camel context
-     * @param future  the future handle
-     * @param timeout timeout value
-     * @param unit    timeout unit
-     * @param type    the expected body response type
-     * @return the result body, can be <tt>null</tt>.
-     * @throws CamelExecutionException is thrown if the processing of the exchange failed
+     * @param  context                               the camel context
+     * @param  future                                the future handle
+     * @param  timeout                               timeout value
+     * @param  unit                                  timeout unit
+     * @param  type                                  the expected body response type
+     * @return                                       the result body, can be <tt>null</tt>.
+     * @throws CamelExecutionException               is thrown if the processing of the exchange failed
      * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
      */
-    public static <T> T extractFutureBody(CamelContext context, Future<?> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+    public static <T> T extractFutureBody(CamelContext context, Future<?> future, long timeout, TimeUnit unit, Class<T> type)
+            throws TimeoutException {
         try {
             if (timeout > 0) {
                 return doExtractFutureBody(context, future.get(timeout, unit), type);
@@ -760,9 +797,8 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Strategy to prepare results before next iterator or when we are complete,
-     * which is done by copying OUT to IN, so there is only an IN as input
-     * for the next iteration.
+     * Strategy to prepare results before next iterator or when we are complete, which is done by copying OUT to IN, so
+     * there is only an IN as input for the next iteration.
      *
      * @param exchange the exchange to prepare
      */
@@ -777,23 +813,23 @@ public final class ExchangeHelper {
     /**
      * Gets both the messageId and exchangeId to be used for logging purposes.
      * <p/>
-     * Logging both ids, can help to correlate exchanges which may be redelivered messages
-     * from for example a JMS broker.
+     * Logging both ids, can help to correlate exchanges which may be redelivered messages from for example a JMS
+     * broker.
      *
-     * @param exchange the exchange
-     * @return a log message with both the messageId and exchangeId
+     * @param  exchange the exchange
+     * @return          a log message with both the messageId and exchangeId
      */
     public static String logIds(Exchange exchange) {
         String msgId = exchange.getMessage().getMessageId();
-        return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId()  + ")";
+        return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId() + ")";
     }
 
     /**
      * Copies the exchange but the copy will be tied to the given context
      *
-     * @param exchange  the source exchange
-     * @param context   the camel context
-     * @return a copy with the given camel context
+     * @param  exchange the source exchange
+     * @param  context  the camel context
+     * @return          a copy with the given camel context
      */
     public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context) {
         return copyExchangeAndSetCamelContext(exchange, context, true);
@@ -802,10 +838,10 @@ public final class ExchangeHelper {
     /**
      * Copies the exchange but the copy will be tied to the given context
      *
-     * @param exchange  the source exchange
-     * @param context   the camel context
-     * @param handover  whether to handover on completions from the source to the copy
-     * @return a copy with the given camel context
+     * @param  exchange the source exchange
+     * @param  context  the camel context
+     * @param  handover whether to handover on completions from the source to the copy
+     * @return          a copy with the given camel context
      */
     public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context, boolean handover) {
         DefaultExchange answer = new DefaultExchange(context, exchange.getPattern());
@@ -814,7 +850,7 @@ public final class ExchangeHelper {
         }
         if (handover) {
             // Need to hand over the completion for async invocation
-            exchange.handoverCompletions(answer);
+            exchange.adapt(ExtendedExchange.class).handoverCompletions(answer);
         }
         answer.setIn(exchange.getIn().copy());
         if (exchange.hasOut()) {
@@ -827,7 +863,7 @@ public final class ExchangeHelper {
     /**
      * Replaces the existing message with the new message
      *
-     * @param exchange  the exchange
+     * @param exchange   the exchange
      * @param newMessage the new message
      * @param outOnly    whether to replace the message as OUT message
      */
@@ -848,8 +884,9 @@ public final class ExchangeHelper {
     /**
      * Gets the original IN {@link Message} this Unit of Work was started with.
      * <p/>
-     * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
-     * is enabled. If its disabled, then <tt>null</tt> is returned.
+     * The original message is only returned if the option
+     * {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()} is enabled. If its disabled, then
+     * <tt>null</tt> is returned.
      *
      * @return the original IN {@link Message}, or <tt>null</tt> if using original message is disabled.
      */
@@ -874,19 +911,11 @@ public final class ExchangeHelper {
     /**
      * Resolve the component scheme (aka name) from the given endpoint uri
      *
-     * @param uri  the endpoint uri
+     * @param  uri the endpoint uri
      * @return     the component scheme (name), or <tt>null</tt> if not possible to resolve
      */
     public static String resolveScheme(String uri) {
-        String scheme = null;
-        if (uri != null) {
-            // Use the URI prefix to find the component.
-            String[] splitURI = StringHelper.splitOnCharacter(uri, ":", 2);
-            if (splitURI[1] != null) {
-                scheme = splitURI[0];
-            }
-        }
-        return scheme;
+        return StringHelper.before(uri, ":");
     }
 
     @SuppressWarnings("unchecked")
@@ -895,12 +924,13 @@ public final class ExchangeHelper {
             return null;
         }
 
-        Map<String, Object> answer = new HashMap<>(properties);
+        Map<String, Object> answer = new ConcurrentHashMap<>(properties);
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
         if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
+            // use thread-safe list as message history may be accessed concurrently
+            answer.put(Exchange.MESSAGE_HISTORY, new CopyOnWriteArrayList<>(history));
         }
 
         return answer;
@@ -914,12 +944,12 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}.
-     * <b>Notice:</b> The lookup from the header has priority over the property.
+     * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}. <b>Notice:</b> The lookup from
+     * the header has priority over the property.
      *
-     * @param exchange  the exchange
-     * @param useDefault should we fallback and use JVM default charset if no property existed?
-     * @return the charset, or <tt>null</tt> if no found
+     * @param  exchange   the exchange
+     * @param  useDefault should we fallback and use JVM default charset if no property existed?
+     * @return            the charset, or <tt>null</tt> if no found
      */
     public static String getCharsetName(Exchange exchange, boolean useDefault) {
         if (exchange != null) {
@@ -946,10 +976,10 @@ public final class ExchangeHelper {
     /**
      * Creates a {@link Scanner} for scanning the given value.
      *
-     * @param exchange  the current exchange
-     * @param value     the value, typically the message IN body
-     * @param delimiter the delimiter pattern to use
-     * @return the scanner, is newer <tt>null</tt>
+     * @param  exchange  the current exchange
+     * @param  value     the value, typically the message IN body
+     * @param  delimiter the delimiter pattern to use
+     * @return           the scanner, is newer <tt>null</tt>
      */
     public static Scanner getScanner(Exchange exchange, Object value, String delimiter) {
         if (value instanceof WrappedFile) {
@@ -988,5 +1018,28 @@ public final class ExchangeHelper {
             }
         }
         return scanner;
+    }
+
+    public static String getRouteId(Exchange exchange) {
+        String answer = getAtRouteId(exchange);
+        if (answer == null) {
+            // fallback and get from route id on the exchange
+            answer = exchange.getFromRouteId();
+        }
+        return answer;
+    }
+
+    public static String getAtRouteId(Exchange exchange) {
+        String answer = null;
+        Route rc = getRoute(exchange);
+        if (rc != null) {
+            answer = rc.getRouteId();
+        }
+        return answer;
+    }
+
+    public static Route getRoute(Exchange exchange) {
+        UnitOfWork uow = exchange.getUnitOfWork();
+        return uow != null ? uow.getRoute() : null;
     }
 }

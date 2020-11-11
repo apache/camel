@@ -18,19 +18,20 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class DefaultStreamCachingTest extends Assert {
-    
-    
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+public class DefaultStreamCachingTest {
+
     @Test
     public void testStreamCaching() throws Exception {
-        AbstractApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] {"org/apache/camel/spring/streamCaching.xml"});
+        AbstractApplicationContext appContext
+                = new ClassPathXmlApplicationContext(new String[] { "org/apache/camel/spring/streamCaching.xml" });
         CamelContext camelContext = appContext.getBean("camelContext", CamelContext.class);
-        assertFalse("StreamCaching should not be enabled", camelContext.isStreamCaching());
+        assertFalse(camelContext.isStreamCaching(), "StreamCaching should not be enabled");
 
         // we're done so let's properly close the application context
         IOHelper.close(appContext);

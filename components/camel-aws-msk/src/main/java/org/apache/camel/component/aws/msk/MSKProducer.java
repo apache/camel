@@ -33,12 +33,15 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon MSK Service
- * <a href="http://aws.amazon.com/msk/">AWS MSK</a>
+ * A Producer which sends messages to the Amazon MSK Service <a href="http://aws.amazon.com/msk/">AWS MSK</a>
  */
 public class MSKProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MSKProducer.class);
 
     private transient String mskProducerToString;
 
@@ -49,20 +52,20 @@ public class MSKProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listClusters:
-            listClusters(getEndpoint().getMskClient(), exchange);
-            break;
-        case createCluster:
-            createCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        case deleteCluster:
-            deleteCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        case describeCluster:
-            describeCluster(getEndpoint().getMskClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listClusters:
+                listClusters(getEndpoint().getMskClient(), exchange);
+                break;
+            case createCluster:
+                createCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            case deleteCluster:
+                deleteCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            case describeCluster:
+                describeCluster(getEndpoint().getMskClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -88,7 +91,7 @@ public class MSKProducer extends DefaultProducer {
 
     @Override
     public MSKEndpoint getEndpoint() {
-        return (MSKEndpoint)super.getEndpoint();
+        return (MSKEndpoint) super.getEndpoint();
     }
 
     private void listClusters(AWSKafka mskClient, Exchange exchange) {
@@ -101,7 +104,7 @@ public class MSKProducer extends DefaultProducer {
         try {
             result = mskClient.listClusters(request);
         } catch (AmazonServiceException ase) {
-            log.trace("List Clusters command returned the error code {}", ase.getErrorCode());
+            LOG.trace("List Clusters command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -129,7 +132,8 @@ public class MSKProducer extends DefaultProducer {
             throw new IllegalArgumentException("Kafka Version must be specified");
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSKConstants.BROKER_NODES_GROUP_INFO))) {
-            BrokerNodeGroupInfo brokerNodesGroupInfo = exchange.getIn().getHeader(MSKConstants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
+            BrokerNodeGroupInfo brokerNodesGroupInfo
+                    = exchange.getIn().getHeader(MSKConstants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
             request.withBrokerNodeGroupInfo(brokerNodesGroupInfo);
         } else {
             throw new IllegalArgumentException("BrokerNodeGroupInfo must be specified");
@@ -138,7 +142,7 @@ public class MSKProducer extends DefaultProducer {
         try {
             result = mskClient.createCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Create Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Create Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -157,13 +161,13 @@ public class MSKProducer extends DefaultProducer {
         try {
             result = mskClient.deleteCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeCluster(AWSKafka mskClient, Exchange exchange) {
         DescribeClusterRequest request = new DescribeClusterRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSKConstants.CLUSTER_ARN))) {
@@ -176,7 +180,7 @@ public class MSKProducer extends DefaultProducer {
         try {
             result = mskClient.describeCluster(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -184,11 +188,6 @@ public class MSKProducer extends DefaultProducer {
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 }

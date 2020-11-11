@@ -25,7 +25,8 @@ public class SpringAggregateExpressionSizeTest extends AggregateExpressionSizeTe
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateExpressionSizeTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateExpressionSizeTest.xml");
     }
 
 }

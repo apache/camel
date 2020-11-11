@@ -22,8 +22,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.messaging.Message;
@@ -31,6 +31,9 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.GenericMessage;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelTargetAdapterTest extends CamelSpringTestSupport {
 
@@ -57,8 +60,8 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
         responseChannel.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
                 latch.countDown();
-                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  message.getPayload());
-            }            
+                assertEquals(MESSAGE_BODY + " is processed", message.getPayload(), "Get the wrong result");
+            }
         });
 
         requestChannel.send(message);
@@ -77,8 +80,8 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
         responseChannel.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
                 latch.countDown();
-                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  message.getPayload());
-            }            
+                assertEquals(MESSAGE_BODY + " is processed", message.getPayload(), "Get the wrong result");
+            }
         });
 
         requestChannel.send(message);

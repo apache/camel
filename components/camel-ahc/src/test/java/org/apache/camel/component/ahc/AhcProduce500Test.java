@@ -55,14 +55,14 @@ public class AhcProduce500Test extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
+                        .to(getAhcEndpointUri())
+                        .to("mock:result");
 
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                                exchange.getOut().setBody("Does not work");
+                                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                                exchange.getMessage().setBody("Does not work");
                             }
                         });
 

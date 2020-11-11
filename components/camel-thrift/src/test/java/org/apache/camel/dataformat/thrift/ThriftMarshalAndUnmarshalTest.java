@@ -22,8 +22,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.thrift.generated.Operation;
 import org.apache.camel.dataformat.thrift.generated.Work;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThriftMarshalAndUnmarshalTest extends CamelTestSupport {
     private static final String WORK_TEST_COMMENT = "This is a test thrift data";
@@ -57,14 +61,13 @@ public class ThriftMarshalAndUnmarshalTest extends CamelTestSupport {
             });
             fail("Expect the exception here");
         } catch (Exception ex) {
-            assertTrue("Expect FailedToCreateRouteException", ex instanceof FailedToCreateRouteException);
-            assertTrue("Get a wrong reason", ex.getCause() instanceof IllegalArgumentException);
+            assertTrue(ex instanceof FailedToCreateRouteException, "Expect FailedToCreateRouteException");
         }
     }
 
     private void marshalAndUnmarshal(String inURI, String outURI) throws Exception {
         Work input = new Work();
-        
+
         input.num1 = WORK_TEST_NUM1;
         input.num2 = WORK_TEST_NUM2;
         input.op = WORK_TEST_OPERATION;
@@ -98,7 +101,8 @@ public class ThriftMarshalAndUnmarshalTest extends CamelTestSupport {
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
                 from("direct:marshal").marshal().thrift();
-                from("direct:unmarshalA").unmarshal().thrift("org.apache.camel.dataformat.thrift.generated.Work").to("mock:reverse");
+                from("direct:unmarshalA").unmarshal().thrift("org.apache.camel.dataformat.thrift.generated.Work")
+                        .to("mock:reverse");
 
                 from("direct:unmarshalB").unmarshal().thrift(new Work()).to("mock:reverse");
             }

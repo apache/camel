@@ -19,7 +19,9 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpReturnDataNotInputStreamConvertableTest extends BaseJettyTest {
 
@@ -36,6 +38,7 @@ public class HttpReturnDataNotInputStreamConvertableTest extends BaseJettyTest {
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/test").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
+                        // See: CAMEL-15475
                         exchange.getOut().setBody(new MyResponseBean());
                     }
                 });

@@ -18,15 +18,17 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test based on user forum request.
  */
 public class DisruptorAsyncRouteTest extends CamelTestSupport {
     @Test
-    public void testSendAsync() throws Exception {
+    void testSendAsync() throws Exception {
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
@@ -39,15 +41,15 @@ public class DisruptorAsyncRouteTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             // START SNIPPET: e1
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         // send it to the disruptor ring buffer that is async
                         .to("disruptor:next")
-                                // return a constant response
+                        // return a constant response
                         .transform(constant("OK"));
 
                 from("disruptor:next").to("mock:result");

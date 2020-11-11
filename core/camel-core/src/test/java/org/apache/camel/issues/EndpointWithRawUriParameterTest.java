@@ -30,7 +30,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
@@ -120,7 +122,8 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<String> lines = (List<String>)getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        List<String> lines
+                = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
         assertEquals(2, lines.size());
         assertEquals("abc", lines.get(0));
         assertEquals("def", lines.get(1));
@@ -134,7 +137,8 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<String> lines = (List<String>)getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        List<String> lines
+                = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
         assertEquals(2, lines.size());
         assertEquals("++abc++", lines.get(0));
         assertEquals("++def++", lines.get(1));

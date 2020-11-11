@@ -29,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link JdbcPrepareStatementStrategy} which is a copy from the camel-sql component having
- * this functionality first.
+ * Default {@link JdbcPrepareStatementStrategy} which is a copy from the camel-sql component having this functionality
+ * first.
  */
 public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatementStrategy {
 
@@ -51,8 +51,10 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
     }
 
     @Override
-    public Iterator<?> createPopulateIterator(final String query, final String preparedQuery, final int expectedParams,
-                                              final Exchange exchange, final Object value) throws SQLException {
+    public Iterator<?> createPopulateIterator(
+            final String query, final String preparedQuery, final int expectedParams,
+            final Exchange exchange, final Object value)
+            throws SQLException {
         Map<?, ?> map = null;
         if (exchange.getIn().hasHeaders()) {
             if (exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS) != null) {
@@ -95,7 +97,10 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
                             // the key is expected to exist, if not report so end user can see this
                             boolean contains = headerMap != null && headerMap.containsKey(key);
                             if (!contains) {
-                                throw new RuntimeExchangeException("Cannot find key [" + key + "] in message body or headers to use when setting named parameter in query [" + query + "]", exchange);
+                                throw new RuntimeExchangeException(
+                                        "Cannot find key [" + key + "] in message body or headers to use when setting named parameter in query ["
+                                                                   + query + "]",
+                                        exchange);
                             }
                             next = headerMap.get(key);
                         }
@@ -114,7 +119,8 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
 
         } else {
             // just use a regular iterator
-            return exchange.getContext().getTypeConverter().convertTo(Iterator.class, headerMap != null ? headerMap.values() : null);
+            return exchange.getContext().getTypeConverter().convertTo(Iterator.class,
+                    headerMap != null ? headerMap.values() : null);
         }
     }
 

@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -42,8 +44,8 @@ public class WireTapOnPrepareTest extends ContextTestSupport {
         final Animal aAnimal = getMockEndpoint("mock:a").getExchanges().get(0).getIn().getBody(Animal.class);
         final Animal bAnimal = getMockEndpoint("mock:b").getExchanges().get(0).getIn().getBody(Animal.class);
 
-        assertSame("Original instance should stay in main route", original, bAnimal);
-        assertNotSame("Copy should go to Wire Tap Endpoint", original, aAnimal);
+        assertSame(original, bAnimal, "Original instance should stay in main route");
+        assertNotSame(original, aAnimal, "Copy should go to Wire Tap Endpoint");
     }
 
     @Override

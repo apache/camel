@@ -26,9 +26,10 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
 
@@ -74,7 +75,7 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
 
         mock.reset();
         mock.expectedMessageCount(1);
@@ -84,7 +85,7 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
 
-        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertTrue("Should be stopped", policy.isStopped()));
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(policy.isStopped(), "Should be stopped"));
     }
 
     @Override
@@ -94,15 +95,16 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").routeId("foo").routePolicy(policy).to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).to("async:bye:camel").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("log:after").to("mock:after").to("mock:result");
+                from("direct:start").routeId("foo").routePolicy(policy).to("mock:before").to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("async:bye:camel").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

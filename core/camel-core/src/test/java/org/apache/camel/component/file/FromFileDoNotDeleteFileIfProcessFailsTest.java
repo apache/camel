@@ -23,15 +23,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSupport {
 
     private String body = "Hello World this file will NOT be deleted";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/deletefile");
         super.setUp();
@@ -48,11 +50,11 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
         mock.expectedMinimumMessageCount(1);
 
         mock.assertIsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // assert the file is deleted
         File file = new File("target/data/deletefile/hello.txt");
-        assertTrue("The file should NOT have been deleted", file.exists());
+        assertTrue(file.exists(), "The file should NOT have been deleted");
     }
 
     @Override

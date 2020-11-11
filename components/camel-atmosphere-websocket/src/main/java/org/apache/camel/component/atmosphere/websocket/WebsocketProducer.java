@@ -38,7 +38,7 @@ public class WebsocketProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(WebsocketProducer.class);
 
     private static ExecutorService executor = Executors.newSingleThreadExecutor();
-    
+
     public WebsocketProducer(WebsocketEndpoint endpoint) {
         super(endpoint);
     }
@@ -57,16 +57,16 @@ public class WebsocketProducer extends DefaultProducer {
             LOG.debug("Ignoring a null message");
             return;
         }
-        
-        if (!(message instanceof String || message instanceof byte[] 
-            || message instanceof Reader || message instanceof InputStream)) {
+
+        if (!(message instanceof String || message instanceof byte[]
+                || message instanceof Reader || message instanceof InputStream)) {
             // fallback to use String
             if (LOG.isInfoEnabled()) {
                 LOG.info("Using String for unexpected message type {}", message.getClass());
             }
-            message = in.getBody(String.class);    
+            message = in.getBody(String.class);
         }
-        
+
         // REVISIT Reader and InputStream handling at Producer 
         // special conversion for Reader and InputStream for now 
         if (message instanceof Reader) {
@@ -75,9 +75,9 @@ public class WebsocketProducer extends DefaultProducer {
             message = in.getBody(byte[].class);
         }
 
-        log.debug("Sending to {}", message);
+        LOG.debug("Sending to {}", message);
         if (getEndpoint().isSendToAll()) {
-            log.debug("Sending to all -> {}", message);
+            LOG.debug("Sending to all -> {}", message);
             //TODO consider using atmosphere's broadcast or a more configurable async send
             for (final WebSocket websocket : getEndpoint().getWebSocketStore().getAllWebSockets()) {
                 sendMessage(websocket, message);
@@ -93,18 +93,19 @@ public class WebsocketProducer extends DefaultProducer {
 
     private void messageDistributor(final List<String> connectionKeyList, final Object message) {
         if (connectionKeyList == null) {
-            throw new IllegalArgumentException("Failed to send message to multiple connections; connetion key list is not set.");
+            throw new IllegalArgumentException(
+                    "Failed to send message to multiple connections; connetion key list is not set.");
         }
 
         List<String> notValidConnectionKeys = new ArrayList<>();
 
         for (final String connectionKey : connectionKeyList) {
-            log.debug("Sending to connection key {} -> {}", connectionKey, message);
+            LOG.debug("Sending to connection key {} -> {}", connectionKey, message);
             sendMessage(getWebSocket(connectionKey, notValidConnectionKeys), message);
         }
 
         if (!notValidConnectionKeys.isEmpty()) {
-            log.debug("Some connections have not received the message {}",  message);
+            LOG.debug("Some connections have not received the message {}", message);
             getEndpoint().getWebsocketConsumer().sendNotDeliveredMessage(notValidConnectionKeys, message);
         }
     }
@@ -140,7 +141,7 @@ public class WebsocketProducer extends DefaultProducer {
             if (websocket == null) {
                 //collect for call back to handle not sent message(s) to guaranty delivery
                 notValidConnectionKeys.add(connectionKey);
-                log.debug("Failed to send message to single connection; connetion key is not valid. {}",  connectionKey);
+                LOG.debug("Failed to send message to single connection; connetion key is not valid. {}", connectionKey);
             }
         }
         return websocket;

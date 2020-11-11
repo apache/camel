@@ -20,24 +20,28 @@ import java.util.Arrays;
 
 import javax.jms.BytesMessage;
 import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConsumeJmsBytesMessageTest.class);
+
     protected JmsTemplate jmsTemplate;
     private MockEndpoint endpoint;
 
@@ -46,14 +50,12 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
         endpoint.expectedMessageCount(1);
 
         jmsTemplate.setPubSubDomain(false);
-        jmsTemplate.send("test.bytes", new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                BytesMessage bytesMessage = session.createBytesMessage();
-                bytesMessage.writeByte((byte) 1);
-                bytesMessage.writeByte((byte) 2);
-                bytesMessage.writeByte((byte) 3);
-                return bytesMessage;
-            }
+        jmsTemplate.send("test.bytes", session -> {
+            BytesMessage bytesMessage = session.createBytesMessage();
+            bytesMessage.writeByte((byte) 1);
+            bytesMessage.writeByte((byte) 2);
+            bytesMessage.writeByte((byte) 3);
+            return bytesMessage;
         });
 
         endpoint.assertIsSatisfied();
@@ -65,7 +67,7 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
 
         endpoint.expectedMessageCount(1);
 
-        byte[] bytes = new byte[] {1, 2, 3};
+        byte[] bytes = new byte[] { 1, 2, 3 };
 
         template.sendBody("direct:test", bytes);
 
@@ -79,19 +81,18 @@ public class ConsumeJmsBytesMessageTest extends CamelTestSupport {
         assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
         JmsMessage in = (JmsMessage) exchange.getIn();
         assertNotNull(in);
-        
-        byte[] bytes = exchange.getIn().getBody(byte[].class);
-        log.info("Received bytes: " + Arrays.toString(bytes));
 
-        assertNotNull("Should have received a bytes message!", bytes);
+        byte[] bytes = exchange.getIn().getBody(byte[].class);
+        LOG.info("Received bytes: " + Arrays.toString(bytes));
+
+        assertNotNull(bytes, "Should have received a bytes message!");
         assertIsInstanceOf(BytesMessage.class, in.getJmsMessage());
-        assertEquals("Wrong byte 1", 1, bytes[0]);
-        assertEquals("Wrong payload lentght", 3, bytes.length);
+        assertEquals(1, bytes[0], "Wrong byte 1");
+        assertEquals(3, bytes.length);
     }
 
-
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         endpoint = getMockEndpoint("mock:result");

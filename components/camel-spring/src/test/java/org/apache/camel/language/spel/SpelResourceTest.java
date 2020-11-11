@@ -18,7 +18,7 @@ package org.apache.camel.language.spel;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -40,8 +40,8 @@ public class SpelResourceTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().spel("resource:classpath:myspel.txt")
-                    .to("mock:result");
+                        .transform().spel("resource:classpath:myspel.txt")
+                        .to("mock:result");
             }
         };
     }

@@ -30,22 +30,22 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * To enable handle attachments with Jetty 9 when this filter is set.
  * <p/>
- * To replace the deprecated org.eclipse.jetty.servlets.MultiPartFilter
- * Tell AttachmentHttpBinding to use Servlet 3 HttpServletRequest.getParts API 
+ * To replace the deprecated org.eclipse.jetty.servlets.MultiPartFilter Tell AttachmentHttpBinding to use Servlet 3
+ * HttpServletRequest.getParts API
  */
 public class MultiPartFilter implements Filter {
-    
+
     public static final String MULTIPART = "populate.multipart";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        
+
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
-        HttpServletRequest srequest = (HttpServletRequest)request;
+            throws IOException, ServletException {
+        HttpServletRequest srequest = (HttpServletRequest) request;
         if (srequest.getContentType() == null || !srequest.getContentType().startsWith("multipart/form-data")) {
             chain.doFilter(request, response);
         } else {
@@ -57,9 +57,7 @@ public class MultiPartFilter implements Filter {
 
     @Override
     public void destroy() {
-        
+
     }
-    
-   
 
 }

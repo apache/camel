@@ -43,7 +43,7 @@ public class FromFtpPassiveModeTest extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.assertIsSatisfied();
     }
-    
+
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server
         Endpoint endpoint = context.getEndpoint(getFtpUrl());

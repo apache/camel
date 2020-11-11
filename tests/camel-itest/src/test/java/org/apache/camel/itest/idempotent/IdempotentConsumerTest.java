@@ -16,8 +16,8 @@
  */
 package org.apache.camel.itest.idempotent;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,7 +29,7 @@ public class IdempotentConsumerTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testDuplicateMessagesAreFilteredOut() throws Exception {
+    void testDuplicateMessagesAreFilteredOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("one", "two", "three");
 
         template.sendBodyAndHeader("direct:start", "one", "messageId", 1);

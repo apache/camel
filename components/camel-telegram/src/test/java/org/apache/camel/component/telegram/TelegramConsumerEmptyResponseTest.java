@@ -55,13 +55,13 @@ public class TelegramConsumerEmptyResponseTest extends TelegramTestSupport {
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] {
-            getMockRoutes(),
-            new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
-                }
-            }};
+                getMockRoutes(),
+                new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from("telegram:bots?authorizationToken=mock-token").to("mock:telegram");
+                    }
+                } };
     }
 
     @Override

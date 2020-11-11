@@ -16,25 +16,21 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
 
@@ -45,28 +41,22 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
         return true;
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/myapp", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        response.setEntity(new StringEntity("OK", "ASCII"));
-                        response.setStatusCode(HttpStatus.SC_OK);
-                    }
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/myapp", (request, response, context) -> {
+                    response.setEntity(new StringEntity("OK", "ASCII"));
+                    response.setStatusCode(HttpStatus.SC_OK);
                 }).create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -83,14 +73,10 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
 
         String uri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp";
 
-        Exchange out = template.request(uri, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-            }
-        });
+        Exchange out = template.request(uri, exchange -> exchange.getIn().setBody("Hello World"));
 
         assertNotNull(out);
-        assertEquals("OK", out.getOut().getBody(String.class));
+        assertEquals("OK", out.getMessage().getBody(String.class));
 
         // look up stats
         HttpEndpoint http = context.getEndpoint(uri, HttpEndpoint.class);
@@ -125,6 +111,5 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
-
 
 }

@@ -17,14 +17,15 @@
 package org.apache.camel.dataformat.bindy;
 
 /**
- * A {@link RuntimeException} which wraps a checked exception. This is necessary when dealing with streams,
- * since the API does not allow catching or propagating a checked exception.
+ * A {@link RuntimeException} which wraps a checked exception. This is necessary when dealing with streams, since the
+ * API does not allow catching or propagating a checked exception.
  */
 public class WrappedException extends RuntimeException {
     private final Exception exception;
 
     /**
      * Mandatory constructor.
+     * 
      * @param wrappedException the checked exception being passed in
      */
     public WrappedException(Exception wrappedException) {

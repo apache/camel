@@ -27,24 +27,28 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.WriterAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogBodyWithNewLineTest extends ContextTestSupport {
 
     private StringWriter writer;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         writer = new StringWriter();
 
-        final LoggerContext ctx = (LoggerContext)LogManager.getContext(false);
+        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
 
-        Appender appender = WriterAppender.newBuilder().setLayout(PatternLayout.newBuilder().withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN).build()).setTarget(writer)
-            .setName("Writer").build();
+        Appender appender = WriterAppender.newBuilder()
+                .setLayout(PatternLayout.newBuilder().withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN).build())
+                .setTarget(writer)
+                .setName("Writer").build();
 
         appender.start();
 

@@ -22,7 +22,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.http.NoHttpResponseException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
 
@@ -39,7 +43,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
                 from("jetty://http://localhost:" + port2 + "/myotherapp").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String in = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Hi " + in);
+                        exchange.getMessage().setBody("Hi " + in);
                     }
                 });
             }
@@ -62,7 +66,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
             // expert the exception here
             fail("Expert the exception here");
         } catch (Exception ex) {
-            assertTrue("Should get the ConnectException", ex.getCause() instanceof NoHttpResponseException);
+            assertTrue(ex.getCause() instanceof NoHttpResponseException, "Should get the ConnectException");
         }
 
     }
@@ -82,7 +86,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
                 from("jetty://http://localhost:" + port1 + "/myapp").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String in = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + in);
+                        exchange.getMessage().setBody("Bye " + in);
                     }
                 });
             }

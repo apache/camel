@@ -18,7 +18,9 @@ package org.apache.camel.component.log;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LogEndpointOptionsTest extends ContextTestSupport {
 
@@ -29,7 +31,7 @@ public class LogEndpointOptionsTest extends ContextTestSupport {
 
         assertEquals("DEBUG", log.getLevel());
         assertEquals("bar", log.getMarker());
-        assertEquals(Integer.valueOf(20), log.getGroupSize());
+        assertEquals(Integer.valueOf(20), (Object) log.getGroupSize());
         assertNull(log.getGroupActiveOnly());
         assertNull(log.getGroupDelay());
         assertNull(log.getGroupInterval());

@@ -28,7 +28,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.CAMEL_CONTEXT_TAG;
@@ -39,6 +39,8 @@ import static org.apache.camel.component.microprofile.metrics.MicroProfileMetric
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_INFLIGHT_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.EXCHANGES_TOTAL_METRIC_NAME;
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.PROCESSING_METRICS_SUFFIX;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMetricsTestSupport {
 
@@ -76,7 +78,7 @@ public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMe
         assertEquals(5, timer.getCount());
         assertTrue(timer.getSnapshot().getMean() > delay.doubleValue());
 
-        Tag[] tags = new Tag[] {new Tag(CAMEL_CONTEXT_TAG, context.getName())};
+        Tag[] tags = new Tag[] { new Tag(CAMEL_CONTEXT_TAG, context.getName()) };
 
         Counter exchangesCompleted = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_COMPLETED_METRIC_NAME, tags);
         assertEquals(count, exchangesCompleted.getCount());
@@ -87,10 +89,12 @@ public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMe
         Counter exchangesTotal = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_TOTAL_METRIC_NAME, tags);
         assertEquals(count, exchangesTotal.getCount());
 
-        AtomicIntegerGauge exchangesInflight = getAtomicIntegerGauge(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_INFLIGHT_METRIC_NAME, tags);
+        AtomicIntegerGauge exchangesInflight
+                = getAtomicIntegerGauge(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_INFLIGHT_METRIC_NAME, tags);
         assertEquals(0, exchangesInflight.getValue().intValue());
 
-        Counter externalRedeliveries = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, tags);
+        Counter externalRedeliveries
+                = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_EXTERNAL_REDELIVERIES_METRIC_NAME, tags);
         assertEquals(0, externalRedeliveries.getCount());
 
         Counter failuresHandled = getCounter(CAMEL_CONTEXT_METRIC_NAME + EXCHANGES_FAILURES_HANDLED_METRIC_NAME, tags);
@@ -109,7 +113,6 @@ public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMe
     protected CamelContext createCamelContext() throws Exception {
         eventNotifier = new MicroProfileMetricsExchangeEventNotifier();
         eventNotifier.setNamingStrategy((exchange, endpoint) -> endpoint.getEndpointUri());
-        eventNotifier.setMetricRegistry(metricRegistry);
 
         CamelContext camelContext = super.createCamelContext();
         camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
@@ -122,18 +125,18 @@ public class MicroProfileMetricsExchangeEventNotifierTest extends MicroProfileMe
             @Override
             public void configure() throws Exception {
                 onException(IllegalStateException.class)
-                    .handled(true);
+                        .handled(true);
 
                 from("direct:start").routeId("test")
-                    .process(exchange -> {
-                        Integer count = exchange.getIn().getBody(Integer.class);
+                        .process(exchange -> {
+                            Integer count = exchange.getIn().getBody(Integer.class);
 
-                        IllegalStateException foo = new IllegalStateException("Invalid count");
-                        if (count % 2 == 0) {
-                            throw foo;
-                        }
-                    })
-                    .to("mock:result");
+                            IllegalStateException foo = new IllegalStateException("Invalid count");
+                            if (count % 2 == 0) {
+                                throw foo;
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

@@ -19,23 +19,22 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when
- * forwarding a JMS message from one destination to another
+ * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when forwarding a JMS message from
+ * one destination to another
  */
-public class LarsIssueTest  extends CamelTestSupport {
+public class LarsIssueTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LarsIssueTest.class);
 
     @Test
@@ -65,11 +64,7 @@ public class LarsIssueTest  extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                Processor myProcessor = new Processor() {
-                    public void process(Exchange e) throws Exception {
-                        LOG.info(">>>> Received exchange: " + e);
-                    }
-                };
+                Processor myProcessor = e -> LOG.info(">>>> Received exchange: " + e);
 
                 // lets enable CACHE_CONSUMER so that the consumer stays around in JMX
                 // as the default due to the spring bug means we keep creating & closing consumers

@@ -18,7 +18,9 @@ package org.apache.camel.component.salesforce.internal.client;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultCompositeApiClientTest {
 
@@ -33,11 +35,12 @@ public class DefaultCompositeApiClientTest {
         DefaultCompositeApiClient.checkCompositeBatchVersion(V35_0, batch.getVersion());
     }
 
-    @Test(expected = SalesforceException.class)
+    @Test
     public void shouldNotAllowNewerPayloadsWhenConfiguredWithOlderVersion() throws SalesforceException {
         final SObjectBatch batch = new SObjectBatch(V35_0);
 
-        DefaultCompositeApiClient.checkCompositeBatchVersion(V34_0, batch.getVersion());
+        assertThrows(SalesforceException.class,
+                () -> DefaultCompositeApiClient.checkCompositeBatchVersion(V34_0, batch.getVersion()));
     }
 
     @Test

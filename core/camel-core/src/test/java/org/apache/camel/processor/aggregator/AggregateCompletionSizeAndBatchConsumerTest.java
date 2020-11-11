@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateCompletionSizeAndBatchConsumerTest extends ContextTestSupport {
 
@@ -52,7 +52,8 @@ public class AggregateCompletionSizeAndBatchConsumerTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionSize(3).completionFromBatchConsumer().to("log:result", "mock:result");
+                from("direct:start").aggregate(body(), new BodyInAggregatingStrategy()).completionSize(3)
+                        .completionFromBatchConsumer().to("log:result", "mock:result");
             }
         };
     }

@@ -19,9 +19,11 @@ package org.apache.camel.spring.processor.onexception;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for onException with the spring DSL.
@@ -80,11 +82,11 @@ public class SpringOnExceptionSubRouteTest extends ContextTestSupport {
             fail("Should throw an Exception");
         } catch (Exception e) {
             assertEquals("Cannot order: kaboom", e.getCause().getMessage());
-        }        
+        }
 
         assertMockEndpointsSatisfied();
-    }    
-    
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "/org/apache/camel/spring/processor/onexception/onExceptionSubRouteTest.xml");

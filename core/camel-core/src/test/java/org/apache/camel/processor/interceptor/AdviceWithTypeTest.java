@@ -17,14 +17,16 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransformDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Advice with tests
@@ -34,7 +36,7 @@ public class AdviceWithTypeTest extends ContextTestSupport {
     @Test
     public void testUnknownType() throws Exception {
         try {
-            RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+            AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     weaveByType(SplitDefinition.class).replace().to("mock:xxx");
@@ -42,14 +44,15 @@ public class AdviceWithTypeTest extends ContextTestSupport {
             });
             fail("Should hve thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().startsWith("There are no outputs which matches: SplitDefinition in the route"));
+            assertTrue(e.getMessage().startsWith("There are no outputs which matches: SplitDefinition in the route"),
+                    e.getMessage());
         }
     }
 
     @Test
     public void testReplace() throws Exception {
         // START SNIPPET: e1
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave by type in the route
@@ -71,7 +74,7 @@ public class AdviceWithTypeTest extends ContextTestSupport {
     @Test
     public void testRemove() throws Exception {
         // START SNIPPET: e2
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the type in the route and remove it
@@ -90,7 +93,7 @@ public class AdviceWithTypeTest extends ContextTestSupport {
     @Test
     public void testBefore() throws Exception {
         // START SNIPPET: e3
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the type in the route and remove it
@@ -110,7 +113,7 @@ public class AdviceWithTypeTest extends ContextTestSupport {
     @Test
     public void testAfter() throws Exception {
         // START SNIPPET: e4
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the type in the route and remove it

@@ -18,10 +18,10 @@
 package org.apache.camel.component.soroushbot.support;
 
 import org.apache.camel.component.soroushbot.service.SoroushService;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.logging.log4j.LogManager;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 /**
  * A support test class for Soroush Bot tests.
@@ -30,7 +30,7 @@ public class SoroushBotTestSupport extends CamelTestSupport {
 
     private static SoroushMockServer soroushMockServer;
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws Exception {
         if (soroushMockServer == null) {
             soroushMockServer = new SoroushMockServer();
@@ -41,7 +41,7 @@ public class SoroushBotTestSupport extends CamelTestSupport {
         LogManager.getLogger().info("soroushMockServer is up on port " + port);
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         SoroushService.get().setAlternativeUrl(null);
     }

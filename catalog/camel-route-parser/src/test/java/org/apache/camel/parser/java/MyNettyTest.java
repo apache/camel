@@ -17,11 +17,11 @@
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore // on purpose to ignore
+@Disabled // on purpose to ignore
 public class MyNettyTest extends CamelTestSupport {
 
     public int getNextPort() {
@@ -29,17 +29,17 @@ public class MyNettyTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFoo() throws Exception {
+    void testFoo() {
         // noop
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             int port2 = getNextPort();
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                         .to("mock:input1")
                         .to("netty-http:http://0.0.0.0:" + port2 + "/bar");

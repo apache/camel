@@ -16,15 +16,21 @@
  */
 package org.apache.camel.component.pubnub;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PubNubConfigurationTest extends CamelTestSupport {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createEndpointWithIllegalArguments() throws Exception {
         PubNubComponent component = new PubNubComponent(context);
-        component.createEndpoint("pubnub");
+        assertThrows(IllegalArgumentException.class,
+                () -> component.createEndpoint("pubnub"));
     }
 
     @Test
@@ -40,8 +46,9 @@ public class PubNubConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
         PubNubComponent component = new PubNubComponent(context);
-        PubNubEndpoint endpoint = (PubNubEndpoint)component
-            .createEndpoint("pubnub:xxx?subscribeKey=mysubkey&publishKey=mypubkey&secretKey=secrets&uuid=myuuid&operation=PUBLISH&secure=false&authKey=authKey");
+        PubNubEndpoint endpoint = (PubNubEndpoint) component
+                .createEndpoint(
+                        "pubnub:xxx?subscribeKey=mysubkey&publishKey=mypubkey&secretKey=secrets&uuid=myuuid&operation=PUBLISH&secure=false&authKey=authKey");
 
         assertEquals("xxx", endpoint.getConfiguration().getChannel());
         assertEquals("mysubkey", endpoint.getConfiguration().getSubscribeKey());

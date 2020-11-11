@@ -31,29 +31,33 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
-        
+
     protected static final String ECHO_RESPONSE = "<ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
-            + "</ns1:echoResponse>";
-    protected static final String ECHO_BOOLEAN_RESPONSE = "<ns1:echoBooleanResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
-            + "</ns1:echoBooleanResponse>";
+                                                  + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
+                                                  + "</ns1:echoResponse>";
+    protected static final String ECHO_BOOLEAN_RESPONSE
+            = "<ns1:echoBooleanResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+              + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
+              + "</ns1:echoBooleanResponse>";
     protected static final String ECHO_REQUEST = "<ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
-    protected static final String ECHO_BOOLEAN_REQUEST = "<ns1:echoBoolean xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">true</arg0></ns1:echoBoolean>";
-    
+                                                 + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
+    protected static final String ECHO_BOOLEAN_REQUEST
+            = "<ns1:echoBoolean xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+              + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">true</arg0></ns1:echoBoolean>";
+
     protected static final String ELEMENT_NAMESPACE = "http://cxf.component.camel.apache.org/";
-    
+
     protected void checkRequest(String expect, String request) {
         //REVIST use a more reliable comparison to tolerate some namespaces being added to the root element
         if (expect.equals("ECHO_REQUEST")) {
-            assertTrue("Get a wrong request", request.startsWith(ECHO_REQUEST.substring(0, 60)) 
-                       && request.endsWith(ECHO_REQUEST.substring(61)));
+            assertTrue(request.startsWith(ECHO_REQUEST.substring(0, 60))
+                    && request.endsWith(ECHO_REQUEST.substring(61)), "Get a wrong request");
         } else {
-            assertTrue("Get a wrong request", request.startsWith(ECHO_BOOLEAN_REQUEST.substring(0, 67)) 
-                       && request.endsWith(ECHO_BOOLEAN_REQUEST.substring(68)));
+            assertTrue(request.startsWith(ECHO_BOOLEAN_REQUEST.substring(0, 67))
+                    && request.endsWith(ECHO_BOOLEAN_REQUEST.substring(68)), "Get a wrong request");
         }
     }
 
@@ -72,7 +76,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                         String request = exchange.getIn().getBody(String.class);
                         XmlConverter converter = new XmlConverter();
                         String documentString = ECHO_RESPONSE;
-                        
+
                         Element in = new XmlConverter().toDOMElement(inElements.get(0));
                         // Just check the element namespace
                         if (!in.getNamespaceURI().equals(ELEMENT_NAMESPACE)) {
@@ -89,7 +93,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                         outElements.add(new DOMSource(outDocument.getDocumentElement()));
                         // set the payload header with null
                         CxfPayload<SoapHeader> responsePayload = new CxfPayload<>(null, outElements, null);
-                        exchange.getOut().setBody(responsePayload); 
+                        exchange.getMessage().setBody(responsePayload);
                     }
                 });
             }

@@ -38,15 +38,17 @@ public final class RestDslParser {
     }
 
     /**
-     * Parses the java source class and build a rest configuration model of the discovered rest configurations in the java source class.
+     * Parses the java source class and build a rest configuration model of the discovered rest configurations in the
+     * java source class.
      *
-     * @param clazz                   the java source class
-     * @param baseDir                 the base of the source code
-     * @param fullyQualifiedFileName  the fully qualified source code file name
-     * @return a list of rest configurations (often there is only one)
+     * @param  clazz                  the java source class
+     * @param  baseDir                the base of the source code
+     * @param  fullyQualifiedFileName the fully qualified source code file name
+     * @return                        a list of rest configurations (often there is only one)
      */
-    public static List<RestConfigurationDetails> parseRestConfiguration(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
-                                                                        boolean includeInlinedRouteBuilders) {
+    public static List<RestConfigurationDetails> parseRestConfiguration(
+            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            boolean includeInlinedRouteBuilders) {
 
         List<MethodSource<JavaClassSource>> methods = new ArrayList<>();
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
@@ -64,7 +66,8 @@ public final class RestDslParser {
         List<RestConfigurationDetails> list = new ArrayList<>();
         for (MethodSource<JavaClassSource> configureMethod : methods) {
             // there may be multiple route builder configure methods
-            List<RestConfigurationDetails> details = parser.parseRestConfiguration(clazz, baseDir, fullyQualifiedFileName, configureMethod);
+            List<RestConfigurationDetails> details
+                    = parser.parseRestConfiguration(clazz, baseDir, fullyQualifiedFileName, configureMethod);
             list.addAll(details);
         }
         // we end up parsing bottom->up so reverse list
@@ -74,15 +77,17 @@ public final class RestDslParser {
     }
 
     /**
-     * Parses the java source class and build a rest service model of the discovered rest services in the java source class.
+     * Parses the java source class and build a rest service model of the discovered rest services in the java source
+     * class.
      *
-     * @param clazz                   the java source class
-     * @param baseDir                 the base of the source code
-     * @param fullyQualifiedFileName  the fully qualified source code file name
-     * @return a list of rest services
+     * @param  clazz                  the java source class
+     * @param  baseDir                the base of the source code
+     * @param  fullyQualifiedFileName the fully qualified source code file name
+     * @return                        a list of rest services
      */
-    public static List<RestServiceDetails> parseRestService(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
-                                                            boolean includeInlinedRouteBuilders) {
+    public static List<RestServiceDetails> parseRestService(
+            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            boolean includeInlinedRouteBuilders) {
 
         List<MethodSource<JavaClassSource>> methods = new ArrayList<>();
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-as2-parent</artifactId>
-        <version>3.1.0-SNAPSHOT</version>
+        <version>3.7.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-as2</artifactId>
@@ -53,26 +53,10 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>spi-annotations</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Component API javadoc in provided scope to read API signatures -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-as2-api</artifactId>
-            <version>${project.version}</version>
-            <type>javadoc</type>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -84,6 +68,7 @@
 
     <build>
         <defaultGoal>install</defaultGoal>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -99,18 +84,8 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-            </plugin>
-
             <!-- generate Component source and test source -->
             <plugin>
                 <groupId>org.apache.camel</groupId>
@@ -125,12 +100,13 @@
                             <apis>
                                 <api>
                                     <apiName>client</apiName>
+                                    <producerOnly>true</producerOnly>
                                     <proxyClass>org.apache.camel.component.as2.api.AS2ClientManager</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>
                                             createSigningGenerator|createEncryptingGenerator|createCompressorGenerator|createEncryptor|createCompressor
                                         </excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <nullableOptions>
                                         <nullableOption>ediMessageTransferEncoding</nullableOption>
                                         <nullableOption>signingAlgorithm</nullableOption>
@@ -145,10 +121,11 @@
                                 </api>
                                 <api>
                                     <apiName>server</apiName>
+                                    <consumerOnly>true</consumerOnly>
                                     <proxyClass>org.apache.camel.component.as2.api.AS2ServerManager</proxyClass>
-                                    <fromJavadoc>
+                                    <fromJavasource>
                                         <excludeMethods>stopListening|handleMDNResponse</excludeMethods>
-                                    </fromJavadoc>
+                                    </fromJavasource>
                                     <excludeConfigNames>handler</excludeConfigNames>
                                     <!--                     <nullableOptions>
                                                             <nullableOption>decryptingPrivateKey</nullableOption>
@@ -161,84 +138,38 @@
                             <excludeConfigNames />
                             <excludeConfigTypes />
                             <extraOptions />
-                            <fromJavadoc />
+                            <fromJavasource />
                             <aliases />
                             <nullableOptions />
                             -->
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Component API to read API signatures -->
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-as2-api</artifactId>
+                        <version>${project.version}</version>
+                        <classifier>sources</classifier>
+                    </dependency>
+                </dependencies>
             </plugin>
-
-            <!-- generate components meta-data and validate component includes documentation etc -->
             <plugin>
+                <!-- we need to generate additional configurer classes -->
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>prepare</id>
+                        <id>generate-configurer</id>
+                        <phase>process-classes</phase>
                         <goals>
-                            <goal>prepare-components</goal>
+                            <goal>generate-configurer</goal>
                         </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                    <execution>
-                        <id>validate</id>
-                        <goals>
-                            <goal>validate-components</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- add generated source and test source to build -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>add-generated-sources</id>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/camel-component</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add-generated-test-sources</id>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-test-sources/camel-component</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-api-component-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <scheme>${schemeName}</scheme>
-                    <componentName>${componentName}</componentName>
-                    <componentPackage>${componentPackage}</componentPackage>
-                    <outPackage>${outPackage}</outPackage>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>

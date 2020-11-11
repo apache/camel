@@ -25,10 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -73,10 +74,10 @@ public class JmsDirectStartupOrderIssueTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:queue:foo").routeId("amq").startupOrder(100).autoStartup(false)
-                    .to("direct:foo");
+                        .to("direct:foo");
 
                 from("direct:foo").routeId("direct").startupOrder(1)
-                    .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

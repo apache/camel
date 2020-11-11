@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
 
@@ -41,16 +41,19 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setSpoolDirectory("target/camel/cache");
                 context.getStreamCachingStrategy().setSpoolThreshold(1L);
 
-                from("direct:startIterable").split(body().tokenize(",")).streaming().aggregationStrategy(new InternalAggregationStrategy()).stopOnException().parallelProcessing()
-                    .to("direct:sub").end().to("mock:result");
+                from("direct:startIterable").split(body().tokenize(",")).streaming()
+                        .aggregationStrategy(new InternalAggregationStrategy()).stopOnException().parallelProcessing()
+                        .to("direct:sub").end().to("mock:result");
 
-                from("direct:start").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy()).stopOnException().parallelProcessing().to("direct:sub")
-                    .end().to("mock:result");
+                from("direct:start").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy())
+                        .stopOnException().parallelProcessing().to("direct:sub")
+                        .end().to("mock:result");
 
                 from("direct:sub").process(new InputProcessorWithStreamCache(22)).to("mock:resultsub");
 
-                from("direct:startNested").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy()).stopOnException().parallelProcessing()
-                    .to("direct:start").end().to("mock:resultNested");
+                from("direct:startNested").split(body().tokenize(",")).aggregationStrategy(new InternalAggregationStrategy())
+                        .stopOnException().parallelProcessing()
+                        .to("direct:start").end().to("mock:resultNested");
             }
 
         };
@@ -98,7 +101,7 @@ public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {
             String s = "Test Message " + number;
             cos.write(s.getBytes(Charset.forName("UTF-8")));
             cos.close();
-            InputStream is = (InputStream)cos.newStreamCache();
+            InputStream is = (InputStream) cos.newStreamCache();
 
             exchange.getMessage().setBody(is);
         }

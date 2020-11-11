@@ -19,7 +19,7 @@ package org.apache.camel.component.hazelcast.atomicnumber;
 import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IAtomicLong;
+import com.hazelcast.cp.IAtomicLong;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
@@ -32,56 +32,59 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
 
     private final IAtomicLong atomicnumber;
 
-    public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
+    public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint,
+                                         String cacheName) {
         super(endpoint);
-        this.atomicnumber = hazelcastInstance.getAtomicLong(cacheName);
+        this.atomicnumber = hazelcastInstance.getCPSubsystem().getAtomicLong(cacheName);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
 
         Map<String, Object> headers = exchange.getIn().getHeaders();
-        
+
         long expectedValue = 0L;
-        
+
         if (headers.containsKey(HazelcastConstants.EXPECTED_VALUE)) {
             expectedValue = (long) headers.get(HazelcastConstants.EXPECTED_VALUE);
         }
-        
+
         HazelcastOperation operation = lookupOperation(exchange);
 
         switch (operation) {
 
-        case INCREMENT:
-            this.increment(exchange);
-            break;
+            case INCREMENT:
+                this.increment(exchange);
+                break;
 
-        case DECREMENT:
-            this.decrement(exchange);
-            break;
-            
-        case COMPARE_AND_SET:
-            this.compare(expectedValue, exchange);
-            break;
-            
-        case GET_AND_ADD:
-            this.getAndAdd(exchange);
-            break;
+            case DECREMENT:
+                this.decrement(exchange);
+                break;
 
-        case SET_VALUE:
-            this.set(exchange);
-            break;
+            case COMPARE_AND_SET:
+                this.compare(expectedValue, exchange);
+                break;
 
-        case GET:
-            this.get(exchange);
-            break;
+            case GET_AND_ADD:
+                this.getAndAdd(exchange);
+                break;
 
-        case DESTROY:
-            this.destroy();
-            break;
+            case SET_VALUE:
+                this.set(exchange);
+                break;
 
-        default:
-            throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the ATOMICNUMBER.", operation, HazelcastConstants.OPERATION));
+            case GET:
+                this.get(exchange);
+                break;
+
+            case DESTROY:
+                this.destroy();
+                break;
+
+            default:
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the ATOMICNUMBER.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers
@@ -99,7 +102,7 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
     private void decrement(Exchange exchange) {
         exchange.getOut().setBody(this.atomicnumber.decrementAndGet());
     }
-    
+
     private void compare(long expected, Exchange exchange) {
         long update = exchange.getIn().getBody(Long.class);
         if (ObjectHelper.isEmpty(expected)) {
@@ -107,7 +110,7 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
         }
         exchange.getOut().setBody(this.atomicnumber.compareAndSet(expected, update));
     }
-    
+
     private void getAndAdd(Exchange exchange) {
         long delta = exchange.getIn().getBody(Long.class);
         exchange.getOut().setBody(this.atomicnumber.getAndAdd(delta));

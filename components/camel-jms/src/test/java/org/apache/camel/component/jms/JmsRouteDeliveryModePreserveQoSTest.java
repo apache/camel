@@ -24,10 +24,12 @@ import javax.jms.DeliveryMode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for preserveMessageQos with delivery mode
@@ -54,7 +56,8 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", DeliveryMode.NON_PERSISTENT);
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode",
+                DeliveryMode.NON_PERSISTENT);
 
         assertMockEndpointsSatisfied();
 
@@ -69,7 +72,8 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", "NON_PERSISTENT");
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode",
+                "NON_PERSISTENT");
 
         assertMockEndpointsSatisfied();
 
@@ -84,7 +88,8 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", DeliveryMode.PERSISTENT);
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode",
+                DeliveryMode.PERSISTENT);
 
         assertMockEndpointsSatisfied();
 
@@ -99,7 +104,8 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", "PERSISTENT");
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode",
+                "PERSISTENT");
 
         assertMockEndpointsSatisfied();
 
@@ -155,7 +161,8 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         // on the message
         mock.message(0).header("JMSDeliveryMode").isEqualTo(1);
 
-        template.sendBodyAndHeader("direct:preserveQosNonJmsDeliveryMode", "Beer is good...", JmsConstants.JMS_DELIVERY_MODE, 3);
+        template.sendBodyAndHeader("direct:preserveQosNonJmsDeliveryMode", "Beer is good...", JmsConstants.JMS_DELIVERY_MODE,
+                3);
 
         assertMockEndpointsSatisfied();
     }

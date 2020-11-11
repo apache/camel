@@ -8,10 +8,10 @@ Building it yourself.
 Then come back here and you might want to read the following
 documentation before continuing:
 
-* Longer Getting Started Guide
-* Find out about xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+* Longer xref:book-getting-started.adoc[Getting Started Guide]
+* Find out about xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
   and how to implement them with Camel
-* Review the Architecture guide to see how to build Routes using the xref:java-dsl.adoc[Java DSL]
+* Review the xref:architecture.adoc[Architecture guide] to see how to build Routes using the xref:java-dsl.adoc[Java DSL]
   or xref:xml-configuration.adoc[XML DSL]
 
 [[GettingStarted-WorkingwithCamelContextsandRouteBuilders]]
@@ -19,7 +19,7 @@ documentation before continuing:
 
 To get started with Camel:
 
-1.  Create a `CamelContext`.
+1.  Create a xref:camelcontext.adoc[CamelContext].
 2.  Optionally, xref:configuring-camel.adoc[configure components or endpoints].
 3.  Add whatever routing rules you wish using the DSL and `RouteBuilder` or using XML DSL.
 4.  Start the Camel context.
@@ -49,7 +49,7 @@ directly as a pdf (about 20 pages) and introduces you to Camel. We have
 been told by experience Camel end users they wished this chapter was
 available to them when they started learning Camel.
 
-* http://java.dzone.com/articles/open-source-integration-apache[Open
+* https://dzone.com/articles/open-source-integration-apache[Open
 Source Integration with Apache Camel and How Fuse IDE Can Help] by
 Jonathan Anstey. Updated article of the
 http://architects.dzone.com/articles/apache-camel-integration[Apache

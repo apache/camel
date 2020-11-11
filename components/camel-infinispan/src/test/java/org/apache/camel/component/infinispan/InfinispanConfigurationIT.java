@@ -24,20 +24,27 @@ import org.infinispan.configuration.global.GlobalConfiguration;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.jgroups.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InfinispanConfigurationIT {
 
-    @Before
+    private RemoteCacheManager manager = new RemoteCacheManager();
+
+    @BeforeEach
     public void setupCache() {
-        RemoteCacheManager manager = new RemoteCacheManager();
         RemoteCache<Object, Object> cache = manager.administration().getOrCreateCache("misc_cache", (String) null);
         assertNotNull(cache);
+    }
+
+    @AfterEach
+    public void cleanupCache() {
+        manager.close();
     }
 
     @Test
@@ -55,6 +62,7 @@ public class InfinispanConfigurationIT {
 
         manager.getCacheContainer().stop();
         manager.stop();
+        manager.close();
     }
 
     @Test
@@ -75,6 +83,7 @@ public class InfinispanConfigurationIT {
         assertNull(remoteCache.put(key, "val1"));
         assertNull(remoteCache.put(key, "val2"));
         manager.stop();
+        manager.close();
     }
 
     @Test
@@ -95,5 +104,6 @@ public class InfinispanConfigurationIT {
         assertNotNull(cache.put(key, "val2"));
 
         manager.stop();
+        manager.close();
     }
 }

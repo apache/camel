@@ -38,7 +38,7 @@ final class RxJavaCamelProcessor implements Closeable {
     private final String name;
     private final RxJavaStreamsService service;
     private final AtomicReference<FlowableEmitter<Exchange>> camelEmitter;
-    private FlowableProcessor<Exchange> publisher;
+    private final FlowableProcessor<Exchange> publisher;
     private ReactiveStreamsProducer camelProducer;
 
     RxJavaCamelProcessor(RxJavaStreamsService service, String name) {
@@ -73,16 +73,16 @@ final class RxJavaCamelProcessor implements Closeable {
 
             if (ObjectHelper.equal(strategy, ReactiveStreamsBackpressureStrategy.OLDEST)) {
                 flow.onBackpressureDrop(this::onBackPressure)
-                    .doAfterNext(this::onItemEmitted)
-                    .subscribe(this.publisher);
+                        .doAfterNext(this::onItemEmitted)
+                        .subscribe(this.publisher);
             } else if (ObjectHelper.equal(strategy, ReactiveStreamsBackpressureStrategy.LATEST)) {
                 flow.doAfterNext(this::onItemEmitted)
-                    .onBackpressureLatest()
-                    .subscribe(this.publisher);
+                        .onBackpressureLatest()
+                        .subscribe(this.publisher);
             } else {
                 flow.doAfterNext(this::onItemEmitted)
-                    .onBackpressureBuffer()
-                    .subscribe(this.publisher);
+                        .onBackpressureBuffer()
+                        .subscribe(this.publisher);
             }
 
             camelProducer = producer;
@@ -113,8 +113,7 @@ final class RxJavaCamelProcessor implements Closeable {
 
     private void onBackPressure(Exchange exchange) {
         ReactiveStreamsHelper.invokeDispatchCallback(
-            exchange,
-            new ReactiveStreamsDiscardedException("Discarded by back pressure strategy", exchange, name)
-        );
+                exchange,
+                new ReactiveStreamsDiscardedException("Discarded by back pressure strategy", exchange, name));
     }
 }

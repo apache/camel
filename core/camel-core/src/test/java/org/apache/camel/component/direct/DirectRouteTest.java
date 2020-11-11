@@ -25,10 +25,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class DirectRouteTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class DirectRouteTest {
 
     @Test
     public void testSedaQueue() throws Exception {
@@ -59,7 +60,7 @@ public class DirectRouteTest extends Assert {
         producer.process(exchange);
 
         // now lets sleep for a while
-        assertTrue("Did not receive the message!", invoked.get());
+        assertTrue(invoked.get(), "Did not receive the message!");
 
         container.stop();
     }

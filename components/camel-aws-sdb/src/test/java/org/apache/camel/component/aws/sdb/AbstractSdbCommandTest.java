@@ -21,13 +21,13 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AbstractSdbCommandTest {
 
@@ -35,15 +35,15 @@ public class AbstractSdbCommandTest {
     private AmazonSimpleDB sdbClient;
     private SdbConfiguration configuration;
     private Exchange exchange;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
         configuration.setDomainName("DOMAIN1");
         configuration.setConsistentRead(Boolean.TRUE);
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         this.command = new AbstractSdbCommand(sdbClient, configuration, exchange) {
             @Override
             public void execute() {
@@ -51,16 +51,16 @@ public class AbstractSdbCommandTest {
             }
         };
     }
-    
+
     @Test
     public void determineDomainName() {
         assertEquals("DOMAIN1", this.command.determineDomainName());
-        
+
         exchange.getIn().setHeader(SdbConstants.DOMAIN_NAME, "DOMAIN2");
-        
+
         assertEquals("DOMAIN2", this.command.determineDomainName());
     }
-    
+
     @Test
     public void determineItemName() {
         try {
@@ -69,37 +69,37 @@ public class AbstractSdbCommandTest {
         } catch (IllegalArgumentException e) {
             assertEquals("AWS SDB Item Name header is missing.", e.getMessage());
         }
-        
+
         exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
-        
+
         assertEquals("ITEM1", this.command.determineItemName());
     }
-    
+
     @Test
     public void determineConsistentRead() {
         assertEquals(Boolean.TRUE, this.command.determineConsistentRead());
-        
+
         exchange.getIn().setHeader(SdbConstants.CONSISTENT_READ, Boolean.FALSE);
-        
+
         assertEquals(Boolean.FALSE, this.command.determineConsistentRead());
     }
-    
+
     @Test
     public void determineUpdateCondition() {
         assertNull(this.command.determineUpdateCondition());
-        
+
         UpdateCondition condition = new UpdateCondition("Key1", "Value1", true);
         exchange.getIn().setHeader(SdbConstants.UPDATE_CONDITION, condition);
-        
+
         assertSame(condition, this.command.determineUpdateCondition());
     }
-    
+
     @Test
     public void determineNextToken() {
         assertNull(this.command.determineNextToken());
-        
+
         exchange.getIn().setHeader(SdbConstants.NEXT_TOKEN, "Token1");
-        
+
         assertEquals("Token1", this.command.determineNextToken());
     }
 }

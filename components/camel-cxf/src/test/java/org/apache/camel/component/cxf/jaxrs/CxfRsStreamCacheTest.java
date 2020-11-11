@@ -17,20 +17,23 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsStreamCacheTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
@@ -52,28 +55,28 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
                 errorHandler(noErrorHandler());
 
                 from(cxfRsEndpointUri)
-                    // should be able to convert to Customer
-                    .convertBodyTo(Customer.class)
-                    .to("mock:result")
-                    .process(exchange-> {
-                        // respond with OK
-                        CachedOutputStream cos = new CachedOutputStream(exchange);
-                        cos.write(RESPONSE.getBytes("UTF-8"));
-                        cos.close();
-                        exchange.getOut().setBody(cos.newStreamCache());
+                        // should be able to convert to Customer
+                        .convertBodyTo(Customer.class)
+                        .to("mock:result")
+                        .process(exchange -> {
+                            // respond with OK
+                            CachedOutputStream cos = new CachedOutputStream(exchange);
+                            cos.write(RESPONSE.getBytes("UTF-8"));
+                            cos.close();
+                            exchange.getOut().setBody(cos.newStreamCache());
 
-                        exchange.addOnCompletion(new Synchronization() {
-                            @Override
-                            public void onComplete(Exchange exchange) {
-                                template.sendBody("mock:onComplete", "");
-                            }
+                            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                                @Override
+                                public void onComplete(Exchange exchange) {
+                                    template.sendBody("mock:onComplete", "");
+                                }
 
-                            @Override
-                            public void onFailure(Exchange exchange) {
+                                @Override
+                                public void onFailure(Exchange exchange) {
 
-                            }
+                                }
+                            });
                         });
-                    });
 
             }
         };
@@ -87,7 +90,6 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
 
         MockEndpoint onComplete = getMockEndpoint("mock:onComplete");
         onComplete.expectedMessageCount(1);
-
 
         HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");

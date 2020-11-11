@@ -22,10 +22,10 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 
 public class FilePrepareRequest implements Processor {
     @Override
-    public void process(Exchange exchange) throws Exception {
-        String request = exchange.getIn().getBody(String.class);       
-        exchange.getOut().setBody(request);
-        exchange.getOut().setHeader(CxfConstants.OPERATION_NAME, "greetMeOneWay");
+    public void process(Exchange exchange) {
+        String request = exchange.getIn().getBody(String.class);
+        exchange.getMessage().setBody(request);
+        exchange.getMessage().setHeader(CxfConstants.OPERATION_NAME, "greetMeOneWay");
     }
 
 }

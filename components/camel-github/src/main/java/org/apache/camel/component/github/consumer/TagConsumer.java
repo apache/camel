@@ -31,10 +31,10 @@ public class TagConsumer extends AbstractGitHubConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(TagConsumer.class);
 
     private List<String> tagNames = new ArrayList<>();
-    
+
     public TagConsumer(GitHubEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
-        
+
         LOG.info("GitHub TagConsumer: Indexing current tags...");
         List<RepositoryTag> tags = getRepositoryService().getTags(getRepository());
         for (RepositoryTag tag : tags) {
@@ -53,7 +53,7 @@ public class TagConsumer extends AbstractGitHubConsumer {
                 tagNames.add(tag.getName());
             }
         }
-        
+
         while (!newTags.empty()) {
             RepositoryTag newTag = newTags.pop();
             Exchange e = getEndpoint().createExchange();

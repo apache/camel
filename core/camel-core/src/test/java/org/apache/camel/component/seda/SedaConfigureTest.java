@@ -21,7 +21,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SedaConfigureTest extends ContextTestSupport {
 
@@ -32,27 +34,27 @@ public class SedaConfigureTest extends ContextTestSupport {
         BlockingQueue<Exchange> queue = endpoint.getQueue();
 
         LinkedBlockingQueue<Exchange> blockingQueue = assertIsInstanceOf(LinkedBlockingQueue.class, queue);
-        assertEquals("remainingCapacity", 2000, blockingQueue.remainingCapacity());
+        assertEquals(2000, blockingQueue.remainingCapacity(), "remainingCapacity");
     }
 
     @Test
     public void testConcurrentConsumersConfigured() {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo?concurrentConsumers=5", SedaEndpoint.class);
-        assertEquals("concurrentConsumers", 5, endpoint.getConcurrentConsumers());
+        assertEquals(5, endpoint.getConcurrentConsumers(), "concurrentConsumers");
     }
 
     @Test
     public void testBlockWhenFull() {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo?size=2000&blockWhenFull=true", SedaEndpoint.class);
-        assertTrue("blockWhenFull", endpoint.isBlockWhenFull());
+        assertTrue(endpoint.isBlockWhenFull(), "blockWhenFull");
     }
 
     @Test
     public void testDefaults() {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo", SedaEndpoint.class);
-        assertFalse("blockWhenFull: wrong default", endpoint.isBlockWhenFull());
-        assertEquals("concurrentConsumers: wrong default", 1, endpoint.getConcurrentConsumers());
-        assertEquals("size (remainingCapacity): wrong default", SedaConstants.QUEUE_SIZE, endpoint.getSize());
-        assertEquals("timeout: wrong default", 30000L, endpoint.getTimeout());
+        assertFalse(endpoint.isBlockWhenFull(), "blockWhenFull: wrong default");
+        assertEquals(1, endpoint.getConcurrentConsumers(), "concurrentConsumers: wrong default");
+        assertEquals(SedaConstants.QUEUE_SIZE, endpoint.getSize(), "size (remainingCapacity): wrong default");
+        assertEquals(30000L, endpoint.getTimeout(), "timeout: wrong default");
     }
 }

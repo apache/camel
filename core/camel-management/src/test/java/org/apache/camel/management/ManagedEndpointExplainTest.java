@@ -20,7 +20,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedEndpointExplainTest extends ManagementTestSupport {
 
@@ -39,7 +41,8 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
         on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
         assertTrue(mbeanServer.isRegistered(on));
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5&level=WARN\"");
+        on = ObjectName.getInstance(
+                "org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\\?groupDelay=2000&groupSize=5&level=WARN\"");
         assertTrue(mbeanServer.isRegistered(on));
     }
 
@@ -49,8 +52,8 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:test")
-                    .to("log:foo?groupDelay=2000&groupSize=5&level=WARN")
-                    .to("mock:result");
+                        .to("log:foo?groupDelay=2000&groupSize=5&level=WARN")
+                        .to("mock:result");
             }
         };
     }

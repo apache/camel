@@ -39,6 +39,6 @@ public class FtpProducerBuildPartOfDirectoryTest extends FtpServerTestSupport {
 
         File file = new File(FTP_ROOT_DIR + "/upload/user/claus/claus.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
-        assertEquals(IOConverter.toString(file, null), "Bye World");
+        assertEquals("Bye World", IOConverter.toString(file, null));
     }
 }

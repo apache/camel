@@ -22,10 +22,11 @@ import ca.uhn.hl7v2.model.v24.segment.PID;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.hl7.HL7.hl7terser;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TerserExpressionTest extends CamelTestSupport {
 
@@ -56,14 +57,16 @@ public class TerserExpressionTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testTerserInvalidExpression() throws Exception {
-        template.sendBody("direct:test4", createADT01Message());
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:test4", createADT01Message()));
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void testTerserInvalidMessage() throws Exception {
-        template.sendBody("direct:test4", "text instead of message");
+        assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:test4", "text instead of message"));
     }
 
     @Test

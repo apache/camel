@@ -20,13 +20,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/filename-consumer");
         super.setUp();
@@ -40,16 +40,20 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
         mock.allMessages().header(Exchange.FILE_NAME).isNotNull();
 
         // the file name is also starting with target/data/filename-consumer
-        template.sendBodyAndHeader("file:target/data/filename-consumer", "Hello World", Exchange.FILE_NAME, "target/data/filename-consumer-hello.txt");
-        template.sendBodyAndHeader("file:target/data/filename-consumer", "Bye World", Exchange.FILE_NAME, "target/data/filename-consumer-bye.txt");
+        template.sendBodyAndHeader("file:target/data/filename-consumer", "Hello World", Exchange.FILE_NAME,
+                "target/data/filename-consumer-hello.txt");
+        template.sendBodyAndHeader("file:target/data/filename-consumer", "Bye World", Exchange.FILE_NAME,
+                "target/data/filename-consumer-bye.txt");
 
         context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
 
         // and expect name to contain target/data/filename-consumer-XXX.txt
-        assertDirectoryEquals("target/data/filename-consumer-bye.txt", mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME, String.class));
-        assertDirectoryEquals("target/data/filename-consumer-hello.txt", mock.getReceivedExchanges().get(1).getIn().getHeader(Exchange.FILE_NAME, String.class));
+        assertDirectoryEquals("target/data/filename-consumer-bye.txt",
+                mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME, String.class));
+        assertDirectoryEquals("target/data/filename-consumer-hello.txt",
+                mock.getReceivedExchanges().get(1).getIn().getHeader(Exchange.FILE_NAME, String.class));
     }
 
     @Override
@@ -57,7 +61,8 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/filename-consumer?initialDelay=0&delay=10&recursive=true&sortBy=file:name").noAutoStartup().to("mock:result");
+                from("file:target/data/filename-consumer?initialDelay=0&delay=10&recursive=true&sortBy=file:name")
+                        .noAutoStartup().to("mock:result");
             }
         };
     }

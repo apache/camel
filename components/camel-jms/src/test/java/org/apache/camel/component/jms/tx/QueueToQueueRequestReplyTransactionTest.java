@@ -16,23 +16,21 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test case derived from:
- * http://camel.apache.org/transactional-client.html and Martin
- * Krasser's sample:
+ * Test case derived from: http://camel.apache.org/transactional-client.html and Martin Krasser's sample:
  * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
  * <p/>
- * NOTE: had to split into separate test classes as I was unable to fully tear
- * down and isolate the test cases, I'm not sure why, but as soon as we know the
- * Transaction classes can be joined into one.
+ * NOTE: had to split into separate test classes as I was unable to fully tear down and isolate the test cases, I'm not
+ * sure why, but as soon as we know the Transaction classes can be joined into one.
  */
 public class QueueToQueueRequestReplyTransactionTest extends AbstractTransactionTest {
 
@@ -46,24 +44,22 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
 
                 from("activemq:queue:foo").policy(required).process(cp).to("activemq-1:queue:bar?replyTo=queue:bar.reply");
 
-                from("activemq-1:queue:bar").process(new Processor() {
-                    public void process(Exchange e) {
-                        String request = e.getIn().getBody(String.class);
-                        Message out = e.getOut();
-                        String selectorValue = e.getIn().getHeader("camelProvider", String.class);
-                        if (selectorValue != null) {
-                            out.setHeader("camelProvider", selectorValue);
-                        }
-                        out.setBody("Re: " + request);
+                from("activemq-1:queue:bar").process(e -> {
+                    String request = e.getIn().getBody(String.class);
+                    Message out = e.getMessage();
+                    String selectorValue = e.getIn().getHeader("camelProvider", String.class);
+                    if (selectorValue != null) {
+                        out.setHeader("camelProvider", selectorValue);
                     }
+                    out.setBody("Re: " + request);
                 });
             }
         });
 
         for (int i = 0; i < 5; ++i) {
             Object reply = template.requestBody("activemq:queue:foo", "blah" + i);
-            assertTrue("Received unexpeced reply", reply.equals("Re: blah" + i));
-            assertTrue(cp.getErrorMessage(), cp.getErrorMessage() == null);
+            assertTrue(reply.equals("Re: blah" + i), "Received unexpeced reply");
+            assertNull(cp.getErrorMessage(), cp.getErrorMessage());
         }
     }
 

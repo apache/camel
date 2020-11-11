@@ -16,18 +16,31 @@
  */
 package org.apache.camel.component.xslt.saxon;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.xslt.XsltBuilder;
 import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
@@ -35,17 +48,26 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ResourceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Transforms the message using a XSLT template using Saxon.
+ * Transform XML payloads using an XSLT template using Saxon.
  */
 @ManagedResource(description = "Managed XsltSaxonEndpoint")
-@UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri", producerOnly = true, label = "core,transformation")
+@UriEndpoint(firstVersion = "3.0.0", scheme = "xslt-saxon", title = "XSLT Saxon", syntax = "xslt-saxon:resourceUri",
+             producerOnly = true, category = { Category.CORE, Category.TRANSFORMATION })
 public class XsltSaxonEndpoint extends XsltEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(XsltSaxonEndpoint.class);
+
     @UriParam(label = "advanced")
     private Configuration saxonConfiguration;
     @Metadata(label = "advanced")
     private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
+    @Metadata(label = "advanced")
+    private Map<String, Object> saxonReaderProperties = new HashMap<>();
     @UriParam(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
     @UriParam(displayName = "Allow StAX", defaultValue = "true")
@@ -60,25 +82,22 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
     }
 
     /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the
+     * classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup.
      */
     public void setSaxonExtensionFunctions(List<Object> extensionFunctions) {
         this.saxonExtensionFunctions = extensionFunctions;
     }
 
     /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the
+     * classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup.
      */
     public void setSaxonExtensionFunctions(String extensionFunctions) {
         this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
-            getCamelContext(),
-            extensionFunctions,
-            Object.class
-        );
+                getCamelContext(),
+                extensionFunctions,
+                Object.class);
     }
 
     public Configuration getSaxonConfiguration() {
@@ -103,25 +122,53 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         this.saxonConfigurationProperties = configurationProperties;
     }
 
+    public Map<String, Object> getSaxonReaderProperties() {
+        return saxonReaderProperties;
+    }
+
+    /**
+     * To set custom Saxon Reader properties
+     */
+    public void setSaxonReaderProperties(Map<String, Object> saxonReaderProperties) {
+        this.saxonReaderProperties = saxonReaderProperties;
+    }
+
     @ManagedAttribute(description = "Whether to allow using StAX as the javax.xml.transform.Source")
     public boolean isAllowStAX() {
         return allowStAX;
     }
 
     /**
-     * Whether to allow using StAX as the javax.xml.transform.Source.
-     * You can enable this if the XSLT library supports StAX such as the Saxon library (camel-saxon).
-     * The Xalan library (default in JVM) does not support StAXSource.
+     * Whether to allow using StAX as the javax.xml.transform.Source. You can enable this if the XSLT library supports
+     * StAX such as the Saxon library (camel-saxon). The Xalan library (default in JVM) does not support StAXSource.
      */
     public void setAllowStAX(boolean allowStAX) {
         this.allowStAX = allowStAX;
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
+
         // the processor is the xslt builder
         setXslt(createXsltBuilder());
+
+        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
+        // load resource from classpath otherwise load in doStart()
+        if (ResourceHelper.isClasspathUri(getResourceUri())) {
+            loadResource(getResourceUri(), getXslt());
+        }
+
         setProcessor(getXslt());
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (!ResourceHelper.isClasspathUri(getResourceUri())) {
+            loadResource(getResourceUri(), getXslt());
+        }
     }
 
     protected XsltSaxonBuilder createXsltBuilder() throws Exception {
@@ -129,7 +176,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         final ClassResolver resolver = ctx.getClassResolver();
         final Injector injector = ctx.getInjector();
 
-        log.debug("{} using schema resource: {}", this, getResourceUri());
+        LOG.debug("{} using schema resource: {}", this, getResourceUri());
 
         final XsltSaxonBuilder xslt = injector.newInstance(XsltSaxonBuilder.class);
 
@@ -140,8 +187,9 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
                 factory = new TransformerFactoryImpl();
             } else {
                 // provide the class loader of this component to work in OSGi environments
-                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(getTransformerFactoryClass(), TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
-                log.debug("Using TransformerFactoryClass {}", factoryClass);
+                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(getTransformerFactoryClass(),
+                        TransformerFactory.class, XsltSaxonComponent.class.getClassLoader());
+                LOG.debug("Using TransformerFactoryClass {}", factoryClass);
                 factory = injector.newInstance(factoryClass);
             }
         }
@@ -154,7 +202,7 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
         }
 
         if (factory != null) {
-            log.debug("Using TransformerFactory {}", factory);
+            LOG.debug("Using TransformerFactory {}", factory);
             xslt.setTransformerFactory(factory);
         }
         if (getResultHandlerFactory() != null) {
@@ -178,10 +226,58 @@ public class XsltSaxonEndpoint extends XsltEndpoint {
             xslt.setParameters(copy);
         }
 
-        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
-        loadResource(getResourceUri(), xslt);
-
         return xslt;
+    }
+
+    /**
+     * Loads the resource.
+     *
+     * @param  resourceUri          the resource to load
+     * @throws TransformerException is thrown if error loading resource
+     * @throws IOException          is thrown if error loading resource
+     */
+    protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
+        LOG.trace("{} loading schema resource: {}", this, resourceUri);
+        Source source = xslt.getUriResolver().resolve(resourceUri, null);
+        if (this.saxonReaderProperties != null) {
+            //for Saxon we need to create XMLReader for the coming source
+            //so that the features configuration can take effect
+            source = createReaderForSource(source);
+        }
+        if (source == null) {
+            throw new IOException("Cannot load schema resource " + resourceUri);
+        } else {
+            xslt.setTransformerSource(source);
+        }
+        // now loaded so clear flag
+        setCacheCleared(false);
+    }
+
+    private Source createReaderForSource(Source source) {
+        try {
+            XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+            for (Map.Entry<String, Object> entry : this.saxonReaderProperties.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                try {
+                    URI uri = new URI(key);
+                    if (value != null
+                            && (value.toString().equals("true") || (value.toString().equals("false")))) {
+                        xmlReader.setFeature(uri.toString(), Boolean.valueOf(value.toString()));
+                    } else if (value != null) {
+                        xmlReader.setProperty(uri.toString(), value);
+                    }
+                } catch (URISyntaxException e) {
+                    LOG.debug("{} isn't a valid URI, so ingore it", key);
+                }
+            }
+            InputSource inputSource = SAXSource.sourceToInputSource(source);
+            return new SAXSource(xmlReader, inputSource);
+        } catch (SAXException e) {
+            LOG.info("Can't created XMLReader for source ", e);
+            return null;
+        }
+
     }
 
 }

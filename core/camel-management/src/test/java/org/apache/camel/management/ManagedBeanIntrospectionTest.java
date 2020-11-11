@@ -25,7 +25,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
 
@@ -58,19 +61,20 @@ public class ManagedBeanIntrospectionTest extends ManagementTestSupport {
             }
         }
 
-        assertNotNull("Should have found DefaultBeanIntrospection", on);
+        assertNotNull(on, "Should have found DefaultBeanIntrospection");
 
         // reset counter
         mbeanServer.invoke(on, "resetCounters", null, null);
 
         Long counter = (Long) mbeanServer.getAttribute(on, "InvokedCounter");
-        assertEquals("Should not have been invoked", 0, counter.intValue());
+        assertEquals(0, counter.intValue(), "Should not have been invoked");
 
-        Object dummy = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(this, "dummy", null, false);
+        Object dummy = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(this, "dummy", null,
+                false);
         assertEquals("MyDummy", dummy);
 
         counter = (Long) mbeanServer.getAttribute(on, "InvokedCounter");
-        assertEquals("Should have been invoked", 1, counter.intValue());
+        assertEquals(1, counter.intValue(), "Should have been invoked");
     }
 
     @Override

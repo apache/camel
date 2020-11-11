@@ -25,9 +25,12 @@ import org.apache.camel.spi.Registry;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.protocol.HTTP;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test that show custom header filter useful to send Connection Close header
@@ -39,23 +42,19 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
 
     private HttpServer localServer;
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        localServer = ServerBootstrap.bootstrap().
-                setHttpProcessor(getBasicHttpProcessor()).
-                setConnectionReuseStrategy(getConnectionReuseStrategy()).
-                setResponseFactory(getHttpResponseFactory()).
-                setExpectationVerifier(getHttpExpectationVerifier()).
-                setSslContext(getSSLContext()).
-                registerHandler("/myget", new BasicValidationHandler("GET", null, null, getExpectedContent())).
-                create();
+        localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
+                .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
+                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
+                .registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
     }
 
-    @After
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -69,8 +68,9 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
     public void noDataDefaultIsGet() throws Exception {
         HttpComponent component = context.getComponent("http", HttpComponent.class);
         component.setConnectionTimeToLive(1000L);
-        HttpEndpoint endpoint = (HttpEndpoint) component.createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-            + localServer.getLocalPort() + "/myget?headerFilterStrategy=#myFilter");
+        HttpEndpoint endpoint = (HttpEndpoint) component
+                .createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
+                                + localServer.getLocalPort() + "/myget?headerFilterStrategy=#myFilter");
         HttpProducer producer = new HttpProducer(endpoint);
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(null);
@@ -79,7 +79,7 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
         producer.process(exchange);
         producer.stop();
 
-        assertEquals(HTTP.CONN_CLOSE, exchange.getOut().getHeader("connection"));
+        assertEquals(HTTP.CONN_CLOSE, exchange.getMessage().getHeader("connection"));
         assertExchange(exchange);
     }
 

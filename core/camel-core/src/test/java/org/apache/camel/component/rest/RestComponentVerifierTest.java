@@ -28,18 +28,20 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.support.DefaultComponent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestComponentVerifierTest extends ContextTestSupport {
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry registry = super.createRegistry();
         registry.bind("rest", new RestComponent());
         registry.bind("rest-component", new MyComponent());
         return registry;
@@ -62,7 +64,7 @@ public class RestComponentVerifierTest extends ContextTestSupport {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
@@ -81,11 +83,12 @@ public class RestComponentVerifierTest extends ContextTestSupport {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
-        Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
-        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER,
+                result.getErrors().get(0).getCode());
+        assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
+        assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }
 
     // ***************************************************
@@ -97,8 +100,9 @@ public class RestComponentVerifierTest extends ContextTestSupport {
             registerExtension(new ComponentVerifierExtension() {
                 @Override
                 public Result verify(Scope scope, Map<String, Object> parameters) {
-                    return ResultBuilder.withStatusAndScope(RestComponentVerifierExtension.Result.Status.OK, scope).error(ResultErrorHelper.requiresOption("authProxy", parameters))
-                        .build();
+                    return ResultBuilder.withStatusAndScope(RestComponentVerifierExtension.Result.Status.OK, scope)
+                            .error(ResultErrorHelper.requiresOption("authProxy", parameters))
+                            .build();
                 }
             });
         }
@@ -109,16 +113,20 @@ public class RestComponentVerifierTest extends ContextTestSupport {
         }
 
         @Override
-        public Producer createProducer(CamelContext camelContext, String host, String verb, String basePath, String uriTemplate, String queryParameters, String consumes,
-                                       String produces, RestConfiguration configuration, Map<String, Object> parameters)
-            throws Exception {
+        public Producer createProducer(
+                CamelContext camelContext, String host, String verb, String basePath, String uriTemplate,
+                String queryParameters, String consumes,
+                String produces, RestConfiguration configuration, Map<String, Object> parameters)
+                throws Exception {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate, String consumes, String produces,
-                                       RestConfiguration configuration, Map<String, Object> parameters)
-            throws Exception {
+        public Consumer createConsumer(
+                CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                String consumes, String produces,
+                RestConfiguration configuration, Map<String, Object> parameters)
+                throws Exception {
             throw new UnsupportedOperationException();
         }
     }

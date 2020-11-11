@@ -27,8 +27,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.DefaultConsumerCache;
-import org.junit.Test;
+import org.apache.camel.support.cache.DefaultConsumerCache;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedConsumerCacheTest extends ManagementTestSupport {
 
@@ -50,7 +54,7 @@ public class ManagedConsumerCacheTest extends ManagementTestSupport {
         Endpoint endpoint = context.getEndpoint("seda:queue");
         PollingConsumer consumer = cache.acquirePollingConsumer(endpoint);
         Exchange out = consumer.receive(3000);
-        assertNotNull("Should got an exchange", out);
+        assertNotNull(out, "Should got an exchange");
         assertEquals("Hello World", out.getIn().getBody());
 
         // get the stats for the route
@@ -65,7 +69,7 @@ public class ManagedConsumerCacheTest extends ManagementTestSupport {
             }
         }
 
-        assertNotNull("Should have found ConsumerCache", on);
+        assertNotNull(on, "Should have found ConsumerCache");
 
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumCacheSize");
         assertEquals(1000, max.intValue());

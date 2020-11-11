@@ -41,10 +41,11 @@ public class TraceAnnotatedTracingStrategy implements InterceptStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
-    public Processor wrapProcessorInInterceptors(CamelContext camelContext,
-                                                 NamedNode processorDefinition,
-                                                 Processor target, Processor nextTarget)
-        throws Exception {
+    public Processor wrapProcessorInInterceptors(
+            CamelContext camelContext,
+            NamedNode processorDefinition,
+            Processor target, Processor nextTarget)
+            throws Exception {
 
         Class<?> processorClass = processorDefinition.getClass();
         String shortName = processorDefinition.getShortName();
@@ -71,10 +72,10 @@ public class TraceAnnotatedTracingStrategy implements InterceptStrategy {
         }
 
         LOG.trace("Wrapping process definition {} of target {} in order for recording its trace",
-            processorDefinition, processorClass);
+                processorDefinition, processorClass);
 
         Annotation annotation = processorClass.getAnnotation(XRayTrace.class);
-        XRayTrace trace = (XRayTrace)annotation;
+        XRayTrace trace = (XRayTrace) annotation;
 
         String metricName = trace.metricName();
 

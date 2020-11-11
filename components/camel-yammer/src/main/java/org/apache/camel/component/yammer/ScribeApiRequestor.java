@@ -27,37 +27,39 @@ public class ScribeApiRequestor implements ApiRequestor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ScribeApiRequestor.class);
     String apiUrl;
-    String apiAccessToken;   
-    
+    String apiAccessToken;
+
     public ScribeApiRequestor(String apiUrl, String apiAccessToken) {
         this.apiUrl = apiUrl;
         this.apiAccessToken = apiAccessToken;
     }
-    
+
     private String send(Verb verb, String params) throws Exception {
         String url = apiUrl + ((params != null) ? params : "");
-        
+
         OAuthRequest request = new OAuthRequest(verb, url);
         request.addQuerystringParameter(OAuthConstants.ACCESS_TOKEN, apiAccessToken);
-        
+
         // For more details on the “Bearer” token refer to http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-23
         StringBuilder sb = new StringBuilder();
         sb.append("Bearer ");
         sb.append(apiAccessToken);
-        request.addHeader("Authorization",  sb.toString());
+        request.addHeader("Authorization", sb.toString());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Yammer request url: {}", request.getCompleteUrl());
         }
-        
+
         Response response = request.send();
-        if (response.isSuccessful()) {                    
+        if (response.isSuccessful()) {
             return response.getBody();
         } else {
-            throw new Exception(String.format("Failed to poll %s. Got response code %s and body: %s", getApiUrl(), response.getCode(), response.getBody()));
+            throw new Exception(
+                    String.format("Failed to poll %s. Got response code %s and body: %s", getApiUrl(), response.getCode(),
+                            response.getBody()));
         }
     }
-    
+
     public String getApiUrl() {
         return apiUrl;
     }

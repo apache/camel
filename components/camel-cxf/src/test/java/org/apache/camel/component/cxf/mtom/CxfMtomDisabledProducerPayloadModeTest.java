@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,33 +47,40 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * 
- * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfProducer in PAYLOAD mode.  
- * That is, testing attachment with MTOM optimization off.
- *  
+ * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfProducer in PAYLOAD mode. That is, testing
+ * attachment with MTOM optimization off.
+ * 
  */
 @ContextConfiguration
 public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPayloadModeTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CxfMtomDisabledProducerPayloadModeTest.class);
+
     @Override
     protected boolean isMtomEnabled() {
         return false;
-    }  
-    
-    @Override    
+    }
+
+    @Override
     protected Object getServiceImpl() {
         return new MyHelloImpl();
     }
-    
+
     @Override
     @Test
     public void testProducer() throws Exception {
-        if (MtomTestHelper.isAwtHeadless(logger, null)) {
+        if (MtomTestHelper.isAwtHeadless(null, LOG)) {
             return;
         }
 
@@ -82,96 +89,98 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 List<Source> elements = new ArrayList<>();
-                elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE)).getDocumentElement()));
-                CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
-                    elements, null);
+                elements.add(new DOMSource(
+                        StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE)).getDocumentElement()));
+                CxfPayload<SoapHeader> body = new CxfPayload<>(
+                        new ArrayList<SoapHeader>(),
+                        elements, null);
                 exchange.getIn().setBody(body);
                 exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
-                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
+                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
 
                 exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
-                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
+                        new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
 
             }
-            
+
         });
-        
+
         // process response - verify response attachments
-        
-        CxfPayload<?> out = exchange.getOut().getBody(CxfPayload.class);
-        Assert.assertEquals(1, out.getBody().size());
-        
+
+        CxfPayload<?> out = exchange.getMessage().getBody(CxfPayload.class);
+        assertEquals(1, out.getBody().size());
 
         DataHandler dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_PHOTO_CID);
-        Assert.assertEquals("application/octet-stream", dr.getContentType());
-        MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
-   
+        assertEquals("application/octet-stream", dr.getContentType());
+        assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
+
         dr = exchange.getOut(AttachmentMessage.class).getAttachment(MtomTestHelper.RESP_IMAGE_CID);
-        Assert.assertEquals("image/jpeg", dr.getContentType());
-        
+        assertEquals("image/jpeg", dr.getContentType());
+
         BufferedImage image = ImageIO.read(dr.getInputStream());
-        Assert.assertEquals(560, image.getWidth());
-        Assert.assertEquals(300, image.getHeight());
-        
+        assertEquals(560, image.getWidth());
+        assertEquals(300, image.getHeight());
+
     }
- 
+
     public static class MyHelloImpl extends HelloImpl implements Hello {
-        
+
         @Resource
         WebServiceContext ctx;
-        
+
         @Override
         public void detail(Holder<byte[]> photo, Holder<Image> image) {
-            
+
             // verify request attachments
-            Map<String, DataHandler> map 
-                = CastUtils.cast((Map<?, ?>)ctx.getMessageContext().get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS));
-            Assert.assertEquals(2, map.size());
-            
+            Map<String, DataHandler> map
+                    = CastUtils.cast((Map<?, ?>) ctx.getMessageContext().get(MessageContext.INBOUND_MESSAGE_ATTACHMENTS));
+            assertEquals(2, map.size());
+
             DataHandler dh = map.get(MtomTestHelper.REQ_PHOTO_CID);
-            Assert.assertEquals("application/octet-stream", dh.getContentType());
+            assertEquals("application/octet-stream", dh.getContentType());
             byte[] bytes = null;
             try {
                 bytes = IOUtils.readBytesFromStream(dh.getInputStream());
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O error reading bytes from stream: {}", e.getMessage(), e);
             }
-            MtomTestHelper.assertEquals(bytes, MtomTestHelper.REQ_PHOTO_DATA);
-            
+            assertArrayEquals(MtomTestHelper.REQ_PHOTO_DATA, bytes);
+
             dh = map.get(MtomTestHelper.REQ_IMAGE_CID);
-            Assert.assertEquals("image/jpeg", dh.getContentType());
+            assertEquals("image/jpeg", dh.getContentType());
 
             BufferedImage bufferedImage = null;
-            try {  
+            try {
                 bufferedImage = ImageIO.read(dh.getInputStream());
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O error reading bytes from stream: {}", e.getMessage(), e);
             }
-            Assert.assertNotNull(bufferedImage);
-            Assert.assertEquals(41, bufferedImage.getWidth());
-            Assert.assertEquals(39, bufferedImage.getHeight());  
+            assertNotNull(bufferedImage);
+            assertEquals(41, bufferedImage.getWidth());
+            assertEquals(39, bufferedImage.getHeight());
 
             // add output attachments
-            map = CastUtils.cast((Map<?, ?>)ctx.getMessageContext().get(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS)); 
+            map = CastUtils.cast((Map<?, ?>) ctx.getMessageContext().get(MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS));
 
             try {
                 DataSource ds = new AttachmentDataSource("image/jpeg", getClass().getResourceAsStream("/Splash.jpg"));
-                map.put(MtomTestHelper.RESP_IMAGE_CID, new DataHandler(ds)); 
-                
+                map.put(MtomTestHelper.RESP_IMAGE_CID, new DataHandler(ds));
+
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O error: {}", e.getMessage(), e);
             }
-            
+
             try {
-                DataSource ds = new AttachmentDataSource("application/octet-stream", 
-                                                         new ByteArrayInputStream(MtomTestHelper.RESP_PHOTO_DATA));
-                map.put(MtomTestHelper.RESP_PHOTO_CID, new DataHandler(ds)); 
-                
+                DataSource ds = new AttachmentDataSource(
+                        "application/octet-stream",
+                        new ByteArrayInputStream(MtomTestHelper.RESP_PHOTO_DATA));
+                map.put(MtomTestHelper.RESP_PHOTO_CID, new DataHandler(ds));
+
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.warn("I/O error: {}", e.getMessage(), e);
             }
-            
+
         }
     }
 }

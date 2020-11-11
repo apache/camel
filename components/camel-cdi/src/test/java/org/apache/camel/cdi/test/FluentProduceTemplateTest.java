@@ -43,12 +43,12 @@ public class FluentProduceTemplateTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test class
-            .addClass(FluentProduceTemplateBean.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test class
+                .addClass(FluentProduceTemplateBean.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Test
@@ -64,11 +64,13 @@ public class FluentProduceTemplateTest {
 
     @Test
     @InSequence(2)
-    public void sendMessageToInbound(@Uri("direct:inbound") FluentProducerTemplate in,
-                                     @Uri("mock:outbound") MockEndpoint out) throws InterruptedException {
+    public void sendMessageToInbound(
+            @Uri("direct:inbound") FluentProducerTemplate in,
+            @Uri("mock:outbound") MockEndpoint out)
+            throws InterruptedException {
         out.expectedMessageCount(1);
         out.expectedBodiesReceived("test-processed");
-        
+
         in.withBody("test").send();
 
         assertIsSatisfied(2L, TimeUnit.SECONDS, out);

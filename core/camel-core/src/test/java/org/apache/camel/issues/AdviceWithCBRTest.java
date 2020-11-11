@@ -17,18 +17,18 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AdviceWithCBRTest extends ContextTestSupport {
 
     @Test
     public void testAdviceCBR() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveById("foo").after().to("mock:foo2");
@@ -52,7 +52,7 @@ public class AdviceWithCBRTest extends ContextTestSupport {
     @Test
     public void testAdviceToStringCBR() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString("To[mock:foo]").after().to("mock:foo2");
@@ -78,7 +78,8 @@ public class AdviceWithCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(header("foo")).to("mock:foo").id("foo").when(header("bar")).to("mock:bar").id("bar").otherwise().to("mock:baz").id("baz");
+                from("direct:start").choice().when(header("foo")).to("mock:foo").id("foo").when(header("bar")).to("mock:bar")
+                        .id("bar").otherwise().to("mock:baz").id("baz");
             }
         };
     }

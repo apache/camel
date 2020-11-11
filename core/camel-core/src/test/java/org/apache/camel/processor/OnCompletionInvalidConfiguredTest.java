@@ -18,7 +18,10 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class OnCompletionInvalidConfiguredTest extends ContextTestSupport {
 
@@ -40,7 +43,9 @@ public class OnCompletionInvalidConfiguredTest extends ContextTestSupport {
             });
             fail("Should throw exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: onCompletion[[]]", e.getMessage());
+            assertEquals(
+                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: onCompletion[[]]",
+                    e.getMessage());
         }
     }
 }

@@ -18,7 +18,9 @@ package org.apache.camel.processor.aggregate.jdbc;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JdbcAggregateTimeoutCompletionRestartTest extends AbstractJdbcAggregationTestSupport {
 
@@ -53,7 +55,7 @@ public class JdbcAggregateTimeoutCompletionRestartTest extends AbstractJdbcAggre
                 // here is the Camel route where we aggregate
                 from("direct:start")
                         .aggregate(header("id"), new MyAggregationStrategy())
-                                // use our created jdbc repo as aggregation repository
+                        // use our created jdbc repo as aggregation repository
                         .completionTimeout(3000).aggregationRepository(repo)
                         .to("mock:aggregated");
             }

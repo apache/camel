@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SchedulerNoPolledMessagesTest extends ContextTestSupport {
 
@@ -42,14 +42,15 @@ public class SchedulerNoPolledMessagesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("scheduler://foo?delay=100&backoffMultiplier=10&backoffIdleThreshold=2&scheduler.concurrentTasks=2").log("Fired scheduler").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        // force no messages to be polled which should affect
-                        // the scheduler to think its idle
-                        exchange.setProperty(Exchange.SCHEDULER_POLLED_MESSAGES, false);
-                    }
-                }).to("mock:result");
+                from("scheduler://foo?delay=100&backoffMultiplier=10&backoffIdleThreshold=2&scheduler.concurrentTasks=2")
+                        .log("Fired scheduler").process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // force no messages to be polled which should affect
+                                // the scheduler to think its idle
+                                exchange.setProperty(Exchange.SCHEDULER_POLLED_MESSAGES, false);
+                            }
+                        }).to("mock:result");
             }
         };
     }

@@ -24,11 +24,12 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeleteAttributesCommandTest {
 
@@ -36,14 +37,14 @@ public class DeleteAttributesCommandTest {
     private AmazonSDBClientMock sdbClient;
     private SdbConfiguration configuration;
     private Exchange exchange;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
         configuration.setDomainName("DOMAIN1");
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new DeleteAttributesCommand(sdbClient, configuration, exchange);
     }
 
@@ -55,34 +56,35 @@ public class DeleteAttributesCommandTest {
         exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
         UpdateCondition condition = new UpdateCondition("Key1", "Value1", true);
         exchange.getIn().setHeader(SdbConstants.UPDATE_CONDITION, condition);
-        
+
         command.execute();
-        
+
         assertEquals("DOMAIN1", sdbClient.deleteAttributesRequest.getDomainName());
         assertEquals("ITEM1", sdbClient.deleteAttributesRequest.getItemName());
         assertEquals(condition, sdbClient.deleteAttributesRequest.getExpected());
         assertEquals(attributes, sdbClient.deleteAttributesRequest.getAttributes());
     }
-    
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void executeWithoutItemName() {
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute("NAME1", "VALUE1"));
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTES, attributes);
         UpdateCondition condition = new UpdateCondition("Key1", "Value1", true);
         exchange.getIn().setHeader(SdbConstants.UPDATE_CONDITION, condition);
-        
-        command.execute();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> command.execute());
     }
 
     @Test
     public void determineAttributes() {
         assertNull(this.command.determineAttributes());
-        
+
         List<Attribute> attributes = new ArrayList<>();
         attributes.add(new Attribute("NAME1", "VALUE1"));
         exchange.getIn().setHeader(SdbConstants.ATTRIBUTES, attributes);
-        
+
         assertEquals(attributes, this.command.determineAttributes());
     }
 }

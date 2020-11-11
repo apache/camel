@@ -22,30 +22,38 @@ import io.fabric8.kubernetes.api.model.APIGroupListBuilder;
 import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.BuildConfigListBuilder;
 import io.fabric8.openshift.client.NamespacedOpenShiftClient;
-import io.fabric8.openshift.client.server.mock.OpenShiftServer;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.OpenShiftServer;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
 
-    @Rule
+    @RegisterExtension
     public OpenShiftServer server = new OpenShiftServer();
 
     @BindToRegistry("client")
     public NamespacedOpenShiftClient loadClient() throws Exception {
-        server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs").andReturn(200, new BuildConfigListBuilder().build()).once();
+        server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
+                .andReturn(200, new BuildConfigListBuilder().build()).once();
 
-        server.expect().withPath("/apis").andReturn(200, new APIGroupListBuilder().addNewGroup().withApiVersion("v1").withName("autoscaling.k8s.io").endGroup().addNewGroup()
-            .withApiVersion("v1").withName("security.openshift.io").endGroup().build()).always();
+        server.expect().withPath("/apis")
+                .andReturn(200,
+                        new APIGroupListBuilder().addNewGroup().withApiVersion("v1").withName("autoscaling.k8s.io").endGroup()
+                                .addNewGroup()
+                                .withApiVersion("v1").withName("security.openshift.io").endGroup().build())
+                .always();
 
         server.expect().withPath("/apis/build.openshift.io/v1/namespaces/test/buildconfigs")
-            .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().build()).once();
 
         server.expect().withPath("/apis/build.openshift.io/v1/buildconfigs")
-            .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build()).once();
+                .andReturn(200, new BuildConfigListBuilder().addNewItem().and().addNewItem().and().addNewItem().and().build())
+                .once();
 
         return server.getOpenshiftClient();
     }
@@ -63,7 +71,8 @@ public class OpenshiftBuildConfigsProducerTest extends KubernetesTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:list").to("openshift-build-configs:///?operation=listBuildConfigs&kubernetesClient=#client");
-                from("direct:listByLabels").to("openshift-build-configs:///?kubernetesClient=#client&operation=listBuildConfigsByLabels");
+                from("direct:listByLabels")
+                        .to("openshift-build-configs:///?kubernetesClient=#client&operation=listBuildConfigsByLabels");
             }
         };
     }

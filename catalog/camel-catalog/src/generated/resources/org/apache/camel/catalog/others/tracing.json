@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "tracing",
+    "title": "Tracing",
+    "description": "Distributed tracing common interfaces",
+    "deprecated": false,
+    "firstVersion": "3.5.0",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-tracing",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

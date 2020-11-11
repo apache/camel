@@ -20,15 +20,15 @@ public interface BlobServiceConstants {
 
     String OPERATION = "operation";
     String BLOB_CLIENT = "AzureBlobClient";
-    
+
     String SERVICE_URI_SEGMENT = ".blob.core.windows.net";
     String BLOB_SERVICE_REQUEST_OPTIONS = "BlobServiceRequestOptions";
     String ACCESS_CONDITION = "BlobAccessCondition";
     String BLOB_REQUEST_OPTIONS = "BlobRequestOptions";
     String OPERATION_CONTEXT = "BlobOperationContext";
-    
+
     String BLOB_LISTING_DETAILS = "BlobListingDetails";
-    
+
     String COMMIT_BLOCK_LIST_LATER = "CommitBlobBlockListLater";
     String APPEND_BLOCK_CREATED = "AppendBlobCreated";
     String PAGE_BLOCK_CREATED = "PageBlobCreated";

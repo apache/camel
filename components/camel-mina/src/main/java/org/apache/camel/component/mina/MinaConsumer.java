@@ -100,7 +100,8 @@ public class MinaConsumer extends DefaultConsumer {
             ConnectFuture future = connector.connect(address);
             future.awaitUninterruptibly();
             session = future.getSession();
-            LOG.info("Connected to server address: {} using connector: {} timeout: {} millis.", address, connector, configuration.getTimeout());
+            LOG.info("Connected to server address: {} using connector: {} timeout: {} millis.", address, connector,
+                    configuration.getTimeout());
         } else {
             acceptor.setHandler(new ReceiveHandler());
             acceptor.bind(address);
@@ -121,7 +122,7 @@ public class MinaConsumer extends DefaultConsumer {
             LOG.info("Unbinding from server address: {} using acceptor: {}", address, acceptor);
             if (address instanceof InetSocketAddress) {
                 // need to check if the address is IPV4 all network address
-                if ("0.0.0.0".equals(((InetSocketAddress)address).getAddress().getHostAddress())) {
+                if ("0.0.0.0".equals(((InetSocketAddress) address).getAddress().getHostAddress())) {
                     LOG.info("Unbind the server address {}", acceptor.getLocalAddresses());
                     acceptor.unbind(acceptor.getLocalAddresses());
                 } else {
@@ -193,7 +194,9 @@ public class MinaConsumer extends DefaultConsumer {
         }
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()), configuration.isAutoStartTls());
+            SslFilter filter = new SslFilter(
+                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()),
+                    configuration.isAutoStartTls());
             filter.setUseClientMode(false);
             acceptor.getFilterChain().addFirst("sslFilter", filter);
         }
@@ -220,7 +223,9 @@ public class MinaConsumer extends DefaultConsumer {
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()), configuration.isAutoStartTls());
+            SslFilter filter = new SslFilter(
+                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()),
+                    configuration.isAutoStartTls());
             filter.setUseClientMode(true);
             connector.getFilterChain().addFirst("sslFilter", filter);
         }
@@ -250,9 +255,9 @@ public class MinaConsumer extends DefaultConsumer {
             addCodecFactory(service, codecFactory);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                          new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
+                        new Object[] { type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter });
                 LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
-                          codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
+                        codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
             }
         } else {
             ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();
@@ -283,16 +288,18 @@ public class MinaConsumer extends DefaultConsumer {
         }
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
-            LOG.warn("Using datagram protocol, " + configuration.getProtocol()
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+            LOG.warn("Using datagram protocol, {}, but an SSLContextParameters instance was provided. "
+                     + "SSLContextParameters is only supported on the TCP protocol.",
+                    configuration.getProtocol());
         }
     }
 
     /**
-     * For datagrams the entire message is available as a single IoBuffer so lets just pass those around by default
-     * and try converting whatever they payload is into IoBuffer unless some custom converter is specified
+     * For datagrams the entire message is available as a single IoBuffer so lets just pass those around by default and
+     * try converting whatever they payload is into IoBuffer unless some custom converter is specified
      */
-    protected void configureDataGramCodecFactory(final String type, final IoService service, final MinaConfiguration configuration) {
+    protected void configureDataGramCodecFactory(
+            final String type, final IoService service, final MinaConfiguration configuration) {
         ProtocolCodecFactory codecFactory = configuration.getCodec();
         if (codecFactory == null) {
             codecFactory = new MinaUdpProtocolCodecFactory(this.getEndpoint().getCamelContext());
@@ -315,18 +322,18 @@ public class MinaConsumer extends DefaultConsumer {
         }
 
         switch (delimiter) {
-        case DEFAULT:
-            return LineDelimiter.DEFAULT;
-        case AUTO:
-            return LineDelimiter.AUTO;
-        case UNIX:
-            return LineDelimiter.UNIX;
-        case WINDOWS:
-            return LineDelimiter.WINDOWS;
-        case MAC:
-            return LineDelimiter.MAC;
-        default:
-            throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
+            case DEFAULT:
+                return LineDelimiter.DEFAULT;
+            case AUTO:
+                return LineDelimiter.AUTO;
+            case UNIX:
+                return LineDelimiter.UNIX;
+            case WINDOWS:
+                return LineDelimiter.WINDOWS;
+            case MAC:
+                return LineDelimiter.MAC;
+            default:
+                throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
         }
     }
 
@@ -346,7 +353,7 @@ public class MinaConsumer extends DefaultConsumer {
     }
 
     private void appendIoFiltersToChain(List<IoFilter> filters, DefaultIoFilterChainBuilder filterChain) {
-        if (filters != null && filters.size() > 0) {
+        if (filters != null && !filters.isEmpty()) {
             for (IoFilter ioFilter : filters) {
                 filterChain.addLast(ioFilter.getClass().getCanonicalName(), ioFilter);
             }
@@ -402,7 +409,8 @@ public class MinaConsumer extends DefaultConsumer {
             Exchange exchange = getEndpoint().createExchange(session, object);
             //Set the exchange charset property for converting
             if (getEndpoint().getConfiguration().getCharsetName() != null) {
-                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
+                exchange.setProperty(Exchange.CHARSET_NAME,
+                        IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
             }
 
             try {

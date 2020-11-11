@@ -24,7 +24,7 @@ import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import org.apache.camel.Exchange;
 
 public class PutAttributesCommand extends AbstractSdbCommand {
-    
+
     public PutAttributesCommand(AmazonSimpleDB sdbClient, SdbConfiguration configuration, Exchange exchange) {
         super(sdbClient, configuration, exchange);
     }
@@ -32,17 +32,17 @@ public class PutAttributesCommand extends AbstractSdbCommand {
     @Override
     public void execute() {
         PutAttributesRequest request = new PutAttributesRequest()
-            .withDomainName(determineDomainName())
-            .withItemName(determineItemName())
-            .withAttributes(determineReplaceableAttributes())
-            .withExpected(determineUpdateCondition());
+                .withDomainName(determineDomainName())
+                .withItemName(determineItemName())
+                .withAttributes(determineReplaceableAttributes())
+                .withExpected(determineUpdateCondition());
         log.trace("Sending request [{}] for exchange [{}]...", request, exchange);
 
         this.sdbClient.putAttributes(request);
-        
+
         log.trace("Request sent");
     }
-    
+
     @SuppressWarnings("unchecked")
     protected Collection<ReplaceableAttribute> determineReplaceableAttributes() {
         return exchange.getIn().getHeader(SdbConstants.REPLACEABLE_ATTRIBUTES, Collection.class);

@@ -19,15 +19,18 @@ package org.apache.camel.spring.config;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         try {
             super.setUp();
@@ -35,7 +38,9 @@ public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
         } catch (Exception e) {
             FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e);
             NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, cause.getCause());
-            assertEquals("No bean could be found in the registry for: bar of type: org.apache.camel.builder.ErrorHandlerBuilder", nsbe.getMessage());
+            assertEquals(
+                    "No bean could be found in the registry for: bar of type: org.apache.camel.ErrorHandlerFactory",
+                    nsbe.getMessage());
         }
     }
 

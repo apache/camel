@@ -35,45 +35,48 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.cxf.message.MessageContentsList;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-public class ConverterTest extends Assert {
-    
+public class ConverterTest {
+
     @Test
     public void testToArray() throws Exception {
         List<String> testList = new ArrayList<>();
         testList.add("string 1");
         testList.add("string 2");
-        
+
         Object[] array = CxfConverter.toArray(testList);
-        assertNotNull("The array should not be null", array);
-        assertEquals("The array size should not be wrong", 2, array.length);
+        assertNotNull(array, "The array should not be null");
+        assertEquals(2, array.length, "The array size should not be wrong");
     }
-    
+
     @Test
     public void testToInputStream() throws Exception {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
-        
+
         Response response = mock(Response.class);
         InputStream is = mock(InputStream.class);
-        
+
         when(response.getEntity()).thenReturn(is);
-        
+
         InputStream result = CxfConverter.toInputStream(response, exchange);
-        assertEquals("We should get the inputStream here ", is, result);
-        
+        assertEquals(is, result, "We should get the inputStream here");
+
         reset(response);
         when(response.getEntity()).thenReturn("Hello World");
         result = CxfConverter.toInputStream(response, exchange);
-        assertTrue("We should get the inputStream here ", result instanceof ByteArrayInputStream);
+        assertTrue(result instanceof ByteArrayInputStream, "We should get the inputStream here");
     }
-    
+
     @Test
     public void testFallbackConverter() throws Exception {
         CamelContext context = new DefaultCamelContext();
@@ -84,7 +87,7 @@ public class ConverterTest extends Assert {
         exchange.getIn().setBody(list);
         Node node = exchange.getIn().getBody(Node.class);
         assertNull(node);
-        
+
         File file = new File("src/test/resources/org/apache/camel/component/cxf/converter/test.xml");
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
@@ -95,6 +98,7 @@ public class ConverterTest extends Assert {
         elements.add(document.getDocumentElement());
         nl = new NodeListWrapper(elements);
         list.clear();
+        // there is only 1 element in the list so it can be converted to a single node element
         list.add(nl);
         exchange.getIn().setBody(list);
         node = exchange.getIn().getBody(Node.class);

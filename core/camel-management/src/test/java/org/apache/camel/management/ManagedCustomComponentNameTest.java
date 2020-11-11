@@ -24,7 +24,11 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedCustomComponentNameTest extends ManagementTestSupport {
 
@@ -41,7 +45,7 @@ public class ManagedCustomComponentNameTest extends ManagementTestSupport {
         assertEquals(3, set.size());
 
         ObjectName on = set.iterator().next();
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
@@ -51,9 +55,9 @@ public class ManagedCustomComponentNameTest extends ManagementTestSupport {
 
         context.stop();
 
-        assertFalse("Should no longer be registered", mbeanServer.isRegistered(on));
+        assertFalse(mbeanServer.isRegistered(on), "Should no longer be registered");
         set = mbeanServer.queryNames(new ObjectName("*:type=components,*"), null);
-        assertEquals("Should no longer be registered", 0, set.size());
+        assertEquals(0, set.size(), "Should no longer be registered");
     }
 
     @Override
@@ -64,8 +68,8 @@ public class ManagedCustomComponentNameTest extends ManagementTestSupport {
                 context.addComponent("foo", new MockComponent());
 
                 from("direct:start")
-                    .to("foo:foo")
-                    .to("mock:result");
+                        .to("foo:foo")
+                        .to("mock:result");
             }
         };
     }

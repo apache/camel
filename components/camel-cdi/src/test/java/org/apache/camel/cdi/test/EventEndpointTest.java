@@ -48,8 +48,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 public class EventEndpointTest {
@@ -117,16 +117,16 @@ public class EventEndpointTest {
     @Deployment
     public static Archive<?> deployment() {
         return ShrinkWrap.create(JavaArchive.class)
-            // Camel CDI
-            .addPackage(CdiCamelExtension.class.getPackage())
-            // Test classes
-            .addClasses(
-                EventConsumingRouteCdi10.class,
-                EventProducingRouteCdi10.class,
-                EventPayloadString.class,
-                EventPayloadInteger.class)
-            // Bean archive deployment descriptor
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                // Camel CDI
+                .addPackage(CdiCamelExtension.class.getPackage())
+                // Test classes
+                .addClasses(
+                        EventConsumingRouteCdi10.class,
+                        EventProducingRouteCdi10.class,
+                        EventPayloadString.class,
+                        EventPayloadInteger.class)
+                // Bean archive deployment descriptor
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
     @Before
@@ -143,7 +143,8 @@ public class EventEndpointTest {
     @Test
     public void sendEventsToConsumers() throws InterruptedException {
         consumeObject.expectedMessageCount(8);
-        consumeObject.expectedBodiesReceived(1234, new EventPayloadString("foo"), new EventPayloadString("bar"), "test", new EventPayloadInteger(1), new EventPayloadInteger(2), 123L, 987L);
+        consumeObject.expectedBodiesReceived(1234, new EventPayloadString("foo"), new EventPayloadString("bar"), "test",
+                new EventPayloadInteger(1), new EventPayloadInteger(2), 123L, 987L);
 
         consumeString.expectedMessageCount(1);
         consumeString.expectedBodiesReceived("test");
@@ -170,7 +171,7 @@ public class EventEndpointTest {
         objectEvent.select(Long.class, new BarQualifier.Literal()).fire(987L);
 
         //assertIsSatisfied(2L, TimeUnit.SECONDS, consumeObject, consumeString, consumeStringPayload, consumeIntegerPayload, consumeFooQualifier, consumeBarQualifier);
-        assertIsSatisfied(2L, TimeUnit.SECONDS, consumeObject, consumeString,  consumeFooQualifier, consumeBarQualifier);
+        assertIsSatisfied(2L, TimeUnit.SECONDS, consumeObject, consumeString, consumeFooQualifier, consumeBarQualifier);
     }
 
     @Test

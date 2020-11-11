@@ -40,14 +40,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Service;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
+import org.apache.camel.support.service.ServiceSupport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpContentResponse;
 import org.eclipse.jetty.client.api.ContentProvider;
@@ -65,7 +66,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractClientBase implements SalesforceSession.SalesforceSessionListener, Service, HttpClientHolder {
+public abstract class AbstractClientBase extends ServiceSupport
+        implements SalesforceSession.SalesforceSessionListener, HttpClientHolder {
 
     protected static final String APPLICATION_JSON_UTF8 = "application/json;charset=utf-8";
     protected static final String APPLICATION_XML_UTF8 = "application/xml;charset=utf-8";
@@ -76,6 +78,7 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     protected final SalesforceHttpClient httpClient;
     protected final SalesforceSession session;
+    protected final SalesforceLoginConfig loginConfig;
     protected final String version;
 
     protected String accessToken;
@@ -85,26 +88,29 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
 
     private long terminationTimeout;
 
-    public AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient) throws SalesforceException {
-        this(version, session, httpClient, DEFAULT_TERMINATION_TIMEOUT);
+    public AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient,
+                              SalesforceLoginConfig loginConfig) throws SalesforceException {
+        this(version, session, httpClient, loginConfig, DEFAULT_TERMINATION_TIMEOUT);
     }
 
-    AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient, int terminationTimeout) throws SalesforceException {
-
+    AbstractClientBase(String version, SalesforceSession session, SalesforceHttpClient httpClient,
+                       SalesforceLoginConfig loginConfig, int terminationTimeout) throws SalesforceException {
         this.version = version;
         this.session = session;
         this.httpClient = httpClient;
+        this.loginConfig = loginConfig;
         this.terminationTimeout = terminationTimeout;
     }
 
     @Override
-    public void start() {
+    protected void doStart() throws Exception {
+        super.doStart();
+
         // local cache
         accessToken = session.getAccessToken();
-        if (accessToken == null) {
-            // lazy login here!
+        if (accessToken == null && !loginConfig.isLazyLogin()) {
             try {
-                accessToken = session.login(accessToken);
+                accessToken = session.login(null);
             } catch (SalesforceException e) {
                 throw new RuntimeException(e);
             }
@@ -118,7 +124,8 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
     }
 
     @Override
-    public void stop() {
+    public void doStop() throws Exception {
+        super.doStop();
         if (inflightRequests != null) {
             inflightRequests.arrive();
             if (!inflightRequests.isTerminated()) {
@@ -153,7 +160,8 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
     }
 
     protected Request getRequest(String method, String url, Map<String, List<String>> headers) {
-        SalesforceHttpRequest request = (SalesforceHttpRequest)httpClient.newRequest(url).method(method).timeout(session.getTimeout(), TimeUnit.MILLISECONDS);
+        SalesforceHttpRequest request = (SalesforceHttpRequest) httpClient.newRequest(url).method(method)
+                .timeout(session.getTimeout(), TimeUnit.MILLISECONDS);
         request.getConversation().setAttribute(SalesforceSecurityHandler.CLIENT_ATTRIBUTE, this);
         addHeadersTo(request, headers);
 
@@ -194,31 +202,36 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
                         // from SalesforceSecurityHandler
                         Throwable failure = result.getFailure();
                         if (failure instanceof SalesforceException) {
-                            callback.onResponse(null, headers, (SalesforceException)failure);
+                            callback.onResponse(null, headers, (SalesforceException) failure);
                         } else {
-                            final String msg = String.format("Unexpected error {%s:%s} executing {%s:%s}", response.getStatus(), response.getReason(), request.getMethod(),
-                                                             request.getURI());
+                            final String msg = String.format("Unexpected error {%s:%s} executing {%s:%s}", response.getStatus(),
+                                    response.getReason(), request.getMethod(),
+                                    request.getURI());
                             callback.onResponse(null, headers, new SalesforceException(msg, response.getStatus(), failure));
                         }
                     } else {
 
                         // HTTP error status
                         final int status = response.getStatus();
-                        SalesforceHttpRequest request = (SalesforceHttpRequest)((SalesforceHttpRequest)result.getRequest()).getConversation()
-                            .getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE);
+                        SalesforceHttpRequest request
+                                = (SalesforceHttpRequest) ((SalesforceHttpRequest) result.getRequest()).getConversation()
+                                        .getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE);
 
                         if (status == HttpStatus.BAD_REQUEST_400 && request != null) {
                             // parse login error
-                            ContentResponse contentResponse = new HttpContentResponse(response, getContent(), getMediaType(), getEncoding());
+                            ContentResponse contentResponse
+                                    = new HttpContentResponse(response, getContent(), getMediaType(), getEncoding());
                             try {
 
                                 session.parseLoginResponse(contentResponse, getContentAsString());
-                                final String msg = String.format("Unexpected Error {%s:%s} executing {%s:%s}", status, response.getReason(), request.getMethod(), request.getURI());
+                                final String msg = String.format("Unexpected Error {%s:%s} executing {%s:%s}", status,
+                                        response.getReason(), request.getMethod(), request.getURI());
                                 callback.onResponse(null, headers, new SalesforceException(msg, null));
 
                             } catch (SalesforceException e) {
 
-                                final String msg = String.format("Error {%s:%s} executing {%s:%s}", status, response.getReason(), request.getMethod(), request.getURI());
+                                final String msg = String.format("Error {%s:%s} executing {%s:%s}", status,
+                                        response.getReason(), request.getMethod(), request.getURI());
                                 callback.onResponse(null, headers, new SalesforceException(msg, response.getStatus(), e));
 
                             }
@@ -263,8 +276,10 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
         return httpClient;
     }
 
-    final List<RestError> readErrorsFrom(final InputStream responseContent, final PayloadFormat format, final ObjectMapper objectMapper, final XStream xStream)
-        throws IOException, JsonParseException, JsonMappingException {
+    final List<RestError> readErrorsFrom(
+            final InputStream responseContent, final PayloadFormat format, final ObjectMapper objectMapper,
+            final XStream xStream)
+            throws IOException, JsonParseException, JsonMappingException {
         final List<RestError> restErrors;
         if (PayloadFormat.JSON.equals(format)) {
             restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
@@ -318,13 +333,15 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
                 final Object headerValue = inboundMessage.getHeader(headerName);
 
                 if (headerValue instanceof String) {
-                    answer.put(headerName, Collections.singletonList((String)headerValue));
+                    answer.put(headerName, Collections.singletonList((String) headerValue));
                 } else if (headerValue instanceof String[]) {
-                    answer.put(headerName, Arrays.asList((String[])headerValue));
+                    answer.put(headerName, Arrays.asList((String[]) headerValue));
                 } else if (headerValue instanceof Collection) {
-                    answer.put(headerName, ((Collection<?>)headerValue).stream().map(String::valueOf).collect(Collectors.<String> toList()));
+                    answer.put(headerName,
+                            ((Collection<?>) headerValue).stream().map(String::valueOf).collect(Collectors.<String> toList()));
                 } else {
-                    throw new IllegalArgumentException("Given value for header `" + headerName + "`, is not String, String array or a Collection");
+                    throw new IllegalArgumentException(
+                            "Given value for header `" + headerName + "`, is not String, String array or a Collection");
                 }
             }
         }

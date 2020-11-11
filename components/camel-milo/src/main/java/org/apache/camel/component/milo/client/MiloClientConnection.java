@@ -79,7 +79,8 @@ public class MiloClientConnection implements AutoCloseable {
         void unregister();
     }
 
-    public MonitorHandle monitorValue(final ExpandedNodeId nodeId, Double samplingInterval, final Consumer<DataValue> valueConsumer) {
+    public MonitorHandle monitorValue(
+            final ExpandedNodeId nodeId, Double samplingInterval, final Consumer<DataValue> valueConsumer) {
 
         requireNonNull(configuration);
         requireNonNull(valueConsumer);
@@ -101,7 +102,8 @@ public class MiloClientConnection implements AutoCloseable {
         return this.manager.write(nodeId, mapWriteValue(value));
     }
 
-    public CompletableFuture<CallMethodResult> call(final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Object value) {
+    public CompletableFuture<CallMethodResult> call(
+            final ExpandedNodeId nodeId, final ExpandedNodeId methodId, final Object value) {
         checkInit();
 
         return this.manager.call(nodeId, methodId, mapCallValue(value));
@@ -110,8 +112,8 @@ public class MiloClientConnection implements AutoCloseable {
     /**
      * Map the incoming value to some value callable to the milo client
      *
-     * @param value the incoming value
-     * @return the outgoing call request
+     * @param  value the incoming value
+     * @return       the outgoing call request
      */
     private Variant[] mapCallValue(final Object value) {
 
@@ -120,27 +122,27 @@ public class MiloClientConnection implements AutoCloseable {
         }
 
         if (value instanceof Variant[]) {
-            return (Variant[])value;
+            return (Variant[]) value;
         }
         if (value instanceof Variant) {
-            return new Variant[] {(Variant)value};
+            return new Variant[] { (Variant) value };
         }
 
-        return new Variant[] {new Variant(value)};
+        return new Variant[] { new Variant(value) };
     }
 
     /**
      * Map the incoming value to some value writable to the milo client
      *
-     * @param value the incoming value
-     * @return the outgoing value
+     * @param  value the incoming value
+     * @return       the outgoing value
      */
     private DataValue mapWriteValue(final Object value) {
         if (value instanceof DataValue) {
-            return (DataValue)value;
+            return (DataValue) value;
         }
         if (value instanceof Variant) {
-            return new DataValue((Variant)value, StatusCode.GOOD, null, null);
+            return new DataValue((Variant) value, StatusCode.GOOD, null, null);
         }
         return new DataValue(new Variant(value), StatusCode.GOOD, null, null);
     }

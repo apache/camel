@@ -21,5 +21,10 @@ package org.apache.camel.component.file;
  */
 public enum GenericFileExist {
 
-    Override, Append, Fail, Ignore, Move, TryRename
+    Override,
+    Append,
+    Fail,
+    Ignore,
+    Move,
+    TryRename
 }

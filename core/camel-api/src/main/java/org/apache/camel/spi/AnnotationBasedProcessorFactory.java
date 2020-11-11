@@ -29,6 +29,11 @@ import org.apache.camel.RoutingSlip;
 public interface AnnotationBasedProcessorFactory {
 
     /**
+     * Service factory key.
+     */
+    String FACTORY = "annotation-processor-factory";
+
+    /**
      * Creates dynamic router processor from the configured annotation.
      */
     AsyncProcessor createDynamicRouter(CamelContext camelContext, DynamicRouter annotation);

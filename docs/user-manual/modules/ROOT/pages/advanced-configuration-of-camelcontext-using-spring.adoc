@@ -2,7 +2,7 @@
 
 When using Spring the CamelContext can be pre configured based on
 defined beans in spring XML.
-This page documentes these features. Most of these features
+This page documents these features. Most of these features
 requires *Camel 2.0*.
 
 == What can be configured
@@ -15,7 +15,7 @@ The following functions can be configured:
 * xref:debugger.adoc[Debugger], xref:tracer.adoc[Tracer],
 xref:delay-interceptor.adoc[Delay] and
 xref:uuidgenerator.adoc[UuidGenerator]
-* xref:intercept.adoc[Intercept]
+* xref:{eip-vc}:eips:intercept.adoc[Intercept]
 * xref:graceful-shutdown.adoc[Graceful Shutdown]
 * xref:stream-caching.adoc[Stream caching]
 * Logging
@@ -53,7 +53,7 @@ configured.
 |HandleFault |0..1 |To use a 3rd part fault handler to handle FAULT
 messages.
 
-|Delayer |0..1 |To use a 3rd part xref:delay-eip.adoc[Delayer].
+|Delayer |0..1 |To use a 3rd part xref:{eip-vc}:eips:delay-eip.adoc[Delayer].
 
 |ManagementStrategy |0..1 |*Camel 2.1:* To use a 3rd part strategy for
 xref:jmx.adoc[management], for example JMX management.
@@ -101,7 +101,7 @@ xref:stream-caching.adoc[Stream caching] strategy.
 RuntimeEndpointRegistry implementation.
 
 |Logger |0..1 |*Camel 2.12.4/2.13.1:* To use provided org.slf4j.Logger
-for xref:components::log-component.adoc[Log] component and xref:log-eip.adoc[log() EIP].
+for xref:components::log-component.adoc[Log] component and xref:{eip-vc}:eips:log-eip.adoc[log() EIP].
 
 |AsyncProcessorAwaitManager |0..1 |*Camel 2.15:* To use a 3rd part async
 process await manager.
@@ -118,7 +118,7 @@ And the following options have support for any number of beans defined.
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Type |Number of beans |Description
-|InterceptStrategy |0..n |To use your own xref:intercept.adoc[Intercept]
+|InterceptStrategy |0..n |To use your own xref:{eip-vc}:eips:intercept.adoc[Intercept]
 that intercepts every processing steps in all routes in the
 xref:camelcontext.adoc[CamelContext]. For instance you can use this to
 do an AOP like performance timer interceptor.

@@ -28,16 +28,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.WebhookNotificationGatewayApiMethod;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintreeTestSupport {
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(WebhookNotificationGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(WebhookNotificationGatewayApiMethod.class).getName();
 
-    @Before
+    @BeforeEach
     public void checkAuthenticationType() {
-        Assume.assumeTrue(checkAuthenticationType(AuthenticationType.PUBLIC_PRIVATE_KEYS));
+        assumeTrue(checkAuthenticationType(AuthenticationType.PUBLIC_PRIVATE_KEYS));
     }
 
     @Test
@@ -52,7 +56,7 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
 
     private void runParseSubscriptionTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("my_id", result.getSubscription().getId());
     }
@@ -65,7 +69,7 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
 
     private void runParseMerchantAccountTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("my_id", result.getMerchantAccount().getId());
     }
@@ -79,7 +83,7 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
 
     private void runParseTransactionTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("my_id", result.getTransaction().getId());
     }
@@ -92,7 +96,7 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
 
     private void runParseDisbursementTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("my_id", result.getDisbursement().getId());
     }
@@ -106,7 +110,7 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
 
     private void runParseDisputeTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("my_id", result.getDispute().getId());
     }
@@ -120,7 +124,7 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
 
     private void runParsePartnerMerchantTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "merchant_public_id");
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("abc123", result.getPartnerMerchant().getPartnerMerchantId());
     }
@@ -129,13 +133,13 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
     public void testParseConnectedMerchantStatusTransitioned() throws Exception {
         final WebhookNotification result = sendSampleNotification(
                 WebhookNotification.Kind.CONNECTED_MERCHANT_STATUS_TRANSITIONED,
-                "my_merchant_public_id"
-        );
+                "my_merchant_public_id");
 
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(WebhookNotification.Kind.CONNECTED_MERCHANT_STATUS_TRANSITIONED, result.getKind());
 
-        ConnectedMerchantStatusTransitioned connectedMerchantStatusTransitioned = result.getConnectedMerchantStatusTransitioned();
+        ConnectedMerchantStatusTransitioned connectedMerchantStatusTransitioned
+                = result.getConnectedMerchantStatusTransitioned();
         assertEquals("my_merchant_public_id", connectedMerchantStatusTransitioned.getMerchantPublicId());
         assertEquals("oauth_application_client_id", connectedMerchantStatusTransitioned.getOAuthApplicationClientId());
         assertEquals("new_status", connectedMerchantStatusTransitioned.getStatus());
@@ -145,13 +149,13 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
     public void testParseConnectedMerchantPayPalStatusChanged() throws Exception {
         final WebhookNotification result = sendSampleNotification(
                 WebhookNotification.Kind.CONNECTED_MERCHANT_PAYPAL_STATUS_CHANGED,
-                "my_merchant_public_id"
-        );
+                "my_merchant_public_id");
 
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(WebhookNotification.Kind.CONNECTED_MERCHANT_PAYPAL_STATUS_CHANGED, result.getKind());
 
-        ConnectedMerchantPayPalStatusChanged connectedMerchantPayPalStatusChanged = result.getConnectedMerchantPayPalStatusChanged();
+        ConnectedMerchantPayPalStatusChanged connectedMerchantPayPalStatusChanged
+                = result.getConnectedMerchantPayPalStatusChanged();
         assertEquals("my_merchant_public_id", connectedMerchantPayPalStatusChanged.getMerchantPublicId());
         assertEquals("oauth_application_client_id", connectedMerchantPayPalStatusChanged.getOAuthApplicationClientId());
         assertEquals("link", connectedMerchantPayPalStatusChanged.getAction());
@@ -164,7 +168,7 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
 
     private void runParsePAccountUpdaterTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("link-to-csv-report", result.getAccountUpdaterDailyReport().getReportUrl());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -177,22 +181,22 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
         runParseIdealPaymentTest(WebhookNotification.Kind.IDEAL_PAYMENT_COMPLETE);
         runParseIdealPaymentTest(WebhookNotification.Kind.IDEAL_PAYMENT_FAILED);
     }
-
+    
     private void runParseIdealPaymentTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("my_id", result.getIdealPayment().getId());
     }
-
+    
     @Test
     public void testParsePaymentInstrument() throws Exception {
         runParsePaymentInstrumentTest(WebhookNotification.Kind.GRANTED_PAYMENT_INSTRUMENT_UPDATE);
     }
-
+    
     private void runParsePaymentInstrumentTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
-        assertNotNull("parse result", result);
+        assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("abc123z", result.getGrantedPaymentInstrumentUpdate().getToken());
     }*/
@@ -212,10 +216,10 @@ public class WebhookNotificationGatewayIntegrationTest extends AbstractBraintree
             public void configure() {
                 // test route for parse
                 from("direct://PARSE")
-                    .to("braintree://" + PATH_PREFIX + "/parse");
+                        .to("braintree://" + PATH_PREFIX + "/parse");
                 // test route for verify
                 from("direct://VERIFY")
-                    .to("braintree://" + PATH_PREFIX + "/verify?inBody=challenge");
+                        .to("braintree://" + PATH_PREFIX + "/verify?inBody=challenge");
             }
         };
     }

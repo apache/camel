@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import javax.naming.Context;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
@@ -26,11 +24,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.support.jndi.JndiContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanWithExceptionTest extends ContextTestSupport {
     protected MockEndpoint validEndpoint;
@@ -73,7 +74,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -82,8 +83,8 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
+    protected Registry createRegistry() throws Exception {
+        Registry answer = super.createRegistry();
         answer.bind("myBean", new ValidationBean());
         return answer;
     }
@@ -102,7 +103,8 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     public static class ValidationBean {
         private static final Logger LOG = LoggerFactory.getLogger(ValidationBean.class);
 
-        public void someMethod(String body, @Header("foo") String header, @ExchangeProperty("cheese") String cheese) throws ValidationException {
+        public void someMethod(String body, @Header("foo") String header, @ExchangeProperty("cheese") String cheese)
+                throws ValidationException {
             assertEquals("old", cheese);
 
             if ("bar".equals(header)) {

@@ -1,0 +1,156 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.6 to 3.7
+
+=== Modularized core
+
+The core has been further modularized and is now split up into three new core modules
+
+- camel-core-model
+- camel-core-reifier
+- camel-core-processor
+
+This separates the route model from the runtime processors via the reifiers, by having the classes in their own modules.
+
+=== API changes
+
+The class `BreakpointSupport` has moved from `org/apache/camel/processor/interceptor/BreakpointSupport` to `org.apache.camel.support.BreakpointSupport`.
+
+These internal classes has been moved to locations that better suit where other similar processors are located.
+
+The class `org.apache.camel.impl.validator.ProcessorValidator` moved to `org.apache.camel.processor.validator.ProcessorValidator`.
+The class `org.apache.camel.impl.transformer.ProcessorTransformer` moved to `org.apache.camel.processor.transformer.ProcessorTransformer`.
+The class `org.apache.camel.impl.transformer.DataFormatTransformer` moved to `org.apache.camel.processor.transformer.DataFormatTransformer`.
+The class `org.apache.camel.impl.validator.ValidatorKey` moved to `org.apache.camel.impl.engine.ValidatorKey`.
+The class `org.apache.camel.impl.transformer.TransformerKey` moved to `org.apache.camel.impl.engine.TransformerKey`.
+
+And the class `org.apache.camel.impl.DefaultExecutorServiceManager` is moved from `camel-core-engine` JAR to
+`org.apache.camel.impl.engine.DefaultExecutorServiceManager` in the `camel-base` JAR.
+
+The class `org.apache.camel.processor.ConvertBodyProcessor` is moved
+to `org.apache.camel.support.ConvertBodyProcessor` in the `camel-support` JAR.
+
+The class `org.apache.camel.impl.engine.DefaultClaimCheckRepository` moved
+to `org.apache.camel.processor.DefaultClaimCheckRepository` in the `camel-core-processor` JAR.
+
+The class `org.apache.camel.impl.engine.DefaultProducerCache` is moved to `org.apache.camel.support.cache.DefaultProducerCache`.
+The class `org.apache.camel.impl.engine.DefaultConsumerCache` is moved to `org.apache.camel.support.cache.DefaultConsumerCache`.
+The class `org.apache.camel.impl.engine.EmptyProducerCache` is moved to `org.apache.camel.support.cache.EmptyProducerCache`.
+The class `org.apache.camel.impl.engine.ServicePool` is moved to `org.apache.camel.support.cache.ServicePool`.
+The class `org.apache.camel.impl.engine.ProducerServicePool` is moved to `org.apache.camel.support.cache.ProducerServicePool`.
+The class `org.apache.camel.impl.engine.PollingConsumerServicePool` is moved to `org.apache.camel.support.cache.PollingConsumerServicePool`.
+The class `org.apache.camel.impl.engine.EventNotifierCallback` is moved to `org.apache.camel.support.cache.EventNotifierCallback`.
+
+The interface `org.apache.camel.spi.LifecycleStrategy` has two methods removed related to adding and removing error handlers.
+
+=== Type Converters
+
+Camel 3.7 has optimized its type converter system, which can impact 3rd party components which has type converters.
+Previously the type converter system would attempt to find a type converter that would be capable of
+converting between two given types (also by walking up the parent classes and super interfaces).
+But this leads to slower performance, and Camel now relies on there being covnerter methods with the exact combo
+of converting from/to types.
+
+==== Converting to milli seconds from text
+
+When converting to milli seconds using the shorthands for time precision with hours, minutes and seconds, then support
+for fractions is no longer supported. For example `delay=0.5m` (half minute) isn't supported instead use `delay=30s`.
+
+Support for using unites as `days`, `hours`, `minutes`, `seconds`, and `millis` has been removed.
+Units must now also be one of `d` for days, `h` for hours, `m` for minutes, `s` for seconds, and `ms` for millis (can be omitted).
+So you can use `1h12m37s42ms` for 1 hour, 12 minutes, 37 seconds and 42 milli seconds.
+
+=== JMX
+
+The MBeans for error handlers has been removed.
+
+=== ProcessorFactory
+
+If a custom `org.apache.camel.spi.ProcessorFactory` is in use, then the factory should extend the default implementation
+`org.apache.camel.processor.DefaultProcessorFactory` and in the overridden methods, super should be called to let
+the default implementation create the processor when custom processors is not created.
+
+The class `org.apache.camel.impl.engine.TypedProcessorFactor` moved from `camel-base` JAR
+to `org.apache.camel.support.TypedProcessorFactor` in the `camel-support` JAR.
+
+=== AdviceWith
+
+Advice routes moved the `adviceWith` method from `org.apache.camel.reifier.RouteReifier` to `org.apache.camel.builder.AdviceWith`.
+Also `adviceWith` methods on `org.apache.camel.builder.AdviceWithRouteBuilder` is deprecated in favour
+of using methods on `org.apache.camel.builder.AdviceWith`.
+
+=== toD EIP
+
+Support for using multiple languages in the toD EIP has been removed as it was a rare feature in use, and is causing some
+problems for maintenance. toD uses simple language by default, but an alternative language can still be specified.
+
+=== camel-couchbase
+
+The original URI path has been changed, now the bucket part is simply a required option and it's not part of the URI anymore.
+
+=== camel-file-watch
+
+The event type header is no more an enum, but it is now the explicit event as a `String` value.
+
+=== camel-leveldb
+
+Component uses different serialization mechanism, which is not backwards compatible with the original one.
+For full compatibility use camel-leveldb-legacy component. (legacy component will be removed in the future)
+
+=== camel-mock
+
+The class `InterceptSendToMockEndpointStrategy` in `camel-base` JAR is moved from `org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy`
+to `org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy` in the `camel-mock` JAR.
+
+=== camel-saga
+
+The class `org.apache.camel.impl.saga.InMemorySagaService` is moved to `org.apache.camel.saga.InMemorySagaService`.
+The class `org.apache.camel.impl.saga.InMemorySagaCoordinator` is moved to `org.apache.camel.saga.InMemorySagaCoordinator`.
+
+=== camel-management
+
+The `listTypeConverters` operation on `ManagedTypeConverterRegistryMBean` has been removed.
+
+=== camel-kafka
+
+We changed some options naming because they were a bit misleading
+
+- From kafkaHeaderDeserializer to headerDeserializer
+- From kafkaHeaderSerializer to headerSerializer
+- From keySerializerClass to keySerializer
+- From serializerClass to valueSerializer
+
+For more information, have a look at CAMEL-15770
+
+=== camel-git
+
+The Camel Git Commit consumer has been changed a bit.
+
+For each exchange now in the body you'll get the commit full message as a String and the Commit Object like before.
+
+Other information have been stored in headers declared in GitConstants class
+- GIT_COMMIT_ID - "CamelGitCommitId" - The commit Id
+- GIT_COMMIT_AUTHOR_NAME - "CamelGitAuthorName" - The commit Author name
+- GIT_COMMIT_COMMITTER_NAME - "CamelGitCommiterName" - The commit committer name
+- GIT_COMMIT_TIME - "CamelGitCommitTime" - The commit time
+
+The Camel Git Branch consumer has been changed a bit.
+
+For each exchange now in the body you'll get the branch ref name and not the full ref like before.
+
+Other information have been stored in headers declared in GitConstants class
+- GIT_BRANCH_LEAF - "CamelGitBranchLeaf" - Leaf
+- GIT_BRANCH_OBJECT_ID - "CamelGitBranchObjectId" - Object Id
+
+The Camel Git Tag consumer has been changed a bit.
+
+For each exchange now in the body you'll get the tag ref name and not the full ref like before.
+
+Other information have been stored in headers declared in GitConstants class
+- GIT_TAG_LEAF - "CamelGitTagLeaf" - Leaf
+- GIT_TAG_OBJECT_ID - "CamelGitTagObjectId" - Object Id
+

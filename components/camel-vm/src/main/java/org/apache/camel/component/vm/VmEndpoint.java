@@ -18,6 +18,7 @@ package org.apache.camel.component.vm;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,9 +27,10 @@ import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The vm component provides asynchronous call to another endpoint from the same CamelContext.
+ * Call another endpoint in the same CamelContext asynchronously.
  */
-@UriEndpoint(firstVersion = "1.1.0", scheme = "vm", title = "VM", syntax = "vm:name", label = "core,endpoint")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "vm", title = "VM", syntax = "vm:name",
+             category = { Category.CORE, Category.ENDPOINT })
 public class VmEndpoint extends SedaEndpoint {
 
     public VmEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
@@ -39,7 +41,8 @@ public class VmEndpoint extends SedaEndpoint {
         super(endpointUri, component, queue, concurrentConsumers);
     }
 
-    public VmEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+    public VmEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory,
+                      int concurrentConsumers) {
         super(endpointUri, component, queueFactory, concurrentConsumers);
     }
 

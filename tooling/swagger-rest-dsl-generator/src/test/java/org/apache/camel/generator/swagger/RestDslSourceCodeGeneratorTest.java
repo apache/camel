@@ -18,7 +18,7 @@ package org.apache.camel.generator.swagger;
 
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -61,10 +61,10 @@ public class RestDslSourceCodeGeneratorTest {
         final Swagger swagger = new Swagger();
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(swagger))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(swagger.info(new Info())))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class RestDslSourceCodeGeneratorTest {
         swagger.info(new Info().title("\\%/4"));
 
         assertThat(RestDslSourceCodeGenerator.generateClassName(swagger))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_CLASS_NAME);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class RestDslSourceCodeGeneratorTest {
         swagger.setHost("localhost");
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(swagger))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
 
     @Test
@@ -91,7 +91,7 @@ public class RestDslSourceCodeGeneratorTest {
         swagger.setHost("localhost:8080");
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(swagger))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
 
     @Test
@@ -99,6 +99,6 @@ public class RestDslSourceCodeGeneratorTest {
         final Swagger swagger = new Swagger();
 
         assertThat(RestDslSourceCodeGenerator.generatePackageName(swagger))
-            .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
+                .isEqualTo(RestDslSourceCodeGenerator.DEFAULT_PACKAGE_NAME);
     }
 }

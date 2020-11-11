@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -57,9 +57,9 @@ public class ContainerAwareTestSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
-        final PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
+        final PropertiesComponent pc = context.getPropertiesComponent();
 
-        pc.addFunction(new ContainerPropertiesFunction(containers));
+        pc.addPropertiesFunction(new ContainerPropertiesFunction(containers));
 
         return context;
     }
@@ -76,8 +76,8 @@ public class ContainerAwareTestSupport extends CamelTestSupport {
         GenericContainer<?> container = createContainer();
 
         return container == null
-            ? Collections.emptyList()
-            : Collections.singletonList(container);
+                ? Collections.emptyList()
+                : Collections.singletonList(container);
     }
 
     protected long containersStartupTimeout() {

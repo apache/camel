@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for the  class.
+ * Tests for the class.
  */
 public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestSupport {
     static final String TEST_EXCEPTION_MESSAGE = "HL7 Acknowledgment Delivery Failed";
@@ -43,7 +43,6 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
         assertArrayEquals(HL7_MESSAGE_BYTES, instance.hl7MessageBytes);
         assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.hl7AcknowledgementBytes);
     }
-
 
     /**
      * Description of test.
@@ -69,13 +68,13 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
     public void testConstructorThree() throws Exception {
         final String alternateExceptionMessage = "Alternate Message";
 
-        instance = new MllpAcknowledgementDeliveryException(alternateExceptionMessage, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
+        instance = new MllpAcknowledgementDeliveryException(
+                alternateExceptionMessage, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES);
 
         assertTrue(instance.getMessage().startsWith(alternateExceptionMessage));
         assertArrayEquals(HL7_MESSAGE_BYTES, instance.hl7MessageBytes);
         assertArrayEquals(HL7_ACKNOWLEDGEMENT_BYTES, instance.hl7AcknowledgementBytes);
     }
-
 
     /**
      * Description of test.
@@ -86,7 +85,8 @@ public class MllpAcknowledgementDeliveryExceptionTest extends MllpExceptionTestS
     public void testConstructorFour() throws Exception {
         final String alternateExceptionMessage = "Alternate Message";
 
-        instance = new MllpAcknowledgementDeliveryException(alternateExceptionMessage, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
+        instance = new MllpAcknowledgementDeliveryException(
+                alternateExceptionMessage, HL7_MESSAGE_BYTES, HL7_ACKNOWLEDGEMENT_BYTES, CAUSE);
 
         assertSame(CAUSE, instance.getCause());
         assertTrue(instance.getMessage().startsWith(alternateExceptionMessage));

@@ -8,11 +8,10 @@ API which provides thread pools, named `ExecutorService`.
 
 Camel leverages thread pools in the following places:
 
-* several xref:enterprise-integration-patterns.adoc[EIP] patterns supports using thread pools for
+* several xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[EIP] patterns supports using thread pools for
 concurrency
 * xref:components::seda-component.adoc[SEDA] component for asynchronous connectivity
 * xref:async.adoc[Threads DSL] in the Camel route
-* xref:servicepool.adoc[ServicePool] for pooling services
 * And some component provide thread pools by nature such as
 xref:components::jms-component.adoc[JMS], xref:components::jetty-component.adoc[Jetty]
 
@@ -22,15 +21,18 @@ xref:components::jms-component.adoc[JMS], xref:components::jetty-component.adoc[
 By default when a thread pool is to be created then its based on the
 default thread pool profile which is:
 
-[source,java]
+[source,xml]
 --------------------------------------------------------------------------------------------------------
     <threadPoolProfile id="defaultThreadPoolProfile" defaultProfile="true"
-                       poolSize="10" maxPoolSize="20" maxQueueSize="1000" allowCoreThreadTimeOut="false"
+                       poolSize="10" maxPoolSize="20" maxQueueSize="1000" allowCoreThreadTimeOut="true"
                        rejectedPolicy="CallerRuns"/>
 --------------------------------------------------------------------------------------------------------
 
+NOTE: From Camel 3.4 onwards the default thread pool profile has `allowCoreThreadTimeOut=true` while
+it was `allowCoreThreadTimeOut=false` in older Camel versions.
+
 What that means is that for example when you use
-xref:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
+xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] with `parallelProcessing=true` enabled,
 then it would create a thread pool based on the profile above. The
 `rejectedPolicy` has four options:
 `Abort, CallerRuns, Discard, DiscardOldest` which corresponds to the
@@ -57,7 +59,7 @@ Suppose you want to use a custom thread pool profile for a Multicast EIP
 pattern in a Camel route you can do it using the `executorServiceRef`
 attribute as shown:
 
-[source,java]
+[source,xml]
 ---------------------------------------------------------------------------
 <camelContext ...>
     ...
@@ -80,7 +82,7 @@ xref:registry.adoc[Registry] for a `ExecutorService` with the id =
 fooProfile. If none found it will fallback and see if there is a
 `ThreadPoolProfile` defined with that id. And in this example there is
 and so the profile is used for creating a new `ExecutorService` which is
-handed back to the xref:multicast-eip.adoc[Multicast] EIP to use in the
+handed back to the xref:{eip-vc}:eips:multicast-eip.adoc[Multicast] EIP to use in the
 route.
 
 [[ThreadingModel-Createcustomthreadpool]]
@@ -146,7 +148,7 @@ thread.
 The default pattern is for:
 
 * *Camel 2.9.x or older:*
-`Camel ($\{camelId\}) thread #$\{counter\} - $\{name\}`
+`Camel ($\{camelId}) thread #$\{counter} - $\{name}`
 * *Camel 2.10 onwards:* `Camel (#camelId#) thread ##counter# - #name#`
 
 Notice we renamed the tokens from Camel 2.10 onwards to not clash with
@@ -168,7 +170,7 @@ In Camel 2.11 onwards its easier to set the thread name pattern on the
 CamelContext using the threadNamePattern attribute in the XML files as
 shown below:
 
-[source,java]
+[source,xml]
 --------------------------------------------------------------------------------------------------------------
   <camelContext xmlns="http://camel.apache.org/schema/spring" threadNamePattern="Riding the thread #counter#">
     <route>

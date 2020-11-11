@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultErrorHandlerOnPrepareTest extends ContextTestSupport {
 
@@ -33,7 +35,7 @@ public class DefaultErrorHandlerOnPrepareTest extends ContextTestSupport {
             }
         });
         assertNotNull(out);
-        assertTrue("Should be failed", out.isFailed());
+        assertTrue(out.isFailed(), "Should be failed");
         assertIsInstanceOf(IllegalArgumentException.class, out.getException());
         assertEquals("Forced", out.getIn().getHeader("FailedBecause"));
     }

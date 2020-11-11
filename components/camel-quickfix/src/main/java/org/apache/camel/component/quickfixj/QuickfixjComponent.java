@@ -26,6 +26,8 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
@@ -33,6 +35,8 @@ import quickfix.SessionSettings;
 
 @Component("quickfix")
 public class QuickfixjComponent extends DefaultComponent implements StartupListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
 
     private static final String PARAMETER_LAZY_CREATE_ENGINE = "lazyCreateEngine";
 
@@ -49,6 +53,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private LogFactory logFactory;
     @Metadata(label = "advanced")
     private MessageFactory messageFactory;
+    @Metadata
     private boolean lazyCreateEngines;
 
     public QuickfixjComponent() {
@@ -76,13 +81,16 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                     if (configuration != null) {
                         settings = configuration.createSessionSettings();
                     } else {
-                        settings = QuickfixjEngine.loadSettings(remaining);
+                        settings = QuickfixjEngine.loadSettings(getCamelContext(), remaining);
                     }
-                    Boolean lazyCreateEngineForEndpoint = super.getAndRemoveParameter(parameters, PARAMETER_LAZY_CREATE_ENGINE, Boolean.TYPE);
+                    Boolean lazyCreateEngineForEndpoint
+                            = super.getAndRemoveParameter(parameters, PARAMETER_LAZY_CREATE_ENGINE, Boolean.TYPE);
                     if (lazyCreateEngineForEndpoint == null) {
                         lazyCreateEngineForEndpoint = isLazyCreateEngines();
                     }
-                    engine = new QuickfixjEngine(uri, settings, messageStoreFactory, logFactory, messageFactory,
+                    engine = new QuickfixjEngine(
+                            getCamelContext(),
+                            uri, settings, messageStoreFactory, logFactory, messageFactory,
                             lazyCreateEngineForEndpoint);
 
                     // only start engine if CamelContext is already started, otherwise the engines gets started
@@ -135,10 +143,10 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
 
     private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
         if (!engine.isLazy()) {
-            log.info("Starting QuickFIX/J engine: {}", engine.getUri());
+            LOG.info("Starting QuickFIX/J engine: {}", engine.getUri());
             engine.start();
         } else {
-            log.info("QuickFIX/J engine: {} will start lazily", engine.getUri());
+            LOG.info("QuickFIX/J engine: {} will start lazily", engine.getUri());
         }
     }
 
@@ -159,6 +167,10 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
         this.messageFactory = messageFactory;
     }
 
+    public MessageFactory getMessageFactory() {
+        return messageFactory;
+    }
+
     /**
      * To use the given LogFactory
      */
@@ -166,11 +178,19 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
         this.logFactory = logFactory;
     }
 
+    public LogFactory getLogFactory() {
+        return logFactory;
+    }
+
     /**
      * To use the given MessageStoreFactory
      */
     public void setMessageStoreFactory(MessageStoreFactory messageStoreFactory) {
         this.messageStoreFactory = messageStoreFactory;
+    }
+
+    public MessageStoreFactory getMessageStoreFactory() {
+        return messageStoreFactory;
     }
 
     public Map<String, QuickfixjConfiguration> getConfigurations() {
@@ -189,8 +209,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     }
 
     /**
-     * If set to <code>true</code>, the engines will be created and started when needed (when first message
-     * is send)
+     * If set to <code>true</code>, the engines will be created and started when needed (when first message is send)
      */
     public void setLazyCreateEngines(boolean lazyCreateEngines) {
         this.lazyCreateEngines = lazyCreateEngines;

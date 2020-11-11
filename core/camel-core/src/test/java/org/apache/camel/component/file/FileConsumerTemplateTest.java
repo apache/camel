@@ -20,13 +20,15 @@ import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileConsumerTemplateTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/consumer");
         super.setUp();
@@ -38,13 +40,13 @@ public class FileConsumerTemplateTest extends ContextTestSupport {
         // file should exist
         File file = new File("target/data/consumer/hello.txt");
 
-        assertTrue("File should exist " + file, file.exists());
+        assertTrue(file.exists(), "File should exist " + file);
 
         String body = consumer.receiveBody("file:target/data/consumer?delete=true", 5000, String.class);
         assertEquals("Hello World", body);
 
         // file should be deleted
-        assertFalse("File should be deleted " + file, file.exists());
+        assertFalse(file.exists(), "File should be deleted " + file);
     }
 
 }

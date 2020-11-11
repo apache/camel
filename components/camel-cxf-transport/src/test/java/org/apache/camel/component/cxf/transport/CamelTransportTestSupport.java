@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf.transport;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.message.Exchange;
@@ -31,9 +31,12 @@ import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class CamelTransportTestSupport extends CamelTestSupport {
 
@@ -44,7 +47,7 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
     protected Message inMessage;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         BusFactory bf = BusFactory.newInstance();
@@ -62,7 +65,7 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         bus.shutdown(true);
         super.tearDown();
@@ -101,14 +104,12 @@ public abstract class CamelTransportTestSupport extends CamelTestSupport {
         try {
             conduit.prepare(message);
         } catch (IOException ex) {
-            assertFalse("CamelConduit can't perpare to send out message", false);
-            ex.printStackTrace();
+            fail("CamelConduit can't prepare to send out message");
         }
         OutputStream os = message.getContent(OutputStream.class);
-        assertTrue("The OutputStream should not be null ", os != null);
+        assertNotNull(os, "The OutputStream should not be null");
         os.write(content.getBytes());
         os.close();
     }
-
 
 }

@@ -1,0 +1,36 @@
+[[undertow-spring-security-other]]
+= Undertow Spring Security Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-undertow-spring-security/src/main/docs/undertow-spring-security.adoc
+:docTitle: Undertow Spring Security
+:artifactId: camel-undertow-spring-security
+:description: Spring Security Provider for camel-undertow
+:since: 3.3
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/undertow-spring-security.adoc[opts=optional]
+
+*Since Camel {since}*
+
+*OSGi is not supported*
+
+
+The Spring Security Provider provides Spring Security (5.x) token bearer security over camel-undertow component.
+To force camel-undertow to use spring security provider:
+
+* Add spring security provider library on classpath.
+* Provide instance of SpringSecurityConfiguration as `securityConfiguration`
+parameter into camel-undertow component or provide both  `securityConfiguration` and `securityProvider`
+into camel-undertow component.
+* Configure spring-security.
+
+Configuration has to provide following security attribute:
+[width="100%"]
+|===
+| Name | Description | Type
+| *securityFiler* | Provides security filter gained from configured spring security (5.x). Filter could be obtained
+for example from DelegatingFilterProxyRegistrationBean. | Filter
+|===
+
+Each exchange created by Undertow endpoint with spring security contains header 'SpringSecurityProvider_principal' (
+name of header is provided as a constant `SpringSecurityProvider.PRINCIPAL_NAME_HEADER`) with current authorized identity
+as value  or header is not present in case of rejected requests.

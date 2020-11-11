@@ -35,7 +35,9 @@ public class HazelcastQueueComponent extends HazelcastDefaultComponent {
     }
 
     @Override
-    protected HazelcastDefaultEndpoint doCreateEndpoint(String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance) throws Exception {
+    protected HazelcastDefaultEndpoint doCreateEndpoint(
+            String uri, String remaining, Map<String, Object> parameters, HazelcastInstance hzInstance)
+            throws Exception {
         final HazelcastQueueConfiguration config = new HazelcastQueueConfiguration();
         HazelcastQueueEndpoint answer = new HazelcastQueueEndpoint(hzInstance, uri, this, remaining, config);
         setProperties(answer, parameters);

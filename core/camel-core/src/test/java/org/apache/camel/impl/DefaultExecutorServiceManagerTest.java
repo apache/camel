@@ -25,8 +25,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
@@ -134,7 +136,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
-        ThreadPoolExecutor executor = (ThreadPoolExecutor)myPool;
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
         assertEquals(10, executor.getCorePoolSize());
         assertEquals(20, executor.getMaximumPoolSize());
         assertEquals(60, executor.getKeepAliveTime(TimeUnit.SECONDS));
@@ -159,7 +161,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
-        ThreadPoolExecutor executor = (ThreadPoolExecutor)myPool;
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
         assertEquals(10, executor.getCorePoolSize());
         assertEquals(30, executor.getMaximumPoolSize());
         assertEquals(50, executor.getKeepAliveTime(TimeUnit.SECONDS));
@@ -184,7 +186,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
-        ThreadPoolExecutor executor = (ThreadPoolExecutor)myPool;
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
         assertEquals(10, executor.getCorePoolSize());
         assertEquals(30, executor.getMaximumPoolSize());
         assertEquals(50, executor.getKeepAliveTime(TimeUnit.SECONDS));
@@ -209,7 +211,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(false, myPool.isShutdown());
 
         // should use default settings
-        ThreadPoolExecutor executor = (ThreadPoolExecutor)myPool;
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
         assertEquals(5, executor.getCorePoolSize());
         assertEquals(40, executor.getMaximumPoolSize());
         assertEquals(20, executor.getKeepAliveTime(TimeUnit.SECONDS));
@@ -403,8 +405,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
         // a fixed dont use keep alive
-        assertEquals("keepAliveTime", 0, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals("maximumPoolSize", 5, tp.getMaximumPoolSize());
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS), "keepAliveTime");
+        assertEquals(5, tp.getMaximumPoolSize(), "maximumPoolSize");
         assertEquals(5, tp.getCorePoolSize());
         assertFalse(tp.isShutdown());
 
@@ -420,8 +422,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
         // a single dont use keep alive
-        assertEquals("keepAliveTime", 0, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals("maximumPoolSize", 1, tp.getMaximumPoolSize());
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS), "keepAliveTime");
+        assertEquals(1, tp.getMaximumPoolSize(), "maximumPoolSize");
         assertEquals(1, tp.getCorePoolSize());
         assertFalse(tp.isShutdown());
 
@@ -521,7 +523,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertTrue(thread.getName().contains("Cool"));
     }
 
-    @Ignore("This is a manual test, by looking at the logs")
+    @Disabled("This is a manual test, by looking at the logs")
     public void xxxtestLongShutdownOfThreadPool() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         ExecutorService pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "Cool");

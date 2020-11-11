@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VersionTest {
 
@@ -45,18 +45,16 @@ public class VersionTest {
         V35_0.requireAtLeast(34, 0);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void shouldObserveApiLimitsOnMajorVersions() {
-        V35_0.requireAtLeast(36, 0);
-
-        fail("No UnsupportedOperationException thrown, but expected");
+        assertThrows(UnsupportedOperationException.class,
+                () -> V35_0.requireAtLeast(36, 0));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void shouldObserveApiLimitsOnMinorVersions() {
-        V35_0.requireAtLeast(35, 1);
-
-        fail("No UnsupportedOperationException thrown, but expected");
+        assertThrows(UnsupportedOperationException.class,
+                () -> V35_0.requireAtLeast(35, 1));
     }
 
     @Test

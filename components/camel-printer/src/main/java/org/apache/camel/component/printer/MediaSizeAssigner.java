@@ -20,8 +20,8 @@ import javax.print.attribute.standard.MediaSizeName;
 
 public class MediaSizeAssigner {
     private MediaSizeName mediaSizeName;
-    
-    public MediaSizeName selectMediaSizeNameISO(String size) {         
+
+    public MediaSizeName selectMediaSizeNameISO(String size) {
         if (size.equalsIgnoreCase("iso_a0")) {
             mediaSizeName = MediaSizeName.ISO_A0;
         } else if (size.equalsIgnoreCase("iso_a1")) {
@@ -83,9 +83,9 @@ public class MediaSizeAssigner {
         }
         return mediaSizeName;
     }
-    
+
     public MediaSizeName selectMediaSizeNameJIS(String size) {
-        
+
         if (size.equalsIgnoreCase("jis_b0")) {
             mediaSizeName = MediaSizeName.JIS_B0;
         } else if (size.equalsIgnoreCase("jis_b1")) {
@@ -108,8 +108,8 @@ public class MediaSizeAssigner {
             mediaSizeName = MediaSizeName.JIS_B9;
         } else if (size.equalsIgnoreCase("jis_b10")) {
             mediaSizeName = MediaSizeName.JIS_B10;
-        } 
-        
+        }
+
         return mediaSizeName;
     }
 
@@ -183,10 +183,10 @@ public class MediaSizeAssigner {
         } else {
             mediaSizeName = MediaSizeName.NA_LETTER;
         }
-        
+
         return mediaSizeName;
     }
-    
+
     public MediaSizeName selectMediaSizeNameOther(String size) {
         if (size.equalsIgnoreCase("executive")) {
             mediaSizeName = MediaSizeName.EXECUTIVE;
@@ -223,8 +223,8 @@ public class MediaSizeAssigner {
         } else if (size.equalsIgnoreCase("personal_envelope")) {
             mediaSizeName = MediaSizeName.PERSONAL_ENVELOPE;
         }
-        
+
         return mediaSizeName;
-    
+
     }
 }

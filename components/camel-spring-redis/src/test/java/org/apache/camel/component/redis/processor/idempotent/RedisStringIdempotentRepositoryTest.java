@@ -18,22 +18,21 @@ package org.apache.camel.component.redis.processor.idempotent;
 
 import java.time.Duration;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings
 public class RedisStringIdempotentRepositoryTest {
 
     private static final String REPOSITORY = "testRepository";
@@ -54,7 +53,7 @@ public class RedisStringIdempotentRepositoryTest {
     private RedisStringIdempotentRepository idempotentRepository;
     private RedisStringIdempotentRepository idempotentRepositoryNoExpiry;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         idempotentRepository = new RedisStringIdempotentRepository(redisTemplate, REPOSITORY);
@@ -75,9 +74,8 @@ public class RedisStringIdempotentRepositoryTest {
         idempotentRepository.contains(KEY);
         verify(valueOperations).get(idempotentRepository.createRedisKey(KEY));
         idempotentRepositoryNoExpiry.contains(KEY);
-        verify(valueOperations).get(idempotentRepositoryNoExpiry.createRedisKey(KEY));       
+        verify(valueOperations).get(idempotentRepositoryNoExpiry.createRedisKey(KEY));
     }
-
 
     @Test
     public void shouldReturnProcessorName() {

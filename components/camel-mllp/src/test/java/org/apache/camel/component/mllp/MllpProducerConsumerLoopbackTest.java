@@ -26,17 +26,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.apache.camel.test.mllp.PassthroughProcessor;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.junit.Assume.assumeTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
+
+    Logger log = LoggerFactory.getLogger(MllpProducerConsumerLoopbackTest.class);
     int mllpPort = AvailablePortFinder.getNextAvailable();
     String mllpHost = "localhost";
 
@@ -46,9 +50,10 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
     @EndpointInject("mock://acknowledged")
     MockEndpoint acknowledged;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
-        assumeTrue("Skipping test running in CI server - Fails sometimes on CI server with address already in use", System.getenv("BUILD_ID") == null);
+        assumeTrue(System.getenv("BUILD_ID") == null,
+                "Skipping test running in CI server - Fails sometimes on CI server with address already in use");
     }
 
     @Override
@@ -70,10 +75,10 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
             public void configure() {
                 fromF("mllp://%s:%d?autoAck=true&readTimeout=5000", mllpHost, mllpPort).id(routeId)
-                    .convertBodyTo(String.class)
-                    .to(acknowledged)
-                    .process(new PassthroughProcessor("after send to result"))
-                    .log(LoggingLevel.DEBUG, routeId, "Receiving: ${body}");
+                        .convertBodyTo(String.class)
+                        .to(acknowledged)
+                        .process(new PassthroughProcessor("after send to result"))
+                        .log(LoggingLevel.DEBUG, routeId, "Receiving: ${body}");
             }
         };
 
@@ -82,9 +87,9 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
             public void configure() {
                 from(source.getDefaultEndpoint()).routeId(routeId)
-                    .log(LoggingLevel.DEBUG, routeId, "Sending: ${body}")
-                    .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPort)
-                    .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
+                        .log(LoggingLevel.DEBUG, routeId, "Sending: ${body}")
+                        .toF("mllp://%s:%d?readTimeout=5000", mllpHost, mllpPort)
+                        .setBody(header(MllpConstants.MLLP_ACKNOWLEDGEMENT));
             }
         };
 
@@ -97,7 +102,8 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
         acknowledged.expectedBodiesReceived(testMessage);
 
         String acknowledgement = source.requestBody((Object) testMessage, String.class);
-        Assert.assertThat("Should be acknowledgment for message 1", acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|00001")));
+        assertThat("Should be acknowledgment for message 1", acknowledgement,
+                CoreMatchers.containsString(String.format("MSA|AA|00001")));
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }
@@ -112,10 +118,10 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
             String testMessage = Hl7TestMessageGenerator.generateMessage(i);
             acknowledged.message(i - 1).body().isEqualTo(testMessage);
             String acknowledgement = source.requestBody((Object) testMessage, String.class);
-            Assert.assertThat("Should be acknowledgment for message " + i, acknowledgement, CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
+            assertThat("Should be acknowledgment for message " + i, acknowledgement,
+                    CoreMatchers.containsString(String.format("MSA|AA|%05d", i)));
         }
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }
 }
-

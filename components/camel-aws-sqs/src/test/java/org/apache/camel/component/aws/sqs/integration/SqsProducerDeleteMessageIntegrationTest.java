@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sqs.integration;
 
+import com.amazonaws.services.sqs.AmazonSQS;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -23,12 +24,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.infra.aws.common.SystemPropertiesAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws.common.TestAWSCredentialsProvider;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.aws.services.AWSServiceFactory;
+import org.apache.camel.test.infra.common.SharedNameGenerator;
+import org.apache.camel.test.infra.common.TestEntityNameGenerator;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SqsProducerDeleteMessageIntegrationTest extends CamelTestSupport {
+
+    @SuppressWarnings("unused")
+    @RegisterExtension
+    public static AWSService<AmazonSQS> service = AWSServiceFactory.createSQSService();
+
+    @RegisterExtension
+    public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -51,16 +64,33 @@ public class SqsProducerDeleteMessageIntegrationTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final String sqsEndpointUri = String.format("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+        TestAWSCredentialsProvider awsCredentialsProvider = new SystemPropertiesAWSCredentialsProvider();
+
+        final String sqsEndpointUri
+                = String.format("aws-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=EU_WEST_1&configuration=#class:%s",
+                        sharedNameGenerator.getName(),
+                        awsCredentialsProvider.getCredentials().getAWSAccessKeyId(),
+                        awsCredentialsProvider.getCredentials().getAWSSecretKey(),
+                        TestSqsConfiguration.class.getName());
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").startupOrder(2).to(sqsEndpointUri);
 
-                from("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=false").startupOrder(1).log("${body}")
-                    .to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&operation=deleteMessage").log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
-                    .to("mock:result");
+                fromF("aws-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=EU_WEST_1&deleteAfterRead=false&configuration=#class:%s",
+                        sharedNameGenerator.getName(),
+                        awsCredentialsProvider.getCredentials().getAWSAccessKeyId(),
+                        awsCredentialsProvider.getCredentials().getAWSSecretKey(),
+                        TestSqsConfiguration.class.getName())
+                                .startupOrder(1).log("${body}")
+                                .toF("aws-sqs://%s?accessKey=RAW(%s)&secretKey=RAW(%s)&region=EU_WEST_1&operation=deleteMessage&configuration=#class:%s",
+                                        sharedNameGenerator.getName(),
+                                        awsCredentialsProvider.getCredentials().getAWSAccessKeyId(),
+                                        awsCredentialsProvider.getCredentials().getAWSSecretKey(),
+                                        TestSqsConfiguration.class.getName())
+                                .log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
+                                .to("mock:result");
             }
         };
     }

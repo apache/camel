@@ -28,7 +28,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SedaConcurrentTest extends ContextTestSupport {
 
@@ -115,7 +118,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
 
         assertEquals(20, replies.size());
         for (int i = 0; i < 20; i++) {
-            String out = (String)replies.get(i).get();
+            String out = (String) replies.get(i).get();
             assertTrue(out.startsWith("Bye"));
         }
         pt.stop();
@@ -129,7 +132,8 @@ public class SedaConcurrentTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("seda:foo?concurrentConsumers=10").to("mock:before").delay(500).to("mock:result");
 
-                from("seda:bar?concurrentConsumers=10").to("mock:before").delay(500).transform(body().prepend("Bye ")).to("mock:result");
+                from("seda:bar?concurrentConsumers=10").to("mock:before").delay(500).transform(body().prepend("Bye "))
+                        .to("mock:result");
             }
         };
     }

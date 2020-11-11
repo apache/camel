@@ -17,7 +17,7 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.Endpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -26,24 +26,30 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class QuartzEndpointConfigureTest extends BaseQuartzTest {
 
     @Test
     public void testConfigureGroupAndName() throws Exception {
-        QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=1000");
+        QuartzEndpoint endpoint
+                = resolveMandatoryEndpoint("quartz://myGroup/myName?trigger.repeatCount=3&trigger.repeatInterval=1000");
 
         Scheduler scheduler = endpoint.getComponent().getScheduler();
         TriggerKey triggerKey = endpoint.getTriggerKey();
         Trigger trigger = scheduler.getTrigger(triggerKey);
         JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(triggerKey.getName(), triggerKey.getGroup()));
 
-        assertEquals("getName()", "myName", triggerKey.getName());
-        assertEquals("getGroup()", "myGroup", triggerKey.getGroup());
-        assertEquals("getJobName", "myName", jobDetail.getKey().getName());
-        assertEquals("getJobGroup", "myGroup", jobDetail.getKey().getGroup());
+        assertEquals("myName", triggerKey.getName(), "getName()");
+        assertEquals("myGroup", triggerKey.getGroup(), "getGroup()");
+        assertEquals("myName", jobDetail.getKey().getName(), "getJobName");
+        assertEquals("myGroup", jobDetail.getKey().getGroup(), "getJobGroup");
 
         SimpleTrigger simpleTrigger = assertIsInstanceOf(SimpleTrigger.class, trigger);
-        assertEquals("getRepeatCount()", 3, simpleTrigger.getRepeatCount());
+        assertEquals(3, simpleTrigger.getRepeatCount(), "getRepeatCount()");
     }
 
     @Test
@@ -54,10 +60,10 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         TriggerKey triggerKey = endpoint.getTriggerKey();
         JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(triggerKey.getName(), triggerKey.getGroup()));
 
-        assertEquals("getName()", "myName", triggerKey.getName());
-        assertEquals("getGroup()", "Camel_" + context.getManagementName(), triggerKey.getGroup());
-        assertEquals("getJobName", "myName", jobDetail.getKey().getName());
-        assertEquals("getJobGroup", "Camel_" + context.getManagementName(), jobDetail.getKey().getGroup());
+        assertEquals("myName", triggerKey.getName(), "getName()");
+        assertEquals("Camel_" + context.getManagementName(), triggerKey.getGroup(), "getGroup()");
+        assertEquals("myName", jobDetail.getKey().getName(), "getJobName");
+        assertEquals("Camel_" + context.getManagementName(), jobDetail.getKey().getGroup(), "getJobGroup");
     }
 
     @Test
@@ -69,14 +75,14 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         Trigger trigger = scheduler.getTrigger(triggerKey);
         JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(triggerKey.getName(), triggerKey.getGroup()));
 
-        assertEquals("getName()", "myTimerName", triggerKey.getName());
-        assertEquals("getGroup()", "myGroup", triggerKey.getGroup());
-        assertEquals("getJobName", "myTimerName", jobDetail.getKey().getName());
-        assertEquals("getJobGroup", "myGroup", jobDetail.getKey().getGroup());
+        assertEquals("myTimerName", triggerKey.getName(), "getName()");
+        assertEquals("myGroup", triggerKey.getGroup(), "getGroup()");
+        assertEquals("myTimerName", jobDetail.getKey().getName(), "getJobName");
+        assertEquals("myGroup", jobDetail.getKey().getGroup(), "getJobGroup");
 
         assertIsInstanceOf(CronTrigger.class, trigger);
-        CronTrigger cronTrigger = (CronTrigger)trigger;
-        assertEquals("cron expression", "0 0/5 12-18 ? * MON-FRI", cronTrigger.getCronExpression());
+        CronTrigger cronTrigger = (CronTrigger) trigger;
+        assertEquals("0 0/5 12-18 ? * MON-FRI", cronTrigger.getCronExpression(), "cron expression");
     }
 
     @Test
@@ -88,14 +94,14 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         Trigger trigger = scheduler.getTrigger(triggerKey);
         JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(triggerKey.getName(), triggerKey.getGroup()));
 
-        assertEquals("getName()", "myTimerName", triggerKey.getName());
-        assertEquals("getGroup()", "myGroup", triggerKey.getGroup());
-        assertEquals("getJobName", "myTimerName", jobDetail.getKey().getName());
-        assertEquals("getJobGroup", "myGroup", jobDetail.getKey().getGroup());
+        assertEquals("myTimerName", triggerKey.getName(), "getName()");
+        assertEquals("myGroup", triggerKey.getGroup(), "getGroup()");
+        assertEquals("myTimerName", jobDetail.getKey().getName(), "getJobName");
+        assertEquals("myGroup", jobDetail.getKey().getGroup(), "getJobGroup");
 
         assertIsInstanceOf(CronTrigger.class, trigger);
-        CronTrigger cronTrigger = (CronTrigger)trigger;
-        assertEquals("cron expression", "0 0 * * * ?", cronTrigger.getCronExpression());
+        CronTrigger cronTrigger = (CronTrigger) trigger;
+        assertEquals("0 0 * * * ?", cronTrigger.getCronExpression(), "cron expression");
     }
 
     @Test
@@ -107,10 +113,10 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         Trigger trigger = scheduler.getTrigger(triggerKey);
         JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey("hadrian", triggerKey.getGroup()));
 
-        assertEquals("getName()", "myTimerName", triggerKey.getName());
-        assertEquals("getGroup()", "myGroup", triggerKey.getGroup());
-        assertEquals("getJobName", "hadrian", jobDetail.getKey().getName());
-        assertEquals("getJobGroup", "myGroup", jobDetail.getKey().getGroup());
+        assertEquals("myTimerName", triggerKey.getName(), "getName()");
+        assertEquals("myGroup", triggerKey.getGroup(), "getGroup()");
+        assertEquals("hadrian", jobDetail.getKey().getName(), "getJobName");
+        assertEquals("myGroup", jobDetail.getKey().getGroup(), "getJobGroup");
 
         assertIsInstanceOf(CronTrigger.class, trigger);
     }
@@ -120,8 +126,8 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz:myGroup/myTimerName");
 
         TriggerKey triggerKey = endpoint.getTriggerKey();
-        assertEquals("getName()", "myTimerName", triggerKey.getName());
-        assertEquals("getGroup()", "myGroup", triggerKey.getGroup());
+        assertEquals("myTimerName", triggerKey.getName(), "getName()");
+        assertEquals("myGroup", triggerKey.getGroup(), "getGroup()");
     }
 
     @Test
@@ -133,25 +139,25 @@ public class QuartzEndpointConfigureTest extends BaseQuartzTest {
         Trigger trigger = scheduler.getTrigger(triggerKey);
         JobDetail jobDetail = scheduler.getJobDetail(JobKey.jobKey(triggerKey.getName(), triggerKey.getGroup()));
 
-        assertEquals("getName()", "myTimerName", triggerKey.getName());
-        assertEquals("getGroup()", "myGroup", triggerKey.getGroup());
-        assertEquals("getJobName", "myTimerName", jobDetail.getKey().getName());
-        assertEquals("getJobGroup", "myGroup", jobDetail.getKey().getGroup());
+        assertEquals("myTimerName", triggerKey.getName(), "getName()");
+        assertEquals("myGroup", triggerKey.getGroup(), "getGroup()");
+        assertEquals("myTimerName", jobDetail.getKey().getName(), "getJobName");
+        assertEquals("myGroup", jobDetail.getKey().getGroup(), "getJobGroup");
 
         assertIsInstanceOf(CronTrigger.class, trigger);
-        CronTrigger cronTrigger = (CronTrigger)trigger;
-        assertEquals("cron expression", "0 0 * * * ?", cronTrigger.getCronExpression());
+        CronTrigger cronTrigger = (CronTrigger) trigger;
+        assertEquals("0 0 * * * ?", cronTrigger.getCronExpression(), "cron expression");
     }
 
     @Test
     public void testConfigureDeleteJob() throws Exception {
         QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?");
-        assertEquals("cron expression", "0 0 * * * ?", endpoint.getCron());
-        assertEquals("deleteJob", true, endpoint.isDeleteJob());
+        assertEquals("0 0 * * * ?", endpoint.getCron(), "cron expression");
+        assertTrue(endpoint.isDeleteJob(), "deleteJob");
 
         endpoint = resolveMandatoryEndpoint("quartz:myGroup/myTimerName2?cron=1+0+*+*+*+?&deleteJob=false");
-        assertEquals("cron expression", "1 0 * * * ?", endpoint.getCron());
-        assertEquals("deleteJob", false, endpoint.isDeleteJob());
+        assertEquals("1 0 * * * ?", endpoint.getCron(), "cron expression");
+        assertFalse(endpoint.isDeleteJob(), "deleteJob");
     }
 
     @Override

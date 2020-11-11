@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ThreadsCorePoolTest extends ContextTestSupport {
 
@@ -35,9 +38,9 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertNotNull("The main thread name should be already properly set!", beforeThreadName);
-        assertNotNull("The camel thread name should be already properly set!", afterThreadName);
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertNotNull(beforeThreadName, "The main thread name should be already properly set!");
+        assertNotNull(afterThreadName, "The camel thread name should be already properly set!");
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Test
@@ -48,9 +51,9 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertNotNull("The main thread name should be already properly set!", beforeThreadName);
-        assertNotNull("The camel thread name should be already properly set!", afterThreadName);
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertNotNull(beforeThreadName, "The main thread name should be already properly set!");
+        assertNotNull(afterThreadName, "The camel thread name should be already properly set!");
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -65,25 +68,25 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 })
-                    // will use a a custom thread pool with 5 in core and 5 as
-                    // max
-                    .threads(5).process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    }).to("log:after").to("mock:result");
+                        // will use a a custom thread pool with 5 in core and 5 as
+                        // max
+                        .threads(5).process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:result");
 
                 from("direct:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 })
-                    // using the builder style
-                    .threads().poolSize(5).process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    }).to("mock:result");
+                        // using the builder style
+                        .threads().poolSize(5).process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("mock:result");
             }
         };
     }

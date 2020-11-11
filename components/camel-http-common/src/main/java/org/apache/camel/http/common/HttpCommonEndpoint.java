@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.cloud.DiscoverableService;
 import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -37,105 +37,113 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     HttpCommonComponent component;
 
-    @UriPath(label = "common", description = "The url of the HTTP endpoint to call.") @Metadata(required = true)
+    @UriPath(label = "common", description = "The url of the HTTP endpoint to call.")
+    @Metadata(required = true)
     URI httpUri;
-    @UriParam(label = "common", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    @UriParam(label = "common",
+              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    @UriParam(label = "common,advanced", description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
+    @UriParam(label = "common,advanced",
+              description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     HttpBinding httpBinding;
     @UriParam(label = "producer", defaultValue = "true",
-            description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
-                    + " This allows you to get all responses regardless of the HTTP status code.")
+              description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
+                            + " This allows you to get all responses regardless of the HTTP status code.")
     boolean throwExceptionOnFailure = true;
     @UriParam(label = "producer",
-            description = "If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request."
-                    + " You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.")
+              description = "If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request."
+                            + " You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.")
     boolean bridgeEndpoint;
     @UriParam(label = "producer",
-            description = "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, "
-                + "useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, "
-                + "this allows applications which use the Host header to generate accurate URL's for a proxied service")
+              description = "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, "
+                            + "useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, "
+                            + "this allows applications which use the Host header to generate accurate URL's for a proxied service")
     boolean preserveHostHeader;
     @UriParam(label = "consumer",
-            description = "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")
+              description = "Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.")
     boolean matchOnUriPrefix;
-    @UriParam(defaultValue = "true", description = "If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response")
+    @UriParam(defaultValue = "true",
+              description = "If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response")
     boolean chunked = true;
     @UriParam(label = "common",
-            description = "Determines whether or not the raw input stream from Servlet is cached or not"
-                    + " (Camel will read the stream into a in memory/overflow to file, Stream caching) cache."
-                    + " By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel"
-                    + " can retrieve all data from the stream. However you can set this option to true when you for example need"
-                    + " to access the raw stream, such as streaming it directly to a file or other persistent store."
-                    + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
-                    + " if this option is false to support reading the stream multiple times."
-                    + " If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,"
-                    + " in case you do not need to read the message payload multiple times."
-                    + " The http producer will by default cache the response body stream. If setting this option to true,"
-                    + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
+              description = "Determines whether or not the raw input stream from Servlet is cached or not"
+                            + " (Camel will read the stream into a in memory/overflow to file, Stream caching) cache."
+                            + " By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel"
+                            + " can retrieve all data from the stream. However you can set this option to true when you for example need"
+                            + " to access the raw stream, such as streaming it directly to a file or other persistent store."
+                            + " DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body"
+                            + " if this option is false to support reading the stream multiple times."
+                            + " If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,"
+                            + " in case you do not need to read the message payload multiple times."
+                            + " The http producer will by default cache the response body stream. If setting this option to true,"
+                            + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
     boolean disableStreamCache;
     @UriParam(description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
-            + " in the response as a application/x-java-serialized-object content type."
-            + " On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException."
-            + " The caused exception is required to be serialized."
-            + " This is by default turned off. If you enable this then be aware that Java will deserialize the incoming"
-            + " data from the request to Java and that can be a potential security risk.")
+                            + " in the response as a application/x-java-serialized-object content type."
+                            + " On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException."
+                            + " The caused exception is required to be serialized."
+                            + " This is by default turned off. If you enable this then be aware that Java will deserialize the incoming"
+                            + " data from the request to Java and that can be a potential security risk.")
     boolean transferException;
     @UriParam(label = "consumer",
-            description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
+              description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
     boolean muteException;
-    @UriParam(label = "producer", defaultValue = "false", description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
+    @UriParam(label = "producer", defaultValue = "false",
+              description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
     boolean connectionClose;
     @UriParam(label = "consumer,advanced",
-            description = "Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.")
+              description = "Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.")
     boolean traceEnabled;
     @UriParam(label = "consumer,advanced",
-            description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
+              description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
     boolean optionsEnabled;
     @UriParam(label = "consumer",
-            description = "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
+              description = "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
     String httpMethodRestrict;
     @UriParam(label = "consumer",
-            description = "To use a custom buffer size on the javax.servlet.ServletResponse.")
+              description = "To use a custom buffer size on the javax.servlet.ServletResponse.")
     Integer responseBufferSize;
     @UriParam(label = "producer",
-            description = "If this option is true, The http producer won't read response body and cache the input stream")
+              description = "If this option is true, The http producer won't read response body and cache the input stream")
     boolean ignoreResponseBody;
     @UriParam(label = "producer", defaultValue = "true",
-            description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
-                    + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
+              description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
+                            + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
     boolean copyHeaders = true;
     @UriParam(label = "consumer,advanced",
-            description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
-                    + " This can be turned on in case HTTP clients do not send streamed data.")
+              description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
+                            + " This can be turned on in case HTTP clients do not send streamed data.")
     boolean eagerCheckContentAvailable;
     @UriParam(label = "advanced", defaultValue = "true",
-            description = "If this option is true then IN exchange Body of the exchange will be mapped to HTTP body." 
-            + " Setting this to false will avoid the HTTP mapping.")
+              description = "If this option is true then IN exchange Body of the exchange will be mapped to HTTP body."
+                            + " Setting this to false will avoid the HTTP mapping.")
     boolean mapHttpMessageBody = true;
     @UriParam(label = "advanced", defaultValue = "true",
-            description = "If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers."
-            + " Setting this to false will avoid the HTTP Headers mapping.")
+              description = "If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers."
+                            + " Setting this to false will avoid the HTTP Headers mapping.")
     boolean mapHttpMessageHeaders = true;
     @UriParam(label = "advanced", defaultValue = "true",
-            description = "If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP."
-            + " Setting this to false will avoid the HTTP Form Encoded body mapping.")
+              description = "If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP."
+                            + " Setting this to false will avoid the HTTP Form Encoded body mapping.")
     boolean mapHttpMessageFormUrlEncodedBody = true;
     @UriParam(label = "producer,advanced", defaultValue = "200-299",
-            description = "The status codes which are considered a success response. The values are inclusive. Multiple ranges can be"
-                    + " defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included.")
+              description = "The status codes which are considered a success response. The values are inclusive. Multiple ranges can be"
+                            + " defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
     @UriParam(label = "consumer", defaultValue = "false",
-            description = "Configure the consumer to work in async mode")
+              description = "Configure the consumer to work in async mode")
     private boolean async;
     @UriParam(label = "producer,advanced", description = "Configure a cookie handler to maintain a HTTP session")
     private CookieHandler cookieHandler;
-    @UriParam(label = "producer", description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
+    @UriParam(label = "producer",
+              description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
     private HttpMethods httpMethod;
 
-    @UriParam(label = "producer,security", description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.")
+    @UriParam(label = "producer,security",
+              description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.")
     private String authMethod;
-    @UriParam(label = "producer,security", enums = "Basic,Digest,NTLM", description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM.")
+    @UriParam(label = "producer,security", enums = "Basic,Digest,NTLM",
+              description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM.")
     private String authMethodPriority;
     @UriParam(label = "producer,security", secret = true, description = "Authentication username")
     private String authUsername;
@@ -163,6 +171,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     private int proxyAuthPort;
     @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTML")
     private String proxyAuthDomain;
+    @UriParam(label = "producer,proxy", description = "Proxy authentication domain (workstation name) to use with NTML")
+    private String proxyAuthNtHost;
 
     public HttpCommonEndpoint() {
     }
@@ -196,16 +206,15 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return true;
     }
 
-// Service Registration
+    // Service Registration
     //-------------------------------------------------------------------------
 
     @Override
     public Map<String, String> getServiceProperties() {
         return CollectionHelper.immutableMapOf(
-            ServiceDefinition.SERVICE_META_PORT, Integer.toString(getPort()),
-            ServiceDefinition.SERVICE_META_PATH, getPath(),
-            ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol()
-        );
+                ServiceDefinition.SERVICE_META_PORT, Integer.toString(getPort()),
+                ServiceDefinition.SERVICE_META_PATH, getPath(),
+                ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol());
     }
 
     // Properties
@@ -313,8 +322,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request.
-     * You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
+     * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for
+     * request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the
+     * fault response back.
      */
     public void setBridgeEndpoint(boolean bridge) {
         this.bridgeEndpoint = bridge;
@@ -325,9 +335,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header,
-     * useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client,
-     * this allows applications which use the Host header to generate accurate URL's for a proxied service
+     * If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host
+     * header, useful in reverse proxy applications where you want the Host header received by the downstream server to
+     * reflect the URL called by the upstream client, this allows applications which use the Host header to generate
+     * accurate URL's for a proxied service
      */
     public void setPreserveHostHeader(boolean preserveHostHeader) {
         this.preserveHostHeader = preserveHostHeader;
@@ -338,7 +349,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
+     * Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is
+     * found.
      * <p/>
      * See more details at: http://camel.apache.org/how-do-i-let-jetty-match-wildcards.html
      */
@@ -351,17 +363,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * Determines whether or not the raw input stream from Servlet is cached or not
-     * (Camel will read the stream into a in memory/overflow to file, Stream caching) cache.
-     * By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel
-     * can retrieve all data from the stream. However you can set this option to true when you for example need
-     * to access the raw stream, such as streaming it directly to a file or other persistent store.
-     * DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body
-     * if this option is false to support reading the stream multiple times.
-     * If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,
-     * in case you do not need to read the message payload multiple times.
-     + The http producer will by default cache the response body stream. If setting this option to true,
-     + then the producers will not cache the response body stream but use the response stream as-is as the message body.
+     * Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a
+     * in memory/overflow to file, Stream caching) cache. By default Camel will cache the Servlet input stream to
+     * support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set
+     * this option to true when you for example need to access the raw stream, such as streaming it directly to a file
+     * or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it
+     * into message body if this option is false to support reading the stream multiple times. If you use Servlet to
+     * bridge/proxy an endpoint then consider enabling this option to improve performance, in case you do not need to
+     * read the message payload multiple times. + The http producer will by default cache the response body stream. If
+     * setting this option to true, + then the producers will not cache the response body stream but use the response
+     * stream as-is as the message body.
      */
     public void setDisableStreamCache(boolean disable) {
         this.disableStreamCache = disable;
@@ -385,7 +396,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     public boolean isMuteException() {
         return muteException;
     }
-    
+
     public boolean isConnectionClose() {
         return connectionClose;
     }
@@ -398,23 +409,24 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized
-     * in the response as a application/x-java-serialized-object content type.
-     * On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException.
-     * The caused exception is required to be serialized.
+     * If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back
+     * serialized in the response as a application/x-java-serialized-object content type. On the producer side the
+     * exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused
+     * exception is required to be serialized.
      * <p/>
-     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
-     * data from the request to Java and that can be a potential security risk.
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from
+     * the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
 
     /**
-     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the
+     * exception's stack trace.
      */
-    public void setMuteException(boolean muteException) { 
-        this.muteException = muteException; 
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public boolean isTraceEnabled() {
@@ -444,8 +456,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc.
-     * Multiple methods can be specified separated by comma.
+     * Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be
+     * specified separated by comma.
      */
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
@@ -474,8 +486,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy.
-     * Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).
+     * If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy
+     * strategy. Setting this to false, allows to only include the headers from the HTTP response (not propagating IN
+     * headers).
      */
     public boolean isCopyHeaders() {
         return copyHeaders;
@@ -503,8 +516,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     /**
      * The status codes which are considered a success response. The values are inclusive. Multiple ranges can be
-     * defined, separated by comma, e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number or from-to with the
-     * dash included.
+     * defined, separated by comma, e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number or from-to
+     * with the dash included.
      * <p/>
      * The default range is <tt>200-299</tt>
      */
@@ -741,5 +754,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setProxyPort(int proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public String getProxyAuthNtHost() {
+        return proxyAuthNtHost;
+    }
+
+    /**
+     * Proxy authentication domain (workstation name) to use with NTML
+     */
+    public void setProxyAuthNtHost(String proxyAuthNtHost) {
+        this.proxyAuthNtHost = proxyAuthNtHost;
     }
 }

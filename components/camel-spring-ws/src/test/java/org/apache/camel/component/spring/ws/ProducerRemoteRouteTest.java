@@ -20,26 +20,30 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.apache.camel.util.xml.StringSource;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Ignore("Run manually, makes connection to external webservice")
+@Disabled("Run manually, makes connection to external webservice")
+@CamelSpringTest
 @ContextConfiguration
-public class ProducerRemoteRouteTest extends AbstractJUnit4SpringContextTests {
+public class ProducerRemoteRouteTest {
 
     private final String stockQuoteWebserviceUri = "http://www.webservicex.net/stockquote.asmx";
-    private final String xmlRequestForGoogleStockQuote = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
+    private final String xmlRequestForGoogleStockQuote
+            = "<GetQuote xmlns=\"http://www.webserviceX.NET/\"><symbol>GOOG</symbol></GetQuote>";
 
     @Produce
     private ProducerTemplate template;
 
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(5)
     public void consumeStockQuoteWebserviceWithDefaultTemplate() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebserviceWithDefaultTemplate", xmlRequestForGoogleStockQuote);
 
@@ -47,7 +51,8 @@ public class ProducerRemoteRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(result instanceof Source);
     }
 
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(5)
     public void consumeStockQuoteWebservice() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebservice", xmlRequestForGoogleStockQuote);
 
@@ -55,7 +60,8 @@ public class ProducerRemoteRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(result instanceof Source);
     }
 
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(5)
     public void consumeStockQuoteWebserviceWithCamelStringSourceInput() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebservice", new StringSource(xmlRequestForGoogleStockQuote));
 
@@ -63,15 +69,18 @@ public class ProducerRemoteRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(result instanceof Source);
     }
 
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(5)
     public void consumeStockQuoteWebserviceWithNonDefaultMessageFactory() throws Exception {
-        Object result = template.requestBody("direct:stockQuoteWebserviceWithNonDefaultMessageFactory", xmlRequestForGoogleStockQuote);
+        Object result = template.requestBody("direct:stockQuoteWebserviceWithNonDefaultMessageFactory",
+                xmlRequestForGoogleStockQuote);
 
         assertNotNull(result);
         assertTrue(result instanceof Source);
     }
 
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(5)
     public void consumeStockQuoteWebserviceAndConvertResult() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebserviceAsString", xmlRequestForGoogleStockQuote);
 
@@ -81,10 +90,12 @@ public class ProducerRemoteRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(resultMessage.contains("Google Inc."));
     }
 
-    @Test(timeout = 5000)
+    @Test
+    @Timeout(5)
     public void consumeStockQuoteWebserviceAndProvideEndpointUriByHeader() throws Exception {
-        Object result = template.requestBodyAndHeader("direct:stockQuoteWebserviceWithoutDefaultUri", xmlRequestForGoogleStockQuote,
-                SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, stockQuoteWebserviceUri);
+        Object result
+                = template.requestBodyAndHeader("direct:stockQuoteWebserviceWithoutDefaultUri", xmlRequestForGoogleStockQuote,
+                        SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, stockQuoteWebserviceUri);
 
         assertNotNull(result);
         assertTrue(result instanceof String);

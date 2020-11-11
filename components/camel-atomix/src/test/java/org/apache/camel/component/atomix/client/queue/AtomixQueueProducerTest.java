@@ -29,8 +29,12 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     private static final String QUEUE_NAME = UUID.randomUUID().toString();
@@ -59,9 +63,11 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        queue.close();
+        if (queue != null) {
+            queue.close();
+        }
 
         super.tearDown();
     }
@@ -71,54 +77,54 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     // ************************************
 
     @Test
-    public void testAdd() throws Exception {
+    void testAdd() {
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
 
         Message result;
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.ADD)
-            .withBody(val1)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.ADD)
+                .withBody(val1)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(queue.contains(val1).join());
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.ADD)
-            .withBody(val2)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.ADD)
+                .withBody(val2)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(queue.contains(val2).join());
     }
 
     @Test
-    public void testOfferPeekAndPoll() throws Exception {
+    void testOfferPeekAndPoll() {
         final String val = context().getUuidGenerator().generateUuid();
 
         Message result;
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.OFFER)
-            .withBody(val)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.OFFER)
+                .withBody(val)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(queue.contains(val).join());
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.PEEK)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.PEEK)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(queue.contains(val).join());
         assertEquals(val, result.getBody());
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.POLL)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.POLL)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(queue.contains(val).join());
@@ -126,15 +132,15 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testSizeClearIsEmpty() throws Exception {
+    void testSizeClearIsEmpty() {
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
 
         Message result;
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.SIZE)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.SIZE)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(0, result.getBody(Integer.class).intValue());
@@ -143,31 +149,31 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
         queue.add(val1).join();
         queue.add(val2).join();
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.SIZE)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.SIZE)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(queue.size().join(), result.getBody(Integer.class));
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.IS_EMPTY)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.IS_EMPTY)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
         assertFalse(queue.isEmpty().join());
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.CLEAR)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.CLEAR)
+                .request(Message.class);
 
         assertFalse(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertEquals(0, queue.size().join().intValue());
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.IS_EMPTY)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.IS_EMPTY)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
@@ -175,15 +181,15 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testContains() throws Exception {
+    void testContains() {
         final String val = context().getUuidGenerator().generateUuid();
 
         Message result;
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.CONTAINS)
-            .withBody(val)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.CONTAINS)
+                .withBody(val)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(result.getBody(Boolean.class));
@@ -191,10 +197,10 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
 
         queue.add(val);
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.CONTAINS)
-            .withBody(val)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.CONTAINS)
+                .withBody(val)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertTrue(result.getBody(Boolean.class));
@@ -202,7 +208,7 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     }
 
     @Test
-    public void testRemove() throws Exception {
+    void testRemove() {
         final String val1 = context().getUuidGenerator().generateUuid();
         final String val2 = context().getUuidGenerator().generateUuid();
 
@@ -211,10 +217,10 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
 
         Message result;
 
-        result = fluent.clearAll()
-            .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.REMOVE)
-            .withHeader(AtomixClientConstants.RESOURCE_VALUE, val1)
-            .request(Message.class);
+        result = fluent
+                .withHeader(AtomixClientConstants.RESOURCE_ACTION, AtomixQueue.Action.REMOVE)
+                .withHeader(AtomixClientConstants.RESOURCE_VALUE, val1)
+                .request(Message.class);
 
         assertTrue(result.getHeader(AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT, Boolean.class));
         assertFalse(queue.contains(val1).join());
@@ -224,13 +230,12 @@ public class AtomixQueueProducerTest extends AtomixClientTestSupport {
     // ************************************
     // Routes
     // ************************************
-
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .toF("atomix-queue:%s", QUEUE_NAME);
+                        .toF("atomix-queue:%s", QUEUE_NAME);
             }
         };
     }

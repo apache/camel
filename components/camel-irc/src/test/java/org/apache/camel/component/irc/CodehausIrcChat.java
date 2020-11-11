@@ -17,8 +17,6 @@
 package org.apache.camel.component.irc;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
@@ -92,11 +90,12 @@ public final class CodehausIrcChat {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        List<IrcChannel> channels = new ArrayList<>();
-        channels.add(new IrcChannel("camel-test", null));
-        final IrcConfiguration config = new IrcConfiguration("irc.codehaus.org", "camel-rc", "Camel IRC Component", channels);
+        final IrcConfiguration config
+                = new IrcConfiguration("irc.codehaus.org", "camel-rc", "Camel IRC Component", "camel-test");
 
-        final IRCConnection conn = new IRCConnection(config.getHostname(), config.getPorts(), config.getPassword(), config.getNickname(), config.getUsername(), config.getRealname());
+        final IRCConnection conn = new IRCConnection(
+                config.getHostname(), config.getPorts(), config.getPassword(), config.getNickname(), config.getUsername(),
+                config.getRealname());
 
         conn.addIRCEventListener(new CodehausIRCEventAdapter());
         conn.setEncoding("UTF-8");
@@ -107,7 +106,7 @@ public final class CodehausIrcChat {
         try {
             conn.connect();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.debug("I/O error while connecting: {}", e.getMessage(), e);
         }
         // while (!conn.isConnected()) {
         // Thread.sleep(1000);
@@ -118,7 +117,7 @@ public final class CodehausIrcChat {
 
         // log.info("Joining Channel: " + config.getTarget());
 
-        for (IrcChannel channel : config.getChannels()) {
+        for (IrcChannel channel : config.getChannelList()) {
             conn.doJoin(channel.getName());
         }
 

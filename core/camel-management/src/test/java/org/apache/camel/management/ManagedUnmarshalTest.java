@@ -23,7 +23,9 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.DataFormatServiceTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedUnmarshalTest extends ManagementTestSupport {
 
@@ -64,7 +66,7 @@ public class ManagedUnmarshalTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .unmarshal(new DataFormatServiceTest.MyDataFormat()).id("mysend")
+                        .unmarshal(new DataFormatServiceTest.MyDataFormat()).id("mysend")
                         .to("mock:foo");
             }
         };

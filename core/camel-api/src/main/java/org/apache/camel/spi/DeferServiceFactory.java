@@ -20,19 +20,26 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 
 /**
- * Factory to create services such as {@link Producer}s
- * and defer starting the created service, until {@link org.apache.camel.CamelContext} has been started.
+ * Factory to create services such as {@link Producer}s and defer starting the created service, until
+ * {@link org.apache.camel.CamelContext} has been started.
  */
 public interface DeferServiceFactory {
 
     /**
-     * Creates the {@link Producer} which is deferred started until {@link org.apache.camel.CamelContext} is being started.
+     * Service factory key.
+     */
+    String FACTORY = "defer-service-factory";
+
+    /**
+     * Creates the {@link Producer} which is deferred started until {@link org.apache.camel.CamelContext} is being
+     * started.
      * <p/>
-     * When the producer is started, it re-lookup the endpoint to capture any changes such as the endpoint has been intercepted.
-     * This allows the producer to react and send messages to the updated endpoint.
+     * When the producer is started, it re-lookup the endpoint to capture any changes such as the endpoint has been
+     * intercepted. This allows the producer to react and send messages to the updated endpoint.
      *
-     * @param endpoint the endpoint
-     * @return the producer which will be deferred started until {@link org.apache.camel.CamelContext} has been started
+     * @param  endpoint  the endpoint
+     * @return           the producer which will be deferred started until {@link org.apache.camel.CamelContext} has
+     *                   been started
      * @throws Exception can be thrown if there is an error starting the producer
      */
     Producer createProducer(Endpoint endpoint) throws Exception;

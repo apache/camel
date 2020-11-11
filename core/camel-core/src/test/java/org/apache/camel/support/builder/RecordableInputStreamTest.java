@@ -18,17 +18,18 @@ package org.apache.camel.support.builder;
 
 import java.io.ByteArrayInputStream;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class RecordableInputStreamTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class RecordableInputStreamTest {
     private static final byte[] DATA;
 
     static {
         DATA = new byte[512];
         final int radix = 0x7f - 0x20;
         for (int i = 0; i < 512; i++) {
-            DATA[i] = (byte)(i % radix + 0x20);
+            DATA[i] = (byte) (i % radix + 0x20);
         }
     }
 

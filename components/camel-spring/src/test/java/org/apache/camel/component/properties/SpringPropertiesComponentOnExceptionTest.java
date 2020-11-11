@@ -24,7 +24,8 @@ public class SpringPropertiesComponentOnExceptionTest extends PropertiesComponen
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/component/properties/SpringPropertiesComponentOnExceptionTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/component/properties/SpringPropertiesComponentOnExceptionTest.xml");
     }
 
 }

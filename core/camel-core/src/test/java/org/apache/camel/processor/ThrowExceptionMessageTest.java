@@ -19,7 +19,10 @@ package org.apache.camel.processor;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThrowExceptionMessageTest extends ContextTestSupport {
 
@@ -44,7 +47,8 @@ public class ThrowExceptionMessageTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:start").throwException(IllegalArgumentException.class, "Darn ${body} is invalid").to("mock:result");
+                from("direct:start").to("mock:start").throwException(IllegalArgumentException.class, "Darn ${body} is invalid")
+                        .to("mock:result");
             }
         };
     }

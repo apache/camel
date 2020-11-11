@@ -1,0 +1,17 @@
+[[testcontainers-spring-other]]
+= Testcontainers Spring Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc
+:docTitle: Testcontainers Spring
+:artifactId: camel-testcontainers-spring
+:description: Camel unit testing with Spring and testcontainers
+:since: 2.22
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/testcontainers-spring.adoc[opts=optional]
+
+*Since Camel {since}*
+
+Testing camel components is sometime complex because the 3rd party system a component interacts with does not provide testing facilities and/or is only available as a native application. To reduce this complexity, *Camel Testcontainers Spring* extends camel spring test support providing a way to create and interact with containerized applications.
+
+This module is an extension to the camel-testcontainers component to add support for Spring.
+Therefore see the documentation for testcontainers for more details.

@@ -36,7 +36,8 @@ public class FtpConsumerDoneFileNameFixedTest extends FtpServerTestSupport {
 
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        // wait a bit and it should not pickup the written file as there are no done file
+        // wait a bit and it should not pickup the written file as there are no
+        // done file
         Thread.sleep(1000);
 
         assertMockEndpointsSatisfied();
@@ -63,9 +64,7 @@ public class FtpConsumerDoneFileNameFixedTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl() + "&doneFileName=fin.dat")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from(getFtpUrl() + "&doneFileName=fin.dat").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

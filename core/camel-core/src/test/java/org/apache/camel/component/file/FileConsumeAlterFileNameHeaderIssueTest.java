@@ -22,8 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -31,7 +34,7 @@ import org.junit.Test;
 public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/files");
         super.setUp();
@@ -48,8 +51,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("file://target/data/files?initialDelay=0&delay=10&delete=true")
-                    // remove all headers
-                    .removeHeaders("*").to("mock:result");
+                        // remove all headers
+                        .removeHeaders("*").to("mock:result");
             }
         });
         context.start();
@@ -60,14 +63,14 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
-        assertFalse("Headers should have been removed", mock.getExchanges().get(0).getIn().hasHeaders());
+        assertFalse(mock.getExchanges().get(0).getIn().hasHeaders(), "Headers should have been removed");
 
         // the original file should have been deleted, as the file consumer
         // should be resilient against
         // end users deleting headers
-        assertFalse("File should been deleted", new File("target/data/files/hello.txt").exists());
+        assertFalse(new File("target/data/files/hello.txt").exists(), "File should been deleted");
     }
 
     @Test
@@ -76,8 +79,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("file://target/data/files?initialDelay=0&delay=10&delete=true")
-                    // change file header
-                    .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");
+                        // change file header
+                        .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");
             }
         });
         context.start();
@@ -89,12 +92,12 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // the original file should have been deleted, as the file consumer
         // should be resilient against
         // end users changing headers
-        assertFalse("File should been deleted", new File("target/data/files/hello.txt").exists());
+        assertFalse(new File("target/data/files/hello.txt").exists(), "File should been deleted");
     }
 
     @Test
@@ -103,8 +106,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("file://target/data/files?initialDelay=0&delay=10")
-                    // remove all headers
-                    .removeHeaders("*").to("mock:result");
+                        // remove all headers
+                        .removeHeaders("*").to("mock:result");
             }
         });
         context.start();
@@ -115,14 +118,14 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
-        assertFalse("Headers should have been removed", mock.getExchanges().get(0).getIn().hasHeaders());
+        assertFalse(mock.getExchanges().get(0).getIn().hasHeaders(), "Headers should have been removed");
 
         // the original file should have been moved, as the file consumer should
         // be resilient against
         // end users deleting headers
-        assertTrue("File should been moved", new File("target/data/files/.camel/hello.txt").exists());
+        assertTrue(new File("target/data/files/.camel/hello.txt").exists(), "File should been moved");
     }
 
     @Test
@@ -131,8 +134,8 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 from("file://target/data/files?initialDelay=0&delay=10")
-                    // change file header
-                    .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");
+                        // change file header
+                        .setHeader(Exchange.FILE_NAME, constant("bye.txt")).to("mock:result");
             }
         });
         context.start();
@@ -144,12 +147,12 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // the original file should have been moved, as the file consumer should
         // be resilient against
         // end users changing headers
-        assertTrue("File should been moved", new File("target/data/files/.camel/hello.txt").exists());
+        assertTrue(new File("target/data/files/.camel/hello.txt").exists(), "File should been moved");
     }
 
 }

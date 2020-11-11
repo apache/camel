@@ -32,12 +32,18 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 @Component("reactive-streams")
 public class ReactiveStreamsComponent extends DefaultComponent {
-    @Metadata(label = "advanced")
-    private ReactiveStreamsEngineConfiguration internalEngineConfiguration = new ReactiveStreamsEngineConfiguration();
+    @Metadata(label = "common", defaultValue = "CamelReactiveStreamsWorker")
+    private String threadPoolName = "CamelReactiveStreamsWorker";
+    @Metadata(label = "common")
+    private int threadPoolMinSize;
+    @Metadata(label = "common", defaultValue = "10")
+    private int threadPoolMaxSize = 10;
     @Metadata(label = "producer", defaultValue = "BUFFER")
     private ReactiveStreamsBackpressureStrategy backpressureStrategy = ReactiveStreamsBackpressureStrategy.BUFFER;
     @Metadata(label = "advanced")
     private String serviceType;
+    @Metadata(label = "advanced")
+    private ReactiveStreamsEngineConfiguration reactiveStreamsEngineConfiguration;
 
     private CamelReactiveStreamsService service;
 
@@ -81,15 +87,15 @@ public class ReactiveStreamsComponent extends DefaultComponent {
     // Properties
     // ****************************************
 
-    public ReactiveStreamsEngineConfiguration getInternalEngineConfiguration() {
-        return internalEngineConfiguration;
+    public ReactiveStreamsEngineConfiguration getReactiveStreamsEngineConfiguration() {
+        return reactiveStreamsEngineConfiguration;
     }
 
     /**
-     * Configures the internal engine for Reactive Streams.
+     * To use an existing reactive stream engine configuration.
      */
-    public void setInternalEngineConfiguration(ReactiveStreamsEngineConfiguration internalEngineConfiguration) {
-        this.internalEngineConfiguration = internalEngineConfiguration;
+    public void setReactiveStreamsEngineConfiguration(ReactiveStreamsEngineConfiguration reactiveStreamsEngineConfiguration) {
+        this.reactiveStreamsEngineConfiguration = reactiveStreamsEngineConfiguration;
     }
 
     public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
@@ -108,14 +114,46 @@ public class ReactiveStreamsComponent extends DefaultComponent {
     }
 
     /**
-     * Set the type of the underlying reactive streams implementation to use. The
-     * implementation is looked up from the registry or using a ServiceLoader, the
-     * default implementation is DefaultCamelReactiveStreamsService
+     * Set the type of the underlying reactive streams implementation to use. The implementation is looked up from the
+     * registry or using a ServiceLoader, the default implementation is DefaultCamelReactiveStreamsService
      *
      * @param serviceType the reactive service implementation name type
      */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
+    }
+
+    public String getThreadPoolName() {
+        return threadPoolName;
+    }
+
+    /**
+     * The name of the thread pool used by the reactive streams internal engine.
+     */
+    public void setThreadPoolName(String threadPoolName) {
+        this.threadPoolName = threadPoolName;
+    }
+
+    public int getThreadPoolMinSize() {
+        return threadPoolMinSize;
+    }
+
+    /**
+     * The minimum number of threads used by the reactive streams internal engine.
+     */
+    public void setThreadPoolMinSize(int threadPoolMinSize) {
+        this.threadPoolMinSize = threadPoolMinSize;
+    }
+
+    public int getThreadPoolMaxSize() {
+        return threadPoolMaxSize;
+    }
+
+    /**
+     * The maximum number of threads used by the reactive streams internal engine.
+     */
+    public void setThreadPoolMaxSize(int threadPoolMaxSize) {
+        this.threadPoolMaxSize = threadPoolMaxSize;
     }
 
     /**
@@ -124,12 +162,18 @@ public class ReactiveStreamsComponent extends DefaultComponent {
      * @return the reactive streams service
      */
     public synchronized CamelReactiveStreamsService getReactiveStreamsService() {
+        if (reactiveStreamsEngineConfiguration == null) {
+            reactiveStreamsEngineConfiguration = new ReactiveStreamsEngineConfiguration();
+            reactiveStreamsEngineConfiguration.setThreadPoolMaxSize(threadPoolMaxSize);
+            reactiveStreamsEngineConfiguration.setThreadPoolMinSize(threadPoolMinSize);
+            reactiveStreamsEngineConfiguration.setThreadPoolName(threadPoolName);
+        }
+
         if (service == null) {
             this.service = ReactiveStreamsHelper.resolveReactiveStreamsService(
-                getCamelContext(),
-                this.serviceType,
-                this.internalEngineConfiguration
-            );
+                    getCamelContext(),
+                    this.serviceType,
+                    this.reactiveStreamsEngineConfiguration);
 
             try {
                 // Start the service and add it to the Camel context to expose managed attributes

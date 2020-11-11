@@ -26,9 +26,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -39,7 +40,7 @@ public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupp
     private final Hashtable<String, String> env = new Hashtable<>();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // use the singleton context factory
         env.put(Context.INITIAL_CONTEXT_FACTORY, CamelSingletonInitialContextFactory.class.getName());
@@ -47,10 +48,10 @@ public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupp
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = new JndiRegistry(new InitialContext(env));
-        jndi.bind("jdbc/myDataSource", FAKE);
-        return jndi;
+    protected Registry createRegistry() throws Exception {
+        Context context = new InitialContext(env);
+        context.bind("jdbc/myDataSource", FAKE);
+        return new DefaultRegistry(new JndiBeanRepository(context));
     }
 
     @Test

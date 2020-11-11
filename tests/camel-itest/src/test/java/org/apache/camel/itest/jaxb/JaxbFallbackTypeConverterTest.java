@@ -24,29 +24,31 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.itest.jaxb.example.Bar;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JaxbFallbackTypeConverterTest extends CamelTestSupport {
-    
+
     @Test
-    public void testJaxbFallbackTypeConverter() {
+    void testJaxbFallbackTypeConverter() {
         Bar bar = new Bar();
         bar.setName("camel");
         bar.setValue("cool");
         String result = template.requestBody("direct:start", bar, String.class);
         assertNotNull(result);
-        assertTrue("Get a wrong xml string", result.indexOf("<bar name=\"camel\" value=\"cool\"/>") > 0);
-        assertTrue("The pretty print setting is not working",  result.indexOf("><bar") > 0);
+        assertTrue(result.indexOf("<bar name=\"camel\" value=\"cool\"/>") > 0, "Get a wrong xml string");
+        assertTrue(result.indexOf("><bar") > 0, "The pretty print setting is not working");
     }
-    
+
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 // setup the camel property for the PrettyPrint
                 context.getGlobalOptions().put(FallbackTypeConverter.PRETTY_PRINT, "false");
 
@@ -55,13 +57,11 @@ public class JaxbFallbackTypeConverterTest extends CamelTestSupport {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
-                        RequestEntity entity = in.getBody(RequestEntity.class);
-                        assertNull("We should not get the entity here", entity);
                         InputStream is = in.getMandatoryBody(InputStream.class);
                         // make sure we can get the InputStream rightly.
-                        exchange.getOut().setBody(is);
+                        exchange.getMessage().setBody(is);
                     }
-                    
+
                 });
             }
         };

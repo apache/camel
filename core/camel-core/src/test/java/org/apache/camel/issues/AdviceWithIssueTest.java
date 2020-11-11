@@ -19,11 +19,14 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AdviceWithIssueTest extends ContextTestSupport {
 
@@ -46,7 +49,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
     public void testAdviceWithErrorHandler() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         try {
-            RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+            AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     errorHandler(deadLetterChannel("mock:dead"));
@@ -54,14 +57,15 @@ public class AdviceWithIssueTest extends ContextTestSupport {
             });
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.", e.getMessage());
+            assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.",
+                    e.getMessage());
         }
     }
 
     @Test
     public void testAdviceWithOnException() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(true).to("mock:error");
@@ -80,7 +84,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
     @Test
     public void testAdviceWithInterceptFrom() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptFrom().to("mock:from");
@@ -99,7 +103,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
     @Test
     public void testAdviceWithInterceptSendToEndpoint() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:result").to("mock:to");
@@ -118,7 +122,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
     @Test
     public void testAdviceWithOnCompletion() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onCompletion().to("mock:done");

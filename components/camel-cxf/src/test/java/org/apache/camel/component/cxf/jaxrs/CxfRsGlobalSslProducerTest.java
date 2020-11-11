@@ -26,20 +26,19 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfRsGlobalSslProducerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getSslPort();
-
-    @Override
-    public boolean isCreateCamelContextPerClass() {
-        return true;
-    }
 
     public int getPort1() {
         return port1;
@@ -68,29 +67,29 @@ public class CxfRsGlobalSslProducerTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct://trust", new CxfRsGlobalSslProducerTest.MyProcessor());
 
         // get the response message 
-        Customer response = (Customer) exchange.getOut().getBody();
+        Customer response = (Customer) exchange.getMessage().getBody();
 
-        assertNotNull("The response should not be null ", response);
-        assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
-        assertEquals("Get a wrong customer name", response.getName(), "John");
-        assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Get a wrong header value", "value", exchange.getOut().getHeader("key"));
+        assertNotNull(response, "The response should not be null");
+        assertEquals("123", String.valueOf(response.getId()), "Get a wrong customer id");
+        assertEquals("John", response.getName(), "Get a wrong customer name");
+        assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
+        assertEquals("value", exchange.getMessage().getHeader("key"), "Get a wrong header value");
     }
 
     @Test
     public void testNoTrustStore() {
         Exchange exchange = template.send("direct://noTrust", new CxfRsGlobalSslProducerTest.MyProcessor());
-        assertThat(exchange.isFailed(), is(true));
+        assertTrue(exchange.isFailed());
         Exception e = exchange.getException();
-        assertThat(e.getCause().getClass().getCanonicalName(), is("javax.net.ssl.SSLHandshakeException"));
+        assertEquals("javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
     }
 
     @Test
     public void testWrongTrustStore() {
         Exchange exchange = template.send("direct://wrongTrust", new CxfRsGlobalSslProducerTest.MyProcessor());
-        assertThat(exchange.isFailed(), is(true));
+        assertTrue(exchange.isFailed());
         Exception e = exchange.getException();
-        assertThat(e.getCause().getClass().getCanonicalName(), is("javax.net.ssl.SSLHandshakeException"));
+        assertEquals("javax.net.ssl.SSLHandshakeException", e.getCause().getClass().getCanonicalName());
     }
 
     private class MyProcessor implements Processor {

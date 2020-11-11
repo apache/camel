@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.Model;
+import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.support.OrderedComparator;
@@ -38,11 +39,12 @@ public class RoutesConfigurer {
 
     private final RoutesCollector routesCollector;
     private final List<RoutesBuilder> routesBuilders;
+    private boolean addRestsToRoutes = true;
 
     /**
      * Creates a new routes configurer
      *
-     * @param routesCollector  routes collector
+     * @param routesCollector routes collector
      */
     public RoutesConfigurer(RoutesCollector routesCollector) {
         this(routesCollector, new ArrayList<>());
@@ -51,8 +53,8 @@ public class RoutesConfigurer {
     /**
      * Creates a new routes configurer
      *
-     * @param routesCollector  routes collector
-     * @param routesBuilders   existing route builders
+     * @param routesCollector routes collector
+     * @param routesBuilders  existing route builders
      */
     public RoutesConfigurer(RoutesCollector routesCollector, List<RoutesBuilder> routesBuilders) {
         this.routesCollector = routesCollector;
@@ -60,11 +62,18 @@ public class RoutesConfigurer {
     }
 
     /**
-     * Collects routes and rests from the various sources (like registry or opinionated
-     * classpath locations) and injects (adds) these into the Camel context.
+     * Whether rests should be automatic added as routes
+     */
+    public void setAddRestsToRoutes(boolean addRestsToRoutes) {
+        this.addRestsToRoutes = addRestsToRoutes;
+    }
+
+    /**
+     * Collects routes and rests from the various sources (like registry or opinionated classpath locations) and injects
+     * (adds) these into the Camel context.
      *
-     * @param camelContext  the Camel context
-     * @param config        the configuration
+     * @param camelContext the Camel context
+     * @param config       the configuration
      */
     public void configureRoutes(CamelContext camelContext, DefaultConfigurationProperties config) {
         if (config.isRoutesCollectorEnabled()) {
@@ -86,19 +95,31 @@ public class RoutesConfigurer {
 
                 boolean scan = !config.getXmlRoutes().equals("false");
                 if (scan) {
-                    List<RoutesDefinition> defs = routesCollector.collectXmlRoutesFromDirectory(camelContext, config.getXmlRoutes());
+                    List<RoutesDefinition> defs
+                            = routesCollector.collectXmlRoutesFromDirectory(camelContext, config.getXmlRoutes());
                     for (RoutesDefinition def : defs) {
                         LOG.debug("Adding routes into CamelContext from XML files: {}", config.getXmlRoutes());
                         camelContext.getExtension(Model.class).addRouteDefinitions(def.getRoutes());
                     }
                 }
 
+                boolean scanTemplates = !config.getXmlRouteTemplates().equals("false");
+                if (scanTemplates) {
+                    List<RouteTemplatesDefinition> defs = routesCollector.collectXmlRouteTemplatesFromDirectory(camelContext,
+                            config.getXmlRouteTemplates());
+                    for (RouteTemplatesDefinition def : defs) {
+                        LOG.debug("Adding route templates into CamelContext from XML files: {}", config.getXmlRouteTemplates());
+                        camelContext.getExtension(Model.class).addRouteTemplateDefinitions(def.getRouteTemplates());
+                    }
+                }
+
                 boolean scanRests = !config.getXmlRests().equals("false");
                 if (scanRests) {
-                    List<RestsDefinition> defs = routesCollector.collectXmlRestsFromDirectory(camelContext, config.getXmlRests());
+                    List<RestsDefinition> defs
+                            = routesCollector.collectXmlRestsFromDirectory(camelContext, config.getXmlRests());
                     for (RestsDefinition def : defs) {
                         LOG.debug("Adding rests into CamelContext from XML files: {}", config.getXmlRests());
-                        camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), true);
+                        camelContext.getExtension(Model.class).addRestDefinitions(def.getRests(), addRestsToRoutes);
                     }
                 }
             } catch (Exception e) {

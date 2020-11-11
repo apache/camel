@@ -23,7 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteStartupOrderTest extends ContextTestSupport {
 
@@ -37,7 +39,7 @@ public class RouteStartupOrderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // assert correct order
-        DefaultCamelContext dcc = (DefaultCamelContext)context;
+        DefaultCamelContext dcc = (DefaultCamelContext) context;
         List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
 
         assertEquals(4, order.size());

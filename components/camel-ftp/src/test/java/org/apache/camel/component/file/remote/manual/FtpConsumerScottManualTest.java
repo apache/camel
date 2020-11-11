@@ -45,9 +45,7 @@ public class FtpConsumerScottManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp:localhost?username=scott&password=tiger&noop=true")
-                    .to("file:target/ftptest")
-                    .to("mock:result");
+                from("ftp:localhost?username=scott&password=tiger&noop=true").to("file:target/ftptest").to("mock:result");
             }
         };
     }

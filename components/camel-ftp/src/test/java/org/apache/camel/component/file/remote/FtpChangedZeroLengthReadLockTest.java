@@ -30,7 +30,8 @@ import static org.apache.camel.test.junit5.TestSupport.createDirectory;
 public class FtpChangedZeroLengthReadLockTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/changed?password=admin&readLock=changed&readLockCheckInterval=1000&readLockMinLength=0&delete=true";
+        return "ftp://admin@localhost:" + getPort()
+               + "/changed?password=admin&readLock=changed&readLockCheckInterval=1000&readLockMinLength=0&delete=true";
     }
 
     @Test

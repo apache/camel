@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
@@ -38,6 +39,8 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToGetMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToSearchMethod;
@@ -46,17 +49,22 @@ import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper
 import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.getEndpointPropertyNames;
 
 /**
- * The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
+ * Send requests to Facebook APIs supported by Facebook4J.
  *
  * It allows producing messages to retrieve, add, and delete posts, likes, comments, photos, albums, videos, photos,
- * checkins, locations, links, etc. It also supports APIs that allow polling for posts, users, checkins, groups, locations, etc.
+ * checkins, locations, links, etc. It also supports APIs that allow polling for posts, users, checkins, groups,
+ * locations, etc.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", label = "social")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName",
+             category = { Category.SOCIAL })
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
 
     private FacebookNameStyle nameStyle;
 
-    @UriPath(name = "methodName", description = "What operation to perform") @Metadata(required = true)
+    @UriPath(name = "methodName", description = "What operation to perform")
+    @Metadata(required = true)
 
     private String method;
     private FacebookMethodsType methodName;
@@ -69,7 +77,8 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
     private List<FacebookMethodsType> candidates;
 
     public FacebookEndpoint(String uri, FacebookComponent facebookComponent,
-                            String remaining, FacebookEndpointConfiguration configuration) throws NoTypeConversionAvailableException {
+                            String remaining,
+                            FacebookEndpointConfiguration configuration) throws NoTypeConversionAvailableException {
         super(uri, facebookComponent);
         this.configuration = configuration;
         this.method = remaining;
@@ -145,7 +154,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
             // error if there are no candidates
             if (candidates.isEmpty()) {
                 throw new IllegalArgumentException(
-                    String.format("No matching operation for %s, with arguments %s", method, arguments));
+                        String.format("No matching operation for %s, with arguments %s", method, arguments));
             }
 
             if (nameStyle == null) {
@@ -158,10 +167,10 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         }
 
         // log missing/extra properties for debugging
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             final Set<String> missing = getMissingProperties(method, nameStyle, arguments);
             if (!missing.isEmpty()) {
-                log.debug("Method {} could use one or more properties from {}", method, missing);
+                LOG.debug("Method {} could use one or more properties from {}", method, missing);
             }
         }
     }

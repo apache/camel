@@ -2,9 +2,9 @@
 = Processor
 
 The
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Processor.html[Processor]
 interface is used to implement consumers of message exchanges or to
-implement a xref:message-translator.adoc[Message Translator].
+implement a xref:{eip-vc}:eips:message-translator.adoc[Message Translator].
 
 [[Processor-Usingaprocessorinaroute]]
 == Using a processor in a route
@@ -21,8 +21,7 @@ public class MyProcessor implements Processor {
 ----
 
 You can then easily use this inside a route by declaring the bean in
-Spring, say via the XML (or registering it in JNDI if that is your
-xref:registry.adoc[Registry]):
+Spring, say via the XML:
 
 [source,xml]
 ----
@@ -33,11 +32,8 @@ Then in Camel you can do:
 
 [source,java]
 ----
-from("activemq:myQueue").to("myProcessor");
+from("activemq:myQueue").process("myProcessor");
 ----
-
-[[Processor-UsingtheprocessDSL]]
-=== Using the process DSL
 
 In your route you can also use the `process` DSL syntax for invoking a
 processor.
@@ -50,11 +46,11 @@ from("activemq:myQueue").process(myProcessor);
 ----
 
 If you need to lookup the processor in the xref:registry.adoc[Registry]
-then you should use the `processRef` DSL:
+then you can do:
 
 [source,java]
 ----
-from("activemq:myQueue").processRef("myProcessor");
+from("activemq:myQueue").process("myProcessor");
 ----
 
 [[Processor-Whyuseprocesswhenyoucanusetoinstead]]
@@ -75,19 +71,20 @@ The process can be used in routes as an anonymous inner class such:
 
 This is usable for quickly whirling up some code. If the code in the
 inner class gets a bit more complicated it is of course advised to
-refactor it into a separate class.
+refactor it into a separate class. This approach is better if you do not want to use this processor again.
+From reusability perspective, it is not recommended to follow this approach.
 
 [[Processor-TurningyourprocessorintoafullComponent]]
 == Turning your processor into a full Component
 
 There is a base class called
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/ProcessorEndpoint.html[ProcessorEndpoint]
+https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/ProcessorEndpoint.html[ProcessorEndpoint]
 which supports the full xref:endpoint.adoc[Endpoint] semantics given a
 Processor instance.
 
 So you just need to create a xref:component.adoc[Component] class by
 deriving from
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent]
+https://www.javadoc.io/doc/org.apache.camel/camel-support/current/org/apache/camel/support/DefaultComponent.html[DefaultComponent]
 which returns instances of ProcessorEndpoint. For more details see
 xref:writing-components.adoc[Writing Components]
 

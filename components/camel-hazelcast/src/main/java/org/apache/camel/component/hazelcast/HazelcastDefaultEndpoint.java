@@ -32,7 +32,8 @@ import org.apache.camel.support.DefaultEndpoint;
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     protected HazelcastCommand command;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     protected String cacheName;
     @UriParam
     protected HazelcastInstance hazelcastInstance;
@@ -45,7 +46,8 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
         this(hazelcastInstance, endpointUri, component, null);
     }
 
-    public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
+    public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component,
+                                    String cacheName) {
         super(endpointUri, component);
         this.cacheName = cacheName;
         this.hazelcastInstance = hazelcastInstance;
@@ -95,8 +97,8 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The hazelcast instance reference name which can be used for hazelcast endpoint.
-     * If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance.
+     * The hazelcast instance reference name which can be used for hazelcast endpoint. If you don't specify the instance
+     * reference, camel use the default hazelcast instance from the camel-hazelcast instance.
      */
     public void setHazelcastInstanceName(String hazelcastInstanceName) {
         this.hazelcastInstanceName = hazelcastInstanceName;

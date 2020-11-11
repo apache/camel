@@ -29,7 +29,7 @@ import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class EtcdHelper  {
+public final class EtcdHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdHelper.class);
     private static final String OUTDATED_EVENT_MSG = "requested index is outdated and cleared";
 
@@ -46,8 +46,8 @@ public final class EtcdHelper  {
 
     public static ObjectMapper createObjectMapper() {
         return new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
     public static void setIndex(AtomicLong index, EtcdKeysResponse response) {
@@ -72,8 +72,8 @@ public final class EtcdHelper  {
 
         for (int i = 0; i < uris.length; i++) {
             etcdUriList[i] = camelContext != null
-                ? URI.create(camelContext.resolvePropertyPlaceholders(uris[i]))
-                : URI.create(uris[i]);
+                    ? URI.create(camelContext.resolvePropertyPlaceholders(uris[i]))
+                    : URI.create(uris[i]);
         }
 
         return etcdUriList;

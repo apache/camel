@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "attachments",
+    "title": "Attachments",
+    "description": "Support for attachments on Camel messages",
+    "deprecated": false,
+    "firstVersion": "3.0.0",
+    "label": "core",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-attachments",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

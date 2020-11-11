@@ -1,0 +1,103 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.2 to 3.3
+
+=== camel-jackson
+
+The dependency on `jackson-module-jaxb-annotations` and the option `enableJaxbAnnotationModule` have been removed. To
+enable support for JAXB annotations, users have to:
+
+* explicit add `jackson-module-jaxb-annotations`
+* configure the `JacksonDataFormat` and/or the `JacksonTypeConverters` module classes, example:
++
+.JacksonDataFormat
+[source,java]
+----
+JacksonDataFormat formatPojo = new JacksonDataFormat(TestJAXBPojo.class);
+formatPojo.setModuleClassNames(JaxbAnnotationModule.class.getName());
+----
++
+.JacksonTypeConverters
+[source,java]
+----
+context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
+context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES, JaxbAnnotationModule.class.getName());
+----
+
+this change affects also the Java DSL and as consequence the `enableJaxbAnnotationModule` option for the Json 
+DataFormat definition has been removed.
+
+=== Template components
+
+The template components which supports using a header to specify a dynamic resource to use as template, instead
+of the configured template on the endpoint is now enabled out of the box. If you want to use this feature then
+you must turn on `allowTemplateFromHeader=true` on either the endpoint or component level.
+
+This applies to the following templating components: camel-freemarker, camel-velocity, camel-mvel, camel-mustache,
+camel-string-template, camel-chunk, camel-jolt, camel-jslt, camel-robotframework.
+
+=== SupervisingRouteController
+
+The `SupervisingRouteController` has been refactored and its configuration has been simplified.
+And when configuring from spring boot, then the auto configuration parameters has
+been changed from `camel.supervising.controller` into the general `camel.springboot` which
+allows to share the same configuration across runtimes so its the same in Spring Boot, Camel Main,
+Camel K, Camel Quarkus, etc.
+
+=== Camel Karaf
+
+The following components is no longer supported in OSGi and has been removed from the Camel Karaf features file:
+camel-undertow, camel-jgroups, camel-jgroups-raft, camel-infinspan.
+
+=== camel-maven-plugin
+
+The `embedded` goal has been removed (was never really in use). Use `run` goal instead.
+
+=== API changes
+
+The dump model classes in package `org.apache.camel.support.dump` has been removed
+as they were not in use by Camel.
+
+In relation to the dump model classes removal, in camel-karaf the following commands were removed: `context-info`, `route-info`, `route-profile` and `route-step`.
+
+=== camel-main
+
+The following methods have been https://issues.apache.org/jira/browse/CAMEL-15005[relocated] from `org.apache.camel.main.BaseMainSupport` to `org.apache.camel.main.MainConfigurationProperties`:
+
+- getConfigurationClasses
+- setConfigurationClasses
+- addConfigurationClass
+- addConfiguration
+- getConfigurations
+- setConfigurations
+- getRouteBuilderClasses
+- setRouteBuilderClasses
+- getRouteBuilders
+- getRoutesBuilders
+- setRoutesBuilders
+- addRoutesBuilder
+
+This means that as example, the following snippet:
+
+[source,java]
+----
+Main main = new Main();
+main.addRoutesBuilder(....)
+----
+
+Should become
+
+[source,java]
+----
+Main main = new Main();
+main.configure().addRoutesBuilder(....)
+----
+
+See https://issues.apache.org/jira/browse/CAMEL-15005
+
+

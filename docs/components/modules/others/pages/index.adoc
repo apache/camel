@@ -1,0 +1,18 @@
+[list-of-camel-components]
+= Miscellaneous Components
+
+Component references are references used to place a component in an assembly. Apache Component references 
+provides various references that offers services for messaging, sending data, notifications and various other 
+services that can not only resolve easy messaging and transferring data but also provide securing of data.
+
+Number of Miscellaneous Components: indexCount:[] in indexUniqueCount:[unique=artifactid] JAR artifacts (indexCount:[attributes=deprecated] deprecated)
+
+[{index-table-format}]
+|===
+| Component | Artifact | Support Level | Since | Description
+|===
+//'relative=!nav.adoc' is a workaround for https://gitlab.com/antora/xref-validator/-/issues/9
+indexTable::[relative=!nav.adoc,cells="$xref,artifactid,supportlevel,since,description"]
+
+
+

@@ -17,7 +17,6 @@
 package org.apache.camel.management;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
@@ -25,16 +24,20 @@ import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.StopWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * JMX enabled processor or advice that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for instrumenting
- * processing of exchanges.
+ * JMX enabled processor or advice that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for
+ * instrumenting processing of exchanges.
  * <p/>
- * This implementation has been optimised to work in dual mode, either as an advice or as a processor.
- * The former is faster and the latter is required when the error handler has been configured with redelivery enabled.
+ * This implementation has been optimised to work in dual mode, either as an advice or as a processor. The former is
+ * faster and the latter is required when the error handler has been configured with redelivery enabled.
  */
 public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
         implements InstrumentationProcessor<StopWatch>, Ordered {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultInstrumentationProcessor.class);
 
     private PerformanceCounter counter;
     private String type;
@@ -45,7 +48,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     }
 
     public DefaultInstrumentationProcessor(String type) {
-        super((AsyncProcessor) null);
+        super(null);
         this.type = type;
     }
 
@@ -67,32 +70,24 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // only record time if stats is enabled
-        final StopWatch watch = (counter != null && counter.isStatisticsEnabled()) ? new StopWatch() : null;
+        final StopWatch watch = before(exchange);
 
-        // mark beginning to process the exchange
-        if (watch != null) {
-            beginTime(exchange);
-        }
-
-        return processor.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
+        // optimize to only create a new callback if needed
+        AsyncCallback ac = callback;
+        boolean newCallback = watch != null;
+        if (newCallback) {
+            ac = doneSync -> {
                 try {
                     // record end time
-                    if (watch != null) {
-                        recordTime(exchange, watch.taken());
-                    }
+                    after(exchange, watch);
                 } finally {
                     // and let the original callback know we are done as well
                     callback.done(doneSync);
                 }
-            }
+            };
+        }
 
-            @Override
-            public String toString() {
-                return DefaultInstrumentationProcessor.this.toString();
-            }
-        });
+        return processor.process(exchange, ac);
     }
 
     protected void beginTime(Exchange exchange) {
@@ -100,8 +95,8 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     }
 
     protected void recordTime(Exchange exchange, long duration) {
-        if (log.isTraceEnabled()) {
-            log.trace("{}Recording duration: {} millis for exchange: {}", type != null ? type + ": " : "", duration, exchange);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("{}Recording duration: {} millis for exchange: {}", type != null ? type + ": " : "", duration, exchange);
         }
 
         if (!exchange.isFailed() && exchange.getException() == null) {
@@ -120,7 +115,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     }
 
     @Override
-    public StopWatch before(Exchange exchange) throws Exception {
+    public StopWatch before(Exchange exchange) {
         // only record time if stats is enabled
         StopWatch answer = counter != null && counter.isStatisticsEnabled() ? new StopWatch() : null;
         if (answer != null) {
@@ -130,7 +125,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
     }
 
     @Override
-    public void after(Exchange exchange, StopWatch watch) throws Exception {
+    public void after(Exchange exchange, StopWatch watch) {
         // record end time
         if (watch != null) {
             recordTime(exchange, watch.taken());

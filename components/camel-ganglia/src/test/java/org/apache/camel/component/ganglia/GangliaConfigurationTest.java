@@ -31,8 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * JUnit test class for
- * <code>org.apache.camel.component.ganglia.GangliaConfiguration</code>
+ * JUnit test class for <code>org.apache.camel.component.ganglia.GangliaConfiguration</code>
  */
 public class GangliaConfigurationTest {
 

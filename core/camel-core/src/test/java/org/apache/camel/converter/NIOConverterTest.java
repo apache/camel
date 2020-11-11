@@ -16,13 +16,17 @@
  */
 package org.apache.camel.converter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NIOConverterTest extends ContextTestSupport {
 
@@ -35,8 +39,8 @@ public class NIOConverterTest extends ContextTestSupport {
     }
 
     /**
-     * Test if returned array size is only to limit of ByteBuffer. If byteBuffer
-     * capacity is bigger that limit, we MUST return data only to the limit.
+     * Test if returned array size is only to limit of ByteBuffer. If byteBuffer capacity is bigger that limit, we MUST
+     * return data only to the limit.
      */
     @Test
     public void testToByteArrayBigBuffer() {
@@ -74,6 +78,13 @@ public class NIOConverterTest extends ContextTestSupport {
     public void testToByteBuffer() {
         ByteBuffer bb = NIOConverter.toByteBuffer("Hello".getBytes());
         assertNotNull(bb);
+    }
+
+    @Test
+    public void testToByteBufferByteArrayOutputStream() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos.write(72);
+        assertEquals(72, NIOConverter.toByteBuffer(baos).get());
     }
 
     @Test
@@ -124,7 +135,7 @@ public class NIOConverterTest extends ContextTestSupport {
     public void testToByteBufferFloat() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Float.valueOf("2"));
         assertNotNull(bb);
-        assertEquals(2.0f, bb.getFloat(), 1e-5f);
+        assertEquals(2.0f, bb.getFloat(), (double) 1e-5f);
     }
 
     @Test

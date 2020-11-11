@@ -25,7 +25,8 @@ public class Forecast7WeatherMadridConsumerTest extends BaseWeatherConsumerTest 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("weather:foo?location=Madrid,Spain&period=7 days&units=IMPERIAL&appid=9162755b2efa555823cfe0451d7fff38").to("mock:result");
+                from("weather:foo?location=Madrid,Spain&period=7 days&units=IMPERIAL&appid=9162755b2efa555823cfe0451d7fff38")
+                        .to("mock:result");
             }
         };
     }

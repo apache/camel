@@ -16,36 +16,37 @@
  */
 package org.apache.camel.converter.crypto;
 
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.converter.crypto.HexUtils.byteArrayToHexString;
 import static org.apache.camel.converter.crypto.HexUtils.hexToByteArray;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HexUtilsTest extends TestSupport {
+public class HexUtilsTest {
 
-    byte[] array = {(byte)0x01, (byte)0x23, (byte)0x45, (byte)0x67, (byte)0x89, (byte)0xAB, (byte)0xCD, (byte)0xEF};
+    byte[] array = { (byte) 0x01, (byte) 0x23, (byte) 0x45, (byte) 0x67, (byte) 0x89, (byte) 0xAB, (byte) 0xCD, (byte) 0xEF };
 
     @Test
-    public void testByteArrayToHex() throws Exception {
+    void testByteArrayToHex() {
         assertEquals("0123456789abcdef", byteArrayToHexString(array));
     }
 
     @Test
-    public void roundtripArray() {
+    void roundtripArray() {
         assertArrayEquals(array, hexToByteArray(byteArrayToHexString(array)));
     }
 
     @Test
-    public void roundtrip() {
+    void roundtrip() {
         String hexchars = "01234567890abcdefABCDEF";
 
         for (int x = 0; x < 100000; x++) {
-            int r = (int)(Math.random() * 50);
+            int r = (int) (Math.random() * 50);
 
             StringBuilder b = new StringBuilder(r);
             for (int y = 0; y < r; y++) {
-                b.append(hexchars.charAt((int)(Math.random() * hexchars.length())));
+                b.append(hexchars.charAt((int) (Math.random() * hexchars.length())));
             }
             String hexString = b.toString().toLowerCase();
             if (b.length() % 2 > 0) {

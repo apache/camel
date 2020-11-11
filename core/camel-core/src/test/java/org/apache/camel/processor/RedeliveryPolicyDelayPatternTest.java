@@ -17,10 +17,11 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class RedeliveryPolicyDelayPatternTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class RedeliveryPolicyDelayPatternTest {
 
     private RedeliveryPolicy policy = new RedeliveryPolicy();
 

@@ -24,10 +24,10 @@ import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
 import org.jooq.Query;
 import org.jooq.Result;
 import org.jooq.ResultQuery;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jooq.db.Tables.BOOK_STORE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JooqProducerTest extends BaseJooqTest {
 
@@ -39,25 +39,26 @@ public class JooqProducerTest extends BaseJooqTest {
         BookStoreRecord bookStoreRecord = new BookStoreRecord("test");
         producerTemplate.sendBody(context.getEndpoint("direct:insert"), ExchangePattern.InOut, bookStoreRecord);
         ResultQuery querySelect = create.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq("test"));
-        Result actual = (Result)producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
-        Assert.assertEquals(1, actual.size());
-        Assert.assertEquals(bookStoreRecord, actual.get(0));
+        Result actual
+                = (Result) producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
+        assertEquals(1, actual.size());
+        assertEquals(bookStoreRecord, actual.get(0));
 
         // Update and select
         String newName = "testNew";
         Query query = create.update(BOOK_STORE).set(BOOK_STORE.NAME, newName).where(BOOK_STORE.NAME.eq("test"));
         producerTemplate.sendBody(context.getEndpoint("direct:update"), ExchangePattern.InOut, query);
         querySelect = create.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq(newName));
-        actual = (Result)producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
-        Assert.assertEquals(1, actual.size());
-        Assert.assertEquals(newName, ((BookStoreRecord)actual.get(0)).getName());
+        actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
+        assertEquals(1, actual.size());
+        assertEquals(newName, ((BookStoreRecord) actual.get(0)).getName());
 
         // Delete and select
         query = create.delete(BOOK_STORE).where(BOOK_STORE.NAME.eq(newName));
         producerTemplate.sendBody(context.getEndpoint("direct:delete"), ExchangePattern.InOut, query);
         querySelect = create.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq(newName));
-        actual = (Result)producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
-        Assert.assertEquals(0, actual.size());
+        actual = (Result) producerTemplate.sendBody(context.getEndpoint("direct:select"), ExchangePattern.InOut, querySelect);
+        assertEquals(0, actual.size());
     }
 
     @Override

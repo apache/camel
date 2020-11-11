@@ -20,24 +20,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.googlecode.junittoolbox.ParallelParameterized;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals;
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals.Info;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
+import org.apache.camel.test.junit5.params.Parameter;
+import org.apache.camel.test.junit5.params.Parameterized;
+import org.apache.camel.test.junit5.params.Parameters;
+import org.apache.camel.test.junit5.params.Test;
 
-@RunWith(ParallelParameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Parameterized
 public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
 
-    private final String format;
+    @Parameter
+    private String format;
 
-    public ApprovalIntegrationTest(final String format) {
+    public ApprovalIntegrationTest() {
         super(5);
-        this.format = format;
     }
 
     @Test
@@ -48,14 +51,16 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
                                                                                  + "&approvalContextId=%s"//
                                                                                  + "&approvalNextApproverIds=%s"//
                                                                                  + "&approvalComments=Integration test"//
-                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process", format, accountIds.get(0), userId),
-                                                                   NOT_USED, ApprovalResult.class);
+                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process",
+                format, accountIds.get(0), userId),
+                NOT_USED, ApprovalResult.class);
 
-        assertNotNull("Approval should have resulted in value", approvalResult);
+        assertNotNull(approvalResult, "Approval should have resulted in value");
 
-        assertEquals("There should be one Account waiting approval", 1, approvalResult.size());
+        assertEquals(1, approvalResult.size(), "There should be one Account waiting approval");
 
-        assertEquals("Instance status of the item in approval result should be `Pending`", "Pending", approvalResult.iterator().next().getInstanceStatus());
+        assertEquals("Instance status of the item in approval result should be `Pending`", "Pending",
+                approvalResult.iterator().next().getInstanceStatus());
 
         // as it stands on 18.11.2016. the GET method on
         // /vXX.X/process/approvals/ with Accept other than
@@ -63,14 +68,14 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
         // supported
         final Approvals approvals = template.requestBody("salesforce:approvals", NOT_USED, Approvals.class);
 
-        assertNotNull("Approvals should be fetched", approvals);
+        assertNotNull(approvals, "Approvals should be fetched");
 
         final List<Info> accountApprovals = approvals.approvalsFor("Account");
-        assertEquals("There should be one Account waiting approval", 1, accountApprovals.size());
+        assertEquals(1, accountApprovals.size(), "There should be one Account waiting approval");
     }
 
     @Test
-    public void shouldSubmitBulkApprovals() {
+    public void shouldSubmitBulkApprovals(String format) {
         final List<ApprovalRequest> approvalRequests = accountIds.stream().map(id -> {
             final ApprovalRequest request = new ApprovalRequest();
             request.setContextId(id);
@@ -84,13 +89,14 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
                                                                                  + "format=%s"//
                                                                                  + "&approvalActionType=Submit"//
                                                                                  + "&approvalNextApproverIds=%s"//
-                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process", format, userId),
-                                                                   approvalRequests, ApprovalResult.class);
+                                                                                 + "&approvalProcessDefinitionNameOrId=Test_Account_Process",
+                format, userId),
+                approvalRequests, ApprovalResult.class);
 
-        assertEquals("Should have same number of approval results as requests", approvalRequests.size(), approvalResult.size());
+        assertEquals(approvalRequests.size(), approvalResult.size(), "Should have same number of approval results as requests");
     }
 
-    @Parameters(name = "format = {0}")
+    @Parameters
     public static Iterable<String> formats() {
         return Arrays.asList("JSON", "XML");
     }

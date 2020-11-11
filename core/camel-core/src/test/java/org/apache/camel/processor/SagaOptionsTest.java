@@ -21,8 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.saga.InMemorySagaService;
-import org.junit.Test;
+import org.apache.camel.saga.InMemorySagaService;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SagaOptionsTest extends ContextTestSupport {
 
@@ -78,10 +80,12 @@ public class SagaOptionsTest extends ContextTestSupport {
 
                 context.addService(new InMemorySagaService());
 
-                from("direct:workflow").saga().option("id", constant("myheader")).option("name", header("myname")).completion("mock:complete").compensation("mock:compensate")
-                    .choice().when(body().isEqualTo("compensate")).process(ex -> {
-                        throw new RuntimeException("forced compensate");
-                    }).end().setHeader("myname", constant("TryToOverride")).setHeader("name", constant("TryToOverride")).to("mock:endpoint");
+                from("direct:workflow").saga().option("id", constant("myheader")).option("name", header("myname"))
+                        .completion("mock:complete").compensation("mock:compensate")
+                        .choice().when(body().isEqualTo("compensate")).process(ex -> {
+                            throw new RuntimeException("forced compensate");
+                        }).end().setHeader("myname", constant("TryToOverride")).setHeader("name", constant("TryToOverride"))
+                        .to("mock:endpoint");
 
                 from("direct:wrong-expression").saga().option("id", simple("${10 / 0}")).to("log:info");
 

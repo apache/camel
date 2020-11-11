@@ -20,6 +20,20 @@ following line -- `class=com.example.CustomComponent`.
 Users can then either explicitly create your component, configure it and
 register with a `CamelContext` or users can use a URI which auto-creates your component.
 
+[NOTE]
+====
+
+It is recommended to bootstrap your initial component using xref:camel-maven-archetypes.adoc[Camel Maven Archetypes], as it will give you all the necessary bits to start developing your component with ease.
+
+====
+
+[NOTE]
+====
+
+You will need as well to make sure to have xref:camel-component-maven-plugin.adoc[Camel Component Maven Plugin] included in your component's `pom.xml` file, order to generate all the necessary metadata and Java files for your component.
+
+====
+
 [[WritingComponents-WritingEndpoints]]
 == Writing Endpoints
 
@@ -27,7 +41,7 @@ When implementing an xref:endpoint.adoc[Endpoint] you typically may
 implement one or more of the following methods:
 
 * `createProducer` will create a producer for sending message exchanges to the endpoint
-* `createConsumer` implements the xref:eventDrivenConsumer-eip.adoc[Event Driven Consumer]
+* `createConsumer` implements the xref:{eip-vc}:eips:eventDrivenConsumer-eip.adoc[Event Driven Consumer]
 pattern for consuming message exchanges from the endpoint.
 
 Typically you just derive from `DefaultEndpoint`

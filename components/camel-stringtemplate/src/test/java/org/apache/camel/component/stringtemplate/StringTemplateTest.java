@@ -20,48 +20,45 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StringTemplateTest extends CamelTestSupport {
-    
+
     @Test
     public void test() throws Exception {
-        Exchange response = template.request("direct:a", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Monday");
-                exchange.getIn().setHeader("name", "Christian");
-                exchange.setProperty("item", "7");
-            }
-        });
-        
-        assertEquals("Dear Christian. You ordered item 7 on Monday.", response.getOut().getBody());
-        assertEquals("org/apache/camel/component/stringtemplate/template.tm", response.getOut().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
-        assertEquals("Christian", response.getOut().getHeader("name"));
-    }
-    
-    @Test
-    public void testVelocityContext() throws Exception {
-        Exchange exchange = template.request("direct:a", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("");
-                exchange.getIn().setHeader("name", "Christian");
-                Map<String, Object> variableMap = new HashMap<>();
-                Map<String, Object> headersMap = new HashMap<>();
-                headersMap.put("name", "Willem");
-                variableMap.put("headers", headersMap);
-                variableMap.put("body", "Monday");
-                variableMap.put("exchange", exchange);
-                exchange.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, variableMap);
-                exchange.setProperty("item", "7");
-            }
+        Exchange response = template.request("direct:a", exchange -> {
+            exchange.getIn().setBody("Monday");
+            exchange.getIn().setHeader("name", "Christian");
+            exchange.setProperty("item", "7");
         });
 
-        assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getOut().getBody());
-        assertEquals("Christian", exchange.getOut().getHeader("name"));
+        assertEquals("Dear Christian. You ordered item 7 on Monday.", response.getMessage().getBody());
+        assertEquals("org/apache/camel/component/stringtemplate/template.tm",
+                response.getMessage().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
+        assertEquals("Christian", response.getMessage().getHeader("name"));
+    }
+
+    @Test
+    public void testVariableMap() throws Exception {
+        Exchange exchange = template.request("direct:a", exchange1 -> {
+            exchange1.getIn().setBody("");
+            exchange1.getIn().setHeader("name", "Christian");
+            Map<String, Object> variableMap = new HashMap<>();
+            Map<String, Object> headersMap = new HashMap<>();
+            headersMap.put("name", "Willem");
+            variableMap.put("headers", headersMap);
+            variableMap.put("body", "Monday");
+            variableMap.put("exchange", exchange1);
+            exchange1.getIn().setHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, variableMap);
+            exchange1.setProperty("item", "7");
+        });
+
+        assertEquals("Dear Willem. You ordered item 7 on Monday.", exchange.getMessage().getBody());
+        assertEquals("Christian", exchange.getMessage().getHeader("name"));
     }
 
     @Override
@@ -69,8 +66,8 @@ public class StringTemplateTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").
-                        to("string-template:org/apache/camel/component/stringtemplate/template.tm");
+                from("direct:a").to(
+                        "string-template:org/apache/camel/component/stringtemplate/template.tm?allowTemplateFromHeader=true&allowContextMapAll=true");
                 // END SNIPPET: example
             }
         };

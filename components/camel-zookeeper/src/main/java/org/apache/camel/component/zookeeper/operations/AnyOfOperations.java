@@ -24,14 +24,12 @@ import org.apache.camel.component.zookeeper.ZooKeeperUtils;
 import org.apache.zookeeper.WatchedEvent;
 
 /**
- * <code>AnyOfOperations</code> is a composite operation of one or more sub
- * operation, executing each in turn until any one succeeds. If any execute
- * successfully, this operation succeeds; if the sub operations are all executed
- * without success it fails.
+ * <code>AnyOfOperations</code> is a composite operation of one or more sub operation, executing each in turn until any
+ * one succeeds. If any execute successfully, this operation succeeds; if the sub operations are all executed without
+ * success it fails.
  * <p>
- * It is mostly used for test and watch scenarios where a node is tested for
- * existence, data or children, falling back to a corresponding watch operation
- * if the test operation fails.
+ * It is mostly used for test and watch scenarios where a node is tested for existence, data or children, falling back
+ * to a corresponding watch operation if the test operation fails.
  */
 @SuppressWarnings("rawtypes")
 public class AnyOfOperations extends ZooKeeperOperation implements WatchedEventProvider {

@@ -22,8 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
 
@@ -31,8 +34,8 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
     private static AtomicBoolean check2 = new AtomicBoolean();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("cbrBean", new MyCBRBean());
         return jndi;
     }
@@ -80,8 +83,9 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start").choice().when().method("cbrBean", "checkHeader").to("mock:foo").when().method("cbrBean", "checkHeader2").to("mock:foo2").otherwise()
-                    .to("mock:bar").end();
+                from("direct:start").choice().when().method("cbrBean", "checkHeader").to("mock:foo").when()
+                        .method("cbrBean", "checkHeader2").to("mock:foo2").otherwise()
+                        .to("mock:bar").end();
             }
         };
     }
@@ -92,7 +96,7 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
             check.set(true);
 
             Message inMsg = exchange.getIn();
-            String foo = (String)inMsg.getHeader("foo");
+            String foo = (String) inMsg.getHeader("foo");
 
             if ("Kaboom".equalsIgnoreCase(foo)) {
                 throw new IllegalArgumentException("Forced");
@@ -105,7 +109,7 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
             check2.set(true);
 
             Message inMsg = exchange.getIn();
-            String foo = (String)inMsg.getHeader("foo");
+            String foo = (String) inMsg.getHeader("foo");
 
             if ("Kaboom".equalsIgnoreCase(foo)) {
                 throw new IllegalArgumentException("Forced");

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.google.sheets.internal;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.sheets.GoogleSheetsConfiguration;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
@@ -26,13 +27,13 @@ public final class GoogleSheetsPropertiesHelper extends ApiMethodPropertiesHelpe
 
     private static GoogleSheetsPropertiesHelper helper;
 
-    private GoogleSheetsPropertiesHelper() {
-        super(GoogleSheetsConfiguration.class, GoogleSheetsConstants.PROPERTY_PREFIX);
+    private GoogleSheetsPropertiesHelper(CamelContext context) {
+        super(context, GoogleSheetsConfiguration.class, GoogleSheetsConstants.PROPERTY_PREFIX);
     }
 
-    public static synchronized GoogleSheetsPropertiesHelper getHelper() {
+    public static synchronized GoogleSheetsPropertiesHelper getHelper(CamelContext context) {
         if (helper == null) {
-            helper = new GoogleSheetsPropertiesHelper();
+            helper = new GoogleSheetsPropertiesHelper(context);
         }
         return helper;
     }

@@ -37,6 +37,7 @@ public final class ConsulCoordinatesProducer extends AbstractConsulProducer<Coor
 
     @InvokeOnHeader(ConsulCoordinatesActions.NODES)
     protected void nodes(Message message) throws Exception {
-        setBodyAndResult(message, getClient().getNodes(message.getHeader(ConsulConstants.CONSUL_DATACENTER, getConfiguration().getDatacenter(), String.class)));
+        setBodyAndResult(message, getClient().getNodes(
+                message.getHeader(ConsulConstants.CONSUL_DATACENTER, getConfiguration().getDatacenter(), String.class)));
     }
 }

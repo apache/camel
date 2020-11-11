@@ -52,38 +52,43 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
 
     protected void doOnInit(Route route) throws Exception {
         QuartzComponent quartz = route.getCamelContext().getComponent("quartz", QuartzComponent.class);
-        setScheduler(quartz.getScheduler());
+        quartz.addScheduleInitTask(scheduler -> {
+            setScheduler(scheduler);
 
-        // Important: do not start scheduler as QuartzComponent does that automatic
-        // when CamelContext has been fully initialized and started
+            // Important: do not start scheduler as QuartzComponent does that automatic
+            // when CamelContext has been fully initialized and started
 
-        if (getRouteStopGracePeriod() == 0) {
-            setRouteStopGracePeriod(10000);
-        }
+            if (getRouteStopGracePeriod() == 0) {
+                setRouteStopGracePeriod(10000);
+            }
 
-        if (getTimeUnit() == null) {
-            setTimeUnit(TimeUnit.MILLISECONDS);
-        }
+            if (getTimeUnit() == null) {
+                setTimeUnit(TimeUnit.MILLISECONDS);
+            }
 
-        // validate time options has been configured
-        if ((getRouteStartDate() == null) && (getRouteStopDate() == null) && (getRouteSuspendDate() == null) && (getRouteResumeDate() == null)) {
-            throw new IllegalArgumentException("Scheduled Route Policy for route " + route.getId() + " has no start/stop/suspend/resume times specified");
-        }
+            // validate time options has been configured
+            if ((getRouteStartDate() == null) && (getRouteStopDate() == null) && (getRouteSuspendDate() == null)
+                    && (getRouteResumeDate() == null)) {
+                throw new IllegalArgumentException(
+                        "Scheduled Route Policy for route " + route.getId()
+                                                   + " has no start/stop/suspend/resume times specified");
+            }
 
-        registerRouteToScheduledRouteDetails(route);
-        if (getRouteStartDate() != null) {
-            scheduleRoute(Action.START, route);
-        }
-        if (getRouteStopDate() != null) {
-            scheduleRoute(Action.STOP, route);
-        }
+            registerRouteToScheduledRouteDetails(route);
+            if (getRouteStartDate() != null) {
+                scheduleRoute(Action.START, route);
+            }
+            if (getRouteStopDate() != null) {
+                scheduleRoute(Action.STOP, route);
+            }
 
-        if (getRouteSuspendDate() != null) {
-            scheduleRoute(Action.SUSPEND, route);
-        }
-        if (getRouteResumeDate() != null) {
-            scheduleRoute(Action.RESUME, route);
-        }
+            if (getRouteSuspendDate() != null) {
+                scheduleRoute(Action.SUSPEND, route);
+            }
+            if (getRouteResumeDate() != null) {
+                scheduleRoute(Action.RESUME, route);
+            }
+        });
     }
 
     @Override
@@ -94,8 +99,8 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
             trigger = TriggerBuilder.newTrigger()
                     .withIdentity(TRIGGER_START + route.getId(), TRIGGER_GROUP + route.getId())
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withRepeatCount(getRouteStartRepeatCount())
-                        .withIntervalInMilliseconds(getRouteStartRepeatInterval()))
+                            .withRepeatCount(getRouteStartRepeatCount())
+                            .withIntervalInMilliseconds(getRouteStartRepeatInterval()))
                     .startAt(routeStartDate == null ? new Date() : routeStartDate)
                     .build();
         } else if (action == Action.STOP) {

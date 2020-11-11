@@ -21,10 +21,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitAggregateInOutTest extends ContextTestSupport {
 
@@ -46,8 +48,8 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("MyOrderService", new MyOrderService());
         return jndi;
     }
@@ -66,22 +68,22 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
                 // so we provide our
                 // own strategy with the class MyOrderStrategy.
                 from("direct:start").split(body().tokenize("@"), new MyOrderStrategy())
-                    // each splitted message is then send to this bean where we
-                    // can process it
-                    .to("bean:MyOrderService?method=handleOrder")
-                    // this is important to end the splitter route as we do not
-                    // want to do more routing
-                    // on each splitted message
-                    .end()
-                    // after we have splitted and handled each message we want
-                    // to send a single combined
-                    // response back to the original caller, so we let this bean
-                    // build it for us
-                    // this bean will receive the result of the aggregate
-                    // strategy: MyOrderStrategy
-                    .to("bean:MyOrderService?method=buildCombinedResponse")
-                    // END SNIPPET: e1
-                    .to("mock:result");
+                        // each splitted message is then send to this bean where we
+                        // can process it
+                        .to("bean:MyOrderService?method=handleOrder")
+                        // this is important to end the splitter route as we do not
+                        // want to do more routing
+                        // on each splitted message
+                        .end()
+                        // after we have splitted and handled each message we want
+                        // to send a single combined
+                        // response back to the original caller, so we let this bean
+                        // build it for us
+                        // this bean will receive the result of the aggregate
+                        // strategy: MyOrderStrategy
+                        .to("bean:MyOrderService?method=buildCombinedResponse")
+                        // END SNIPPET: e1
+                        .to("mock:result");
             }
         };
     }
@@ -100,8 +102,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
         }
 
         /**
-         * We use the same bean for building the combined response to send back
-         * to the original caller
+         * We use the same bean for building the combined response to send back to the original caller
          */
         public String buildCombinedResponse(String line) {
             LOG.debug("BuildCombinedResponse: " + line);
@@ -112,10 +113,9 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
 
     // START SNIPPET: e3
     /**
-     * This is our own order aggregation strategy where we can control how each
-     * splitted message should be combined. As we do not want to loos any
-     * message we copy from the new to the old to preserve the order lines as
-     * long we process them
+     * This is our own order aggregation strategy where we can control how each splitted message should be combined. As
+     * we do not want to loos any message we copy from the new to the old to preserve the order lines as long we process
+     * them
      */
     public static class MyOrderStrategy implements AggregationStrategy {
 

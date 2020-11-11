@@ -42,17 +42,17 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     private void init(AbstractJAXRSFactoryBean bean) {
         this.bean = bean;
         if (bean instanceof BeanIdAware) {
-            setBeanId(((BeanIdAware)bean).getBeanId());
+            setBeanId(((BeanIdAware) bean).getBeanId());
         }
 
-        ApplicationContext applicationContext = ((SpringCamelContext)getCamelContext()).getApplicationContext();
+        ApplicationContext applicationContext = ((SpringCamelContext) getCamelContext()).getApplicationContext();
         configurer = new ConfigurerImpl(applicationContext);
     }
 
     @Override
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
         checkBeanType(bean, JAXRSServerFactoryBean.class);
-        return (JAXRSServerFactoryBean)bean;
+        return (JAXRSServerFactoryBean) bean;
     }
 
     @Override
@@ -79,14 +79,14 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     public void setBeanId(String id) {
         this.beanId = id;
     }
-    
+
     private JAXRSClientFactoryBean newInstanceWithCommonProperties() {
         SpringJAXRSClientFactoryBean cfb = new SpringJAXRSClientFactoryBean();
-        
+
         if (bean instanceof SpringJAXRSClientFactoryBean) {
             ReflectionUtils.shallowCopyFieldState(bean, cfb);
         }
 
         return cfb;
-    }    
+    }
 }

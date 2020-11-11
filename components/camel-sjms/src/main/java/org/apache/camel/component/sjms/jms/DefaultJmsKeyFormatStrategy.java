@@ -19,21 +19,20 @@ package org.apache.camel.component.sjms.jms;
 /**
  * Default strategy that handles dots and hyphens.
  * <p/>
- * This can be used for sending keys contain package names that is common by
- * Java frameworks.
+ * This can be used for sending keys contain package names that is common by Java frameworks.
  */
 public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 
     @Override
     public String encodeKey(String key) {
         String answer = key.replace(".", "_DOT_");
-        answer = answer.replaceAll("-", "_HYPHEN_");
+        answer = answer.replace("-", "_HYPHEN_");
         return answer;
     }
 
     @Override
     public String decodeKey(String key) {
-        String answer = key.replaceAll("_HYPHEN_", "-");
+        String answer = key.replace("_HYPHEN_", "-");
         answer = answer.replace("_DOT_", ".");
         return answer;
     }

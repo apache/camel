@@ -44,13 +44,15 @@ public final class SigningUtils {
     private SigningUtils() {
     }
 
-    public static AS2SignedDataGenerator createSigningGenerator(AS2SignatureAlgorithm signingAlgorithm, Certificate[] certificateChain, PrivateKey privateKey) throws HttpException {
+    public static AS2SignedDataGenerator createSigningGenerator(
+            AS2SignatureAlgorithm signingAlgorithm, Certificate[] certificateChain, PrivateKey privateKey)
+            throws HttpException {
         Args.notNull(certificateChain, "certificateChain");
         if (certificateChain.length == 0 || !(certificateChain[0] instanceof X509Certificate)) {
             throw new IllegalArgumentException("Invalid certificate chain");
         }
         Args.notNull(privateKey, "privateKey");
-        
+
         AS2SignedDataGenerator gen = new AS2SignedDataGenerator();
 
         // Get first certificate in chain for signing
@@ -64,8 +66,9 @@ public final class SigningUtils {
 
         // Create signing attributes
         ASN1EncodableVector attributes = new ASN1EncodableVector();
-        attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(new IssuerAndSerialNumber(
-                new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
+        attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(
+                new IssuerAndSerialNumber(
+                        new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
 
         SignerInfoGenerator signerInfoGenerator = null;
@@ -73,7 +76,7 @@ public final class SigningUtils {
             signerInfoGenerator = new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
                     .setSignedAttributeGenerator(new AttributeTable(attributes))
                     .build(signingAlgorithm.getSignatureAlgorithmName(), privateKey, signingCert);
-           
+
         } catch (Exception e) {
             throw new HttpException("Failed to create signer info", e);
         }

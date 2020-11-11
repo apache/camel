@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Error Handler unit test
@@ -59,15 +59,16 @@ public class ErrorHandlerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0)).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        if ("Boom".equals(body)) {
-                            throw new IllegalArgumentException("Forced exception by unit test");
-                        }
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("mock:result");
+                from("direct:start").errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                if ("Boom".equals(body)) {
+                                    throw new IllegalArgumentException("Forced exception by unit test");
+                                }
+                                exchange.getIn().setBody("Bye World");
+                            }
+                        }).to("mock:result");
             }
         };
     }

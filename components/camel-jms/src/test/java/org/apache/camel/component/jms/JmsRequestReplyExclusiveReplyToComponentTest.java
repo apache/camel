@@ -20,15 +20,16 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Using exclusive fixed replyTo queues should be faster as there is no need for
- * JMSMessage selectors.
+ * Using exclusive fixed replyTo queues should be faster as there is no need for JMSMessage selectors.
  */
 public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSupport {
 
@@ -43,7 +44,7 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSuppo
         assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar", "E"));
 
         long delta = watch.taken();
-        assertTrue("Should be faster than about 4 seconds, was: " + delta, delta < 4200);
+        assertTrue(delta < 4200, "Should be faster than about 4 seconds, was: " + delta);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSuppo
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         // mark the reply to type as exclusive on the component
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setReplyToType(ReplyToType.Exclusive);
+        jms.getConfiguration().setReplyToType(ReplyToType.Exclusive);
         camelContext.addComponent("activemq", jms);
         return camelContext;
     }
@@ -63,7 +64,7 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSuppo
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
             }
         };
     }

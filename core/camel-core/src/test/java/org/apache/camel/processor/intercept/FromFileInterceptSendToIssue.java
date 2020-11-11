@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Based on an issue on the camel user forum.
  */
@@ -46,7 +48,8 @@ public class FromFileInterceptSendToIssue extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:foo").to("mock:foo");
 
-                from("file://target/intercept?initialDelay=0&delay=10").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to("seda:foo");
+                from("file://target/intercept?initialDelay=0&delay=10").setHeader(Exchange.FILE_NAME, constant("hello.txt"))
+                        .to("seda:foo");
             }
         };
     }

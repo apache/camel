@@ -19,14 +19,14 @@ package org.apache.camel.component.mail;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class MailHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
-    
+
     public MailHeaderFilterStrategy() {
         initialize();
     }
-    
+
     protected void initialize() {
         // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
+        setOutFilterPattern(CAMEL_FILTER_PATTERN);
     }
 
 }

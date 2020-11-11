@@ -40,23 +40,21 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
         switch (determineOperation(exchange)) {
 
-        case list:
-            getSnapshots(exchange);
-            break;
-        case get:
-            getSnapshot(exchange);
-            break;
-        case delete:
-            deleteSnapshot(exchange);
-            break;
+            case list:
+                getSnapshots(exchange);
+                break;
+            case get:
+                getSnapshot(exchange);
+                break;
+            case delete:
+                deleteSnapshot(exchange);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
 
-
     }
-
 
     private void getSnapshots(Exchange exchange) throws Exception {
         DigitalOceanSnapshotTypes type = exchange.getIn().getHeader(DigitalOceanHeaders.TYPE, DigitalOceanSnapshotTypes.class);
@@ -64,15 +62,19 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
         if (ObjectHelper.isNotEmpty(type)) {
             if (type == DigitalOceanSnapshotTypes.droplet) {
-                snapshots = getEndpoint().getDigitalOceanClient().getAllDropletSnapshots(configuration.getPage(), configuration.getPerPage());
+                snapshots = getEndpoint().getDigitalOceanClient().getAllDropletSnapshots(configuration.getPage(),
+                        configuration.getPerPage());
             } else {
-                snapshots = getEndpoint().getDigitalOceanClient().getAllVolumeSnapshots(configuration.getPage(), configuration.getPerPage());
+                snapshots = getEndpoint().getDigitalOceanClient().getAllVolumeSnapshots(configuration.getPage(),
+                        configuration.getPerPage());
             }
         } else {
-            snapshots = getEndpoint().getDigitalOceanClient().getAvailableSnapshots(configuration.getPage(), configuration.getPerPage());
+            snapshots = getEndpoint().getDigitalOceanClient().getAvailableSnapshots(configuration.getPage(),
+                    configuration.getPerPage());
         }
 
-        LOG.trace("All Snapshots : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(), snapshots.getSnapshots());
+        LOG.trace("All Snapshots : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(),
+                snapshots.getSnapshots());
         exchange.getOut().setBody(snapshots.getSnapshots());
     }
 
@@ -101,6 +103,5 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
         exchange.getOut().setBody(delete);
 
     }
-
 
 }

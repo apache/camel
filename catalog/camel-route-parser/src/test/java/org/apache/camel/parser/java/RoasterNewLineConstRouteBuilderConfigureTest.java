@@ -24,32 +24,34 @@ import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoasterNewLineConstRouteBuilderConfigureTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoasterNewLineConstRouteBuilderConfigureTest.class);
 
     @Test
-    public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyNewLineConstRouteBuilder.java"));
+    void parse() throws Exception {
+        JavaClassSource clazz = (JavaClassSource) Roaster
+                .parse(new File("src/test/java/org/apache/camel/parser/java/MyNewLineConstRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, false);
         for (ParserResult result : list) {
             LOG.info("Consumer: " + result.getElement());
         }
-        Assert.assertEquals("timer:foo", list.get(0).getElement());
+        assertEquals("timer:foo", list.get(0).getElement());
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, false);
         for (ParserResult result : list) {
             LOG.info("Producer: " + result.getElement());
         }
-        Assert.assertEquals("file:output?fileExist=Append&chmod=777&allowNullBody=true", list.get(0).getElement());
-        Assert.assertEquals("log:b", list.get(1).getElement());
+        assertEquals("file:output?fileExist=Append&chmod=777&allowNullBody=true", list.get(0).getElement());
+        assertEquals("log:b", list.get(1).getElement());
     }
 
 }

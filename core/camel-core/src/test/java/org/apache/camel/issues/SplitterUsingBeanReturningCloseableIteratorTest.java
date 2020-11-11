@@ -24,14 +24,17 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("mySplitter", new MyOtherSplitterBean());
         return jndi;
     }
@@ -47,7 +50,7 @@ public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTest
         try {
             template.sendBody("direct:start", "Hello,World");
         } catch (CamelExecutionException e) {
-            assertTrue("MyCloseableIterator.close() was not invoked", MyCloseableIterator.getInstance().isClosed());
+            assertTrue(MyCloseableIterator.getInstance().isClosed(), "MyCloseableIterator.close() was not invoked");
             return;
         }
         fail("Exception should have been thrown");

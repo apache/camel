@@ -16,7 +16,25 @@
  */
 package org.apache.camel.util.function;
 
+/**
+ * Represents a function that accepts two arguments, produces a result and may thrown an exception.
+ *
+ * @param <I1> the type of the first argument to the operation
+ * @param <I2> the type of the second argument to the operation
+ * @param <R>  the type of the result of the function
+ * @param <T>  the type of the exception the accept method may throw
+ *
+ * @see        java.util.function.BiFunction
+ */
 @FunctionalInterface
 public interface ThrowingBiFunction<I1, I2, R, T extends Throwable> {
+    /**
+     * Applies this function to the given arguments, potentially throwing an exception.
+     *
+     * @param  in1 the first function argument
+     * @param  in2 the second function argument
+     * @return     the function result
+     * @throws T   the exception that may be thrown
+     */
     R apply(I1 in1, I2 in2) throws T;
 }

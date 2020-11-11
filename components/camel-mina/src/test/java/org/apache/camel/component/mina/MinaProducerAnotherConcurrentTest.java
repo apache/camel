@@ -23,13 +23,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore("TODO: investigate for Camel 3.0")
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Disabled("TODO: investigate for Camel 3.0")
 public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
 
     @Test
@@ -82,12 +82,9 @@ public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
             public void configure() throws Exception {
                 from("direct:start").to(String.format("mina:tcp://localhost:%1$s?sync=true", getPort()));
 
-                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
-                    }
+                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody("Bye " + body);
                 }).to("mock:result");
             }
         };

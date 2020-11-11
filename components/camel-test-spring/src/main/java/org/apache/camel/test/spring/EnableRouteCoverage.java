@@ -24,18 +24,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Enables dumping route coverage statistic.
- * The route coverage status is written as xml files in the <tt>target/camel-route-coverage</tt> directory after the test has finished.
+ * Enables dumping route coverage statistic. The route coverage status is written as xml files in the
+ * <tt>target/camel-route-coverage</tt> directory after the test has finished.
  * <p/>
- * This allows tooling or manual inspection of the stats, so you can generate a route trace diagram of which EIPs
- * have been in use and which have not. Similar concepts as a code coverage report.
+ * This allows tooling or manual inspection of the stats, so you can generate a route trace diagram of which EIPs have
+ * been in use and which have not. Similar concepts as a code coverage report.
  * <p/>
  * You can also turn on route coverage globally via setting JVM system property <tt>CamelTestRouteCoverage=true</tt>.
  */
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 public @interface EnableRouteCoverage {
 
 }

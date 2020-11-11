@@ -36,7 +36,8 @@ public class DateFormatFactory extends AbstractFormatFactory {
 
     @Override
     public Format<?> build(FormattingOptions formattingOptions) {
-        return new DatePatternFormat(formattingOptions.getPattern(),
+        return new DatePatternFormat(
+                formattingOptions.getPattern(),
                 formattingOptions.getTimezone(),
                 formattingOptions.getLocale());
     }

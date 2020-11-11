@@ -22,9 +22,10 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpProducerHeadersTest extends CamelTestSupport {
 
@@ -36,7 +37,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
         headers.put(Exchange.HTTP_METHOD, "GET");
         headers.put(Exchange.HTTP_QUERY, "hi=hello");
         String result = template.requestBodyAndHeaders("netty-http:http://localhost:" + port, "", headers, String.class);
-        Assert.assertEquals("/", result);
+        assertEquals("/", result);
     }
 
     @Test
@@ -46,7 +47,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
         headers.put(Exchange.HTTP_PATH, "/");
         headers.put(Exchange.HTTP_QUERY, "hi=hello");
         String result = template.requestBodyAndHeaders("netty-http:http://localhost:" + port, "", headers, String.class);
-        Assert.assertEquals("/", result);
+        assertEquals("/", result);
     }
 
     @Test
@@ -56,7 +57,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
         headers.put(Exchange.HTTP_PATH, "some-path");
         headers.put(Exchange.HTTP_QUERY, "hi=hello");
         String result = template.requestBodyAndHeaders("netty-http:http://localhost:" + port, "", headers, String.class);
-        Assert.assertEquals("/some-path", result);
+        assertEquals("/some-path", result);
     }
 
     @Test
@@ -64,7 +65,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.HTTP_METHOD, "GET");
         String result = template.requestBodyAndHeaders("netty-http:http://localhost:" + port, "", headers, String.class);
-        Assert.assertEquals("/", result);
+        assertEquals("/", result);
     }
 
     @Override
@@ -75,7 +76,7 @@ public class NettyHttpProducerHeadersTest extends CamelTestSupport {
                 port = AvailablePortFinder.getNextAvailable();
 
                 from("netty-http:http://localhost:" + port + "?matchOnUriPrefix=true")
-                    .setBody(simple("${header." + Exchange.HTTP_URI + "}"));
+                        .setBody(simple("${header." + Exchange.HTTP_URI + "}"));
             }
         };
     }

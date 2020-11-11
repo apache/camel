@@ -21,15 +21,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.embedded.EmbeddedChannel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.netty.buffer.Unpooled.buffer;
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_ACKNOWLEDGE;
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V2;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LumberjackChannelInitializerTest {
     @Test
@@ -46,13 +47,22 @@ public class LumberjackChannelInitializerTest {
         writeResourceBytePerByte(channel, "window10");
         writeResourceBytePerByte(channel, "window15");
 
+        // EmbeddedChannel is no "real" Channel implementation and mainly use-able for testing and embedded ChannelHandlers
+        // since now we are executing scheduled writeAndFlush for parallel messages within a single session
+        // we need to use runPendingTasks for this type of Channel
+        // this is use case for internal camel code test only : other unit tests use production like channels and don't need
+        // adding runPendingTasks()
+        TimeUnit.MILLISECONDS.sleep(2000);
+        channel.runPendingTasks();
+
         // Then we must have 25 messages with only maps
         assertEquals(25, messages.size());
 
         // And the first map should contains valid data (we're assuming it's also valid for the other ones)
         Map first = (Map) messages.get(0);
         assertEquals("log", first.get("type"));
-        assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log", first.get("source"));
+        assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
+                first.get("source"));
 
         // And we should have replied twice (one per window)
         assertEquals(2, channel.outboundMessages().size());
@@ -72,9 +82,9 @@ public class LumberjackChannelInitializerTest {
     }
 
     private void checkAck(ByteBuf buf, int sequence) {
-        assertEquals("version", (short) VERSION_V2, buf.readUnsignedByte());
-        assertEquals("frame", (short) TYPE_ACKNOWLEDGE, buf.readUnsignedByte());
-        assertEquals("sequence", sequence, buf.readInt());
-        assertEquals("remaining", 0, buf.readableBytes());
+        assertEquals((short) VERSION_V2, buf.readUnsignedByte(), "version");
+        assertEquals((short) TYPE_ACKNOWLEDGE, buf.readUnsignedByte(), "frame");
+        assertEquals(sequence, buf.readInt(), "sequence");
+        assertEquals(0, buf.readableBytes(), "remaining");
     }
 }

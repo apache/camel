@@ -26,15 +26,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
     @Test
     public void testReceivedTimestamp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.message(0).exchangeProperty(Exchange.CREATED_TIMESTAMP).isNotNull();
-        mock.message(0).exchangeProperty(Exchange.CREATED_TIMESTAMP).isInstanceOf(Date.class);
+        mock.message(0).predicate(e -> e.getCreated() > 0);
         mock.message(0).exchangeProperty(Exchange.RECEIVED_TIMESTAMP).isNotNull();
         mock.message(0).exchangeProperty(Exchange.RECEIVED_TIMESTAMP).isInstanceOf(Date.class);
 
@@ -231,7 +233,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
     private boolean isStarted(Service service) {
         if (service instanceof StatefulService) {
-            return ((StatefulService)service).isStarted();
+            return ((StatefulService) service).isStarted();
         }
         return true;
     }

@@ -18,10 +18,10 @@ package org.apache.camel.component.rss;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class RssEntryPollingConsumerWithBasicAuthTest extends CamelTestSupport {
 
@@ -37,17 +37,18 @@ public class RssEntryPollingConsumerWithBasicAuthTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("rss:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&sortEntries=true&delay=100&username=camel&password=camelPass").to("mock:result");
+                from("rss:http://localhost:" + JettyTestServer.getInstance().port
+                     + "/?splitEntries=true&sortEntries=true&delay=100&username=camel&password=camelPass").to("mock:result");
             }
         };
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() {
         JettyTestServer.getInstance().startServer();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServer() {
         JettyTestServer.getInstance().stopServer();
     }

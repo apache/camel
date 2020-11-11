@@ -26,7 +26,11 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
 
@@ -44,10 +48,10 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
-        assertEquals("Should be 1000", 1000, size.intValue());
+        assertEquals(1000, size.intValue(), "Should be 1000");
 
         Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
         assertEquals(Boolean.TRUE, removeOnDump);
@@ -67,7 +71,7 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
         List<Exchange> exchanges = getMockEndpoint("mock:bar").getReceivedExchanges();
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
-                new Object[]{"bar"}, new String[]{"java.lang.String"});
+                new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         assertNotNull(events);
         assertEquals(1, events.size());
@@ -75,8 +79,9 @@ public class BacklogTracerStreamCachingTest extends ManagementTestSupport {
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("bar", event1.getToNode());
         assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n"
-                + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\">Bye World</body>\n"
-                + "    </message>", event1.getMessageAsXml());
+                     + "      <body type=\"org.apache.camel.converter.stream.ByteArrayInputStreamCache\">Bye World</body>\n"
+                     + "    </message>",
+                event1.getMessageAsXml());
     }
 
     @Override

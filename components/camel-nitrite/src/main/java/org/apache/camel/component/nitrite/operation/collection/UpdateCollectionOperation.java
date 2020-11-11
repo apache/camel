@@ -36,12 +36,10 @@ public class UpdateCollectionOperation extends AbstractPayloadAwareOperation imp
     private UpdateOptions updateOptions;
 
     public UpdateCollectionOperation(Filter filter) {
-        super();
         this.filter = filter;
     }
 
     public UpdateCollectionOperation(Filter filter, UpdateOptions updateOptions) {
-        super();
         this.filter = filter;
         this.updateOptions = updateOptions;
     }

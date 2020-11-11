@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.quickfixj;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,9 +27,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.JMException;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.quickfixj.jmx.JmxExporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import quickfix.Acceptor;
 import quickfix.Application;
 import quickfix.ConfigError;
@@ -66,15 +68,14 @@ import quickfix.ThreadedSocketInitiator;
 import quickfix.UnsupportedMessageType;
 
 /**
- * This is a wrapper class that provided QuickFIX/J initialization capabilities
- * beyond those supported in the core QuickFIX/J distribution.
+ * This is a wrapper class that provided QuickFIX/J initialization capabilities beyond those supported in the core
+ * QuickFIX/J distribution.
  * 
- * Specifically, it infers dependencies on specific implementations of message
- * stores and logs. It also supports extended QuickFIX/J settings properties to
- * specify threading models, custom store and log implementations, etc.
+ * Specifically, it infers dependencies on specific implementations of message stores and logs. It also supports
+ * extended QuickFIX/J settings properties to specify threading models, custom store and log implementations, etc.
  * 
- * The wrapper will create an initiator or acceptor or both depending on the
- * roles of sessions described in the settings file.
+ * The wrapper will create an initiator or acceptor or both depending on the roles of sessions described in the settings
+ * file.
  */
 public class QuickfixjEngine extends ServiceSupport {
     public static final String DEFAULT_START_TIME = "00:00:00";
@@ -82,6 +83,8 @@ public class QuickfixjEngine extends ServiceSupport {
     public static final long DEFAULT_HEARTBTINT = 30;
     public static final String SETTING_THREAD_MODEL = "ThreadModel";
     public static final String SETTING_USE_JMX = "UseJmx";
+
+    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEngine.class);
 
     private Acceptor acceptor;
     private Initiator initiator;
@@ -95,63 +98,40 @@ public class QuickfixjEngine extends ServiceSupport {
     private ObjectName acceptorObjectName;
     private ObjectName initiatorObjectName;
     private final SessionSettings settings;
-    private final AtomicBoolean initialized = new AtomicBoolean(false);
+    private final AtomicBoolean initialized = new AtomicBoolean();
     private boolean lazy;
 
     public enum ThreadModel {
-        ThreadPerConnector, ThreadPerSession;
+        ThreadPerConnector,
+        ThreadPerSession;
     }
 
-    /**
-     * @deprecated Better make use of the {@link #QuickfixjEngine(String, String)} constructor
-     *             as the {@code forcedShutdown} paramater had/has no effect.
-     */
-    @Deprecated
-    public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown)
-        throws ConfigError, FieldConvertError, IOException, JMException {
-
-        this(uri, settingsResourceName, forcedShutdown, null, null, null);
+    public QuickfixjEngine(CamelContext camelContext, String uri, String settingsResourceName) throws Exception {
+        this(camelContext, uri, settingsResourceName, null, null, null);
     }
 
-    public QuickfixjEngine(String uri, String settingsResourceName) throws ConfigError, FieldConvertError, IOException, JMException {
-        this(uri, settingsResourceName, null, null, null);
+    public QuickfixjEngine(CamelContext camelContext, String uri, String settingsResourceName,
+                           MessageStoreFactory messageStoreFactoryOverride,
+                           LogFactory sessionLogFactoryOverride,
+                           MessageFactory messageFactoryOverride) throws Exception {
+        this(camelContext, uri, loadSettings(camelContext, settingsResourceName), messageStoreFactoryOverride,
+             sessionLogFactoryOverride,
+             messageFactoryOverride);
     }
 
-    /**
-     * @deprecated Better make use of the {@link #QuickfixjEngine(String, String, MessageStoreFactory, LogFactory, MessageFactory)} constructor
-     *             as the {@code forcedShutdown} paramater had/has no effect.
-     */
-    @Deprecated
-    public QuickfixjEngine(String uri, String settingsResourceName, boolean forcedShutdown,
-            MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
-            MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
-        this(uri, loadSettings(settingsResourceName), forcedShutdown, messageStoreFactoryOverride,
-                sessionLogFactoryOverride, messageFactoryOverride);
+    public QuickfixjEngine(CamelContext camelContext, String uri, SessionSettings settings,
+                           MessageStoreFactory messageStoreFactoryOverride,
+                           LogFactory sessionLogFactoryOverride,
+                           MessageFactory messageFactoryOverride) throws Exception {
+        this(camelContext, uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride,
+             false);
     }
 
-    public QuickfixjEngine(String uri, String settingsResourceName, MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
-                           MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
-        this(uri, loadSettings(settingsResourceName), messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride);
-    }
-
-    /**
-     * @deprecated Better make use of the {@link #QuickfixjEngine(String, SessionSettings, MessageStoreFactory, LogFactory, MessageFactory)} constructor
-     *             as the {@code forcedShutdown} paramater had/has no effect.
-     */
-    @Deprecated
-    public QuickfixjEngine(String uri, SessionSettings settings, boolean forcedShutdown,
-            MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
-            MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
-        this(uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride);
-    }
-
-    public QuickfixjEngine(String uri, SessionSettings settings, MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
-                           MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
-        this(uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride, false);
-    }
-
-    public QuickfixjEngine(String uri, SessionSettings settings, MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
-            MessageFactory messageFactoryOverride, boolean lazy) throws ConfigError, FieldConvertError, IOException, JMException {
+    public QuickfixjEngine(CamelContext camelContext, String uri, SessionSettings settings,
+                           MessageStoreFactory messageStoreFactoryOverride,
+                           LogFactory sessionLogFactoryOverride,
+                           MessageFactory messageFactoryOverride,
+                           boolean lazy) throws Exception {
         addEventListener(messageCorrelator);
 
         this.uri = uri;
@@ -175,10 +155,11 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     /**
-     * Initializes the engine on demand. May be called immediately in constructor or when needed.
-     * If initializing later, it should be started afterwards.
+     * Initializes the engine on demand. May be called immediately in constructor or when needed. If initializing later,
+     * it should be started afterwards.
      */
-    void initializeEngine() throws ConfigError,
+    void initializeEngine()
+            throws ConfigError,
             FieldConvertError, JMException {
         if (messageFactory == null) {
             messageFactory = new DefaultMessageFactory();
@@ -209,7 +190,7 @@ public class QuickfixjEngine extends ServiceSupport {
         }
 
         if (settings.isSetting(SETTING_USE_JMX) && settings.getBool(SETTING_USE_JMX)) {
-            log.info("Enabling JMX for QuickFIX/J");
+            LOG.info("Enabling JMX for QuickFIX/J");
             jmxExporter = new JmxExporter();
         } else {
             jmxExporter = null;
@@ -223,15 +204,15 @@ public class QuickfixjEngine extends ServiceSupport {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             if (isConnectorRole(settings, SessionFactory.ACCEPTOR_CONNECTION_TYPE)) {
-                acceptor = createAcceptor(new Dispatcher(), settings, messageStoreFactory, 
-                    sessionLogFactory, messageFactory, threadModel);
+                acceptor = createAcceptor(new Dispatcher(), settings, messageStoreFactory,
+                        sessionLogFactory, messageFactory, threadModel);
             } else {
                 acceptor = null;
             }
 
             if (isConnectorRole(settings, SessionFactory.INITIATOR_CONNECTION_TYPE)) {
-                initiator = createInitiator(new Dispatcher(), settings, messageStoreFactory, 
-                    sessionLogFactory, messageFactory, threadModel);
+                initiator = createInitiator(new Dispatcher(), settings, messageStoreFactory,
+                        sessionLogFactory, messageFactory, threadModel);
             } else {
                 initiator = null;
             }
@@ -245,11 +226,8 @@ public class QuickfixjEngine extends ServiceSupport {
         initialized.set(true);
     }
 
-    static SessionSettings loadSettings(String settingsResourceName) throws ConfigError {
-        InputStream inputStream = ObjectHelper.loadResourceAsStream(settingsResourceName);
-        if (inputStream == null) {
-            throw new IllegalArgumentException("Could not load " + settingsResourceName);
-        }
+    protected static SessionSettings loadSettings(CamelContext camelContext, String settingsResourceName) throws Exception {
+        InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, settingsResourceName);
         return new SessionSettings(inputStream);
     }
 
@@ -293,13 +271,16 @@ public class QuickfixjEngine extends ServiceSupport {
         eventListeners.clear();
     }
 
-    private Initiator createInitiator(Application application, SessionSettings settings,
-            MessageStoreFactory messageStoreFactory, LogFactory sessionLogFactory, 
-            MessageFactory messageFactory, ThreadModel threadModel) throws ConfigError {
-        
+    private Initiator createInitiator(
+            Application application, SessionSettings settings,
+            MessageStoreFactory messageStoreFactory, LogFactory sessionLogFactory,
+            MessageFactory messageFactory, ThreadModel threadModel)
+            throws ConfigError {
+
         Initiator initiator;
         if (threadModel == ThreadModel.ThreadPerSession) {
-            initiator = new ThreadedSocketInitiator(application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
+            initiator = new ThreadedSocketInitiator(
+                    application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
         } else if (threadModel == ThreadModel.ThreadPerConnector) {
             initiator = new SocketInitiator(application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
         } else {
@@ -308,13 +289,16 @@ public class QuickfixjEngine extends ServiceSupport {
         return initiator;
     }
 
-    private Acceptor createAcceptor(Application application, SessionSettings settings,
-            MessageStoreFactory messageStoreFactory, LogFactory sessionLogFactory, 
-            MessageFactory messageFactory, ThreadModel threadModel) throws ConfigError {
+    private Acceptor createAcceptor(
+            Application application, SessionSettings settings,
+            MessageStoreFactory messageStoreFactory, LogFactory sessionLogFactory,
+            MessageFactory messageFactory, ThreadModel threadModel)
+            throws ConfigError {
 
         Acceptor acceptor;
         if (threadModel == ThreadModel.ThreadPerSession) {
-            acceptor = new ThreadedSocketAcceptor(application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
+            acceptor = new ThreadedSocketAcceptor(
+                    application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
         } else if (threadModel == ThreadModel.ThreadPerConnector) {
             acceptor = new SocketAcceptor(application, messageStoreFactory, settings, sessionLogFactory, messageFactory);
         } else {
@@ -337,7 +321,7 @@ public class QuickfixjEngine extends ServiceSupport {
         } else {
             messageStoreFactory = new MemoryStoreFactory();
         }
-        log.info("Inferring message store factory: {}", messageStoreFactory.getClass().getName());
+        LOG.info("Inferring message store factory: {}", messageStoreFactory.getClass().getName());
         return messageStoreFactory;
     }
 
@@ -375,7 +359,7 @@ public class QuickfixjEngine extends ServiceSupport {
             // Default
             sessionLogFactory = new ScreenLogFactory(settings);
         }
-        log.info("Inferring log factory: {}", sessionLogFactory.getClass().getName());
+        LOG.info("Inferring log factory: {}", sessionLogFactory.getClass().getName());
         return sessionLogFactory;
     }
 
@@ -420,18 +404,19 @@ public class QuickfixjEngine extends ServiceSupport {
         }
         return hasRole;
     }
-    
+
     public void addEventListener(QuickfixjEventListener listener) {
         eventListeners.add(listener);
     }
-    
+
     public void removeEventListener(QuickfixjEventListener listener) {
         eventListeners.remove(listener);
     }
 
     private class Dispatcher implements Application {
         @Override
-        public void fromAdmin(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
+        public void fromAdmin(Message message, SessionID sessionID)
+                throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
             try {
                 dispatch(QuickfixjEventCategory.AdminMessageReceived, sessionID, message);
             } catch (RuntimeException e) {
@@ -440,13 +425,14 @@ public class QuickfixjEngine extends ServiceSupport {
                 rethrowIfType(e, FieldNotFound.class);
                 rethrowIfType(e, IncorrectDataFormat.class);
                 rethrowIfType(e, IncorrectTagValue.class);
-                rethrowIfType(e, RejectLogon.class);               
+                rethrowIfType(e, RejectLogon.class);
                 throw new DispatcherException(e);
             }
         }
-        
+
         @Override
-        public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
+        public void fromApp(Message message, SessionID sessionID)
+                throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
             try {
                 dispatch(QuickfixjEventCategory.AppMessageReceived, sessionID, message);
             } catch (RuntimeException e) {
@@ -511,8 +497,9 @@ public class QuickfixjEngine extends ServiceSupport {
             }
         }
 
-        private void dispatch(QuickfixjEventCategory quickfixjEventCategory, SessionID sessionID, Message message) throws Exception {
-            log.debug("FIX event dispatched: {} {}", quickfixjEventCategory, message != null ? message : "");
+        private void dispatch(QuickfixjEventCategory quickfixjEventCategory, SessionID sessionID, Message message)
+                throws Exception {
+            LOG.debug("FIX event dispatched: {} {}", quickfixjEventCategory, message != null ? message : "");
             for (QuickfixjEventListener listener : eventListeners) {
                 // Exceptions propagate back to the FIX engine so sequence numbers can be adjusted
                 listener.onEvent(quickfixjEventCategory, sessionID, message);

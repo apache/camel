@@ -26,14 +26,13 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Unit test for sending the bean method name as a key over the JMS wire, that
- * we now support this.
+ * Unit test for sending the bean method name as a key over the JMS wire, that we now support this.
  */
 public class JmsBeanMethodHeaderTest extends CamelTestSupport {
 
@@ -77,7 +76,8 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("Yes");
 
-        template.sendBodyAndHeader("activemq:approve", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME, "approveLoan");
+        template.sendBodyAndHeader("activemq:approve", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME,
+                "approveLoan");
 
         mock.assertIsSatisfied();
     }
@@ -89,7 +89,8 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("No");
 
-        template.sendBodyAndHeader("activemq:queue", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME, "approveSuperLoan");
+        template.sendBodyAndHeader("activemq:queue", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME,
+                "approveSuperLoan");
 
         mock.assertIsSatisfied();
     }

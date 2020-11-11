@@ -28,17 +28,23 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.util.security.Constraint;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@Disabled
 public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
     @BindToRegistry("myAuthHandler")
@@ -52,46 +58,56 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
         ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
         sh.setAuthenticator(new BasicAuthenticator());
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
 
         return sh;
     }
 
     @Test
     public void testAuthMethodPriorityBasicDigest() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck", "Hello World",
-                                          String.class);
+        String out = template.requestBody(
+                "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,Digest&authUsername=donald&authPassword=duck",
+                "Hello World",
+                String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testAuthMethodPriorityNTLMBasic() throws Exception {
-        String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck", "Hello World",
-                                          String.class);
+        String out = template.requestBody(
+                "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM,Basic&authUsername=donald&authPassword=duck",
+                "Hello World",
+                String.class);
         assertEquals("Bye World", out);
     }
 
     @Test
     public void testAuthMethodPriorityInvalid() throws Exception {
         try {
-            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck", "Hello World", String.class);
+            template.requestBody(
+                    "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=Basic,foo&authUsername=donald&authPassword=duck",
+                    "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (FailedToCreateProducerException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
+            IllegalArgumentException cause
+                    = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
             // JAXB 2.2 uses a slightly different message
-            boolean b = cause.getMessage().contains("No enum const") && cause.getMessage().contains("org.apache.camel.component.http.AuthMethod.foo");
-            assertTrue("Bad fault message: " + cause.getMessage(), b);
+            boolean b = cause.getMessage().contains("No enum const")
+                    && cause.getMessage().contains("org.apache.camel.component.http.AuthMethod.foo");
+            assertTrue(b, "Bad fault message: " + cause.getMessage());
         }
     }
 
     @Test
     public void testAuthMethodPriorityNTLM() throws Exception {
         try {
-            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM&authUsername=donald&authPassword=duck", "Hello World", String.class);
+            template.requestBody(
+                    "http://localhost:{{port}}/test?authMethod=Basic&authMethodPriority=NTLM&authUsername=donald&authPassword=duck",
+                    "Hello World", String.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());

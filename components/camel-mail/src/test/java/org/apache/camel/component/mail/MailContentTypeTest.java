@@ -23,9 +23,12 @@ import javax.mail.Message;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for contentType option.
@@ -56,7 +59,7 @@ public class MailContentTypeTest extends CamelTestSupport {
         assertTrue(msg.getContentType().startsWith("text/plain"));
         assertEquals("Hello World", msg.getContent());
     }
-    
+
     @Test
     public void testSendMultipartMail() throws Exception {
         Mailbox.clearAll();
@@ -69,7 +72,8 @@ public class MailContentTypeTest extends CamelTestSupport {
         Message msg = box.get(0);
         assertTrue(msg.getContentType().startsWith("multipart/alternative"));
         assertEquals("Hello World", ((MimeMultipart) msg.getContent()).getBodyPart(0).getContent());
-        assertEquals("<html><body><h1>Hello</h1>World</body></html>", ((MimeMultipart) msg.getContent()).getBodyPart(1).getContent());
+        assertEquals("<html><body><h1>Hello</h1>World</body></html>",
+                ((MimeMultipart) msg.getContent()).getBodyPart(1).getContent());
     }
 
     @Override

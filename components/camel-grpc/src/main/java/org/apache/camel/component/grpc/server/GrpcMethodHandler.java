@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.grpc.server;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
-import javassist.util.proxy.MethodHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConstants;
 import org.apache.camel.component.grpc.GrpcConsumer;
@@ -30,66 +29,97 @@ import org.apache.camel.component.grpc.GrpcConsumerStrategy;
 import org.apache.camel.component.grpc.GrpcEndpoint;
 
 /**
- * gRPC server method invocation handler
+ * Handles gRPC service method invocations
  */
-public class GrpcMethodHandler implements MethodHandler {
-    private final GrpcEndpoint endpoint;
-    private final GrpcConsumer consumer;
+public class GrpcMethodHandler {
 
-    public GrpcMethodHandler(GrpcEndpoint endpoint, GrpcConsumer consumer) {
-        this.endpoint = endpoint;
+    protected final GrpcConsumer consumer;
+
+    public GrpcMethodHandler(GrpcConsumer consumer) {
         this.consumer = consumer;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
-        Map<String, Object> grcpHeaders = new HashMap<>();
-        
-        grcpHeaders.put(GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.toString(), GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.get());
-        grcpHeaders.put(GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.toString(), GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.get());
-        grcpHeaders.put(GrpcConstants.GRPC_METHOD_NAME_HEADER, thisMethod.getName());
-        
-        // Determines that the incoming parameters are transmitted in synchronous mode
-        // Two incoming parameters and second is instance of the io.grpc.stub.StreamObserver
-        if (args.length == 2 && args[1] instanceof StreamObserver) {
-            Exchange exchange = endpoint.createExchange();
-            exchange.getIn().setBody(args[0]);
-            exchange.getIn().setHeaders(grcpHeaders);
+    /**
+     * This method deals with the unary and server streaming gRPC calls
+     *
+     * @param  body             The request object sent by the gRPC client to the server
+     * @param  responseObserver The response stream observer
+     * @param  methodName       The name of the method invoked using the stub.
+     * @throws Exception        java.lang.Exception
+     */
+    public void handle(Object body, StreamObserver<Object> responseObserver, String methodName) throws Exception {
+        Map<String, Object> grcpHeaders = populateGrpcHeaders(methodName);
+        GrpcEndpoint endpoint = (GrpcEndpoint) consumer.getEndpoint();
 
-            if (endpoint.isSynchronous()) {
-                consumer.getProcessor().process(exchange);
-            } else {
-                consumer.getAsyncProcessor().process(exchange);
-            }
-            
-            StreamObserver<Object> responseObserver = (StreamObserver<Object>)args[1];
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody(body);
+        exchange.getIn().setHeaders(grcpHeaders);
+
+        if (endpoint.getConfiguration().isRouteControlledStreamObserver()) {
+            exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+            invokeRoute(endpoint, exchange);
+            return;
+        }
+
+        invokeRoute(endpoint, exchange);
+
+        if (exchange.isFailed()) {
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(exchange.getException().getMessage())
+                    // This can be attached to the Status locally, but NOT transmitted to the client!
+                    .withCause(exchange.getException())
+                    .asRuntimeException());
+        } else {
             Object responseBody = exchange.getIn().getBody();
             if (responseBody instanceof List) {
-                List<Object> responseList = (List<Object>)responseBody;
+                List<Object> responseList = (List<Object>) responseBody;
                 responseList.forEach(responseObserver::onNext);
             } else {
                 responseObserver.onNext(responseBody);
             }
             responseObserver.onCompleted();
-        } else if (args.length == 1 && args[0] instanceof StreamObserver) {
-            // Single incoming parameter is instance of the io.grpc.stub.StreamObserver
-            final StreamObserver<Object> responseObserver = (StreamObserver<Object>)args[0];
-            StreamObserver<Object> requestObserver = null;
-            
-            if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.AGGREGATION) {
-                requestObserver = new GrpcRequestAggregationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
-            } else if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.PROPAGATION) {
-                requestObserver = new GrpcRequestPropagationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
-            } else {
-                throw new IllegalArgumentException("gRPC processing strategy not implemented " + consumer.getConfiguration().getConsumerStrategy());
-            }
-            
-            return requestObserver;
+        }
+    }
+
+    private void invokeRoute(GrpcEndpoint endpoint, Exchange exchange) throws Exception {
+        if (endpoint.isSynchronous()) {
+            consumer.getProcessor().process(exchange);
         } else {
-            throw new IllegalArgumentException("Invalid to process gRPC method: " + thisMethod.getName());
+            consumer.getAsyncProcessor().process(exchange);
+        }
+    }
+
+    /**
+     * This method deals with the client streaming and bi-directional streaming gRPC calls
+     *
+     * @param  responseObserver The response stream observer
+     * @param  methodName       The name of the method invoked using the stub.
+     * @return                  Request stream observer
+     */
+    public StreamObserver<Object> handleForConsumerStrategy(StreamObserver<Object> responseObserver, String methodName) {
+        Map<String, Object> grcpHeaders = populateGrpcHeaders(methodName);
+        GrpcEndpoint endpoint = (GrpcEndpoint) consumer.getEndpoint();
+        StreamObserver<Object> requestObserver;
+
+        if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.AGGREGATION) {
+            requestObserver = new GrpcRequestAggregationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
+        } else if (consumer.getConfiguration().getConsumerStrategy() == GrpcConsumerStrategy.PROPAGATION) {
+            requestObserver = new GrpcRequestPropagationStreamObserver(endpoint, consumer, responseObserver, grcpHeaders);
+        } else {
+            throw new IllegalArgumentException(
+                    "gRPC processing strategy not implemented " + consumer.getConfiguration().getConsumerStrategy());
         }
 
-        return null;
+        return requestObserver;
+    }
+
+    private Map<String, Object> populateGrpcHeaders(String methodName) {
+        Map<String, Object> grpcHeaders = new HashMap<>();
+        grpcHeaders.put(GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.toString(),
+                GrpcHeaderInterceptor.USER_AGENT_CONTEXT_KEY.get());
+        grpcHeaders.put(GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.toString(),
+                GrpcHeaderInterceptor.CONTENT_TYPE_CONTEXT_KEY.get());
+        grpcHeaders.put(GrpcConstants.GRPC_METHOD_NAME_HEADER, methodName);
+        return grpcHeaders;
     }
 }

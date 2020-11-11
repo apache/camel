@@ -26,12 +26,14 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.Any23Type;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Any23DataFormatOutputFormatTest extends CamelTestSupport {
 
@@ -40,7 +42,8 @@ public class Any23DataFormatOutputFormatTest extends CamelTestSupport {
     @Test
     public void test() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        String contenhtml = Any23TestSupport.loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
+        String contenhtml = Any23TestSupport
+                .loadFileAsString(new File("src/test/resources/org/apache/camel/dataformat/any23/microformat/vcard.html"));
         template.sendBody("direct:start", contenhtml);
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
@@ -48,7 +51,7 @@ public class Any23DataFormatOutputFormatTest extends CamelTestSupport {
             String resultingRDF = in.getBody(String.class);
             InputStream toInputStream = IOUtils.toInputStream(resultingRDF, Charset.defaultCharset());
             Model parse = Rio.parse(toInputStream, baseURI, RDFFormat.TURTLE);
-            assertEquals(parse.size(), 28);
+            assertEquals(28, parse.size());
         }
     }
 

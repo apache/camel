@@ -28,8 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -70,7 +73,7 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
 
         for (Exchange exchange : resultEndpoint.getExchanges()) {
             // should be in repo list
-            assertTrue("Should contain the exchange", repo.getExchange().contains(exchange.getExchangeId()));
+            assertTrue(repo.getExchange().contains(exchange.getExchangeId()), "Should contain the exchange");
         }
     }
 
@@ -86,7 +89,7 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

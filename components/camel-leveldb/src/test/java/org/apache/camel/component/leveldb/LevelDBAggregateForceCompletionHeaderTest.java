@@ -19,20 +19,20 @@ package org.apache.camel.component.leveldb;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.params.Test;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * To test CAMEL-4118 support for completing all aggregation groups with a signal message
  */
-public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport {
+public class LevelDBAggregateForceCompletionHeaderTest extends LevelDBTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();
@@ -55,7 +55,7 @@ public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport 
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
         //now send the signal message to trigger completion of all groups, message should NOT be aggregated
-        template.sendBodyAndHeader("direct:start", "test5", Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
+        template.sendBodyAndProperty("direct:start", "test5", Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, true);
 
         assertMockEndpointsSatisfied();
     }
@@ -90,31 +90,14 @@ public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // create the leveldb repo
-                LevelDBAggregationRepository repo = new LevelDBAggregationRepository("repo1", "target/data/leveldb.dat");
 
                 // here is the Camel route where we aggregate
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
+                        .aggregate(header("id"), new StringAggregationStrategy())
                         // use our created leveldb repo as aggregation repository
-                        .completionSize(10).aggregationRepository(repo)
+                        .completionSize(10).aggregationRepository(getRepo())
                         .to("mock:aggregated");
             }
         };
-    }
-
-    public static class MyAggregationStrategy implements AggregationStrategy {
-
-        @Override
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            if (oldExchange == null) {
-                return newExchange;
-            }
-            String body1 = oldExchange.getIn().getBody(String.class);
-            String body2 = newExchange.getIn().getBody(String.class);
-
-            oldExchange.getIn().setBody(body1 + body2);
-            return oldExchange;
-        }
     }
 }

@@ -23,10 +23,11 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -52,7 +53,7 @@ public class JmsRequestReplyTemporaryRefreshFailureOnStartupTest extends CamelTe
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .inOut("jms:queue:foo?recoveryInterval=" + recoveryInterval)
+                        .to(ExchangePattern.InOut, "jms:queue:foo?recoveryInterval=" + recoveryInterval)
                         .to("mock:result");
 
                 from("jms:queue:foo")

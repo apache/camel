@@ -20,9 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IronMQPreserveHeadersTest extends CamelTestSupport {
 
@@ -41,14 +42,15 @@ public class IronMQPreserveHeadersTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
         String id = mock.getExchanges().get(0).getIn().getHeader(IronMQConstants.MESSAGE_ID, String.class);
-        Assert.assertNotNull(id);
+        assertNotNull(id);
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         IronMQComponent component = new IronMQComponent(context);
-        endpoint = (IronMQEndpoint)component.createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&preserveHeaders=true");
+        component.init();
+        endpoint = (IronMQEndpoint) component.createEndpoint("ironmq://TestQueue?projectId=xxx&token=yyy&preserveHeaders=true");
         endpoint.setClient(new IronMQClientMock("dummy", "dummy"));
         context.addComponent("ironmq", component);
         return context;

@@ -16,18 +16,7 @@
  */
 package org.apache.camel.converter;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.Writer;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -38,7 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test case for {@link IOConverter}
@@ -51,12 +42,12 @@ public class IOConverterTest extends ContextTestSupport {
     public void testToBytes() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/converter/dummy.txt");
         byte[] data = IOConverter.toBytes(Files.newInputStream(Paths.get(file.getAbsolutePath())));
-        assertEquals("get the wrong byte size", file.length(), data.length);
-        assertEquals('#', (char)data[0]);
+        assertEquals(file.length(), data.length, "get the wrong byte size");
+        assertEquals('#', (int) (char) data[0]);
 
         // should contain Hello World!
         String s = new String(data);
-        assertTrue("Should contain Hello World!", s.contains("Hello World"));
+        assertTrue(s.contains("Hello World"), "Should contain Hello World!");
     }
 
     @Test
@@ -64,14 +55,7 @@ public class IOConverterTest extends ContextTestSupport {
         ByteArrayInputStream bis = new ByteArrayInputStream(TESTDATA);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOHelper.copy(bis, bos);
-        assertEquals(TESTDATA, bos.toByteArray());
-    }
-
-    private void assertEquals(byte[] data1, byte[] data2) {
-        assertEquals(data1.length, data2.length);
-        for (int i = 0; i < data1.length; i++) {
-            assertEquals(data1[i], data2[i]);
-        }
+        assertArrayEquals(TESTDATA, bos.toByteArray());
     }
 
     @Test
@@ -96,7 +80,7 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToReader() throws Exception {
-        StringReader reader = IOConverter.toReader("Hello");
+        Reader reader = IOConverter.toReader("Hello");
         assertEquals("Hello", IOConverter.toString(reader));
     }
 
@@ -244,7 +228,7 @@ public class IOConverterTest extends ContextTestSupport {
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
         String result = IOConverter.toString(is, exchange);
-        assertEquals("Get a wrong result", data, result);
+        assertEquals(data, result, "Get a wrong result");
     }
 
     @Test
@@ -261,8 +245,8 @@ public class IOConverterTest extends ContextTestSupport {
     public void testToPropertiesFromFile() throws Exception {
         Properties p = IOConverter.toProperties(new File("src/test/resources/log4j2.properties"));
         assertNotNull(p);
-        assertTrue("Should be 8 or more properties, was " + p.size(), p.size() >= 8);
-        String root = (String)p.get("rootLogger.level");
+        assertTrue(p.size() >= 8, "Should be 8 or more properties, was " + p.size());
+        String root = (String) p.get("rootLogger.level");
         assertNotNull(root);
         assertTrue(root.contains("INFO"));
     }

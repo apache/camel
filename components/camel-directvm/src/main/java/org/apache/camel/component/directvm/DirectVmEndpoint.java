@@ -17,6 +17,7 @@
 package org.apache.camel.component.directvm;
 
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,19 +29,21 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
+ * Call another endpoint from any Camel Context in the same JVM synchronously.
  *
  * This endpoint can be used to connect existing routes in the same JVM between different CamelContexts.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "direct-vm", title = "Direct VM", syntax = "direct-vm:name", label = "core,endpoint")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "direct-vm", title = "Direct VM", syntax = "direct-vm:name",
+             category = { Category.CORE, Category.ENDPOINT })
 public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
-    @UriPath(description = "Name of direct-vm endpoint") @Metadata(required = true)
+    @UriPath(description = "Name of direct-vm endpoint")
+    @Metadata(required = true)
     private String name;
 
     @UriParam(label = "producer", defaultValue = "true")
     private boolean block = true;
-    @UriParam(label = "producer", defaultValue = "30000")
+    @UriParam(label = "producer", defaultValue = "30000", javaType = "java.time.Duration")
     private long timeout = 30000L;
     @UriParam(label = "producer")
     private boolean failIfNoConsumers = true;
@@ -83,8 +86,8 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * If sending a message to a direct endpoint which has no active consumer,
-     * then we can tell the producer to block and wait for the consumer to become active.
+     * If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block
+     * and wait for the consumer to become active.
      */
     public void setBlock(boolean block) {
         this.block = block;
@@ -106,7 +109,8 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Whether the producer should fail by throwing an exception, when sending to a Direct-VM endpoint with no active consumers.
+     * Whether the producer should fail by throwing an exception, when sending to a Direct-VM endpoint with no active
+     * consumers.
      */
     public void setFailIfNoConsumers(boolean failIfNoConsumers) {
         this.failIfNoConsumers = failIfNoConsumers;
@@ -117,8 +121,11 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Sets a {@link HeaderFilterStrategy} that will only be applied on producer endpoints (on both directions: request and response).
-     * <p>Default value: none.</p>
+     * Sets a {@link HeaderFilterStrategy} that will only be applied on producer endpoints (on both directions: request
+     * and response).
+     * <p>
+     * Default value: none.
+     * </p>
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
@@ -130,7 +137,9 @@ public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     /**
      * Whether to propagate or not properties from the producer side to the consumer side, and vice versa.
-     * <p>Default value: true.</p>
+     * <p>
+     * Default value: true.
+     * </p>
      */
     public void setPropagateProperties(boolean propagateProperties) {
         this.propagateProperties = propagateProperties;

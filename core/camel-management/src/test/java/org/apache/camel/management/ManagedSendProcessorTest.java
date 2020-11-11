@@ -22,7 +22,10 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ManagedSendProcessorTest extends ManagementTestSupport {
 
@@ -71,7 +74,7 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("mock:result").id("mysend");
+                        .to("mock:result").id("mysend");
 
                 from("direct:foo").to("mock:foo");
             }

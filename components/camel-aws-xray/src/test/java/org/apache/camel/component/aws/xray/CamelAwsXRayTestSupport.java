@@ -25,18 +25,30 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestTrace;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Rule;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CamelAwsXRayTestSupport extends CamelTestSupport {
 
-    @Rule
-    public FakeAWSDaemon socketListener = new FakeAWSDaemon();
+    protected FakeAWSDaemon socketListener = new FakeAWSDaemon();
 
     private List<TestTrace> testData;
 
     public CamelAwsXRayTestSupport(TestTrace... testData) {
         this.testData = Arrays.asList(testData);
+    }
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        socketListener.before();
+        super.setUp();
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        super.tearDown();
+        socketListener.after();
     }
 
     @Override

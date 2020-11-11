@@ -18,12 +18,12 @@ package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class HazelcastCamelTestSupport extends CamelTestSupport {
 
@@ -47,11 +47,10 @@ public class HazelcastCamelTestSupport extends CamelTestSupport {
 
     }
 
-    @After
+    @AfterEach
     public final void verifyHazelcastInstanceMock() {
         verifyHazelcastInstance(hazelcastInstance);
         verifyNoMoreInteractions(hazelcastInstance);
     }
-
 
 }

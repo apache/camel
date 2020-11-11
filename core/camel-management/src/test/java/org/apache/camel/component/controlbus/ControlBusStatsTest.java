@@ -18,7 +18,10 @@ package org.apache.camel.component.controlbus;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -89,11 +92,11 @@ public class ControlBusStatsTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:foo").routeId("foo")
-                    .to("mock:foo");
+                        .to("mock:foo");
                 from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+                        .to("mock:bar");
                 from("direct:current").routeId("current")
-                    .to("mock:current");
+                        .to("mock:current");
             }
         };
     }

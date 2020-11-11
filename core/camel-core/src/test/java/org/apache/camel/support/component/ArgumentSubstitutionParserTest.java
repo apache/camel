@@ -17,13 +17,14 @@
 package org.apache.camel.support.component;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.support.component.ArgumentSubstitutionParser.Substitution;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ArgumentSubstitutionParserTest {
 
@@ -42,41 +43,58 @@ public class ArgumentSubstitutionParserTest {
 
         final ArrayList<String> signatures = new ArrayList<>();
         signatures.add("public String sayHi();");
+
         signatures.add("public String sayHi(final String name);");
+        Map<String, String> args = new LinkedHashMap<>();
+        args.put("name", "java.lang.String");
+        parser.addSignatureArguments("String sayHi(String name);", args);
+
         signatures.add("public final String greetMe(final String name);");
+        args = new LinkedHashMap<>();
+        args.put("name", "java.lang.String");
+        parser.addSignatureArguments("String greetMe(String name);", args);
+
         signatures.add("public final String greetUs(final String name1, String name2);");
+        args = new LinkedHashMap<>();
+        args.put("name1", "java.lang.String");
+        args.put("name2", "java.lang.String");
+        parser.addSignatureArguments("String greetUs(String name1, String name2);", args);
+
         signatures.add("public final String greetAll(String[] names);");
+        args = new LinkedHashMap<>();
+        args.put("name", "java.lang.String[]");
+        parser.addSignatureArguments("String greetAll(String[] names);", args);
+
         signatures.add("public final String greetAll(java.util.List<String> names);");
+        args = new LinkedHashMap<>();
+        args.put("name", "java.util.List<String>");
+        parser.addSignatureArguments("String greetAll(java.util.List<String> names);", args);
+
         signatures.add("public final java.util.Map<String, String> greetAll(java.util.Map<String> nameMap);");
+        args = new LinkedHashMap<>();
+        args.put("nameMap", "java.util.Map<String>");
+        parser.addSignatureArguments("java.util.Map<String, String> greetAll(java.util.Map<String> nameMap);", args);
+
         signatures.add("public final String[] greetTimes(String name, int times);");
+        args = new LinkedHashMap<>();
+        args.put("name", "java.lang.String");
+        args.put("times", "int");
+        parser.addSignatureArguments("String[] greetTimes(String name, int times);", args);
+
         signatures.add("public final String greetInnerChild(org.apache.camel.support.component.TestProxy.InnerChild child);");
-        signatures.add("public final <T extends java.util.Date> T sayHiResource(java.util.Set<T> resourceType, String resourceId);");
-        signatures.add("public final <T extends java.util.Date> T with(T theDate);");
-        signatures.add("public final <T extends java.util.Date> String withDate(T theDate, Class<? extends java.util.Date> dateClass, Class<T> parameter, T parameters);");
+        args = new LinkedHashMap<>();
+        args.put("child", "org.apache.camel.support.component.TestProxy$InnerChild");
+        parser.addSignatureArguments("String greetInnerChild(org.apache.camel.support.component.TestProxy.InnerChild child);",
+                args);
 
         parser.setSignatures(signatures);
 
         final List<ApiMethodParser.ApiMethodModel> methodModels = parser.parse();
-        assertEquals(12, methodModels.size());
-
-        final ApiMethodParser.ApiMethodModel withDate = methodModels.get(11);
-        assertEquals(String.class, withDate.getResultType());
-        assertEquals(Date.class, withDate.getArguments().get(0).getType());
+        assertEquals(9, methodModels.size());
 
         final ApiMethodParser.ApiMethodModel sayHi1 = methodModels.get(8);
         assertEquals(PERSON, sayHi1.getArguments().get(0).getName());
-        assertEquals("SAYHI_1", sayHi1.getUniqueName());
-
-        ApiMethodParser.ApiMethodModel sayHiResource = methodModels.get(9);
-        assertEquals(java.util.Date.class, sayHiResource.getResultType());
-        assertEquals(java.util.Set.class, sayHiResource.getArguments().get(0).getType());
-        assertEquals("resourceType", sayHiResource.getArguments().get(0).getName());
-        assertEquals("resourceId", sayHiResource.getArguments().get(1).getName());
-        assertEquals(String.class, sayHiResource.getArguments().get(1).getType());
-
-        ApiMethodParser.ApiMethodModel with = methodModels.get(10);
-        assertEquals(java.util.Date.class, with.getResultType());
-        assertEquals(java.util.Date.class, with.getArguments().get(0).getType());
+        assertEquals("SAY_HI_1", sayHi1.getUniqueName());
 
         final ApiMethodParser.ApiMethodModel greetMe = methodModels.get(4);
         assertEquals(PERSON, greetMe.getArguments().get(0).getName());
@@ -86,10 +104,10 @@ public class ArgumentSubstitutionParserTest {
         assertEquals("astronaut2", greetUs.getArguments().get(1).getName());
 
         final ApiMethodParser.ApiMethodModel greetAll = methodModels.get(0);
-        assertEquals("personMap", greetAll.getArguments().get(0).getName());
+        assertEquals("personList", greetAll.getArguments().get(0).getName());
 
         final ApiMethodParser.ApiMethodModel greetAll1 = methodModels.get(1);
-        assertEquals("personsList", greetAll1.getArguments().get(0).getName());
+        assertEquals("personMap", greetAll1.getArguments().get(0).getName());
 
         final ApiMethodParser.ApiMethodModel greetAll2 = methodModels.get(2);
         assertEquals("stringArray", greetAll2.getArguments().get(0).getName());

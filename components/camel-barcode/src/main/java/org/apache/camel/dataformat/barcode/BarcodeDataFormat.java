@@ -43,16 +43,20 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * {@link DataFormat} to create (encode) and
- * read (decode) barcodes. For more info about
- * the available barcodes have a look at:<br/><br/>
+ * {@link DataFormat} to create (encode) and read (decode) barcodes. For more info about the available barcodes have a
+ * look at:<br/>
+ * <br/>
  * <p/>
  * https://github.com/zxing/zxing
  */
 @Dataformat("barcode")
 public class BarcodeDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BarcodeDataFormat.class);
 
     /**
      * The bean for the default parameters.
@@ -69,7 +73,6 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     private final Map<DecodeHintType, Object> readerHintMap = new EnumMap<>(DecodeHintType.class);
 
-
     /**
      * Create instance with default parameters.
      */
@@ -79,8 +82,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * Create instance with custom {@link BarcodeFormat}. The other
-     * values are default.
+     * Create instance with custom {@link BarcodeFormat}. The other values are default.
      *
      * @param format the barcode format
      */
@@ -91,8 +93,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * Create instance with custom height and width. The other
-     * values are default.
+     * Create instance with custom height and width. The other values are default.
      *
      * @param height the image height
      * @param width  the image width
@@ -105,8 +106,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * Create instance with custom {@link BarcodeImageType}. The other
-     * values are default.
+     * Create instance with custom {@link BarcodeImageType}. The other values are default.
      *
      * @param type the type (format) of the image. e.g. PNG
      */
@@ -117,8 +117,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * Create instance with custom height, width and image type. The other
-     * values are default.
+     * Create instance with custom height, width and image type. The other values are default.
      *
      * @param height the image height
      * @param width  the image width
@@ -227,6 +226,12 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
         // write the found barcode format into the header
         exchange.getOut().setHeader(Barcode.BARCODE_FORMAT, result.getBarcodeFormat());
 
+        if (result.getResultMetadata() != null) {
+            result.getResultMetadata().forEach((k, v) -> {
+                exchange.getOut().setHeader(k.toString(), v);
+            });
+        }
+
         return result.getText();
     }
 
@@ -235,7 +240,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public final void addToHintMap(final EncodeHintType hintType, final Object value) {
         this.writerHintMap.put(hintType, value);
-        log.info(String.format("Added '%s' with value '%s' to writer hint map.", hintType.toString(), value.toString()));
+        LOG.info(String.format("Added '%s' with value '%s' to writer hint map.", hintType.toString(), value.toString()));
     }
 
     /**
@@ -251,9 +256,9 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     public final void removeFromHintMap(final EncodeHintType hintType) {
         if (this.writerHintMap.containsKey(hintType)) {
             this.writerHintMap.remove(hintType);
-            log.info(String.format("Removed '%s' from writer hint map.", hintType.toString()));
+            LOG.info(String.format("Removed '%s' from writer hint map.", hintType.toString()));
         } else {
-            log.warn(String.format("Could not find encode hint type '%s' in writer hint map.", hintType.toString()));
+            LOG.warn(String.format("Could not find encode hint type '%s' in writer hint map.", hintType.toString()));
         }
     }
 
@@ -263,9 +268,9 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
     public final void removeFromHintMap(final DecodeHintType hintType) {
         if (this.readerHintMap.containsKey(hintType)) {
             this.readerHintMap.remove(hintType);
-            log.info(String.format("Removed '%s' from reader hint map.", hintType.toString()));
+            LOG.info(String.format("Removed '%s' from reader hint map.", hintType.toString()));
         } else {
-            log.warn(String.format("Could not find decode hint type '%s' in reader hint map.", hintType.toString()));
+            LOG.warn(String.format("Could not find decode hint type '%s' in reader hint map.", hintType.toString()));
         }
     }
 

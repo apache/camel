@@ -25,12 +25,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 /**
  * A Camel extension of Spring's {@link ThreadPoolTaskScheduler} which uses the
- * {@link org.apache.camel.spi.ExecutorServiceManager} to create and destroy the
- * thread pool, which ensures the thread pool is also managed and consistent with
- * other usages of thread pools in Camel.
+ * {@link org.apache.camel.spi.ExecutorServiceManager} to create and destroy the thread pool, which ensures the thread
+ * pool is also managed and consistent with other usages of thread pools in Camel.
  */
 public class CamelThreadPoolTaskScheduler extends ThreadPoolTaskScheduler {
-    
+
     private static final long serialVersionUID = 1L;
     private final CamelContext camelContext;
     private final Object source;
@@ -43,7 +42,8 @@ public class CamelThreadPoolTaskScheduler extends ThreadPoolTaskScheduler {
     }
 
     @Override
-    protected ScheduledExecutorService createExecutor(int poolSize, ThreadFactory threadFactory, RejectedExecutionHandler rejectedExecutionHandler) {
+    protected ScheduledExecutorService createExecutor(
+            int poolSize, ThreadFactory threadFactory, RejectedExecutionHandler rejectedExecutionHandler) {
         return camelContext.getExecutorServiceManager().newScheduledThreadPool(source, name, poolSize);
     }
 

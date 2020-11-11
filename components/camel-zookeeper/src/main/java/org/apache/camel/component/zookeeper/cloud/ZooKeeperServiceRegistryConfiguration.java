@@ -70,7 +70,7 @@ public class ZooKeeperServiceRegistryConfiguration extends ZooKeeperCuratorConfi
     @Override
     public ZooKeeperServiceRegistryConfiguration copy() {
         try {
-            return (ZooKeeperServiceRegistryConfiguration)super.clone();
+            return (ZooKeeperServiceRegistryConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

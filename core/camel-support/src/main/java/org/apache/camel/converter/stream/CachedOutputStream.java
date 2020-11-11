@@ -27,16 +27,15 @@ import org.apache.camel.converter.stream.FileInputStreamCache.TempFileManager;
 import org.apache.camel.spi.StreamCachingStrategy;
 
 /**
- * This output stream will store the content into a File if the stream context size is exceed the
- * THRESHOLD value. The default THRESHOLD value is {@link StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes .
+ * This output stream will store the content into a File if the stream context size is exceed the THRESHOLD value. The
+ * default THRESHOLD value is {@link StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes .
  * <p/>
- * The temp file will store in the temp directory, you can configure it by setting the TEMP_DIR property.
- * If you don't set the TEMP_DIR property, it will choose the directory which is set by the
- * system property of "java.io.tmpdir".
+ * The temp file will store in the temp directory, you can configure it by setting the TEMP_DIR property. If you don't
+ * set the TEMP_DIR property, it will choose the directory which is set by the system property of "java.io.tmpdir".
  * <p/>
- * You can get a cached input stream of this stream. The temp file which is created with this 
- * output stream will be deleted when you close this output stream or the cached 
- * fileInputStream(s) is/are closed after all the exchanges using the temp file are completed.
+ * You can get a cached input stream of this stream. The temp file which is created with this output stream will be
+ * deleted when you close this output stream or the cached fileInputStream(s) is/are closed after all the exchanges
+ * using the temp file are completed.
  */
 public class CachedOutputStream extends OutputStream {
 
@@ -61,7 +60,7 @@ public class CachedOutputStream extends OutputStream {
 
     @Override
     public void flush() throws IOException {
-        currentStream.flush();       
+        currentStream.flush();
     }
 
     @Override
@@ -121,12 +120,12 @@ public class CachedOutputStream extends OutputStream {
     }
 
     public InputStream getInputStream() throws IOException {
-        return (InputStream)newStreamCache();
-    }    
+        return (InputStream) newStreamCache();
+    }
 
     public InputStream getWrappedInputStream() throws IOException {
         // The WrappedInputStream will close the CachedOutputStream when it is closed
-        return new WrappedInputStream(this, (InputStream)newStreamCache());
+        return new WrappedInputStream(this, (InputStream) newStreamCache());
     }
 
     /**
@@ -139,17 +138,18 @@ public class CachedOutputStream extends OutputStream {
             if (currentStream instanceof CachedByteArrayOutputStream) {
                 return ((CachedByteArrayOutputStream) currentStream).newInputStreamCache();
             } else {
-                throw new IllegalStateException("CurrentStream should be an instance of CachedByteArrayOutputStream but is: " + currentStream.getClass().getName());
+                throw new IllegalStateException(
+                        "CurrentStream should be an instance of CachedByteArrayOutputStream but is: "
+                                                + currentStream.getClass().getName());
             }
         } else {
             return tempFileManager.newStreamCache();
         }
     }
-    
 
     private void pageToFileStream() throws IOException {
         flush();
-        ByteArrayOutputStream bout = (ByteArrayOutputStream)currentStream;
+        ByteArrayOutputStream bout = (ByteArrayOutputStream) currentStream;
         try {
             // creates an tmp file and a file output stream
             currentStream = tempFileManager.createOutputStream(strategy);
@@ -168,27 +168,27 @@ public class CachedOutputStream extends OutputStream {
     private static class WrappedInputStream extends InputStream {
         private CachedOutputStream cachedOutputStream;
         private InputStream inputStream;
-        
+
         WrappedInputStream(CachedOutputStream cos, InputStream is) {
             cachedOutputStream = cos;
             inputStream = is;
         }
-        
+
         @Override
         public int read() throws IOException {
             return inputStream.read();
         }
-        
+
         @Override
         public int available() throws IOException {
             return inputStream.available();
         }
-        
+
         @Override
-        public void reset() throws IOException {
+        public synchronized void reset() throws IOException {
             inputStream.reset();
         }
-        
+
         @Override
         public void close() throws IOException {
             inputStream.close();

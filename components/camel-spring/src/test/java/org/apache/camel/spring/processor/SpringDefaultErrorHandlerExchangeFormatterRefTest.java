@@ -25,6 +25,7 @@ public class SpringDefaultErrorHandlerExchangeFormatterRefTest extends DefaultEr
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/DefaultErrorHandlerExchangeFormatterRefTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/DefaultErrorHandlerExchangeFormatterRefTest.xml");
     }
 }

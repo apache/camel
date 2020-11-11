@@ -17,11 +17,11 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Advice with tests
@@ -30,7 +30,7 @@ public class AdviceWithWeaveByTypeOnExceptionTest extends ContextTestSupport {
 
     @Test
     public void testWeaveOnException() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByType(OnExceptionDefinition.class).after().to("mock:error");
@@ -50,7 +50,8 @@ public class AdviceWithWeaveByTypeOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").onException(Exception.class).handled(true).to("log:error").end().throwException(new IllegalArgumentException("Forced")).to("mock:result");
+                from("direct:start").onException(Exception.class).handled(true).to("log:error").end()
+                        .throwException(new IllegalArgumentException("Forced")).to("mock:result");
             }
         };
     }

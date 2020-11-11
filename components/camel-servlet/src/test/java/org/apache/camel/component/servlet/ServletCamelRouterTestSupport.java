@@ -16,52 +16,288 @@
  */
 package org.apache.camel.component.servlet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.meterware.httpunit.HttpUnitOptions;
-import com.meterware.servletunit.ServletRunner;
-import com.meterware.servletunit.ServletUnitClient;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
+import io.undertow.Handlers;
+import io.undertow.Undertow;
+import io.undertow.server.handlers.PathHandler;
+import io.undertow.servlet.Servlets;
+import io.undertow.servlet.api.DeploymentInfo;
+import io.undertow.servlet.api.DeploymentManager;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public class ServletCamelRouterTestSupport extends CamelTestSupport {
+
     public static final String CONTEXT = "/mycontext";
-    public static final String CONTEXT_URL = "http://localhost/mycontext";
-    protected ServletRunner sr;
+    protected String contextUrl;
     protected boolean startCamelContext = true;
+    protected int port;
+    protected DeploymentManager manager;
+    protected Undertow server;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        InputStream is = this.getClass().getResourceAsStream(getConfiguration());
-        assertNotNull("The configuration input stream should not be null", is);
-        sr = new ServletRunner(is, CONTEXT);
-        
-        HttpUnitOptions.setExceptionsThrownOnErrorStatus(true);
-        if (startCamelContext) {        
+        port = AvailablePortFinder.getNextAvailable();
+        DeploymentInfo servletBuilder = getDeploymentInfo();
+        manager = Servlets.newContainer().addDeployment(servletBuilder);
+        manager.deploy();
+        PathHandler path = Handlers.path(Handlers.redirect(CONTEXT))
+                .addPrefixPath(CONTEXT, manager.start());
+        server = Undertow.builder().addHttpListener(port, "localhost")
+                .setHandler(path).build();
+        server.start();
+        contextUrl = "http://localhost:" + port + CONTEXT;
+        if (startCamelContext) {
             super.setUp();
         }
     }
-    
+
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (startCamelContext) {
             super.tearDown();
         }
-        sr.shutDown();
-    }
-    
-    /**
-     * @return The web.xml to use for testing.
-     */
-    protected String getConfiguration() {
-        return "/org/apache/camel/component/servlet/web.xml";
+        server.stop();
+        manager.stop();
+        manager.undeploy();
     }
 
-    protected ServletUnitClient newClient() {
-        return sr.newClient();
+    protected DeploymentInfo getDeploymentInfo() {
+        return Servlets.deployment()
+                .setClassLoader(getClass().getClassLoader())
+                .setContextPath(CONTEXT)
+                .setDeploymentName(getClass().getName())
+                .addServlet(Servlets.servlet("CamelServlet", CamelHttpTransportServlet.class)
+                        .addMapping("/services/*"));
+    }
+
+    protected WebResponse query(WebRequest req) throws IOException {
+        return query(req, true);
+    }
+
+    protected WebResponse query(WebRequest req, boolean exceptionsThrownOnErrorStatus) throws IOException {
+        String params = req.params.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+                .collect(Collectors.joining("&"));
+        String urlStr = params.isEmpty() ? req.url : req.url + "?" + params;
+        URL url = new URL(urlStr);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setUseCaches(false);
+        req.headers.forEach(con::addRequestProperty);
+        con.setRequestMethod(req.getMethod());
+        if (req instanceof PostMethodWebRequest) {
+            con.setDoOutput(true);
+            InputStream is = ((PostMethodWebRequest) req).content;
+            if (is != null) {
+                IOHelper.copy(is, con.getOutputStream());
+            }
+        }
+        int code = con.getResponseCode();
+        if (exceptionsThrownOnErrorStatus && code >= HttpURLConnection.HTTP_BAD_REQUEST) {
+            if (code == HttpURLConnection.HTTP_NOT_FOUND) {
+                throw new HttpNotFoundException(code, con.getResponseMessage(), url);
+            }
+            throw new HttpException(code, con.getResponseMessage(), url);
+        }
+        return new WebResponse(con);
+    }
+
+    protected abstract static class WebRequest {
+        protected String url;
+        protected Map<String, String> headers = new HashMap<>();
+        protected Map<String, String> params = new HashMap<>();
+
+        public WebRequest(String url) {
+            this.url = url;
+        }
+
+        public abstract String getMethod();
+
+        public void setParameter(String key, String val) {
+            params.put(key, val);
+        }
+
+        public void setHeaderField(String key, String val) {
+            headers.put(key, val);
+        }
+    }
+
+    protected static class GetMethodWebRequest extends WebRequest {
+        public GetMethodWebRequest(String url) {
+            super(url);
+            headers.put("Content-Length", "0");
+        }
+
+        public String getMethod() {
+            return "GET";
+        }
+    }
+
+    protected static class PostMethodWebRequest extends WebRequest {
+        protected InputStream content;
+
+        public PostMethodWebRequest(String url) {
+            super(url);
+        }
+
+        public PostMethodWebRequest(String url, InputStream content, String contentType) {
+            super(url);
+            this.content = content;
+            headers.put("Content-Type", contentType);
+        }
+
+        public String getMethod() {
+            return "POST";
+        }
+    }
+
+    protected static class PutMethodWebRequest extends PostMethodWebRequest {
+        public PutMethodWebRequest(String url) {
+            super(url);
+        }
+
+        public PutMethodWebRequest(String url, InputStream content, String contentType) {
+            super(url, content, contentType);
+        }
+
+        public String getMethod() {
+            return "PUT";
+        }
+    }
+
+    protected static class OptionsMethodWebRequest extends WebRequest {
+        public OptionsMethodWebRequest(String url) {
+            super(url);
+        }
+
+        public String getMethod() {
+            return "OPTIONS";
+        }
+    }
+
+    protected abstract static class HeaderOnlyWebRequest extends WebRequest {
+        public HeaderOnlyWebRequest(String url) {
+            super(url);
+        }
+    }
+
+    protected static class WebResponse {
+
+        HttpURLConnection con;
+        String text;
+
+        public WebResponse(HttpURLConnection con) {
+            this.con = con;
+        }
+
+        public int getResponseCode() throws IOException {
+            return con.getResponseCode();
+        }
+
+        public String getText(Charset charset) throws IOException {
+            if (text == null) {
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    IOHelper.copy(con.getInputStream(), baos);
+                    text = baos.toString(charset.name());
+                } catch (IOException e) {
+                    text = "Exception";
+                }
+            }
+            return text;
+        }
+
+        public String getText() throws IOException {
+            return getText(Charset.defaultCharset());
+        }
+
+        public String getContentType() {
+            String content = con.getContentType();
+            return content != null && content.contains(";")
+                    ? content.substring(0, content.indexOf(";"))
+                    : content;
+        }
+
+        public InputStream getInputStream() throws IOException {
+            try {
+                return con.getInputStream();
+            } catch (IOException e) {
+                try {
+                    Field f = con.getClass().getDeclaredField("inputStream");
+                    f.setAccessible(true);
+                    return (InputStream) f.get(con);
+                } catch (Throwable t) {
+                    e.addSuppressed(t);
+                    throw e;
+                }
+            }
+        }
+
+        public String getResponseMessage() throws IOException {
+            return con.getResponseMessage();
+        }
+
+        public String getCharacterSet() {
+            String content = con.getContentType();
+            return content != null && content.contains(";charset=")
+                    ? content.substring(content.lastIndexOf(";charset=") + ";charset=".length())
+                    : con.getContentEncoding();
+        }
+
+        public String getHeaderField(String key) {
+            return con.getHeaderField(key);
+        }
+    }
+
+    protected static class HttpException extends RuntimeException {
+        private final int code;
+        private final String message;
+        private final URL url;
+
+        public HttpException(int code, String message, URL url) {
+            this.code = code;
+            this.message = message;
+            this.url = url;
+        }
+
+        public int getResponseCode() {
+            return code;
+        }
+
+        public String toString() {
+            StringBuilder sb = new StringBuilder().append("Error on HTTP request: ");
+            sb.append(code);
+            if (message != null) {
+                sb.append(" ");
+                sb.append(message);
+            }
+            if (url != null) {
+                sb.append(" [");
+                sb.append(url.toExternalForm());
+                sb.append("]");
+            }
+            return sb.toString();
+        }
+    }
+
+    protected static class HttpNotFoundException extends HttpException {
+        public HttpNotFoundException(int code, String message, URL url) {
+            super(code, message, url);
+        }
     }
 
 }

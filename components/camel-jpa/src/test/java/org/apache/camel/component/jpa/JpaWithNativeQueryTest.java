@@ -19,29 +19,31 @@ package org.apache.camel.component.jpa;
 import org.apache.camel.Exchange;
 import org.apache.camel.examples.MultiSteps;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class JpaWithNativeQueryTest extends JpaWithNamedQueryTest {
-    
+
     /**
-     * We receive an object array, because we call entityManager.createNativeQuery(nativeQuery)
-     * and not entityManager.createNativeQuery(nativeQuery, MultiSteps.class)
+     * We receive an object array, because we call entityManager.createNativeQuery(nativeQuery) and not
+     * entityManager.createNativeQuery(nativeQuery, MultiSteps.class)
      */
     @Override
     protected void assertReceivedResult(Exchange exchange) {
         assertNotNull(exchange);
         Object[] result = exchange.getIn().getBody(Object[].class);
-        assertNotNull("Received an object array", result);
-        assertEquals("address property", "foo@bar.com", result[1]);
+        assertNotNull(result, "Received an object array");
+        assertEquals("foo@bar.com", result[1], "address property");
     }
-    
+
     /**
-     * Is still 1, because we receive an object array which has no @Consumed annotation
-     * as the MultiSteps class has.
+     * Is still 1, because we receive an object array which has no @Consumed annotation as the MultiSteps class has.
      */
     @Override
     protected int getUpdatedStepValue() {
         return 1;
     }
-    
+
     @Override
     protected void assertURIQueryOption(JpaConsumer jpaConsumer) {
         assertEquals("select * from MultiSteps where step = 1", jpaConsumer.getNativeQuery());

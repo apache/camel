@@ -52,7 +52,7 @@ public class SocketInputStreamStub extends InputStream {
                 return answer;
             } else if (element instanceof IOException) {
                 packetQueue.remove();
-                throw (IOException)element;
+                throw (IOException) element;
             }
         }
 
@@ -79,7 +79,7 @@ public class SocketInputStreamStub extends InputStream {
                 return answer;
             } else if (element instanceof IOException) {
                 packetQueue.remove();
-                throw (IOException)element;
+                throw (IOException) element;
             }
         }
 
@@ -106,7 +106,7 @@ public class SocketInputStreamStub extends InputStream {
                 return answer;
             } else if (element instanceof IOException) {
                 packetQueue.remove();
-                throw (IOException)element;
+                throw (IOException) element;
             }
         }
 

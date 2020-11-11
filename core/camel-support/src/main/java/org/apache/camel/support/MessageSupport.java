@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
@@ -26,15 +27,15 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 
 /**
- * A base class for implementation inheritance providing the core
- * {@link Message} body handling features but letting the derived class deal
- * with headers.
+ * A base class for implementation inheritance providing the core {@link Message} body handling features but letting the
+ * derived class deal with headers.
  *
- * Unless a specific provider wishes to do something particularly clever with
- * headers you probably want to just derive from {@link DefaultMessage}
+ * Unless a specific provider wishes to do something particularly clever with headers you probably want to just derive
+ * from {@link DefaultMessage}
  */
 public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
-    private CamelContext camelContext;
+    ExtendedCamelContext camelContext;
+    TypeConverter typeConverter;
     private Exchange exchange;
     private Object body;
     private String messageId;
@@ -43,7 +44,11 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public String toString() {
         // do not output information about the message as it may contain sensitive information
-        return String.format("Message[%s]", messageId == null ? "" : messageId);
+        if (messageId != null) {
+            return "Message[" + messageId + "]";
+        } else {
+            return "Message";
+        }
     }
 
     @Override
@@ -72,23 +77,21 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
         if (type.isInstance(body)) {
-            return type.cast(body);
+            return (T) body;
         }
 
         Exchange e = getExchange();
         if (e != null) {
-            TypeConverter converter = e.getContext().getTypeConverter();
-
             // lets first try converting the body itself first
             // as for some types like InputStream v Reader its more efficient to do the transformation
             // from the body itself as its got efficient implementations of them, before trying the message
-            T answer = converter.convertTo(type, e, body);
+            T answer = typeConverter.convertTo(type, e, body);
             if (answer != null) {
                 return answer;
             }
 
             // fallback and try the message itself (e.g. used in camel-http)
-            answer = converter.tryConvertTo(type, e, this);
+            answer = typeConverter.tryConvertTo(type, e, this);
             if (answer != null) {
                 return answer;
             }
@@ -103,14 +106,13 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
         if (type.isInstance(body)) {
-            return type.cast(body);
+            return (T) body;
         }
 
         Exchange e = getExchange();
         if (e != null) {
-            TypeConverter converter = e.getContext().getTypeConverter();
             try {
-                return converter.mandatoryConvertTo(type, e, getBody());
+                return typeConverter.mandatoryConvertTo(type, e, getBody());
             } catch (Exception cause) {
                 throw new InvalidPayloadException(e, type, this, cause);
             }
@@ -131,7 +133,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     public <T> void setBody(Object value, Class<T> type) {
         Exchange e = getExchange();
         if (e != null) {
-            T v = e.getContext().getTypeConverter().convertTo(type, e, value);
+            T v = typeConverter.convertTo(type, e, value);
             if (v != null) {
                 value = v;
             }
@@ -165,7 +167,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         Message answer = newInstance();
         // must copy over CamelContext
         if (answer instanceof CamelContextAware) {
-            ((CamelContextAware) answer).setCamelContext(getCamelContext());
+            ((CamelContextAware) answer).setCamelContext(camelContext);
         }
         answer.copyFrom(this);
         return answer;
@@ -183,7 +185,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
             setCamelContext(((CamelContextAware) that).getCamelContext());
         }
         if (that instanceof DataTypeAware && ((DataTypeAware) that).hasDataType()) {
-            setDataType(((DataTypeAware)that).getDataType());
+            setDataType(((DataTypeAware) that).getDataType());
         }
         // cover over exchange if none has been assigned
         if (getExchange() == null) {
@@ -248,7 +250,8 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        this.camelContext = (ExtendedCamelContext) camelContext;
+        this.typeConverter = camelContext.getTypeConverter();
     }
 
     /**
@@ -257,11 +260,9 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     public abstract Message newInstance();
 
     /**
-     * A factory method to allow a provider to lazily create the message body
-     * for inbound messages from other sources
+     * A factory method to allow a provider to lazily create the message body for inbound messages from other sources
      *
-     * @return the value of the message body or null if there is no value
-     *         available
+     * @return the value of the message body or null if there is no value available
      */
     protected Object createBody() {
         return null;
@@ -284,14 +285,12 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
      * Allow implementations to auto-create a messageId
      */
     protected String createMessageId() {
-        String uuid = null;
         if (exchange != null) {
-            uuid = exchange.getContext().getUuidGenerator().generateUuid();
+            // optimize and reuse exchange id
+            return exchange.getExchangeId();
+        } else {
+            return null;
         }
-        // fall back to the simple UUID generator
-        if (uuid == null) {
-            uuid = new SimpleUuidGenerator().generateUuid();
-        }
-        return uuid;
     }
+
 }

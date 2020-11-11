@@ -26,12 +26,16 @@ import mousio.etcd4j.responses.EtcdKeysResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.etcd.support.EtcdTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EtcdKeysTest extends EtcdTestSupport {
 
-    @Test(expected = EtcdException.class)
+    @Test
     public void testKeys() throws Exception {
         final String path = "/camel/" + UUID.randomUUID().toString();
         final String value = UUID.randomUUID().toString();
@@ -50,7 +54,7 @@ public class EtcdKeysTest extends EtcdTestSupport {
 
         MockEndpoint mockSet = getMockEndpoint("mock:result-set");
         mockSet.expectedMinimumMessageCount(1);
-        mockSet.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.keys.name());
+        mockSet.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, "keys");
         mockSet.expectedHeaderReceived(EtcdConstants.ETCD_PATH, path);
         mockSet.assertIsSatisfied();
 
@@ -66,7 +70,7 @@ public class EtcdKeysTest extends EtcdTestSupport {
 
         MockEndpoint mockGet = getMockEndpoint("mock:result-get");
         mockGet.expectedMinimumMessageCount(1);
-        mockSet.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.keys.name());
+        mockSet.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, "keys");
         mockGet.expectedHeaderReceived(EtcdConstants.ETCD_PATH, path);
         mockGet.expectedMessagesMatches(new Predicate() {
             @Override
@@ -94,7 +98,7 @@ public class EtcdKeysTest extends EtcdTestSupport {
 
         MockEndpoint mockDel = getMockEndpoint("mock:result-del");
         mockDel.expectedMinimumMessageCount(1);
-        mockSet.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, EtcdNamespace.keys.name());
+        mockSet.expectedHeaderReceived(EtcdConstants.ETCD_NAMESPACE, "keys");
         mockDel.expectedHeaderReceived(EtcdConstants.ETCD_PATH, path);
         mockDel.assertIsSatisfied();
 
@@ -102,9 +106,9 @@ public class EtcdKeysTest extends EtcdTestSupport {
         // VALIDATION
         // *******************************************
 
-        client.get(path).send().get();
-
-        fail("EtcdException should have been thrown");
+        assertThrows(EtcdException.class, () -> {
+            client.get(path).send().get();
+        });
     }
 
     @Override
@@ -112,13 +116,13 @@ public class EtcdKeysTest extends EtcdTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:keys-set")
-                    .to("etcd:keys")
+                        .to("etcd-keys:dummy")
                         .to("mock:result-set");
                 from("direct:keys-get")
-                    .to("etcd:keys")
+                        .to("etcd-keys:dummy")
                         .to("mock:result-get");
                 from("direct:keys-del")
-                    .to("etcd:keys")
+                        .to("etcd-keys:dummy")
                         .to("mock:result-del");
             }
         };

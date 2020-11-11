@@ -25,18 +25,18 @@ import org.apache.camel.component.atmos.util.AtmosResultHeader;
 public class AtmosFileDownloadResult extends AtmosResult {
 
     /**
-     * Object payload contained in Exchange
-     * In case of a single file Exchange Header is populated with the name of the remote path downloaded
-     * In case of a multiple files Exchange Header is populated with the name of the remote paths downloaded
-     * In case of a single file Exchange Body is populated with the ByteArrayOutputStream downloaded from atmos.
-     * In case of multiple files Exchange Body is populated with a map containing as key the remote path
-     * and as value the linked ByteArrayOutputStream
+     * Object payload contained in Exchange In case of a single file Exchange Header is populated with the name of the
+     * remote path downloaded In case of a multiple files Exchange Header is populated with the name of the remote paths
+     * downloaded In case of a single file Exchange Body is populated with the ByteArrayOutputStream downloaded from
+     * atmos. In case of multiple files Exchange Body is populated with a map containing as key the remote path and as
+     * value the linked ByteArrayOutputStream
+     * 
      * @param exchange
      */
     @Override
     public void populateExchange(Exchange exchange) {
         //in case we have only one baos put it directly in body
-        Map<String, ByteArrayOutputStream> map = (Map<String, ByteArrayOutputStream>)resultEntries;
+        Map<String, ByteArrayOutputStream> map = (Map<String, ByteArrayOutputStream>) resultEntries;
         if (map.size() == 1) {
             //set info in exchange
             String pathExtracted = null;

@@ -22,10 +22,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.IdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the idempotentRepositoryRef option.
@@ -35,14 +38,14 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     private static volatile boolean invoked;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myRepo", new MyIdempotentRepository());
         return jndi;
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/idempotent");
         super.setUp();
@@ -53,8 +56,9 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file://target/data/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
@@ -68,7 +72,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset mock and set new expectations
         mock.reset();
@@ -83,7 +87,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         Thread.sleep(100);
         assertMockEndpointsSatisfied();
 
-        assertTrue("MyIdempotentRepository should have been invoked", invoked);
+        assertTrue(invoked, "MyIdempotentRepository should have been invoked");
     }
 
     public class MyIdempotentRepository implements IdempotentRepository {

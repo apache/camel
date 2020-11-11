@@ -22,20 +22,20 @@ import java.io.FileOutputStream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  *
  */
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class FileProducerAppendManyMessagesTest extends ContextTestSupport {
 
     private boolean enabled;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         if (!enabled) {
             return;
@@ -74,8 +74,9 @@ public class FileProducerAppendManyMessagesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/big").split(body().tokenize(LS)).streaming().to("log:processing?groupSize=1000").to("file:target/data/out/also-big.txt?fileExist=Append")
-                    .end().to("mock:done");
+                from("file:target/data/big").split(body().tokenize(LS)).streaming().to("log:processing?groupSize=1000")
+                        .to("file:target/data/out/also-big.txt?fileExist=Append")
+                        .end().to("mock:done");
             }
         };
     }

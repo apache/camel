@@ -19,8 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TransformViaDSLTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
@@ -35,7 +35,7 @@ public class TransformViaDSLTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -46,9 +46,11 @@ public class TransformViaDSLTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // tag::example[]
-                from("direct:start").setBody(body().append(" World!")).to("mock:result");
-                // end::example[]
+                /*tag::example[]*/
+                from("direct:start")
+                        .setBody(body().append(" World!"))
+                        .to("mock:result");
+                /*end::example[]*/
             }
         };
     }

@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CBRWithRecipientListTest extends ContextTestSupport {
 
@@ -60,9 +60,10 @@ public class CBRWithRecipientListTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").choice().when(body().contains("Camel")).recipientList(header("foo")).end().when(body().contains("Donkey"))
-                    // we can do either end() or endChoice()
-                    .recipientList(header("bar")).endChoice().otherwise().to("mock:result");
+                from("direct:start").choice().when(body().contains("Camel")).recipientList(header("foo")).end()
+                        .when(body().contains("Donkey"))
+                        // we can do either end() or endChoice()
+                        .recipientList(header("bar")).endChoice().otherwise().to("mock:result");
             }
         };
     }

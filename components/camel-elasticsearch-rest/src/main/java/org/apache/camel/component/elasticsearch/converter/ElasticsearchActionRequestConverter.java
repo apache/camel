@@ -55,62 +55,68 @@ public final class ElasticsearchActionRequestConverter {
     // Update requests
     private static UpdateRequest createUpdateRequest(Object document, Exchange exchange) {
         if (document instanceof UpdateRequest) {
-            return (UpdateRequest)document;
+            return (UpdateRequest) document;
         }
         UpdateRequest updateRequest = new UpdateRequest();
         if (document instanceof byte[]) {
-            updateRequest.doc((byte[])document);
+            updateRequest.doc((byte[]) document);
         } else if (document instanceof Map) {
-            updateRequest.doc((Map<String, Object>)document);
+            updateRequest.doc((Map<String, Object>) document);
         } else if (document instanceof String) {
-            updateRequest.doc((String)document, XContentFactory.xContentType((String)document));
+            updateRequest.doc((String) document, XContentFactory.xContentType((String) document));
         } else if (document instanceof XContentBuilder) {
-            updateRequest.doc((XContentBuilder)document);
+            updateRequest.doc((XContentBuilder) document);
         } else {
             return null;
         }
 
-        return updateRequest.waitForActiveShards(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
-            .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-            .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+        return updateRequest
+                .waitForActiveShards(
+                        exchange.getIn().getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
+                .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
+                .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
     }
 
     // Index requests
     private static IndexRequest createIndexRequest(Object document, Exchange exchange) {
         if (document instanceof IndexRequest) {
-            return (IndexRequest)document;
+            return (IndexRequest) document;
         }
         IndexRequest indexRequest = new IndexRequest();
         if (document instanceof byte[]) {
-            indexRequest.source((byte[])document, XContentFactory.xContentType((byte[])document));
+            indexRequest.source((byte[]) document, XContentFactory.xContentType((byte[]) document));
         } else if (document instanceof Map) {
-            indexRequest.source((Map<String, Object>)document);
+            indexRequest.source((Map<String, Object>) document);
         } else if (document instanceof String) {
-            indexRequest.source((String)document, XContentFactory.xContentType((String)document));
+            indexRequest.source((String) document, XContentFactory.xContentType((String) document));
         } else if (document instanceof XContentBuilder) {
-            indexRequest.source((XContentBuilder)document);
+            indexRequest.source((XContentBuilder) document);
         } else {
             return null;
         }
 
-        return indexRequest.waitForActiveShards(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
-            .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
+        return indexRequest
+                .waitForActiveShards(
+                        exchange.getIn().getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class))
+                .index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
     }
 
     @Converter
     public static IndexRequest toIndexRequest(Object document, Exchange exchange) {
-        return createIndexRequest(document, exchange).id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+        return createIndexRequest(document, exchange)
+                .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
     }
 
     @Converter
     public static UpdateRequest toUpdateRequest(Object document, Exchange exchange) {
-        return createUpdateRequest(document, exchange).id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
+        return createUpdateRequest(document, exchange)
+                .id(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_ID, String.class));
     }
 
     @Converter
     public static GetRequest toGetRequest(Object document, Exchange exchange) {
         if (document instanceof GetRequest) {
-            return (GetRequest)document;
+            return (GetRequest) document;
         }
         if (document instanceof String) {
             return new GetRequest(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
@@ -122,11 +128,11 @@ public final class ElasticsearchActionRequestConverter {
     @Converter
     public static DeleteRequest toDeleteRequest(Object document, Exchange exchange) {
         if (document instanceof DeleteRequest) {
-            return (DeleteRequest)document;
+            return (DeleteRequest) document;
         }
         if (document instanceof String) {
             return new DeleteRequest().index(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-                .id((String)document);
+                    .id((String) document);
         }
         return null;
     }
@@ -134,7 +140,7 @@ public final class ElasticsearchActionRequestConverter {
     @Converter
     public static DeleteIndexRequest toDeleteIndexRequest(Object document, Exchange exchange) {
         if (document instanceof DeleteIndexRequest) {
-            return (DeleteIndexRequest)document;
+            return (DeleteIndexRequest) document;
         }
         if (document instanceof String) {
             String index = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
@@ -146,13 +152,15 @@ public final class ElasticsearchActionRequestConverter {
     @Converter
     public static SearchRequest toSearchRequest(Object queryObject, Exchange exchange) throws IOException {
         if (queryObject instanceof SearchRequest) {
-            return (SearchRequest)queryObject;
+            return (SearchRequest) queryObject;
         }
         SearchRequest searchRequest = new SearchRequest();
 
         // Only setup the indexName and indexType if the message header has the
         // setting
         String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
+        Integer size = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_SIZE, Integer.class);
+        Integer from = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_FROM, Integer.class);
         if (ObjectHelper.isNotEmpty(indexName)) {
             searchRequest.indices(indexName);
         }
@@ -161,11 +169,11 @@ public final class ElasticsearchActionRequestConverter {
         String queryText = null;
 
         if (queryObject instanceof Map<?, ?>) {
-            Map<String, Object> mapQuery = (Map<String, Object>)queryObject;
+            Map<String, Object> mapQuery = (Map<String, Object>) queryObject;
             // Remove 'query' prefix from the query object for backward
             // compatibility
             if (mapQuery.containsKey(ES_QUERY_DSL_PREFIX)) {
-                mapQuery = (Map<String, Object>)mapQuery.get(ES_QUERY_DSL_PREFIX);
+                mapQuery = (Map<String, Object>) mapQuery.get(ES_QUERY_DSL_PREFIX);
             }
             try {
                 XContentBuilder contentBuilder = XContentFactory.contentBuilder(XContentType.JSON);
@@ -174,7 +182,7 @@ public final class ElasticsearchActionRequestConverter {
                 LOG.error("Cannot build the QueryText from the map.", e);
             }
         } else if (queryObject instanceof String) {
-            queryText = (String)queryObject;
+            queryText = (String) queryObject;
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonTextObject = mapper.readValue(queryText, JsonNode.class);
             JsonNode parentJsonNode = jsonTextObject.get(ES_QUERY_DSL_PREFIX);
@@ -186,7 +194,12 @@ public final class ElasticsearchActionRequestConverter {
             LOG.info("Cannot convert queryObject into SearchRequest object");
             return null;
         }
-
+        if (size != null) {
+            searchSourceBuilder.size(size);
+        }
+        if (from != null) {
+            searchSourceBuilder.from(from);
+        }
         searchSourceBuilder.query(QueryBuilders.wrapperQuery(queryText));
         searchRequest.source(searchSourceBuilder);
 
@@ -196,11 +209,11 @@ public final class ElasticsearchActionRequestConverter {
     @Converter
     public static BulkRequest toBulkRequest(Object documents, Exchange exchange) {
         if (documents instanceof BulkRequest) {
-            return (BulkRequest)documents;
+            return (BulkRequest) documents;
         }
         if (documents instanceof List) {
             BulkRequest request = new BulkRequest();
-            for (Object document : (List<Object>)documents) {
+            for (Object document : (List<Object>) documents) {
                 request.add(createIndexRequest(document, exchange));
             }
             return request;

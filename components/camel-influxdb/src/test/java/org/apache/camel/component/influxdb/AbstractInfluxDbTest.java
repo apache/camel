@@ -17,22 +17,22 @@
 package org.apache.camel.component.influxdb;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.influxdb.InfluxDB;
+import org.influxdb.impl.InfluxDBImpl;
+
+import static org.mockito.Mockito.mock;
 
 public class AbstractInfluxDbTest extends CamelTestSupport {
 
-    protected ApplicationContext applicationContext;
+    InfluxDB mockedDbConnection = mock(InfluxDBImpl.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new AnnotationConfigApplicationContext(MockedInfluxDbConfiguration.class);
-        CamelContext ctx = new SpringCamelContext(applicationContext);
-        ctx.init();
-        ctx.getPropertiesComponent().setLocation("classpath:influxdb.test.properties");
-        return ctx;
+        CamelContext context = super.createCamelContext();
+        context.getRegistry().bind("influxDbBean", mockedDbConnection);
+        context.getPropertiesComponent().setLocation("classpath:influxdb.test.properties");
+        return context;
     }
 
 }

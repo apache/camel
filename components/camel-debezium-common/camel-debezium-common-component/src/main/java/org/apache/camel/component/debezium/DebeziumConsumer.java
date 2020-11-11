@@ -18,7 +18,9 @@ package org.apache.camel.component.debezium;
 
 import java.util.concurrent.ExecutorService;
 
-import io.debezium.embedded.EmbeddedEngine;
+import io.debezium.embedded.Connect;
+import io.debezium.engine.ChangeEvent;
+import io.debezium.engine.DebeziumEngine;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.debezium.configuration.EmbeddedDebeziumConfiguration;
@@ -31,7 +33,7 @@ public class DebeziumConsumer extends DefaultConsumer {
     private final EmbeddedDebeziumConfiguration configuration;
 
     private ExecutorService executorService;
-    private EmbeddedEngine dbzEngine;
+    private DebeziumEngine<ChangeEvent<SourceRecord, SourceRecord>> dbzEngine;
 
     public DebeziumConsumer(DebeziumEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -55,7 +57,7 @@ public class DebeziumConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        dbzEngine.stop();
+        dbzEngine.close();
 
         // shutdown the thread pool gracefully
         getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
@@ -64,13 +66,15 @@ public class DebeziumConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    private EmbeddedEngine createDbzEngine() {
-        return EmbeddedEngine.create().using(configuration.createDebeziumConfiguration())
-            .notifying(this::onEventListener).build();
+    private DebeziumEngine<ChangeEvent<SourceRecord, SourceRecord>> createDbzEngine() {
+        return DebeziumEngine.create(Connect.class)
+                .using(configuration.createDebeziumConfiguration().asProperties())
+                .notifying(this::onEventListener)
+                .build();
     }
 
-    private void onEventListener(final SourceRecord event) {
-        final Exchange exchange = endpoint.createDbzExchange(event);
+    private void onEventListener(final ChangeEvent<SourceRecord, SourceRecord> event) {
+        final Exchange exchange = endpoint.createDbzExchange(event.value());
 
         try {
             // send message to next processor in the route
@@ -81,7 +85,7 @@ public class DebeziumConsumer extends DefaultConsumer {
             // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange,
-                                                      exchange.getException());
+                        exchange.getException());
             }
         }
     }

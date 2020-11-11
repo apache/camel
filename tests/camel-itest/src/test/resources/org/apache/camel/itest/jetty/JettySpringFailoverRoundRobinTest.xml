@@ -38,7 +38,7 @@
 
         <!-- START SNIPPET: e1 -->
         <route>
-            <from uri="direct:start"/>
+            <from uri="direct:JettySpringFailoverRoundRobinTestStart"/>
             <!-- load balance using failover in round robin mode.
                  Also do not inherit error handler which means the failover LB will not fallback
                  and use error handler but trigger failover to next endpoint immediately -->
@@ -55,27 +55,27 @@
 
         <route>
             <from uri="ref:bad"/>
-            <to uri="mock:bad"/>
+            <to uri="mock:JettySpringFailoverRoundRobinTestBad"/>
             <setHeader name="CamelHttpResponseCode"><constant>500</constant></setHeader>
             <setBody><constant>Something bad happened</constant></setBody>
         </route>
 
         <route>
             <from uri="ref:bad2"/>
-            <to uri="mock:bad2"/>
+            <to uri="mock:JettySpringFailoverRoundRobinTestBad2"/>
             <setHeader name="CamelHttpResponseCode"><constant>404</constant></setHeader>
             <setBody><constant>Not found</constant></setBody>
         </route>
 
         <route>
             <from uri="ref:good"/>
-            <to uri="mock:good"/>
+            <to uri="mock:JettySpringFailoverRoundRobinTestGood"/>
             <setBody><constant>Good</constant></setBody>
         </route>
 
         <route>
             <from uri="ref:good2"/>
-            <to uri="mock:good2"/>
+            <to uri="mock:JettySpringFailoverRoundRobinTestGood2"/>
             <setBody><constant>Also good</constant></setBody>
         </route>
 

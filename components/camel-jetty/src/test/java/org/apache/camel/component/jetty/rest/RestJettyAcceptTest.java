@@ -20,23 +20,30 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.junit.Test;
+import org.apache.camel.http.base.HttpOperationFailedException;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RestJettyAcceptTest extends BaseJettyTest {
 
     @Test
     public void testJettyProducerNoAccept() throws Exception {
-        String out = fluentTemplate.withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update")
-            .request(String.class);
+        String out = fluentTemplate.withHeader(Exchange.HTTP_METHOD, "post").withBody("{ \"name\": \"Donald Duck\" }")
+                .to("http://localhost:" + getPort() + "/users/123/update")
+                .request(String.class);
 
         assertEquals("{ \"status\": \"ok\" }", out);
     }
 
     @Test
     public void testJettyProducerAcceptValid() throws Exception {
-        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json").withHeader("Accept", "application/json").withHeader(Exchange.HTTP_METHOD, "post")
-            .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
+        String out = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withHeader("Accept", "application/json").withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update")
+                .request(String.class);
 
         assertEquals("{ \"status\": \"ok\" }", out);
     }
@@ -44,8 +51,10 @@ public class RestJettyAcceptTest extends BaseJettyTest {
     @Test
     public void testJettyProducerAcceptInvalid() throws Exception {
         try {
-            fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json").withHeader("Accept", "application/xml").withHeader(Exchange.HTTP_METHOD, "post")
-                .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update").request(String.class);
+            fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json").withHeader("Accept", "application/xml")
+                    .withHeader(Exchange.HTTP_METHOD, "post")
+                    .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update")
+                    .request(String.class);
 
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
@@ -62,11 +71,12 @@ public class RestJettyAcceptTest extends BaseJettyTest {
             public void configure() throws Exception {
                 // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort())
-                    // turn on client request validation
-                    .clientRequestValidation(true);
+                        // turn on client request validation
+                        .clientRequestValidation(true);
 
                 // use the rest DSL to define the rest services
-                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").route().setBody(constant("{ \"status\": \"ok\" }"));
+                rest("/users/").post("{id}/update").consumes("application/json").produces("application/json").route()
+                        .setBody(constant("{ \"status\": \"ok\" }"));
             }
         };
     }

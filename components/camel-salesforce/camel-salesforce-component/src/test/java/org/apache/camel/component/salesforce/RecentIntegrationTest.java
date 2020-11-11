@@ -25,12 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.RecentItem;
 import org.apache.camel.component.salesforce.dto.generated.Account;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@Category(Standalone.class)
+import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+
+@Standalone
 public class RecentIntegrationTest extends AbstractSalesforceTestBase {
 
     public static class Accounts extends AbstractQueryRecordsBase {
@@ -49,14 +50,15 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
 
     private static final Object NOT_USED = null;
 
-    @After
+    @AfterEach
     public void deleteRecords() {
         template.sendBody("direct:delete-recent", NOT_USED);
     }
 
-    @Before
+    @BeforeEach
     public void setupTenRecentItems() {
-        final List<Account> accounts = IntStream.range(0, 10).mapToObj(RecentIntegrationTest::account).collect(Collectors.toList());
+        final List<Account> accounts
+                = IntStream.range(0, 10).mapToObj(RecentIntegrationTest::account).collect(Collectors.toList());
 
         template.sendBody("direct:create-recent", accounts);
     }
@@ -99,17 +101,22 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
             @Override
             public void configure() throws Exception {
                 from("direct:create-recent").split().body().to("salesforce:createSObject?sObjectName=Account").end()
-                    .to("salesforce:query?sObjectClass=" + Accounts.class.getName() + "&sObjectQuery=SELECT Id FROM Account WHERE Name LIKE 'recent-%' FOR VIEW");
+                        .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
+                            + "&sObjectQuery=SELECT Id FROM Account WHERE Name LIKE 'recent-%' FOR VIEW");
 
-                from("direct:delete-recent").to("salesforce:query?sObjectClass=" + Accounts.class.getName() + "&sObjectQuery=SELECT Id FROM Account WHERE Name LIKE 'recent-%'")
-                    .transform(simple("${body.records}")).split().body().setHeader(SalesforceEndpointConfig.SOBJECT_ID).simple("${body.id}")
-                    .to("salesforce:deleteSObject?sObjectName=Account");
+                from("direct:delete-recent")
+                        .to("salesforce:query?sObjectClass=" + Accounts.class.getName()
+                            + "&sObjectQuery=SELECT Id FROM Account WHERE Name LIKE 'recent-%'")
+                        .transform(simple("${body.records}")).split().body().setHeader(SalesforceEndpointConfig.SOBJECT_ID)
+                        .simple("${body.id}")
+                        .to("salesforce:deleteSObject?sObjectName=Account");
 
                 from("direct:test-recent").to("salesforce:recent");
 
                 from("direct:test-recent-with-limit-uri-param").to("salesforce:recent?limit=5");
 
-                from("direct:test-recent-with-header-limit-param").setHeader(SalesforceEndpointConfig.LIMIT).constant(5).to("salesforce:recent");
+                from("direct:test-recent-with-header-limit-param").setHeader(SalesforceEndpointConfig.LIMIT).constant(5)
+                        .to("salesforce:recent");
 
                 from("direct:test-recent-with-body-limit-param").setBody(constant(5)).to("salesforce:recent");
             }
@@ -124,7 +131,8 @@ public class RecentIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     static void assertRecentItemsSize(final List<RecentItem> items, final int expected) {
-        final List<RecentItem> recentItems = items.stream().filter(i -> i.getName().startsWith("recent-")).collect(Collectors.toList());
+        final List<RecentItem> recentItems
+                = items.stream().filter(i -> i.getName().startsWith("recent-")).collect(Collectors.toList());
 
         assertListSize("Expected " + expected + " items named `recent-N` in recent items", recentItems, expected);
     }

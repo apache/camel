@@ -25,9 +25,12 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.FileUtil.normalizePath;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
 
@@ -51,7 +54,7 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
                 break;
             }
         }
-        assertNotNull("Cannot find DefaultStreamCachingStrategy", name);
+        assertNotNull(name, "Cannot find DefaultStreamCachingStrategy");
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(name, "Enabled");
         assertEquals(Boolean.TRUE, enabled);
@@ -96,8 +99,8 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
                 context.getStreamCachingStrategy().setSpoolDirectory("target/data/cachedir/#name#/");
 
                 from("direct:start").routeId("foo")
-                    .convertBodyTo(int.class)
-                    .to("mock:a");
+                        .convertBodyTo(int.class)
+                        .to("mock:a");
             }
         };
     }

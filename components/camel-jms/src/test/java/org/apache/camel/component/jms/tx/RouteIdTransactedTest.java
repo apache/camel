@@ -17,16 +17,18 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RouteIdTransactedTest extends CamelSpringTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/RouteIdTransactedTest.xml");
+                "/org/apache/camel/component/jms/tx/RouteIdTransactedTest.xml");
     }
 
     @Test
@@ -61,13 +63,13 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo?transacted=true").id("myCoolRoute")
-                    .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
-                    .transacted()
-                    .choice()
+                        .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
+                        .transacted()
+                        .choice()
                         .when(body().contains("Kabom")).throwException(new IllegalArgumentException("Damn"))
-                    .otherwise()
+                        .otherwise()
                         .to("mock:result")
-                    .end();
+                        .end();
 
             }
         };

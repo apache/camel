@@ -19,20 +19,21 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.hamcrest.CoreMatchers;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class QuartzComponentCamelContextSharedSchedulerTest {
 
     private DefaultCamelContext camel1;
     private DefaultCamelContext camel2;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         camel1 = new DefaultCamelContext();
         camel1.setName("camel-1");
@@ -61,7 +62,7 @@ public class QuartzComponentCamelContextSharedSchedulerTest {
         camel2.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         camel1.stop();
         camel2.stop();
@@ -77,14 +78,16 @@ public class QuartzComponentCamelContextSharedSchedulerTest {
         mock1.assertIsSatisfied();
 
         JobDetail detail = mock1.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
-        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/2 * * * * ?"), CoreMatchers.is(true));
+        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/2 * * * * ?"),
+                is(true));
 
         camel1.stop();
 
         mock2.assertIsSatisfied();
 
         detail = mock2.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
-        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/1 * * * * ?"), CoreMatchers.is(true));
+        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/1 * * * * ?"),
+                is(true));
 
         camel2.stop();
     }

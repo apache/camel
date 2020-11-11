@@ -19,7 +19,7 @@ package org.apache.camel.component.file;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for the idempotentKey option.
@@ -31,7 +31,7 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("file://target/data/idempotent/?idempotent=true&idempotentKey=${file:onlyname}-${file:size}&move=done/${file:name}&initialDelay=0&delay=10")
-                    .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -44,7 +44,7 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset mock and set new expectations
         mock.reset();

@@ -17,15 +17,18 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringErrorHandlerRedeliveryPolicyProfileTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringErrorHandlerRedeliveryPolicyProfileTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/processor/SpringErrorHandlerRedeliveryPolicyProfileTest.xml");
     }
 
     @Test

@@ -32,6 +32,7 @@ import javax.jms.TemporaryTopic;
 import javax.jms.Topic;
 
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
@@ -52,6 +53,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -63,25 +66,31 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.ErrorHandler;
 
 /**
- * The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
+ * Sent and receive messages to/from a JMS Queue or Topic.
  *
  * This component uses Spring JMS and supports JMS 1.1 and 2.0 API.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", label = "messaging",
-        excludeProperties = "bridgeErrorHandler")
-public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName",
+             category = { Category.MESSAGING })
+@Metadata(excludeProperties = "bridgeErrorHandler")
+public class JmsEndpoint extends DefaultEndpoint
+        implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsEndpoint.class);
 
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
     private boolean pubSubDomain;
     private JmsBinding binding;
-    @UriPath(defaultValue = "queue", enums = "queue,topic,temp-queue,temp-topic", description = "The kind of destination to use")
+    @UriPath(defaultValue = "queue", enums = "queue,topic,temp-queue,temp-topic",
+             description = "The kind of destination to use")
     private String destinationType;
     @UriPath(description = "Name of the queue or topic to use as destination")
     @Metadata(required = true)
     private String destinationName;
     private Destination destination;
-    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    @UriParam(label = "advanced",
+              description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam
     private JmsConfiguration configuration;
@@ -96,7 +105,8 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         this.destinationType = "topic";
     }
 
-    public JmsEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain, JmsConfiguration configuration) {
+    public JmsEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain,
+                       JmsConfiguration configuration) {
         super(UnsafeUriCharactersEncoder.encode(uri), component);
         this.configuration = configuration;
         this.destinationName = destinationName;
@@ -108,7 +118,8 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
     }
 
-    public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destinationName, boolean pubSubDomain) {
+    public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destinationName,
+                       boolean pubSubDomain) {
         super(UnsafeUriCharactersEncoder.encode(endpointUri), null);
         this.binding = binding;
         this.configuration = configuration;
@@ -187,18 +198,19 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
         if (destinationName != null) {
             listenerContainer.setDestinationName(destinationName);
-            log.debug("Using destinationName: {} on listenerContainer: {}", destinationName, listenerContainer);
+            LOG.debug("Using destinationName: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else if (destination != null) {
             listenerContainer.setDestination(destination);
-            log.debug("Using destination: {} on listenerContainer: {}", destinationName, listenerContainer);
+            LOG.debug("Using destination: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else {
             DestinationResolver resolver = getDestinationResolver();
             if (resolver != null) {
                 listenerContainer.setDestinationResolver(resolver);
             } else {
-                throw new IllegalArgumentException("Neither destination, destinationName or destinationResolver are specified on this endpoint!");
+                throw new IllegalArgumentException(
+                        "Neither destination, destinationName or destinationResolver are specified on this endpoint!");
             }
-            log.debug("Using destinationResolver: {} on listenerContainer: {}", resolver, listenerContainer);
+            LOG.debug("Using destinationResolver: {} on listenerContainer: {}", resolver, listenerContainer);
         }
         listenerContainer.setPubSubDomain(pubSubDomain);
 
@@ -206,8 +218,9 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         String consumerName = getThreadName();
 
         if (configuration.getTaskExecutor() != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Using custom TaskExecutor: {} on listener container: {}", configuration.getTaskExecutor(), listenerContainer);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using custom TaskExecutor: {} on listener container: {}", configuration.getTaskExecutor(),
+                        listenerContainer);
             }
             setContainerTaskExecutor(listenerContainer, configuration.getTaskExecutor());
             // we are using a shared thread pool that this listener container is using.
@@ -216,11 +229,13 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             if (configuration.getTaskExecutor() instanceof ExecutorService) {
                 consumer.setListenerContainerExecutorService((ExecutorService) configuration.getTaskExecutor(), false);
             }
-        } else if (!(listenerContainer instanceof DefaultJmsMessageListenerContainer) || configuration.getDefaultTaskExecutorType() == null) {
+        } else if (!(listenerContainer instanceof DefaultJmsMessageListenerContainer)
+                || configuration.getDefaultTaskExecutorType() == null) {
             // preserve backwards compatibility if an explicit Default TaskExecutor Type was not set;
             // otherwise, defer the creation of the TaskExecutor
             // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
-            ExecutorService executor = getCamelContext().getExecutorServiceManager().newCachedThreadPool(consumer, consumerName);
+            ExecutorService executor
+                    = getCamelContext().getExecutorServiceManager().newCachedThreadPool(consumer, consumerName);
             setContainerTaskExecutor(listenerContainer, executor);
             // we created a new private thread pool that this listener container is using, now store a reference on the consumer
             // so when the consumer is stopped we can shutdown the thread pool also, to ensure all resources is shutdown
@@ -228,7 +243,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         } else {
             // do nothing, as we're working with a DefaultJmsMessageListenerContainer with an explicit DefaultTaskExecutorType,
             // so DefaultJmsMessageListenerContainer#createDefaultTaskExecutor will handle the creation
-            log.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
+            LOG.debug("Deferring creation of TaskExecutor for listener container: {} as per policy: {}",
                     listenerContainer, getDefaultTaskExecutorType());
         }
 
@@ -276,12 +291,13 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     /**
      * Creates a consumer using the given processor and listener container
      *
-     * @param processor         the processor to use to process the messages
-     * @param listenerContainer the listener container
-     * @return a newly created consumer
-     * @throws Exception if the consumer cannot be created
+     * @param  processor         the processor to use to process the messages
+     * @param  listenerContainer the listener container
+     * @return                   a newly created consumer
+     * @throws Exception         if the consumer cannot be created
      */
-    public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
+    public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer)
+            throws Exception {
         JmsConsumer consumer = new JmsConsumer(this, processor, listenerContainer);
         configureListenerContainer(listenerContainer, consumer);
         configureConsumer(consumer);
@@ -292,9 +308,11 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
         String replyTo = consumer.getEndpoint().getReplyTo();
         if (replyTo != null && consumer.getEndpoint().getDestinationName().equals(replyTo)) {
-            throw new IllegalArgumentException("Invalid Endpoint configuration: " + consumer.getEndpoint()
-                    + ". ReplyTo=" + replyTo + " cannot be the same as the destination name on the JmsConsumer as that"
-                    + " would lead to the consumer sending reply messages to itself in an endless loop.");
+            throw new IllegalArgumentException(
+                    "Invalid Endpoint configuration: " + consumer.getEndpoint()
+                                               + ". ReplyTo=" + replyTo
+                                               + " cannot be the same as the destination name on the JmsConsumer as that"
+                                               + " would lead to the consumer sending reply messages to itself in an endless loop.");
         }
 
         return consumer;
@@ -383,8 +401,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     /**
-     * Sets the binding used to convert from a Camel message to and from a JMS
-     * message
+     * Sets the binding used to convert from a Camel message to and from a JMS message
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
@@ -438,7 +455,8 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     protected ExecutorService getAsyncStartStopExecutorService() {
         if (getComponent() == null) {
-            throw new IllegalStateException("AsyncStartStopListener requires JmsComponent to be configured on this endpoint: " + this);
+            throw new IllegalStateException(
+                    "AsyncStartStopListener requires JmsComponent to be configured on this endpoint: " + this);
         }
         // use shared thread pool from component
         return getComponent().getAsyncStartStopExecutorService();
@@ -465,7 +483,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (running <= 0) {
             super.stop();
         } else {
-            log.trace("There are still {} running message listeners. Cannot stop endpoint {}", running, this);
+            LOG.trace("There are still {} running message listeners. Cannot stop endpoint {}", running, this);
         }
     }
 
@@ -475,7 +493,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (running <= 0) {
             super.shutdown();
         } else {
-            log.trace("There are still {} running message listeners. Cannot shutdown endpoint {}", running, this);
+            LOG.trace("There are still {} running message listeners. Cannot shutdown endpoint {}", running, this);
         }
     }
 
@@ -679,7 +697,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     public boolean isAllowReplyManagerQuickStop() {
         return getConfiguration().isAllowReplyManagerQuickStop();
     }
-    
+
     @ManagedAttribute
     public boolean isAlwaysCopyMessage() {
         return getConfiguration().isAlwaysCopyMessage();
@@ -756,6 +774,11 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
+    public boolean isTransactedInOut() {
+        return getConfiguration().isTransactedInOut();
+    }
+
+    @ManagedAttribute
     public boolean isLazyCreateTransactionManager() {
         return getConfiguration().isLazyCreateTransactionManager();
     }
@@ -774,7 +797,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
         getConfiguration().setAllowReplyManagerQuickStop(allowReplyManagerQuickStop);
     }
-    
+
     @ManagedAttribute
     public void setAcknowledgementMode(int consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);
@@ -997,8 +1020,8 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
-    public void setTransacted(boolean consumerTransacted) {
-        getConfiguration().setTransacted(consumerTransacted);
+    public void setTransacted(boolean transacted) {
+        getConfiguration().setTransacted(transacted);
     }
 
     @ManagedAttribute
@@ -1227,7 +1250,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         getConfiguration().setSubscriptionName(subscriptionName);
     }
 
-
     @ManagedAttribute
     public String getReplyToType() {
         if (configuration.getReplyToType() != null) {
@@ -1285,6 +1307,16 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @ManagedAttribute
     public void setFormatDateHeadersToIso8601(boolean formatDateHeadersToIso8601) {
         configuration.setFormatDateHeadersToIso8601(formatDateHeadersToIso8601);
+    }
+
+    @ManagedAttribute
+    public boolean isArtemisStreamingEnabled() {
+        return configuration.isArtemisStreamingEnabled();
+    }
+
+    @ManagedAttribute
+    public void setArtemisStreamingEnabled(boolean artemisStreamingEnabled) {
+        configuration.setArtemisStreamingEnabled(artemisStreamingEnabled);
     }
 
     // Implementation methods

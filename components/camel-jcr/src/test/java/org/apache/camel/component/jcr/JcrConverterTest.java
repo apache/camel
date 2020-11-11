@@ -23,8 +23,6 @@ import javax.jcr.Value;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.support.ObjectHelper;
@@ -33,20 +31,23 @@ import org.apache.jackrabbit.value.BinaryValue;
 import org.apache.jackrabbit.value.BooleanValue;
 import org.apache.jackrabbit.value.DateValue;
 import org.apache.jackrabbit.value.StringValue;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for JCR type conversions ({@link JcrConverter})
  */
-public class JcrConverterTest extends Assert {
+public class JcrConverterTest {
 
     protected TypeConverter converter;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
-        converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
+        converter = new DefaultTypeConverter(
+                new DefaultPackageScanClassResolver(),
                 new Injector() {
                     @Override
                     public <T> T newInstance(Class<T> type) {
@@ -67,7 +68,7 @@ public class JcrConverterTest extends Assert {
                     public boolean supportsAutoWiring() {
                         return false;
                     }
-                }, new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), true);
+                }, true);
         ServiceHelper.startService(converter);
     }
 

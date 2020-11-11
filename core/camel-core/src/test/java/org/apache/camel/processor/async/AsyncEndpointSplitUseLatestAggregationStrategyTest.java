@@ -21,7 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AsyncEndpointSplitUseLatestAggregationStrategyTest extends ContextTestSupport {
 
@@ -37,7 +40,7 @@ public class AsyncEndpointSplitUseLatestAggregationStrategyTest extends ContextT
         String reply = template.requestBody("direct:start", "A,B", String.class);
         assertEquals("Bye Camel", reply);
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
     }
 
     @Override
@@ -47,15 +50,16 @@ public class AsyncEndpointSplitUseLatestAggregationStrategyTest extends ContextT
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start").split(body(), new UseLatestAggregationStrategy()).to("mock:before").to("log:before").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        beforeThreadName = Thread.currentThread().getName();
-                    }
-                }).to("async:bye:camel").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        afterThreadName = Thread.currentThread().getName();
-                    }
-                }).to("log:after").to("mock:after").end().to("mock:result");
+                from("direct:start").split(body(), new UseLatestAggregationStrategy()).to("mock:before").to("log:before")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                beforeThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("async:bye:camel").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                afterThreadName = Thread.currentThread().getName();
+                            }
+                        }).to("log:after").to("mock:after").end().to("mock:result");
             }
         };
     }

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.util.CaseInsensitiveMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Mode;
@@ -46,22 +46,22 @@ public class CaseInsensitiveMapTest {
     @Test
     public void launchBenchmark() throws Exception {
         Options opt = new OptionsBuilder()
-            // Specify which benchmarks to run.
-            // You can be more specific if you'd like to run only one benchmark per test.
-            .include(this.getClass().getName() + ".*")
-            // Set the following options as needed
-            .mode(Mode.SampleTime)
-            .timeUnit(TimeUnit.MILLISECONDS)
-            .warmupTime(TimeValue.seconds(1))
-            .warmupIterations(2)
-            .measurementTime(TimeValue.seconds(5))
-            .measurementIterations(5)
-            .threads(1)
-            .forks(1)
-            .shouldFailOnError(true)
-            .shouldDoGC(true)
-            .measurementBatchSize(1000000)
-            .build();
+                // Specify which benchmarks to run.
+                // You can be more specific if you'd like to run only one benchmark per test.
+                .include(this.getClass().getName() + ".*")
+                // Set the following options as needed
+                .mode(Mode.SampleTime)
+                .timeUnit(TimeUnit.MILLISECONDS)
+                .warmupTime(TimeValue.seconds(1))
+                .warmupIterations(2)
+                .measurementTime(TimeValue.seconds(5))
+                .measurementIterations(5)
+                .threads(1)
+                .forks(1)
+                .shouldFailOnError(true)
+                .shouldDoGC(true)
+                .measurementBatchSize(1000000)
+                .build();
 
         new Runner(opt).run();
     }
@@ -91,7 +91,7 @@ public class CaseInsensitiveMapTest {
         private Map<String, Object> generateRandomMap(int size) {
             return IntStream.range(0, size)
                     .boxed()
-                    .collect(Collectors.toMap(i -> randomAlphabetic(10), i-> randomAlphabetic(10)));
+                    .collect(Collectors.toMap(i -> randomAlphabetic(10), i -> randomAlphabetic(10)));
         }
     }
 
@@ -147,7 +147,8 @@ public class CaseInsensitiveMapTest {
     }
 
     @Benchmark
-    public void camelMapComplexCase(MapsBenchmarkState mapsBenchmarkState, MapsSourceDataBenchmarkState sourceDataState, Blackhole blackhole) {
+    public void camelMapComplexCase(
+            MapsBenchmarkState mapsBenchmarkState, MapsSourceDataBenchmarkState sourceDataState, Blackhole blackhole) {
         // step 1 - initialize map with existing elements
         Map map = mapsBenchmarkState.camelMap;
 
@@ -166,9 +167,9 @@ public class CaseInsensitiveMapTest {
         blackhole.consume(map);
     }
 
-
     @Benchmark
-    public void cedarsoftMapComplexCase(MapsBenchmarkState mapsBenchmarkState, MapsSourceDataBenchmarkState sourceDataState, Blackhole blackhole) {
+    public void cedarsoftMapComplexCase(
+            MapsBenchmarkState mapsBenchmarkState, MapsSourceDataBenchmarkState sourceDataState, Blackhole blackhole) {
         // step 1 - initialize map with existing elements
         Map map = mapsBenchmarkState.cedarsoftMap;
 
@@ -188,7 +189,8 @@ public class CaseInsensitiveMapTest {
     }
 
     @Benchmark
-    public void hashMapComplexCase(MapsBenchmarkState mapsBenchmarkState, MapsSourceDataBenchmarkState sourceDataState, Blackhole blackhole) {
+    public void hashMapComplexCase(
+            MapsBenchmarkState mapsBenchmarkState, MapsSourceDataBenchmarkState sourceDataState, Blackhole blackhole) {
         // step 1 - initialize map with existing elements
         Map map = mapsBenchmarkState.hashMap;
 

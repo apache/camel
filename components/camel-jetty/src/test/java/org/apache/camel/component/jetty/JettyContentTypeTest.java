@@ -22,7 +22,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for content-type
@@ -45,9 +47,9 @@ public class JettyContentTypeTest extends BaseJettyTest {
         }
         template.send(endpoint, exchange);
 
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("<order>OK</order>", body);
-        assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "text/xml");
+        assertEquals("text/xml", MessageHelper.getContentType(exchange.getMessage()), "Get a wrong content-type ");
     }
 
     @Test
@@ -70,9 +72,9 @@ public class JettyContentTypeTest extends BaseJettyTest {
         exchange.getIn().setHeader("Content-Type", "text/xml");
         template.send(endpoint, exchange);
 
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("FAIL", body);
-        assertEquals("Get a wrong content-type ", MessageHelper.getContentType(exchange.getOut()), "text/plain");
+        assertEquals("text/plain", MessageHelper.getContentType(exchange.getMessage()), "Get a wrong content-type ");
     }
 
     @Override
@@ -92,18 +94,18 @@ public class JettyContentTypeTest extends BaseJettyTest {
             String body = exchange.getIn().getBody(String.class);
             String encoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
             if (encoding != null) {
-                exchange.getOut().setHeader(Exchange.CONTENT_ENCODING, encoding);
+                exchange.getMessage().setHeader(Exchange.CONTENT_ENCODING, encoding);
             }
             if ("Claus".equals(user) && contentType.startsWith("text/xml") && body.equals("<order>123</order>")) {
                 assertEquals("test", exchange.getIn().getHeader("SOAPAction", String.class));
                 if (contentType.endsWith("UTF-8")) {
-                    assertEquals("Get a wrong charset name.", exchange.getProperty(Exchange.CHARSET_NAME, String.class), "UTF-8");
+                    assertEquals("UTF-8", exchange.getProperty(Exchange.CHARSET_NAME), "Get a wrong charset name.");
                 }
-                exchange.getOut().setBody("<order>OK</order>");
-                exchange.getOut().setHeader("Content-Type", "text/xml");
+                exchange.getMessage().setBody("<order>OK</order>");
+                exchange.getMessage().setHeader("Content-Type", "text/xml");
             } else {
-                exchange.getOut().setBody("FAIL");
-                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                exchange.getMessage().setBody("FAIL");
+                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "text/plain");
             }
         }
     }

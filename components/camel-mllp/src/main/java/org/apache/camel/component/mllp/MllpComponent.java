@@ -63,7 +63,8 @@ public class MllpComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uriString, String remaining, Map<String, Object> parameters) throws Exception {
-        MllpEndpoint endpoint = new MllpEndpoint(uriString, this, hasConfiguration() ? configuration.copy() : new MllpConfiguration());
+        MllpEndpoint endpoint
+                = new MllpEndpoint(uriString, this, hasConfiguration() ? configuration.copy() : new MllpConfiguration());
 
         setProperties(endpoint, parameters);
 
@@ -124,7 +125,8 @@ public class MllpComponent extends DefaultComponent {
             try {
                 answer = Integer.parseInt(logPhiProperty);
             } catch (NumberFormatException numberFormatException) {
-                log.warn("Invalid Integer value '{}' for system property {} - using default value of {}", logPhiProperty, MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY, answer);
+                log.warn("Invalid Integer value '{}' for system property {} - using default value of {}", logPhiProperty,
+                        MllpComponent.MLLP_LOG_PHI_MAX_BYTES_PROPERTY, answer);
                 // use DEFAULT_LOG_PHI_MAX_BYTES for a invalid entry
             }
         }
@@ -140,7 +142,6 @@ public class MllpComponent extends DefaultComponent {
     public static void setLogPhiMaxBytes(Integer logPhiMaxBytes) {
         MllpComponent.logPhiMaxBytes = logPhiMaxBytes;
     }
-
 
     public static boolean hasDefaultCharset() {
         return defaultCharset != null;
@@ -160,12 +161,13 @@ public class MllpComponent extends DefaultComponent {
                 } else {
                     defaultCharset = StandardCharsets.ISO_8859_1;
                     log.warn("Unsupported character set name '{}' in system property {} - using character set {} as default",
-                        defaultCharacterSetNamePropertyValue, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
+                            defaultCharacterSetNamePropertyValue, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
                 }
             } catch (Exception charsetEx) {
                 defaultCharset = StandardCharsets.ISO_8859_1;
-                log.warn("Exception encountered determining character set for '{}' found in  system property {} - using default value of {}",
-                    defaultCharacterSetNamePropertyValue, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
+                log.warn(
+                        "Exception encountered determining character set for '{}' found in  system property {} - using default value of {}",
+                        defaultCharacterSetNamePropertyValue, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
             }
         } else {
             defaultCharset = StandardCharsets.ISO_8859_1;
@@ -185,13 +187,15 @@ public class MllpComponent extends DefaultComponent {
                 if (Charset.isSupported(defaultCharacterSetName)) {
                     MllpComponent.defaultCharset = Charset.forName(defaultCharacterSetName);
                 } else {
-                    log.warn("Unsupported character set name '{}' in system property {} - continuing to use character set {} as default",
-                        defaultCharacterSetName, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
+                    log.warn(
+                            "Unsupported character set name '{}' in system property {} - continuing to use character set {} as default",
+                            defaultCharacterSetName, MllpComponent.MLLP_DEFAULT_CHARSET_PROPERTY, defaultCharset);
                 }
             } catch (Exception charsetEx) {
                 MllpComponent.defaultCharset = StandardCharsets.ISO_8859_1;
-                log.warn("Exception encountered determining character set for '{}' - continuing to use character set {} as default",
-                    defaultCharacterSetName, defaultCharset);
+                log.warn(
+                        "Exception encountered determining character set for '{}' - continuing to use character set {} as default",
+                        defaultCharacterSetName, defaultCharset);
             }
         }
     }

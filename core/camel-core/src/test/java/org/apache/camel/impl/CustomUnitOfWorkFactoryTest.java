@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
 
@@ -75,6 +75,11 @@ public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
         public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
             exchange.getIn().setHeader("before", "I was here");
             return callback;
+        }
+
+        @Override
+        public boolean isBeforeAfterProcess() {
+            return true;
         }
     }
 }

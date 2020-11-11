@@ -17,11 +17,11 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends ContextTestSupport {
 
@@ -40,7 +40,7 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Conte
         });
 
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:end1").skipSendToOriginalEndpoint().to("mock:end");
             }

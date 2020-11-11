@@ -23,14 +23,14 @@ import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DropboxProducerDelTest extends DropboxTestSupport {
 
     public static final String FILE_NAME = "file.txt";
 
-    @Before
+    @BeforeEach
     public void createFile() throws IOException {
         createFile(FILE_NAME, "content");
     }
@@ -44,7 +44,6 @@ public class DropboxProducerDelTest extends DropboxTestSupport {
     public void testCamelDropboxWithOptionInHeader() throws Exception {
         test("direct:start2");
     }
-
 
     private void test(String endpointURI) throws InterruptedException {
         template.sendBody(endpointURI, null);
@@ -64,8 +63,8 @@ public class DropboxProducerDelTest extends DropboxTestSupport {
 
                 from("direct:start2")
                         .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE_NAME))
-                    .to("dropbox://del?accessToken={{accessToken}}")
-                    .to("mock:result");
+                        .to("dropbox://del?accessToken={{accessToken}}")
+                        .to("mock:result");
             }
         };
     }

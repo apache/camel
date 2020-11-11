@@ -22,7 +22,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -38,7 +39,7 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange received = result.getReceivedExchanges().get(0);
-        assertThat("no exception", received.isFailed(), is(false));
+        MatcherAssert.assertThat("no exception", received.isFailed(), is(false));
     }
 
     @Test
@@ -59,7 +60,7 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange received = result.getReceivedExchanges().get(0);
-        assertThat("no exception", received.isFailed(), is(false));
+        MatcherAssert.assertThat("no exception", received.isFailed(), is(false));
     }
 
     @Test
@@ -80,7 +81,7 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange received = result.getReceivedExchanges().get(0);
-        assertThat("no exception", received.isFailed(), is(false));
+        MatcherAssert.assertThat("no exception", received.isFailed(), is(false));
     }
 
     @Override
@@ -88,7 +89,8 @@ public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").multicast(new GroupedExchangeAggregationStrategy()).to("mock:endpointA", "mock:endpointB").end().to("mock:result");
+                from("direct:start").multicast(new GroupedExchangeAggregationStrategy()).to("mock:endpointA", "mock:endpointB")
+                        .end().to("mock:result");
 
             }
         };

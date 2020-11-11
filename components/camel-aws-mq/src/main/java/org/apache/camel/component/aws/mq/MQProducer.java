@@ -42,12 +42,15 @@ import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A Producer which sends messages to the Amazon MQ Service
- * <a href="http://aws.amazon.com/mq/">AWS MQ</a>
+ * A Producer which sends messages to the Amazon MQ Service <a href="http://aws.amazon.com/mq/">AWS MQ</a>
  */
 public class MQProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MQProducer.class);
 
     private transient String mqProducerToString;
 
@@ -58,26 +61,26 @@ public class MQProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
-        case listBrokers:
-            listBrokers(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case createBroker:
-            createBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case deleteBroker:
-            deleteBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case rebootBroker:
-            rebootBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case updateBroker:
-            updateBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        case describeBroker:
-            describeBroker(getEndpoint().getAmazonMqClient(), exchange);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operation");
+            case listBrokers:
+                listBrokers(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case createBroker:
+                createBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case deleteBroker:
+                deleteBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case rebootBroker:
+                rebootBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case updateBroker:
+                updateBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            case describeBroker:
+                describeBroker(getEndpoint().getAmazonMqClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -103,7 +106,7 @@ public class MQProducer extends DefaultProducer {
 
     @Override
     public MQEndpoint getEndpoint() {
-        return (MQEndpoint)super.getEndpoint();
+        return (MQEndpoint) super.getEndpoint();
     }
 
     private void listBrokers(AmazonMQ mqClient, Exchange exchange) {
@@ -116,7 +119,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.listBrokers(request);
         } catch (AmazonServiceException ase) {
-            log.trace("List Brokers command returned the error code {}", ase.getErrorCode());
+            LOG.trace("List Brokers command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -178,7 +181,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.createBroker(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Create Broker command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Create Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -198,13 +201,13 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.deleteBroker(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Delete Broker command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Delete Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void rebootBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerId;
         RebootBrokerRequest request = new RebootBrokerRequest();
@@ -218,13 +221,13 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.rebootBroker(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void updateBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerId;
         ConfigurationId configurationId;
@@ -245,13 +248,13 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.updateBroker(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Update Broker command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Update Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void describeBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerId;
         DescribeBrokerRequest request = new DescribeBrokerRequest();
@@ -265,19 +268,14 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.describeBroker(request);
         } catch (AmazonServiceException ase) {
-            log.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 }

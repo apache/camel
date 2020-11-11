@@ -27,47 +27,50 @@ import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoasterSimpleToDTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoasterSimpleToDTest.class);
 
     @Test
-    public void parse() throws Exception {
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MySimpleToDRoute.java"));
+    void parse() throws Exception {
+        JavaClassSource clazz
+                = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MySimpleToDRoute.java"));
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
 
         List<CamelEndpointDetails> details = new ArrayList<>();
-        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, ".", "src/test/java/org/apache/camel/parser/java/MySimpleToDRoute.java", details);
+        RouteBuilderParser.parseRouteBuilderEndpoints(clazz, ".",
+                "src/test/java/org/apache/camel/parser/java/MySimpleToDRoute.java", details);
         LOG.info("{}", details);
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
             LOG.info("Consumer: " + result.getElement());
         }
-        Assert.assertEquals("direct:start", list.get(0).getElement());
+        assertEquals("direct:start", list.get(0).getElement());
 
         list = CamelJavaParserHelper.parseCamelProducerUris(method, true, true);
         for (ParserResult result : list) {
             LOG.info("Producer: " + result.getElement());
         }
-        Assert.assertEquals("toD", list.get(0).getNode());
-        Assert.assertEquals("log:a", list.get(0).getElement());
-        Assert.assertEquals("to", list.get(1).getNode());
-        Assert.assertEquals("log:b", list.get(1).getElement());
-        Assert.assertEquals("to", list.get(2).getNode());
-        Assert.assertEquals("log:c", list.get(2).getElement());
-        Assert.assertEquals(3, list.size());
+        assertEquals("toD", list.get(0).getNode());
+        assertEquals("log:a", list.get(0).getElement());
+        assertEquals("to", list.get(1).getNode());
+        assertEquals("log:b", list.get(1).getElement());
+        assertEquals("to", list.get(2).getNode());
+        assertEquals("log:c", list.get(2).getElement());
+        assertEquals(3, list.size());
 
-        Assert.assertEquals(4, details.size());
-        Assert.assertEquals("direct:start", details.get(0).getEndpointUri());
-        Assert.assertEquals("log:a", details.get(1).getEndpointUri());
-        Assert.assertEquals("log:b", details.get(2).getEndpointUri());
-        Assert.assertEquals("log:c", details.get(3).getEndpointUri());
+        assertEquals(4, details.size());
+        assertEquals("direct:start", details.get(0).getEndpointUri());
+        assertEquals("log:a", details.get(1).getEndpointUri());
+        assertEquals("log:b", details.get(2).getEndpointUri());
+        assertEquals("log:c", details.get(3).getEndpointUri());
     }
 
 }

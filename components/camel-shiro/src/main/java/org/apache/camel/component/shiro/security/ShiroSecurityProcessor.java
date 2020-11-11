@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.shiro.security;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelExchangeException;
@@ -26,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -42,8 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link Processor} that executes the authentication and authorization of the {@link Subject} accordingly
- * to the {@link ShiroSecurityPolicy}.
+ * {@link Processor} that executes the authentication and authorization of the {@link Subject} accordingly to the
+ * {@link ShiroSecurityPolicy}.
  */
 public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
 
@@ -111,19 +107,15 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         } else if (token instanceof ByteSource) {
             encryptedToken = (ByteSource) token;
         } else {
-            throw new CamelExchangeException("Shiro security header " + ShiroSecurityConstants.SHIRO_SECURITY_TOKEN + " is unsupported type: " + ObjectHelper.classCanonicalName(token), exchange);
+            throw new CamelExchangeException(
+                    "Shiro security header " + ShiroSecurityConstants.SHIRO_SECURITY_TOKEN + " is unsupported type: "
+                                             + ObjectHelper.classCanonicalName(token),
+                    exchange);
         }
 
         ByteSource decryptedToken = policy.getCipherService().decrypt(encryptedToken.getBytes(), policy.getPassPhrase());
 
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(decryptedToken.getBytes());
-        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-        ShiroSecurityToken securityToken;
-        try {
-            securityToken = (ShiroSecurityToken)objectInputStream.readObject();
-        } finally {
-            IOHelper.close(objectInputStream, byteArrayInputStream);
-        }
+        ShiroSecurityToken securityToken = ShiroSecurityHelper.deserialize(decryptedToken.getBytes());
 
         Subject currentUser = SecurityUtils.getSubject();
 
@@ -157,12 +149,17 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
                 currentUser.login(token);
                 LOG.debug("Current user {} successfully authenticated", currentUser.getPrincipal());
             } catch (UnknownAccountException uae) {
-                throw new UnknownAccountException("Authentication Failed. There is no user with username of " + token.getPrincipal(), uae.getCause());
+                throw new UnknownAccountException(
+                        "Authentication Failed. There is no user with username of " + token.getPrincipal(), uae.getCause());
             } catch (IncorrectCredentialsException ice) {
-                throw new IncorrectCredentialsException("Authentication Failed. Password for account " + token.getPrincipal() + " was incorrect!", ice.getCause());
+                throw new IncorrectCredentialsException(
+                        "Authentication Failed. Password for account " + token.getPrincipal() + " was incorrect!",
+                        ice.getCause());
             } catch (LockedAccountException lae) {
-                throw new LockedAccountException("Authentication Failed. The account for username " + token.getPrincipal() + " is locked."
-                        + " Please contact your administrator to unlock it.", lae.getCause());
+                throw new LockedAccountException(
+                        "Authentication Failed. The account for username " + token.getPrincipal() + " is locked."
+                                                 + " Please contact your administrator to unlock it.",
+                        lae.getCause());
             } catch (AuthenticationException ae) {
                 throw new AuthenticationException("Authentication Failed.", ae.getCause());
             }
@@ -200,8 +197,10 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         }
 
         if (!authorized) {
-            throw new CamelAuthorizationException("Authorization Failed. Subject's role set does "
-                                                  + "not have the necessary roles or permissions to perform further processing.", exchange);
+            throw new CamelAuthorizationException(
+                    "Authorization Failed. Subject's role set does "
+                                                  + "not have the necessary roles or permissions to perform further processing.",
+                    exchange);
         }
 
         LOG.debug("Current user {} is successfully authorized.", currentUser.getPrincipal());

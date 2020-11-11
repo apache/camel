@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SqsConfigurationTest {
 
@@ -30,7 +30,8 @@ public class SqsConfigurationTest {
             sqsConfiguration.setMessageGroupIdStrategy("useUnknownStrategy");
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue("Bad error message: " + e.getMessage(), e.getMessage().startsWith("Unrecognised MessageGroupIdStrategy"));
+            assertTrue(e.getMessage().startsWith("Unrecognised MessageGroupIdStrategy"),
+                    "Bad error message: " + e.getMessage());
         }
     }
 
@@ -41,7 +42,8 @@ public class SqsConfigurationTest {
             sqsConfiguration.setMessageDeduplicationIdStrategy("useUnknownStrategy");
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue("Bad error message: " + e.getMessage(), e.getMessage().startsWith("Unrecognised MessageDeduplicationIdStrategy"));
+            assertTrue(e.getMessage().startsWith("Unrecognised MessageDeduplicationIdStrategy"),
+                    "Bad error message: " + e.getMessage());
         }
     }
 

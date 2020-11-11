@@ -25,19 +25,20 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class IronMQConfiguration {
     // common properties
-    
+
     @UriParam
     private String projectId;
-    
+
     @UriParam
     private String token;
-    
-    @UriPath @Metadata(required = true)
+
+    @UriPath
+    @Metadata(required = true)
     private String queueName;
-    
+
     @UriParam(defaultValue = "https://mq-aws-us-east-1-1.iron.io")
     private String ironMQCloud = "https://mq-aws-us-east-1-1.iron.io";
-    
+
     @UriParam
     private boolean preserveHeaders;
 
@@ -51,16 +52,16 @@ public class IronMQConfiguration {
     // consumer properties
     @UriParam(defaultValue = "1", label = "consumer")
     private int concurrentConsumers = 1;
-    
+
     @UriParam(label = "consumer")
     private boolean batchDelete;
-    
+
     @UriParam(defaultValue = "1", label = "consumer")
     private int maxMessagesPerPoll = 1;
-    
+
     @UriParam(defaultValue = "60", label = "consumer")
     private int timeout = 60;
-    
+
     @UriParam(label = "consumer")
     private int wait;
 
@@ -69,7 +70,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Reference to a io.iron.ironmq.Client in the Registry. 
+     * Reference to a io.iron.ironmq.Client in the Registry.
      */
     public void setClient(Client client) {
         this.client = client;
@@ -109,7 +110,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * The name of the IronMQ queue 
+     * The name of the IronMQ queue
      */
     public void setQueueName(String queueName) {
         this.queueName = queueName;
@@ -120,7 +121,8 @@ public class IronMQConfiguration {
     }
 
     /**
-     * IronMq Cloud url. Urls for public clusters: https://mq-aws-us-east-1-1.iron.io (US) and https://mq-aws-eu-west-1-1.iron.io (EU)
+     * IronMq Cloud url. Urls for public clusters: https://mq-aws-us-east-1-1.iron.io (US) and
+     * https://mq-aws-eu-west-1-1.iron.io (EU)
      */
     public void setIronMQCloud(String ironMQCloud) {
         this.ironMQCloud = ironMQCloud;
@@ -157,8 +159,7 @@ public class IronMQConfiguration {
     }
 
     /**
-     * The item will not be available on the queue until this many seconds have passed. 
-     * Default is 0 seconds.
+     * The item will not be available on the queue until this many seconds have passed. Default is 0 seconds.
      */
     public void setVisibilityDelay(int visibilityDelay) {
         this.visibilityDelay = visibilityDelay;
@@ -169,9 +170,9 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Should message headers be preserved when publishing messages.
-     * This will add the Camel headers to the Iron MQ message as a json payload with a header list, and a message body.
-     * Useful when Camel is both consumer and producer.
+     * Should message headers be preserved when publishing messages. This will add the Camel headers to the Iron MQ
+     * message as a json payload with a header list, and a message body. Useful when Camel is both consumer and
+     * producer.
      */
     public void setPreserveHeaders(boolean preserveHeaders) {
         this.preserveHeaders = preserveHeaders;
@@ -182,9 +183,9 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Should messages be deleted in one batch. 
-     * This will limit the number of api requests since messages are deleted in one request, instead of one pr. exchange. 
-     * If enabled care should be taken that the consumer is idempotent when processing exchanges.
+     * Should messages be deleted in one batch. This will limit the number of api requests since messages are deleted in
+     * one request, instead of one pr. exchange. If enabled care should be taken that the consumer is idempotent when
+     * processing exchanges.
      */
     public void setBatchDelete(boolean batchDelete) {
         this.batchDelete = batchDelete;
@@ -195,8 +196,8 @@ public class IronMQConfiguration {
     }
 
     /**
-     * Time in seconds to wait for a message to become available. 
-     * This enables long polling. Default is 0 (does not wait), maximum is 30.
+     * Time in seconds to wait for a message to become available. This enables long polling. Default is 0 (does not
+     * wait), maximum is 30.
      */
     public void setWait(int wait) {
         this.wait = wait;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.reactive.streams;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,10 +29,11 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * Reactive Camel using reactive streams
+ * Exchange messages with reactive stream processing libraries compatible with the reactive streams standard.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams", syntax = "reactive-streams:stream",
-        label = "reactive,streams")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams",
+             syntax = "reactive-streams:stream",
+             category = { Category.REACTIVE, Category.STREAMS })
 @ManagedResource(description = "Managed ReactiveStreamsEndpoint")
 public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 
@@ -88,9 +90,8 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Maximum number of exchanges concurrently being processed by Camel.
-     * This parameter controls backpressure on the stream.
-     * Setting a non-positive value will disable backpressure.
+     * Maximum number of exchanges concurrently being processed by Camel. This parameter controls backpressure on the
+     * stream. Setting a non-positive value will disable backpressure.
      */
     public void setMaxInflightExchanges(Integer maxInflightExchanges) {
         this.maxInflightExchanges = maxInflightExchanges;
@@ -137,8 +138,7 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Determines if onError events should be pushed to the Camel route.
-     * Exceptions will be set as message body.
+     * Determines if onError events should be pushed to the Camel route. Exceptions will be set as message body.
      */
     public void setForwardOnError(boolean forwardOnError) {
         this.forwardOnError = forwardOnError;
@@ -150,18 +150,18 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Set the low watermark of requested exchanges to the active subscription as percentage of the maxInflightExchanges.
-     * When the number of pending items from the upstream source is lower than the watermark, new items can be requested to the subscription.
-     * If set to 0, the subscriber will request items in batches of maxInflightExchanges, only after all items of the previous batch have been processed.
-     * If set to 1, the subscriber can request a new item each time an exchange is processed (chatty).
-     * Any intermediate value can be used.
+     * Set the low watermark of requested exchanges to the active subscription as percentage of the
+     * maxInflightExchanges. When the number of pending items from the upstream source is lower than the watermark, new
+     * items can be requested to the subscription. If set to 0, the subscriber will request items in batches of
+     * maxInflightExchanges, only after all items of the previous batch have been processed. If set to 1, the subscriber
+     * can request a new item each time an exchange is processed (chatty). Any intermediate value can be used.
      */
     public void setExchangesRefillLowWatermark(double exchangesRefillLowWatermark) {
         this.exchangesRefillLowWatermark = exchangesRefillLowWatermark;
     }
 
     CamelReactiveStreamsService getReactiveStreamsService() {
-        return ((ReactiveStreamsComponent)getComponent()).getReactiveStreamsService();
+        return ((ReactiveStreamsComponent) getComponent()).getReactiveStreamsService();
     }
 
 }

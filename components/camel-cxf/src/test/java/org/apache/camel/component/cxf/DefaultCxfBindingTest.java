@@ -53,46 +53,57 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DefaultCxfBindingTest extends Assert {
-    
+public class DefaultCxfBindingTest {
+
     private static final String SOAP_MESSAGE_1 = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
-        + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
-        + " <soap:Body> <request> <ns1:identifier>TEST</ns1:identifier> </request>"
-        + " </soap:Body> </soap:Envelope>";
-    
+                                                 + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
+                                                 + " <soap:Body> <request> <ns1:identifier>TEST</ns1:identifier> </request>"
+                                                 + " </soap:Body> </soap:Envelope>";
+
     private static final String SOAP_MESSAGE_2 = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
-        + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
-        + " <soap:Body> <ns1:identifier xmlns:ns1=\"http://www.mycompany.com/test/\" xmlns=\"http://www.mycompany.com/test/1/\">TEST</ns1:identifier>"
-        + " </soap:Body> </soap:Envelope>";
-    
-    private DefaultCamelContext context = new DefaultCamelContext();
+                                                 + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
+                                                 + " <soap:Body> <ns1:identifier xmlns:ns1=\"http://www.mycompany.com/test/\" xmlns=\"http://www.mycompany.com/test/1/\">TEST</ns1:identifier>"
+                                                 + " </soap:Body> </soap:Envelope>";
+
+    private DefaultCamelContext context;
+
+    @BeforeEach
+    protected void setUp() throws Exception {
+        context = new DefaultCamelContext();
+        context.start();
+    }
 
     @Test
     public void testSetGetHeaderFilterStrategy() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
         HeaderFilterStrategy hfs = new DefaultHeaderFilterStrategy();
-        
-        cxfBinding.setHeaderFilterStrategy(hfs);        
-        assertSame("The header filter strategy is set", hfs, cxfBinding.getHeaderFilterStrategy());
+
+        cxfBinding.setHeaderFilterStrategy(hfs);
+        assertSame(hfs, cxfBinding.getHeaderFilterStrategy(), "The header filter strategy is set");
     }
-    
+
     private Document getDocument(String soapMessage) throws Exception {
-        
+
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(IOConverter.toInputStream(soapMessage, null));
         document.getDocumentElement().normalize();
-       
+
         return document;
     }
-    
+
     @Test
     public void testPayloadBodyNamespace() throws Exception {
         MessageImpl message = new MessageImpl();
@@ -100,16 +111,16 @@ public class DefaultCxfBindingTest extends Assert {
         Document document = getDocument(SOAP_MESSAGE_1);
         message.setContent(Node.class, document);
         DefaultCxfBinding.getPayloadBodyElements(message, nsMap);
-        
+
         assertEquals(2, nsMap.size());
         assertEquals("http://www.mycompany.com/test/", nsMap.get("xmlns"));
-        
+
         Element element = document.createElement("tag");
         DefaultCxfBinding.addNamespace(element, nsMap);
         assertEquals("http://www.mycompany.com/test/", element.getAttribute("xmlns"));
         assertEquals("http://www.mycompany.com/test/1/", element.getAttribute("xmlns:ns1"));
     }
-    
+
     @Test
     public void testOverridePayloadBodyNamespace() throws Exception {
         MessageImpl message = new MessageImpl();
@@ -117,18 +128,17 @@ public class DefaultCxfBindingTest extends Assert {
         Document document = getDocument(SOAP_MESSAGE_2);
         message.setContent(Node.class, document);
         DefaultCxfBinding.getPayloadBodyElements(message, nsMap);
-        
+
         assertEquals(2, nsMap.size());
         assertEquals("http://www.mycompany.com/test/", nsMap.get("xmlns"));
-        
-        Element element = (Element)document.getElementsByTagName("ns1:identifier").item(0);
-        assertNotNull("We should get the element", element);
+
+        Element element = (Element) document.getElementsByTagName("ns1:identifier").item(0);
+        assertNotNull(element, "We should get the element");
         DefaultCxfBinding.addNamespace(element, nsMap);
         assertEquals("http://www.mycompany.com/test/1/", element.getAttribute("xmlns"));
         assertEquals("http://www.mycompany.com/test/", element.getAttribute("xmlns:ns1"));
     }
 
-    
     @Test
     public void testSetCharsetWithContentType() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
@@ -136,16 +146,16 @@ public class DefaultCxfBindingTest extends Assert {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml;charset=ISO-8859-1");
         cxfBinding.setCharsetWithContentType(exchange);
-        
+
         String charset = ExchangeHelper.getCharsetName(exchange);
-        assertEquals("Get a wrong charset", "ISO-8859-1", charset);
-        
+        assertEquals("ISO-8859-1", charset, "Get a wrong charset");
+
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
         cxfBinding.setCharsetWithContentType(exchange);
         charset = ExchangeHelper.getCharsetName(exchange);
-        assertEquals("Get a worng charset name", "UTF-8", charset);
+        assertEquals("UTF-8", charset, "Get a worng charset name");
     }
-    
+
     @Test
     public void testPopulateCxfRequestFromExchange() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
@@ -154,7 +164,7 @@ public class DefaultCxfBindingTest extends Assert {
         org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
         exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
         Map<String, Object> requestContext = new HashMap<>();
-        
+
         exchange.getIn().setHeader("soapAction", "urn:hello:world");
         exchange.getIn().setHeader("MyFruitHeader", "peach");
         exchange.getIn().setHeader("MyBrewHeader", Arrays.asList("cappuccino", "espresso"));
@@ -162,12 +172,12 @@ public class DefaultCxfBindingTest extends Assert {
         exchange.getIn(AttachmentMessage.class).getAttachmentObject("att-1").setHeader("attachment-header", "value 1");
 
         cxfBinding.populateCxfRequestFromExchange(cxfExchange, exchange, requestContext);
-        
+
         // check the protocol headers
-        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>)requestContext.get(Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>) requestContext.get(Message.PROTOCOL_HEADERS));
         assertNotNull(headers);
         assertEquals(3, headers.size());
-        
+
         verifyHeader(headers, "soapaction", "urn:hello:world");
         verifyHeader(headers, "SoapAction", "urn:hello:world");
         verifyHeader(headers, "SOAPAction", "urn:hello:world");
@@ -175,11 +185,11 @@ public class DefaultCxfBindingTest extends Assert {
         verifyHeader(headers, "myFruitHeader", "peach");
         verifyHeader(headers, "MYFRUITHEADER", "peach");
         verifyHeader(headers, "MyBrewHeader", Arrays.asList("cappuccino", "espresso"));
-        
-        Set<Attachment> attachments 
-            = CastUtils.cast((Set<?>)requestContext.get(CxfConstants.CAMEL_CXF_ATTACHMENTS));
+
+        Set<Attachment> attachments
+                = CastUtils.cast((Set<?>) requestContext.get(CxfConstants.CAMEL_CXF_ATTACHMENTS));
         assertNotNull(attachments);
-        assertNotNull(attachments.size() == 1);
+        assertEquals(1, attachments.size());
         Attachment att = attachments.iterator().next();
         assertEquals("att-1", att.getId());
         assertEquals("value 1", att.getHeader("attachment-header"));
@@ -198,10 +208,10 @@ public class DefaultCxfBindingTest extends Assert {
 
         cxfBinding.populateCxfRequestFromExchange(cxfExchange, exchange, requestContext);
 
-        String actualSoapActionHeader = (String)requestContext.get(SoapBindingConstants.SOAP_ACTION);
+        String actualSoapActionHeader = (String) requestContext.get(SoapBindingConstants.SOAP_ACTION);
         assertEquals(expectedSoapActionHeader, actualSoapActionHeader);
     }
-    
+
     @Test
     public void testPopulateCxfSoapHeaderRequestFromExchangeWithExplicitOperationName() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
@@ -216,10 +226,10 @@ public class DefaultCxfBindingTest extends Assert {
 
         cxfBinding.populateCxfRequestFromExchange(cxfExchange, exchange, requestContext);
 
-        String actualSoapActionHeader = (String)requestContext.get(SoapBindingConstants.SOAP_ACTION);
+        String actualSoapActionHeader = (String) requestContext.get(SoapBindingConstants.SOAP_ACTION);
         assertNull(actualSoapActionHeader);
     }
-    
+
     @Test
     public void testPopupalteExchangeFromCxfResponse() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
@@ -235,20 +245,21 @@ public class DefaultCxfBindingTest extends Assert {
         responseContext.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headers);
         org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
         cxfExchange.setInMessage(cxfMessage);
-        
+
         Set<Attachment> attachments = new HashSet<>();
         AttachmentImpl attachment = new AttachmentImpl("att-1", new DataHandler(new FileDataSource("pom.xml")));
         attachment.setHeader("additional-header", "value 1");
         attachments.add(attachment);
         cxfMessage.setAttachments(attachments);
-        
+
         cxfBinding.populateExchangeFromCxfResponse(exchange, cxfExchange, responseContext);
-        
-        Map<String, Object> camelHeaders = exchange.getOut().getHeaders();
+
+        Map<String, Object> camelHeaders = exchange.getMessage().getHeaders();
         assertNotNull(camelHeaders);
         assertEquals(responseContext, camelHeaders.get(Client.RESPONSE_CONTEXT));
-        
-        Map<String, org.apache.camel.attachment.Attachment> camelAttachments = exchange.getOut(AttachmentMessage.class).getAttachmentObjects();
+
+        Map<String, org.apache.camel.attachment.Attachment> camelAttachments
+                = exchange.getOut(AttachmentMessage.class).getAttachmentObjects();
         assertNotNull(camelAttachments);
         assertNotNull(camelAttachments.get("att-1"));
         assertEquals("value 1", camelAttachments.get("att-1").getHeader("additional-header"));
@@ -267,17 +278,17 @@ public class DefaultCxfBindingTest extends Assert {
         responseContext.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headers);
         org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
         cxfExchange.setInMessage(cxfMessage);
-        
+
         cxfBinding.populateExchangeFromCxfResponse(exchange, cxfExchange, responseContext);
 
-        CxfPayload<?> cxfPayload = exchange.getOut().getBody(CxfPayload.class);
+        CxfPayload<?> cxfPayload = exchange.getMessage().getBody(CxfPayload.class);
 
         assertNotNull(cxfPayload);
-        List<?> body = cxfPayload.getBody(); 
+        List<?> body = cxfPayload.getBody();
         assertNotNull(body);
         assertEquals(0, body.size());
     }
-    
+
     @Test
     public void testPopupalteCxfResponseFromExchange() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
@@ -285,38 +296,38 @@ public class DefaultCxfBindingTest extends Assert {
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
         exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
-        
+
         exchange.getOut().setHeader("soapAction", "urn:hello:world");
         exchange.getOut().setHeader("MyFruitHeader", "peach");
         exchange.getOut(AttachmentMessage.class).addAttachment("att-1", new DataHandler(new FileDataSource("pom.xml")));
         exchange.getOut(AttachmentMessage.class).getAttachmentObject("att-1").setHeader("attachment-header", "value 1");
-        
+
         Endpoint endpoint = mock(Endpoint.class);
         Binding binding = mock(Binding.class);
         when(endpoint.getBinding()).thenReturn(binding);
         org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
         when(binding.createMessage()).thenReturn(cxfMessage);
         cxfExchange.put(Endpoint.class, endpoint);
-        
+
         cxfBinding.populateCxfResponseFromExchange(exchange, cxfExchange);
-        
+
         cxfMessage = cxfExchange.getOutMessage();
         assertNotNull(cxfMessage);
-        
-        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>)cxfMessage.get(Message.PROTOCOL_HEADERS));
+
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>) cxfMessage.get(Message.PROTOCOL_HEADERS));
         assertNotNull(headers);
         assertTrue(headers.size() == 2);
-        
+
         verifyHeader(headers, "soapaction", "urn:hello:world");
         verifyHeader(headers, "SoapAction", "urn:hello:world");
         verifyHeader(headers, "SOAPAction", "urn:hello:world");
         verifyHeader(headers, "myfruitheader", "peach");
         verifyHeader(headers, "myFruitHeader", "peach");
         verifyHeader(headers, "MYFRUITHEADER", "peach");
-        
+
         Collection<Attachment> attachments = cxfMessage.getAttachments();
         assertNotNull(attachments);
-        assertNotNull(attachments.size() == 1);
+        assertEquals(1, attachments.size());
         Attachment att = attachments.iterator().next();
         assertEquals("att-1", att.getId());
         assertEquals("value 1", att.getHeader("attachment-header"));
@@ -343,11 +354,11 @@ public class DefaultCxfBindingTest extends Assert {
         attachment.setHeader("attachment-header", "value 1");
         attachments.add(attachment);
         cxfMessage.setAttachments(attachments);
-        
+
         cxfExchange.setInMessage(cxfMessage);
 
         cxfBinding.populateExchangeFromCxfRequest(cxfExchange, exchange);
-        
+
         Map<String, Object> camelHeaders = exchange.getIn().getHeaders();
         assertNotNull(camelHeaders);
         assertEquals("urn:hello:world", camelHeaders.get("soapaction"));
@@ -357,7 +368,8 @@ public class DefaultCxfBindingTest extends Assert {
         assertEquals("peach", camelHeaders.get("MyFruitHeader"));
         assertEquals(Arrays.asList("cappuccino", "espresso"), camelHeaders.get("MyBrewHeader"));
 
-        Map<String, org.apache.camel.attachment.Attachment> camelAttachments = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
+        Map<String, org.apache.camel.attachment.Attachment> camelAttachments
+                = exchange.getIn(AttachmentMessage.class).getAttachmentObjects();
         assertNotNull(camelAttachments);
         assertNotNull(camelAttachments.get("att-1"));
         assertEquals("value 1", camelAttachments.get("att-1").getHeader("attachment-header"));
@@ -380,7 +392,7 @@ public class DefaultCxfBindingTest extends Assert {
         cxfExchange.setInMessage(cxfMessage);
 
         cxfBinding.populateExchangeFromCxfRequest(cxfExchange, exchange);
-        
+
         Map<String, Object> camelHeaders = exchange.getIn().getHeaders();
         assertNotNull(camelHeaders);
         assertEquals("peach", camelHeaders.get("MyFruitHeader"));
@@ -389,14 +401,14 @@ public class DefaultCxfBindingTest extends Assert {
 
     private void verifyHeader(Map<String, List<String>> headers, String name, List<String> value) {
         List<String> values = headers.get(name);
-        assertTrue("The entry must be available", values != null && values.size() == ((List<?>)value).size());
-        assertEquals("The value must match", value, values);
+        assertTrue(values != null && values.size() == ((List<?>) value).size(), "The entry must be available");
+        assertEquals(value, values, "The value must match");
     }
 
     private void verifyHeader(Map<String, List<String>> headers, String name, String value) {
         List<String> values = headers.get(name);
-        assertTrue("The entry must be available", values != null && values.size() == 1);
-        assertEquals("The value must match", values.get(0), value);
+        assertTrue(values != null && values.size() == 1, "The entry must be available");
+        assertEquals(values.get(0), value, "The value must match");
     }
 
 }

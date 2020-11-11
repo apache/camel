@@ -20,8 +20,8 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -76,11 +76,11 @@ public class JmsXPathHeaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:in")
-                    .choice()
+                        .choice()
                         .when().xpath("$foo = 'true'")
-                            .to("activemq:queue:true")
+                        .to("activemq:queue:true")
                         .otherwise()
-                            .to("activemq:queue:other")
+                        .to("activemq:queue:other")
                         .end();
 
                 from("activemq:queue:true").to("mock:true");

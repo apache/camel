@@ -57,7 +57,6 @@ public enum HazelcastOperation {
     DRAIN_TO("drainTo"),
     REMOVE_IF("removeIf"),
     TAKE("take"),
-    
 
     // topic
     PUBLISH("publish"),
@@ -66,7 +65,6 @@ public enum HazelcastOperation {
     READ_ONCE_HEAD("readOnceHeal"),
     READ_ONCE_TAIL("readOnceTail"),
     CAPACITY("capacity");
-
 
     private static HazelcastOperation[] values = values();
     private final String operation;

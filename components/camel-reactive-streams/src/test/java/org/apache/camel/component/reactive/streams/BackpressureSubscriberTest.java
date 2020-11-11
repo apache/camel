@@ -23,12 +23,15 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test backpressure from the consumer side.
  */
+@SuppressWarnings("unused")
 public class BackpressureSubscriberTest extends CamelTestSupport {
 
     @Test
@@ -46,7 +49,7 @@ public class BackpressureSubscriberTest extends CamelTestSupport {
 
         // Maximum one inflight exchange, even if multiple consumer threads are present
         // Must take at least 50 * 10 = 500ms
-        assertTrue("Exchange completed too early", end - start >= 500);
+        assertTrue(end - start >= 500, "Exchange completed too early");
     }
 
     @Test
@@ -64,7 +67,7 @@ public class BackpressureSubscriberTest extends CamelTestSupport {
 
         // Maximum one inflight exchange, even if multiple consumer threads are present
         // Must take at least 300 * 2 = 600ms
-        assertTrue("Exchange completed too early", end - start >= 600);
+        assertTrue(end - start >= 600, "Exchange completed too early");
     }
 
     @Test
@@ -81,14 +84,14 @@ public class BackpressureSubscriberTest extends CamelTestSupport {
 
         // Maximum 5 inflight exchanges
         // Must take at least 100 * (40 / 5) = 800ms
-        assertTrue("Exchange completed too early", end - start >= 800);
+        assertTrue(end - start >= 800, "Exchange completed too early");
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("reactive-streams:slowNumbers?concurrentConsumers=10&maxInflightExchanges=1")
                         .process(x -> Thread.sleep(50))
                         .to("mock:endpoint");

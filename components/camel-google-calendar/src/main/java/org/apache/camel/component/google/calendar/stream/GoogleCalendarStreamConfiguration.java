@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -33,39 +34,29 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     private static final List<String> DEFAULT_SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
     @UriPath
+    @Metadata(required = true)
     private String index;
-
     @UriParam
     private List<String> scopes = DEFAULT_SCOPES;
-
     @UriParam
     private String clientId;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientSecret;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessToken;
-
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String refreshToken;
-
     @UriParam
     private String applicationName;
-
     @UriParam
     private String query;
-
     @UriParam(defaultValue = "10")
     private int maxResults = 10;
-
     @UriParam(defaultValue = "primary")
     private String calendarId = "primary";
-
     @UriParam(defaultValue = "true")
     private boolean consumeFromNow = true;
-
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean considerLastUpdate;
 
     public String getClientId() {
@@ -95,8 +86,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 access token. This typically expires after an hour so
-     * refreshToken is recommended for long term usage.
+     * OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
      */
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
@@ -107,9 +97,8 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * OAuth 2 refresh token. Using this, the Google Calendar component can
-     * obtain a new accessToken whenever the current one expires - a necessity
-     * if the application is long-lived.
+     * OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the
+     * current one expires - a necessity if the application is long-lived.
      */
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -131,9 +120,8 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the level of permissions you want a calendar application to have to
-     * a user account. See https://developers.google.com/calendar/auth
-     * for more info.
+     * Specifies the level of permissions you want a calendar application to have to a user account. See
+     * https://developers.google.com/calendar/auth for more info.
      */
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
@@ -210,7 +198,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     // *************************************************
     public GoogleCalendarStreamConfiguration copy() {
         try {
-            return (GoogleCalendarStreamConfiguration)super.clone();
+            return (GoogleCalendarStreamConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

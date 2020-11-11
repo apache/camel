@@ -78,8 +78,8 @@ public class RedisStringIdempotentRepository extends RedisIdempotentRepository {
                     byte[] key = cursor.next();
                     binaryKeys.add(key);
                 }
-                if (binaryKeys.size() > 0) {
-                    connection.del(binaryKeys.toArray(new byte[][]{}));
+                if (!binaryKeys.isEmpty()) {
+                    connection.del(binaryKeys.toArray(new byte[][] {}));
                 }
                 return binaryKeys;
             }

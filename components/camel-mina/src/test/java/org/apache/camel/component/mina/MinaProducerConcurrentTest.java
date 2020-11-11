@@ -25,10 +25,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MinaProducerConcurrentTest extends BaseMinaTest {
 
@@ -53,7 +53,8 @@ public class MinaProducerConcurrentTest extends BaseMinaTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
-                    return template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true", getPort()), index, String.class);
+                    return template.requestBody(String.format("mina:tcp://localhost:%1$s?sync=true", getPort()), index,
+                            String.class);
                 }
             });
             responses.put(index, out);
@@ -69,7 +70,7 @@ public class MinaProducerConcurrentTest extends BaseMinaTest {
         }
 
         // should be 'files' unique responses
-        assertEquals("Should be " + files + " unique responses", files, unique.size());
+        assertEquals(files, unique.size(), "Should be " + files + " unique responses");
         executor.shutdownNow();
     }
 
@@ -78,12 +79,9 @@ public class MinaProducerConcurrentTest extends BaseMinaTest {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        exchange.getOut().setBody("Bye " + body);
-                    }
+                from(String.format("mina:tcp://localhost:%1$s?sync=true", getPort())).process(exchange -> {
+                    String body = exchange.getIn().getBody(String.class);
+                    exchange.getMessage().setBody("Bye " + body);
                 }).to("mock:result");
             }
         };

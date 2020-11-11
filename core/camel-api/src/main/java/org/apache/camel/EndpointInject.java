@@ -23,18 +23,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to indicate an injection point of an {@link Endpoint}, {@link Producer} or
- * {@link ProducerTemplate} into a POJO.
+ * Used to indicate an injection point of an {@link Endpoint}, {@link Producer} or {@link ProducerTemplate} into a POJO.
  *
- * A <a href="http://camel.apache.org/uris.html">URI</a> for an endpoint
- * can be specified on this annotation, or a name can be specified which is resolved in the
- * {@link org.apache.camel.spi.Registry} such as in your Spring ApplicationContext.
+ * A <a href="http://camel.apache.org/uris.html">URI</a> for an endpoint can be specified on this annotation, or a name
+ * can be specified which is resolved in the {@link org.apache.camel.spi.Registry} such as in your Spring
+ * ApplicationContext.
  *
  * If no ref or uri is specified then the ref is defaulted from the field, property or method name.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface EndpointInject {
 
     /**

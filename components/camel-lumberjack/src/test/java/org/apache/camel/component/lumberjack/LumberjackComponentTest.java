@@ -23,14 +23,16 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LumberjackComponentTest extends CamelTestSupport {
     private static int port;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         port = AvailablePortFinder.getNextAvailable();
     }
@@ -49,11 +51,13 @@ public class LumberjackComponentTest extends CamelTestSupport {
     public void shouldListenToMessages() throws Exception {
         // We're expecting 25 messages with Maps
         MockEndpoint mock = getMockEndpoint("mock:output");
-        mock.expectedMessageCount(25);
+        mock.expectedMessageCount(60);
         mock.allMessages().body().isInstanceOf(Map.class);
 
+        List<Integer> windows = Arrays.asList(15, 10, 15, 10, 10);
+
         // When sending messages
-        List<Integer> responses = LumberjackUtil.sendMessages(port, null);
+        List<Integer> responses = LumberjackUtil.sendMessages(port, null, windows);
 
         // Then we should have the messages we're expecting
         mock.assertIsSatisfied();
@@ -61,9 +65,10 @@ public class LumberjackComponentTest extends CamelTestSupport {
         // And the first map should contains valid data (we're assuming it's also valid for the other ones)
         Map first = mock.getExchanges().get(0).getIn().getBody(Map.class);
         assertEquals("log", first.get("input_type"));
-        assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log", first.get("source"));
+        assertEquals("/home/qatest/collectNetwork/log/data-integration/00000000-f000-0000-1541-8da26f200001/absorption.log",
+                first.get("source"));
 
         // And we should have replied with 2 acknowledgments for each window frame
-        assertEquals(Arrays.asList(10, 15), responses);
+        assertEquals(windows, responses);
     }
 }

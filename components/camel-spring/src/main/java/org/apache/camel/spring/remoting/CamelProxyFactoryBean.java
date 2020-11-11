@@ -35,7 +35,8 @@ import org.springframework.remoting.support.UrlBasedRemoteAccessor;
 /**
  * A {@link FactoryBean} to create a Proxy to a a Camel Pojo Endpoint.
  */
-public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements FactoryBean<Object>, CamelContextAware, DisposableBean, ApplicationContextAware {
+public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor
+        implements FactoryBean<Object>, CamelContextAware, DisposableBean, ApplicationContextAware {
     private String serviceRef;
     private CamelContext camelContext;
     private String camelContextId;
@@ -54,7 +55,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
             if (camelContext == null) {
                 throw new IllegalArgumentException("camelContext or camelContextId must be specified");
             }
-            
+
             if (getServiceUrl() == null && getServiceRef() == null) {
                 throw new IllegalArgumentException("serviceUrl or serviceRef must be specified.");
             }
@@ -79,7 +80,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
             ServiceHelper.startService(endpoint);
             producer = endpoint.createProducer();
             // add and start producer
-            camelContext.addService(producer, true, true);
+            camelContext.addService(producer, true, false);
             serviceProxy = ProxyHelper.createProxy(endpoint, bind, producer, getServiceInterface());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);
@@ -149,7 +150,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
-    
+
     public void setCamelContextId(String contextId) {
         this.camelContextId = contextId;
     }

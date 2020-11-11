@@ -23,11 +23,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test to verify that handled policy is working as expected for wiki
- * documentation.
+ * Unit test to verify that handled policy is working as expected for wiki documentation.
  */
 public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
 
@@ -69,17 +70,17 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
                 // we do special error handling for when OrderFailedException is
                 // thrown
                 onException(OrderFailedException.class)
-                    // we mark the exchange as handled so the caller doesn't
-                    // receive the
-                    // OrderFailedException but whatever we want to return
-                    // instead
-                    .handled(true)
-                    // this bean handles the error handling where we can
-                    // customize the error
-                    // response using java code
-                    .bean(OrderService.class, "orderFailed")
-                    // and since this is an unit test we use mocks for testing
-                    .to("mock:error");
+                        // we mark the exchange as handled so the caller doesn't
+                        // receive the
+                        // OrderFailedException but whatever we want to return
+                        // instead
+                        .handled(true)
+                        // this bean handles the error handling where we can
+                        // customize the error
+                        // response using java code
+                        .bean(OrderService.class, "orderFailed")
+                        // and since this is an unit test we use mocks for testing
+                        .to("mock:error");
 
                 // this is just the generic error handler where we set the
                 // destination
@@ -88,10 +89,10 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
 
                 // this is our route where we handle orders
                 from("direct:start")
-                    // this bean is our order service
-                    .bean(OrderService.class, "handleOrder")
-                    // this is the destination if the order is OK
-                    .to("mock:result");
+                        // this bean is our order service
+                        .bean(OrderService.class, "handleOrder")
+                        // this is the destination if the order is OK
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };
@@ -106,11 +107,10 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
         /**
          * This method handle our order input and return the order
          *
-         * @param headers the in headers
-         * @param payload the in payload
-         * @return the out payload
-         * @throws OrderFailedException is thrown if the order cannot be
-         *             processed
+         * @param  headers              the in headers
+         * @param  payload              the in payload
+         * @return                      the out payload
+         * @throws OrderFailedException is thrown if the order cannot be processed
          */
         public Object handleOrder(@Headers Map headers, @Body String payload) throws OrderFailedException {
             headers.put("customerid", headers.get("customerid"));
@@ -123,12 +123,11 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
         }
 
         /**
-         * This method creates the response to the caller if the order could not
-         * be processed
+         * This method creates the response to the caller if the order could not be processed
          * 
-         * @param headers the in headers
-         * @param payload the in payload
-         * @return the out payload
+         * @param  headers the in headers
+         * @param  payload the in payload
+         * @return         the out payload
          */
         public Object orderFailed(@Headers Map headers, @Body String payload) {
             headers.put("customerid", headers.get("customerid"));

@@ -51,9 +51,9 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource) {
         this(camelContext, knownHostsResource, false);
     }
-    
+
     public ResourceBasedSSHKeyVerifier(CamelContext camelContext, String knownHostsResource,
-            boolean failOnUnknownHost) {
+                                       boolean failOnUnknownHost) {
         this.camelContext = camelContext;
         this.knownHostsResource = knownHostsResource;
         this.failOnUnknownHost = failOnUnknownHost;

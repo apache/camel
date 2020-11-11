@@ -23,8 +23,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PredicateBinaryCoerceTypeTest extends TestSupport {
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
@@ -199,7 +199,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         Message in = exchange.getIn();

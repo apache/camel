@@ -29,9 +29,12 @@ import org.eclipse.microprofile.metrics.MetricID;
 import org.eclipse.microprofile.metrics.MetricRegistry.Type;
 import org.eclipse.microprofile.metrics.Tag;
 import org.eclipse.microprofile.metrics.Timer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTestSupport {
 
@@ -59,16 +62,19 @@ public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTe
         assertEquals(3, timers.size());
 
         String contextTag = "camelContext=" + context.getName();
-        Tag[] fooTags = getTags(new String[] {contextTag, "nodeId=foo", "routeId=routeA"});
-        Timer fooTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME, Timer.class, Arrays.asList(fooTags));
+        Tag[] fooTags = getTags(new String[] { contextTag, "nodeId=foo", "routeId=routeA" });
+        Timer fooTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME,
+                Timer.class, Arrays.asList(fooTags));
         assertEquals(count / 2, fooTimer.getCount());
 
-        Tag[] barTags = getTags(new String[] {contextTag, "nodeId=bar", "routeId=routeB"});
-        Timer barTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME, Timer.class, Arrays.asList(barTags));
+        Tag[] barTags = getTags(new String[] { contextTag, "nodeId=bar", "routeId=routeB" });
+        Timer barTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME,
+                Timer.class, Arrays.asList(barTags));
         assertEquals(count / 2, barTimer.getCount());
 
-        Tag[] bazTags = getTags(new String[] {contextTag, "nodeId=baz", "routeId=routeB"});
-        Timer bazTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME, Timer.class, Arrays.asList(bazTags));
+        Tag[] bazTags = getTags(new String[] { contextTag, "nodeId=baz", "routeId=routeB" });
+        Timer bazTimer = MicroProfileMetricsHelper.findMetric(metricRegistry, DEFAULT_CAMEL_MESSAGE_HISTORY_METRIC_NAME,
+                Timer.class, Arrays.asList(bazTags));
         assertEquals(count / 2, bazTimer.getCount());
 
         MicroProfileMetricsMessageHistoryService service = context.hasService(MicroProfileMetricsMessageHistoryService.class);
@@ -96,11 +102,11 @@ public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTe
             @Override
             public void configure() {
                 from("direct:foo").routeId("routeA")
-                    .to("mock:foo").id("foo");
+                        .to("mock:foo").id("foo");
 
                 from("direct:bar").routeId("routeB")
-                    .to("mock:bar").id("bar")
-                    .to("mock:baz").id("baz");
+                        .to("mock:bar").id("bar")
+                        .to("mock:baz").id("baz");
             }
         };
     }
@@ -108,7 +114,6 @@ public class MicroProfileMetricsMessageHistoryTest extends MicroProfileMetricsTe
     @Override
     protected CamelContext createCamelContext() throws Exception {
         factory = new MicroProfileMetricsMessageHistoryFactory();
-        factory.setMetricRegistry(metricRegistry);
 
         CamelContext context = super.createCamelContext();
         context.setMessageHistoryFactory(factory);

@@ -22,20 +22,20 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.spring.CamelSpringRunner;
-import org.apache.camel.test.spring.MockEndpoints;
+import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.apache.cxf.message.Message;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@RunWith(CamelSpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CxfComponentEnableMtomTest.TestConfig.class)
 @MockEndpoints
 public class CxfComponentEnableMtomTest {
@@ -49,7 +49,7 @@ public class CxfComponentEnableMtomTest {
 
         if (endpoint instanceof CxfEndpoint) {
             CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
-            assertTrue("Mtom should be enabled", cxfEndpoint.isMtomEnabled());
+            assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
         } else {
             fail("CXF Endpoint not found");
         }
@@ -61,7 +61,7 @@ public class CxfComponentEnableMtomTest {
 
         if (endpoint instanceof CxfEndpoint) {
             CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
-            assertTrue("Mtom should be enabled", cxfEndpoint.isMtomEnabled());
+            assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
         } else {
             fail("CXF Endpoint not found");
         }
@@ -73,7 +73,7 @@ public class CxfComponentEnableMtomTest {
 
         if (endpoint instanceof CxfEndpoint) {
             CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
-            assertTrue("Mtom should be enabled", cxfEndpoint.isMtomEnabled());
+            assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
         } else {
             fail("CXF Endpoint not found");
         }
@@ -85,7 +85,7 @@ public class CxfComponentEnableMtomTest {
 
         if (endpoint instanceof CxfEndpoint) {
             CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
-            assertTrue("Mtom should be enabled", cxfEndpoint.isMtomEnabled());
+            assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
         } else {
             fail("CXF Endpoint not found");
         }

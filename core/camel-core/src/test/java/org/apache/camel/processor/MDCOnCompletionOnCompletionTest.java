@@ -18,14 +18,17 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
 
@@ -47,12 +50,13 @@ public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("timer:foo?period=5000").routeId("route-a").setBody().constant("Hello World").onCompletion().process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.addOnCompletion(new MyOnCompletion());
-                    }
-                }).end().to("log:foo").to("direct:b");
+                from("timer:foo?period=5000").routeId("route-a").setBody().constant("Hello World").onCompletion()
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.adapt(ExtendedExchange.class).addOnCompletion(new MyOnCompletion());
+                            }
+                        }).end().to("log:foo").to("direct:b");
 
                 from("direct:b").routeId("route-b").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

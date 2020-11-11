@@ -20,7 +20,11 @@ import javax.jcr.LoginException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JcrAuthLoginFailureTest extends JcrAuthTestBase {
 
@@ -30,8 +34,8 @@ public class JcrAuthLoginFailureTest extends JcrAuthTestBase {
         Exchange out = template.send("direct:a", exchange);
         assertNotNull(out);
         String uuid = out.getOut().getBody(String.class);
-        assertNull("Expected body to be null, found JCR node UUID", uuid);
-        assertTrue("Wrong exception type", out.getException() instanceof LoginException);
+        assertNull(uuid, "Expected body to be null, found JCR node UUID");
+        assertTrue(out.getException() instanceof LoginException, "Wrong exception type");
     }
 
     @Override
@@ -42,8 +46,10 @@ public class JcrAuthLoginFailureTest extends JcrAuthTestBase {
                 // START SNIPPET: jcr
                 from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
                         constant("node")).setHeader("my.contents.property",
-                        body()).to(
-                        "jcr://not-a-user:nonexisting-password@repository" + BASE_REPO_PATH);
+                                body())
+                        .to(
+                                "jcr://not-a-user:nonexisting-password@repository"
+                            + BASE_REPO_PATH);
                 // END SNIPPET: jcr
             }
         };

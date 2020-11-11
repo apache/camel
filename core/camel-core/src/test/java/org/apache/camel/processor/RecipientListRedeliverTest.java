@@ -21,7 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -56,7 +58,8 @@ public class RecipientListRedeliverTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1 + 3, counter); // first call + 3 redeliveries
+        // first call + 3 redeliveries
+        assertEquals(1 + 3, counter);
     }
 
     @Test
@@ -76,7 +79,8 @@ public class RecipientListRedeliverTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1 + 3, counter); // first call + 3 redeliveries
+        // first call + 3 redeliveries
+        assertEquals(1 + 3, counter);
     }
 
     @Override
@@ -94,7 +98,7 @@ public class RecipientListRedeliverTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // should be same input body
                         assertEquals("Hello World", exchange.getIn().getBody());
-                        assertFalse("Should not have OUT", exchange.hasOut());
+                        assertFalse(exchange.hasOut(), "Should not have OUT");
                         assertNull(exchange.getException());
 
                         counter++;
@@ -107,7 +111,7 @@ public class RecipientListRedeliverTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // should be same input body
                         assertEquals("Hello World", exchange.getIn().getBody());
-                        assertFalse("Should not have OUT", exchange.hasOut());
+                        assertFalse(exchange.hasOut(), "Should not have OUT");
                         assertNull(exchange.getException());
 
                         // mutate IN body

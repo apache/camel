@@ -30,15 +30,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.jpa.MessageProcessed;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
 import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaIdempotentConsumerTest extends AbstractJpaTest {
-    protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
+    protected static final String SELECT_ALL_STRING
+            = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected Endpoint startEndpoint;
@@ -67,7 +70,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         startEndpoint = resolveMandatoryEndpoint("direct:start");
@@ -83,8 +86,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
                 // START SNIPPET: idempotent
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
-                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)
-                ).to("mock:result");
+                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)).to("mock:result");
                 // END SNIPPET: idempotent
             }
         });
@@ -111,9 +113,9 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         }
 
         assertEquals(3, ids.size());
-        assertTrue("Should contain message 1", ids.contains("1"));
-        assertTrue("Should contain message 2", ids.contains("2"));
-        assertTrue("Should contain message 3", ids.contains("3"));
+        assertTrue(ids.contains("1"), "Should contain message 1");
+        assertTrue(ids.contains("2"), "Should contain message 2");
+        assertTrue(ids.contains("3"), "Should contain message 3");
     }
 
     @SuppressWarnings("unchecked")
@@ -126,15 +128,14 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
-                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)
-                ).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("messageId", String.class);
-                        if (id.equals("2")) {
-                            throw new IllegalArgumentException("Damn I cannot handle id 2");
-                        }
-                    }
-                }).to("mock:result");
+                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)).process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damn I cannot handle id 2");
+                                }
+                            }
+                        }).to("mock:result");
             }
         });
         context.start();
@@ -162,8 +163,8 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         }
 
         assertEquals(2, ids.size());
-        assertTrue("Should contain message 1", ids.contains("1"));
-        assertTrue("Should contain message 3", ids.contains("3"));
+        assertTrue(ids.contains("1"), "Should contain message 1");
+        assertTrue(ids.contains("3"), "Should contain message 3");
     }
 
     protected void sendMessage(final Object messageId, final Object body) {

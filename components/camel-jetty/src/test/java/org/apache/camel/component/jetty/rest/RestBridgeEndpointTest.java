@@ -18,7 +18,9 @@ package org.apache.camel.component.jetty.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestBridgeEndpointTest extends BaseJettyTest {
 
@@ -42,7 +44,8 @@ public class RestBridgeEndpointTest extends BaseJettyTest {
 
                 rest("/api/").get("/{id}/").to("http://localhost:" + getPort2() + "?bridgeEndpoint=true");
 
-                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true").to("mock:result").transform().simple("Bye ${header.id}");
+                from("jetty:http://localhost:" + getPort2() + "?matchOnUriPrefix=true").to("mock:result").transform()
+                        .simple("Bye ${header.id}");
             }
         };
     }

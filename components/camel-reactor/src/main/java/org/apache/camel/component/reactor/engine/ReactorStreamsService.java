@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsCamelSubscriber;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
@@ -61,6 +62,11 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
     @Override
     public String getId() {
         return ReactorStreamsConstants.SERVICE_NAME;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return context;
     }
 
     // ******************************************
@@ -121,9 +127,8 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
     @Override
     public Publisher<Exchange> toStream(String name, Object data) {
         return doRequest(
-            name,
-            ReactiveStreamsHelper.convertToExchange(context, data)
-        );
+                name,
+                ReactiveStreamsHelper.convertToExchange(context, data));
     }
 
     @Override
@@ -147,8 +152,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
             try {
                 String uuid = context.getUuidGenerator().generateUuid();
 
-                RouteBuilder.addRoutes(context, rb ->
-                        rb.from(camelUri).to("reactive-streams:" + uuid));
+                RouteBuilder.addRoutes(context, rb -> rb.from(camelUri).to("reactive-streams:" + uuid));
 
                 return uuid;
             } catch (Exception e) {
@@ -178,7 +182,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
                 @Override
                 public void configure() throws Exception {
                     from("reactive-streams:" + uuid)
-                        .to(uri);
+                            .to(uri);
                 }
             });
 
@@ -202,7 +206,7 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
                     @Override
                     public void configure() throws Exception {
                         from("reactive-streams:" + uuid)
-                            .to(camelUri);
+                                .to(camelUri);
                     }
                 });
 
@@ -239,12 +243,12 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
                 @Override
                 public void configure() throws Exception {
                     from(uri)
-                        .process(exchange -> {
-                            Exchange copy = exchange.copy();
-                            Object result = processor.apply(Mono.just(copy));
-                            exchange.getIn().setBody(result);
-                        })
-                        .process(unwrapStreamProcessorSupplier.get());
+                            .process(exchange -> {
+                                Exchange copy = exchange.copy();
+                                Object result = processor.apply(Mono.just(copy));
+                                exchange.getIn().setBody(result);
+                            })
+                            .process(unwrapStreamProcessorSupplier.get());
                 }
             });
         } catch (Exception e) {
@@ -255,11 +259,9 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
     @Override
     public <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
         process(
-            uri,
-            publisher -> processor.apply(
-                Flux.from(publisher).map(BodyConverter.forType(type))
-            )
-        );
+                uri,
+                publisher -> processor.apply(
+                        Flux.from(publisher).map(BodyConverter.forType(type))));
     }
 
     // ******************************************
@@ -313,25 +315,23 @@ final class ReactorStreamsService extends ServiceSupport implements CamelReactiv
             throw new IllegalStateException("No consumers attached to the stream " + name);
         }
 
-        return Mono.<Exchange>create(
-            sink -> data.addOnCompletion(new Synchronization() {
-                @Override
-                public void onComplete(Exchange exchange) {
-                    sink.success(exchange);
-                }
-
-                @Override
-                public void onFailure(Exchange exchange) {
-                    Throwable throwable = exchange.getException();
-                    if (throwable == null) {
-                        throwable = new IllegalStateException("Unknown Exception");
+        return Mono.<Exchange> create(
+                sink -> data.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                    @Override
+                    public void onComplete(Exchange exchange) {
+                        sink.success(exchange);
                     }
 
-                    sink.error(throwable);
-                }
-            })
-        ).doOnSubscribe(
-            subs -> consumer.process(data, ReactorStreamsConstants.EMPTY_ASYNC_CALLBACK)
-        );
+                    @Override
+                    public void onFailure(Exchange exchange) {
+                        Throwable throwable = exchange.getException();
+                        if (throwable == null) {
+                            throwable = new IllegalStateException("Unknown Exception");
+                        }
+
+                        sink.error(throwable);
+                    }
+                })).doOnSubscribe(
+                        subs -> consumer.process(data, ReactorStreamsConstants.EMPTY_ASYNC_CALLBACK));
     }
 }

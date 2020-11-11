@@ -26,9 +26,9 @@ import javax.ws.rs.core.Response;
 
 @Path("/echoservice/")
 public class EchoService {
-    @Context 
+    @Context
     private HttpHeaders headers;
-    
+
     @POST
     @Path("/echo/")
     public Response echo(String string) {
@@ -37,5 +37,5 @@ public class EchoService {
             return Response.ok("Old " + string).build();
         }
         return Response.ok("New " + string).cookie(new NewCookie("foo", "bar", "/", null, 1, null, -1, false)).build();
-    }  
+    }
 }

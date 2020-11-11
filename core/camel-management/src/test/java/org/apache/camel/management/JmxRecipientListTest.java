@@ -21,7 +21,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JmxRecipientListTest extends ManagementTestSupport {
 
@@ -48,21 +51,21 @@ public class JmxRecipientListTest extends ManagementTestSupport {
 
         // this endpoint is part of the route and should be registered
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"direct://a\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(name));
+        assertTrue(mbeanServer.isRegistered(name), "Should be registered");
 
         // endpoints added after routes has been started is by default not registered
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://x\"");
-        assertFalse("Should not be registered", mbeanServer.isRegistered(name));
+        assertFalse(mbeanServer.isRegistered(name), "Should not be registered");
 
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://y\"");
-        assertFalse("Should not be registered", mbeanServer.isRegistered(name));
+        assertFalse(mbeanServer.isRegistered(name), "Should not be registered");
 
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://z\"");
-        assertFalse("Should not be registered", mbeanServer.isRegistered(name));
+        assertFalse(mbeanServer.isRegistered(name), "Should not be registered");
 
         // however components is always registered
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"mock\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(name));
+        assertTrue(mbeanServer.isRegistered(name), "Should be registered");
     }
 
     @Test
@@ -91,21 +94,21 @@ public class JmxRecipientListTest extends ManagementTestSupport {
 
         // this endpoint is part of the route and should be registered
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"direct://a\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(name));
+        assertTrue(mbeanServer.isRegistered(name), "Should be registered");
 
         // endpoints added after routes has been started is now also registered
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://x\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(name));
+        assertTrue(mbeanServer.isRegistered(name), "Should be registered");
 
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://y\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(name));
+        assertTrue(mbeanServer.isRegistered(name), "Should be registered");
 
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://z\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(name));
+        assertTrue(mbeanServer.isRegistered(name), "Should be registered");
 
         // however components is always registered
         name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"mock\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(name));
+        assertTrue(mbeanServer.isRegistered(name), "Should be registered");
     }
 
     protected void sendBody() {

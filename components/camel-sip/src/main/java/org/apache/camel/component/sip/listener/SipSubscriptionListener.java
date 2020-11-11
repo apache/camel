@@ -58,23 +58,24 @@ public class SipSubscriptionListener implements SipListener {
             throw new CamelException("Error in consumer while dispatching exchange", e);
         }
     }
-    
+
     @Override
     public void processRequest(RequestEvent requestReceivedEvent) {
         Request request = requestReceivedEvent.getRequest();
         ServerTransaction serverTransactionId = requestReceivedEvent
                 .getServerTransaction();
-        String viaBranch = ((ViaHeader)(request.getHeaders(ViaHeader.NAME).next())).getParameter("branch");
-        LOG.debug("Request: {}", request.getMethod()); 
+        String viaBranch = ((ViaHeader) (request.getHeaders(ViaHeader.NAME).next())).getParameter("branch");
+        LOG.debug("Request: {}", request.getMethod());
         LOG.debug("Server Transaction Id: {}", serverTransactionId);
         LOG.debug("Received From Branch: {}", viaBranch);
 
         if (request.getMethod().equals(Request.NOTIFY)) {
             processNotify(requestReceivedEvent, serverTransactionId);
-        } 
+        }
     }
 
-    public synchronized void processNotify(RequestEvent requestEvent,
+    public synchronized void processNotify(
+            RequestEvent requestEvent,
             ServerTransaction serverTransactionId) {
         LOG.debug("Notification received at Subscriber");
         SipProvider provider = (SipProvider) requestEvent.getSource();
@@ -91,9 +92,9 @@ public class SipSubscriptionListener implements SipListener {
             }
             //Dispatch the response along the route
             dispatchExchange(notify.getContent());
-            
+
             // Send back an success response
-            Response response = sipSubscriber.getConfiguration().getMessageFactory().createResponse(200, notify);            
+            Response response = sipSubscriber.getConfiguration().getMessageFactory().createResponse(200, notify);
             response.addHeader(sipSubscriber.getConfiguration().getContactHeader());
             serverTransactionId.sendResponse(response);
 
@@ -109,7 +110,7 @@ public class SipSubscriptionListener implements SipListener {
             LOG.error("Exception thrown during Notify processing in the SipSubscriptionListener.", e);
         }
     }
-    
+
     @Override
     public void processResponse(ResponseEvent responseReceivedEvent) {
         LOG.debug("Response received at Subscriber");

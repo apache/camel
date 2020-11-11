@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ssh;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -27,10 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The ssh component enables access to SSH servers such that you can send an SSH
- * command, and process the response.
+ * Execute commands on remote hosts using SSH.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port", alternativeSyntax = "ssh:username:password@host:port", label = "file")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port",
+             alternativeSyntax = "ssh:username:password@host:port", category = { Category.FILE })
 public class SshEndpoint extends ScheduledPollEndpoint {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -50,6 +51,12 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public boolean isSingletonProducer() {
+        // SshClient is not thread-safe to be shared
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new SshProducer(this);
     }
@@ -59,12 +66,6 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         SshConsumer consumer = new SshConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        // SshClient is not thread-safe to be shared
-        return true;
     }
 
     public SshConfiguration getConfiguration() {
@@ -137,22 +138,6 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
     public void setTimeout(long timeout) {
         getConfiguration().setTimeout(timeout);
-    }
-
-    /**
-     * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
-     */
-    @Deprecated
-    public String getCertFilename() {
-        return getConfiguration().getCertFilename();
-    }
-
-    /**
-     * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
-     */
-    @Deprecated
-    public void setCertFilename(String certFilename) {
-        getConfiguration().setCertFilename(certFilename);
     }
 
     public String getCertResource() {

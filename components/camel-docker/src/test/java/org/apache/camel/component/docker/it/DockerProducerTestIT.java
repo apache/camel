@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration test listing images on Docker Platform
@@ -28,7 +28,7 @@ import org.junit.Test;
 public class DockerProducerTestIT extends DockerITTestSupport {
 
     @Test
-    public void testDocker() throws Exception {
+    void testDocker() throws Exception {
         template.sendBody("direct:in", "");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -38,13 +38,13 @@ public class DockerProducerTestIT extends DockerITTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("docker://imagelist?maxTotalConnections=10")
-                    .log("${body}")
-                    .to("mock:result");
+                        .to("docker://imagelist?maxTotalConnections=10")
+                        .log("${body}")
+                        .to("mock:result");
             }
         };
     }

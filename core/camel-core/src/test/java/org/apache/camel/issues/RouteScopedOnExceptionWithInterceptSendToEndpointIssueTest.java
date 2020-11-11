@@ -21,11 +21,14 @@ import java.net.ConnectException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Based on user forum issue
@@ -35,7 +38,7 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueTest extends 
     @Test
     public void testIssue() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().throwException(new ConnectException("Forced"));
@@ -66,10 +69,11 @@ public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueTest extends 
                 errorHandler(deadLetterChannel("mock:global").maximumRedeliveries(2).redeliveryDelay(5000));
 
                 from("direct:start")
-                    // no redelivery delay for faster unit tests
-                    .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0).logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.WARN)
-                    // send to mock when we are exhausted
-                    .to("mock:exhausted").end().to("seda:foo");
+                        // no redelivery delay for faster unit tests
+                        .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0).logRetryAttempted(true)
+                        .retryAttemptedLogLevel(LoggingLevel.WARN)
+                        // send to mock when we are exhausted
+                        .to("mock:exhausted").end().to("seda:foo");
             }
         };
     }

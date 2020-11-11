@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RecipientListAggregationStrategyTest extends ContextTestSupport {
 
@@ -38,7 +38,8 @@ public class RecipientListAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").recipientList(header("foo")).aggregationStrategy(new BodyInAggregatingStrategy()).to("mock:result");
+                from("direct:start").recipientList(header("foo")).aggregationStrategy(new BodyInAggregatingStrategy())
+                        .to("mock:result");
 
                 from("direct:a").transform(constant("a"));
                 from("direct:b").transform(constant("b"));

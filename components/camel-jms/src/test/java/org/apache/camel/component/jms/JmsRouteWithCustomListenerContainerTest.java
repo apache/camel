@@ -23,12 +23,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test inspired by user forum
@@ -60,7 +62,8 @@ public class JmsRouteWithCustomListenerContainerTest extends CamelTestSupport {
         assertEquals(ExchangePattern.InOut, inbox.getReceivedExchanges().get(0).getPattern());
         assertEquals(ExchangePattern.InOnly, order.getReceivedExchanges().get(0).getPattern());
 
-        JmsEndpoint jmsEndpoint = getMandatoryEndpoint("activemq:queue:inbox?messageListenerContainerFactory=#myListenerContainerFactory", JmsEndpoint.class);
+        JmsEndpoint jmsEndpoint = getMandatoryEndpoint(
+                "activemq:queue:inbox?messageListenerContainerFactory=#myListenerContainerFactory", JmsEndpoint.class);
         assertIsInstanceOf(MyListenerContainerFactory.class, jmsEndpoint.getMessageListenerContainerFactory());
         assertEquals(ConsumerType.Custom, jmsEndpoint.getConfiguration().getConsumerType());
         assertIsInstanceOf(MyListenerContainer.class, jmsEndpoint.createMessageListenerContainer());
@@ -81,8 +84,9 @@ public class JmsRouteWithCustomListenerContainerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:inbox?messageListenerContainerFactory=#myListenerContainerFactory").to("mock:inbox").inOnly("activemq:topic:order").bean("orderService",
-                                                                                                                                                              "handleOrder");
+                from("activemq:queue:inbox?messageListenerContainerFactory=#myListenerContainerFactory").to("mock:inbox")
+                        .to(ExchangePattern.InOnly, "activemq:topic:order").bean("orderService",
+                                "handleOrder");
 
                 from("activemq:topic:order").to("mock:topic");
             }

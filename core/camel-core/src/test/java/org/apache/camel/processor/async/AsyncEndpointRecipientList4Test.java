@@ -20,7 +20,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
 
@@ -38,7 +41,7 @@ public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should use different threads " + beforeThreadId + ":" + afterThreadId, beforeThreadId != afterThreadId);
+        assertTrue(beforeThreadId != afterThreadId, "Should use different threads " + beforeThreadId + ":" + afterThreadId);
     }
 
     @Override

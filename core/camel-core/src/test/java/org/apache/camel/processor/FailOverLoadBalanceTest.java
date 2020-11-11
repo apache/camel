@@ -22,10 +22,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FailOverLoadBalanceTest extends ContextTestSupport {
 
@@ -34,7 +36,7 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -70,10 +72,11 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:exception").loadBalance()
-                    // catch all the exception here
-                    .failover().to("direct:x", "direct:y", "direct:z");
+                        // catch all the exception here
+                        .failover().to("direct:x", "direct:y", "direct:z");
 
-                from("direct:customerException").loadBalance().failover(MyException.class).to("direct:x", "direct:y", "direct:z");
+                from("direct:customerException").loadBalance().failover(MyException.class).to("direct:x", "direct:y",
+                        "direct:z");
 
                 from("direct:x").process(new MyExceptionProcessor()).to("mock:x");
 
@@ -103,7 +106,8 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
             fail("There should get the MyAnotherException");
         } catch (RuntimeCamelException ex) {
             // expect the exception here
-            assertTrue("The cause should be MyAnotherException", ex.getCause() instanceof MyAnotherException);
+            boolean b = ex.getCause() instanceof MyAnotherException;
+            assertTrue(b, "The cause should be MyAnotherException");
         }
         assertMockEndpointsSatisfied();
     }

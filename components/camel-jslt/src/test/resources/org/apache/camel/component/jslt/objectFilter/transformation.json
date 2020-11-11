@@ -1,0 +1,7 @@
+{
+  "name": {
+    * - firstname: .
+  },
+  "list": [for(.list) . if(.value > 2)],
+  "shoudBeRemoved": .name.lastname
+}

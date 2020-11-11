@@ -25,7 +25,7 @@ import java.util.List;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
 import com.amazonaws.regions.Region;
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
+import com.amazonaws.services.identitymanagement.AbstractAmazonIdentityManagement;
 import com.amazonaws.services.identitymanagement.model.AccessKey;
 import com.amazonaws.services.identitymanagement.model.AccessKeyMetadata;
 import com.amazonaws.services.identitymanagement.model.AddClientIDToOpenIDConnectProviderRequest;
@@ -277,7 +277,7 @@ import com.amazonaws.services.identitymanagement.model.UploadSigningCertificateR
 import com.amazonaws.services.identitymanagement.model.User;
 import com.amazonaws.services.identitymanagement.waiters.AmazonIdentityManagementWaiters;
 
-public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
+public class AmazonIAMClientMock extends AbstractAmazonIdentityManagement {
 
     @Override
     public void setEndpoint(String endpoint) {
@@ -288,12 +288,14 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public AddClientIDToOpenIDConnectProviderResult addClientIDToOpenIDConnectProvider(AddClientIDToOpenIDConnectProviderRequest addClientIDToOpenIDConnectProviderRequest) {
+    public AddClientIDToOpenIDConnectProviderResult addClientIDToOpenIDConnectProvider(
+            AddClientIDToOpenIDConnectProviderRequest addClientIDToOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public AddRoleToInstanceProfileResult addRoleToInstanceProfile(AddRoleToInstanceProfileRequest addRoleToInstanceProfileRequest) {
+    public AddRoleToInstanceProfileResult addRoleToInstanceProfile(
+            AddRoleToInstanceProfileRequest addRoleToInstanceProfileRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -366,7 +368,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public CreateOpenIDConnectProviderResult createOpenIDConnectProvider(CreateOpenIDConnectProviderRequest createOpenIDConnectProviderRequest) {
+    public CreateOpenIDConnectProviderResult createOpenIDConnectProvider(
+            CreateOpenIDConnectProviderRequest createOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -391,12 +394,14 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public CreateServiceLinkedRoleResult createServiceLinkedRole(CreateServiceLinkedRoleRequest createServiceLinkedRoleRequest) {
+    public CreateServiceLinkedRoleResult createServiceLinkedRole(
+            CreateServiceLinkedRoleRequest createServiceLinkedRoleRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public CreateServiceSpecificCredentialResult createServiceSpecificCredential(CreateServiceSpecificCredentialRequest createServiceSpecificCredentialRequest) {
+    public CreateServiceSpecificCredentialResult createServiceSpecificCredential(
+            CreateServiceSpecificCredentialRequest createServiceSpecificCredentialRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -431,7 +436,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public DeleteAccountPasswordPolicyResult deleteAccountPasswordPolicy(DeleteAccountPasswordPolicyRequest deleteAccountPasswordPolicyRequest) {
+    public DeleteAccountPasswordPolicyResult deleteAccountPasswordPolicy(
+            DeleteAccountPasswordPolicyRequest deleteAccountPasswordPolicyRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -462,7 +468,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public DeleteOpenIDConnectProviderResult deleteOpenIDConnectProvider(DeleteOpenIDConnectProviderRequest deleteOpenIDConnectProviderRequest) {
+    public DeleteOpenIDConnectProviderResult deleteOpenIDConnectProvider(
+            DeleteOpenIDConnectProviderRequest deleteOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -497,22 +504,26 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public DeleteServerCertificateResult deleteServerCertificate(DeleteServerCertificateRequest deleteServerCertificateRequest) {
+    public DeleteServerCertificateResult deleteServerCertificate(
+            DeleteServerCertificateRequest deleteServerCertificateRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public DeleteServiceLinkedRoleResult deleteServiceLinkedRole(DeleteServiceLinkedRoleRequest deleteServiceLinkedRoleRequest) {
+    public DeleteServiceLinkedRoleResult deleteServiceLinkedRole(
+            DeleteServiceLinkedRoleRequest deleteServiceLinkedRoleRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public DeleteServiceSpecificCredentialResult deleteServiceSpecificCredential(DeleteServiceSpecificCredentialRequest deleteServiceSpecificCredentialRequest) {
+    public DeleteServiceSpecificCredentialResult deleteServiceSpecificCredential(
+            DeleteServiceSpecificCredentialRequest deleteServiceSpecificCredentialRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public DeleteSigningCertificateResult deleteSigningCertificate(DeleteSigningCertificateRequest deleteSigningCertificateRequest) {
+    public DeleteSigningCertificateResult deleteSigningCertificate(
+            DeleteSigningCertificateRequest deleteSigningCertificateRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -553,7 +564,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public GenerateCredentialReportResult generateCredentialReport(GenerateCredentialReportRequest generateCredentialReportRequest) {
+    public GenerateCredentialReportResult generateCredentialReport(
+            GenerateCredentialReportRequest generateCredentialReportRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -568,7 +580,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public GetAccountAuthorizationDetailsResult getAccountAuthorizationDetails(GetAccountAuthorizationDetailsRequest getAccountAuthorizationDetailsRequest) {
+    public GetAccountAuthorizationDetailsResult getAccountAuthorizationDetails(
+            GetAccountAuthorizationDetailsRequest getAccountAuthorizationDetailsRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -578,7 +591,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public GetAccountPasswordPolicyResult getAccountPasswordPolicy(GetAccountPasswordPolicyRequest getAccountPasswordPolicyRequest) {
+    public GetAccountPasswordPolicyResult getAccountPasswordPolicy(
+            GetAccountPasswordPolicyRequest getAccountPasswordPolicyRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -598,12 +612,14 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public GetContextKeysForCustomPolicyResult getContextKeysForCustomPolicy(GetContextKeysForCustomPolicyRequest getContextKeysForCustomPolicyRequest) {
+    public GetContextKeysForCustomPolicyResult getContextKeysForCustomPolicy(
+            GetContextKeysForCustomPolicyRequest getContextKeysForCustomPolicyRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public GetContextKeysForPrincipalPolicyResult getContextKeysForPrincipalPolicy(GetContextKeysForPrincipalPolicyRequest getContextKeysForPrincipalPolicyRequest) {
+    public GetContextKeysForPrincipalPolicyResult getContextKeysForPrincipalPolicy(
+            GetContextKeysForPrincipalPolicyRequest getContextKeysForPrincipalPolicyRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -638,7 +654,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public GetOpenIDConnectProviderResult getOpenIDConnectProvider(GetOpenIDConnectProviderRequest getOpenIDConnectProviderRequest) {
+    public GetOpenIDConnectProviderResult getOpenIDConnectProvider(
+            GetOpenIDConnectProviderRequest getOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -678,7 +695,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public GetServiceLinkedRoleDeletionStatusResult getServiceLinkedRoleDeletionStatus(GetServiceLinkedRoleDeletionStatusRequest getServiceLinkedRoleDeletionStatusRequest) {
+    public GetServiceLinkedRoleDeletionStatusResult getServiceLinkedRoleDeletionStatus(
+            GetServiceLinkedRoleDeletionStatusRequest getServiceLinkedRoleDeletionStatusRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -731,17 +749,20 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public ListAttachedGroupPoliciesResult listAttachedGroupPolicies(ListAttachedGroupPoliciesRequest listAttachedGroupPoliciesRequest) {
+    public ListAttachedGroupPoliciesResult listAttachedGroupPolicies(
+            ListAttachedGroupPoliciesRequest listAttachedGroupPoliciesRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ListAttachedRolePoliciesResult listAttachedRolePolicies(ListAttachedRolePoliciesRequest listAttachedRolePoliciesRequest) {
+    public ListAttachedRolePoliciesResult listAttachedRolePolicies(
+            ListAttachedRolePoliciesRequest listAttachedRolePoliciesRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ListAttachedUserPoliciesResult listAttachedUserPolicies(ListAttachedUserPoliciesRequest listAttachedUserPoliciesRequest) {
+    public ListAttachedUserPoliciesResult listAttachedUserPolicies(
+            ListAttachedUserPoliciesRequest listAttachedUserPoliciesRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -786,7 +807,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public ListInstanceProfilesForRoleResult listInstanceProfilesForRole(ListInstanceProfilesForRoleRequest listInstanceProfilesForRoleRequest) {
+    public ListInstanceProfilesForRoleResult listInstanceProfilesForRole(
+            ListInstanceProfilesForRoleRequest listInstanceProfilesForRoleRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -801,7 +823,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public ListOpenIDConnectProvidersResult listOpenIDConnectProviders(ListOpenIDConnectProvidersRequest listOpenIDConnectProvidersRequest) {
+    public ListOpenIDConnectProvidersResult listOpenIDConnectProviders(
+            ListOpenIDConnectProvidersRequest listOpenIDConnectProvidersRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -871,12 +894,14 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public ListServiceSpecificCredentialsResult listServiceSpecificCredentials(ListServiceSpecificCredentialsRequest listServiceSpecificCredentialsRequest) {
+    public ListServiceSpecificCredentialsResult listServiceSpecificCredentials(
+            ListServiceSpecificCredentialsRequest listServiceSpecificCredentialsRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ListSigningCertificatesResult listSigningCertificates(ListSigningCertificatesRequest listSigningCertificatesRequest) {
+    public ListSigningCertificatesResult listSigningCertificates(
+            ListSigningCertificatesRequest listSigningCertificatesRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -932,12 +957,14 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public RemoveClientIDFromOpenIDConnectProviderResult removeClientIDFromOpenIDConnectProvider(RemoveClientIDFromOpenIDConnectProviderRequest removeClientIDFromOpenIDConnectProviderRequest) {
+    public RemoveClientIDFromOpenIDConnectProviderResult removeClientIDFromOpenIDConnectProvider(
+            RemoveClientIDFromOpenIDConnectProviderRequest removeClientIDFromOpenIDConnectProviderRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public RemoveRoleFromInstanceProfileResult removeRoleFromInstanceProfile(RemoveRoleFromInstanceProfileRequest removeRoleFromInstanceProfileRequest) {
+    public RemoveRoleFromInstanceProfileResult removeRoleFromInstanceProfile(
+            RemoveRoleFromInstanceProfileRequest removeRoleFromInstanceProfileRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -948,7 +975,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public ResetServiceSpecificCredentialResult resetServiceSpecificCredential(ResetServiceSpecificCredentialRequest resetServiceSpecificCredentialRequest) {
+    public ResetServiceSpecificCredentialResult resetServiceSpecificCredential(
+            ResetServiceSpecificCredentialRequest resetServiceSpecificCredentialRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -958,7 +986,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public SetDefaultPolicyVersionResult setDefaultPolicyVersion(SetDefaultPolicyVersionRequest setDefaultPolicyVersionRequest) {
+    public SetDefaultPolicyVersionResult setDefaultPolicyVersion(
+            SetDefaultPolicyVersionRequest setDefaultPolicyVersionRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -968,7 +997,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public SimulatePrincipalPolicyResult simulatePrincipalPolicy(SimulatePrincipalPolicyRequest simulatePrincipalPolicyRequest) {
+    public SimulatePrincipalPolicyResult simulatePrincipalPolicy(
+            SimulatePrincipalPolicyRequest simulatePrincipalPolicyRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -979,7 +1009,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public UpdateAccountPasswordPolicyResult updateAccountPasswordPolicy(UpdateAccountPasswordPolicyRequest updateAccountPasswordPolicyRequest) {
+    public UpdateAccountPasswordPolicyResult updateAccountPasswordPolicy(
+            UpdateAccountPasswordPolicyRequest updateAccountPasswordPolicyRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -999,7 +1030,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public UpdateOpenIDConnectProviderThumbprintResult updateOpenIDConnectProviderThumbprint(UpdateOpenIDConnectProviderThumbprintRequest updateOpenIDConnectProviderThumbprintRequest) {
+    public UpdateOpenIDConnectProviderThumbprintResult updateOpenIDConnectProviderThumbprint(
+            UpdateOpenIDConnectProviderThumbprintRequest updateOpenIDConnectProviderThumbprintRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -1019,17 +1051,20 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public UpdateServerCertificateResult updateServerCertificate(UpdateServerCertificateRequest updateServerCertificateRequest) {
+    public UpdateServerCertificateResult updateServerCertificate(
+            UpdateServerCertificateRequest updateServerCertificateRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public UpdateServiceSpecificCredentialResult updateServiceSpecificCredential(UpdateServiceSpecificCredentialRequest updateServiceSpecificCredentialRequest) {
+    public UpdateServiceSpecificCredentialResult updateServiceSpecificCredential(
+            UpdateServiceSpecificCredentialRequest updateServiceSpecificCredentialRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public UpdateSigningCertificateResult updateSigningCertificate(UpdateSigningCertificateRequest updateSigningCertificateRequest) {
+    public UpdateSigningCertificateResult updateSigningCertificate(
+            UpdateSigningCertificateRequest updateSigningCertificateRequest) {
         throw new UnsupportedOperationException();
     }
 
@@ -1044,12 +1079,14 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
     }
 
     @Override
-    public UploadServerCertificateResult uploadServerCertificate(UploadServerCertificateRequest uploadServerCertificateRequest) {
+    public UploadServerCertificateResult uploadServerCertificate(
+            UploadServerCertificateRequest uploadServerCertificateRequest) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public UploadSigningCertificateResult uploadSigningCertificate(UploadSigningCertificateRequest uploadSigningCertificateRequest) {
+    public UploadSigningCertificateResult uploadSigningCertificate(
+            UploadSigningCertificateRequest uploadSigningCertificateRequest) {
         throw new UnsupportedOperationException();
     }
 

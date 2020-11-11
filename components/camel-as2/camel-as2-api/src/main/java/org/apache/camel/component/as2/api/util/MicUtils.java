@@ -78,15 +78,20 @@ public final class MicUtils {
         }
     }
 
-    public static ReceivedContentMic createReceivedContentMic(HttpEntityEnclosingRequest request, PrivateKey decryptingPrivateKey) throws HttpException {
+    public static ReceivedContentMic createReceivedContentMic(
+            HttpEntityEnclosingRequest request, PrivateKey decryptingPrivateKey)
+            throws HttpException {
 
-        String dispositionNotificationOptionsString =  HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
+        String dispositionNotificationOptionsString
+                = HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
         if (dispositionNotificationOptionsString == null) {
             LOG.debug("do not create MIC: no disposition notification options in request");
             return null;
         }
-        DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser.parseDispositionNotificationOptions(dispositionNotificationOptionsString, null);
-        String micJdkAlgorithmName = getMicJdkAlgorithmName(dispositionNotificationOptions.getSignedReceiptMicalg().getValues());
+        DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
+                .parseDispositionNotificationOptions(dispositionNotificationOptionsString, null);
+        String micJdkAlgorithmName
+                = getMicJdkAlgorithmName(dispositionNotificationOptions.getSignedReceiptMicalg().getValues());
         if (micJdkAlgorithmName == null) {
             LOG.debug("do not create MIC: no matching MIC algorithms found");
             return null;

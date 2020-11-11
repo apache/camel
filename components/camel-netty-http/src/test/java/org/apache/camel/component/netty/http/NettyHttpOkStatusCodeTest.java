@@ -19,51 +19,51 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NettyHttpOkStatusCodeTest extends BaseNettyTest {
 
     @Test
     public void testNoOk() throws Exception {
         byte[] data = "Hello World".getBytes();
-        try {
-            template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-200", data, String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(209, cause.getStatusCode());
-            String body = cause.getContentAsString();
-            assertEquals("Not allowed", body);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-200", data,
+                        String.class));
+        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        assertEquals(209, cause.getStatusCode());
+        String body = cause.getContentAsString();
+        assertEquals("Not allowed", body);
     }
-
 
     @Test
     public void testNoOkComplexRange() throws Exception {
         byte[] data = "Hello World".getBytes();
-        try {
-            template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-204,301", data, String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(209, cause.getStatusCode());
-            String body = cause.getContentAsString();
-            assertEquals("Not allowed", body);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-204,301", data,
+                        String.class));
+        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        assertEquals(209, cause.getStatusCode());
+        String body = cause.getContentAsString();
+        assertEquals("Not allowed", body);
     }
 
     @Test
     public void testOk() throws Exception {
         byte[] data = "Hello World".getBytes();
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-209", data, String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-209", data,
+                String.class);
         assertEquals("Not allowed", out);
     }
-
 
     @Test
     public void testOkComplexRange() throws Exception {
         byte[] data = "Hello World".getBytes();
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-204,209,301-304", data, String.class);
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/test?okStatusCodeRange=200-204,209,301-304",
+                data, String.class);
         assertEquals("Not allowed", out);
     }
 

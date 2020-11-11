@@ -25,7 +25,8 @@ public class SpringAggregateForceCompletionOnStopTest extends AggregateForceComp
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregateForceCompletionOnStopTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/aggregator/SpringAggregateForceCompletionOnStopTest.xml");
     }
 
 }

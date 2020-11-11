@@ -20,14 +20,17 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringLoadRouteFromXmlTest extends CamelSpringTestSupport {
 
@@ -37,8 +40,8 @@ public class SpringLoadRouteFromXmlTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testLoadRouteFromXml() throws Exception {
-        assertNotNull("Existing foo route should be there", context.getRoute("foo"));
+    void testLoadRouteFromXml() throws Exception {
+        assertNotNull(context.getRoute("foo"), "Existing foo route should be there");
         assertEquals(1, context.getRoutes().size());
 
         // test that existing route works
@@ -56,13 +59,13 @@ public class SpringLoadRouteFromXmlTest extends CamelSpringTestSupport {
 
         // it should be a RoutesDefinition (we can have multiple routes in the same XML file)
         RoutesDefinition routes = (RoutesDefinition) value;
-        assertNotNull("Should load routes from XML", routes);
+        assertNotNull(routes, "Should load routes from XML");
         assertEquals(1, routes.getRoutes().size());
 
         // add the routes to existing CamelContext
         context.addRouteDefinitions(routes.getRoutes());
 
-        assertNotNull("Loaded bar route should be there", context.getRoute("bar"));
+        assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
         assertEquals(2, context.getRoutes().size());
 
         // test that loaded route works

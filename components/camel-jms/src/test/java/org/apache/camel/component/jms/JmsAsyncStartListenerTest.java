@@ -21,8 +21,8 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -52,7 +52,7 @@ public class JmsAsyncStartListenerTest extends CamelTestSupport {
         // so we need a persistent store in case no active consumers when we send the messages
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
-        jms.setAsyncStartListener(true);
+        jms.getConfiguration().setAsyncStartListener(true);
         camelContext.addComponent(componentName, jms);
 
         return camelContext;

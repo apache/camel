@@ -58,12 +58,14 @@ public class ConfigMapLockSimulator {
         if (version != null) {
             long versionLong = Long.parseLong(version);
             if (versionLong != versionCounter) {
-                LOG.warn("Current resource version is {} while the update is related to version {}", versionCounter, versionLong);
+                LOG.warn("Current resource version is {} while the update is related to version {}", versionCounter,
+                        versionLong);
                 return false;
             }
         }
 
-        this.currentMap = new ConfigMapBuilder(map).editOrNewMetadata().withResourceVersion(String.valueOf(++versionCounter)).endMetadata().build();
+        this.currentMap = new ConfigMapBuilder(map).editOrNewMetadata().withResourceVersion(String.valueOf(++versionCounter))
+                .endMetadata().build();
         return true;
     }
 

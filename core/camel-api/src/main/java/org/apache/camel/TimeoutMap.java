@@ -24,8 +24,8 @@ public interface TimeoutMap<K, V> extends Service {
     /**
      * Looks up the value in the map by the given key.
      *
-     * @param key the key of the value to search for
-     * @return the value for the given key or <tt>null</tt> if it is not present (or has timed out)
+     * @param  key the key of the value to search for
+     * @return     the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
     V get(K key);
 
@@ -37,35 +37,33 @@ public interface TimeoutMap<K, V> extends Service {
     int size();
 
     /**
-     * Adds the key value pair into the map such that some time after the given
-     * timeout the entry will be evicted
+     * Adds the key value pair into the map such that some time after the given timeout the entry will be evicted
      *
-     * @param key   the key
-     * @param value the value
-     * @param timeoutMillis  timeout in millis
-     * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     * @param  key           the key
+     * @param  value         the value
+     * @param  timeoutMillis timeout in millis
+     * @return               the previous value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping
+     *                       for <tt>key</tt>.
      */
     V put(K key, V value, long timeoutMillis);
-    
+
     /**
-     * Adds the key value pair into the map if the specified key is not already associated with a value
-     * such that some time after the given timeout the entry will be evicted. Expiry time of an existing mapping
-     * is left unchanged.
+     * Adds the key value pair into the map if the specified key is not already associated with a value such that some
+     * time after the given timeout the entry will be evicted. Expiry time of an existing mapping is left unchanged.
      *
-     * @param key   the key
-     * @param value the value
-     * @param timeoutMillis  timeout in millis
-     * @return the value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     * @param  key           the key
+     * @param  value         the value
+     * @param  timeoutMillis timeout in millis
+     * @return               the value associated with <tt>key</tt>, or <tt>null</tt> if there was no mapping for
+     *                       <tt>key</tt>.
      */
     V putIfAbsent(K key, V value, long timeoutMillis);
 
     /**
      * Removes the object with the given key
      *
-     * @param key  key for the object to remove
-     * @return the value for the given key or <tt>null</tt> if it is not present (or has timed out)
+     * @param  key key for the object to remove
+     * @return     the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
     V remove(K key);
 
@@ -79,12 +77,16 @@ public interface TimeoutMap<K, V> extends Service {
     @FunctionalInterface
     interface Listener<K, V> {
 
-        enum Type { Put, Remove, Evict }
+        enum Type {
+            Put,
+            Remove,
+            Evict
+        }
 
         /**
          * Callback when the map changes content
          *
-         * @param key the item key
+         * @param key   the item key
          * @param value the item value
          */
         void timeoutMapEvent(Type type, K key, V value);

@@ -22,7 +22,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -57,17 +59,18 @@ public class SameRouteAndContextScopedErrorHandlerIssueTest extends ContextTestS
                     }
                 });
 
-                from("direct:start").errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0)).process(new Processor() {
-                    private int counter;
+                from("direct:start").errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0))
+                        .process(new Processor() {
+                            private int counter;
 
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        if (counter++ < 2) {
-                            throw new IllegalArgumentException("Damn");
-                        }
-                        exchange.getIn().setBody("Bye World");
-                    }
-                }).to("log:result").to("mock:result");
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                if (counter++ < 2) {
+                                    throw new IllegalArgumentException("Damn");
+                                }
+                                exchange.getIn().setBody("Bye World");
+                            }
+                        }).to("log:result").to("mock:result");
             }
         };
     }

@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregateExpressionTimeoutFallbackTest extends ContextTestSupport {
 
@@ -46,8 +46,8 @@ public class AggregateExpressionTimeoutFallbackTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
-                    // if no timeout header it will fallback to the 2000 seconds
-                    .completionTimeout(header("timeout")).completionTimeout(2000).to("mock:aggregated");
+                        // if no timeout header it will fallback to the 2000 seconds
+                        .completionTimeout(header("timeout")).completionTimeout(2000).to("mock:aggregated");
             }
         };
     }

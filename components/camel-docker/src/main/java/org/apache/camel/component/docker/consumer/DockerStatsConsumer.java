@@ -46,17 +46,18 @@ public class DockerStatsConsumer extends DefaultConsumer {
     public DockerStatsConsumer(DockerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.component = (DockerComponent)endpoint.getComponent();
+        this.component = (DockerComponent) endpoint.getComponent();
     }
 
     @Override
     public DockerEndpoint getEndpoint() {
-        return (DockerEndpoint)super.getEndpoint();
+        return (DockerEndpoint) super.getEndpoint();
     }
 
     @Override
     protected void doStart() throws Exception {
-        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, endpoint.getConfiguration(), null, String.class);
+        String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, endpoint.getConfiguration(), null,
+                String.class);
 
         this.statsCmd = DockerClientFactory.getDockerClient(component, endpoint.getConfiguration(), null).statsCmd(containerId);
         this.statsCmd.exec(new StatsCallback());
@@ -75,7 +76,7 @@ public class DockerStatsConsumer extends DefaultConsumer {
 
         @Override
         public void onNext(Statistics statistics) {
-            LOGGER.debug("Received Docker Statistics Event: " + statistics);
+            LOGGER.debug("Received Docker Statistics Event: {}", statistics);
 
             final Exchange exchange = getEndpoint().createExchange();
             Message message = exchange.getIn();

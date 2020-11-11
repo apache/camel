@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CBRWithLoadBalancerTest extends ContextTestSupport {
 
@@ -63,9 +63,9 @@ public class CBRWithLoadBalancerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start").choice().when(body().contains("Camel"))
-                    // we need to use endChoice to tell Java DSL to return scope
-                    // back to the choice DSL
-                    .loadBalance().roundRobin().to("mock:foo").to("mock:bar").endChoice().otherwise().to("mock:result");
+                        // we need to use endChoice to tell Java DSL to return scope
+                        // back to the choice DSL
+                        .loadBalance().roundRobin().to("mock:foo").to("mock:bar").endChoice().otherwise().to("mock:result");
                 // END SNIPPET: e1
             }
         };

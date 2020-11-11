@@ -34,10 +34,9 @@ public final class DockerHelper {
     }
 
     /**
-     * Transforms a Docker Component header value to its analogous URI
-     * parameter
+     * Transforms a Docker Component header value to its analogous URI parameter
      *
-     * @param name
+     * @param  name
      * @return
      */
     public static String transformFromHeaderName(String name) {
@@ -49,21 +48,20 @@ public final class DockerHelper {
 
         if (nameSubstring.length() > 0) {
             formattedName.append(nameSubstring.substring(0, 1).toLowerCase());
-            formattedName.append(nameSubstring.substring(1));
+            formattedName.append(nameSubstring, 1, nameSubstring.length());
         }
 
         return formattedName.toString();
     }
 
     /**
-     * Attempts to locate a given property name within a URI parameter or the
-     * message header. A found value in a message header takes precedence over a
-     * URI parameter.
+     * Attempts to locate a given property name within a URI parameter or the message header. A found value in a message
+     * header takes precedence over a URI parameter.
      *
-     * @param name
-     * @param configuration
-     * @param message
-     * @param clazz
+     * @param  name
+     * @param  configuration
+     * @param  message
+     * @param  clazz
      * @return
      */
     public static <T> T getProperty(String name, DockerConfiguration configuration, Message message, Class<T> clazz) {
@@ -71,19 +69,19 @@ public final class DockerHelper {
     }
 
     /**
-     * Attempts to locate a given property name within a URI parameter or the
-     * message header. A found value in a message header takes precedence over a
-     * URI parameter. Returns a default value if given
+     * Attempts to locate a given property name within a URI parameter or the message header. A found value in a message
+     * header takes precedence over a URI parameter. Returns a default value if given
      *
-     * @param name
-     * @param configuration
-     * @param message
-     * @param clazz
-     * @param defaultValue
+     * @param  name
+     * @param  configuration
+     * @param  message
+     * @param  clazz
+     * @param  defaultValue
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getProperty(String name, DockerConfiguration configuration, Message message, Class<T> clazz, T defaultValue) {
+    public static <
+            T> T getProperty(String name, DockerConfiguration configuration, Message message, Class<T> clazz, T defaultValue) {
         // First attempt to locate property from Message Header, then fallback
         // to Endpoint property
 
@@ -100,11 +98,11 @@ public final class DockerHelper {
         if (prop != null) {
 
             if (prop.getClass().isAssignableFrom(clazz)) {
-                return (T)prop;
+                return (T) prop;
             } else if (Integer.class == clazz) {
-                return (T)Integer.valueOf((String)prop);
+                return (T) Integer.valueOf((String) prop);
             } else if (Boolean.class == clazz) {
-                return (T)BooleanUtils.toBooleanObject((String)prop, "true", "false", "null");
+                return (T) BooleanUtils.toBooleanObject((String) prop, "true", "false", "null");
             }
         } else if (defaultValue != null) {
             return defaultValue;
@@ -114,13 +112,12 @@ public final class DockerHelper {
     }
 
     /**
-     * Attempts to locate a given property which is an array by name within a
-     * URI parameter or the message header. A found value in a message header
-     * takes precedence over a URI parameter.
+     * Attempts to locate a given property which is an array by name within a URI parameter or the message header. A
+     * found value in a message header takes precedence over a URI parameter.
      *
-     * @param name
-     * @param message
-     * @param clazz
+     * @param  name
+     * @param  message
+     * @param  clazz
      * @return
      */
     @SuppressWarnings("unchecked")
@@ -132,15 +129,16 @@ public final class DockerHelper {
             if (header != null) {
                 if (header.getClass().isAssignableFrom(clazz)) {
 
-                    T[] headerArray = (T[])Array.newInstance(clazz, 1);
-                    headerArray[0] = (T)header;
+                    T[] headerArray = (T[]) Array.newInstance(clazz, 1);
+                    headerArray[0] = (T) header;
                     return headerArray;
 
                 }
 
                 if (header.getClass().isArray()) {
-                    if (header.getClass().getComponentType().isAssignableFrom(clazz) || header.getClass().getDeclaringClass().isAssignableFrom(clazz)) {
-                        return (T[])header;
+                    if (header.getClass().getComponentType().isAssignableFrom(clazz)
+                            || header.getClass().getDeclaringClass().isAssignableFrom(clazz)) {
+                        return (T[]) header;
                     }
                 }
             }
@@ -151,8 +149,8 @@ public final class DockerHelper {
     }
 
     /**
-     * @param headerName name of the header
-     * @param message the Camel message
+     * @param  headerName name of the header
+     * @param  message    the Camel message
      * @return
      */
     public static String[] parseDelimitedStringHeader(String headerName, Message message) {
@@ -162,11 +160,11 @@ public final class DockerHelper {
         if (header != null) {
 
             if (header instanceof String) {
-                return ((String)header).split(STRING_DELIMITER);
+                return ((String) header).split(STRING_DELIMITER);
             }
 
             if (header instanceof String[]) {
-                return (String[])header;
+                return (String[]) header;
             }
         }
 

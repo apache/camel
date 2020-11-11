@@ -22,6 +22,8 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CxfSimpleRouterTest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * A unit test for testing reading SOAP body in PAYLOAD mode.
  */
@@ -38,10 +40,10 @@ public class CxfPayLoadStreamCacheRouterTest extends CxfSimpleRouterTest {
                 from(routerEndpointURI).streamCaching().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Object payload = exchange.getIn().getBody();
-                        assertTrue("payload is not a StreamCache", payload instanceof StreamCache);
-                    }                    
+                        assertTrue(payload instanceof StreamCache, "payload is not a StreamCache");
+                    }
                 })
-                .to(serviceEndpointURI);
+                        .to(serviceEndpointURI);
                 // END SNIPPET: payload
             }
         };

@@ -17,9 +17,8 @@
 package org.apache.camel.component.quickfixj;
 
 /**
- * FIX message types provided by the QuickfixjEngine. This is used in the
- * Camel exchange headers to specify the category of the message payload.
- * This allow Camel to route and filter the messages based on the category.
+ * FIX message types provided by the QuickfixjEngine. This is used in the Camel exchange headers to specify the category
+ * of the message payload. This allow Camel to route and filter the messages based on the category.
  */
 public enum QuickfixjEventCategory {
     AppMessageReceived,

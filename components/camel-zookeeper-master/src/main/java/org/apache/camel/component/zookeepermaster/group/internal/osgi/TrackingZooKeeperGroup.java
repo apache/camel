@@ -32,24 +32,25 @@ public class TrackingZooKeeperGroup<T extends NodeState> extends DelegateZooKeep
     public TrackingZooKeeperGroup(BundleContext bundleContext, String path, Class<T> clazz) {
         super(path, clazz);
         this.bundleContext = bundleContext;
-        this.tracker = new ServiceTracker<>(bundleContext, CuratorFramework.class, new ServiceTrackerCustomizer<CuratorFramework, CuratorFramework>() {
-            @Override
-            public CuratorFramework addingService(ServiceReference<CuratorFramework> reference) {
-                CuratorFramework curator = TrackingZooKeeperGroup.this.bundleContext.getService(reference);
-                useCurator(curator);
-                return curator;
-            }
+        this.tracker = new ServiceTracker<>(
+                bundleContext, CuratorFramework.class, new ServiceTrackerCustomizer<CuratorFramework, CuratorFramework>() {
+                    @Override
+                    public CuratorFramework addingService(ServiceReference<CuratorFramework> reference) {
+                        CuratorFramework curator = TrackingZooKeeperGroup.this.bundleContext.getService(reference);
+                        useCurator(curator);
+                        return curator;
+                    }
 
-            @Override
-            public void modifiedService(ServiceReference<CuratorFramework> reference, CuratorFramework service) {
-            }
+                    @Override
+                    public void modifiedService(ServiceReference<CuratorFramework> reference, CuratorFramework service) {
+                    }
 
-            @Override
-            public void removedService(ServiceReference<CuratorFramework> reference, CuratorFramework service) {
-                useCurator(null);
-                TrackingZooKeeperGroup.this.bundleContext.ungetService(reference);
-            }
-        });
+                    @Override
+                    public void removedService(ServiceReference<CuratorFramework> reference, CuratorFramework service) {
+                        useCurator(null);
+                        TrackingZooKeeperGroup.this.bundleContext.ungetService(reference);
+                    }
+                });
     }
 
     @Override

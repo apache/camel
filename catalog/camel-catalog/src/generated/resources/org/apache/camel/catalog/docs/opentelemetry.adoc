@@ -1,0 +1,53 @@
+[[opentelemetry-other]]
+= OpenTelemetry Component
+:docTitle: OpenTelemetry
+:artifactId: camel-opentelemetry
+:description: Distributed tracing using OpenTelemetry
+:since: 3.5
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/opentelemetry.adoc[opts=optional]
+
+*Since Camel {since}*
+
+The OpenTelemetry component is used for tracing and timing incoming and
+outgoing Camel messages using https://opentelemetry.io/[OpenTelemetry].
+
+Events (spans) are captured for incoming and outgoing messages being sent
+to/from Camel.
+
+== Configuration
+
+The configuration properties for the OpenTelemetry tracer are:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Option |Default |Description
+
+|excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
+messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
+uses the rules from Intercept.
+|encoding |false| Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean.
+Dashes need for instances to be encoded for JMS property keys.
+
+|=======================================================================
+
+
+=== Configuration
+
+Include the `camel-opentelemetry` component in your POM, along with any specific dependencies associated with the
+chosen OpenTelemetry compliant Tracer.
+
+To explicitly configure OpenTelemetry support, instantiate the `OpenTelemetryTracer` and initialize the camel
+context. You can optionally specify a `Tracer`, or alternatively it can be implicitly discovered using the
+`Registry`
+
+[source,java]
+--------------------------------------------------------------------------------------------------
+OpenTelemetryTracer otelTracer = new OpenTelemetryTracer();
+// By default it uses the DefaultTracer, but you can override it with a specific OpenTelemetry Tracer implementation.
+otelTracer.setTracer(...);
+// And then initialize the context
+otelTracer.init(camelContext);
+--------------------------------------------------------------------------------------------------
+
+include::camel-spring-boot::page$opentelemetry-starter.adoc[]

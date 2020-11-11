@@ -29,7 +29,8 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class CwConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String namespace;
     @UriParam
     private AmazonCloudWatch amazonCwClient;
@@ -53,6 +54,8 @@ public class CwConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClient = true;
 
     public String getAccessKey() {
         return accessKey;
@@ -141,7 +144,7 @@ public class CwConfiguration implements Cloneable {
     public void setAmazonCwClient(AmazonCloudWatch amazonCwClient) {
         this.amazonCwClient = amazonCwClient;
     }
-    
+
     public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
@@ -180,11 +183,23 @@ public class CwConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which CW client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which CW client needs to work. When using this parameter, the configuration will expect the
+     * capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
+    }
+
+    public boolean isAutoDiscoverClient() {
+        return autoDiscoverClient;
+    }
+
+    /**
+     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
+     * automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
+        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************
@@ -193,7 +208,7 @@ public class CwConfiguration implements Cloneable {
 
     public CwConfiguration copy() {
         try {
-            return (CwConfiguration)super.clone();
+            return (CwConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

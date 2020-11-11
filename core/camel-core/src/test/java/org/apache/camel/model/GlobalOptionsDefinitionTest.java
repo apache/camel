@@ -21,9 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GlobalOptionsDefinitionTest {
 
@@ -35,7 +36,7 @@ public class GlobalOptionsDefinitionTest {
     private GlobalOptionDefinition nominalOption;
     private GlobalOptionDefinition duplicateOption;
 
-    @Before
+    @BeforeEach
     public void setup() {
         nominalOption = new GlobalOptionDefinition();
         nominalOption.setKey(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
@@ -54,41 +55,41 @@ public class GlobalOptionsDefinitionTest {
     @Test
     public void asMapShouldCarryOnLogDebugMaxChars() {
         Map<String, String> map = instance.asMap();
-        Assert.assertNotNull(map);
-        Assert.assertEquals(1, map.size());
-        Assert.assertEquals(LOG_DEBUG_BODY_MAX_CHARS_VALUE, map.get(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+        assertNotNull(map);
+        assertEquals(1, map.size());
+        assertEquals(LOG_DEBUG_BODY_MAX_CHARS_VALUE, map.get(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
     }
 
     @Test
     public void asMapWithDuplicateKeyShouldOverride() {
         globalOptions.add(duplicateOption);
         Map<String, String> map = instance.asMap();
-        Assert.assertNotNull(map);
-        Assert.assertEquals(1, map.size());
-        Assert.assertEquals(LOG_DEBUG_BODY_MAX_CHARS_DUP_VALUE, map.get(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+        assertNotNull(map);
+        assertEquals(1, map.size());
+        assertEquals(LOG_DEBUG_BODY_MAX_CHARS_DUP_VALUE, map.get(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void asMapWithNullGlobalOptionsShouldThrowNullPointerException() {
         instance.setGlobalOptions(null);
-        instance.asMap();
+        assertThrows(NullPointerException.class, () -> instance.asMap());
     }
 
     @Test
     public void asMapWithEmptyGlobalOptionsShouldReturnEmptyMap() {
         globalOptions.clear();
         Map<String, String> map = instance.asMap();
-        Assert.assertNotNull(map);
-        Assert.assertEquals(0, map.size());
+        assertNotNull(map);
+        assertEquals(0, map.size());
     }
 
     @Test
     public void asMapWithNullKeyShouldReturnEmptyMap() {
         nominalOption.setKey(null);
         Map<String, String> map = instance.asMap();
-        Assert.assertNotNull(map);
-        Assert.assertEquals(1, map.size());
-        Assert.assertEquals(LOG_DEBUG_BODY_MAX_CHARS_VALUE, map.get(null));
+        assertNotNull(map);
+        assertEquals(1, map.size());
+        assertEquals(LOG_DEBUG_BODY_MAX_CHARS_VALUE, map.get(null));
     }
 
 }

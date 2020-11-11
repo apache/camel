@@ -20,8 +20,11 @@ import com.netflix.hystrix.exception.HystrixBadRequestException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CircuitBreakerConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HystrixBadRequestExceptionTest extends CamelTestSupport {
 
@@ -45,15 +48,15 @@ public class HystrixBadRequestExceptionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:start")
-                    .circuitBreaker()
+                        .to("log:start")
+                        .circuitBreaker()
                         .throwException(new HystrixBadRequestException("Should not fallback"))
-                    .onFallback()
+                        .onFallback()
                         .to("mock:fallback")
                         .transform().constant("Fallback message")
-                    .end()
-                    .to("log:result")
-                    .to("mock:result");
+                        .end()
+                        .to("log:result")
+                        .to("mock:result");
             }
         };
     }

@@ -22,7 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
 
@@ -30,8 +33,8 @@ public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
 
     @Test
     public void testCustomAggregationStrategy() throws Exception {
-        assertTrue("Should be started", strategy.start);
-        assertFalse("Should not be stopped", strategy.stop);
+        assertTrue(strategy.start, "Should be started");
+        assertFalse(strategy.stop, "Should not be stopped");
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -45,8 +48,8 @@ public class CustomAggregationStrategyServiceTest extends ContextTestSupport {
         // stop Camel
         context.stop();
 
-        assertFalse("Should not be started", strategy.start);
-        assertTrue("Should be stopped", strategy.stop);
+        assertFalse(strategy.start, "Should not be started");
+        assertTrue(strategy.stop, "Should be stopped");
     }
 
     @Override

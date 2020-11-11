@@ -23,8 +23,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedCamelContextRestartTest extends ManagementTestSupport {
 
@@ -32,7 +36,7 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
     private int stops;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
         super.setUp();
@@ -42,10 +46,12 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
             public void notify(CamelEvent event) throws Exception {
                 // Empty.
             }
+
             @Override
             protected void doStart() throws Exception {
                 starts++;
             }
+
             @Override
             protected void doStop() throws Exception {
                 stops++;
@@ -64,7 +70,7 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 
@@ -81,7 +87,8 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello World" },
+                new String[] { "java.lang.String", "java.lang.Object" });
         assertEquals("Bye World", reply);
 
         // restart Camel
@@ -94,7 +101,8 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
 
-        reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello Camel"}, new String[]{"java.lang.String", "java.lang.Object"});
+        reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello Camel" },
+                new String[] { "java.lang.String", "java.lang.Object" });
         assertEquals("Bye World", reply);
     }
 

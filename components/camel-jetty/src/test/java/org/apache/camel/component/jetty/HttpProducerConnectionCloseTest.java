@@ -21,7 +21,10 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HttpProducerConnectionCloseTest extends BaseJettyTest {
 
@@ -36,7 +39,7 @@ public class HttpProducerConnectionCloseTest extends BaseJettyTest {
         });
         assertNotNull(exchange);
 
-        Map<?, ?> headers = exchange.getOut().getHeaders();
+        Map<?, ?> headers = exchange.getMessage().getHeaders();
 
         assertEquals("close", headers.get("Connection"));
     }

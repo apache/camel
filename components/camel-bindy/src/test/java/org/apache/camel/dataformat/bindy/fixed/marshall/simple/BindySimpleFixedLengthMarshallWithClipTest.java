@@ -29,8 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class BindySimpleFixedLengthMarshallWithClipTest extends CamelTestSupport {
 
@@ -45,8 +45,8 @@ public class BindySimpleFixedLengthMarshallWithClipTest extends CamelTestSupport
                 bindy.setLocale("en");
 
                 from("direct:start")
-                    .marshal(bindy)
-                    .to("mock:result");
+                        .marshal(bindy)
+                        .to("mock:result");
             }
         };
     }
@@ -122,7 +122,6 @@ public class BindySimpleFixedLengthMarshallWithClipTest extends CamelTestSupport
 
         @DataField(pos = 56, length = 10, pattern = "dd-MM-yyyy")
         private Date orderDate;
-
 
         public int getOrderNr() {
             return orderNr;
@@ -214,11 +213,12 @@ public class BindySimpleFixedLengthMarshallWithClipTest extends CamelTestSupport
 
         @Override
         public String toString() {
-            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
-                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
-                    + String.valueOf(this.orderDate);
+            return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
+                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
+                   + this.firstName + ", " + this.lastName + ", "
+                   + String.valueOf(this.orderDate);
         }
     }
-
 
 }

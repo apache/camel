@@ -56,7 +56,7 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
         assertEquals("hello.txt", file.getRelativeFilePath());
         assertEquals("hello.txt", file.getFileName());
     }
-    
+
     private void prepareFtpServer() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
     }

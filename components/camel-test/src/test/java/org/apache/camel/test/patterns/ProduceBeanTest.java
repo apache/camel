@@ -40,7 +40,7 @@ public class ProduceBeanTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .bean(MyProduceBean.class, "doSomething");
+                        .bean(MyProduceBean.class, "doSomething");
             }
         };
     }

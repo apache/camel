@@ -32,9 +32,11 @@ public class NagiosConfiguration implements Cloneable {
 
     private transient NagiosSettings nagiosSettings;
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private int port;
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;
@@ -68,7 +70,7 @@ public class NagiosConfiguration implements Cloneable {
         }
     }
 
-    public synchronized NagiosSettings getNagiosSettings() {
+    public synchronized NagiosSettings getOrCreateNagiosSettings() {
         if (nagiosSettings == null) {
 
             // validate parameters
@@ -88,10 +90,6 @@ public class NagiosConfiguration implements Cloneable {
         }
 
         return nagiosSettings;
-    }
-
-    public void setNagiosSettings(NagiosSettings nagiosSettings) {
-        this.nagiosSettings = nagiosSettings;
     }
 
     public String getHost() {

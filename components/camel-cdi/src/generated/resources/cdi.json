@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "cdi",
+    "title": "CDI",
+    "description": "Using Camel with CDI",
+    "deprecated": false,
+    "firstVersion": "2.10.0",
+    "label": "java",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-cdi",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

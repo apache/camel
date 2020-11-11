@@ -27,8 +27,8 @@ public final class StreamUtils {
     /**
      * Creates a stream on the given collection if it is not null
      *
-     * @param value  the collection
-     * @return A stream of elements or an empty stream if the collection is null
+     * @param  value the collection
+     * @return       A stream of elements or an empty stream if the collection is null
      */
     public static <C> Stream<C> stream(Collection<C> value) {
         return value != null ? value.stream() : Stream.empty();
@@ -37,8 +37,8 @@ public final class StreamUtils {
     /**
      * Creates a stream of entries on the given Map if it is not null
      *
-     * @param value  the map
-     * @return A stream of entries or an empty stream if the collection is null
+     * @param  value the map
+     * @return       A stream of entries or an empty stream if the collection is null
      */
     public static <K, V> Stream<Map.Entry<K, V>> stream(Map<K, V> value) {
         return value != null ? value.entrySet().stream() : Stream.empty();

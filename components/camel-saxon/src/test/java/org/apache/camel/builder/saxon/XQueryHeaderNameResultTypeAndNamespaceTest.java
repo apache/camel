@@ -19,8 +19,8 @@ package org.apache.camel.builder.saxon;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test XPath DSL with the ability to apply XPath on a header
@@ -32,7 +32,8 @@ public class XQueryHeaderNameResultTypeAndNamespaceTest extends CamelTestSupport
         mock.expectedBodiesReceived("body");
         mock.expectedHeaderReceived("cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
-        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails", "<number xmlns=\"http://acme.com/cheese\">55</number>");
+        template.sendBodyAndHeader("direct:in", "body", "cheeseDetails",
+                "<number xmlns=\"http://acme.com/cheese\">55</number>");
 
         mock.assertIsSatisfied();
     }
@@ -44,11 +45,11 @@ public class XQueryHeaderNameResultTypeAndNamespaceTest extends CamelTestSupport
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
                 from("direct:in").choice()
-                    .when().xquery("/c:number = 55", Integer.class, ns, "cheeseDetails")
+                        .when().xquery("/c:number = 55", Integer.class, ns, "cheeseDetails")
                         .to("mock:55")
-                    .otherwise()
+                        .otherwise()
                         .to("mock:other")
-                    .end();
+                        .end();
             }
         };
     }

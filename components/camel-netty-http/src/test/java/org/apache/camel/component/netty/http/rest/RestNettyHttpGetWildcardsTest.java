@@ -17,12 +17,12 @@
 package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.component.netty.http.RestNettyHttpBinding;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
 
@@ -47,27 +47,24 @@ public class RestNettyHttpGetWildcardsTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use netty-http on localhost with the given port
-                restConfiguration().component("netty-http").host("localhost").port(getPort()).endpointProperty("nettyHttpBinding", "#mybinding");
+                restConfiguration().component("netty-http").host("localhost").port(getPort())
+                        .endpointProperty("nettyHttpBinding", "#mybinding");
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .get("{id}/{query}")
+                        .get("{id}/{query}")
                         .route()
                         .to("log:query")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Goofy");
-                            }
+                        .process(exchange -> {
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Goofy");
                         }).endRest()
-                    .get("{id}/basic")
+                        .get("{id}/basic")
                         .route()
                         .to("log:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
+                        .process(exchange -> {
+                            String id = exchange.getIn().getHeader("id", String.class);
+                            exchange.getMessage().setBody(id + ";Donald Duck");
                         }).endRest();
             }
         };

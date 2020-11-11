@@ -26,8 +26,11 @@ import org.apache.camel.Produce;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
 
@@ -69,12 +72,14 @@ public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
         int after = events.size();
         // should be 2 events
         assertEquals(2, after);
-        assertTrue(events.get(0) instanceof CamelEvent.ExchangeSendingEvent);
-        assertTrue(events.get(1) instanceof CamelEvent.ExchangeSentEvent);
+        boolean b1 = events.get(0) instanceof CamelEvent.ExchangeSendingEvent;
+        assertTrue(b1);
+        boolean b = events.get(1) instanceof CamelEvent.ExchangeSentEvent;
+        assertTrue(b);
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();

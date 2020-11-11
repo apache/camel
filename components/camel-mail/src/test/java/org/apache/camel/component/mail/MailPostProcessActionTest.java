@@ -24,12 +24,14 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests if post process action is called if it is set
@@ -41,7 +43,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     private TestPostProcessAction action = new TestPostProcessAction();
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -96,7 +98,8 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://bill@localhost?password=secret&postProcessAction=#postProcessAction&initialDelay=100&delay=100").to("mock:result");
+                from("pop3://bill@localhost?password=secret&postProcessAction=#postProcessAction&initialDelay=100&delay=100")
+                        .to("mock:result");
             }
         };
     }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.pdf;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -31,9 +30,13 @@ public class PdfComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        PdfConfiguration pdfConfiguration = new PdfConfiguration();
-        setProperties(pdfConfiguration, parameters);
-        pdfConfiguration.setOperation(new URI(uri).getHost());
-        return new PdfEndpoint(uri, this, pdfConfiguration);
+        PdfConfiguration configuration = new PdfConfiguration();
+        configuration.setOperation(remaining);
+
+        PdfEndpoint endpoint = new PdfEndpoint(uri, this, configuration);
+
+        setProperties(endpoint, parameters);
+
+        return endpoint;
     }
 }

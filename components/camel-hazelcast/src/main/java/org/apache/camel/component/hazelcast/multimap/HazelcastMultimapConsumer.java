@@ -17,7 +17,7 @@
 package org.apache.camel.component.hazelcast.multimap;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MultiMap;
+import com.hazelcast.multimap.MultiMap;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
@@ -25,7 +25,8 @@ import org.apache.camel.component.hazelcast.listener.CamelEntryListener;
 
 public class HazelcastMultimapConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastMultimapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
+    public HazelcastMultimapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
+                                     String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
         MultiMap<Object, Object> cache = hazelcastInstance.getMultiMap(cacheName);

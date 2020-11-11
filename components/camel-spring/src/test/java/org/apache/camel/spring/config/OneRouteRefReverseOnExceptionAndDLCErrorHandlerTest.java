@@ -17,7 +17,7 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -47,6 +47,7 @@ public class OneRouteRefReverseOnExceptionAndDLCErrorHandlerTest extends SpringT
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/OneRouteRefReverseOnExceptionAndDLCErrorHandler.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/spring/config/OneRouteRefReverseOnExceptionAndDLCErrorHandler.xml");
     }
 }

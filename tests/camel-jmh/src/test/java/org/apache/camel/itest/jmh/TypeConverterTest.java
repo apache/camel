@@ -17,17 +17,20 @@
 package org.apache.camel.itest.jmh;
 
 import java.io.ByteArrayInputStream;
+import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Mode;
@@ -53,7 +56,7 @@ public class TypeConverterTest {
                 // You can be more specific if you'd like to run only one benchmark per test.
                 .include(this.getClass().getName() + ".*")
                 // Set the following options as needed
-                .mode(Mode.SampleTime)
+                .mode(Mode.Throughput)
                 .timeUnit(TimeUnit.MILLISECONDS)
                 .warmupTime(TimeValue.seconds(1))
                 .warmupIterations(2)
@@ -63,7 +66,7 @@ public class TypeConverterTest {
                 .forks(1)
                 .shouldFailOnError(true)
                 .shouldDoGC(true)
-                .measurementBatchSize(100000)
+                .measurementBatchSize(1000)
                 .build();
 
         new Runner(opt).run();
@@ -75,8 +78,10 @@ public class TypeConverterTest {
     public static class BenchmarkCamelContextState {
         Integer someInteger = 12345;
         String someIntegerString = String.valueOf(someInteger);
+        ByteArrayInputStream bos;
         String xmlAsString;
         byte[] xmlAsBytes;
+        char[] xmlAsCharArray;
 
         CamelContext camel;
 
@@ -91,6 +96,8 @@ public class TypeConverterTest {
 
             xmlAsString = IOHelper.loadText(getClass().getClassLoader().getResourceAsStream("sample_soap.xml"));
             xmlAsBytes = xmlAsString.getBytes(StandardCharsets.UTF_8);
+            xmlAsCharArray = xmlAsString.toCharArray();
+            bos = new ByteArrayInputStream(xmlAsBytes);
         }
 
         @TearDown(Level.Trial)
@@ -102,7 +109,6 @@ public class TypeConverterTest {
             }
         }
     }
-
 
     @Benchmark
     public void typeConvertIntegerToString(BenchmarkCamelContextState state, Blackhole bh) {
@@ -124,7 +130,8 @@ public class TypeConverterTest {
 
     @Benchmark
     public void typeConvertInputStreamToString(BenchmarkCamelContextState state, Blackhole bh) {
-        String string = state.camel.getTypeConverter().convertTo(String.class, new ByteArrayInputStream(state.xmlAsBytes));
+        state.bos.reset();
+        String string = state.camel.getTypeConverter().convertTo(String.class, state.bos);
         bh.consume(string);
     }
 
@@ -150,5 +157,19 @@ public class TypeConverterTest {
     public void typeConvertByteArrayToString(BenchmarkCamelContextState state, Blackhole bh) {
         String string = state.camel.getTypeConverter().convertTo(String.class, state.xmlAsBytes);
         bh.consume(string);
+    }
+
+    @Benchmark
+    public void typeConvertStringToEnum(BenchmarkCamelContextState state, Blackhole bh) {
+        LoggingLevel level = state.camel.getTypeConverter().convertTo(LoggingLevel.class, "WARN");
+        bh.consume(level);
+    }
+
+    @Benchmark
+    public void typeConvertReaderToByteArray(BenchmarkCamelContextState state, Blackhole bh) {
+        Reader reader = new CharArrayReader(state.xmlAsCharArray);
+        byte[] arr = state.camel.getTypeConverter().convertTo(byte[].class, reader);
+        bh.consume(arr);
+        bh.consume(reader);
     }
 }

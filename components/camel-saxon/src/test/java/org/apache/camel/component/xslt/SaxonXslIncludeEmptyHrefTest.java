@@ -18,8 +18,8 @@ package org.apache.camel.component.xslt;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SaxonXslIncludeEmptyHrefTest extends CamelTestSupport {
 
@@ -28,7 +28,7 @@ public class SaxonXslIncludeEmptyHrefTest extends CamelTestSupport {
     @Test
     public void testXsltOutput() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        
+
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><MyDate>February</MyDate>");
         mock.message(0).body().isInstanceOf(String.class);
 
@@ -43,8 +43,8 @@ public class SaxonXslIncludeEmptyHrefTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("xslt-saxon:org/apache/camel/component/xslt/transform_includes_data.xsl")
-                    .to("mock:result");
+                        .to("xslt-saxon:org/apache/camel/component/xslt/transform_includes_data.xsl")
+                        .to("mock:result");
             }
         };
     }

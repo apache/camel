@@ -33,14 +33,17 @@ final class XsltSaxonHelper {
     private XsltSaxonHelper() {
     }
 
-    public static void registerSaxonConfiguration(TransformerFactoryImpl factory, Configuration saxonConfiguration) throws Exception {
+    public static void registerSaxonConfiguration(TransformerFactoryImpl factory, Configuration saxonConfiguration)
+            throws Exception {
         if (saxonConfiguration != null) {
             factory.setConfiguration(saxonConfiguration);
         }
     }
 
-    public static void registerSaxonConfigurationProperties(TransformerFactoryImpl factory,
-                                                            Map<String, Object> saxonConfigurationProperties) throws Exception {
+    public static void registerSaxonConfigurationProperties(
+            TransformerFactoryImpl factory,
+            Map<String, Object> saxonConfigurationProperties)
+            throws Exception {
         if (saxonConfigurationProperties != null && !saxonConfigurationProperties.isEmpty()) {
             for (Map.Entry<String, Object> entry : saxonConfigurationProperties.entrySet()) {
                 factory.getConfiguration().setConfigurationProperty(entry.getKey(), entry.getValue());
@@ -48,7 +51,8 @@ final class XsltSaxonHelper {
         }
     }
 
-    public static void registerSaxonExtensionFunctions(TransformerFactoryImpl factory, List<Object> saxonExtensionFunctions) throws Exception {
+    public static void registerSaxonExtensionFunctions(TransformerFactoryImpl factory, List<Object> saxonExtensionFunctions)
+            throws Exception {
         if (saxonExtensionFunctions != null && !saxonExtensionFunctions.isEmpty()) {
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             for (Object extensionFunction : saxonExtensionFunctions) {
@@ -59,5 +63,5 @@ final class XsltSaxonHelper {
             }
         }
     }
-    
+
 }

@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IdempotentConsumerRepoExceptionTest extends ContextTestSupport {
 

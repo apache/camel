@@ -22,7 +22,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MessageHistoryCopyMessageTest extends ContextTestSupport {
 
@@ -62,7 +65,8 @@ public class MessageHistoryCopyMessageTest extends ContextTestSupport {
                 context.getMessageHistoryFactory().setNodePattern("step");
                 context.getMessageHistoryFactory().setCopyMessage(true);
 
-                from("direct:start").step("a").transform().constant("Bye World").to("mock:a").end().step("b").transform().constant("Hi World").to("direct:bar").to("mock:b").end();
+                from("direct:start").step("a").transform().constant("Bye World").to("mock:a").end().step("b").transform()
+                        .constant("Hi World").to("direct:bar").to("mock:b").end();
 
                 from("direct:bar").step("bar").to("log:bar").to("mock:bar").end();
             }

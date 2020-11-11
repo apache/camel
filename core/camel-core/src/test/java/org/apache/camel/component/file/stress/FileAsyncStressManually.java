@@ -23,9 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore("Manual test")
+@Disabled("Manual test")
 public class FileAsyncStressManually extends ContextTestSupport {
 
     public void testAsyncStress() throws Exception {
@@ -48,14 +48,15 @@ public class FileAsyncStressManually extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/filestress?readLock=markerFile&maxMessagesPerPoll=25&move=backup").threads(10).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // simulate some work with random time to complete
-                        Random ran = new Random();
-                        int delay = ran.nextInt(500) + 10;
-                        Thread.sleep(delay);
-                    }
-                }).to("mock:result");
+                from("file:target/data/filestress?readLock=markerFile&maxMessagesPerPoll=25&move=backup").threads(10)
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // simulate some work with random time to complete
+                                Random ran = new Random();
+                                int delay = ran.nextInt(500) + 10;
+                                Thread.sleep(delay);
+                            }
+                        }).to("mock:result");
             }
         };
     }

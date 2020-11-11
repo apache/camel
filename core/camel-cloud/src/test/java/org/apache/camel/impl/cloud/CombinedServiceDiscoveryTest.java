@@ -21,10 +21,12 @@ import java.util.Arrays;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CombinedServiceDiscoveryTest extends ContextTestSupport {
+
     @Test
     public void testCombinedServiceDiscovery() throws Exception {
         StaticServiceDiscovery discovery1 = new StaticServiceDiscovery();
@@ -36,8 +38,8 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
         discovery2.addServer(new DefaultServiceDefinition("discovery2", "localhost", 1114));
 
         CombinedServiceDiscovery discovery = CombinedServiceDiscovery.wrap(discovery1, discovery2);
-        Assert.assertEquals(3, discovery.getServices("discovery1").size());
-        Assert.assertEquals(1, discovery.getServices("discovery2").size());
+        assertEquals(3, discovery.getServices("discovery1").size());
+        assertEquals(1, discovery.getServices("discovery2").size());
     }
 
     @Test
@@ -51,10 +53,10 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
         CombinedServiceCallServiceDiscoveryConfiguration multiConf = new CombinedServiceCallServiceDiscoveryConfiguration();
         multiConf.setServiceDiscoveryConfigurations(Arrays.asList(staticConf1, staticConf2));
 
-        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery)multiConf.newInstance(context);
-        Assert.assertEquals(2, discovery.getDelegates().size());
-        Assert.assertEquals(3, discovery.getServices("discovery1").size());
-        Assert.assertEquals(1, discovery.getServices("discovery2").size());
+        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery) multiConf.newInstance(context);
+        assertEquals(2, discovery.getDelegates().size());
+        assertEquals(3, discovery.getServices("discovery1").size());
+        assertEquals(1, discovery.getServices("discovery2").size());
     }
 
     @Test
@@ -63,10 +65,10 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
         multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1111", "discovery1@localhost:1112"));
         multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1113", "discovery2@localhost:1114"));
 
-        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery)multiConf.newInstance(context);
-        Assert.assertEquals(2, discovery.getDelegates().size());
-        Assert.assertEquals(3, discovery.getServices("discovery1").size());
-        Assert.assertEquals(1, discovery.getServices("discovery2").size());
+        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery) multiConf.newInstance(context);
+        assertEquals(2, discovery.getDelegates().size());
+        assertEquals(3, discovery.getServices("discovery1").size());
+        assertEquals(1, discovery.getServices("discovery2").size());
     }
 
     @Test
@@ -78,9 +80,9 @@ public class CombinedServiceDiscoveryTest extends ContextTestSupport {
         multiConf.staticServiceDiscovery().servers("{{svc-list-1}}");
         multiConf.staticServiceDiscovery().servers("{{svc-list-2}}");
 
-        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery)multiConf.newInstance(context);
-        Assert.assertEquals(2, discovery.getDelegates().size());
-        Assert.assertEquals(3, discovery.getServices("discovery1").size());
-        Assert.assertEquals(1, discovery.getServices("discovery2").size());
+        CombinedServiceDiscovery discovery = (CombinedServiceDiscovery) multiConf.newInstance(context);
+        assertEquals(2, discovery.getDelegates().size());
+        assertEquals(3, discovery.getServices("discovery1").size());
+        assertEquals(1, discovery.getServices("discovery2").size());
     }
 }

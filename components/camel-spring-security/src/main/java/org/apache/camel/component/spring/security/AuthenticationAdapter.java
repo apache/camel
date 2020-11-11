@@ -21,7 +21,7 @@ import javax.security.auth.Subject;
 import org.springframework.security.core.Authentication;
 
 public interface AuthenticationAdapter {
-    
+
     Authentication toAuthentication(Subject subject);
 
 }

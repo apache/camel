@@ -23,7 +23,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JCacheAggregationRepositoryRoutesTest extends JCacheAggregationRepositoryTestSupport {
 
@@ -51,11 +51,11 @@ public class JCacheAggregationRepositoryRoutesTest extends JCacheAggregationRepo
             @Override
             public void configure() throws Exception {
                 from(DIRECT_ONE).routeId("AggregatingRouteOne")
-                    .aggregate(header(correlator))
-                    .aggregationRepository(repoOne)
-                    .aggregationStrategy(new MyAggregationStrategy())
-                    .completionSize(completionSize)
-                    .to(MOCK_GOTCHA);
+                        .aggregate(header(correlator))
+                        .aggregationRepository(repoOne)
+                        .aggregationStrategy(new MyAggregationStrategy())
+                        .completionSize(completionSize)
+                        .to(MOCK_GOTCHA);
             }
         };
 
@@ -63,11 +63,11 @@ public class JCacheAggregationRepositoryRoutesTest extends JCacheAggregationRepo
             @Override
             public void configure() throws Exception {
                 from(DIRECT_TWO).routeId("AggregatingRouteTwo")
-                    .aggregate(header(correlator))
-                    .aggregationRepository(repoTwo)
-                    .aggregationStrategy(new MyAggregationStrategy())
-                    .completionSize(completionSize)
-                    .to(MOCK_GOTCHA);
+                        .aggregate(header(correlator))
+                        .aggregationRepository(repoTwo)
+                        .aggregationStrategy(new MyAggregationStrategy())
+                        .completionSize(completionSize)
+                        .to(MOCK_GOTCHA);
             }
         };
 

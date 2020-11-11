@@ -22,23 +22,24 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.util.Assert;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @ContextConfiguration
-public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4SpringContextTests {
-    
+@CamelSpringTest
+public class BindySimpleCsvMandatoryFieldsUnmarshallTest {
+
     @EndpointInject("mock:result1")
     protected MockEndpoint resultEndpoint1;
 
     @EndpointInject("mock:result2")
     protected MockEndpoint resultEndpoint2;
-    
+
     @EndpointInject("mock:result3")
     protected MockEndpoint resultEndpoint3;
 
@@ -47,11 +48,12 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
 
     @Produce("direct:start2")
     protected ProducerTemplate template2;
-    
+
     @Produce("direct:start3")
     protected ProducerTemplate template3;
 
-    String header = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n";
+    String header
+            = "order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date\r\n";
 
     // String record5 = ",,,,,,,,,,"; // record with no data
 
@@ -134,7 +136,7 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
 
         resultEndpoint1.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testEmptyLineWithAllowEmptyStreamEqualsTrue() throws Exception {
@@ -143,7 +145,7 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
         template3.sendBody(record6);
         resultEndpoint3.assertIsSatisfied();
     }
-    
+
     @DirtiesContext
     @Test
     public void testNonEmptyLineWithAllowEmptyStreamEqualsTrue() throws Exception {
@@ -188,9 +190,12 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat formatOptional = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
-        BindyCsvDataFormat formatMandatory = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory.Order.class);
-        BindyCsvDataFormat formatEmptyStream = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassemptystream.Order.class);
+        BindyCsvDataFormat formatOptional
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
+        BindyCsvDataFormat formatMandatory
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory.Order.class);
+        BindyCsvDataFormat formatEmptyStream
+                = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassemptystream.Order.class);
 
         @Override
         public void configure() {
@@ -198,6 +203,6 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
             from("direct:start2").unmarshal(formatMandatory).to("mock:result2");
             from("direct:start3").unmarshal(formatEmptyStream).to("mock:result3");
         }
-         
+
     }
 }

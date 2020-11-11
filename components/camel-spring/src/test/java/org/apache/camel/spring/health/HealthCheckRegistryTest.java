@@ -16,52 +16,62 @@
  */
 package org.apache.camel.spring.health;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.health.HealthCheckRepository;
-import org.apache.camel.impl.health.RegistryRepository;
-import org.apache.camel.impl.health.RoutePerformanceCounterEvaluators;
-import org.apache.camel.impl.health.RoutesHealthCheckRepository;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HealthCheckRegistryTest {
 
     @Test
-    public void testRepositories() {
+    public void testHealthCheckRoutes() throws Exception {
         CamelContext context = createContext("org/apache/camel/spring/health/HealthCheckRegistryTest.xml");
-        Collection<HealthCheckRepository> repos = HealthCheckRegistry.get(context).getRepositories();
 
-        Assert.assertNotNull(repos);
-        Assert.assertEquals(2, repos.size());
-        Assert.assertTrue(repos.stream().anyMatch(RegistryRepository.class::isInstance));
-        Assert.assertTrue(repos.stream().anyMatch(RoutesHealthCheckRepository.class::isInstance));
+        HealthCheckRegistry hc = context.getExtension(HealthCheckRegistry.class);
+        assertNotNull(hc);
 
-        Optional<RoutesHealthCheckRepository> repo = repos.stream()
-            .filter(RoutesHealthCheckRepository.class::isInstance)
-            .map(RoutesHealthCheckRepository.class::cast)
-            .findFirst();
+        List<HealthCheck> checks = hc.stream().collect(Collectors.toList());
+        assertEquals(2, checks.size());
 
-        Assert.assertTrue(repo.isPresent());
-        Assert.assertEquals(2, repo.get().evaluators().count());
-        Assert.assertEquals(1, repo.get().evaluators().filter(RoutePerformanceCounterEvaluators.ExchangesFailed.class::isInstance).count());
-        Assert.assertEquals(1, repo.get().evaluators().filter(RoutePerformanceCounterEvaluators.LastProcessingTime.class::isInstance).count());
-        Assert.assertEquals(1, repo.get().evaluators("route-1").count());
-        Assert.assertEquals(1, repo.get().evaluators("route-1").filter(RoutePerformanceCounterEvaluators.ExchangesInflight.class::isInstance).count());
+        for (HealthCheck check : checks) {
+            HealthCheck.Result response = check.call();
+
+            assertEquals(HealthCheck.State.UP, response.getState());
+            assertFalse(response.getMessage().isPresent());
+            assertFalse(response.getError().isPresent());
+        }
+
+        context.getRouteController().stopRoute("foo");
+
+        for (HealthCheck check : checks) {
+            HealthCheck.Result response = check.call();
+            boolean foo = "foo".equals(response.getDetails().get("route.id"));
+            if (foo) {
+                assertEquals(HealthCheck.State.DOWN, response.getState());
+                assertTrue(response.getMessage().isPresent());
+                assertFalse(response.getError().isPresent());
+            } else {
+                assertEquals(HealthCheck.State.UP, response.getState());
+                assertFalse(response.getMessage().isPresent());
+                assertFalse(response.getError().isPresent());
+            }
+        }
     }
-
 
     protected CamelContext createContext(String classpathConfigFile) {
         ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(classpathConfigFile);
 
         CamelContext camelContext = appContext.getBean(CamelContext.class);
-        assertNotNull("No Camel Context in file: " + classpathConfigFile, camelContext);
+        assertNotNull(camelContext, "No Camel Context in file: " + classpathConfigFile);
 
         return camelContext;
     }

@@ -56,15 +56,15 @@ public class ClientProducer extends DefaultProducer {
         final Object body = exchange.getIn().getBody();
 
         if (body instanceof Float || body instanceof Double) {
-            return makeFloatCommand(((Number)body).floatValue());
+            return makeFloatCommand(((Number) body).floatValue());
         }
 
         if (body instanceof Boolean) {
-            return makeBooleanCommand((Boolean)body);
+            return makeBooleanCommand((Boolean) body);
         }
 
         if (body instanceof Integer || body instanceof Short || body instanceof Byte || body instanceof Long) {
-            return makeIntCommand(((Number)body).longValue());
+            return makeIntCommand(((Number) body).longValue());
         }
 
         throw new IllegalArgumentException("Unable to map value to a command: " + body);
@@ -77,10 +77,11 @@ public class ClientProducer extends DefaultProducer {
     private Object makeIntCommand(final long value) {
 
         if (value < Short.MIN_VALUE || value > Short.MAX_VALUE) {
-            throw new IllegalArgumentException(String.format("Integer value is outside of range - min: %s, max: %s", Short.MIN_VALUE, Short.MAX_VALUE));
+            throw new IllegalArgumentException(
+                    String.format("Integer value is outside of range - min: %s, max: %s", Short.MIN_VALUE, Short.MAX_VALUE));
         }
 
-        return new SetPointCommandScaledValue(this.header, this.address, (short)value);
+        return new SetPointCommandScaledValue(this.header, this.address, (short) value);
     }
 
     private Object makeFloatCommand(final float value) {

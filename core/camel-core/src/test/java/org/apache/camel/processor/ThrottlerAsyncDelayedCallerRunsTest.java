@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -50,7 +50,8 @@ public class ThrottlerAsyncDelayedCallerRunsTest extends ContextTestSupport {
                 builder.maxQueueSize(2);
                 context.getExecutorServiceManager().registerThreadPoolProfile(builder.build());
 
-                from("seda:start").throttle(1).timePeriodMillis(100).asyncDelayed().executorServiceRef("myThrottler").callerRunsWhenRejected(true).to("mock:result");
+                from("seda:start").throttle(1).timePeriodMillis(100).asyncDelayed().executorServiceRef("myThrottler")
+                        .callerRunsWhenRejected(true).to("mock:result");
             }
         };
     }

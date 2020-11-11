@@ -20,7 +20,10 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RecipientListAggregationStrategyInputExchangeTest extends ContextTestSupport {
 
@@ -45,7 +48,8 @@ public class RecipientListAggregationStrategyInputExchangeTest extends ContextTe
                 from("direct:start").recipientList(constant("direct:a,direct:b")).aggregationStrategy(new MyAggregateBean());
 
                 from("direct:a").setHeader("foo", constant("123")).transform(constant("A")).to("mock:a");
-                from("direct:b").setHeader("bar", constant("456")).transform(constant("B")).throwException(new IllegalArgumentException("Forced")).to("mock:b");
+                from("direct:b").setHeader("bar", constant("456")).transform(constant("B"))
+                        .throwException(new IllegalArgumentException("Forced")).to("mock:b");
             }
         };
     }

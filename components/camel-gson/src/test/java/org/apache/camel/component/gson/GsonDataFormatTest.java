@@ -17,13 +17,34 @@
 package org.apache.camel.component.gson;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import org.junit.Test;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class GsonDataFormatTest {
+
+    @Mock
+    private Exchange exchange;
+    @Mock
+    private Message message;
+
+    @BeforeEach
+    private void setup() {
+        when(message.getHeader(Exchange.CHARSET_NAME, String.class)).thenReturn(StandardCharsets.UTF_8.name());
+        when(exchange.getIn()).thenReturn(message);
+    }
+
     @Test
     public void testString() throws Exception {
         testJson("\"A string\"", "A string");
@@ -41,12 +62,12 @@ public class GsonDataFormatTest {
 
     private void testJson(String json, Object expected) throws Exception {
         Object unmarshalled;
-        GsonDataFormat gsonDataFormat = new GsonDataFormat();
-        gsonDataFormat.doStart();
-        try (InputStream in = new ByteArrayInputStream(json.getBytes())) {
-            unmarshalled = gsonDataFormat.unmarshal(null, in);
+        try (GsonDataFormat gsonDataFormat = new GsonDataFormat()) {
+            gsonDataFormat.doStart();
+            try (InputStream in = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
+                unmarshalled = gsonDataFormat.unmarshal(exchange, in);
+            }
+            assertEquals(expected, unmarshalled);
         }
-
-        assertEquals(expected, unmarshalled);
     }
 }

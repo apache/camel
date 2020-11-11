@@ -23,12 +23,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.support.EndpointHelper;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EndpointHelperTest extends ContextTestSupport {
 
@@ -112,7 +117,7 @@ public class EndpointHelperTest extends ContextTestSupport {
         // The registry value is a java.lang.String
         Integer number = EndpointHelper.resolveReferenceParameter(context, "numbar", Integer.class);
         assertNotNull(number);
-        assertEquals(12345, (int)number);
+        assertEquals(12345, (int) number);
     }
 
     @Test
@@ -148,14 +153,14 @@ public class EndpointHelperTest extends ContextTestSupport {
         String endpointUriShuffled = "sjms:queue:my-queue?consumerCount=1&transacted=true";
         String notMatchingEndpointUri = "sjms:queue:my-queue?consumerCount=1";
 
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUri), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUriShuffled), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUri), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUriShuffled), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUriShuffled), is(false));
-        assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUri), is(false));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, notMatchingEndpointUri), is(false));
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, notMatchingEndpointUri), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUri), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, endpointUriShuffled), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUri), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, endpointUriShuffled), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUriShuffled), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, endpointUri), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, notMatchingEndpointUri), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUriShuffled, notMatchingEndpointUri), is(false));
     }
 
     @Test
@@ -164,8 +169,8 @@ public class EndpointHelperTest extends ContextTestSupport {
         String notMatchingEndpointUri = "sjms:queue:my-queue";
         String pattern = "sjms:queue:my-queue?*";
 
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, pattern), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, pattern), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, pattern), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, pattern), is(false));
     }
 
     @Test
@@ -174,8 +179,79 @@ public class EndpointHelperTest extends ContextTestSupport {
         String notMatchingEndpointUri = "sjms:queue:my-queue?transacted=false&consumerCount=1";
         String pattern = "sjms://.*transacted=true.*";
 
-        assertThat(EndpointHelper.matchEndpoint(null, endpointUri, pattern), is(true));
-        assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, pattern), is(false));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, endpointUri, pattern), is(true));
+        MatcherAssert.assertThat(EndpointHelper.matchEndpoint(null, notMatchingEndpointUri, pattern), is(false));
+    }
+
+    @Test
+    public void testResolveByType() throws Exception {
+        AuthorizationPolicy myPolicy = new AuthorizationPolicy() {
+            @Override
+            public void beforeWrap(Route route, NamedNode definition) {
+                // noop
+            }
+
+            @Override
+            public Processor wrap(Route route, Processor processor) {
+                return processor;
+            }
+        };
+
+        context.getRegistry().bind("foobar", myPolicy);
+
+        AuthorizationPolicy policy = EndpointHelper.resolveReferenceParameter(context,
+                "#type:org.apache.camel.spi.AuthorizationPolicy", AuthorizationPolicy.class);
+        assertNotNull(policy);
+        assertSame(myPolicy, policy);
+    }
+
+    @Test
+    public void testResolveByTypeNoBean() throws Exception {
+        try {
+            EndpointHelper.resolveReferenceParameter(context, "#type:org.apache.camel.spi.AuthorizationPolicy",
+                    AuthorizationPolicy.class);
+            fail("Should throw exception");
+        } catch (NoSuchBeanException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testResolveByTypeTwo() throws Exception {
+        AuthorizationPolicy myPolicy = new AuthorizationPolicy() {
+            @Override
+            public void beforeWrap(Route route, NamedNode definition) {
+                // noop
+            }
+
+            @Override
+            public Processor wrap(Route route, Processor processor) {
+                return processor;
+            }
+        };
+        context.getRegistry().bind("foobar", myPolicy);
+
+        AuthorizationPolicy myPolicy2 = new AuthorizationPolicy() {
+            @Override
+            public void beforeWrap(Route route, NamedNode definition) {
+                // noop
+            }
+
+            @Override
+            public Processor wrap(Route route, Processor processor) {
+                return processor;
+            }
+        };
+        context.getRegistry().bind("foobar2", myPolicy2);
+
+        // when there are 2 instances of the same time, then we cannot decide
+        try {
+            EndpointHelper.resolveReferenceParameter(context, "#type:org.apache.camel.spi.AuthorizationPolicy",
+                    AuthorizationPolicy.class);
+            fail("Should throw exception");
+        } catch (NoSuchBeanException e) {
+            assertTrue(e.getMessage().contains("Found 2 beans"));
+        }
     }
 
 }

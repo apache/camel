@@ -20,25 +20,24 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ClientRecipientListRouteTest extends CamelAwsXRayTestSupport {
 
     public ClientRecipientListRouteTest() {
         super(
-            TestDataBuilder.createTrace().inRandomOrder()
-                .withSegment(TestDataBuilder.createSegment("start")
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda:a"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
-                    .withSubsegment(TestDataBuilder.createSubsegment("seda:c"))
-                )
-                .withSegment(TestDataBuilder.createSegment("a"))
-                .withSegment(TestDataBuilder.createSegment("b"))
-                .withSegment(TestDataBuilder.createSegment("c"))
-        );
+              TestDataBuilder.createTrace().inRandomOrder()
+                      .withSegment(TestDataBuilder.createSegment("start")
+                              .withSubsegment(TestDataBuilder.createSubsegment("seda:a"))
+                              .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
+                              .withSubsegment(TestDataBuilder.createSubsegment("seda:c")))
+                      .withSegment(TestDataBuilder.createSegment("a"))
+                      .withSegment(TestDataBuilder.createSegment("b"))
+                      .withSegment(TestDataBuilder.createSegment("c")));
     }
 
     @Test
@@ -59,18 +58,18 @@ public class ClientRecipientListRouteTest extends CamelAwsXRayTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("start")
-                    .recipientList(constant("seda:a,seda:b,seda:c"));
+                        .recipientList(constant("seda:a,seda:b,seda:c"));
 
                 from("seda:a").routeId("a")
-                    .log("routing at ${routeId}");
+                        .log("routing at ${routeId}");
 
                 from("seda:b").routeId("b")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(1000,2000)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(1000,2000)}"));
 
                 from("seda:c").routeId("c")
-                    .log("routing at ${routeId}")
-                    .delay(simple("${random(0,100)}"));
+                        .log("routing at ${routeId}")
+                        .delay(simple("${random(0,100)}"));
             }
         };
     }

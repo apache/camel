@@ -19,8 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
@@ -74,7 +74,7 @@ public class ChoiceAsyncTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -88,8 +88,10 @@ public class ChoiceAsyncTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice().when().xpath("$foo = 'bar'").delay(10).asyncDelayed().to("mock:x").endChoice().when().xpath("$foo = 'cheese'").delay(10)
-                    .asyncDelayed().to("mock:y").endChoice().otherwise().delay(10).asyncDelayed().to("mock:z").endChoice().end().to("mock:end");
+                from("direct:start").choice().when().xpath("$foo = 'bar'").delay(10).asyncDelayed().to("mock:x").endChoice()
+                        .when().xpath("$foo = 'cheese'").delay(10)
+                        .asyncDelayed().to("mock:y").endChoice().otherwise().delay(10).asyncDelayed().to("mock:z").endChoice()
+                        .end().to("mock:end");
             }
         };
     }

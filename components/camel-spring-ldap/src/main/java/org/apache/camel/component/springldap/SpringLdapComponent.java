@@ -36,11 +36,12 @@ public class SpringLdapComponent extends DefaultComponent {
 
     /**
      * creates a Spring LDAP endpoint
-     * @param remaining name of the Spring LDAP template bean to be used for the LDAP operation
+     * 
+     * @param remaining  name of the Spring LDAP template bean to be used for the LDAP operation
      * @param parameters key-value pairs to be set on @see org.apache.camel.component.springldap.SpringLdapEndpoint.
-     * Currently supported keys are operation and scope.
-     * 'operation' is defined in org.apache.camel.component.springldap.LdapOperation.
-     * 'scope' must be one of "object", "onelevel", or "subtree".
+     *                   Currently supported keys are operation and scope. 'operation' is defined in
+     *                   org.apache.camel.component.springldap.LdapOperation. 'scope' must be one of "object",
+     *                   "onelevel", or "subtree".
      */
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -49,7 +50,7 @@ public class SpringLdapComponent extends DefaultComponent {
         Registry registry = camelContext.getRegistry();
         LdapTemplate ldapTemplate = registry.lookupByNameAndType(remaining, LdapTemplate.class);
 
-        Endpoint endpoint = new SpringLdapEndpoint(remaining, ldapTemplate);
+        Endpoint endpoint = new SpringLdapEndpoint(uri, this, remaining, ldapTemplate);
         setProperties(endpoint, parameters);
         return endpoint;
     }

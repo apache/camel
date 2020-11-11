@@ -28,9 +28,9 @@ import org.springframework.context.ApplicationContextAware;
 
 public class TrustManagersParametersFactoryBean extends AbstractTrustManagersParametersFactoryBean
         implements FactoryBean<TrustManagersParameters>, ApplicationContextAware {
-    
+
     private KeyStoreParametersFactoryBean keyStore;
-    
+
     @XmlTransient
     private ApplicationContext applicationContext;
 
@@ -42,7 +42,7 @@ public class TrustManagersParametersFactoryBean extends AbstractTrustManagersPar
     public void setKeyStore(KeyStoreParametersFactoryBean keyStore) {
         this.keyStore = keyStore;
     }
-    
+
     @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);

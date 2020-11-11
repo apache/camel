@@ -20,13 +20,16 @@ import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/eagerdelete");
         super.setUp();
@@ -35,28 +38,33 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
 
     @Test
     public void testEagerDeleteTargetFileTrue() throws Exception {
-        template.sendBodyAndHeader("file://target/data/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=true", "Bye World", Exchange.FILE_NAME, "world.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=true", "Bye World",
+                Exchange.FILE_NAME, "world.txt");
 
         File file = new File("target/data/eagerdelete/world.txt");
-        assertTrue("File should exist", file.exists());
+        assertTrue(file.exists(), "File should exist");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
     @Test
     public void testEagerDeleteTargetFileFalse() throws Exception {
-        template.sendBodyAndHeader("file://target/data/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=false", "Bye World", Exchange.FILE_NAME, "world.txt");
+        template.sendBodyAndHeader(
+                "file://target/data/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=false", "Bye World",
+                Exchange.FILE_NAME, "world.txt");
 
         File file = new File("target/data/eagerdelete/world.txt");
-        assertTrue("File should exist", file.exists());
+        assertTrue(file.exists(), "File should exist");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
     @Test
     public void testEagerDeleteTargetFileDefault() throws Exception {
-        template.sendBodyAndHeader("file://target/data/eagerdelete?tempFileName=inprogress-${file:name}", "Bye World", Exchange.FILE_NAME, "world.txt");
+        template.sendBodyAndHeader("file://target/data/eagerdelete?tempFileName=inprogress-${file:name}", "Bye World",
+                Exchange.FILE_NAME, "world.txt");
 
         File file = new File("target/data/eagerdelete/world.txt");
-        assertTrue("File should exist", file.exists());
+        assertTrue(file.exists(), "File should exist");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 

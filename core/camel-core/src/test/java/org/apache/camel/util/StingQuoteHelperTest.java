@@ -16,13 +16,14 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  */
-public class StingQuoteHelperTest extends Assert {
+public class StingQuoteHelperTest {
 
     @Test
     public void testSplitSafeQuote() throws Exception {

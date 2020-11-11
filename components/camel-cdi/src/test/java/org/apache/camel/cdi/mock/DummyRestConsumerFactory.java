@@ -22,24 +22,26 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.support.ClassicUuidGenerator;
 
 public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiConsumerFactory {
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb,
-                                   String basePath, String uriTemplate, String consumes,
-                                   String produces, RestConfiguration configuration,
-                                   Map<String, Object> parameters) throws Exception {
+    public Consumer createConsumer(
+            CamelContext camelContext, Processor processor, String verb,
+            String basePath, String uriTemplate, String consumes,
+            String produces, RestConfiguration configuration,
+            Map<String, Object> parameters)
+            throws Exception {
         // just use a seda endpoint for testing purpose
         String id;
         if (uriTemplate != null) {
-            id = DefaultUuidGenerator.generateSanitizedId(basePath + uriTemplate);
+            id = ClassicUuidGenerator.generateSanitizedId(basePath + uriTemplate);
         } else {
-            id = DefaultUuidGenerator.generateSanitizedId(basePath);
+            id = ClassicUuidGenerator.generateSanitizedId(basePath);
         }
         // remove leading dash as we add that ourselves
         if (id.startsWith("-")) {
@@ -51,11 +53,13 @@ public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiCon
     }
 
     @Override
-    public Consumer createApiConsumer(CamelContext camelContext, Processor processor,
-                                      String contextPath, RestConfiguration configuration,
-                                      Map<String, Object> parameters) throws Exception {
+    public Consumer createApiConsumer(
+            CamelContext camelContext, Processor processor,
+            String contextPath, RestConfiguration configuration,
+            Map<String, Object> parameters)
+            throws Exception {
         // just use a seda endpoint for testing purpose
-        String id = DefaultUuidGenerator.generateSanitizedId(contextPath);
+        String id = ClassicUuidGenerator.generateSanitizedId(contextPath);
         // remove leading dash as we add that ourselves
         if (id.startsWith("-")) {
             id = id.substring(1);

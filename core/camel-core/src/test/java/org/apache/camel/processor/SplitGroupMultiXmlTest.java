@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -29,7 +29,7 @@ import org.junit.Test;
 public class SplitGroupMultiXmlTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/pair");
         super.setUp();
@@ -39,8 +39,10 @@ public class SplitGroupMultiXmlTest extends ContextTestSupport {
     public void testTokenXMLPairGroup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
-        mock.message(0).body().isEqualTo("<order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order><order id=\"2\" xmlns=\"http:acme.com\">ActiveMQ in Action</order>");
-        mock.message(1).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">Spring in Action</order><order id=\"4\" xmlns=\"http:acme.com\">Scala in Action</order>");
+        mock.message(0).body().isEqualTo(
+                "<order id=\"1\" xmlns=\"http:acme.com\">Camel in Action</order><order id=\"2\" xmlns=\"http:acme.com\">ActiveMQ in Action</order>");
+        mock.message(1).body().isEqualTo(
+                "<order id=\"3\" xmlns=\"http:acme.com\">Spring in Action</order><order id=\"4\" xmlns=\"http:acme.com\">Scala in Action</order>");
         mock.message(2).body().isEqualTo("<order id=\"5\" xmlns=\"http:acme.com\">Groovy in Action</order>");
 
         String body = createBody();
@@ -68,9 +70,9 @@ public class SplitGroupMultiXmlTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("file:target/data/pair?initialDelay=0&delay=10")
-                    // split the order child tags, and inherit namespaces from
-                    // the orders root tag
-                    .split().tokenizeXML("order", "orders", 2).to("log:split").to("mock:split");
+                        // split the order child tags, and inherit namespaces from
+                        // the orders root tag
+                        .split().tokenizeXML("order", "orders", 2).to("log:split").to("mock:split");
                 // END SNIPPET: e1
             }
         };

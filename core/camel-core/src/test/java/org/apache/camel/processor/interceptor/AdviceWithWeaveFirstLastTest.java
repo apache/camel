@@ -17,10 +17,12 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Advice with tests
@@ -30,7 +32,7 @@ public class AdviceWithWeaveFirstLastTest extends ContextTestSupport {
     @Test
     public void testWeaveAddFirst() throws Exception {
         // START SNIPPET: e1
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // insert at first the given piece of route to the existing
@@ -53,7 +55,7 @@ public class AdviceWithWeaveFirstLastTest extends ContextTestSupport {
     @Test
     public void testWeaveAddLast() throws Exception {
         // START SNIPPET: e2
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // insert at the end of the existing route, the given piece of

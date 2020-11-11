@@ -20,13 +20,13 @@ import java.util.ArrayList;
 
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GenerateMojoTest {
 
@@ -70,8 +70,8 @@ public class GenerateMojoTest {
     public void shouldParsePicklistsToObjectsFail() {
         // given
         final int properCountExceptions = 2;
-        final String[] invalidPicklistToStrings = new String[] {"Account,DataSource"};
-        final String[] invalidPicklistToEnums = new String[] {"Con-tact.Contact_Source_Information__c"};
+        final String[] invalidPicklistToStrings = new String[] { "Account,DataSource" };
+        final String[] invalidPicklistToEnums = new String[] { "Con-tact.Contact_Source_Information__c" };
         final GenerateMojo mojo = new GenerateMojo();
         mojo.picklistToStrings = invalidPicklistToStrings;
         mojo.picklistToEnums = invalidPicklistToEnums;
@@ -99,7 +99,8 @@ public class GenerateMojoTest {
         // given
         final String sObjectName = ACCOUNT;
         final GenerateMojo mojo = new GenerateMojo();
-        mojo.picklistToStrings = new String[] {sObjectName + ".StandardPicklist", sObjectName + ".Stringified_Custom_Picklist_Type__c"};
+        mojo.picklistToStrings
+                = new String[] { sObjectName + ".StandardPicklist", sObjectName + ".Stringified_Custom_Picklist_Type__c" };
         mojo.parsePicklistToStrings();
         assertTrue(mojo.picklistToStrings != null && mojo.picklistToStrings.length > 1);
 
@@ -109,8 +110,10 @@ public class GenerateMojoTest {
 
         final SObjectField defaultPicklist = createField("Default_Picklist__c", PICKLIST);
         final SObjectField defaultMultipicklist = createField("Default_Multipicklist__c", MULTIPICKLIST);
-        final SObjectField picklistToString = createField(mojo.picklistToStrings[0].substring(mojo.picklistToStrings[0].indexOf('.') + 1), PICKLIST);
-        final SObjectField multipicklistToString = createField(mojo.picklistToStrings[1].substring(mojo.picklistToStrings[1].indexOf('.') + 1), MULTIPICKLIST);
+        final SObjectField picklistToString
+                = createField(mojo.picklistToStrings[0].substring(mojo.picklistToStrings[0].indexOf('.') + 1), PICKLIST);
+        final SObjectField multipicklistToString
+                = createField(mojo.picklistToStrings[1].substring(mojo.picklistToStrings[1].indexOf('.') + 1), MULTIPICKLIST);
         accountDescription.getFields().add(defaultPicklist);
         accountDescription.getFields().add(defaultMultipicklist);
         accountDescription.getFields().add(picklistToString);
@@ -137,7 +140,8 @@ public class GenerateMojoTest {
         // given
         final String sObjectName = CONTACT;
         final GenerateMojo mojo = new GenerateMojo();
-        mojo.picklistToEnums = new String[] {sObjectName + ".Enum_Contact_Source_Information__c", sObjectName + ".Enum_Contract_Type__c"};
+        mojo.picklistToEnums
+                = new String[] { sObjectName + ".Enum_Contact_Source_Information__c", sObjectName + ".Enum_Contract_Type__c" };
         mojo.parsePicklistToEnums();
 
         final SObjectDescription contactDescription = new SObjectDescription();
@@ -146,8 +150,10 @@ public class GenerateMojoTest {
 
         final SObjectField stringPicklist = createField("Nonspecific_Picklist__c", PICKLIST);
         final SObjectField stringMultipicklist = createField("Nonspecific_Multipicklist__c", MULTIPICKLIST);
-        final SObjectField picklistToEnum = createField(mojo.picklistToEnums[0].substring(mojo.picklistToEnums[0].indexOf('.') + 1), PICKLIST);
-        final SObjectField multipicklistToEnum = createField(mojo.picklistToEnums[1].substring(mojo.picklistToEnums[1].indexOf('.') + 1), MULTIPICKLIST);
+        final SObjectField picklistToEnum
+                = createField(mojo.picklistToEnums[0].substring(mojo.picklistToEnums[0].indexOf('.') + 1), PICKLIST);
+        final SObjectField multipicklistToEnum
+                = createField(mojo.picklistToEnums[1].substring(mojo.picklistToEnums[1].indexOf('.') + 1), MULTIPICKLIST);
         contactDescription.getFields().add(stringPicklist);
         contactDescription.getFields().add(stringMultipicklist);
         contactDescription.getFields().add(picklistToEnum);
@@ -177,10 +183,13 @@ public class GenerateMojoTest {
     }
 
     private static String[] createValidPicklistToEnums() {
-        return new String[] {CONTACT + ".Contact_Source_Information__c", CONTACT + ".Contract_Type__c", CONTACT + ".Custom_Picklist_Type__c"};
+        return new String[] {
+                CONTACT + ".Contact_Source_Information__c", CONTACT + ".Contract_Type__c",
+                CONTACT + ".Custom_Picklist_Type__c" };
     }
 
     private static String[] createValidPicklistToStrings() {
-        return new String[] {ACCOUNT + ".DataSource", ACCOUNT + ".Custom_Picklist_Type__c", ACCOUNT + ".Other_Custom_Picklist_Type__c"};
+        return new String[] {
+                ACCOUNT + ".DataSource", ACCOUNT + ".Custom_Picklist_Type__c", ACCOUNT + ".Other_Custom_Picklist_Type__c" };
     }
 }

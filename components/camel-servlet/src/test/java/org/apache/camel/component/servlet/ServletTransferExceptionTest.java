@@ -18,27 +18,27 @@ package org.apache.camel.component.servlet;
 
 import java.io.ByteArrayInputStream;
 
-import com.meterware.httpunit.PostMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testTransferException() throws Exception {
-        WebRequest req = new PostMethodWebRequest(CONTEXT_URL + "/services/hello", new ByteArrayInputStream("".getBytes()), "text/plain");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebRequest req = new PostMethodWebRequest(
+                contextUrl + "/services/hello",
+                new ByteArrayInputStream("".getBytes()), "text/plain");
+        WebResponse response = query(req, false);
 
         assertEquals(500, response.getResponseCode());
         assertEquals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, response.getContentType());
-        Object object = HttpHelper.deserializeJavaObjectFromStream(response.getInputStream());
+        Object object = HttpHelper.deserializeJavaObjectFromStream(response.getInputStream(), null);
         assertNotNull(object);
 
         IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, object);
@@ -51,7 +51,7 @@ public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport 
             @Override
             public void configure() throws Exception {
                 from("servlet:hello?transferException=true")
-                    .throwException(new IllegalArgumentException("Damn"));
+                        .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

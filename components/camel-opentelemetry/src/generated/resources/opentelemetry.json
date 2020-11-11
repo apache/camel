@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "opentelemetry",
+    "title": "OpenTelemetry",
+    "description": "Distributed tracing using OpenTelemetry",
+    "deprecated": false,
+    "firstVersion": "3.5.0",
+    "label": "monitoring,microservice",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-opentelemetry",
+    "version": "3.7.0-SNAPSHOT"
+  }
+}

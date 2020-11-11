@@ -18,14 +18,15 @@ package org.apache.camel.component.exec.impl;
 
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.exec.impl.ExecParseUtils.isDoubleQuoted;
 import static org.apache.camel.component.exec.impl.ExecParseUtils.isSingleQuoted;
 import static org.apache.camel.component.exec.impl.ExecParseUtils.splitToWhiteSpaceSeparatedTokens;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for {@link ExecParseUtils}
@@ -126,13 +127,15 @@ public class ExecParseUtilsTest {
         assertEquals("\"arg1\"", args.get(1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWhiteSpaceSeparatedArgsNotClosed() {
-        splitToWhiteSpaceSeparatedTokens("arg 0 \" arg1 \"arg 2\"");
+        assertThrows(IllegalArgumentException.class,
+                () -> splitToWhiteSpaceSeparatedTokens("arg 0 \" arg1 \"arg 2\""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidQuotes() {
-        splitToWhiteSpaceSeparatedTokens("\"\"arg 0 \" arg1 \"arg 2\"");
+        assertThrows(IllegalArgumentException.class,
+                () -> splitToWhiteSpaceSeparatedTokens("\"\"arg 0 \" arg1 \"arg 2\""));
     }
 }

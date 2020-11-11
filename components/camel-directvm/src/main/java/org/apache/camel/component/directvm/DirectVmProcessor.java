@@ -18,15 +18,16 @@ package org.apache.camel.component.directvm;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
-*
-*/
 public final class DirectVmProcessor extends DelegateAsyncProcessor {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DirectVmProcessor.class);
     private final DirectVmEndpoint endpoint;
 
     public DirectVmProcessor(Processor processor, DirectVmEndpoint endpoint) {
@@ -45,11 +46,11 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
             // set TCCL to application context class loader if given
             ClassLoader appClassLoader = endpoint.getCamelContext().getApplicationContextClassLoader();
             if (appClassLoader != null) {
-                log.trace("Setting Thread ContextClassLoader to {}", appClassLoader);
+                LOG.trace("Setting Thread ContextClassLoader to {}", appClassLoader);
                 Thread.currentThread().setContextClassLoader(appClassLoader);
                 changed = true;
             }
-            
+
             final boolean chgd = changed;
             return processor.process(copy, new AsyncCallback() {
                 @Override
@@ -57,7 +58,7 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
                     try {
                         // restore TCCL if it was changed during processing
                         if (chgd) {
-                            log.trace("Restoring Thread ContextClassLoader to {}", current);
+                            LOG.trace("Restoring Thread ContextClassLoader to {}", current);
                             Thread.currentThread().setContextClassLoader(current);
                         }
                         // make sure to copy results back
@@ -71,7 +72,7 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
         } finally {
             // restore TCCL if it was changed during processing
             if (changed) {
-                log.trace("Restoring Thread ContextClassLoader to {}", current);
+                LOG.trace("Restoring Thread ContextClassLoader to {}", current);
                 Thread.currentThread().setContextClassLoader(current);
             }
         }
@@ -80,14 +81,14 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
     /**
      * Strategy to prepare exchange for being processed by this consumer
      *
-     * @param exchange the exchange
-     * @return the exchange to process by this consumer.
+     * @param  exchange the exchange
+     * @return          the exchange to process by this consumer.
      */
     protected Exchange prepareExchange(Exchange exchange) {
         // send a new copied exchange with new camel context (do not handover completions)
         Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
         // set the from endpoint
-        newExchange.setFromEndpoint(endpoint);
+        newExchange.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
         // The StreamCache created by the child routes must not be 
         // closed by the unit of work of the child route, but by the unit of 
         // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).

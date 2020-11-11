@@ -26,31 +26,33 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfRsEndpointWithPropertiesTest extends AbstractSpringBeanTestSupport {
 
     @Override
     protected String[] getApplicationContextFiles() {
-        return new String[] {"org/apache/camel/component/cxf/jaxrs/CxfRsEndpointWithProperties.xml"};
+        return new String[] { "org/apache/camel/component/cxf/jaxrs/CxfRsEndpointWithProperties.xml" };
     }
 
     @Test
-    @Ignore("Camel 3.0: investigate why this fail")
+    @Disabled("Camel 3.0: investigate why this fail")
     public void testCxfRsBeanWithCamelPropertiesHolder() throws Exception {
         // get the camelContext from application context
         CamelContext camelContext = ctx.getBean("camel", CamelContext.class);
         CxfRsEndpoint testEndpoint = camelContext.getEndpoint("cxfrs:bean:testEndpoint", CxfRsEndpoint.class);
-        assertEquals("Got a wrong address", "http://localhost:9900/testEndpoint", testEndpoint.getAddress());
-        
+        assertEquals("http://localhost:9900/testEndpoint", testEndpoint.getAddress(), "Got a wrong address");
+
         List<Feature> features = testEndpoint.getFeatures();
-        assertEquals("Single feature is expected", 1, features.size());
-        
+        assertEquals(1, features.size(), "Single feature is expected");
+
         Map<String, Object> endpointProps = testEndpoint.getProperties();
-        assertEquals("Single endpoint property is expected", 1, endpointProps.size());
-        assertEquals("Wrong property value", "aValue", endpointProps.get("aKey"));
-        
+        assertEquals(1, endpointProps.size(), "Single endpoint property is expected");
+        assertEquals("aValue", endpointProps.get("aKey"), "Wrong property value");
+
         HttpGet get = new HttpGet(testEndpoint.getAddress());
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
         try {

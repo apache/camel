@@ -22,6 +22,7 @@ import com.box.sdk.EncryptionAlgorithm;
 import com.box.sdk.IAccessTokenCache;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.box.internal.BoxApiName;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -32,6 +33,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
  * Component configuration for Box component.
  */
 @UriParams
+@Configurer(extended = true)
 public class BoxConfiguration {
 
     /**
@@ -100,7 +102,7 @@ public class BoxConfiguration {
 
     /**
      * What kind of operation to perform
-     * 
+     *
      * @return the API Name
      */
     public BoxApiName getApiName() {
@@ -109,9 +111,8 @@ public class BoxConfiguration {
 
     /**
      * What kind of operation to perform
-     * 
-     * @param apiName
-     *            the API Name to set
+     *
+     * @param apiName the API Name to set
      */
     public void setApiName(BoxApiName apiName) {
         this.apiName = apiName;
@@ -119,7 +120,7 @@ public class BoxConfiguration {
 
     /**
      * What sub operation to use for the selected operation
-     * 
+     *
      * @return the methodName
      */
     public String getMethodName() {
@@ -128,9 +129,8 @@ public class BoxConfiguration {
 
     /**
      * What sub operation to use for the selected operation
-     * 
-     * @param methodName
-     *            the methodName to set
+     *
+     * @param methodName the methodName to set
      */
     public void setMethodName(String methodName) {
         this.methodName = methodName;
@@ -138,7 +138,7 @@ public class BoxConfiguration {
 
     /**
      * The enterprise ID to use for an App Enterprise.
-     * 
+     *
      * @return the enterpriseId
      */
     public String getEnterpriseId() {
@@ -147,9 +147,8 @@ public class BoxConfiguration {
 
     /**
      * The enterprise ID to use for an App Enterprise.
-     * 
-     * @param enterpriseId
-     *            the enterpriseId to set
+     *
+     * @param enterpriseId the enterpriseId to set
      */
     public void setEnterpriseId(String enterpriseId) {
         this.enterpriseId = enterpriseId;
@@ -157,7 +156,7 @@ public class BoxConfiguration {
 
     /**
      * The user ID to use for an App User.
-     * 
+     *
      * @return the userId
      */
     public String getUserId() {
@@ -166,9 +165,8 @@ public class BoxConfiguration {
 
     /**
      * The user ID to use for an App User.
-     * 
-     * @param userId
-     *            the userId to set
+     *
+     * @param userId the userId to set
      */
     public void setUserId(String userId) {
         this.userId = userId;
@@ -176,7 +174,7 @@ public class BoxConfiguration {
 
     /**
      * The ID for public key for validating the JWT signature.
-     * 
+     *
      * @return the publicKeyId
      */
     public String getPublicKeyId() {
@@ -185,9 +183,8 @@ public class BoxConfiguration {
 
     /**
      * The ID for public key for validating the JWT signature.
-     * 
-     * @param publicKeyId
-     *            the publicKeyId to set
+     *
+     * @param publicKeyId the publicKeyId to set
      */
     public void setPublicKeyId(String publicKeyId) {
         this.publicKeyId = publicKeyId;
@@ -195,7 +192,7 @@ public class BoxConfiguration {
 
     /**
      * The private key for generating the JWT signature.
-     * 
+     *
      * @return the privateKey
      */
     public String getPrivateKeyFile() {
@@ -204,9 +201,8 @@ public class BoxConfiguration {
 
     /**
      * The private key for generating the JWT signature.
-     * 
-     * @param privateKey
-     *            the privateKey to set
+     *
+     * @param privateKey the privateKey to set
      */
     public void setPrivateKeyFile(String privateKey) {
         this.privateKeyFile = privateKey;
@@ -214,7 +210,7 @@ public class BoxConfiguration {
 
     /**
      * The password for the private key.
-     * 
+     *
      * @return the privateKeyPassword
      */
     public String getPrivateKeyPassword() {
@@ -223,9 +219,8 @@ public class BoxConfiguration {
 
     /**
      * The password for the private key.
-     * 
-     * @param privateKeyPassword
-     *            the privateKeyPassword to set
+     *
+     * @param privateKeyPassword the privateKeyPassword to set
      */
     public void setPrivateKeyPassword(String privateKeyPassword) {
         this.privateKeyPassword = privateKeyPassword;
@@ -233,7 +228,7 @@ public class BoxConfiguration {
 
     /**
      * The maximum number of access tokens in cache.
-     * 
+     *
      * @return the maxCacheEntries
      */
     public int getMaxCacheEntries() {
@@ -243,8 +238,7 @@ public class BoxConfiguration {
     /**
      * The maximum number of access tokens in cache.
      *
-     * @param maxCacheEntries
-     *            the maxCacheEntries to set
+     * @param maxCacheEntries the maxCacheEntries to set
      */
     public void setMaxCacheEntries(int maxCacheEntries) {
         this.maxCacheEntries = maxCacheEntries;
@@ -260,7 +254,7 @@ public class BoxConfiguration {
 
     /**
      * The type of encryption algorithm for JWT.
-     * 
+     *
      * @return the encryptionAlgorithm
      */
     public EncryptionAlgorithm getEncryptionAlgorithm() {
@@ -269,7 +263,7 @@ public class BoxConfiguration {
 
     /**
      * The type of encryption algorithm for JWT.
-     * 
+     *
      * <p>
      * Supported Algorithms:
      * <ul>
@@ -277,9 +271,8 @@ public class BoxConfiguration {
      * <li>RSA_SHA_384</li>
      * <li>RSA_SHA_512</li>
      * </ul>
-     * 
-     * @param encryptionAlgorithm
-     *            the encryptionAlgorithm to set
+     *
+     * @param encryptionAlgorithm the encryptionAlgorithm to set
      */
     public void setEncryptionAlgorithm(EncryptionAlgorithm encryptionAlgorithm) {
         this.encryptionAlgorithm = encryptionAlgorithm;
@@ -287,30 +280,30 @@ public class BoxConfiguration {
 
     public void setEncryptionAlgorithm(String encryptionAlgorithm) {
         switch (encryptionAlgorithm) {
-        case RSA_SHA_256:
-            this.encryptionAlgorithm = EncryptionAlgorithm.RSA_SHA_256;
-            return;
-        case RSA_SHA_384:
-            this.encryptionAlgorithm = EncryptionAlgorithm.RSA_SHA_384;
-            return;
-        case RSA_SHA_512:
-            this.encryptionAlgorithm = EncryptionAlgorithm.RSA_SHA_512;
-            return;
-        default:
-            throw new RuntimeCamelException(String.format("Invalid Encryption Algorithm: %s", encryptionAlgorithm));
+            case RSA_SHA_256:
+                this.encryptionAlgorithm = EncryptionAlgorithm.RSA_SHA_256;
+                return;
+            case RSA_SHA_384:
+                this.encryptionAlgorithm = EncryptionAlgorithm.RSA_SHA_384;
+                return;
+            case RSA_SHA_512:
+                this.encryptionAlgorithm = EncryptionAlgorithm.RSA_SHA_512;
+                return;
+            default:
+                throw new RuntimeCamelException(String.format("Invalid Encryption Algorithm: %s", encryptionAlgorithm));
         }
     }
 
     /**
      * The type of authentication for connection.
-     * 
+     *
      * <p>
      * Types of Authentication:
      * <ul>
      * <li>STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged)</li>
      * <li>SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens</li>
      * </ul>
-     * 
+     *
      * @return the authenticationType
      */
     public String getAuthenticationType() {
@@ -319,32 +312,31 @@ public class BoxConfiguration {
 
     /**
      * The type of authentication for connection.
-     * 
+     *
      * <p>
      * Types of Authentication:
      * <ul>
      * <li>STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged)</li>
      * <li>SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens</li>
      * </ul>
-     * 
-     * @param authenticationType
-     *            the authenticationType to set
+     *
+     * @param authenticationType the authenticationType to set
      */
     public void setAuthenticationType(String authenticationType) {
         switch (authenticationType) {
-        case STANDARD_AUTHENTICATION:
-        case APP_USER_AUTHENTICATION:
-        case APP_ENTERPRISE_AUTHENTICATION:
-            this.authenticationType = authenticationType;
-            return;
-        default:
-            throw new RuntimeCamelException(String.format("Invalid Authentication Type: %s", authenticationType));
+            case STANDARD_AUTHENTICATION:
+            case APP_USER_AUTHENTICATION:
+            case APP_ENTERPRISE_AUTHENTICATION:
+                this.authenticationType = authenticationType;
+                return;
+            default:
+                throw new RuntimeCamelException(String.format("Invalid Authentication Type: %s", authenticationType));
         }
     }
 
     /**
      * Box application client ID
-     * 
+     *
      * @return the clientId
      */
     public String getClientId() {
@@ -353,9 +345,8 @@ public class BoxConfiguration {
 
     /**
      * Box application client ID
-     * 
-     * @param clientId
-     *            the clientId to set
+     *
+     * @param clientId the clientId to set
      */
     public void setClientId(String clientId) {
         this.clientId = clientId;
@@ -363,7 +354,7 @@ public class BoxConfiguration {
 
     /**
      * Box application client secret
-     * 
+     *
      * @return the clientSecret
      */
     public String getClientSecret() {
@@ -372,9 +363,8 @@ public class BoxConfiguration {
 
     /**
      * Box application client secret
-     * 
-     * @param clientSecret
-     *            the clientSecret to set
+     *
+     * @param clientSecret the clientSecret to set
      */
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
@@ -382,7 +372,7 @@ public class BoxConfiguration {
 
     /**
      * Box user name, MUST be provided
-     * 
+     *
      * @return the userName
      */
     public String getUserName() {
@@ -391,18 +381,16 @@ public class BoxConfiguration {
 
     /**
      * Box user name, MUST be provided
-     * 
-     * @param userName
-     *            the userName to set
+     *
+     * @param userName the userName to set
      */
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
     /**
-     * Box user password, MUST be provided if authSecureStorage is not set, or
-     * returns null on first call
-     * 
+     * Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call
+     *
      * @return the userPassword
      */
     public String getUserPassword() {
@@ -410,11 +398,9 @@ public class BoxConfiguration {
     }
 
     /**
-     * Box user password, MUST be provided if authSecureStorage is not set, or
-     * returns null on first call
-     * 
-     * @param userPassword
-     *            the userPassword to set
+     * Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call
+     *
+     * @param userPassword the userPassword to set
      */
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
@@ -422,7 +408,7 @@ public class BoxConfiguration {
 
     /**
      * Custom HTTP params for settings like proxy host
-     * 
+     *
      * @return the httpParams
      */
     public Map<String, Object> getHttpParams() {
@@ -431,9 +417,8 @@ public class BoxConfiguration {
 
     /**
      * Custom HTTP params for settings like proxy host
-     * 
-     * @param httpParams
-     *            the httpParams to set
+     *
+     * @param httpParams the httpParams to set
      */
     public void setHttpParams(Map<String, Object> httpParams) {
         this.httpParams = httpParams;
@@ -441,7 +426,7 @@ public class BoxConfiguration {
 
     /**
      * To configure security using SSLContextParameters.
-     * 
+     *
      * @return the sslContextParameters
      */
     public SSLContextParameters getSslContextParameters() {
@@ -450,9 +435,8 @@ public class BoxConfiguration {
 
     /**
      * To configure security using SSLContextParameters.
-     * 
-     * @param sslContextParameters
-     *            the sslContextParameters to set
+     *
+     * @param sslContextParameters the sslContextParameters to set
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -460,7 +444,7 @@ public class BoxConfiguration {
 
     /**
      * Custom Access Token Cache for storing and retrieving access tokens.
-     * 
+     *
      * @return Custom Access Token Cache
      */
     public IAccessTokenCache getAccessTokenCache() {
@@ -469,9 +453,8 @@ public class BoxConfiguration {
 
     /**
      * Custom Access Token Cache for storing and retrieving access tokens.
-     * 
-     * @param accessTokenCache
-     *            - the Custom Access Token Cache
+     *
+     * @param accessTokenCache - the Custom Access Token Cache
      */
     public void setAccessTokenCache(IAccessTokenCache accessTokenCache) {
         this.accessTokenCache = accessTokenCache;

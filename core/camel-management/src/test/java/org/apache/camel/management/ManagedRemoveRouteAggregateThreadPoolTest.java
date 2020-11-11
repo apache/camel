@@ -23,7 +23,10 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRemoveRouteAggregateThreadPoolTest extends ManagementTestSupport {
 
@@ -50,13 +53,13 @@ public class ManagedRemoveRouteAggregateThreadPoolTest extends ManagementTestSup
 
         // should not be registered anymore
         boolean registered = mbeanServer.isRegistered(on);
-        assertFalse("Route mbean should have been unregistered", registered);
+        assertFalse(registered, "Route mbean should have been unregistered");
 
         // and no wire tap thread pool as we use an existing external pool
         Set<ObjectName> after = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
 
         // there should be 1 less thread pool
-        assertTrue("There should be one less thread pool", before.size() - 1 == after.size());
+        assertTrue(before.size() - 1 == after.size(), "There should be one less thread pool");
     }
 
     @Override
@@ -65,7 +68,7 @@ public class ManagedRemoveRouteAggregateThreadPoolTest extends ManagementTestSup
             @Override
             public void configure() throws Exception {
                 from("direct:foo").routeId("foo")
-                    .aggregate(constant(true), new UseLatestAggregationStrategy()).completionTimeout(1000)
+                        .aggregate(constant(true), new UseLatestAggregationStrategy()).completionTimeout(1000)
                         .to("mock:result");
             }
         };

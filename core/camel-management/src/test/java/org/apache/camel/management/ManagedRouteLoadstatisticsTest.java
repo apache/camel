@@ -22,9 +22,13 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
@@ -61,9 +65,9 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        String load01 = (String)mbeanServer.getAttribute(on, "Load01");
-        String load05 = (String)mbeanServer.getAttribute(on, "Load05");
-        String load15 = (String)mbeanServer.getAttribute(on, "Load15");
+        String load01 = (String) mbeanServer.getAttribute(on, "Load01");
+        String load05 = (String) mbeanServer.getAttribute(on, "Load05");
+        String load15 = (String) mbeanServer.getAttribute(on, "Load15");
         assertEquals("", load01);
         assertEquals("", load05);
         assertEquals("", load15);
@@ -98,9 +102,9 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
-            String load01 = (String)mbeanServer.getAttribute(on, "Load01");
-            String load05 = (String)mbeanServer.getAttribute(on, "Load05");
-            String load15 = (String)mbeanServer.getAttribute(on, "Load15");
+            String load01 = (String) mbeanServer.getAttribute(on, "Load01");
+            String load05 = (String) mbeanServer.getAttribute(on, "Load05");
+            String load15 = (String) mbeanServer.getAttribute(on, "Load15");
             assertNotNull(load01);
             assertNotNull(load05);
             assertNotNull(load15);

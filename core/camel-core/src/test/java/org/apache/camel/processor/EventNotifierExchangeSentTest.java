@@ -21,7 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
@@ -46,13 +48,13 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(4, notifier.getEvents().size());
-        ExchangeSentEvent e = (ExchangeSentEvent)notifier.getEvents().get(0);
+        ExchangeSentEvent e = (ExchangeSentEvent) notifier.getEvents().get(0);
         assertEquals("mock://bar", e.getEndpoint().getEndpointUri());
-        e = (ExchangeSentEvent)notifier.getEvents().get(1);
+        e = (ExchangeSentEvent) notifier.getEvents().get(1);
         assertEquals("direct://bar", e.getEndpoint().getEndpointUri());
-        e = (ExchangeSentEvent)notifier.getEvents().get(2);
+        e = (ExchangeSentEvent) notifier.getEvents().get(2);
         assertEquals("mock://result", e.getEndpoint().getEndpointUri());
-        e = (ExchangeSentEvent)notifier.getEvents().get(3);
+        e = (ExchangeSentEvent) notifier.getEvents().get(3);
         assertEquals("direct://start", e.getEndpoint().getEndpointUri());
     }
 

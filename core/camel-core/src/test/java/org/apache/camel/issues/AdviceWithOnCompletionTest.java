@@ -17,10 +17,10 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AdviceWithOnCompletionTest extends ContextTestSupport {
 
@@ -30,7 +30,7 @@ public class AdviceWithOnCompletionTest extends ContextTestSupport {
         getMockEndpoint("mock:advice").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddFirst().to("mock:advice");

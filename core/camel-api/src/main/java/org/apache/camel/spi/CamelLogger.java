@@ -26,8 +26,8 @@ import org.slf4j.MarkerFactory;
 /**
  * A logger which logs to a slf4j {@link Logger}.
  * <p/>
- * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
- * which has a <tt>Logger</tt> class.
+ * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits which has a <tt>Logger</tt>
+ * class.
  */
 public class CamelLogger {
     private Logger log;
@@ -83,23 +83,31 @@ public class CamelLogger {
      */
     public void log(String message) {
         if (shouldLog(log, level)) {
-            log(log, level, marker, message);
+            if (marker != null) {
+                log(log, level, marker, message);
+            } else {
+                log(log, level, message);
+            }
         }
     }
 
     /**
      * Logs the message <b>without</b> checking the {@link #shouldLog()} method first.
-     * 
+     *
      * @param message the message to log
      */
     public void doLog(String message) {
-        log(log, level, marker, message);
+        if (marker != null) {
+            log(log, level, marker, message);
+        } else {
+            log(log, level, message);
+        }
     }
 
     public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
         log(log, loggingLevel, marker, message, exception);
-    }   
-    
+    }
+
     public void log(String message, Throwable exception) {
         if (shouldLog(log, level)) {
             log(log, level, marker, message, exception);
@@ -148,70 +156,64 @@ public class CamelLogger {
 
     public static void log(Logger log, LoggingLevel level, String message) {
         switch (level) {
-        case DEBUG:
-            log.debug(message);
-            break;
-        case ERROR:
-            log.error(message);
-            break;
-        case INFO:
-            log.info(message);
-            break;
-        case TRACE:
-            log.trace(message);
-            break;
-        case WARN:
-            log.warn(message);
-            break;
-        default:
+            case DEBUG:
+                log.debug(message);
+                break;
+            case ERROR:
+                log.error(message);
+                break;
+            case INFO:
+                log.info(message);
+                break;
+            case TRACE:
+                log.trace(message);
+                break;
+            case WARN:
+                log.warn(message);
+                break;
+            default:
         }
     }
 
     public static void log(Logger log, LoggingLevel level, Marker marker, String message) {
-        if (marker == null) {
-            log(log, level, message);
-            return;
-        }
-
-        // marker must be provided
         switch (level) {
-        case DEBUG:
-            log.debug(marker, message);
-            break;
-        case ERROR:
-            log.error(marker, message);
-            break;
-        case INFO:
-            log.info(marker, message);
-            break;
-        case TRACE:
-            log.trace(marker, message);
-            break;
-        case WARN:
-            log.warn(marker, message);
-            break;
-        default:
+            case DEBUG:
+                log.debug(marker, message);
+                break;
+            case ERROR:
+                log.error(marker, message);
+                break;
+            case INFO:
+                log.info(marker, message);
+                break;
+            case TRACE:
+                log.trace(marker, message);
+                break;
+            case WARN:
+                log.warn(marker, message);
+                break;
+            default:
         }
     }
 
     public static void log(Logger log, LoggingLevel level, String message, Throwable th) {
         switch (level) {
-        case DEBUG:
-            log.debug(message, th);
-            break;
-        case ERROR:
-            log.error(message, th);
-            break;
-        case INFO:
-            log.info(message, th);
-            break;
-        case TRACE:
-            log.trace(message, th);
-            break;
-        case WARN:
-            log.warn(message, th);
-            break;
-        default:
+            case DEBUG:
+                log.debug(message, th);
+                break;
+            case ERROR:
+                log.error(message, th);
+                break;
+            case INFO:
+                log.info(message, th);
+                break;
+            case TRACE:
+                log.trace(message, th);
+                break;
+            case WARN:
+                log.warn(message, th);
+                break;
+            default:
         }
     }
 
@@ -223,22 +225,22 @@ public class CamelLogger {
 
         // marker must be provided
         switch (level) {
-        case DEBUG:
-            log.debug(marker, message, th);
-            break;
-        case ERROR:
-            log.error(marker, message, th);
-            break;
-        case INFO:
-            log.info(marker, message, th);
-            break;
-        case TRACE:
-            log.trace(marker, message, th);
-            break;
-        case WARN:
-            log.warn(marker, message, th);
-            break;
-        default:
+            case DEBUG:
+                log.debug(marker, message, th);
+                break;
+            case ERROR:
+                log.error(marker, message, th);
+                break;
+            case INFO:
+                log.info(marker, message, th);
+                break;
+            case TRACE:
+                log.trace(marker, message, th);
+                break;
+            case WARN:
+                log.warn(marker, message, th);
+                break;
+            default:
         }
     }
 
@@ -248,17 +250,17 @@ public class CamelLogger {
 
     public static boolean shouldLog(Logger log, LoggingLevel level) {
         switch (level) {
-        case DEBUG:
-            return log.isDebugEnabled(); 
-        case ERROR:
-            return log.isErrorEnabled(); 
-        case INFO:
-            return log.isInfoEnabled(); 
-        case TRACE:
-            return log.isTraceEnabled(); 
-        case WARN:
-            return log.isWarnEnabled(); 
-        default:
+            case DEBUG:
+                return log.isDebugEnabled();
+            case ERROR:
+                return log.isErrorEnabled();
+            case INFO:
+                return log.isInfoEnabled();
+            case TRACE:
+                return log.isTraceEnabled();
+            case WARN:
+                return log.isWarnEnabled();
+            default:
         }
         return false;
     }

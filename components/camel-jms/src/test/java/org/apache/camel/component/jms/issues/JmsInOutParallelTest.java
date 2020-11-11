@@ -19,13 +19,15 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsInOutParallelTest extends CamelTestSupport {
 
@@ -51,25 +53,25 @@ public class JmsInOutParallelTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                
+
                 from("direct:test")
-                    .setBody(constant("1,2,3,4,5"))
-                    .inOut("activemq:queue:test1?requestTimeout=2000")
-                    .split().tokenize(",").parallelProcessing()
-                        .inOut("activemq:queue:test2?requestTimeout=2000")
+                        .setBody(constant("1,2,3,4,5"))
+                        .to(ExchangePattern.InOut, "activemq:queue:test1?requestTimeout=2000")
+                        .split().tokenize(",").parallelProcessing()
+                        .to(ExchangePattern.InOut, "activemq:queue:test2?requestTimeout=2000")
                         .to("mock:received")
-                    .end()
-                    .setBody(constant("Fully done"))
-                    .log("Finished");
-                
+                        .end()
+                        .setBody(constant("Fully done"))
+                        .log("Finished");
+
                 from("activemq:queue:test1")
-                    .log("Received on queue test1");
-                
+                        .log("Received on queue test1");
+
                 from("activemq:queue:test2")
-                    .log("Received on queue test2")
-                    .setBody(constant("Some reply"))
-                    .delay(constant(100));
-                
+                        .log("Received on queue test2")
+                        .setBody(constant("Some reply"))
+                        .delay(constant(100));
+
             }
         };
     }

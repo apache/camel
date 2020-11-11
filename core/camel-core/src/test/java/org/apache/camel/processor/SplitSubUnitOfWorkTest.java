@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -58,7 +60,8 @@ public class SplitSubUnitOfWorkTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(4, counter); // 1 first + 3 redeliveries
+        // 1 first + 3 redeliveries
+        assertEquals(4, counter);
     }
 
     @Override
@@ -70,12 +73,12 @@ public class SplitSubUnitOfWorkTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
                 from("direct:start").to("mock:a")
-                    // share unit of work in the splitter, which tells Camel to
-                    // propagate failures from
-                    // processing the splitted messages back to the result of
-                    // the splitter, which allows
-                    // it to act as a combined unit of work
-                    .split(body().tokenize(",")).shareUnitOfWork().to("mock:b").to("direct:line").end().to("mock:result");
+                        // share unit of work in the splitter, which tells Camel to
+                        // propagate failures from
+                        // processing the splitted messages back to the result of
+                        // the splitter, which allows
+                        // it to act as a combined unit of work
+                        .split(body().tokenize(",")).shareUnitOfWork().to("mock:b").to("direct:line").end().to("mock:result");
 
                 from("direct:line").to("log:line").process(new MyProcessor()).to("mock:line");
                 // END SNIPPET: e1

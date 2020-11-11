@@ -22,7 +22,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestUndertowHttpBindingModeJsonWithContractTest extends BaseUndertowTest {
 
@@ -35,14 +39,14 @@ public class RestUndertowHttpBindingModeJsonWithContractTest extends BaseUnderto
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         Object answer = template.requestBody("undertow:http://localhost:{{port}}/users/new", body);
         assertNotNull(answer);
-        String answerString = new String((byte[])answer);
-        assertTrue("Unexpected response: " + answerString, answerString.contains("\"active\":true"));
+        String answerString = new String((byte[]) answer);
+        assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
 
         assertMockEndpointsSatisfied();
 
         Object obj = mock.getReceivedExchanges().get(0).getIn().getBody();
         assertEquals(UserPojoEx.class, obj.getClass());
-        UserPojoEx user = (UserPojoEx)obj;
+        UserPojoEx user = (UserPojoEx) obj;
         assertNotNull(user);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());
@@ -58,9 +62,9 @@ public class RestUndertowHttpBindingModeJsonWithContractTest extends BaseUnderto
                 restConfiguration().component("undertow").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
 
                 rest("/users/")
-                    // REST binding converts from JSON to UserPojo
-                    .post("new").type(UserPojo.class)
-                    .route()
+                        // REST binding converts from JSON to UserPojo
+                        .post("new").type(UserPojo.class)
+                        .route()
                         // then contract advice converts from UserPojo to UserPojoEx
                         .inputType(UserPojoEx.class)
                         .to("mock:input");

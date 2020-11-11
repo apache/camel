@@ -40,6 +40,7 @@ public final class KeystoneConstants extends OpenstackConstants {
     public static final String CHECK_GROUP_USER = "checkUserGroup";
     public static final String REMOVE_USER_FROM_GROUP = "removeUserFromGroup";
 
-    private KeystoneConstants() { }
+    private KeystoneConstants() {
+    }
 
 }

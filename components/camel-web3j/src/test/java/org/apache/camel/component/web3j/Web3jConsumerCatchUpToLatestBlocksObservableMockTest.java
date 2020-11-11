@@ -17,7 +17,7 @@
 package org.apache.camel.component.web3j;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -43,11 +43,12 @@ public class Web3jConsumerCatchUpToLatestBlocksObservableMockTest extends Web3jM
         mockError.expectedMinimumMessageCount(0);
         mockResult.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.catchUpToLatestBlockObservable(any(DefaultBlockParameter.class), any(Boolean.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.catchUpToLatestBlockObservable(any(DefaultBlockParameter.class), any(Boolean.class)))
+                .thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<EthBlock>)args[0]).call(new EthBlock());
+                ((Action1<EthBlock>) args[0]).call(new EthBlock());
                 return subscription;
             }
         });
@@ -62,11 +63,12 @@ public class Web3jConsumerCatchUpToLatestBlocksObservableMockTest extends Web3jM
         mockResult.expectedMessageCount(0);
         mockError.expectedMinimumMessageCount(1);
 
-        Mockito.when(mockWeb3j.catchUpToLatestBlockObservable(any(DefaultBlockParameter.class), any(Boolean.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.catchUpToLatestBlockObservable(any(DefaultBlockParameter.class), any(Boolean.class)))
+                .thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action1<Throwable>)args[1]).call(new RuntimeException("Error"));
+                ((Action1<Throwable>) args[1]).call(new RuntimeException("Error"));
                 return subscription;
             }
         });
@@ -82,11 +84,12 @@ public class Web3jConsumerCatchUpToLatestBlocksObservableMockTest extends Web3jM
         mockResult.expectedHeaderReceived("status", "done");
         mockError.expectedMinimumMessageCount(0);
 
-        Mockito.when(mockWeb3j.catchUpToLatestBlockObservable(any(DefaultBlockParameter.class), any(Boolean.class))).thenReturn(observable);
+        Mockito.when(mockWeb3j.catchUpToLatestBlockObservable(any(DefaultBlockParameter.class), any(Boolean.class)))
+                .thenReturn(observable);
         Mockito.when(observable.subscribe(any(), any(), any())).thenAnswer(new Answer() {
             public Subscription answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
-                ((Action0)args[2]).call();
+                ((Action0) args[2]).call();
                 return subscription;
             }
         });
@@ -101,8 +104,9 @@ public class Web3jConsumerCatchUpToLatestBlocksObservableMockTest extends Web3jM
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
-                from(getUrl() + OPERATION.toLowerCase() + "=" + CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE + "&fromBlock=5499965&toBlock=5499967")
-                        .to("mock:result");
+                from(getUrl() + OPERATION.toLowerCase() + "=" + CATCH_UP_TO_LATEST_BLOCK_OBSERVABLE
+                     + "&fromBlock=5499965&toBlock=5499967")
+                             .to("mock:result");
             }
         };
     }

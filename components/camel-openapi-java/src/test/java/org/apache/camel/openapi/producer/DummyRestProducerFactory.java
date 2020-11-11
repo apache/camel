@@ -30,9 +30,11 @@ import org.apache.camel.util.StringHelper;
 public class DummyRestProducerFactory implements RestProducerFactory {
 
     @Override
-    public Producer createProducer(CamelContext camelContext, String host,
-                            String verb, String basePath, final String uriTemplate, String queryParameters,
-                            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    public Producer createProducer(
+            CamelContext camelContext, String host,
+            String verb, String basePath, final String uriTemplate, String queryParameters,
+            String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
+            throws Exception {
 
         // use a dummy endpoint
         Endpoint endpoint = camelContext.getEndpoint("stub:dummy");

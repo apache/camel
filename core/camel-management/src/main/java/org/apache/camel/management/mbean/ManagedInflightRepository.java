@@ -54,6 +54,11 @@ public class ManagedInflightRepository extends ManagedService implements Managed
     }
 
     @Override
+    public boolean isInflightBrowseEnabled() {
+        return inflightRepository.isInflightBrowseEnabled();
+    }
+
+    @Override
     public int size(String routeId) {
         return inflightRepository.size(routeId);
     }
@@ -72,7 +77,8 @@ public class ManagedInflightRepository extends ManagedService implements Managed
     public TabularData browse(String routeId, int limit, boolean sortByLongestDuration) {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listInflightExchangesTabularType());
-            Collection<InflightRepository.InflightExchange> exchanges = inflightRepository.browse(routeId, limit, sortByLongestDuration);
+            Collection<InflightRepository.InflightExchange> exchanges
+                    = inflightRepository.browse(routeId, limit, sortByLongestDuration);
 
             for (InflightRepository.InflightExchange entry : exchanges) {
                 CompositeType ct = CamelOpenMBeanTypes.listInflightExchangesCompositeType();
@@ -83,9 +89,10 @@ public class ManagedInflightRepository extends ManagedService implements Managed
                 String elapsed = "" + entry.getElapsed();
                 String duration = "" + entry.getDuration();
 
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration"},
-                        new Object[]{exchangeId, fromRouteId, atRouteId, nodeId, elapsed, duration});
+                CompositeData data = new CompositeDataSupport(
+                        ct,
+                        new String[] { "exchangeId", "fromRouteId", "routeId", "nodeId", "elapsed", "duration" },
+                        new Object[] { exchangeId, fromRouteId, atRouteId, nodeId, elapsed, duration });
                 answer.put(data);
             }
             return answer;

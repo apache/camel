@@ -21,17 +21,18 @@ import io.debezium.config.Configuration;
 import io.debezium.connector.sqlserver.SqlServerConnector;
 import io.debezium.embedded.EmbeddedEngine;
 import org.apache.camel.component.debezium.DebeziumConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SqlserverConnectorEmbeddedDebeziumConfigurationTest {
 
     @Test
-    public void testIfCreatesConfig() {
-        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration = new SqlServerConnectorEmbeddedDebeziumConfiguration();
+    void testIfCreatesConfig() {
+        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration
+                = new SqlServerConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_user");
         configuration.setMaxQueueSize(1212);
@@ -47,8 +48,9 @@ public class SqlserverConnectorEmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testIfValidatesConfigurationCorrectly() {
-        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration = new SqlServerConnectorEmbeddedDebeziumConfiguration();
+    void testIfValidatesConfigurationCorrectly() {
+        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration
+                = new SqlServerConnectorEmbeddedDebeziumConfiguration();
 
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
@@ -65,8 +67,9 @@ public class SqlserverConnectorEmbeddedDebeziumConfigurationTest {
     }
 
     @Test
-    public void testValidateConfigurationsForAllRequiredFields() {
-        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration = new SqlServerConnectorEmbeddedDebeziumConfiguration();
+    void testValidateConfigurationsForAllRequiredFields() {
+        final SqlServerConnectorEmbeddedDebeziumConfiguration configuration
+                = new SqlServerConnectorEmbeddedDebeziumConfiguration();
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
         configuration.setDatabaseHostname("localhost");

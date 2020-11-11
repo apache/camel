@@ -20,6 +20,9 @@ import java.io.IOException;
 
 import org.apache.camel.ExchangeException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class BeanWithExchangeExceptionAnnotationWrappedExceptionTest extends BeanWithExchangeExceptionAnnotationTest {
 
     public static class MyBean {

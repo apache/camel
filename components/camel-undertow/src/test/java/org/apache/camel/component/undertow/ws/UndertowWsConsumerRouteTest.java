@@ -45,10 +45,17 @@ import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.ws.WebSocket;
 import org.asynchttpclient.ws.WebSocketListener;
 import org.asynchttpclient.ws.WebSocketUpgradeHandler;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowWsConsumerRouteTest.class);
 
     private static final String CONNECTED_PREFIX = "connected ";
     private static final String BROADCAST_MESSAGE_PREFIX = "broadcast ";
@@ -75,7 +82,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();
@@ -114,7 +121,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();
@@ -126,13 +133,13 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
         result.await(60, TimeUnit.SECONDS);
         List<Exchange> exchanges = result.getReceivedExchanges();
-        Assert.assertEquals(1, exchanges.size());
+        assertEquals(1, exchanges.size());
         Exchange exchange = result.getReceivedExchanges().get(0);
         assertNotNull(exchange.getIn().getHeader(UndertowConstants.CHANNEL));
         Object body = exchange.getIn().getBody();
-        Assert.assertTrue("body is " + body.getClass().getName(), body instanceof Reader);
+        assertTrue(body instanceof Reader, "body is " + body.getClass().getName());
         Reader r = (Reader) body;
-        Assert.assertEquals("Test", IOConverter.toString(r));
+        assertEquals("Test", IOConverter.toString(r));
 
         websocket.sendCloseFrame();
         c.close();
@@ -155,7 +162,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                     @Override
@@ -198,7 +205,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();
@@ -211,13 +218,13 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
         result.await(60, TimeUnit.SECONDS);
         List<Exchange> exchanges = result.getReceivedExchanges();
-        Assert.assertEquals(1, exchanges.size());
+        assertEquals(1, exchanges.size());
         Exchange exchange = result.getReceivedExchanges().get(0);
         assertNotNull(exchange.getIn().getHeader(UndertowConstants.CHANNEL));
         Object body = exchange.getIn().getBody();
-        Assert.assertTrue("body is " + body.getClass().getName(), body instanceof InputStream);
+        assertTrue(body instanceof InputStream, "body is " + body.getClass().getName());
         InputStream in = (InputStream) body;
-        Assert.assertArrayEquals(testmessage, IOConverter.toBytes(in));
+        assertArrayEquals(testmessage, IOConverter.toBytes(in));
 
         websocket.sendCloseFrame();
         c.close();
@@ -245,7 +252,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();
@@ -269,7 +276,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
                     @Override
                     public void onError(Throwable t) {
-                        t.printStackTrace();
+                        LOG.warn("Unhandled exception: {}", t.getMessage(), t);
                     }
 
                 }).build()).get();
@@ -286,7 +293,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         Set<String> actual = new HashSet<>();
         actual.add(exchanges.get(0).getIn().getBody(String.class));
         actual.add(exchanges.get(1).getIn().getBody(String.class));
-        Assert.assertEquals(new HashSet<>(Arrays.asList("Test1", "Test2")), actual);
+        assertEquals(new HashSet<>(Arrays.asList("Test1", "Test2")), actual);
 
         websocket1.sendCloseFrame();
         websocket2.sendCloseFrame();
@@ -302,9 +309,9 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.sendTextMessage("Test1");
         wsclient1.sendTextMessage("Test2");
 
-        Assert.assertTrue(wsclient1.await(10));
+        assertTrue(wsclient1.await(10));
 
-        Assert.assertEquals(Arrays.asList("Test1", "Test2"), wsclient1.getReceived(String.class));
+        assertEquals(Arrays.asList("Test1", "Test2"), wsclient1.getReceived(String.class));
 
         wsclient1.close();
     }
@@ -319,11 +326,11 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.sendTextMessage("Gambas");
         wsclient2.sendTextMessage("Calamares");
 
-        Assert.assertTrue(wsclient1.await(10));
-        Assert.assertTrue(wsclient2.await(10));
+        assertTrue(wsclient1.await(10));
+        assertTrue(wsclient2.await(10));
 
-        Assert.assertEquals(Arrays.asList("Gambas"), wsclient1.getReceived(String.class));
-        Assert.assertEquals(Arrays.asList("Calamares"), wsclient2.getReceived(String.class));
+        assertEquals(Arrays.asList("Gambas"), wsclient1.getReceived(String.class));
+        assertEquals(Arrays.asList("Calamares"), wsclient2.getReceived(String.class));
 
         wsclient1.close();
         wsclient2.close();
@@ -339,19 +346,19 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.sendTextMessage("Gambas");
         wsclient2.sendTextMessage("Calamares");
 
-        Assert.assertTrue(wsclient1.await(10));
-        Assert.assertTrue(wsclient2.await(10));
+        assertTrue(wsclient1.await(10));
+        assertTrue(wsclient2.await(10));
 
         List<String> received1 = wsclient1.getReceived(String.class);
-        Assert.assertEquals(2, received1.size());
+        assertEquals(2, received1.size());
 
-        Assert.assertTrue(received1.contains("Gambas"));
-        Assert.assertTrue(received1.contains("Calamares"));
+        assertTrue(received1.contains("Gambas"));
+        assertTrue(received1.contains("Calamares"));
 
         List<String> received2 = wsclient2.getReceived(String.class);
-        Assert.assertEquals(2, received2.size());
-        Assert.assertTrue(received2.contains("Gambas"));
-        Assert.assertTrue(received2.contains("Calamares"));
+        assertEquals(2, received2.size());
+        assertTrue(received2.contains("Gambas"));
+        assertTrue(received2.contains("Calamares"));
 
         wsclient1.close();
         wsclient2.close();
@@ -381,12 +388,13 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         for (Exchange exchange : exchanges) {
             final Message in = exchange.getIn();
             final String key = (String) in.getHeader(UndertowConstants.CONNECTION_KEY);
-            Assert.assertNotNull(key);
+            assertNotNull(key);
             final WebSocketChannel channel = in.getHeader(UndertowConstants.CHANNEL, WebSocketChannel.class);
-            Assert.assertNotNull(channel);
+            assertNotNull(channel);
             if (in.getHeader(UndertowConstants.EVENT_TYPE_ENUM, EventType.class) == EventType.ONOPEN) {
-                final WebSocketHttpExchange transportExchange = in.getHeader(UndertowConstants.EXCHANGE, WebSocketHttpExchange.class);
-                Assert.assertNotNull(transportExchange);
+                final WebSocketHttpExchange transportExchange
+                        = in.getHeader(UndertowConstants.EXCHANGE, WebSocketHttpExchange.class);
+                assertNotNull(transportExchange);
             }
             List<String> messages = connections.get(key);
             if (messages == null) {
@@ -404,12 +412,12 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         final List<String> expected1 = Arrays.asList(EventType.ONOPEN.name(), "Gambas", EventType.ONCLOSE.name());
         final List<String> expected2 = Arrays.asList(EventType.ONOPEN.name(), "Calamares", EventType.ONCLOSE.name());
 
-        Assert.assertEquals(2, connections.size());
+        assertEquals(2, connections.size());
         final Iterator<List<String>> it = connections.values().iterator();
         final List<String> actual1 = it.next();
-        Assert.assertTrue("actual " + actual1, actual1.equals(expected1) || actual1.equals(expected2));
+        assertTrue(actual1.equals(expected1) || actual1.equals(expected2), "actual " + actual1);
         final List<String> actual2 = it.next();
-        Assert.assertTrue("actual " + actual2, actual2.equals(expected1) || actual2.equals(expected2));
+        assertTrue(actual2.equals(expected1) || actual2.equals(expected2), "actual " + actual2);
 
     }
 
@@ -425,7 +433,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
         wsclient1.await(10);
         final String connectionKey1 = assertConnected(wsclient1);
-        Assert.assertNotNull(connectionKey1);
+        assertNotNull(connectionKey1);
         wsclient2.await(10);
         final String connectionKey2 = assertConnected(wsclient2);
         wsclient3.await(10);
@@ -439,11 +447,11 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
         wsclient1.sendTextMessage("private"); // this one should go to wsclient1 only
 
         wsclient2.await(10);
-        Assert.assertEquals(broadcastMsg, wsclient2.getReceived(String.class).get(0));
+        assertEquals(broadcastMsg, wsclient2.getReceived(String.class).get(0));
         wsclient3.await(10);
-        Assert.assertEquals(broadcastMsg, wsclient3.getReceived(String.class).get(0));
+        assertEquals(broadcastMsg, wsclient3.getReceived(String.class).get(0));
         wsclient1.await(10);
-        Assert.assertEquals("private", wsclient1.getReceived(String.class).get(0));
+        assertEquals("private", wsclient1.getReceived(String.class).get(0));
 
         wsclient1.close();
         wsclient2.close();
@@ -453,8 +461,7 @@ public class UndertowWsConsumerRouteTest extends BaseUndertowTest {
 
     private String assertConnected(TestClient wsclient1) {
         final String msg0 = wsclient1.getReceived(String.class).get(0);
-        Assert.assertTrue("'" + msg0 + "' should start with '" + CONNECTED_PREFIX + "'",
-                msg0.startsWith(CONNECTED_PREFIX));
+        assertTrue(msg0.startsWith(CONNECTED_PREFIX), "'" + msg0 + "' should start with '" + CONNECTED_PREFIX + "'");
         return msg0.substring(CONNECTED_PREFIX.length());
     }
 

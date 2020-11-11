@@ -23,11 +23,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.chemistry.opencmis.client.api.OperationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The CMIS consumer.
  */
 public class CMISConsumer extends ScheduledPollConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CMISConsumer.class);
 
     private final CMISSessionFacadeFactory sessionFacadeFactory;
     private CMISSessionFacade sessionFacade;
@@ -47,17 +51,17 @@ public class CMISConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         return getSessionFacade().poll(this);
     }
-    
+
     public OperationContext createOperationContext() throws Exception {
         return getSessionFacade().createOperationContext();
     }
 
     int sendExchangeWithPropsAndBody(Map<String, Object> properties, InputStream inputStream)
-        throws Exception {
+            throws Exception {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setHeaders(properties);
         exchange.getIn().setBody(inputStream);
-        log.debug("Polling node : {}", properties.get("cmis:name"));
+        LOG.debug("Polling node: {}", properties.get("cmis:name"));
         getProcessor().process(exchange);
         return 1;
     }

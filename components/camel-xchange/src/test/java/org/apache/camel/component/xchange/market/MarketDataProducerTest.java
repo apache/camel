@@ -17,46 +17,45 @@
 package org.apache.camel.component.xchange.market;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.marketdata.Ticker;
 
 import static org.apache.camel.component.xchange.XChangeConfiguration.HEADER_CURRENCY_PAIR;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MarketDataProducerTest extends CamelTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                
+            public void configure() {
+
                 from("direct:ticker")
-                    .to("xchange:binance?service=marketdata&method=ticker");
-                
+                        .to("xchange:binance?service=marketdata&method=ticker");
+
                 from("direct:tickerBTCUSDT")
-                    .to("xchange:binance?service=marketdata&method=ticker&currencyPair=BTC/USDT");
+                        .to("xchange:binance?service=marketdata&method=ticker&currencyPair=BTC/USDT");
             }
         };
     }
 
     @Test
-    public void testTicker() throws Exception {
-        
+    void testTicker() {
+
         Ticker ticker = template.requestBody("direct:ticker", CurrencyPair.EOS_ETH, Ticker.class);
-        Assert.assertNotNull("Ticker not null", ticker);
-        
+        assertNotNull(ticker, "Ticker not null");
+
         ticker = template.requestBodyAndHeader("direct:ticker", null, HEADER_CURRENCY_PAIR, CurrencyPair.EOS_ETH, Ticker.class);
-        Assert.assertNotNull("Ticker not null", ticker);
+        assertNotNull(ticker, "Ticker not null");
     }
 
     @Test
-    public void testTickerBTCUSDT() throws Exception {
-        
+    void testTickerBTCUSDT() {
+
         Ticker ticker = template.requestBody("direct:tickerBTCUSDT", null, Ticker.class);
-        Assert.assertNotNull("Ticker not null", ticker);
+        assertNotNull(ticker, "Ticker not null");
     }
 }
-

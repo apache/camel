@@ -18,7 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TryCatchFinallyOnExceptionIssueTest extends ContextTestSupport {
 
@@ -41,8 +41,10 @@ public class TryCatchFinallyOnExceptionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").onException(Exception.class).handled(true).redeliveryDelay(0).maximumRedeliveries(2).to("mock:error").end().doTry()
-                    .throwException(new IllegalArgumentException("Damn")).doFinally().to("mock:finally").end().to("mock:end");
+                from("seda:start").onException(Exception.class).handled(true).redeliveryDelay(0).maximumRedeliveries(2)
+                        .to("mock:error").end().doTry()
+                        .throwException(new IllegalArgumentException("Damn")).doFinally().to("mock:finally").end()
+                        .to("mock:end");
             }
         };
     }

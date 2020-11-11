@@ -19,7 +19,11 @@ package org.apache.camel.component.mina;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test with InOut however we want sometimes to not send a response.
@@ -55,18 +59,16 @@ public class MinaInOutWithForcedNoResponseTest extends BaseMinaTest {
                 port2 = getNextPort();
 
                 from("mina:tcp://localhost:" + port1 + "?sync=true")
-                    .choice()
+                        .choice()
                         .when(body().isEqualTo("Woodbine"))
-                            .transform(constant("Hello Chad"))
+                        .transform(constant("Hello Chad"))
                         .otherwise()
-                            .transform(constant(null));
+                        .transform(constant(null));
 
-                from("mina:tcp://localhost:" + port2 + "?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF").
-                    choice()
+                from("mina:tcp://localhost:" + port2 + "?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF").choice()
                         .when(body().isEqualTo("Woodbine"))
-                            .transform(constant("Hello Chad")).
-                        otherwise()
-                            .transform(constant(null));
+                        .transform(constant("Hello Chad")).otherwise()
+                        .transform(constant(null));
             }
         };
     }

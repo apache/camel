@@ -25,9 +25,11 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExceptionHandler;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -49,12 +51,12 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should pickup bye.txt file 2 times", 2, myReadLockStrategy.getCounter());
+        assertEquals(2, myReadLockStrategy.getCounter(), "Should pickup bye.txt file 2 times");
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myExceptionHandler", myExceptionHandler);
         jndi.bind("myReadLockStrategy", myReadLockStrategy);
         return jndi;
@@ -68,23 +70,23 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // to handle any IOException being thrown
                 onException(IOException.class).handled(true).log("IOException occurred due: ${exception.message}")
-                    // as we handle the exception we can send it to
-                    // direct:file-error,
-                    // where we could send out alerts or whatever we want
-                    .to("direct:file-error");
+                        // as we handle the exception we can send it to
+                        // direct:file-error,
+                        // where we could send out alerts or whatever we want
+                        .to("direct:file-error");
 
                 // special route that handles file errors
                 from("direct:file-error").log("File error route triggered to deal with exception ${exception?.class}")
-                    // as this is based on unit test just transform a message
-                    // and send it to a mock
-                    .transform().simple("Error ${exception.message}").to("mock:error");
+                        // as this is based on unit test just transform a message
+                        // and send it to a mock
+                        .transform().simple("Error ${exception.message}").to("mock:error");
 
                 // this is the file route that pickup files, notice how we use
                 // our custom exception handler on the consumer
                 // the exclusiveReadLockStrategy is only configured because this
                 // is from an unit test, so we use that to simulate exceptions
                 from("file:target/data/nospace?exclusiveReadLockStrategy=#myReadLockStrategy&exceptionHandler=#myExceptionHandler&initialDelay=0&delay=10")
-                    .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -92,8 +94,8 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     /**
-     * Custom {@link ExceptionHandler} to be used on the file consumer, to send
-     * exceptions to a Camel route, to let Camel deal with the error.
+     * Custom {@link ExceptionHandler} to be used on the file consumer, to send exceptions to a Camel route, to let
+     * Camel deal with the error.
      */
     private static class MyExceptionHandler implements ExceptionHandler {
 
@@ -140,12 +142,15 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
         private int counter;
 
         @Override
-        public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
+        public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint)
+                throws Exception {
             // noop
         }
 
         @Override
-        public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        public boolean acquireExclusiveReadLock(
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+                throws Exception {
             if (file.getFileNameOnly().equals("bye.txt")) {
                 if (counter++ == 0) {
                     // force an exception on acquire attempt for the bye.txt
@@ -158,17 +163,23 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
         }
 
         @Override
-        public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        public void releaseExclusiveReadLockOnAbort(
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+                throws Exception {
             // noop
         }
 
         @Override
-        public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        public void releaseExclusiveReadLockOnRollback(
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+                throws Exception {
             // noop
         }
 
         @Override
-        public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        public void releaseExclusiveReadLockOnCommit(
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+                throws Exception {
             // noop
         }
 

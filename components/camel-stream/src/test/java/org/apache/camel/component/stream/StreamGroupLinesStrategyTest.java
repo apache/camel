@@ -21,7 +21,9 @@ import java.util.List;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
 
@@ -55,10 +57,10 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
         assertMockEndpointsSatisfied();
 
         Object result = mock.getExchanges().get(0).getIn().getBody();
-        assertEquals("Get a wrong result.", "A" + LS + "B" + LS + "C" + LS, result);
+        assertEquals("A" + LS + "B" + LS + "C" + LS, result, "Get a wrong result.");
 
         Object result2 = mock.getExchanges().get(1).getIn().getBody();
-        assertEquals("Get a wrong result.", "D" + LS + "E" + LS + "F" + LS, result2);
+        assertEquals("D" + LS + "E" + LS + "F" + LS, result2, "Get a wrong result.");
     }
 
     @Override
@@ -66,7 +68,8 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("stream:file?fileName=target/stream/streamfile.txt&groupLines=3&groupStrategy=#myGroupStrategy").to("mock:result");
+                from("stream:file?fileName=target/stream/streamfile.txt&groupLines=3&groupStrategy=#myGroupStrategy")
+                        .to("mock:result");
             }
         };
     }

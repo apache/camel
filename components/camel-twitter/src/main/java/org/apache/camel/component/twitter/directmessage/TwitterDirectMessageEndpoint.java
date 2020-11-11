@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.twitter.directmessage;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -27,17 +28,19 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 
 /**
- * The Twitter Direct Message Component consumes/produces user's direct messages.
+ * Send and receive Twitter direct messages.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-directmessage", title = "Twitter Direct Message", syntax = "twitter-directmessage:user",
-    label = "api,social")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-directmessage", title = "Twitter Direct Message",
+             syntax = "twitter-directmessage:user",
+             category = { Category.CLOUD, Category.API, Category.SOCIAL, Category.CHAT })
 public class TwitterDirectMessageEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The user name to send a direct message. This will be ignored for consumer.")
     @Metadata(required = true)
     private String user;
 
-    public TwitterDirectMessageEndpoint(String uri, String remaining, TwitterDirectMessageComponent component, TwitterConfiguration properties) {
+    public TwitterDirectMessageEndpoint(String uri, String remaining, TwitterDirectMessageComponent component,
+                                        TwitterConfiguration properties) {
         super(uri, component, properties);
         this.user = remaining;
     }
@@ -49,8 +52,7 @@ public class TwitterDirectMessageEndpoint extends AbstractTwitterEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer answer = TwitterHelper.createConsumer(processor, this, new DirectMessageConsumerHandler(this));
-        return answer;
+        return TwitterHelper.createConsumer(processor, this, new DirectMessageConsumerHandler(this));
     }
 
 }

@@ -25,10 +25,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NettyHttpStreamTest extends BaseNettyTest {
-    public static final long SIZE =  10 * 256;
+    public static final long SIZE = 10 * 256;
 
     @Test
     public void testUploadStream() {
@@ -40,12 +43,12 @@ public class NettyHttpStreamTest extends BaseNettyTest {
         Exchange response = template.send("direct:upstream-call", request);
 
         //validate response success
-        assertFalse("ups", response.isFailed());
+        assertFalse(response.isFailed(), "ups");
 
         //validate request stream at server
         MockEndpoint mock = context.getEndpoint("mock:stream-size", MockEndpoint.class);
         Long requestSize = mock.getExchanges().get(0).getIn().getBody(Long.class);
-        assertEquals("request size not matching.", SIZE, requestSize.longValue());
+        assertEquals(SIZE, requestSize.longValue(), "request size not matching.");
     }
 
     @Test
@@ -58,10 +61,10 @@ public class NettyHttpStreamTest extends BaseNettyTest {
         Exchange response = template.send("direct:download-call", request);
 
         //validate response success
-        assertFalse("ups", response.isFailed());
+        assertFalse(response.isFailed(), "ups");
 
         //validate response stream at client
-        assertEquals("response size not matching.", SIZE, response.getIn().getBody(Long.class).longValue());
+        assertEquals(SIZE, response.getIn().getBody(Long.class).longValue(), "response size not matching.");
     }
 
     @Override
@@ -70,21 +73,21 @@ public class NettyHttpStreamTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("direct:upstream-call")
-                    .bean(Helper.class, "prepareStream")
-                    .to("netty-http:http://localhost:{{port}}/upstream?disableStreamCache=true")
-                    .log("get ${body}");
+                        .bean(Helper.class, "prepareStream")
+                        .to("netty-http:http://localhost:{{port}}/upstream?disableStreamCache=true")
+                        .log("get ${body}");
 
                 from("direct:download-call")
-                    .to("netty-http:http://localhost:{{port}}/downstream?disableStreamCache=true")
-                    .bean(Helper.class, "asyncProcessStream")
-                    .log("get ${body}");
+                        .to("netty-http:http://localhost:{{port}}/downstream?disableStreamCache=true")
+                        .bean(Helper.class, "asyncProcessStream")
+                        .log("get ${body}");
 
                 from("netty-http:http://0.0.0.0:{{port}}/upstream?disableStreamCache=true")
-                    .bean(Helper.class, "processStream")
-                    .to("mock:stream-size");
+                        .bean(Helper.class, "processStream")
+                        .to("mock:stream-size");
 
                 from("netty-http:http://0.0.0.0:{{port}}/downstream?disableStreamCache=true")
-                    .bean(Helper.class, "prepareStream");
+                        .bean(Helper.class, "prepareStream");
             }
         };
     }
@@ -104,7 +107,7 @@ final class Helper {
             total += read;
         }
 
-        exchange.getIn().setBody(new Long(total));
+        exchange.getIn().setBody(Long.valueOf(total));
     }
 
     public static CompletableFuture<Void> asyncProcessStream(Exchange exchange) {
@@ -145,7 +148,7 @@ class StreamWriter extends Thread {
         try {
             while (count < limit) {
                 long len = content.length < (limit - count) ? content.length : limit - count;
-                pos.write(content, 0, (int)len);
+                pos.write(content, 0, (int) len);
                 pos.flush();
                 count += len;
             }

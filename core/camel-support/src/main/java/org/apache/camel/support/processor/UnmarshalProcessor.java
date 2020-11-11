@@ -28,17 +28,19 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Unmarshals the body of the incoming message using the given
- * <a href="http://camel.apache.org/data-format.html">data format</a>
+ * Unmarshals the body of the incoming message using the given <a href="http://camel.apache.org/data-format.html">data
+ * format</a>
  */
-public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceable, CamelContextAware, IdAware {
+public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceable, CamelContextAware, IdAware, RouteIdAware {
     private String id;
+    private String routeId;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
 
@@ -63,7 +65,9 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
             if (result instanceof Exchange) {
                 if (result != exchange) {
                     // it's not allowed to return another exchange other than the one provided to dataFormat
-                    throw new RuntimeCamelException("The returned exchange " + result + " is not the same as " + exchange + " provided to the DataFormat");
+                    throw new RuntimeCamelException(
+                            "The returned exchange " + result + " is not the same as " + exchange
+                                                    + " provided to the DataFormat");
                 }
             } else if (result instanceof Message) {
                 // the dataformat has probably set headers, attachments, etc. so let's use it as the outbound payload
@@ -103,6 +107,16 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

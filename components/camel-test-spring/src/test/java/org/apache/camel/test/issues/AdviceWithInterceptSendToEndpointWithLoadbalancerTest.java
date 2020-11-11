@@ -16,9 +16,9 @@
  */
 package org.apache.camel.test.issues;
 
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -28,7 +28,8 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Camel
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/test/issues/AdviceWithInterceptSendToEndpointWithLoadbalancerTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/test/issues/AdviceWithInterceptSendToEndpointWithLoadbalancerTest.xml");
     }
 
     @Override
@@ -39,10 +40,10 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Camel
     @Test
     public void testSimpleMultipleAdvice() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new RouteBuilder() {
+        AdviceWith.adviceWith(route, context, new RouteBuilder() {
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:end1")
-                    .skipSendToOriginalEndpoint()
+                        .skipSendToOriginalEndpoint()
                         .to("mock:end");
             }
         });
@@ -61,7 +62,7 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Camel
         @Override
         public void configure() throws Exception {
             from("direct:start")
-                .loadBalance().failover()
+                    .loadBalance().failover()
                     .to("seda:end1", "seda:end2");
         }
     }

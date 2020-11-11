@@ -23,8 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for the idempotent=true option.
@@ -34,7 +37,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     private String uri = "file://target/data/idempotent/?idempotent=true&move=done/${file:name}&initialDelay=0&delay=10";
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/idempotent");
         super.setUp();
@@ -58,7 +61,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // reset mock and set new expectations
         mock.reset();
@@ -77,8 +80,8 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         FileEndpoint fe = context.getEndpoint(uri, FileEndpoint.class);
         assertNotNull(fe);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)fe.getInProgressRepository();
-        assertEquals("Should be no in-progress files", 0, repo.getCacheSize());
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) fe.getInProgressRepository();
+        assertEquals(0, repo.getCacheSize(), "Should be no in-progress files");
     }
 
 }

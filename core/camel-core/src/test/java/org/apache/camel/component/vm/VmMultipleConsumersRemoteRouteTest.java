@@ -23,10 +23,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class VmMultipleConsumersRemoteRouteTest extends Assert {
+public class VmMultipleConsumersRemoteRouteTest {
 
     @Test
     public void testVmMultipleConsumersRemoteRoute() throws Exception {
@@ -57,8 +56,8 @@ public class VmMultipleConsumersRemoteRouteTest extends Assert {
         camelContext.getRouteController().stopRoute("route2");
         camelContext.removeRoute("route2");
 
-        MockEndpoint mock1 = (MockEndpoint)camelContext.getEndpoint("mock:route1");
-        MockEndpoint mock2 = (MockEndpoint)camelContext.getEndpoint("mock:route2");
+        MockEndpoint mock1 = (MockEndpoint) camelContext.getEndpoint("mock:route1");
+        MockEndpoint mock2 = (MockEndpoint) camelContext.getEndpoint("mock:route2");
         mock1.expectedMessageCount(100);
         mock2.expectedMessageCount(0);
 

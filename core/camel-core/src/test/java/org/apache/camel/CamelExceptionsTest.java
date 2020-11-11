@@ -20,7 +20,9 @@ import java.util.Date;
 
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CamelExceptionsTest extends ContextTestSupport {
 
@@ -38,7 +40,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         Expression exp = ExpressionBuilder.constantExpression("foo");
         Exchange exchange = new DefaultExchange(context);
 
-        ExpressionEvaluationException e = new ExpressionEvaluationException(exp, exchange, new IllegalArgumentException("Damn"));
+        ExpressionEvaluationException e
+                = new ExpressionEvaluationException(exp, exchange, new IllegalArgumentException("Damn"));
         assertSame(exchange, e.getExchange());
         assertSame(exp, e.getExpression());
         assertNotNull(e.getCause());
@@ -74,7 +77,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertSame(exchange, e2.getExchange());
         assertEquals(Integer.class, e2.getType());
 
-        InvalidPayloadRuntimeException e3 = new InvalidPayloadRuntimeException(exchange, Integer.class, exchange.getIn(), new IllegalArgumentException("Damn"));
+        InvalidPayloadRuntimeException e3 = new InvalidPayloadRuntimeException(
+                exchange, Integer.class, exchange.getIn(), new IllegalArgumentException("Damn"));
         assertSame(exchange, e3.getExchange());
         assertEquals(Integer.class, e3.getType());
     }
@@ -306,7 +310,8 @@ public class CamelExceptionsTest extends ContextTestSupport {
 
     @Test
     public void testFailedToStartRouteException() {
-        FailedToStartRouteException e = new FailedToStartRouteException("myRoute", "Forced error", new IllegalArgumentException("Forced"));
+        FailedToStartRouteException e
+                = new FailedToStartRouteException("myRoute", "Forced error", new IllegalArgumentException("Forced"));
         assertNotNull(e.getMessage());
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
     }
@@ -321,7 +326,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         NoTypeConversionAvailableException e2 = new NoTypeConversionAvailableException(null, Date.class);
         assertNull(e2.getValue());
         assertEquals(Date.class, e2.getToType());
-        assertNull(null, e2.getFromType());
+        assertNull(e2.getFromType());
     }
 
     @Test

@@ -46,7 +46,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
 
     @Override
     public JcloudsComputeEndpoint getEndpoint() {
-        return (JcloudsComputeEndpoint)super.getEndpoint();
+        return (JcloudsComputeEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -54,7 +54,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         String operation = getOperation(exchange);
 
         if (operation == null) {
-            throw new CamelExchangeException("Operation must be specified in the endpoint URI or as a property on the exchange.", exchange);
+            throw new CamelExchangeException(
+                    "Operation must be specified in the endpoint URI or as a property on the exchange.", exchange);
         }
 
         if (JcloudsConstants.LIST_NODES.equals(operation)) {
@@ -88,7 +89,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         String hardwareId = getHardwareId(exchange);
 
         if (ObjectHelper.isEmpty(group)) {
-            throw new CamelExchangeException("Group must be specific in the URI or as exchange property for the destroy node operation.", exchange);
+            throw new CamelExchangeException(
+                    "Group must be specific in the URI or as exchange property for the destroy node operation.", exchange);
         }
         TemplateBuilder builder = computeService.templateBuilder();
         builder.any();
@@ -130,11 +132,14 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         if (credentials == null) {
             execResponse = computeService.runScriptOnNode(nodeId, script);
         } else {
-            execResponse = computeService.runScriptOnNode(nodeId, script, RunScriptOptions.Builder.overrideLoginCredentials(credentials).runAsRoot(false));
+            execResponse = computeService.runScriptOnNode(nodeId, script,
+                    RunScriptOptions.Builder.overrideLoginCredentials(credentials).runAsRoot(false));
         }
 
         if (execResponse == null) {
-            throw new CamelExchangeException("Failed to receive response for run script operation on node: " + nodeId + " using script: " + script, exchange);
+            throw new CamelExchangeException(
+                    "Failed to receive response for run script operation on node: " + nodeId + " using script: " + script,
+                    exchange);
         }
 
         exchange.setProperty(JcloudsConstants.RUN_SCRIPT_ERROR, execResponse.getError());
@@ -174,7 +179,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         Set<? extends Hardware> hardwareProfiles = computeService.listHardwareProfiles();
         exchange.getOut().setBody(hardwareProfiles);
     }
-    
+
     /**
      * Reboot the node with the specified nodeId.
      */
@@ -182,7 +187,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         Predicate<NodeMetadata> predicate = getNodePredicate(exchange);
         computeService.rebootNodesMatching(predicate);
     }
-    
+
     /**
      * Suspend the node with the specified nodeId.
      */
@@ -190,7 +195,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         Predicate<NodeMetadata> predicate = getNodePredicate(exchange);
         computeService.suspendNodesMatching(predicate);
     }
-    
+
     /**
      * Suspend the node with the specified nodeId.
      */
@@ -200,8 +205,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     }
 
     /**
-     * Returns the required {@ComputeMetadata} {@link Predicate} for the Exhcnage.
-     * The predicate can be used for filtering.
+     * Returns the required {@ComputeMetadata} {@link Predicate} for the Exhcnage. The predicate can be used for
+     * filtering.
      */
     public Predicate<ComputeMetadata> getComputePredicate(final Exchange exchange) {
         final String nodeId = getNodeId(exchange);
@@ -227,8 +232,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     }
 
     /**
-     * Returns the required {@ComputeMetadata} {@link Predicate} for the Exhcnage.
-     * The predicate can be used for filtering.
+     * Returns the required {@ComputeMetadata} {@link Predicate} for the Exhcnage. The predicate can be used for
+     * filtering.
      */
     public Predicate<NodeMetadata> getNodePredicate(Exchange exchange) {
         final String nodeId = getNodeId(exchange);
@@ -275,25 +280,25 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         NodeMetadata.Status nodeState = null;
         String state = getEndpoint().getNodeState();
         if (ObjectHelper.isNotEmpty(state)) {
-            nodeState =  NodeMetadata.Status.valueOf(state);
+            nodeState = NodeMetadata.Status.valueOf(state);
         }
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(JcloudsConstants.NODE_STATE))) {
             Object stateHeader = exchange.getIn().getHeader(JcloudsConstants.NODE_STATE);
             if (stateHeader == null) {
                 nodeState = null;
-            } else if (stateHeader instanceof  NodeMetadata.Status) {
+            } else if (stateHeader instanceof NodeMetadata.Status) {
                 nodeState = (NodeMetadata.Status) stateHeader;
             } else {
-                nodeState =  NodeMetadata.Status.valueOf(String.valueOf(stateHeader));
+                nodeState = NodeMetadata.Status.valueOf(String.valueOf(stateHeader));
             }
         }
         return nodeState;
     }
 
-
     /**
-     * Retrieves the image id from the URI or from the exchange properties. The property will take precedence over the URI.
+     * Retrieves the image id from the URI or from the exchange properties. The property will take precedence over the
+     * URI.
      */
     protected String getImageId(Exchange exchange) {
         String imageId = getEndpoint().getImageId();
@@ -305,7 +310,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     }
 
     /**
-     * Retrieves the hardware id from the URI or from the exchange headers. The header will take precedence over the URI.
+     * Retrieves the hardware id from the URI or from the exchange headers. The header will take precedence over the
+     * URI.
      */
     protected String getHardwareId(Exchange exchange) {
         String hardwareId = getEndpoint().getHardwareId();
@@ -317,7 +323,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     }
 
     /**
-     * Retrieves the location id from the URI or from the exchange headers. The header will take precedence over the URI.
+     * Retrieves the location id from the URI or from the exchange headers. The header will take precedence over the
+     * URI.
      */
     protected String getLocationId(Exchange exchange) {
         String locationId = getEndpoint().getLocationId();

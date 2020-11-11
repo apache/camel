@@ -22,7 +22,6 @@ import io.fabric8.kubernetes.api.model.DoneableServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccountList;
 import io.fabric8.kubernetes.client.Watch;
-import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -46,7 +45,7 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint)super.getEndpoint();
+        return (AbstractKubernetesEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -61,28 +60,28 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
         switch (operation) {
 
-        case KubernetesOperations.LIST_SERVICE_ACCOUNTS:
-            doList(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SERVICE_ACCOUNTS:
+                doList(exchange, operation);
+                break;
 
-        case KubernetesOperations.LIST_SERVICE_ACCOUNTS_BY_LABELS_OPERATION:
-            doListServiceAccountsByLabels(exchange, operation);
-            break;
+            case KubernetesOperations.LIST_SERVICE_ACCOUNTS_BY_LABELS_OPERATION:
+                doListServiceAccountsByLabels(exchange, operation);
+                break;
 
-        case KubernetesOperations.GET_SECRET_OPERATION:
-            doGetServiceAccount(exchange, operation);
-            break;
+            case KubernetesOperations.GET_SECRET_OPERATION:
+                doGetServiceAccount(exchange, operation);
+                break;
 
-        case KubernetesOperations.CREATE_SERVICE_ACCOUNT_OPERATION:
-            doCreateServiceAccount(exchange, operation);
-            break;
+            case KubernetesOperations.CREATE_SERVICE_ACCOUNT_OPERATION:
+                doCreateServiceAccount(exchange, operation);
+                break;
 
-        case KubernetesOperations.DELETE_SERVICE_ACCOUNT_OPERATION:
-            doDeleteServiceAccount(exchange, operation);
-            break;
+            case KubernetesOperations.DELETE_SERVICE_ACCOUNT_OPERATION:
+                doDeleteServiceAccount(exchange, operation);
+                break;
 
-        default:
-            throw new IllegalArgumentException("Unsupported operation " + operation);
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + operation);
         }
     }
 
@@ -94,7 +93,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
 
     protected void doListServiceAccountsByLabels(Exchange exchange, String operation) throws Exception {
         ServiceAccountList saList = null;
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
+        Map<String, String> labels
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
             NonNamespaceOperation<ServiceAccount, ServiceAccountList, DoneableServiceAccount, Resource<ServiceAccount, DoneableServiceAccount>> serviceAccounts;
@@ -104,8 +104,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             }
             saList = serviceAccounts.list();
         } else {
-            FilterWatchListMultiDeletable<ServiceAccount, ServiceAccountList, Boolean, Watch, Watcher<ServiceAccount>> serviceAccounts;
-            serviceAccounts = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace();
+            FilterWatchListMultiDeletable<ServiceAccount, ServiceAccountList, Boolean, Watch> serviceAccounts
+                    = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 serviceAccounts.withLabel(entry.getKey(), entry.getValue());
             }
@@ -137,7 +137,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
     protected void doCreateServiceAccount(Exchange exchange, String operation) throws Exception {
         ServiceAccount sa = null;
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        ServiceAccount saToCreate = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, ServiceAccount.class);
+        ServiceAccount saToCreate
+                = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNT, ServiceAccount.class);
         if (ObjectHelper.isEmpty(namespaceName)) {
             LOG.error("Create a specific Service Account require specify a namespace name");
             throw new IllegalArgumentException("Create a specific Service Account require specify a namespace name");
@@ -163,7 +164,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
             LOG.error("Delete a specific Service Account require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific Service Account require specify a namespace name");
         }
-        boolean saDeleted = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).delete();
+        boolean saDeleted
+                = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName).withName(saName).delete();
 
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(saDeleted);

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.maven.config;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -27,12 +25,12 @@ import io.debezium.config.Configuration;
 import io.debezium.config.Field;
 import io.debezium.relational.history.FileDatabaseHistory;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
-import org.apache.camel.maven.packaging.srcgen.Annotation;
-import org.apache.camel.maven.packaging.srcgen.JavaClass;
-import org.apache.camel.maven.packaging.srcgen.Method;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.tooling.util.srcgen.Annotation;
+import org.apache.camel.tooling.util.srcgen.JavaClass;
+import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.source.SourceConnector;
@@ -50,7 +48,8 @@ public final class ConnectorConfigGenerator {
 
     private final JavaClass javaClass = new JavaClass(getClass().getClassLoader());
 
-    private ConnectorConfigGenerator(final SourceConnector connector, final Map<String, ConnectorConfigField> dbzConfigFields, final String connectorName) {
+    private ConnectorConfigGenerator(final SourceConnector connector, final Map<String, ConnectorConfigField> dbzConfigFields,
+                                     final String connectorName) {
         this.connector = connector;
         this.dbzConfigFields = dbzConfigFields;
         this.connectorName = connectorName;
@@ -63,15 +62,19 @@ public final class ConnectorConfigGenerator {
         return create(connector, dbzConfigClass, Collections.emptySet(), Collections.emptyMap());
     }
 
-    public static ConnectorConfigGenerator create(final SourceConnector connector, final Class<?> dbzConfigClass, final Set<String> requiredFields) {
+    public static ConnectorConfigGenerator create(
+            final SourceConnector connector, final Class<?> dbzConfigClass, final Set<String> requiredFields) {
         return create(connector, dbzConfigClass, requiredFields, Collections.emptyMap());
     }
 
-    public static ConnectorConfigGenerator create(final SourceConnector connector, final Class<?> dbzConfigClass, final Map<String, Object> overridenDefaultValues) {
+    public static ConnectorConfigGenerator create(
+            final SourceConnector connector, final Class<?> dbzConfigClass, final Map<String, Object> overridenDefaultValues) {
         return create(connector, dbzConfigClass, Collections.emptySet(), overridenDefaultValues);
     }
 
-    public static ConnectorConfigGenerator create(final SourceConnector connector, final Class<?> dbzConfigClass, final Set<String> requiredFields, final Map<String, Object> overridenDefaultValues) {
+    public static ConnectorConfigGenerator create(
+            final SourceConnector connector, final Class<?> dbzConfigClass, final Set<String> requiredFields,
+            final Map<String, Object> overridenDefaultValues) {
         ObjectHelper.notNull(connector, "connector");
         ObjectHelper.notNull(dbzConfigClass, "dbzConfigClass");
         ObjectHelper.notNull(requiredFields, "requiredFields");
@@ -79,7 +82,8 @@ public final class ConnectorConfigGenerator {
 
         // check if config class is correct
         if (!isConfigClassValid(dbzConfigClass)) {
-            throw new IllegalArgumentException(String.format("Class '%s' is not valid Debezium configuration class", dbzConfigClass.getName()));
+            throw new IllegalArgumentException(
+                    String.format("Class '%s' is not valid Debezium configuration class", dbzConfigClass.getName()));
         }
 
         final ConfigDef configDef = connector.config();
@@ -88,7 +92,10 @@ public final class ConnectorConfigGenerator {
         // get the name of the connector from the configClass
         final String connectorName = dbzConfigClass.getSimpleName().replace(CONNECTOR_SUFFIX, "");
 
-        return new ConnectorConfigGenerator(connector, ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(configDef, dbzConfigClass, requiredFields, overridenDefaultValues), connectorName);
+        return new ConnectorConfigGenerator(
+                connector, ConnectorConfigFieldsFactory.createConnectorFieldsAsMap(configDef, dbzConfigClass, requiredFields,
+                        overridenDefaultValues),
+                connectorName);
     }
 
     public String getConnectorName() {
@@ -101,12 +108,6 @@ public final class ConnectorConfigGenerator {
 
     public String getPackageName() {
         return PACKAGE_NAME;
-    }
-
-    public void printGeneratedClass(final OutputStream outputStream) {
-        final PrintStream printStreams = new PrintStream(outputStream, true);
-        printStreams.println(printClassAsString());
-        printStreams.close();
     }
 
     public String printClassAsString() {
@@ -173,7 +174,7 @@ public final class ConnectorConfigGenerator {
         // connector fields
         dbzConfigFields.forEach((fieldName, fieldConfig) -> {
             if (!isFieldInternalOrDeprecated(fieldConfig)) {
-                final org.apache.camel.maven.packaging.srcgen.Field field = javaClass.addField()
+                final org.apache.camel.tooling.util.srcgen.Field field = javaClass.addField()
                         .setName(fieldConfig.getFieldName())
                         .setType(fieldConfig.getRawType())
                         .setPrivate();
@@ -188,7 +189,18 @@ public final class ConnectorConfigGenerator {
 
                 // especial case for database.server.id, we don't set the default value, we let debezium do that
                 if (fieldConfig.getDefaultValue() != null && !fieldConfig.getRawName().equals("database.server.id")) {
-                    annotation.setLiteralValue("defaultValue", String.format("\"%s\"", fieldConfig.getDefaultValue()));
+                    if (fieldConfig.isTimeField()) {
+                        final long defaultValueAsLong = Long.parseLong(fieldConfig.getDefaultValueAsString());
+                        annotation.setLiteralValue("defaultValue",
+                                String.format("\"%s\"", ConnectorConfigGeneratorUtils.toTimeAsString(defaultValueAsLong)));
+                    } else {
+                        annotation.setLiteralValue("defaultValue", String.format("\"%s\"", fieldConfig.getDefaultValue()));
+                    }
+                }
+
+                // especial case for Duration field
+                if (fieldConfig.isTimeField()) {
+                    annotation.setLiteralValue("javaType", "\"java.time.Duration\"");
                 }
 
                 if (fieldConfig.isRequired()) {
@@ -213,7 +225,9 @@ public final class ConnectorConfigGenerator {
                 String description = fieldConfig.getDescription();
 
                 if (description == null || description.isEmpty()) {
-                    description = String.format("Description is not available here, please check Debezium website for corresponding key '%s' description.", fieldName);
+                    description = String.format(
+                            "Description is not available here, please check Debezium website for corresponding key '%s' description.",
+                            fieldName);
                 }
 
                 method.getJavaDoc().setFullText(description);
@@ -241,7 +255,8 @@ public final class ConnectorConfigGenerator {
         stringBuilder.append("final Configuration.Builder configBuilder = Configuration.create();\n\n");
         dbzConfigFields.forEach((fieldName, fieldConfig) -> {
             if (!isFieldInternalOrDeprecated(fieldConfig)) {
-                stringBuilder.append(String.format("addPropertyIfNotNull(configBuilder, \"%s\", %s);\n", fieldConfig.getRawName(), fieldConfig.getFieldName()));
+                stringBuilder.append(String.format("addPropertyIfNotNull(configBuilder, \"%s\", %s);\n",
+                        fieldConfig.getRawName(), fieldConfig.getFieldName()));
             }
         });
         stringBuilder.append("\n");
@@ -271,7 +286,9 @@ public final class ConnectorConfigGenerator {
         dbzConfigFields.forEach((fieldName, fieldConfig) -> {
             if (!isFieldInternalOrDeprecated(fieldConfig) && fieldConfig.isRequired()) {
                 stringBuilder.append(String.format("if (isFieldValueNotSet(%s)) {\n", fieldConfig.getFieldName()));
-                stringBuilder.append(String.format("\treturn ConfigurationValidation.notValid(\"Required field '%s' must be set.\");\n}\n", fieldConfig.getFieldName()));
+                stringBuilder.append(
+                        String.format("\treturn ConfigurationValidation.notValid(\"Required field '%s' must be set.\");\n}\n",
+                                fieldConfig.getFieldName()));
             }
         });
 

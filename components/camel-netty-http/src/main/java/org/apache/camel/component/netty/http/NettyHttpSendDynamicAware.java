@@ -16,27 +16,10 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.http.common.HttpSendDynamicAware;
+import org.apache.camel.http.base.HttpSendDynamicAware;
 import org.apache.camel.spi.annotations.SendDynamic;
 
 @SendDynamic("netty-http")
 public class NettyHttpSendDynamicAware extends HttpSendDynamicAware {
 
-    @Override
-    protected String[] parseUri(DynamicAwareEntry entry) {
-        // camel-netty parses the uri a bit differently than camel-http-common base class
-
-        String scheme = entry.getProperties().get("protocol");
-        String host = entry.getProperties().get("host");
-        String port = entry.getProperties().get("port");
-        String path = entry.getProperties().get("path");
-
-        String baseUrl = scheme + "://" + host;
-        if (port != null) {
-            baseUrl += ":" + port;
-        }
-        return new String[]{baseUrl, path};
-    }
-
 }
-

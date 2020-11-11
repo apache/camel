@@ -29,6 +29,8 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumer to read data from a database.
@@ -42,6 +44,8 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
         DataHolder() {
         }
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger(MyBatisConsumer.class);
 
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
@@ -70,7 +74,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
         // poll data from the database
         MyBatisEndpoint endpoint = getEndpoint();
-        log.trace("Polling: {}", endpoint);
+        LOG.trace("Polling: {}", endpoint);
         List<?> data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
 
         // create a list of exchange objects with the data
@@ -105,7 +109,8 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total + " messages in this poll.");
+            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
+                    maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 
@@ -124,7 +129,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
             pendingExchanges = total - index - 1;
 
             // process the current exchange
-            log.debug("Processing exchange: {} with properties: {}", exchange, exchange.getProperties());
+            LOG.debug("Processing exchange: {} with properties: {}", exchange, exchange.getProperties());
             getProcessor().process(exchange);
 
             try {
@@ -166,16 +171,14 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Gets the statement(s) to run after successful processing.
-     * Use comma to separate multiple statements.
+     * Gets the statement(s) to run after successful processing. Use comma to separate multiple statements.
      */
     public String getOnConsume() {
         return onConsume;
     }
 
     /**
-     * Sets the statement to run after successful processing.
-     * Use comma to separate multiple statements.
+     * Sets the statement to run after successful processing. Use comma to separate multiple statements.
      */
     public void setOnConsume(String onConsume) {
         this.onConsume = onConsume;
@@ -189,8 +192,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Sets how resultset should be delivered to route.
-     * Indicates delivery as either a list or individual object.
+     * Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object.
      * defaults to true.
      */
     public void setUseIterator(boolean useIterator) {
@@ -205,8 +207,8 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     }
 
     /**
-     * Sets whether empty resultset should be allowed to be sent to the next hop.
-     * defaults to false. So the empty resultset will be filtered out.
+     * Sets whether empty resultset should be allowed to be sent to the next hop. defaults to false. So the empty
+     * resultset will be filtered out.
      */
     public void setRouteEmptyResultSet(boolean routeEmptyResultSet) {
         this.routeEmptyResultSet = routeEmptyResultSet;

@@ -39,7 +39,6 @@ public class TelegramMockRoutes extends RouteBuilder {
     private final Map<String, MockProcessor<?>> mocks = new LinkedHashMap<>();
 
     public TelegramMockRoutes(int port) {
-        super();
         this.port = port;
     }
 
@@ -51,9 +50,9 @@ public class TelegramMockRoutes extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        mocks.entrySet().stream().forEach(en -> {
-            from("netty-http:http://localhost:" + port + "/botmock-token/" + en.getKey() + "?httpMethodRestrict=" + en.getValue().method)
-                .process(en.getValue());
+        mocks.forEach((key, value) -> {
+            from("netty-http:http://localhost:" + port + "/botmock-token/" + key + "?httpMethodRestrict=" + value.method)
+                    .process(value);
         });
 
     }
@@ -84,7 +83,8 @@ public class TelegramMockRoutes extends RouteBuilder {
                     final String rawBody = m.getBody(String.class);
                     LOG.debug("Recording {} {} body {}", method, path, rawBody);
                     @SuppressWarnings("unchecked")
-                    final T body = returnType != String.class ? (T) new ObjectMapper().readValue(rawBody, returnType) : (T) rawBody;
+                    final T body
+                            = returnType != String.class ? (T) new ObjectMapper().readValue(rawBody, returnType) : (T) rawBody;
                     recordedMessages.add(body);
                     final byte[] bytes = responseBodies[responseIndex].getBytes(StandardCharsets.UTF_8);
                     m.setBody(bytes);
@@ -99,6 +99,7 @@ public class TelegramMockRoutes extends RouteBuilder {
                 recordedMessages.clear();
             }
         }
+
         public List<T> getRecordedMessages() {
             synchronized (lock) {
                 return new ArrayList<T>(recordedMessages);
@@ -108,7 +109,7 @@ public class TelegramMockRoutes extends RouteBuilder {
         public List<T> awaitRecordedMessages(int count, long timeoutMillis) {
             return Awaitility.await()
                     .atMost(timeoutMillis, TimeUnit.MILLISECONDS)
-                    .until(() -> getRecordedMessages(), msgs -> msgs.size() >= count);
+                    .until(this::getRecordedMessages, msgs -> msgs.size() >= count);
         }
 
     }

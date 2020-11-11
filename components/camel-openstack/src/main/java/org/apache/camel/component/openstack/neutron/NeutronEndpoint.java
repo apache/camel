@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openstack.neutron;
 
+import org.apache.camel.Category;
 import org.apache.camel.Producer;
 import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
 import org.apache.camel.component.openstack.neutron.producer.NetworkProducer;
@@ -29,9 +30,10 @@ import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
 /**
- * The openstack-neutron component allows messages to be sent to an OpenStack network services.
+ * Access OpenStack Neutron for network services.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-neutron", title = "OpenStack Neutron", syntax = "openstack-neutron:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-neutron", title = "OpenStack Neutron",
+             syntax = "openstack-neutron:host", category = { Category.CLOUD, Category.PAAS }, producerOnly = true)
 public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "networks,subnets,ports,routers")
@@ -71,16 +73,16 @@ public class NeutronEndpoint extends AbstractOpenstackEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         switch (getSubsystem()) {
-        case NeutronConstants.NEUTRON_NETWORK_SUBSYSTEM:
-            return new NetworkProducer(this, createClient());
-        case NeutronConstants.NEUTRON_SUBNETS_SYSTEM:
-            return new SubnetProducer(this, createClient());
-        case NeutronConstants.NEUTRON_PORT_SYSTEM:
-            return new PortProducer(this, createClient());
-        case NeutronConstants.NEUTRON_ROUTER_SYSTEM:
-            return new RouterProducer(this, createClient());
-        default:
-            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+            case NeutronConstants.NEUTRON_NETWORK_SUBSYSTEM:
+                return new NetworkProducer(this, createClient());
+            case NeutronConstants.NEUTRON_SUBNETS_SYSTEM:
+                return new SubnetProducer(this, createClient());
+            case NeutronConstants.NEUTRON_PORT_SYSTEM:
+                return new PortProducer(this, createClient());
+            case NeutronConstants.NEUTRON_ROUTER_SYSTEM:
+                return new RouterProducer(this, createClient());
+            default:
+                throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
         }
     }
 
@@ -173,7 +175,7 @@ public class NeutronEndpoint extends AbstractOpenstackEndpoint {
     }
 
     /**
-     *OpenStack configuration
+     * OpenStack configuration
      */
     public void setConfig(Config config) {
         this.config = config;

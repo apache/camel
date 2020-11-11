@@ -16,24 +16,20 @@
  */
 package org.apache.camel.component.servlet.rest;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
-import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RestApiMatchUriServletTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testApiDocGet() throws Exception {
-        WebRequest req = new GetMethodWebRequest(CONTEXT_URL + "/services/api-doc");
+        WebRequest req = new GetMethodWebRequest(contextUrl + "/services/api-doc");
         req.setHeaderField("Accept", "application/json");
-        ServletUnitClient client = newClient();
-        client.setExceptionsThrownOnErrorStatus(false);
-        WebResponse response = client.getResponse(req);
+        WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
 
@@ -46,14 +42,15 @@ public class RestApiMatchUriServletTest extends ServletCamelRouterTestSupport {
             @Override
             public void configure() throws Exception {
                 restConfiguration().component("servlet")
-                    .apiContextPath("/api-doc")
-                    .endpointProperty("matchOnUriPrefix", "true")
-                    .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3")
-                    .bindingMode(RestBindingMode.auto);
+                        .apiContextPath("/api-doc")
+                        .endpointProperty("matchOnUriPrefix", "true")
+                        .apiProperty("cors", "true").apiProperty("api.title", "The hello rest thing")
+                        .apiProperty("api.version", "1.2.3")
+                        .bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/json").type(UserPojo.class)
+                        .post("new").consumes("application/json").type(UserPojo.class)
                         .to("mock:input");
             }
         };

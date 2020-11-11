@@ -20,14 +20,14 @@ import java.util.ArrayList;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.impl.matchers.GroupMatcher;
 
 /**
- * This test the  CronTrigger as a timer endpoint in a route.
+ * This test the CronTrigger as a timer endpoint in a route.
  */
 public class QuartzManuallyTriggerJobTest extends BaseQuartzTest {
 

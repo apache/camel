@@ -20,7 +20,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
 
@@ -34,8 +38,8 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
     public void testJettyProducerFail() throws Exception {
         Exchange out = fluentTemplate.withHeader("id", "666").to("direct:start").request(Exchange.class);
         assertNotNull(out);
-        assertFalse("Should not have thrown exception", out.isFailed());
-        assertEquals(500, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertFalse(out.isFailed(), "Should not have thrown exception");
+        assertEquals(500, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
 
     @Override
@@ -44,7 +48,8 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure to use localhost with the given port
-                restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("throwExceptionOnFailure", "false");
+                restConfiguration().component("jetty").host("localhost").port(getPort())
+                        .endpointProperty("throwExceptionOnFailure", "false");
 
                 from("direct:start").to("rest:get:users/{id}/basic");
 
@@ -55,7 +60,7 @@ public class JettyRestProducerThrowExceptionOnErrorTest extends BaseJettyTest {
                         if ("666".equals(id)) {
                             throw new IllegalArgumentException("Bad id number");
                         }
-                        exchange.getOut().setBody(id + ";Donald Duck");
+                        exchange.getMessage().setBody(id + ";Donald Duck");
                     }
                 });
             }

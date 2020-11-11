@@ -18,9 +18,9 @@ package org.apache.camel.component.spring.batch;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,10 +32,10 @@ public class SpringBatchJobLauncherTest extends CamelSpringTestSupport {
     @EndpointInject("mock:jobExecutionEventsQueue")
     MockEndpoint jobExecutionEventsQueueEndpoint;
 
-    String[] inputMessages = new String[]{"foo", "bar", "baz", null};
+    String[] inputMessages = new String[] { "foo", "bar", "baz", null };
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -64,6 +64,7 @@ public class SpringBatchJobLauncherTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/batch/springBatchtestJobLauncherContext.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/spring/batch/springBatchtestJobLauncherContext.xml");
     }
 }

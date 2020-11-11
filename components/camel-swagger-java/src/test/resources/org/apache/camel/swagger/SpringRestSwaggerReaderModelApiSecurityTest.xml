@@ -27,6 +27,9 @@
   <!-- use a dummy rest consumer factory for the rest engine -->
   <bean id="dummy-rest" class="org.apache.camel.swagger.DummyRestConsumerFactory"/>
 
+  <!-- dummy -->
+  <bean id="userService" class="java.lang.Object"/>
+
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <rest path="/user" tag="dude" consumes="application/json" produces="application/json">

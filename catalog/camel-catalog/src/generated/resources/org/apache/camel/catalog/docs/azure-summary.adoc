@@ -1,0 +1,15 @@
+[[Azure-CamelComponentsforWindowsAzureServices]]
+= Camel Components for Windows Azure Services
+//attributes written by hand, not generated
+:docTitle: Azure
+
+The Camel Components for https://azure.microsoft.com/[Windows Azure Services]
+provide connectivity to Azure services from Camel.
+
+== {docTitle} components
+
+See the following for usage of each component:
+
+indexDescriptionList::[attributes='group={docTitle}',descAttribute=description]
+
+include::camel-spring-boot::page$azure-starter.adoc[]

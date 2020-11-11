@@ -27,13 +27,16 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedSuspendableRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/managed");
         super.setUp();
@@ -58,13 +61,13 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // stop
         mbeanServer.invoke(on, "suspend", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be suspended", ServiceStatus.Suspended.name(), state);
+        assertEquals(ServiceStatus.Suspended.name(), state, "Should be suspended");
 
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
@@ -84,12 +87,13 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         mbeanServer.invoke(on, "resume", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // this time the file is consumed
         mock.assertIsSatisfied();
 
-        ManagedSuspendableRouteMBean route = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo", ManagedSuspendableRouteMBean.class);
+        ManagedSuspendableRouteMBean route
+                = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo", ManagedSuspendableRouteMBean.class);
         assertNotNull(route);
 
         assertEquals(2, route.getExchangesCompleted());

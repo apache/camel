@@ -54,7 +54,7 @@ public class AddIssueProducer extends DefaultProducer {
         // search for issueTypeId from an issueTypeName
         if (issueTypeId == null && issueTypeName != null) {
             Iterable<IssueType> issueTypes = client.getMetadataClient().getIssueTypes().claim();
-            for (IssueType type: issueTypes) {
+            for (IssueType type : issueTypes) {
                 if (issueTypeName.equals(type.getName())) {
                     issueTypeId = type.getId();
                     break;
@@ -64,7 +64,7 @@ public class AddIssueProducer extends DefaultProducer {
         // search for priorityId from an priorityName
         if (priorityId == null && priorityName != null) {
             Iterable<Priority> priorities = client.getMetadataClient().getPriorities().claim();
-            for (Priority pri: priorities) {
+            for (Priority pri : priorities) {
                 if (priorityName.equals(pri.getName())) {
                     priorityId = pri.getId();
                     break;
@@ -75,7 +75,8 @@ public class AddIssueProducer extends DefaultProducer {
             throw new IllegalArgumentException("A valid project key is required.");
         }
         if (issueTypeId == null) {
-            throw new IllegalArgumentException("A valid issue type id is required, actual: id(" + issueTypeId + "), name(" + issueTypeName + ")");
+            throw new IllegalArgumentException(
+                    "A valid issue type id is required, actual: id(" + issueTypeId + "), name(" + issueTypeName + ")");
         }
 
         if (summary == null) {
@@ -85,7 +86,7 @@ public class AddIssueProducer extends DefaultProducer {
         IssueInputBuilder builder = new IssueInputBuilder(projectKey, issueTypeId);
         builder.setDescription(exchange.getIn().getBody(String.class));
         builder.setSummary(summary);
-        if (components != null && components.size() > 0) {
+        if (components != null && !components.isEmpty()) {
             builder.setComponentsNames(components);
         }
         if (priorityId != null) {
@@ -98,8 +99,8 @@ public class AddIssueProducer extends DefaultProducer {
         IssueRestClient issueClient = client.getIssueClient();
         BasicIssue issueCreated = issueClient.createIssue(builder.build()).claim();
         Issue issue = issueClient.getIssue(issueCreated.getKey()).claim();
-        if (watchers != null && watchers.size() > 0) {
-            for (String watcher: watchers) {
+        if (watchers != null && !watchers.isEmpty()) {
+            for (String watcher : watchers) {
                 issueClient.addWatcher(issue.getWatchers().getSelf(), watcher);
             }
         }

@@ -59,8 +59,8 @@ public class AutoConfiguration {
 
     private void ensureNameSpace(String tenant, String namespace) throws PulsarAdminException {
         List<String> namespaces = pulsarAdmin.namespaces().getNamespaces(tenant);
-        if (!namespaces.contains(namespace)) {
-            pulsarAdmin.namespaces().createNamespace(namespace, clusters);
+        if (!namespaces.contains(tenant + "/" + namespace)) {
+            pulsarAdmin.namespaces().createNamespace(tenant + "/" + namespace, clusters);
         }
     }
 

@@ -26,12 +26,15 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.management.ManagedCamelContextTest;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Ignore("Does not run well on CI due test uses JMX mbeans")
+@Disabled("Does not run well on CI due test uses JMX mbeans")
 public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
     @Override
@@ -55,7 +58,7 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         @SuppressWarnings("unchecked")
         List<String> info = (List<String>) mbeanServer.invoke(on, "findEipNames", null, null);
@@ -78,7 +81,7 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         @SuppressWarnings("unchecked")
         Map<String, Properties> info = (Map<String, Properties>) mbeanServer.invoke(on, "findEips", null, null);
@@ -102,7 +105,7 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
 
         TabularData data = (TabularData) mbeanServer.invoke(on, "listEips", null, null);
         assertNotNull(data);

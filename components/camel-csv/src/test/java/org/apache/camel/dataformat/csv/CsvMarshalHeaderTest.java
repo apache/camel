@@ -32,18 +32,19 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * <b>Camel</b> based test cases for {@link org.apache.camel.dataformat.csv.CsvDataFormat}.
  */
 public class CsvMarshalHeaderTest extends CamelTestSupport {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public File folder;
 
     @Produce("direct:start")
     private ProducerTemplate producerTemplate;
@@ -52,11 +53,11 @@ public class CsvMarshalHeaderTest extends CamelTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
-        outputFile = new File(folder.newFolder(), "output.csv");
+        outputFile = new File(folder, "output.csv");
     }
 
     @Test
-    public void testSendBody() throws IOException {
+    void testSendBody() throws IOException {
         Map<String, String> body = new LinkedHashMap<>();
         body.put("first_name", "John");
         body.put("last_name", "Doe");
@@ -74,7 +75,7 @@ public class CsvMarshalHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSendBodyWithList() throws IOException {
+    void testSendBodyWithList() throws IOException {
         List<List<String>> body = Collections.singletonList(Arrays.asList("John", "Doe"));
         String fileName = outputFile.getName();
         assertEquals("output.csv", fileName);
@@ -92,7 +93,8 @@ public class CsvMarshalHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                String uri = String.format("file:%s?charset=utf-8&fileExist=Append", outputFile.getParentFile().getAbsolutePath());
+                String uri
+                        = String.format("file:%s?charset=utf-8&fileExist=Append", outputFile.getParentFile().getAbsolutePath());
                 from("direct:start").marshal(createCsvDataFormat()).to(uri);
             }
         };

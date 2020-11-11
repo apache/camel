@@ -24,7 +24,11 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSupport {
 
@@ -37,31 +41,31 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
 
         MockEndpoint mockEP = getMockEndpoint("mock:result");
         mockEP.setExpectedMessageCount(10);
-        
+
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
         // confirm that route has started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("route should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "route should be started");
 
         //send some message through the route
         for (int i = 0; i < 5; i++) {
             template.sendBody("seda:start", "message-" + i);
         }
-        
+
         // stop route with a 1s timeout and abortAfterTimeout=true (should abort after 1s)
-        Long timeout = new Long(1);
+        Long timeout = Long.valueOf(1);
         Boolean abortAfterTimeout = Boolean.TRUE;
-        Object[] params = {timeout, abortAfterTimeout};
-        String[] sig = {"java.lang.Long", "java.lang.Boolean"};
+        Object[] params = { timeout, abortAfterTimeout };
+        String[] sig = { "java.lang.Long", "java.lang.Boolean" };
         Boolean stopRouteResponse = (Boolean) mbeanServer.invoke(on, "stop", params, sig);
 
         // confirm that route is still running
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertFalse("stopRoute response should be False", stopRouteResponse);
-        assertEquals("route should still be started", ServiceStatus.Started.name(), state);
-        
+        assertFalse(stopRouteResponse, "stopRoute response should be False");
+        assertEquals(ServiceStatus.Started.name(), state, "route should still be started");
+
         //send some more messages through the route
         for (int i = 5; i < 10; i++) {
             template.sendBody("seda:start", "message-" + i);
@@ -78,39 +82,39 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
         }
 
         MockEndpoint mockEP = getMockEndpoint("mock:result");
-        
+
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 
         // confirm that route has started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("route should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "route should be started");
 
         //send some message through the route
         for (int i = 0; i < 5; i++) {
             template.sendBody("seda:start", "message-" + i);
         }
-        
+
         // stop route with a 1s timeout and abortAfterTimeout=false (normal timeout behavior)
-        Long timeout = new Long(1);
+        Long timeout = Long.valueOf(1);
         Boolean abortAfterTimeout = Boolean.FALSE;
-        Object[] params = {timeout, abortAfterTimeout};
-        String[] sig = {"java.lang.Long", "java.lang.Boolean"};
+        Object[] params = { timeout, abortAfterTimeout };
+        String[] sig = { "java.lang.Long", "java.lang.Boolean" };
         Boolean stopRouteResponse = (Boolean) mbeanServer.invoke(on, "stop", params, sig);
 
         // confirm that route is stopped
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertTrue("stopRoute response should be True", stopRouteResponse);
-        assertEquals("route should be stopped", ServiceStatus.Stopped.name(), state);
-        
+        assertTrue(stopRouteResponse, "stopRoute response should be True");
+        assertEquals(ServiceStatus.Stopped.name(), state, "route should be stopped");
+
         // send some more messages through the route
         for (int i = 5; i < 10; i++) {
             template.sendBody("seda:start", "message-" + i);
         }
-        
+
         Thread.sleep(1000);
-        
-        assertTrue("Should not have received more than 5 messages", mockEP.getExchanges().size() <= 5);
+
+        assertTrue(mockEP.getExchanges().size() <= 5, "Should not have received more than 5 messages");
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {

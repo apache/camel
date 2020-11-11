@@ -1,0 +1,14 @@
+[list-of-camel-expression-languages]
+= Expression Languages
+
+Below is the list of expression languages that are provided by Apache Camel.
+
+Number of Languages: indexCount:[] in indexUniqueCount:[unique=artifactid] JAR artifacts (indexCount:[attributes=deprecated] deprecated)
+
+[{index-table-format}]
+|===
+| Language | Artifact | Support Level | Since | Description
+|===
+//'relative=!nav.adoc' is a workaround for https://gitlab.com/antora/xref-validator/-/issues/9
+indexTable::[relative=!nav.adoc,cells="$xref,artifactid,supportlevel,since,description"]
+

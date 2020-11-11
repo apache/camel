@@ -16,30 +16,36 @@
  */
 package org.apache.camel.component.weather;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
+import org.apache.http.client.utils.HttpClientUtils;
 
 /**
- * Polls the weather information from Open Weather Map.
+ * Poll the weather information from Open Weather Map.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name", label = "api")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "weather", title = "Weather", syntax = "weather:name",
+             category = { Category.API })
 public class WeatherEndpoint extends DefaultPollingEndpoint {
 
     @UriParam
     private WeatherConfiguration configuration;
 
+    private WeatherQuery weatherQuery;
+
     public WeatherEndpoint(String uri, WeatherComponent component, WeatherConfiguration properties) {
         super(uri, component);
         this.configuration = properties;
+        this.weatherQuery = new WeatherQuery(getConfiguration());
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        WeatherConsumer answer = new WeatherConsumer(this, processor, this.configuration.getQuery());
+        WeatherConsumer answer = new WeatherConsumer(this, processor, getWeatherQuery().getQuery());
 
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed, so we override
         // with a new default value. End user can override this value by providing a consumer.delay parameter
@@ -50,10 +56,22 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new WeatherProducer(this, configuration.getQuery());
+        return new WeatherProducer(this, getWeatherQuery().getQuery());
     }
 
     public WeatherConfiguration getConfiguration() {
         return configuration;
     }
+
+    public WeatherQuery getWeatherQuery() {
+        return this.weatherQuery;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        HttpClientUtils.closeQuietly(getConfiguration().getHttpClient());
+    }
+
 }

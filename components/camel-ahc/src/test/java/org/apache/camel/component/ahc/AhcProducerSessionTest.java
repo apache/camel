@@ -23,9 +23,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
+import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.http.common.HttpMessage;
-import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
-import org.apache.camel.http.common.cookie.InstanceCookieHandler;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class AhcProducerSessionTest extends BaseAhcTest {
 
     @BindToRegistry("instanceCookieHandler")
     InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
-   
+
     @BindToRegistry("exchangeCookieHandler")
     ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
@@ -99,63 +99,65 @@ public class AhcProducerSessionTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:" + getTestServerEndpointSessionUrl())
-                    .to("ahc:" + getTestServerEndpointSessionUrl())
-                    .to("mock:result");
+                        .to("ahc:" + getTestServerEndpointSessionUrl())
+                        .to("ahc:" + getTestServerEndpointSessionUrl())
+                        .to("mock:result");
 
                 from("direct:config")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig")
-                    .to("mock:result");
+                        .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig")
+                        .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig")
+                        .to("mock:result");
 
                 from("direct:defaultconfig")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#defaultConfig")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#defaultConfig")
-                    .to("mock:result");
+                        .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#defaultConfig")
+                        .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#defaultConfig")
+                        .to("mock:result");
 
                 from("direct:instance")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
-                    .to("mock:result");
+                        .to("ahc:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
+                        .to("ahc:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
+                        .to("mock:result");
 
                 from("direct:exchange")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig&cookieHandler=#exchangeCookieHandler")
-                    .to("ahc:" + getTestServerEndpointSessionUrl() + "?clientConfig=#noCookieConfig&cookieHandler=#exchangeCookieHandler")
-                    .to("mock:result");
+                        .to("ahc:" + getTestServerEndpointSessionUrl()
+                            + "?clientConfig=#noCookieConfig&cookieHandler=#exchangeCookieHandler")
+                        .to("ahc:" + getTestServerEndpointSessionUrl()
+                            + "?clientConfig=#noCookieConfig&cookieHandler=#exchangeCookieHandler")
+                        .to("mock:result");
 
                 from(getTestServerEndpointSessionUri())
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            HttpMessage message = exchange.getIn(HttpMessage.class);
-                            Object cookiesObj = message.getHeader("Cookie");
-                            HttpSession session = message.getRequest().getSession();
-                            String body = message.getBody(String.class);
-                            if ("bar".equals(session.getAttribute("foo"))) {
-                                message.setBody("Old " + body);
-                                /*
-                                 * If we are in a session we should also have a cookie header with two
-                                 * cookies. This test checks that the cookies are in one line.
-                                 * We can also get the cookies with request.getCookies() but this will
-                                 * always give us two cookies even if there are two cookie headers instead
-                                 * of one multi-value cookie header.
-                                 */
-                                if (cookiesObj instanceof String && ((String) cookiesObj).contains("othercookie=value")) {
-                                    if (!((String) cookiesObj).contains("JSESSIONID=")) {
-                                        log.error("JSESSIONID missing");
-                                        throw new IllegalStateException("JSESSIONID missing");
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                HttpMessage message = exchange.getIn(HttpMessage.class);
+                                Object cookiesObj = message.getHeader("Cookie");
+                                HttpSession session = message.getRequest().getSession();
+                                String body = message.getBody(String.class);
+                                if ("bar".equals(session.getAttribute("foo"))) {
+                                    message.setBody("Old " + body);
+                                    /*
+                                     * If we are in a session we should also have a cookie header with two
+                                     * cookies. This test checks that the cookies are in one line.
+                                     * We can also get the cookies with request.getCookies() but this will
+                                     * always give us two cookies even if there are two cookie headers instead
+                                     * of one multi-value cookie header.
+                                     */
+                                    if (cookiesObj instanceof String && ((String) cookiesObj).contains("othercookie=value")) {
+                                        if (!((String) cookiesObj).contains("JSESSIONID=")) {
+                                            log.error("JSESSIONID missing");
+                                            throw new IllegalStateException("JSESSIONID missing");
+                                        }
+                                    } else {
+                                        log.error("othercookie=value is missing in cookie");
+                                        throw new IllegalStateException("othercookie=value is missing in cookie");
                                     }
                                 } else {
-                                    log.error("othercookie=value is missing in cookie");
-                                    throw new IllegalStateException("othercookie=value is missing in cookie");
+                                    session.setAttribute("foo", "bar");
+                                    message.setBody("New " + body);
                                 }
-                            } else {
-                                session.setAttribute("foo", "bar");
-                                message.setBody("New " + body);
+                                message.getResponse().addCookie(new Cookie("othercookie", "value"));
                             }
-                            message.getResponse().addCookie(new Cookie("othercookie", "value"));
-                        }
-                    });
+                        });
             }
         };
     }

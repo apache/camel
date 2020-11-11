@@ -31,10 +31,13 @@ public class CxfOperationException extends CamelException implements Serializabl
     private final Map<String, String> responseHeaders;
     private final String responseBody;
 
-    public CxfOperationException(String uri, int statusCode, String statusText, String location, Map<String, String> responseHeaders,
+    public CxfOperationException(String uri, int statusCode, String statusText, String location,
+                                 Map<String, String> responseHeaders,
                                  String responseBody) {
-        super("JAXRS operation failed invoking " + uri + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location
-            : ""));
+        super("JAXRS operation failed invoking " + uri + " with statusCode: " + statusCode
+              + (location != null
+                      ? ", redirectLocation: " + location
+                      : ""));
         this.uri = uri;
         this.statusCode = statusCode;
         this.statusText = statusText;

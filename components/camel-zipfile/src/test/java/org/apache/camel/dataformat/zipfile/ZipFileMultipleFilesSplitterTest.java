@@ -22,21 +22,22 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
     static final String PROCESSED_FILES_HEADER_NAME = "processedFiles";
-    
+
     @Override
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");
         MockEndpoint splitResult = getMockEndpoint("mock:splitResult");
         processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "another_chiau", "another_hi");
-        splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "directoryOne/another_chiau.txt", "directoryOne/another_hi.txt");
+        splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "directoryOne/another_chiau.txt",
+                "directoryOne/another_hi.txt");
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -61,7 +62,7 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
         };
 
     }
-    
+
     private AggregationStrategy updateHeader() {
         return new AggregationStrategy() {
             @Override
@@ -76,7 +77,7 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
                 }
                 return newExchange;
             }
-            
+
         };
     }
 

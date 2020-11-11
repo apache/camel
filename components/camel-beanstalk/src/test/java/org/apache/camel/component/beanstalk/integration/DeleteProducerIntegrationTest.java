@@ -26,7 +26,13 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.beanstalk.Headers;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DeleteProducerIntegrationTest extends BeanstalkCamelTestSupport {
     @EndpointInject("mock:result")
@@ -36,9 +42,9 @@ public class DeleteProducerIntegrationTest extends BeanstalkCamelTestSupport {
     protected ProducerTemplate direct;
 
     @Test
-    public void testDelete() throws InterruptedException, IOException {
+    void testDelete() throws InterruptedException, IOException {
         long jobId = writer.put(0, 0, 5, new byte[0]);
-        assertTrue("Valid Job Id", jobId > 0);
+        assertTrue(jobId > 0, "Valid Job Id");
 
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.allMessages().header(Headers.JOB_ID).isNotNull();
@@ -48,20 +54,18 @@ public class DeleteProducerIntegrationTest extends BeanstalkCamelTestSupport {
         assertMockEndpointsSatisfied();
 
         final Long messageJobId = resultEndpoint.getReceivedExchanges().get(0).getIn().getHeader(Headers.JOB_ID, Long.class);
-        assertNotNull("Job ID in message", messageJobId);
-        assertEquals("Message Job ID equals", jobId, messageJobId.longValue());
+        assertNotNull(messageJobId, "Job ID in message");
+        assertEquals(jobId, messageJobId.longValue(), "Message Job ID equals");
 
         final Job job = reader.peek(jobId);
-        assertNull("Job has been deleted", job);
+        assertNull(job, "Job has been deleted");
     }
 
-    @Test(expected = CamelExecutionException.class)
-    public void testNoJobId() throws InterruptedException, IOException {
-        resultEndpoint.expectedMessageCount(0);
-        direct.sendBody(new byte[0]);
-
-        resultEndpoint.assertIsSatisfied();
-        assertListSize("Number of exceptions", resultEndpoint.getFailures(), 1);
+    @Test
+    void testNoJobId() {
+        assertThrows(CamelExecutionException.class, () -> {
+            direct.sendBody(new byte[0]);
+        });
     }
 
     @Override

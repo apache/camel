@@ -38,7 +38,8 @@ public class WordpressPostConsumer extends AbstractWordpressConsumer {
         servicePosts = WordpressServiceProvider.getInstance().getService(WordpressServicePosts.class);
     }
 
-    public WordpressPostConsumer(WordpressEndpoint endpoint, Processor processor, ScheduledExecutorService scheduledExecutorService) {
+    public WordpressPostConsumer(WordpressEndpoint endpoint, Processor processor,
+                                 ScheduledExecutorService scheduledExecutorService) {
         super(endpoint, processor, scheduledExecutorService);
         servicePosts = WordpressServiceProvider.getInstance().getService(WordpressServicePosts.class);
     }
@@ -53,7 +54,7 @@ public class WordpressPostConsumer extends AbstractWordpressConsumer {
     }
 
     private int pollForPostList() {
-        final List<Post> posts = this.servicePosts.list((PostSearchCriteria)getConfiguration().getSearchCriteria());
+        final List<Post> posts = this.servicePosts.list((PostSearchCriteria) getConfiguration().getSearchCriteria());
         posts.stream().forEach(p -> this.process(p));
         return posts.size();
     }

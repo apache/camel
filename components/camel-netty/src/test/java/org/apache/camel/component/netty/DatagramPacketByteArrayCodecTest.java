@@ -23,8 +23,11 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.AddressedEnvelope;
 import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.channel.embedded.EmbeddedChannel;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DatagramPacketByteArrayCodecTest {
 
@@ -35,31 +38,31 @@ public class DatagramPacketByteArrayCodecTest {
         ByteBuf buf = Unpooled.buffer();
         buf.writeBytes(VALUE.getBytes());
         ByteBuf input = buf.duplicate();
-        AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
-                new DefaultAddressedEnvelope<>(input, new InetSocketAddress(8888));
+        AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop
+                = new DefaultAddressedEnvelope<>(input, new InetSocketAddress(8888));
         EmbeddedChannel channel = new EmbeddedChannel(ChannelHandlerFactories.newByteArrayDecoder("udp").newChannelHandler());
-        Assert.assertTrue(channel.writeInbound(addressedEnvelop));
-        Assert.assertTrue(channel.finish());
+        assertTrue(channel.writeInbound(addressedEnvelop));
+        assertTrue(channel.finish());
         AddressedEnvelope<Object, InetSocketAddress> result = (AddressedEnvelope) channel.readInbound();
-        Assert.assertEquals(result.recipient().getPort(), addressedEnvelop.recipient().getPort());
-        Assert.assertTrue(result.content() instanceof byte[]);
-        Assert.assertEquals(VALUE, new String((byte[]) result.content()));
-        Assert.assertNull(channel.readInbound());
+        assertEquals(result.recipient().getPort(), addressedEnvelop.recipient().getPort());
+        assertTrue(result.content() instanceof byte[]);
+        assertEquals(VALUE, new String((byte[]) result.content()));
+        assertNull(channel.readInbound());
     }
 
     @Test
     public void testEncoder() {
         ByteBuf buf = Unpooled.buffer();
         buf.writeBytes(VALUE.getBytes());
-        AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
-                new DefaultAddressedEnvelope<>(VALUE.getBytes(), new InetSocketAddress(8888));
+        AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop
+                = new DefaultAddressedEnvelope<>(VALUE.getBytes(), new InetSocketAddress(8888));
         EmbeddedChannel channel = new EmbeddedChannel(ChannelHandlerFactories.newByteArrayEncoder("udp").newChannelHandler());
-        Assert.assertTrue(channel.writeOutbound(addressedEnvelop));
-        Assert.assertTrue(channel.finish());
+        assertTrue(channel.writeOutbound(addressedEnvelop));
+        assertTrue(channel.finish());
         AddressedEnvelope output = (AddressedEnvelope) channel.readOutbound();
-        Assert.assertTrue(output.content() instanceof ByteBuf);
+        assertTrue(output.content() instanceof ByteBuf);
         ByteBuf resultContent = (ByteBuf) output.content();
-        Assert.assertEquals(VALUE, new String(resultContent.array()));
-        Assert.assertNull(channel.readOutbound());
+        assertEquals(VALUE, new String(resultContent.array()));
+        assertNull(channel.readOutbound());
     }
 }

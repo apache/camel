@@ -18,21 +18,24 @@ package org.apache.camel.support;
 
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.FooBar;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class DefaultRegistryTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.*;
+
+public class DefaultRegistryTest {
 
     private final SimpleRegistry br = new SimpleRegistry();
     private final DefaultRegistry registry = new DefaultRegistry(br);
     private final Company myCompany = new Company();
     private final FooBar myFooBar = new FooBar();
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         br.bind("myCompany", myCompany);
         registry.bind("myFooBar", myFooBar);
     }
@@ -84,6 +87,46 @@ public class DefaultRegistryTest extends TestCase {
         Iterator it = registry.findByTypeWithName(Object.class).keySet().iterator();
         assertEquals("myCompany", it.next());
         assertEquals("myFooBar", it.next());
+    }
+
+    @Test
+    public void testBindCamelContextAwareInject() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        registry.setCamelContext(context);
+
+        MyBean my = new MyBean("Tiger");
+        registry.bind("tiger", my);
+
+        MyBean lookup = (MyBean) registry.lookupByName("tiger");
+        assertSame(my, lookup);
+
+        assertNotNull(lookup.getCamelContext());
+        assertSame(context, lookup.getCamelContext());
+    }
+
+    private class MyBean implements CamelContextAware {
+
+        private CamelContext camelContext;
+
+        private String name;
+
+        public MyBean(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        @Override
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
 }

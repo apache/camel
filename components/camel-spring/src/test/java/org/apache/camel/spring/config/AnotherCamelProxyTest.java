@@ -17,17 +17,19 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.util.IOHelper;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class AnotherCamelProxyTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class AnotherCamelProxyTest {
 
     @Test
     public void testAnotherCamelProxy() throws Exception {
         // START SNIPPET: e1
-        AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/AnotherCamelProxyTest.xml");
+        AbstractApplicationContext ac
+                = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/AnotherCamelProxyTest.xml");
 
         MyProxySender sender = ac.getBean("myProxySender", MyProxySender.class);
         String reply = sender.hello("Camel");

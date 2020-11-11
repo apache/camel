@@ -20,7 +20,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bar.BarComponent;
 import org.apache.camel.component.bar.BarConstants;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
 
@@ -37,7 +39,7 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
 
         // there should only be a bar:order endpoint
         boolean found = context.getEndpointMap().containsKey("bar://order");
-        assertTrue("There should only be one bar endpoint", found);
+        assertTrue(found, "There should only be one bar endpoint");
     }
 
     @Override

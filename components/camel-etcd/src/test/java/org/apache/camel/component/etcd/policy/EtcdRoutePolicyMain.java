@@ -27,7 +27,7 @@ public final class EtcdRoutePolicyMain {
 
     public static void main(final String[] args) throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new RouteBuilder() {
+        main.configure().addRoutesBuilder(new RouteBuilder() {
             public void configure() {
                 EtcdRoutePolicy policy = new EtcdRoutePolicy();
                 policy.setClientUris(EtcdConstants.ETCD_DEFAULT_URIS);
@@ -36,11 +36,11 @@ public final class EtcdRoutePolicyMain {
                 policy.setTtl(15);
 
                 from("file:///tmp/camel?delete=true")
-                    .routeId(args[1])
-                    .routePolicy(policy)
-                    .setHeader("EtcdRouteID", constant(args[1]))
-                    .setHeader("EtcdServiceName", constant(args[0]))
-                    .to("log:org.apache.camel.component.etcd?level=INFO&showAll=true");
+                        .routeId(args[1])
+                        .routePolicy(policy)
+                        .setHeader("EtcdRouteID", constant(args[1]))
+                        .setHeader("EtcdServiceName", constant(args[0]))
+                        .to("log:org.apache.camel.component.etcd?level=INFO&showAll=true");
             }
         });
 

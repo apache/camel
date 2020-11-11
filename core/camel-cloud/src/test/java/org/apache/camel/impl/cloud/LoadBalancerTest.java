@@ -20,16 +20,17 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LoadBalancerTest {
 
     private static StaticServiceDiscovery serviceDiscovery = new StaticServiceDiscovery();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         serviceDiscovery.addServer("no-name@127.0.0.1:2001");
         serviceDiscovery.addServer("no-name@127.0.0.1:2002");
@@ -42,7 +43,8 @@ public class LoadBalancerTest {
         DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
         loadBalancer.setCamelContext(new DefaultCamelContext());
         loadBalancer.setServiceDiscovery(serviceDiscovery);
-        loadBalancer.setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
+        loadBalancer
+                .setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
         loadBalancer.setServiceChooser(new RoundRobinServiceChooser());
         loadBalancer.process("no-name", service -> {
             assertEquals(1001, service.getPort());
@@ -54,13 +56,16 @@ public class LoadBalancerTest {
         });
     }
 
-    @Test(expected = RejectedExecutionException.class)
+    @Test
     public void testNoActiveServices() throws Exception {
         DefaultServiceLoadBalancer loadBalancer = new DefaultServiceLoadBalancer();
         loadBalancer.setCamelContext(new DefaultCamelContext());
         loadBalancer.setServiceDiscovery(serviceDiscovery);
-        loadBalancer.setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 1000).collect(Collectors.toList()));
+        loadBalancer
+                .setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 1000).collect(Collectors.toList()));
         loadBalancer.setServiceChooser(new RoundRobinServiceChooser());
-        loadBalancer.process("no-name", service -> false);
+        assertThrows(RejectedExecutionException.class, () -> {
+            loadBalancer.process("no-name", service -> false);
+        });
     }
 }

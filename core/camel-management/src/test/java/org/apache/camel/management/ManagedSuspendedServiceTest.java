@@ -28,15 +28,17 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ManagedSuspendedServiceTest extends ManagementTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/suspended");
         super.setUp();
@@ -57,7 +59,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         ObjectName on = set.iterator().next();
 
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertEquals(true, registered, "Should be registered");
         Boolean ss = (Boolean) mbeanServer.getAttribute(on, "SupportSuspension");
         assertEquals(true, ss.booleanValue());
         Boolean suspended = (Boolean) mbeanServer.getAttribute(on, "Suspended");
@@ -80,7 +82,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         // the route is suspended by the policy so we should only receive one
         String[] files = new File("target/data/suspended/").list();
         assertNotNull(files);
-        assertEquals("The file should exists", 1, files.length);
+        assertEquals(1, files.length, "The file should exists");
 
         // reset mock
         mock.reset();
@@ -98,7 +100,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
             // and the file is now deleted
             String[] names = new File("target/data/suspended/").list();
             assertNotNull(names);
-            assertEquals("The file should exists", 0, names.length);
+            assertEquals(0, names.length, "The file should exists");
         });
     }
 
@@ -110,8 +112,8 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
                 MyPolicy myPolicy = new MyPolicy();
 
                 from("file://target/data/suspended?initialDelay=0&delay=10&maxMessagesPerPoll=1&delete=true")
-                    .routePolicy(myPolicy).id("myRoute")
-                    .to("mock:result");
+                        .routePolicy(myPolicy).id("myRoute")
+                        .to("mock:result");
             }
         };
     }

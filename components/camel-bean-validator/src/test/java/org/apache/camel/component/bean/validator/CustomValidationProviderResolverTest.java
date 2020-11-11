@@ -23,9 +23,9 @@ import javax.validation.spi.ValidationProvider;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.hibernate.validator.HibernateValidator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static org.mockito.BDDMockito.given;
@@ -52,7 +52,8 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:test").to("bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
+                from("direct:test").to(
+                        "bean-validator://ValidationProviderResolverTest?validationProviderResolver=#myValidationProviderResolver");
             }
         };
     }
@@ -60,7 +61,7 @@ public class CustomValidationProviderResolverTest extends CamelTestSupport {
     // Tests
 
     @Test
-    public void shouldResolveCustomValidationProviderResolver() {
+    void shouldResolveCustomValidationProviderResolver() {
         verify(validationProviderResolver, atLeastOnce()).getValidationProviders();
     }
 

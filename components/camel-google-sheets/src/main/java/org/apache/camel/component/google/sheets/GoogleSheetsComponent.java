@@ -25,13 +25,13 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
-/**
- * Represents the component that manages {@link GoogleSheetsEndpoint}.
- */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 @Component("google-sheets")
-public class GoogleSheetsComponent extends AbstractApiComponent<GoogleSheetsApiName, GoogleSheetsConfiguration, GoogleSheetsApiCollection> {
+public class GoogleSheetsComponent
+        extends AbstractApiComponent<GoogleSheetsApiName, GoogleSheetsConfiguration, GoogleSheetsApiCollection> {
 
+    @Metadata
+    GoogleSheetsConfiguration configuration;
     @Metadata(label = "advanced")
     private Sheets client;
     @Metadata(label = "advanced")
@@ -48,8 +48,8 @@ public class GoogleSheetsComponent extends AbstractApiComponent<GoogleSheetsApiN
     }
 
     @Override
-    protected GoogleSheetsApiName getApiName(String apiNameStr) throws IllegalArgumentException {
-        return GoogleSheetsApiName.fromValue(apiNameStr);
+    protected GoogleSheetsApiName getApiName(String apiNameStr) {
+        return getCamelContext().getTypeConverter().convertTo(GoogleSheetsApiName.class, apiNameStr);
     }
 
     public Sheets getClient(GoogleSheetsConfiguration config) {
@@ -87,16 +87,17 @@ public class GoogleSheetsComponent extends AbstractApiComponent<GoogleSheetsApiN
     }
 
     /**
-     * To use the GoogleSheetsClientFactory as factory for creating the client.
-     * Will by default use {@link BatchGoogleSheetsClientFactory}
+     * To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use
+     * {@link BatchGoogleSheetsClientFactory}
      */
     public void setClientFactory(GoogleSheetsClientFactory clientFactory) {
         this.clientFactory = clientFactory;
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String methodName, GoogleSheetsApiName apiName,
-                                      GoogleSheetsConfiguration endpointConfiguration) {
+    protected Endpoint createEndpoint(
+            String uri, String methodName, GoogleSheetsApiName apiName,
+            GoogleSheetsConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
         return new GoogleSheetsEndpoint(uri, this, apiName, methodName, endpointConfiguration);

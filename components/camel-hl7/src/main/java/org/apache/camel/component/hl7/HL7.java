@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ValueBuilder;
+import org.apache.camel.model.language.Hl7TerserExpression;
 import org.apache.camel.support.ExpressionAdapter;
 
 public final class HL7 {

@@ -21,13 +21,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/failed");
         super.setUp();
@@ -51,15 +51,17 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class).handled(true).useOriginalMessage().to("file://target/data/failed/error");
-                from("file://target/data/failed?delete=true&initialDelay=0&delay=10").setBody(simple("${body} IS processed!")).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String body = exchange.getIn().getBody(String.class);
-                        if (body != null && body.startsWith("Kabom")) {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    }
-                }).to("mock:result");
+                onException(IllegalArgumentException.class).handled(true).useOriginalMessage()
+                        .to("file://target/data/failed/error");
+                from("file://target/data/failed?delete=true&initialDelay=0&delay=10").setBody(simple("${body} IS processed!"))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String body = exchange.getIn().getBody(String.class);
+                                if (body != null && body.startsWith("Kabom")) {
+                                    throw new IllegalArgumentException("Forced");
+                                }
+                            }
+                        }).to("mock:result");
             }
         };
     }

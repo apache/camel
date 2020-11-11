@@ -21,7 +21,9 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.xpath.XPathLanguage;
 import org.apache.camel.spi.Language;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XPathTest extends LanguageTestSupport {
 
@@ -54,8 +56,9 @@ public class XPathTest extends LanguageTestSupport {
     @Override
     protected Language assertResolveLanguage(String languageName) {
         XPathLanguage answer = new XPathLanguage();
-        answer.setResultType(XPathConstants.STRING);
-        assertEquals(XPathConstants.STRING, answer.getResultType());
+        answer.setCamelContext(context);
+        answer.setResultQName(XPathConstants.STRING);
+        assertEquals(XPathConstants.STRING, answer.getResultQName());
         return answer;
     }
 }

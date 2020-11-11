@@ -1,0 +1,154 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.3 to 3.4
+
+=== camel-test and JMX
+
+The `camel-test` module no longer has dependency on `camel-management` out of the box.
+In Camel JMX is optional and to use JMX then `camel-management` must be added as dependency.
+
+For example to use JMX during testing you the following dependency as test scope:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-management</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+=== Health Check
+
+The default health check implementation has been moved out of `camel-base` into `camel-health` as a separate module.
+The health check has been refactored and there are some APIs and classes that has been changed.
+The health check in `camel-consul` has been removed.
+
+The old health check was not fully implemented and was only targeting Spring Boot.
+The new system is more generic and supports all Camel runtimes.
+
+An example is provided in `camel-example-main-health`.
+
+=== Template components
+
+The template components which allows access to the current `Exchange` and `CamelContext` API
+from the context map available for templating has now been restricted to only the message body and headers.
+
+This option can be enabled (`allowContextMapAll=true`) for full access to the current Exchange and CamelContext.
+Doing so impose a potential security risk as this opens access to the full power of CamelContext API.
+
+This applies to the following templating components: camel-freemarker, camel-velocity, camel-mvel, camel-mustache,
+camel-string-template, camel-chunk, camel-robotframework.
+
+=== Using custom language in RouteBuilder
+
+The Java DSL `RouteBuilder` allows referring to a custom language as shown below:
+
+[source,java]
+----
+from("direct:start")
+    .filter(language("foo", "Bla bla bla"))
+      .to("mock:camel");
+----
+
+This functionality is seldom in use, as you would use the provided languages from Camel.
+If using, then the `language` method now requires a static import as shown below:
+
+[source,java]
+----
+import static org.apache.camel.builder.Builder.language;
+----
+
+=== Using custom type converters
+
+If you are using custom type converters and they have not source code generated a loader class (by `@Converter(generateLoader = true)`)
+then Camel needs to be instructed to scan for custom converters. This can be done as shown:
+
+[source,java]
+----
+context.setLoadTypeConverters(true);
+----
+
+And in XML:
+[source,xml]
+----
+<camelContext loadTypeConverters="true">
+
+</camelContext>
+----
+
+If you are using Camel on Spring Boot, Quarkus or via Camel Main this can also be configured in the `application.properties`:
+[source,properties]
+----
+camel.main.loadTypeConverters=true
+----
+
+=== camel-spring-boot
+
+The `/actuator/camelroutes` HTTP endpoint has been removed from provided Spring Boot actuators in `camel-spring-boot`.
+This actuator was becoming problematic to maintain during Spring Boot upgrades due to changes in Spring Boot.
+
+=== camel-servlet and camel-http-common
+
+`HttpRegistry` and `DefaultHttpRegistry` classes from camel-servlet are moved from camel-servlet into camel-http-common.
+`HttpRegistryProvider` is added and used in `DefaultHttpRegistry` instead of `CamelServlet`.
+
+These changes had effects on camel-atmosphere-websocket and camel-servlet and also camel-resteasy.
+Users of these components where they would have custom implemetations on `DefaultHttpRegistry` and using `CamelServlet` class should take this change into account.
+
+=== camel-sql
+
+The `JdbcAggregationRepository` optimistic locking feature has been fixed to work on a distributed environment and every database.
+There is a new `version` column that is required and must be added to the repository:
+
+[source,sql]
+----
+CREATE TABLE aggregation (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ version BIGINT NOT NULL,
+ constraint aggregation_pk PRIMARY KEY (id)
+);
+CREATE TABLE aggregation_completed (
+ id varchar(255) NOT NULL,
+ exchange blob NOT NULL,
+ version BIGINT NOT NULL,
+ constraint aggregation_completed_pk PRIMARY KEY (id)
+);
+----
+
+=== Thread Pool default changed
+
+The thread pools managed and created by Camels 'ExecutorServiceManager' or `ThreadPoolFactory` is now set to default created thread pools
+with `allowCoreThreadTimeOut=true`. This means that the thread pool can shrink and terminate also the core threads if the pool is idle.
+
+In older versions this was `allowCoreThreadTimeOut=false` and the default core size was 10, which means thread pools would typically have 10 threads as minimum.
+With this change those thread pools can shrink to lower value when core threads become idle as well.
+
+=== camel-lra-starter
+
+The Spring Boot LRA starter component have changed its auto configuration keys to be similar to using camel-lra with camel-main or camel-quarkus.
+Change the keys from `camel.service.lra` to `camel.lra`, eg `camel.service.lra.coordinator-url` to `camel.lra.coordinator-url`.
+
+=== Maven Archetypes
+
+The `camel-archetype-java8` has been removed, as you can just use `camel-archetype-java` instead.
+
+=== Maven Plugins
+
+A new maven plugin called `camel-component-maven-plugin` has been added which intents to help third party component developers to generate all required metadata and configurations Java files. For more info on how to use it in your project, please take a look at plugin's documentation xref:camel-component-maven-plugin.adoc[here].
+
+=== Camel-Kafka
+
+From a lot of time, the headerFilterStrategy application in consumer and producer was done in an interchanged way.
+You need to have a look at the following issue for more information: https://issues.apache.org/jira/browse/CAMEL-15121
+
+=== Camel-Karaf
+
+Removed `camel-hdfs` and `camel-pulsar` Karaf features.
+
+

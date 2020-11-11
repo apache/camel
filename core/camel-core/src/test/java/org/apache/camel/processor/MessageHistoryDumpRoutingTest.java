@@ -21,11 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MessageHistoryDumpRoutingTest extends ContextTestSupport {
 
-    private String body = "Hello World 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+    private String body
+            = "Hello World 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
 
     @Test
     public void testReduceStacksNeeded() throws Exception {

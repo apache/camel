@@ -19,8 +19,10 @@ package org.apache.camel.dataformat.bindy.csv;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.spanLastRecord.SpanLastRecord;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
 
@@ -37,7 +39,7 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
         //final SpanLastRecord order = rows.get(0).get(SpanLastRecord.class.getName());
 
         final SpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(SpanLastRecord.class);
-        
+
         assertEquals(1, order.getRecordId());
         assertEquals("hei", order.getName());
         assertEquals("kommentar", order.getComment());
@@ -53,7 +55,7 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         final SpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(SpanLastRecord.class);
-        
+
         assertEquals(1, order.getRecordId());
         assertEquals("hei", order.getName());
         assertEquals("kommentar,test,noe,hei", order.getComment());

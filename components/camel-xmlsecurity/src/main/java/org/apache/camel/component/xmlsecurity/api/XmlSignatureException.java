@@ -17,11 +17,10 @@
 package org.apache.camel.component.xmlsecurity.api;
 
 /**
- * Exception thrown when a configuration failure or a failure caused by the
- * input message in the XML signature generation or validation process occurs.
+ * Exception thrown when a configuration failure or a failure caused by the input message in the XML signature
+ * generation or validation process occurs.
  * 
- * The route developer can catch these exception in an error handler to react on
- * such failures.
+ * The route developer can catch these exception in an error handler to react on such failures.
  */
 public class XmlSignatureException extends Exception {
 

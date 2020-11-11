@@ -24,15 +24,13 @@ import java.io.IOException;
 public interface ExecCommandExecutor {
 
     /**
-     * Executes the <code>command</code> and returns a not-<code>null</code>
-     * {@link ExecResult} instance.
+     * Executes the <code>command</code> and returns a not-<code>null</code> {@link ExecResult} instance.
      * 
-     * @param execCommand The command object, that describes the executable application
-     * @return the result
+     * @param  execCommand   The command object, that describes the executable application
+     * @return               the result
      * @throws ExecException if the execution failed
-     * @throws IOException if there is an invalid path in the working directory,
-     *             or if the absolute path of the command executable is invalid,
-     *             or if the executable does not exist
+     * @throws IOException   if there is an invalid path in the working directory, or if the absolute path of the
+     *                       command executable is invalid, or if the executable does not exist
      */
     ExecResult execute(ExecCommand execCommand) throws ExecException, IOException;
 }

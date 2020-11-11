@@ -23,7 +23,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
@@ -125,20 +127,20 @@ public class ThrottlerTest extends ContextTestSupport {
             MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 5, INTERVAL, MESSAGE_COUNT);
             Thread.sleep(INTERVAL + TOLERANCE); // sleep here to ensure the
-                                                // first throttle rate does not
-                                                // influence the next one.
+                                               // first throttle rate does not
+                                               // influence the next one.
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 10, INTERVAL, MESSAGE_COUNT);
             Thread.sleep(INTERVAL + TOLERANCE); // sleep here to ensure the
-                                                // first throttle rate does not
-                                                // influence the next one.
+                                               // first throttle rate does not
+                                               // influence the next one.
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 5, INTERVAL, MESSAGE_COUNT);
             Thread.sleep(INTERVAL + TOLERANCE); // sleep here to ensure the
-                                                // first throttle rate does not
-                                                // influence the next one.
+                                               // first throttle rate does not
+                                               // influence the next one.
 
             resultEndpoint.reset();
             sendMessagesWithHeaderExpression(executor, resultEndpoint, 10, INTERVAL, MESSAGE_COUNT);
@@ -147,22 +149,25 @@ public class ThrottlerTest extends ContextTestSupport {
         }
     }
 
-    private void assertThrottlerTiming(final long elapsedTimeMs, final int throttle, final int intervalMs, final int messageCount) {
+    private void assertThrottlerTiming(
+            final long elapsedTimeMs, final int throttle, final int intervalMs, final int messageCount) {
         // now assert that they have actually been throttled (use +/- 50 as
         // slack)
         long minimum = calculateMinimum(intervalMs, throttle, messageCount) - 50;
         long maximum = calculateMaximum(intervalMs, throttle, messageCount) + 50;
         // add 500 in case running on slow CI boxes
         maximum += 500;
-        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", messageCount, elapsedTimeMs, throttle, intervalMs, minimum,
-                 maximum);
+        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", messageCount,
+                elapsedTimeMs, throttle, intervalMs, minimum,
+                maximum);
 
-        assertTrue("Should take at least " + minimum + "ms, was: " + elapsedTimeMs, elapsedTimeMs >= minimum);
-        assertTrue("Should take at most " + maximum + "ms, was: " + elapsedTimeMs, elapsedTimeMs <= maximum + TOLERANCE);
+        assertTrue(elapsedTimeMs >= minimum, "Should take at least " + minimum + "ms, was: " + elapsedTimeMs);
+        assertTrue(elapsedTimeMs <= maximum + TOLERANCE, "Should take at most " + maximum + "ms, was: " + elapsedTimeMs);
     }
 
-    private long sendMessagesAndAwaitDelivery(final int messageCount, final String endpointUri, final int threadPoolSize, final MockEndpoint receivingEndpoint)
-        throws InterruptedException {
+    private long sendMessagesAndAwaitDelivery(
+            final int messageCount, final String endpointUri, final int threadPoolSize, final MockEndpoint receivingEndpoint)
+            throws InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize);
         try {
             if (receivingEndpoint != null) {
@@ -188,16 +193,18 @@ public class ThrottlerTest extends ContextTestSupport {
         }
     }
 
-    private void sendMessagesWithHeaderExpression(final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int intervalMs,
-                                                  final int messageCount)
-        throws InterruptedException {
+    private void sendMessagesWithHeaderExpression(
+            final ExecutorService executor, final MockEndpoint resultEndpoint, final int throttle, final int intervalMs,
+            final int messageCount)
+            throws InterruptedException {
         resultEndpoint.expectedMessageCount(messageCount);
 
         long start = System.nanoTime();
         for (int i = 0; i < messageCount; i++) {
             executor.execute(new Runnable() {
                 public void run() {
-                    template.sendBodyAndHeader("direct:expressionHeader", "<message>payload</message>", "throttleValue", throttle);
+                    template.sendBodyAndHeader("direct:expressionHeader", "<message>payload</message>", "throttleValue",
+                            throttle);
                 }
             });
         }
@@ -210,14 +217,14 @@ public class ThrottlerTest extends ContextTestSupport {
 
     private long calculateMinimum(final long periodMs, final long throttleRate, final long messageCount) {
         if (messageCount % throttleRate > 0) {
-            return (long)Math.floor((double)messageCount / (double)throttleRate) * periodMs;
+            return (long) Math.floor((double) messageCount / (double) throttleRate) * periodMs;
         } else {
-            return (long)(Math.floor((double)messageCount / (double)throttleRate) * periodMs) - periodMs;
+            return (long) (Math.floor((double) messageCount / (double) throttleRate) * periodMs) - periodMs;
         }
     }
 
     private long calculateMaximum(final long periodMs, final long throttleRate, final long messageCount) {
-        return ((long)Math.ceil((double)messageCount / (double)throttleRate)) * periodMs;
+        return ((long) Math.ceil((double) messageCount / (double) throttleRate)) * periodMs;
     }
 
     @Override
@@ -233,9 +240,11 @@ public class ThrottlerTest extends ContextTestSupport {
 
                 from("direct:a").throttle(5).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
 
-                from("direct:expressionConstant").throttle(constant(5)).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+                from("direct:expressionConstant").throttle(constant(5)).timePeriodMillis(INTERVAL).to("log:result",
+                        "mock:result");
 
-                from("direct:expressionHeader").throttle(header("throttleValue")).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
+                from("direct:expressionHeader").throttle(header("throttleValue")).timePeriodMillis(INTERVAL).to("log:result",
+                        "mock:result");
 
                 from("direct:start").throttle(2).timePeriodMillis(1000).rejectExecution(true).to("log:result", "mock:result");
 

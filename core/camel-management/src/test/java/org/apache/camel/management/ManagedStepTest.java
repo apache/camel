@@ -24,7 +24,11 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedStepTest extends ManagementTestSupport {
 
@@ -96,11 +100,11 @@ public class ManagedStepTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("route1")
-                    .step("foo")
+                        .step("foo")
                         .to("log:foo").id("abc")
                         .to("mock:foo").id("def")
-                    .end()
-                    .to("mock:result");
+                        .end()
+                        .to("mock:result");
             }
         };
     }

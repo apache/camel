@@ -19,7 +19,7 @@ package org.apache.camel.processor.enricher;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EnricherDslTest extends ContextTestSupport {
 
@@ -40,7 +40,8 @@ public class EnricherDslTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").enrichWith("direct:resource").body(Integer.class, String.class, (o, n) -> n + o).to("mock:enriched");
+                from("direct:start").enrichWith("direct:resource").body(Integer.class, String.class, (o, n) -> n + o)
+                        .to("mock:enriched");
 
                 // set an empty message
                 from("direct:resource").transform().body(b -> "res-");

@@ -20,13 +20,18 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+@CamelSpringTest
 @ContextConfiguration
-public class FileToJmsTest extends AbstractJUnit4SpringContextTests {
+public class FileToJmsTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Autowired
     protected ProducerTemplate template;
@@ -34,7 +39,7 @@ public class FileToJmsTest extends AbstractJUnit4SpringContextTests {
     protected MockEndpoint result;
 
     @Test
-    public void testFileToJms() throws Exception {
+    void testFileToJms() throws Exception {
         result.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("file://target/jmsfile?fileExist=Override", "Hello World", Exchange.FILE_NAME, "hello.txt");

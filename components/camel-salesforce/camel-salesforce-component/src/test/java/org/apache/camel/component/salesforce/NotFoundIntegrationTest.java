@@ -16,43 +16,39 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.util.Arrays;
-
-import com.googlecode.junittoolbox.ParallelParameterized;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
 import org.apache.camel.component.salesforce.dto.generated.Account;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-@RunWith(ParallelParameterized.class)
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 public class NotFoundIntegrationTest extends AbstractSalesforceTestBase {
 
-    @Parameter
-    public String format;
+    @ParameterizedTest
+    @ValueSource(strings = { "XML", "JSON" })
+    public void shouldNotReportNotFoundExceptionFromRestApiIfConfiguredNotTo(String format) {
+        final Account got = template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format="
+                                                 + format + "&notFoundBehaviour=NULL",
+                "NonExistant",
+                Account.class);
 
-    @Test
-    public void shouldNotReportNotFoundExceptionFromRestApiIfConfiguredNotTo() {
-        final Account got = template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format + "&notFoundBehaviour=NULL", "NonExistant",
-                                                 Account.class);
-
-        assertNull("Expecting null when `notFoundBehaviour` is set to NULL", got);
+        assertNull(got, "Expecting null when `notFoundBehaviour` is set to NULL");
     }
 
-    @Test
-    public void shouldReportNotFoundExceptionFromRestApi() {
+    @ParameterizedTest
+    @ValueSource(strings = { "XML", "JSON" })
+    public void shouldReportNotFoundExceptionFromRestApi(String format) {
         try {
-            template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format, "NonExistant", Account.class);
+            template.requestBody("salesforce:getSObjectWithId?sObjectName=Account&sObjectIdName=Name&format=" + format,
+                    "NonExistant", Account.class);
             fail("Expecting CamelExecutionException");
         } catch (final CamelExecutionException e) {
-            assertTrue("Expecting the cause of CamelExecutionException to be NoSuchSObjectException", e.getCause() instanceof NoSuchSObjectException);
+            assertTrue(e.getCause() instanceof NoSuchSObjectException,
+                    "Expecting the cause of CamelExecutionException to be NoSuchSObjectException");
         }
-    }
-
-    @Parameters(name = "{0}")
-    public static Iterable<String> formats() {
-        return Arrays.asList("XML", "JSON");
     }
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
-
 public class DropboxMoveResult {
 
     private final String oldPath;

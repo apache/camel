@@ -24,7 +24,7 @@ public class MyProduceBean {
 
     @Produce("mock:result")
     MySender sender;
-    
+
     @EndpointInject("direct:start")
     ProducerTemplate template;
 

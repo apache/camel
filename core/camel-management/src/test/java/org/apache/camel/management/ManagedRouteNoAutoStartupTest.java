@@ -25,9 +25,10 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Extended test to see if mbeans is removed and stats are correct
@@ -64,7 +65,7 @@ public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
 
         // should be stopped
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+        assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
 
         // start
         mbeanServer.invoke(on, "start", null, null);
@@ -85,23 +86,23 @@ public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
 
         // should be 1 consumer and 1 processor
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
-        assertEquals("Should be 1 consumer", 1, set.size());
+        assertEquals(1, set.size(), "Should be 1 consumer");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals("Should be 1 processor", 1, set.size());
+        assertEquals(1, set.size(), "Should be 1 processor");
 
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+        assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
 
         // should be 0 consumer and 0 processor
         set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
-        assertEquals("Should be 0 consumer", 0, set.size());
+        assertEquals(0, set.size(), "Should be 0 consumer");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals("Should be 0 processor", 0, set.size());
+        assertEquals(0, set.size(), "Should be 0 processor");
     }
 
 }

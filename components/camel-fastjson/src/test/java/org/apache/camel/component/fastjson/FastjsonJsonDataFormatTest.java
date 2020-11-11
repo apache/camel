@@ -20,16 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FastjsonJsonDataFormatTest extends FastjsonMarshalTest {
 
     @Test
     public void testUnmarshalMap() throws Exception {
-        Map<?, ?> unmarshalled = template.requestBody("direct:json", "{\"pointsOfSale\":{\"pointOfSale\":{\"prodcut\":\"newpad\"}}}", Map.class);
+        Map<?, ?> unmarshalled = template.requestBody("direct:json",
+                "{\"pointsOfSale\":{\"pointOfSale\":{\"prodcut\":\"newpad\"}}}", Map.class);
         Map<?, ?> map1 = (Map<?, ?>) unmarshalled.get("pointsOfSale");
         Map<?, ?> map2 = (Map<?, ?>) map1.get("pointOfSale");
-        assertEquals("Don't get the right value", "newpad", map2.get("prodcut"));
+        assertEquals("newpad", map2.get("prodcut"), "Don't get the right value");
     }
 
     @Override
@@ -42,7 +45,7 @@ public class FastjsonJsonDataFormatTest extends FastjsonMarshalTest {
 
                 from("direct:inPojo").marshal().json(JsonLibrary.Fastjson);
                 from("direct:backPojo").unmarshal().json(JsonLibrary.Fastjson, TestPojo.class).to("mock:reversePojo");
-                
+
                 from("direct:json").unmarshal().json(JsonLibrary.Fastjson, Map.class);
             }
         };

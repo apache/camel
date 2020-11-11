@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -115,9 +115,9 @@ public class SplitTokenizerTest extends ContextTestSupport {
                 from("direct:e").split().tokenizeXML("person").to("mock:split");
 
                 from("direct:f").split().xpath("//person")
-                    // To test the body is not empty
-                    // it will call the ObjectHelper.evaluateValuePredicate()
-                    .filter().simple("${body}").to("mock:split");
+                        // To test the body is not empty
+                        // it will call the ObjectHelper.evaluateValuePredicate()
+                        .filter().simple("${body}").to("mock:split");
 
             }
         };

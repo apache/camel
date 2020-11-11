@@ -52,7 +52,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
 
         LOG.info("GitHub PullRequestConsumer: Indexing current pull requests...");
         List<PullRequest> pullRequests = pullRequestService.getPullRequests(getRepository(), "open");
-        if (pullRequests.size() > 0) {
+        if (!pullRequests.isEmpty()) {
             lastOpenPullRequest = pullRequests.get(0).getNumber();
         }
     }
@@ -70,7 +70,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
             }
         }
 
-        if (newPullRequests.size() > 0) {
+        if (!newPullRequests.isEmpty()) {
             lastOpenPullRequest = openPullRequests.get(0).getNumber();
         }
 

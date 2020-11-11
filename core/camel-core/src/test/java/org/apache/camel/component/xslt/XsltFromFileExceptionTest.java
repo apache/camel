@@ -21,8 +21,11 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -30,7 +33,7 @@ import org.junit.Test;
 public class XsltFromFileExceptionTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/xslt");
         super.setUp();
@@ -45,13 +48,13 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/xslt/hello.xml");
-        assertFalse("File should not exists " + file, file.exists());
+        assertFalse(file.exists(), "File should not exists " + file);
 
         file = new File("target/data/xslt/ok/hello.xml");
-        assertTrue("File should exists " + file, file.exists());
+        assertTrue(file.exists(), "File should exists " + file);
     }
 
     @Test
@@ -64,13 +67,13 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         File file = new File("target/data/xslt/hello2.xml");
-        assertFalse("File should not exists " + file, file.exists());
+        assertFalse(file.exists(), "File should not exists " + file);
 
         file = new File("target/data/xslt/error/hello2.xml");
-        assertTrue("File should exists " + file, file.exists());
+        assertTrue(file.exists(), "File should exists " + file);
     }
 
     @Override
@@ -78,8 +81,9 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/xslt?moveFailed=error&move=ok&initialDelay=0&delay=10").onException(Exception.class).to("mock:error").end()
-                    .to("xslt:org/apache/camel/component/xslt/example.xsl").to("mock:result");
+                from("file:target/data/xslt?moveFailed=error&move=ok&initialDelay=0&delay=10").onException(Exception.class)
+                        .to("mock:error").end()
+                        .to("xslt:org/apache/camel/component/xslt/example.xsl").to("mock:result");
             }
         };
     }

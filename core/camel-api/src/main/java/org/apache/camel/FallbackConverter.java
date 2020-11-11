@@ -23,23 +23,20 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation used to mark methods to indicate code capable of being a
- * fallback converter which are then auto-discovered using
- * the <a href="http://camel.apache.org/type-converter.html">Type
- * Conversion Support</a>.
+ * An annotation used to mark methods to indicate code capable of being a fallback converter which are then
+ * auto-discovered using the <a href="http://camel.apache.org/type-converter.html">Type Conversion Support</a>.
  * <p/>
- * The difference between a regular <tt>@Converter</tt> and a <tt>@FallbackConverter</tt>
- * is that the fallback is resolved at last if no regular converter could be found.
- * Also the method signature is scoped to be generic to allow handling a broader range
- * of types trying to be converted. The fallback converter can just return <tt>null</tt>
- * if it can not handle the types to convert from/to.
+ * The difference between a regular <tt>@Converter</tt> and a <tt>@FallbackConverter</tt> is that the fallback is
+ * resolved at last if no regular converter could be found. Also the method signature is scoped to be generic to allow
+ * handling a broader range of types trying to be converted. The fallback converter can just return <tt>null</tt> if it
+ * can not handle the types to convert from/to.
  *
- * @see org.apache.camel.component.file.GenericFileConverter GenericFileConverter for an example.
+ * @see        org.apache.camel.component.file.GenericFileConverter GenericFileConverter for an example.
  * @deprecated use @Converter(fallback = true) instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD })
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Deprecated
 public @interface FallbackConverter {
 

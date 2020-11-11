@@ -33,7 +33,7 @@ import org.apache.camel.support.SimpleRegistry;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class PulsarProducerHeadersInTest extends PulsarTestSupport {
 
@@ -44,12 +44,11 @@ public class PulsarProducerHeadersInTest extends PulsarTestSupport {
     private ProducerTemplate producerTemplate;
 
     @EndpointInject("pulsar:" + TOPIC_URI
-            + "?numberOfConsumers=1&subscriptionType=Exclusive"
-            + "&subscriptionName=camel-subscription"
-            + "&consumerQueueSize=1"
-            + "&consumerName=camel-consumer"
-            + "&producerName=" + PRODUCER
-    )
+                    + "?numberOfConsumers=1&subscriptionType=Exclusive"
+                    + "&subscriptionName=camel-subscription"
+                    + "&consumerQueueSize=1"
+                    + "&consumerName=camel-consumer"
+                    + "&producerName=" + PRODUCER)
     private Endpoint pulsar;
 
     @EndpointInject("mock:result")

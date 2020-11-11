@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.hazelcast.list;
 
+import com.hazelcast.collection.IList;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -29,7 +29,8 @@ import org.apache.camel.component.hazelcast.listener.CamelItemListener;
  */
 public class HazelcastListConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastListConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
+    public HazelcastListConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
+                                 String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
         IList<Object> queue = hazelcastInstance.getList(cacheName);

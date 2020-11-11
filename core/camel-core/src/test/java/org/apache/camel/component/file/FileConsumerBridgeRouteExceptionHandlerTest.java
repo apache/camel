@@ -23,8 +23,10 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -43,12 +45,12 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should pickup bye.txt file 2 times", 2, myReadLockStrategy.getCounter());
+        assertEquals(2, myReadLockStrategy.getCounter(), "Should pickup bye.txt file 2 times");
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myReadLockStrategy", myReadLockStrategy);
         return jndi;
     }
@@ -60,15 +62,17 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
             @Override
             public void configure() throws Exception {
                 // to handle any IOException being thrown
-                onException(IOException.class).handled(true).log("IOException occurred due: ${exception.message}").transform().simple("Error ${exception.message}")
-                    .to("mock:error");
+                onException(IOException.class).handled(true).log("IOException occurred due: ${exception.message}").transform()
+                        .simple("Error ${exception.message}")
+                        .to("mock:error");
 
                 // this is the file route that pickup files, notice how we
                 // bridge the consumer to use the Camel routing error handler
                 // the exclusiveReadLockStrategy is only configured because this
                 // is from an unit test, so we use that to simulate exceptions
-                from("file:target/data/nospace?exclusiveReadLockStrategy=#myReadLockStrategy&bridgeErrorHandler=true&initialDelay=0&delay=10").convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file:target/data/nospace?exclusiveReadLockStrategy=#myReadLockStrategy&bridgeErrorHandler=true&initialDelay=0&delay=10")
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }
@@ -80,12 +84,15 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
         private int counter;
 
         @Override
-        public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
+        public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint)
+                throws Exception {
             // noop
         }
 
         @Override
-        public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        public boolean acquireExclusiveReadLock(
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+                throws Exception {
             if (file.getFileNameOnly().equals("bye.txt")) {
                 if (counter++ == 0) {
                     // force an exception on acquire attempt for the bye.txt
@@ -98,17 +105,23 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
         }
 
         @Override
-        public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        public void releaseExclusiveReadLockOnAbort(
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+                throws Exception {
             // noop
         }
 
         @Override
-        public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        public void releaseExclusiveReadLockOnRollback(
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+                throws Exception {
             // noop
         }
 
         @Override
-        public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+        public void releaseExclusiveReadLockOnCommit(
+                GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+                throws Exception {
             // noop
         }
 

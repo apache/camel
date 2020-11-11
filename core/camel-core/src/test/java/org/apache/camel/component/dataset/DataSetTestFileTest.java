@@ -18,9 +18,9 @@ package org.apache.camel.component.dataset;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class DataSetTestFileTest extends ContextTestSupport {
 
@@ -30,13 +30,13 @@ public class DataSetTestFileTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/testme");
         super.setUp();
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testFile() throws Exception {
         template.sendBody("file:target/data/testme", "Hello World");

@@ -18,15 +18,18 @@ package org.apache.camel.main;
 
 import java.util.HashMap;
 
+import org.apache.camel.spi.BootstrapCloseable;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.PatternHelper;
 
 /**
  * Global configuration for Rest DSL.
  */
-public class RestConfigurationProperties extends RestConfiguration {
+@Configurer(bootstrap = true)
+public class RestConfigurationProperties extends RestConfiguration implements BootstrapCloseable {
 
-    private final MainConfigurationProperties parent;
+    private MainConfigurationProperties parent;
 
     public RestConfigurationProperties(MainConfigurationProperties parent) {
         this.parent = parent;
@@ -36,20 +39,30 @@ public class RestConfigurationProperties extends RestConfiguration {
         return parent;
     }
 
+    @Override
+    public void close() {
+        parent = null;
+        setComponentProperties(null);
+        setEndpointProperties(null);
+        setConsumerProperties(null);
+        setDataFormatProperties(null);
+        setApiProperties(null);
+        setCorsHeaders(null);
+    }
+
     // getter and setters
     // --------------------------------------------------------------
 
     // these are inherited from the parent class
-
 
     // fluent builders
     // --------------------------------------------------------------
 
     /**
      * The Camel Rest component to use for the REST transport (consumer), such as netty-http, jetty, servlet, undertow.
-     * If no component has been explicit configured, then Camel will lookup if there is a Camel component
-     * that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry.
-     * If either one is found, then that is being used.
+     * If no component has been explicit configured, then Camel will lookup if there is a Camel component that
+     * integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If
+     * either one is found, then that is being used.
      */
     public RestConfigurationProperties withComponent(String component) {
         setComponent(component);
@@ -111,13 +124,12 @@ public class RestConfigurationProperties extends RestConfiguration {
     }
 
     /**
-     * The port number to use for exposing the REST service.
-     * Notice if you use servlet component then the port number configured here does not apply,
-     * as the port number in use is the actual port number the servlet component is using.
-     * eg if using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP service in Karaf
-     * that uses port 8181 by default etc. Though in those situations setting the port number here,
-     * allows tooling and JMX to know the port number, so its recommended to set the port number
-     * to the number that the servlet engine uses.
+     * The port number to use for exposing the REST service. Notice if you use servlet component then the port number
+     * configured here does not apply, as the port number in use is the actual port number the servlet component is
+     * using. eg if using Apache Tomcat its the tomcat http port, if using Apache Karaf its the HTTP service in Karaf
+     * that uses port 8181 by default etc. Though in those situations setting the port number here, allows tooling and
+     * JMX to know the port number, so its recommended to set the port number to the number that the servlet engine
+     * uses.
      */
     public RestConfigurationProperties withPort(int port) {
         setPort(port);
@@ -125,13 +137,12 @@ public class RestConfigurationProperties extends RestConfiguration {
     }
 
     /**
-     * Sets the location of the api document (swagger api) the REST producer will use
-     * to validate the REST uri and query parameters are valid accordingly to the api document.
-     * This requires adding camel-swagger-java to the classpath, and any miss configuration
-     * will let Camel fail on startup and report the error(s).
+     * Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
+     * parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath,
+     * and any miss configuration will let Camel fail on startup and report the error(s).
      * <p/>
-     * The location of the api document is loaded from classpath by default, but you can use
-     * <tt>file:</tt> or <tt>http:</tt> to refer to resources to load from file or http url.
+     * The location of the api document is loaded from classpath by default, but you can use <tt>file:</tt> or
+     * <tt>http:</tt> to refer to resources to load from file or http url.
      */
     public RestConfigurationProperties withProducerApiDoc(String producerApiDoc) {
         setProducerApiDoc(producerApiDoc);
@@ -141,9 +152,9 @@ public class RestConfigurationProperties extends RestConfiguration {
     /**
      * Sets a leading context-path the REST services will be using.
      * <p/>
-     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
-     * is deployed using a context-path. Or for components such as <tt>camel-jetty</tt> or <tt>camel-netty-http</tt>
-     * that includes a HTTP server.
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application is
+     * deployed using a context-path. Or for components such as <tt>camel-jetty</tt> or <tt>camel-netty-http</tt> that
+     * includes a HTTP server.
      */
     public RestConfigurationProperties withContextPath(String contextPath) {
         setContextPath(contextPath);
@@ -153,8 +164,8 @@ public class RestConfigurationProperties extends RestConfiguration {
     /**
      * Sets a leading API context-path the REST API services will be using.
      * <p/>
-     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
-     * is deployed using a context-path.
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application is
+     * deployed using a context-path.
      */
     public RestConfigurationProperties withApiContextPath(String apiContextPath) {
         setApiContextPath(apiContextPath);
@@ -172,10 +183,11 @@ public class RestConfigurationProperties extends RestConfiguration {
     }
 
     /**
-     * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+     * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name
+     * matches the pattern.
      * <p/>
-     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only.
-     * For any other value, the pattern uses the rules from {@link PatternHelper#matchPattern(String, String)}
+     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only. For any
+     * other value, the pattern uses the rules from {@link PatternHelper#matchPattern(String, String)}
      */
     public RestConfigurationProperties withApiContextIdPattern(String apiContextIdPattern) {
         setApiContextIdPattern(apiContextIdPattern);
@@ -183,8 +195,8 @@ public class RestConfigurationProperties extends RestConfiguration {
     }
 
     /**
-     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover
-     * these contexts, if <tt>false</tt> then only the current CamelContext is in use.
+     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it
+     * allows to discover these contexts, if <tt>false</tt> then only the current CamelContext is in use.
      */
     public RestConfigurationProperties withApiContextListing(boolean apiContextListing) {
         setApiContextListing(apiContextListing);
@@ -193,8 +205,8 @@ public class RestConfigurationProperties extends RestConfiguration {
 
     /**
      * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
-     * as vendor extension (eg keys starting with x-) such as route ids, class names etc.
-     * Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.
+     * as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways
+     * and tools supports vendor-extensions when importing your API docs.
      */
     public RestConfigurationProperties withApiVendorExtension(boolean apiVendorExtension) {
         setApiVendorExtension(apiVendorExtension);
@@ -202,8 +214,8 @@ public class RestConfigurationProperties extends RestConfiguration {
     }
 
     /**
-     * If no hostname has been explicit configured, then this resolver is used to compute the hostname the REST service will be using.
-     * The possible values are: allLocalIp, localIp, localHostName
+     * If no hostname has been explicit configured, then this resolver is used to compute the hostname the REST service
+     * will be using. The possible values are: allLocalIp, localIp, localHostName
      */
     public RestConfigurationProperties withHostNameResolver(String hostNameResolver) {
         setHostNameResolver(hostNameResolver);
@@ -213,8 +225,7 @@ public class RestConfigurationProperties extends RestConfiguration {
     /**
      * Sets the binding mode to use.
      * <p/>
-     * The possible values are: auto, off, json, xml, json_xml
-     * The default value is off
+     * The possible values are: auto, off, json, xml, json_xml The default value is off
      */
     public RestConfigurationProperties withBindingMode(String bindingMode) {
         setBindingMode(bindingMode);
@@ -222,8 +233,8 @@ public class RestConfigurationProperties extends RestConfiguration {
     }
 
     /**
-     * Whether to skip binding on output if there is a custom HTTP error code header.
-     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
+     * Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
+     * messages that do not bind to json / xml etc, as success messages otherwise will do.
      */
     public RestConfigurationProperties withSkipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
         setSkipBindingOnErrorCode(skipBindingOnErrorCode);
@@ -231,10 +242,11 @@ public class RestConfigurationProperties extends RestConfiguration {
     }
 
     /**
-     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
-     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the
+     * client is supported by the Rest-DSL configuration of its consumes/produces settings.
      * <p/>
-     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is
+     * returned.
      * <p/>
      * The default value is false.
      */
@@ -254,9 +266,8 @@ public class RestConfigurationProperties extends RestConfiguration {
     }
 
     /**
-     * Name of specific json data format to use.
-     * By default json-jackson will be used.
-     * Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+     * Name of specific json data format to use. By default json-jackson will be used. Important: This option is only
+     * for setting a custom name of the data format, not to refer to an existing data format instance.
      */
     public RestConfigurationProperties withJsonDataFormat(String jsonDataFormat) {
         setJsonDataFormat(jsonDataFormat);
@@ -264,9 +275,8 @@ public class RestConfigurationProperties extends RestConfiguration {
     }
 
     /**
-     * Name of specific XML data format to use.
-     * By default jaxb will be used.
-     * Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+     * Name of specific XML data format to use. By default jaxb will be used. Important: This option is only for setting
+     * a custom name of the data format, not to refer to an existing data format instance.
      */
     public RestConfigurationProperties withXmlDataFormat(String xmlDataFormat) {
         setXmlDataFormat(xmlDataFormat);

@@ -27,14 +27,19 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedCamelContextTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.init();
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
         return context;
@@ -42,7 +47,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
     @Test
     public void testManagedCamelContextClient() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
+        // JMX tests don't work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
             return;
         }
@@ -65,7 +70,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
-        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+        assertTrue(mbeanServer.isRegistered(on), "Should be registered");
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", name);
 
@@ -85,7 +90,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals("Started", status);
 
         Boolean messageHistory = (Boolean) mbeanServer.getAttribute(on, "MessageHistory");
-        assertEquals(Boolean.TRUE, messageHistory);
+        assertEquals(Boolean.FALSE, messageHistory);
 
         Boolean logMask = (Boolean) mbeanServer.getAttribute(on, "LogMask");
         assertEquals(Boolean.FALSE, logMask);
@@ -99,18 +104,22 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mbeanServer.invoke(on, "sendBody", new Object[]{"direct:start", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
+        mbeanServer.invoke(on, "sendBody", new Object[] { "direct:start", "Hello World" },
+                new String[] { "java.lang.String", "java.lang.Object" });
         assertMockEndpointsSatisfied();
 
         resetMocks();
         mock.expectedBodiesReceived("Hello World");
-        mbeanServer.invoke(on, "sendStringBody", new Object[]{"direct:start", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
+        mbeanServer.invoke(on, "sendStringBody", new Object[] { "direct:start", "Hello World" },
+                new String[] { "java.lang.String", "java.lang.String" });
         assertMockEndpointsSatisfied();
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[] { "direct:foo", "Hello World" },
+                new String[] { "java.lang.String", "java.lang.Object" });
         assertEquals("Bye World", reply);
 
-        reply = mbeanServer.invoke(on, "requestStringBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
+        reply = mbeanServer.invoke(on, "requestStringBody", new Object[] { "direct:foo", "Hello World" },
+                new String[] { "java.lang.String", "java.lang.String" });
         assertEquals("Bye World", reply);
 
         resetMocks();
@@ -119,21 +128,25 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         mock.expectedHeaderReceived("foo", 123);
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
-        mbeanServer.invoke(on, "sendBodyAndHeaders", new Object[]{"direct:start", "Hello World", headers}, new String[]{"java.lang.String", "java.lang.Object", "java.util.Map"});
+        mbeanServer.invoke(on, "sendBodyAndHeaders", new Object[] { "direct:start", "Hello World", headers },
+                new String[] { "java.lang.String", "java.lang.Object", "java.util.Map" });
         assertMockEndpointsSatisfied();
 
         resetMocks();
         mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", 123);
-        reply = mbeanServer.invoke(on, "requestBodyAndHeaders", new Object[]{"direct:start", "Hello World", headers}, new String[]{"java.lang.String", "java.lang.Object", "java.util.Map"});
+        reply = mbeanServer.invoke(on, "requestBodyAndHeaders", new Object[] { "direct:start", "Hello World", headers },
+                new String[] { "java.lang.String", "java.lang.Object", "java.util.Map" });
         assertEquals("Hello World", reply);
         assertMockEndpointsSatisfied();
 
         // test can send
-        Boolean can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[]{"direct:start"}, new String[]{"java.lang.String"});
+        Boolean can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[] { "direct:start" },
+                new String[] { "java.lang.String" });
         assertEquals(true, can.booleanValue());
-        can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[]{"timer:foo"}, new String[]{"java.lang.String"});
+        can = (Boolean) mbeanServer.invoke(on, "canSendToEndpoint", new Object[] { "timer:foo" },
+                new String[] { "java.lang.String" });
         assertEquals(false, can.booleanValue());
 
         // stop Camel
@@ -154,21 +167,22 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNull(context.hasEndpoint("seda:bar"));
 
         // create a new endpoint
-        Object reply = mbeanServer.invoke(on, "createEndpoint", new Object[]{"seda:bar"}, new String[]{"java.lang.String"});
+        Object reply
+                = mbeanServer.invoke(on, "createEndpoint", new Object[] { "seda:bar" }, new String[] { "java.lang.String" });
         assertEquals(Boolean.TRUE, reply);
 
         assertNotNull(context.hasEndpoint("seda:bar"));
 
         ObjectName seda = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=endpoints,name=\"seda://bar\"");
         boolean registered = mbeanServer.isRegistered(seda);
-        assertTrue("Should be registered " + seda, registered);
+        assertTrue(registered, "Should be registered " + seda);
 
         // create it again
-        reply = mbeanServer.invoke(on, "createEndpoint", new Object[]{"seda:bar"}, new String[]{"java.lang.String"});
+        reply = mbeanServer.invoke(on, "createEndpoint", new Object[] { "seda:bar" }, new String[] { "java.lang.String" });
         assertEquals(Boolean.FALSE, reply);
 
         registered = mbeanServer.isRegistered(seda);
-        assertTrue("Should be registered " + seda, registered);
+        assertTrue(registered, "Should be registered " + seda);
     }
 
     @Test
@@ -185,30 +199,31 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNull(context.hasEndpoint("seda:bar"));
 
         // create a new endpoint
-        Object reply = mbeanServer.invoke(on, "createEndpoint", new Object[]{"seda:bar"}, new String[]{"java.lang.String"});
+        Object reply
+                = mbeanServer.invoke(on, "createEndpoint", new Object[] { "seda:bar" }, new String[] { "java.lang.String" });
         assertEquals(Boolean.TRUE, reply);
 
         assertNotNull(context.hasEndpoint("seda:bar"));
 
         ObjectName seda = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=endpoints,name=\"seda://bar\"");
         boolean registered = mbeanServer.isRegistered(seda);
-        assertTrue("Should be registered " + seda, registered);
+        assertTrue(registered, "Should be registered " + seda);
 
         // remove it
-        Object num = mbeanServer.invoke(on, "removeEndpoints", new Object[]{"seda:*"}, new String[]{"java.lang.String"});
+        Object num = mbeanServer.invoke(on, "removeEndpoints", new Object[] { "seda:*" }, new String[] { "java.lang.String" });
         assertEquals(1, num);
 
         assertNull(context.hasEndpoint("seda:bar"));
         registered = mbeanServer.isRegistered(seda);
-        assertFalse("Should not be registered " + seda, registered);
+        assertFalse(registered, "Should not be registered " + seda);
 
         // remove it again
-        num = mbeanServer.invoke(on, "removeEndpoints", new Object[]{"seda:*"}, new String[]{"java.lang.String"});
+        num = mbeanServer.invoke(on, "removeEndpoints", new Object[] { "seda:*" }, new String[] { "java.lang.String" });
         assertEquals(0, num);
 
         assertNull(context.hasEndpoint("seda:bar"));
         registered = mbeanServer.isRegistered(seda);
-        assertFalse("Should not be registered " + seda, registered);
+        assertFalse(registered, "Should not be registered " + seda);
     }
 
     @Override

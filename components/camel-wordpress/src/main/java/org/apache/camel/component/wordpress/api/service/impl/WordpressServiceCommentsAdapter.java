@@ -26,7 +26,9 @@ import org.apache.camel.component.wordpress.api.service.spi.CommentsSPI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class WordpressServiceCommentsAdapter extends AbstractWordpressCrudServiceAdapter<CommentsSPI, Comment, CommentSearchCriteria> implements WordpressServiceComments {
+public class WordpressServiceCommentsAdapter
+        extends AbstractWordpressCrudServiceAdapter<CommentsSPI, Comment, CommentSearchCriteria>
+        implements WordpressServiceComments {
 
     public WordpressServiceCommentsAdapter(final String wordpressUrl, final String apiVersion) {
         super(wordpressUrl, apiVersion);
@@ -41,8 +43,10 @@ public class WordpressServiceCommentsAdapter extends AbstractWordpressCrudServic
     @Override
     public List<Comment> list(CommentSearchCriteria c) {
         checkNotNull(c, "The search criteria must be defined");
-        return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(), c.getAuthor(), c.getAuthorExclude(), c.getAuthorEmail(), c.getBefore(),
-                             c.getExclude(), c.getInclude(), c.getKarma(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(), c.getParentExclude(), c.getPost(), c.getStatus(), c.getType());
+        return getSpi().list(this.getApiVersion(), c.getContext(), c.getPage(), c.getPerPage(), c.getSearch(), c.getAfter(),
+                c.getAuthor(), c.getAuthorExclude(), c.getAuthorEmail(), c.getBefore(),
+                c.getExclude(), c.getInclude(), c.getKarma(), c.getOffset(), c.getOrder(), c.getOrderBy(), c.getParent(),
+                c.getParentExclude(), c.getPost(), c.getStatus(), c.getType());
     }
     // @formatter:on
 

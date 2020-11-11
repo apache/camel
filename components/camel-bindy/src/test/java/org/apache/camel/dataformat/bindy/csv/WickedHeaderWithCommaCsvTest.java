@@ -20,8 +20,10 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WickedHeaderWithCommaCsvTest extends CamelTestSupport {
 
@@ -32,14 +34,15 @@ public class WickedHeaderWithCommaCsvTest extends CamelTestSupport {
         unmarshalMock.expectedMessageCount(1);
 
         String csv = ("\"Foo (one, or more, foos)\",\"Bar (one, or more, bars)\"" + "\r\n")
-            + "\"1,000.00\",\"1,500.00\"" + "\r\n"
-            + "\"2,000.00\",\"2,700.00\"" + "\r\n";
+                     + "\"1,000.00\",\"1,500.00\"" + "\r\n"
+                     + "\"2,000.00\",\"2,700.00\"" + "\r\n";
 
         template.sendBody("direct:startUnmarshal", csv);
 
         assertMockEndpointsSatisfied();
 
-        final List<WickedHeaderWithCommaCsv> wickedHeaderWithCommaCsvs = unmarshalMock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        final List<WickedHeaderWithCommaCsv> wickedHeaderWithCommaCsvs
+                = unmarshalMock.getReceivedExchanges().get(0).getIn().getBody(List.class);
 
         final WickedHeaderWithCommaCsv row1000 = wickedHeaderWithCommaCsvs.get(0);
         assertEquals("1,000.00", row1000.getFoo());
@@ -66,12 +69,12 @@ public class WickedHeaderWithCommaCsvTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:startUnmarshal")
-                    .unmarshal(new BindyCsvDataFormat(WickedHeaderWithCommaCsv.class))
-                    .to("mock:receiveUnmarshal");
+                        .unmarshal(new BindyCsvDataFormat(WickedHeaderWithCommaCsv.class))
+                        .to("mock:receiveUnmarshal");
 
                 from("direct:startMarshal")
-                    .marshal(new BindyCsvDataFormat(WickedHeaderWithCommaCsv.class))
-                    .to("mock:receiveMarshal");
+                        .marshal(new BindyCsvDataFormat(WickedHeaderWithCommaCsv.class))
+                        .to("mock:receiveMarshal");
 
             }
         };

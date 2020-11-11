@@ -26,6 +26,7 @@ import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.rules.Verifier;
 import org.junit.runner.Description;
@@ -66,12 +67,12 @@ public class LogVerifier extends Verifier {
     private class LogAppender extends AbstractAppender {
         LogAppender(String name) {
             super(
-                name,
-                null,
-                PatternLayout.newBuilder()
-                    .withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN)
-                    .build()
-            );
+                  name,
+                  null,
+                  PatternLayout.newBuilder()
+                          .withPattern(PatternLayout.SIMPLE_CONVERSION_PATTERN)
+                          .build(),
+                  true, Property.EMPTY_ARRAY);
         }
 
         @Override
@@ -80,7 +81,7 @@ public class LogVerifier extends Verifier {
         }
     }
 
-    private Appender newAppender()  {
+    private Appender newAppender() {
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
 

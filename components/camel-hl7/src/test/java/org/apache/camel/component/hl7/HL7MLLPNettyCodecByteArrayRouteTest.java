@@ -28,11 +28,14 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Unit test for HL7 routing where the netty endpoint passes on a byte array
- * instead of a string and leaves charset interpretation to the dataformat.
+ * Unit test for HL7 routing where the netty endpoint passes on a byte array instead of a string and leaves charset
+ * interpretation to the dataformat.
  */
 public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
 
@@ -64,7 +67,9 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", in.toString(), String.class);
+        String out = template.requestBody(
+                "netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoders=#hl7encoder&decoders=#hl7decoder", in.toString(),
+                String.class);
 
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123|||||UNICODE UTF-8", lines[0]);
@@ -87,7 +92,9 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        String out = template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", in.toString(), String.class);
+        String out = template.requestBody(
+                "netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoders=#hl7encoder&decoders=#hl7decoder", in.toString(),
+                String.class);
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADT^A01||||123|||||UNICODE UTF-8", lines[0]);
         assertEquals("PID|||123||Döe^John", lines[1]);
@@ -109,7 +116,8 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
         in.append("\r");
         in.append(line2);
 
-        template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder", in.toString());
+        template.requestBody("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoders=#hl7encoder&decoders=#hl7decoder",
+                in.toString());
 
         assertMockEndpointsSatisfied();
     }
@@ -122,27 +130,28 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
                 DataFormat hl7 = new HL7DataFormat();
                 // we setup or HL7 listener on port 8888 (using the hl7codec)
                 // and in sync mode so we can return a response
-                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoder=#hl7encoder&decoder=#hl7decoder")
-                    // we use the HL7 data format to unmarshal from HL7 stream
-                    // to the HAPI Message model
-                    // this ensures that the camel message has been enriched
-                    // with hl7 specific headers to
-                    // make the routing much easier (see below)
-                    .unmarshal(hl7)
-                    // using choice as the content base router
-                    .choice()
-                    // where we choose that A19 queries invoke the handleA19
-                    // method on our hl7service bean
-                    .when(header("CamelHL7TriggerEvent").isEqualTo("A19")).bean("hl7service", "handleA19").to("mock:a19")
-                    // and A01 should invoke the handleA01 method on our
-                    // hl7service bean
-                    .when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("mock:a01").bean("hl7service", "handleA01").to("mock:a19")
-                    // other types should go to mock:unknown
-                    .otherwise().to("mock:unknown")
-                    // end choice block
-                    .end()
-                    // marshal response back
-                    .marshal(hl7);
+                from("netty:tcp://127.0.0.1:" + getPort() + "?sync=true&encoders=#hl7encoder&decoders=#hl7decoder")
+                        // we use the HL7 data format to unmarshal from HL7 stream
+                        // to the HAPI Message model
+                        // this ensures that the camel message has been enriched
+                        // with hl7 specific headers to
+                        // make the routing much easier (see below)
+                        .unmarshal(hl7)
+                        // using choice as the content base router
+                        .choice()
+                        // where we choose that A19 queries invoke the handleA19
+                        // method on our hl7service bean
+                        .when(header("CamelHL7TriggerEvent").isEqualTo("A19")).bean("hl7service", "handleA19").to("mock:a19")
+                        // and A01 should invoke the handleA01 method on our
+                        // hl7service bean
+                        .when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("mock:a01").bean("hl7service", "handleA01")
+                        .to("mock:a19")
+                        // other types should go to mock:unknown
+                        .otherwise().to("mock:unknown")
+                        // end choice block
+                        .end()
+                        // marshal response back
+                        .marshal(hl7);
                 // END SNIPPET: e1
             }
         };
@@ -165,7 +174,7 @@ public class HL7MLLPNettyCodecByteArrayRouteTest extends HL7TestSupport {
             // here you can have your business logic for A01 messages
             assertTrue(msg instanceof ADT_A01);
             // just return the same dummy response
-            return createADT01Message(((ADT_A01)msg).getMSH().getMessageControlID().getValue());
+            return createADT01Message(((ADT_A01) msg).getMSH().getMessageControlID().getValue());
         }
     }
 

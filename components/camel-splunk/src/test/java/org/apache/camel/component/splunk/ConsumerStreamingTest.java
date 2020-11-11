@@ -24,16 +24,18 @@ import com.splunk.JobCollection;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.splunk.event.SplunkEvent;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class ConsumerStreamingTest extends SplunkMockTestSupport {
 
     @Mock
@@ -54,9 +56,9 @@ public class ConsumerStreamingTest extends SplunkMockTestSupport {
         when(jobMock.getResults(any())).thenReturn(stream);
 
         assertMockEndpointsSatisfied();
-        SplunkEvent recieved = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
-        assertNotNull(recieved);
-        Map<String, String> data = recieved.getEventData();
+        SplunkEvent received = searchMock.getReceivedExchanges().get(0).getIn().getBody(SplunkEvent.class);
+        assertNotNull(received);
+        Map<String, String> data = received.getEventData();
         assertEquals("indexertpool", data.get("name"));
         stream.close();
     }
@@ -65,10 +67,9 @@ public class ConsumerStreamingTest extends SplunkMockTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("splunk://normal?delay=5s&username=foo&password=bar&initEarliestTime=-10s&latestTime=now&search=search index=myindex&sourceType=testSource&streaming=true")
+                from("splunk://normal?delay=5000&username=foo&password=bar&initEarliestTime=-10s&latestTime=now&search=search index=myindex&sourceType=testSource&streaming=true")
                         .to("mock:search-result");
             }
         };
     }
 }
-

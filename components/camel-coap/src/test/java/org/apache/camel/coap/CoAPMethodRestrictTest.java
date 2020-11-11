@@ -19,12 +19,15 @@ package org.apache.camel.coap;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
     @Test
-    public void testDefaultCoAPMethodRestrict() {
+    void testDefaultCoAPMethodRestrict() {
         NetworkConfig.createStandardWithoutFile();
 
         // All request methods should be valid on this endpoint
@@ -32,7 +35,7 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
     }
 
     @Test
-    public void testSpecifiedCoAPMethodRestrict() {
+    void testSpecifiedCoAPMethodRestrict() {
         NetworkConfig.createStandardWithoutFile();
 
         // Only GET is valid for /test/a
@@ -50,7 +53,8 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
 
     private void assertCoAPMethodRestrictResponse(String path, String methodRestrict, String expectedResponse) {
         for (String method : CoAPConstants.METHOD_RESTRICT_ALL.split(",")) {
-            String result = template.requestBodyAndHeader("coap://localhost:" + PORT + path, null, CoAPConstants.COAP_METHOD, method, String.class);
+            String result = template.requestBodyAndHeader("coap://localhost:" + PORT + path, null, CoAPConstants.COAP_METHOD,
+                    method, String.class);
             if (methodRestrict.contains(method)) {
                 assertEquals(expectedResponse, result);
             } else {
@@ -60,24 +64,20 @@ public class CoAPMethodRestrictTest extends CoAPTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                fromF("coap://localhost:%d/test", PORT)
-                        .setBody(constant("GET: /test"));
+            public void configure() {
+                fromF("coap://localhost:%d/test", PORT).setBody(constant("GET: /test"));
 
-                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT)
-                        .setBody(constant("GET: /test/a"));
+                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/a"));
 
-                fromF("coap://localhost:%d/test/a/b?coapMethodRestrict=DELETE", PORT)
-                        .setBody(constant("DELETE: /test/a/b"));
+                fromF("coap://localhost:%d/test/a/b?coapMethodRestrict=DELETE", PORT).setBody(constant("DELETE: /test/a/b"));
 
                 fromF("coap://localhost:%d/test/a/b/c?coapMethodRestrict=DELETE,GET", PORT)
                         .setBody(constant("DELETE & GET: /test/a/b/c"));
 
-                fromF("coap://localhost:%d/test/b?coapMethodRestrict=GET", PORT)
-                        .setBody(constant("GET: /test/b"));
+                fromF("coap://localhost:%d/test/b?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/b"));
             }
         };
     }

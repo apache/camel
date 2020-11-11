@@ -24,14 +24,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
 public class JsonValidationException extends ValidationException {
-    
+
     private static final long serialVersionUID = 1L;
 
     private final JsonSchema schema;
     private final Set<ValidationMessage> errors;
 
     public JsonValidationException(Exchange exchange, JsonSchema schema, Set<ValidationMessage> errors) {
-        super(exchange, "JSon validation error with " + errors.size() + " errors");
+        super(exchange, "JSON validation error with " + errors.size() + " errors");
         this.schema = schema;
         this.errors = errors;
     }

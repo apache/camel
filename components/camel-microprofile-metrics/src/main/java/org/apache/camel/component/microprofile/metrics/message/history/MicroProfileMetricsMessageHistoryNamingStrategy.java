@@ -33,9 +33,9 @@ public interface MicroProfileMetricsMessageHistoryNamingStrategy {
 
     default Tag[] getTags(Route route, NamedNode node) {
         return new Tag[] {
-            new Tag(CAMEL_CONTEXT_TAG, route.getCamelContext().getName()),
-            new Tag(ROUTE_ID_TAG, route.getId()),
-            new Tag(NODE_ID_TAG, node.getId())
+                new Tag(CAMEL_CONTEXT_TAG, route.getCamelContext().getName()),
+                new Tag(ROUTE_ID_TAG, route.getId()),
+                new Tag(NODE_ID_TAG, node.getId())
         };
     }
 }

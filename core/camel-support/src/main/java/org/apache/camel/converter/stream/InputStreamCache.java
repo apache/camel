@@ -36,7 +36,7 @@ public final class InputStreamCache extends ByteArrayInputStream implements Stre
         super(data);
         super.count = count;
     }
-    
+
     @Override
     public void writeTo(OutputStream os) throws IOException {
         os.write(buf, pos, count - pos);

@@ -24,14 +24,15 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindySimpleCsvRemoveWhitespaceUnmarshallTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindySimpleCsvRemoveWhitespaceUnmarshallTest {
 
     @Produce("direct:start")
     protected ProducerTemplate template;
@@ -45,16 +46,17 @@ public class BindySimpleCsvRemoveWhitespaceUnmarshallTest extends AbstractJUnit4
     @Test
     public void testUnMarshallMessage() throws Exception {
         resultEndpoint.expectedMessageCount(1);
-        
+
         template.sendBody(record);
-        
+
         resultEndpoint.assertIsSatisfied();
         Exchange exchange = resultEndpoint.assertExchangeReceived(0);
         assertEquals(2, exchange.getIn().getBody(List.class).size());
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassandremovewhitespace.Order.class);
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
+                org.apache.camel.dataformat.bindy.model.simple.oneclassandremovewhitespace.Order.class);
 
         @Override
         public void configure() {

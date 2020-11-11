@@ -38,9 +38,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import static info.ganglia.gmetric4j.gmetric.GMetricSlope.NEGATIVE;
 import static info.ganglia.gmetric4j.gmetric.GMetricType.FLOAT;
@@ -59,17 +57,16 @@ import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_SLOPE;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_TMAX;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_TYPE;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_UNITS;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * {@code GangliaProtocolV31CamelTest} is not shipped with an embedded gmond
- * agent. The gmond agent is mocked with the help of camel-netty codecs and a
- * mock endpoint. As underlying UDP packets are not guaranteed to be delivered,
- * loose assertions are performed.
+ * {@code GangliaProtocolV31CamelTest} is not shipped with an embedded gmond agent. The gmond agent is mocked with the
+ * help of camel-netty codecs and a mock endpoint. As underlying UDP packets are not guaranteed to be delivered, loose
+ * assertions are performed.
  */
 public class GangliaProtocolV31CamelTest extends CamelGangliaTestSupport {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @BindToRegistry("protocolV31Decoder")
     private ProtocolV31Decoder protocolV31Decoder = new ProtocolV31Decoder();
@@ -157,57 +154,37 @@ public class GangliaProtocolV31CamelTest extends CamelGangliaTestSupport {
 
     @Test
     public void sendWrongMetricTypeShouldThrow() throws Exception {
-        thrown.expect(CamelExecutionException.class);
-        mockGmond.setExpectedMessageCount(0);
-        mockGmond.setAssertPeriod(100L);
-
-        template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_TYPE, "NotAGMetricType");
-
-        mockGmond.assertIsSatisfied();
+        assertThrows(CamelExecutionException.class, () -> {
+            template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_TYPE, "NotAGMetricType");
+        });
     }
 
     @Test
     public void sendWrongMetricSlopeShouldThrow() throws Exception {
-        thrown.expect(CamelExecutionException.class);
-        mockGmond.setExpectedMessageCount(0);
-        mockGmond.setAssertPeriod(100L);
-
-        template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_SLOPE, "NotAGMetricSlope");
-
-        mockGmond.assertIsSatisfied();
+        assertThrows(CamelExecutionException.class, () -> {
+            template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_SLOPE, "NotAGMetricSlope");
+        });
     }
 
     @Test
     public void sendWrongMetricTMaxShouldThrow() throws Exception {
-        thrown.expect(CamelExecutionException.class);
-        mockGmond.setExpectedMessageCount(0);
-        mockGmond.setAssertPeriod(100L);
-
-        template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_TMAX, new Object());
-
-        mockGmond.assertIsSatisfied();
+        assertThrows(CamelExecutionException.class, () -> {
+            template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_TMAX, new Object());
+        });
     }
 
     @Test
     public void sendWrongMetricDMaxShouldThrow() throws Exception {
-        thrown.expect(CamelExecutionException.class);
-        mockGmond.setExpectedMessageCount(0);
-        mockGmond.setAssertPeriod(100L);
-
-        template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_DMAX, new Object());
-
-        mockGmond.assertIsSatisfied();
+        assertThrows(CamelExecutionException.class, () -> {
+            template.sendBodyAndHeader(getTestUri(), "28.0", METRIC_DMAX, new Object());
+        });
     }
 
     @Test
     public void sendWithWrongTypeShouldThrow() throws Exception {
-        thrown.expect(ResolveEndpointFailedException.class);
-        mockGmond.setExpectedMessageCount(0);
-        mockGmond.setAssertPeriod(100L);
-
-        template.sendBody(getTestUri() + "&type=wrong", "");
-
-        mockGmond.assertIsSatisfied();
+        assertThrows(ResolveEndpointFailedException.class, () -> {
+            template.sendBody(getTestUri() + "&type=wrong", "");
+        });
     }
 
     @Override
@@ -222,7 +199,8 @@ public class GangliaProtocolV31CamelTest extends CamelGangliaTestSupport {
     @Sharable
     public static class ProtocolV31Decoder extends MessageToMessageDecoder<DatagramPacket> {
         @Override
-        protected void decode(ChannelHandlerContext ctx, DatagramPacket packet, List<Object> out) throws OncRpcException, IOException {
+        protected void decode(ChannelHandlerContext ctx, DatagramPacket packet, List<Object> out)
+                throws OncRpcException, IOException {
             byte[] bytes = new byte[packet.content().readableBytes()];
             packet.content().readBytes(bytes);
 

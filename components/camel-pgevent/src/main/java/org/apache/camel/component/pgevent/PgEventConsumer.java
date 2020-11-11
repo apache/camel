@@ -24,11 +24,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The PgEvent consumer.
  */
 public class PgEventConsumer extends DefaultConsumer implements PGNotificationListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PgEventConsumer.class);
 
     private final PgEventEndpoint endpoint;
     private PGConnection dbConnection;
@@ -49,11 +53,10 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
         dbConnection.addNotificationListener(endpoint.getChannel(), endpoint.getChannel(), this);
     }
 
-
     @Override
     public void notification(int processId, String channel, String payload) {
-        if (log.isDebugEnabled()) {
-            log.debug("Notification processId: {}, channel: {}, payload: {}", processId, channel, payload);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Notification processId: {}, channel: {}, payload: {}", processId, channel, payload);
         }
 
         Exchange exchange = endpoint.createExchange();
@@ -64,7 +67,8 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
         try {
             getProcessor().process(exchange);
         } catch (Exception ex) {
-            String cause = "Unable to process incoming notification from PostgreSQL: processId='" + processId + "', channel='" + channel + "', payload='" + payload + "'";
+            String cause = "Unable to process incoming notification from PostgreSQL: processId='" + processId + "', channel='"
+                           + channel + "', payload='" + payload + "'";
             getExceptionHandler().handleException(cause, ex);
         }
     }

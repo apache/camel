@@ -25,6 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 public class InterceptSendToEndpointInOnException extends ContextTestSupport {
 
     @Override

@@ -18,8 +18,8 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -27,7 +27,7 @@ import org.junit.Test;
 public class DisruptorVmMultipleConsumersIssueTest extends CamelTestSupport {
 
     @Test
-    public void testDisruptorVmMultipleConsumersIssue() throws Exception {
+    void testDisruptorVmMultipleConsumersIssue() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:c").expectedBodiesReceived("Hello World");
@@ -41,10 +41,10 @@ public class DisruptorVmMultipleConsumersIssueTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:inbox")
                         .to(ExchangePattern.InOut, "disruptor-vm:foo?timeout=5000")
                         .to("mock:done");

@@ -47,5 +47,5 @@ public class AnnotatedConsumeImpl implements AnnotatedConsume {
 
         producer.sendBody(title);
     }
-    
+
 }

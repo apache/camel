@@ -38,8 +38,7 @@ import org.apache.cxf.message.MessageContentsList;
 import static org.apache.camel.TypeConverter.MISS_VALUE;
 
 /**
- * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
- * for CXF related types' converting .
+ * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a> for CXF related types' converting .
  */
 @Converter(generateLoader = true)
 public final class CxfConverter {
@@ -56,16 +55,16 @@ public final class CxfConverter {
             return new MessageContentsList();
         }
     }
-    
+
     @Converter
     public static QName toQName(String qname) {
         return QName.valueOf(qname);
     }
-    
+
     @Converter
     public static Object[] toArray(Object object) {
         if (object instanceof Collection) {
-            return ((Collection<?>)object).toArray();
+            return ((Collection<?>) object).toArray();
         } else {
             Object answer[];
             if (object == null) {
@@ -75,73 +74,75 @@ public final class CxfConverter {
                 answer[0] = object;
             }
             return answer;
-        }       
+        }
     }
 
     @Converter
-    public static String soapMessageToString(final SOAPMessage soapMessage, Exchange exchange) throws SOAPException, IOException {
+    public static String soapMessageToString(final SOAPMessage soapMessage, Exchange exchange)
+            throws SOAPException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         soapMessage.writeTo(baos);
         return baos.toString(ExchangeHelper.getCharsetName(exchange));
     }
-    
+
     @Converter
-    public static InputStream soapMessageToInputStream(final SOAPMessage soapMessage, Exchange exchange) throws SOAPException, IOException {
+    public static InputStream soapMessageToInputStream(final SOAPMessage soapMessage, Exchange exchange)
+            throws SOAPException, IOException {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         soapMessage.writeTo(cos);
         InputStream in = cos.getInputStream();
         return in;
     }
-    
+
     @Converter
     public static DataFormat toDataFormat(final String name) {
         return DataFormat.valueOf(name.toUpperCase());
     }
-    
+
     @Converter
     public static InputStream toInputStream(Response response, Exchange exchange) {
         Object obj = response.getEntity();
-        
+
         if (obj == null) {
             return null;
         }
-        
+
         if (obj instanceof InputStream) {
             // short circuit the lookup
-            return (InputStream)obj;
+            return (InputStream) obj;
         }
-        
+
         TypeConverterRegistry registry = exchange.getContext().getTypeConverterRegistry();
         TypeConverter tc = registry.lookup(InputStream.class, obj.getClass());
-        
+
         if (tc != null) {
             return tc.convertTo(InputStream.class, exchange, obj);
         }
-        
+
         return null;
     }
 
     /**
-     * Use a fallback type converter so we can convert the embedded list element 
-     * if the value is MessageContentsList.  The algorithm of this converter
-     * finds the first non-null list element from the list and applies conversion
-     * to the list element.
+     * Use a fallback type converter so we can convert the embedded list element if the value is MessageContentsList.
+     * The algorithm of this converter finds the first non-null list element from the list and applies conversion to the
+     * list element.
      * 
-     * @param type the desired type to be converted to
-     * @param exchange optional exchange which can be null
-     * @param value the object to be converted
-     * @param registry type converter registry
-     * @return the converted value of the desired type or null if no suitable converter found
+     * @param  type     the desired type to be converted to
+     * @param  exchange optional exchange which can be null
+     * @param  value    the object to be converted
+     * @param  registry type converter registry
+     * @return          the converted value of the desired type or null if no suitable converter found
      */
     @SuppressWarnings("unchecked")
     @Converter(fallback = true)
-    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, 
+    public static <T> T convertTo(
+            Class<T> type, Exchange exchange, Object value,
             TypeConverterRegistry registry) {
 
         // CXF-WS MessageContentsList class
         if (MessageContentsList.class.isAssignableFrom(value.getClass())) {
-            MessageContentsList list = (MessageContentsList)value;
-            
+            MessageContentsList list = (MessageContentsList) value;
+
             // try to turn the first array element into the object that we want
             for (Object embedded : list) {
                 if (embedded != null) {
@@ -149,10 +150,19 @@ public final class CxfConverter {
                         return type.cast(embedded);
                     } else {
                         TypeConverter tc = registry.lookup(type, embedded.getClass());
+                        if (tc == null) {
+                            // maybe one of its interface fits
+                            for (Class<?> clazz : embedded.getClass().getInterfaces()) {
+                                tc = registry.lookup(type, clazz);
+                                if (tc != null) {
+                                    break;
+                                }
+                            }
+                        }
                         if (tc != null) {
                             Object result = tc.convertTo(type, exchange, embedded);
                             if (result != null) {
-                                return (T)result;
+                                return (T) result;
                             }
                             // there is no suitable result will be return
                             break;
@@ -177,7 +187,7 @@ public final class CxfConverter {
             // return void to indicate its not possible to convert at this time
             return (T) MISS_VALUE;
         }
-        
+
         return null;
     }
 }

@@ -36,7 +36,7 @@ public class StartupShutdownSpringCamelContextFactoryBeanOrderTest extends Start
     @Override
     ConfigurableApplicationContext createContext() {
         final ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(
-            CamelContextConfiguration.class, Beans.class);
+                CamelContextConfiguration.class, Beans.class);
         return context;
     }
 

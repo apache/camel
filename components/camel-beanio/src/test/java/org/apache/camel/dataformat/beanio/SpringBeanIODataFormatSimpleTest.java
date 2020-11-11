@@ -22,16 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringBeanIODataFormatSimpleTest extends CamelSpringTestSupport {
 
-    private static final String FIXED_DATA = "Joe,Smith,Developer,75000,10012009" + LS
-            + "Jane,Doe,Architect,80000,01152008" + LS
-            + "Jon,Anderson,Manager,85000,03182007" + LS;
+    private static final String FIXED_DATA = "Joe,Smith,Developer,75000,10012009" + Constants.LS
+                                             + "Jane,Doe,Architect,80000,01152008" + Constants.LS
+                                             + "Jon,Anderson,Manager,85000,03182007" + Constants.LS;
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -39,7 +39,7 @@ public class SpringBeanIODataFormatSimpleTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testMarshal() throws Exception {
+    void testMarshal() throws Exception {
         List<Employee> employees = getEmployees();
 
         MockEndpoint mock = getMockEndpoint("mock:beanio-marshal");
@@ -51,7 +51,7 @@ public class SpringBeanIODataFormatSimpleTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testUnmarshal() throws Exception {
+    void testUnmarshal() throws Exception {
         List<Employee> employees = getEmployees();
 
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");

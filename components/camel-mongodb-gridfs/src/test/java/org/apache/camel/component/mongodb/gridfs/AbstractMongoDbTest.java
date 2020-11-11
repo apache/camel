@@ -16,46 +16,48 @@
  */
 package org.apache.camel.component.mongodb.gridfs;
 
-import com.mongodb.MongoClient;
-import com.mongodb.gridfs.GridFS;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
 import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.apache.camel.test.infra.mongodb.services.MongoDBService;
+import org.apache.camel.test.infra.mongodb.services.MongoDBServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
+    @RegisterExtension
+    public static MongoDBService service = MongoDBServiceFactory.createService();
 
+    protected static final String FILE_NAME = "filename.for.db.txt";
+    protected static final String FILE_DATA = "This is some stuff to go into the db";
     protected MongoClient mongo;
-    protected GridFS gridfs;
-
-    protected ApplicationContext applicationContext;
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void doPostSetup() {
-        mongo = applicationContext.getBean(MongoClient.class);
-        gridfs = new GridFS(mongo.getDB("test"), getBucket());
-    }
+    protected GridFSBucket gridFSBucket;
 
     public String getBucket() {
         return this.getClass().getSimpleName();
     }
-    
+
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
+        gridFSBucket.find().forEach(gridFSFile -> gridFSBucket.delete(gridFSFile.getId()));
         super.tearDown();
         mongo.close();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new AnnotationConfigApplicationContext(EmbedMongoConfiguration.class);
-        CamelContext ctx = new SpringCamelContext(applicationContext);
-        ctx.init();
-        ctx.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
-        return ctx;
+        mongo = MongoClients.create(service.getReplicaSetUrl());
+        gridFSBucket = GridFSBuckets.create(mongo.getDatabase("test"), getBucket());
+
+        CamelContext context = super.createCamelContext();
+        context.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
+        context.getRegistry().bind("test", gridFSBucket);
+        context.getRegistry().bind("myDb", mongo);
+
+        return context;
     }
 }

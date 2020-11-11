@@ -18,10 +18,12 @@ package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MainRoutesCollectorPackageScanTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class MainRoutesCollectorPackageScanTest {
 
     @Test
     public void testMainRoutesCollector() throws Exception {
@@ -31,18 +33,22 @@ public class MainRoutesCollectorPackageScanTest extends Assert {
 
         CamelContext camelContext = main.getCamelContext();
         assertNotNull(camelContext);
-        assertEquals(2, camelContext.getRoutes().size());
+        assertEquals(3, camelContext.getRoutes().size());
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:scan", MockEndpoint.class);
         endpoint.expectedBodiesReceived("Hello World");
         MockEndpoint endpoint2 = camelContext.getEndpoint("mock:dummy", MockEndpoint.class);
         endpoint2.expectedBodiesReceived("Bye World");
+        MockEndpoint endpoint3 = camelContext.getEndpoint("mock:concrete", MockEndpoint.class);
+        endpoint3.expectedBodiesReceived("Hola World");
 
         main.getCamelTemplate().sendBody("direct:scan", "Hello World");
         main.getCamelTemplate().sendBody("direct:dummy", "Bye World");
+        main.getCamelTemplate().sendBody("direct:concrete", "Hola World");
 
         endpoint.assertIsSatisfied();
         endpoint2.assertIsSatisfied();
+        endpoint3.assertIsSatisfied();
 
         main.stop();
     }

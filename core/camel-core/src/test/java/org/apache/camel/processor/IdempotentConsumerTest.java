@@ -25,8 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -42,7 +42,9 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .to("mock:result");
             }
         });
         context.start();
@@ -66,7 +68,8 @@ public class IdempotentConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
-                from("direct:start").idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false).to("mock:result");
+                from("direct:start").idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
+                        .to("mock:result");
             }
         });
         context.start();
@@ -98,14 +101,15 @@ public class IdempotentConsumerTest extends ContextTestSupport {
 
                 // START SNIPPET: e1
                 from("direct:start")
-                    // instruct idempotent consumer to not skip duplicates as we
-                    // will filter then our self
-                    .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false).filter(exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
-                    // filter out duplicate messages by sending them to
-                    // someplace else and then stop
-                    .to("mock:duplicate").stop().end()
-                    // and here we process only new messages (no duplicates)
-                    .to("mock:result");
+                        // instruct idempotent consumer to not skip duplicates as we
+                        // will filter then our self
+                        .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
+                        .filter(exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
+                        // filter out duplicate messages by sending them to
+                        // someplace else and then stop
+                        .to("mock:duplicate").stop().end()
+                        // and here we process only new messages (no duplicates)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         });
@@ -133,14 +137,16 @@ public class IdempotentConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
-                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("messageId", String.class);
-                        if (id.equals("2")) {
-                            throw new IllegalArgumentException("Damm I cannot handle id 2");
-                        }
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damm I cannot handle id 2");
+                                }
+                            }
+                        }).to("mock:result");
             }
         });
         context.start();
@@ -166,14 +172,16 @@ public class IdempotentConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
-                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("messageId", String.class);
-                        if (id.equals("2")) {
-                            throw new IllegalArgumentException("Damm I cannot handle id 2");
-                        }
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damm I cannot handle id 2");
+                                }
+                            }
+                        }).to("mock:result");
             }
         });
         context.start();
@@ -200,14 +208,16 @@ public class IdempotentConsumerTest extends ContextTestSupport {
                 // use default error handler
                 errorHandler(defaultErrorHandler());
 
-                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("messageId", String.class);
-                        if (id.equals("2")) {
-                            throw new IllegalArgumentException("Damm I cannot handle id 2");
-                        }
-                    }
-                }).to("mock:result");
+                from("direct:start")
+                        .idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                String id = exchange.getIn().getHeader("messageId", String.class);
+                                if (id.equals("2")) {
+                                    throw new IllegalArgumentException("Damm I cannot handle id 2");
+                                }
+                            }
+                        }).to("mock:result");
             }
         });
         context.start();
@@ -236,7 +246,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 

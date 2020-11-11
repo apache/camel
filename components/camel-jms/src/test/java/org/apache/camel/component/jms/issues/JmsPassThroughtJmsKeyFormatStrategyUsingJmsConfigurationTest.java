@@ -21,17 +21,16 @@ import java.util.Map;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.PassThroughJmsKeyFormatStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extends CamelTestSupport {
 
@@ -77,24 +76,20 @@ public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extend
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
+                        .process(exchange -> {
                             Map<String, Object> headers = exchange.getIn().getHeaders();
                             assertEquals("VALUE_1", headers.get("HEADER_1"));
                             assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
-                        }
-                    })
-                    .setHeader("HEADER_3", constant("START"))
-                    .setHeader("HEADER_2", constant("VALUE_2"))
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
+                        })
+                        .setHeader("HEADER_3", constant("START"))
+                        .setHeader("HEADER_2", constant("VALUE_2"))
+                        .process(exchange -> {
                             Map<String, Object> headers = exchange.getIn().getHeaders();
                             assertEquals("START", headers.get("HEADER_3"));
                             assertEquals("START", exchange.getIn().getHeader("HEADER_3"));
-                        }
-                    })
-                    .setHeader("HEADER_3", constant("VALUE_3"))
-                    .to("mock:result");
+                        })
+                        .setHeader("HEADER_3", constant("VALUE_3"))
+                        .to("mock:result");
             }
         };
     }

@@ -24,7 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExpressionListComparator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExpressionListComparatorTest extends ContextTestSupport {
 
@@ -33,7 +35,7 @@ public class ExpressionListComparatorTest extends ContextTestSupport {
         @Override
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
-            return (T)"foo";
+            return (T) "foo";
         }
     }
 
@@ -42,7 +44,7 @@ public class ExpressionListComparatorTest extends ContextTestSupport {
         @Override
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
-            return (T)"bar";
+            return (T) "bar";
         }
     }
 

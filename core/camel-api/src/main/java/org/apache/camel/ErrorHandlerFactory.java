@@ -16,21 +16,9 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.spi.RouteContext;
-
 /**
- * Factory for creating {@link org.apache.camel.processor.ErrorHandler}s.
+ * Factory for creating {@link org.apache.camel.spi.ErrorHandler}s.
  */
 public interface ErrorHandlerFactory {
-
-    /**
-     * Creates the error handler 
-     *
-     * @param routeContext the route context
-     * @param processor the outer processor
-     * @return the error handler
-     * @throws Exception is thrown if the error handler could not be created
-     */
-    Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception;
 
 }

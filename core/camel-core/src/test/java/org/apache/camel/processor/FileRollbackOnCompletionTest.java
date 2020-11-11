@@ -27,8 +27,10 @@ import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
@@ -70,7 +72,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/mail/backup");
         super.setUp();
@@ -82,7 +84,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
         File file = new File("target/data/mail/backup/");
         String[] files = file.list();
-        assertEquals("There should be one file", 1, files.length);
+        assertEquals(1, files.length, "There should be one file");
     }
 
     @Test
@@ -95,15 +97,15 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             assertEquals("Simulated fatal error", e.getCause().getMessage());
         }
 
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // onCompletion is async so we gotta wait a bit for the file to be
         // deleted
-        assertTrue("Should countdown the latch", LATCH.await(5, TimeUnit.SECONDS));
+        assertTrue(LATCH.await(5, TimeUnit.SECONDS), "Should countdown the latch");
 
         File file = new File("target/data/mail/backup/");
         String[] files = file.list();
-        assertEquals("There should be no files", 0, files.length);
+        assertEquals(0, files.length, "There should be no files");
     }
 
     @Override
@@ -112,16 +114,17 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:confirm")
-                    // use a route scoped onCompletion to be executed when the
-                    // Exchange failed
-                    .onCompletion().onFailureOnly()
-                    // and call the onFailure method on this bean
-                    .bean(FileRollback.class, "onFailure")
-                    // must use end to denote the end of the onCompletion route
-                    .end()
-                    // here starts the regular route
-                    .bean(OrderService.class, "createMail").log("Saving mail backup file").to("file:target/data/mail/backup").log("Trying to send mail to ${header.to}")
-                    .bean(OrderService.class, "sendMail").log("Mail send to ${header.to}");
+                        // use a route scoped onCompletion to be executed when the
+                        // Exchange failed
+                        .onCompletion().onFailureOnly()
+                        // and call the onFailure method on this bean
+                        .bean(FileRollback.class, "onFailure")
+                        // must use end to denote the end of the onCompletion route
+                        .end()
+                        // here starts the regular route
+                        .bean(OrderService.class, "createMail").log("Saving mail backup file")
+                        .to("file:target/data/mail/backup").log("Trying to send mail to ${header.to}")
+                        .bean(OrderService.class, "sendMail").log("Mail send to ${header.to}");
             }
         };
     }

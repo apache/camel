@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -45,15 +45,15 @@ import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CMISTestSupport extends CamelTestSupport {
     protected static final String CMIS_ENDPOINT_TEST_SERVER
-        = "http://localhost:%s/chemistry-opencmis-server-inmemory/atom11";
+            = "http://localhost:%s/chemistry-opencmis-server-inmemory/atom11";
     protected static final String OPEN_CMIS_SERVER_WAR_PATH
-        = "target/dependency/chemistry-opencmis-server-inmemory.war";
+            = "target/dependency/chemistry-opencmis-server-inmemory.war";
 
     protected static Server cmisServer;
     protected static int port;
@@ -70,7 +70,7 @@ public class CMISTestSupport extends CamelTestSupport {
         return exchange;
     }
 
-    protected CmisObject retrieveCMISObjectByIdFromServer(String nodeId) throws Exception {
+    protected CmisObject retrieveCMISObjectByIdFromServer(String nodeId) {
         Session session = createSession();
         return session.getObject(nodeId);
     }
@@ -81,7 +81,7 @@ public class CMISTestSupport extends CamelTestSupport {
         ItemIterable<CmisObject> children = rootFolder.getChildren();
         for (CmisObject cmisObject : children) {
             if (CamelCMISConstants.CMIS_FOLDER.equals(cmisObject.getPropertyValue(PropertyIds.OBJECT_TYPE_ID))) {
-                List<String> notDeltedIdList = ((Folder)cmisObject)
+                List<String> notDeltedIdList = ((Folder) cmisObject)
                         .deleteTree(true, UnfileObject.DELETE, true);
                 if (notDeltedIdList != null && notDeltedIdList.size() > 0) {
                     throw new RuntimeException("Cannot empty repo");
@@ -105,7 +105,7 @@ public class CMISTestSupport extends CamelTestSupport {
 
     protected String getDocumentContentAsString(String nodeId) throws Exception {
         CmisObject cmisObject = retrieveCMISObjectByIdFromServer(nodeId);
-        Document doc = (Document)cmisObject;
+        Document doc = (Document) cmisObject;
         InputStream inputStream = doc.getContentStream().getStream();
         return readFromStream(inputStream);
     }
@@ -135,7 +135,7 @@ public class CMISTestSupport extends CamelTestSupport {
     }
 
     protected Document createTextDocument(Folder newFolder, String content, String fileName)
-        throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         byte[] buf = content.getBytes("UTF-8");
         ByteArrayInputStream input = new ByteArrayInputStream(buf);
         ContentStream contentStream = createSession().getObjectFactory()
@@ -147,7 +147,7 @@ public class CMISTestSupport extends CamelTestSupport {
         return newFolder.createDocument(properties, contentStream, VersioningState.NONE);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startServer() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         cmisServer = new Server(port);
@@ -155,13 +155,13 @@ public class CMISTestSupport extends CamelTestSupport {
         cmisServer.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopServer() throws Exception {
         cmisServer.stop();
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteAllContent();
         super.setUp();

@@ -21,8 +21,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RibbonServiceCallRouteMetadataTest extends CamelTestSupport {
     @Test
@@ -46,28 +48,30 @@ public class RibbonServiceCallRouteMetadataTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // setup a static ribbon server list with these 2 servers to start with
                 StaticServiceDiscovery servers = new StaticServiceDiscovery();
-                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090).addMeta("contextPath", "app1").build());
-                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090).addMeta("contextPath", "app2").build());
+                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090)
+                        .addMeta("contextPath", "app1").build());
+                servers.addServer(DefaultServiceDefinition.builder().withName("myService").withHost("localhost").withPort(9090)
+                        .addMeta("contextPath", "app2").build());
 
                 RibbonConfiguration configuration = new RibbonConfiguration();
                 RibbonServiceLoadBalancer loadBalancer = new RibbonServiceLoadBalancer(configuration);
 
                 from("direct:start")
-                    .serviceCall()
+                        .serviceCall()
                         .name("myService")
-                        .expression().simple("http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/${header.CamelServiceCallServiceMeta[contextPath]}")
+                        .expression()
+                        .simple("http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/${header.CamelServiceCallServiceMeta[contextPath]}")
                         .loadBalancer(loadBalancer)
                         .serviceDiscovery(servers)
                         .end()
-                    .to("mock:result");
+                        .to("mock:result");
                 from("jetty:http://localhost:9090/app1")
-                    .to("mock:app1")
-                    .transform().constant("app1");
+                        .to("mock:app1")
+                        .transform().constant("app1");
                 from("jetty:http://localhost:9090/app2")
-                    .to("mock:app2")
-                    .transform().constant("app2");
+                        .to("mock:app2")
+                        .transform().constant("app2");
             }
         };
     }
 }
-

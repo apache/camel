@@ -28,23 +28,22 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.impl.engine.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ReflectionInjector;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JaxpTest extends Assert {
-    private static final Logger LOG = LoggerFactory.getLogger(JaxpTest.class);
-    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(),
-                                                                 new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Before
+public class JaxpTest {
+    private static final Logger LOG = LoggerFactory.getLogger(JaxpTest.class);
+    protected TypeConverter converter = new DefaultTypeConverter(
+            new DefaultPackageScanClassResolver(), new ReflectionInjector(), false);
+
+    @BeforeEach
     public void setUp() throws Exception {
 
         ServiceHelper.startService(converter);
@@ -52,7 +51,8 @@ public class JaxpTest extends Assert {
 
     @Test
     public void testConvertToDocument() throws Exception {
-        Document document = converter.convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
+        Document document
+                = converter.convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><hello>world!</hello>");
         assertNotNull(document);
 
         LOG.debug("Found document: " + document);
@@ -62,7 +62,7 @@ public class JaxpTest extends Assert {
         String text = converter.convertTo(String.class, document);
         // The preamble changes a little under Java 1.6 it adds a
         // standalone="no" attribute.
-        assertTrue("Converted to String: " + text, text.endsWith("<hello>world!</hello>"));
+        assertTrue(text.endsWith("<hello>world!</hello>"), "Converted to String: " + text);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class JaxpTest extends Assert {
     public void testStreamSourceToDomSource() throws Exception {
         StreamSource streamSource = new StreamSource(new StringReader("<hello>world!</hello>"));
         DOMSource domSource = converter.convertTo(DOMSource.class, streamSource);
-        assertNotNull("Could not convert to a DOMSource!", domSource);
+        assertNotNull(domSource, "Could not convert to a DOMSource!");
 
         LOG.debug("Found document: " + domSource);
     }
@@ -86,16 +86,16 @@ public class JaxpTest extends Assert {
     public void testNodeToSourceThenToInputStream() throws Exception {
         Document document = converter.convertTo(Document.class, "<?xml version=\"1.0\"?><hello>world!</hello>");
         Element element = document.getDocumentElement();
-        Source source = converter.convertTo(Source.class, element);
-        assertNotNull("Could not convert from Node to Source!", source);
+        Source source = converter.convertTo(DOMSource.class, element);
+        assertNotNull(source, "Could not convert from Node to Source!");
 
         LOG.debug("Found source: " + source);
 
         InputStream in = converter.convertTo(InputStream.class, source);
-        assertNotNull("Could not convert from Source to InputStream!", in);
+        assertNotNull(in, "Could not convert from Source to InputStream!");
 
         String actualText = IOConverter.toString(in, null);
-        assertEquals("Text", "<hello>world!</hello>", actualText);
+        assertEquals("<hello>world!</hello>", actualText, "Text");
 
     }
 }

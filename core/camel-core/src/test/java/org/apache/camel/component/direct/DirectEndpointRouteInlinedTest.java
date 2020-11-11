@@ -19,7 +19,10 @@ package org.apache.camel.component.direct;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
 
@@ -56,7 +59,9 @@ public class DirectEndpointRouteInlinedTest extends ContextTestSupport {
             });
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
-            assertEquals("Failed to start route route2 because of Multiple consumers for the same endpoint is not allowed: direct://start", e.getMessage());
+            assertEquals(
+                    "Failed to start route route2 because of Multiple consumers for the same endpoint is not allowed: direct://start",
+                    e.getMessage());
         }
     }
 

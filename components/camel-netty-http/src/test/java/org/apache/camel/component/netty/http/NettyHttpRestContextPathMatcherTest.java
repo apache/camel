@@ -17,29 +17,34 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.Exchange.HTTP_METHOD;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NettyHttpRestContextPathMatcherTest extends BaseNettyTest {
 
     @Test
     public void shouldReturnCustomResponseForOptions() throws Exception {
-        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS", String.class);
+        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "", HTTP_METHOD, "OPTIONS",
+                String.class);
         assertEquals("expectedOptionsResponse", response);
     }
 
     @Test
     public void shouldPreferStrictMatchOverPrefixMatch() throws Exception {
-        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path2/foo", "", HTTP_METHOD, "GET", String.class);
+        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path2/foo", "", HTTP_METHOD,
+                "GET", String.class);
         assertEquals("exact", response);
     }
 
     @Test
     public void shouldPreferOptionsForEqualPaths() throws Exception {
-        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path3", "", HTTP_METHOD, "POST", String.class);
+        String response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path3", "", HTTP_METHOD, "POST",
+                String.class);
         assertEquals("postPath3", response);
-        response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path3", "", HTTP_METHOD, "OPTIONS", String.class);
+        response = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/path3", "", HTTP_METHOD, "OPTIONS",
+                String.class);
         assertEquals("optionsPath3", response);
     }
 
@@ -49,7 +54,8 @@ public class NettyHttpRestContextPathMatcherTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/path1?httpMethodRestrict=POST").setBody().constant("somePostResponse");
-                from("netty-http:http://0.0.0.0:{{port}}?matchOnUriPrefix=true&httpMethodRestrict=OPTIONS").setBody().constant("expectedOptionsResponse");
+                from("netty-http:http://0.0.0.0:{{port}}?matchOnUriPrefix=true&httpMethodRestrict=OPTIONS").setBody()
+                        .constant("expectedOptionsResponse");
 
                 from("netty-http:http://0.0.0.0:{{port}}/path2/foo").setBody().constant("exact");
                 from("netty-http:http://0.0.0.0:{{port}}/path2?matchOnUriPrefix=true").setBody().constant("wildcard");

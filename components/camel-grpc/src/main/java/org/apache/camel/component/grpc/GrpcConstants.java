@@ -30,7 +30,7 @@ public interface GrpcConstants {
     String GRPC_SERVICE_ASYNC_STUB_METHOD = "newStub";
     String GRPC_SERVICE_FUTURE_STUB_METHOD = "newFutureStub";
     String GRPC_SERVICE_STUB_CALL_CREDS_METHOD = "withCallCredentials";
-    
+
     /*
      * JSON Web Tokens specific constants
      */
@@ -39,15 +39,21 @@ public interface GrpcConstants {
     Metadata.Key<String> GRPC_JWT_METADATA_KEY = Metadata.Key.of(GRPC_JWT_TOKEN_KEY, Metadata.ASCII_STRING_MARSHALLER);
     Context.Key<String> GRPC_JWT_CTX_KEY = Context.key(GRPC_JWT_TOKEN_KEY);
     Context.Key<String> GRPC_JWT_USER_ID_CTX_KEY = Context.key(GRPC_USER_ID_KEY);
-    
+
     /*
      * This headers will be set after gRPC consumer method is invoked
      */
     String GRPC_METHOD_NAME_HEADER = "CamelGrpcMethodName";
     String GRPC_USER_AGENT_HEADER = "CamelGrpcUserAgent";
     String GRPC_EVENT_TYPE_HEADER = "CamelGrpcEventType";
-    
+
     String GRPC_EVENT_TYPE_ON_NEXT = "onNext";
     String GRPC_EVENT_TYPE_ON_ERROR = "onError";
     String GRPC_EVENT_TYPE_ON_COMPLETED = "onCompleted";
+
+    /*
+     * The registry key to lookup a custom BindableServiceFactory
+     */
+    String GRPC_BINDABLE_SERVICE_FACTORY_NAME = "grpcBindableServiceFactory";
+    String GRPC_RESPONSE_OBSERVER = "grpcResponseObserver";
 }

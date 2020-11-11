@@ -64,6 +64,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
@@ -82,19 +83,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Creates from the message body a XML signature element which is returned in
- * the message body of the output message. Enveloped, enveloping XML, and
- * detached signatures are supported.
+ * Creates from the message body a XML signature element which is returned in the message body of the output message.
+ * Enveloped, enveloping XML, and detached signatures are supported.
  * <p>
- * In the enveloped XML signature case, the method
- * {@link XmlSignerConfiguration#getParentLocalName()} must not return
- * <code>null</code>. In this case the parent element must be contained in the
- * XML document provided by the message body and the signature element is added
- * as last child element of the parent element. If a KeyInfo instance is
- * provided by the {@link KeyAccessor} and
- * {@link XmlSignerConfiguration#getAddKeyInfoReference()} is <code>true</code>,
- * then also a reference to the KeyInfo element is added. The generated XML
- * signature has the following structure:
+ * In the enveloped XML signature case, the method {@link XmlSignerConfiguration#getParentLocalName()} must not return
+ * <code>null</code>. In this case the parent element must be contained in the XML document provided by the message body
+ * and the signature element is added as last child element of the parent element. If a KeyInfo instance is provided by
+ * the {@link KeyAccessor} and {@link XmlSignerConfiguration#getAddKeyInfoReference()} is <code>true</code>, then also a
+ * reference to the KeyInfo element is added. The generated XML signature has the following structure:
  * 
  * <pre>
  * {@code
@@ -123,8 +119,7 @@ import org.slf4j.LoggerFactory;
  * }
  * </pre>
  * <p>
- * In the enveloping XML signature case, the generated XML signature has the
- * following structure:
+ * In the enveloping XML signature case, the generated XML signature has the following structure:
  * 
  * <pre>
  *  {@code
@@ -150,31 +145,24 @@ import org.slf4j.LoggerFactory;
  *  }
  * </pre>
  * 
- * In the enveloping XML signature case, also message bodies containing plain
- * text are supported. This must be indicated via the header
- * {@link XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT} or via the
- * configuration {@link XmlSignerConfiguration#getPlainText()}.
+ * In the enveloping XML signature case, also message bodies containing plain text are supported. This must be indicated
+ * via the header {@link XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT} or via the configuration
+ * {@link XmlSignerConfiguration#getPlainText()}.
  * 
  * <p>
- * Detached signatures where the signature element is a sibling element to the
- * signed element are supported. Those elements can be signed which have ID
- * attributes. The elements to be signed must be specified via xpath expressions
- * (see {@link XmlSignerConfiguration#setXpathsToIdAttributes(List)}) and the
- * XML schema must be provided via the schema resource URI (see method
- * {@link XmlSignerConfiguration#setSchemaResourceUri(String)}. Elements with
- * deeper hierarchy level are signed first. This procedure can result in nested
- * signatures.
+ * Detached signatures where the signature element is a sibling element to the signed element are supported. Those
+ * elements can be signed which have ID attributes. The elements to be signed must be specified via xpath expressions
+ * (see {@link XmlSignerConfiguration#setXpathsToIdAttributes(List)}) and the XML schema must be provided via the schema
+ * resource URI (see method {@link XmlSignerConfiguration#setSchemaResourceUri(String)}. Elements with deeper hierarchy
+ * level are signed first. This procedure can result in nested signatures.
  * 
  * <p>
- * In all cases, the digest algorithm is either read from the configuration
- * method {@link XmlSignerConfiguration#getDigestAlgorithm()} or calculated from
- * the signature algorithm (
- * {@link XmlSignerConfiguration#getSignatureAlgorithm()}. The optional
- * transforms are read from {@link XmlSignerConfiguration#getTransformMethods()}
- * .
+ * In all cases, the digest algorithm is either read from the configuration method
+ * {@link XmlSignerConfiguration#getDigestAlgorithm()} or calculated from the signature algorithm (
+ * {@link XmlSignerConfiguration#getSignatureAlgorithm()}. The optional transforms are read from
+ * {@link XmlSignerConfiguration#getTransformMethods()} .
  * <p>
- * In all cases, you can add additional references and objects which contain
- * properties for the XML signature, see
+ * In all cases, you can add additional references and objects which contain properties for the XML signature, see
  * {@link XmlSignerConfiguration#setProperties(XmlSignatureProperties)}.
  */
 
@@ -189,15 +177,14 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     private static final String SHA1 = "sha1";
     private static final String RIPEMD160 = "ripemd160";
 
-    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA224 = 
-        "http://www.w3.org/2001/04/xmldsig-more#sha224"; // see RFC 4051
-    
-    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA384 = 
-        "http://www.w3.org/2001/04/xmldsig-more#sha384"; // see RFC 4051
+    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA224 = "http://www.w3.org/2001/04/xmldsig-more#sha224"; // see RFC 4051
+
+    private static final String HTTP_WWW_W3_ORG_2001_04_XMLDSIG_MORE_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384"; // see RFC 4051
 
     private final XmlSignerConfiguration config;
-    
-    public XmlSignerProcessor(XmlSignerConfiguration config) {
+
+    public XmlSignerProcessor(CamelContext context, XmlSignerConfiguration config) {
+        super(context);
         this.config = config;
     }
 
@@ -207,7 +194,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception { //NOPMD
+    public void process(Exchange exchange) throws Exception {
 
         try {
             LOG.debug("XML signature generation started using algorithm {} and canonicalization method {}", getConfiguration()
@@ -221,7 +208,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             Document outputDoc = sign(out);
 
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            XmlSignatureHelper.transformNonTextNodeToOutputStream(outputDoc, outStream, omitXmlDeclaration(out), getConfiguration().getOutputXmlEncoding());
+            XmlSignatureHelper.transformNonTextNodeToOutputStream(outputDoc, outStream, omitXmlDeclaration(out),
+                    getConfiguration().getOutputXmlEncoding());
             byte[] data = outStream.toByteArray();
             out.setBody(data);
             setOutputEncodingToMessageHeader(out);
@@ -234,7 +222,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    protected Document sign(final Message out) throws Exception { //NOPMD
+    protected Document sign(final Message out) throws Exception {
 
         try {
             XMLSignatureFactory fac;
@@ -250,9 +238,9 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
             if (getConfiguration().getKeyAccessor() == null) {
                 throw new XmlSignatureNoKeyException(
-                    "Key accessor is missing for XML signature generation. Specify a key accessor in the configuration.");
+                        "Key accessor is missing for XML signature generation. Specify a key accessor in the configuration.");
             }
-            
+
             final KeySelector keySelector = getConfiguration().getKeyAccessor().getKeySelector(out);
             if (keySelector == null) {
                 throw new XmlSignatureNoKeyException(
@@ -289,15 +277,16 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 }
                 lastParent = parent;
 
-                XmlSignatureProperties.Input input = new InputBuilder().contentDigestAlgorithm(getDigestAlgorithmUri()).keyInfo(keyInfo)
-                        .message(out).messageBodyNode(node).parent(parent).signatureAlgorithm(getConfiguration().getSignatureAlgorithm())
-                        .signatureFactory(fac).signatureId(signatureId).contentReferenceUri(contentReferenceUri)
-                        .signatureType(signatureType)
-                        .prefixForXmlSignatureNamespace(getConfiguration().getPrefixForXmlSignatureNamespace()).build();
+                XmlSignatureProperties.Input input
+                        = new InputBuilder().contentDigestAlgorithm(getDigestAlgorithmUri()).keyInfo(keyInfo)
+                                .message(out).messageBodyNode(node).parent(parent)
+                                .signatureAlgorithm(getConfiguration().getSignatureAlgorithm())
+                                .signatureFactory(fac).signatureId(signatureId).contentReferenceUri(contentReferenceUri)
+                                .signatureType(signatureType)
+                                .prefixForXmlSignatureNamespace(getConfiguration().getPrefixForXmlSignatureNamespace()).build();
 
                 XmlSignatureProperties.Output properties = getSignatureProperties(input);
 
-                
                 // the signature properties can overwrite the signature Id
                 if (properties != null && properties.getSignatureId() != null && !properties.getSignatureId().isEmpty()) {
                     signatureId = properties.getSignatureId();
@@ -334,26 +323,27 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         if (getConfiguration().getParentLocalName() != null && getConfiguration().getParentXpath() != null) {
             throw new XmlSignatureException(
                     "The configuration of the XML signer component is wrong. The parent local name "
-                            + getConfiguration().getParentLocalName()
-                            + " and the parent XPath " + getConfiguration().getParentXpath().getXPath() + " are specified. You must not specify both parameters.");
+                                            + getConfiguration().getParentLocalName()
+                                            + " and the parent XPath " + getConfiguration().getParentXpath().getXPath()
+                                            + " are specified. You must not specify both parameters.");
 
         }
 
         boolean isEnveloped = getConfiguration().getParentLocalName() != null || getConfiguration().getParentXpath() != null;
 
-        boolean isDetached = getXpathToIdAttributes(message).size() > 0;
+        boolean isDetached = !getXpathToIdAttributes(message).isEmpty();
 
         if (isEnveloped && isDetached) {
             if (getConfiguration().getParentLocalName() != null) {
                 throw new XmlSignatureException(
-                    "The configuration of the XML signer component is wrong. The parent local name "
-                            + getConfiguration().getParentLocalName()
-                            + " for an enveloped signature and the XPATHs to ID attributes for a detached signature are specified. You must not specify both parameters.");
+                        "The configuration of the XML signer component is wrong. The parent local name "
+                                                + getConfiguration().getParentLocalName()
+                                                + " for an enveloped signature and the XPATHs to ID attributes for a detached signature are specified. You must not specify both parameters.");
             } else {
                 throw new XmlSignatureException(
                         "The configuration of the XML signer component is wrong. The parent XPath "
-                                + getConfiguration().getParentXpath().getXPath()
-                                + " for an enveloped signature and the XPATHs to ID attributes for a detached signature are specified. You must not specify both parameters.");
+                                                + getConfiguration().getParentXpath().getXPath()
+                                                + " for an enveloped signature and the XPATHs to ID attributes for a detached signature are specified. You must not specify both parameters.");
 
             }
         }
@@ -387,7 +377,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return result;
     }
 
-    protected XmlSignatureProperties.Output getSignatureProperties(XmlSignatureProperties.Input input) throws Exception { //NOPMD
+    protected XmlSignatureProperties.Output getSignatureProperties(XmlSignatureProperties.Input input) throws Exception {
         XmlSignatureProperties propGetter = getConfiguration().getProperties();
         XmlSignatureProperties.Output propsOutput = null;
         if (propGetter != null) {
@@ -401,7 +391,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         // set namespace prefix for "http://www.w3.org/2000/09/xmldsig#" according to best practice described in http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml-without-namespaces
         if (getConfiguration().getPrefixForXmlSignatureNamespace() != null
                 && !getConfiguration().getPrefixForXmlSignatureNamespace().isEmpty()) {
-            dsc.putNamespacePrefix("http://www.w3.org/2000/09/xmldsig#", getConfiguration().getPrefixForXmlSignatureNamespace());
+            dsc.putNamespacePrefix("http://www.w3.org/2000/09/xmldsig#",
+                    getConfiguration().getPrefixForXmlSignatureNamespace());
         }
         dsc.putNamespacePrefix("http://www.w3.org/2001/10/xml-exc-c14n#", "ec");
         setCryptoContextProperties(dsc);
@@ -421,18 +412,19 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return omitXmlDeclaration;
     }
 
-    protected SignedInfo createSignedInfo(XMLSignatureFactory fac, List<? extends Reference> refs) throws Exception { //NOPMD
+    protected SignedInfo createSignedInfo(XMLSignatureFactory fac, List<? extends Reference> refs) throws Exception {
         return fac.newSignedInfo(fac.newCanonicalizationMethod(getConfiguration().getCanonicalizationMethod().getAlgorithm(),
                 (C14NMethodParameterSpec) getConfiguration().getCanonicalizationMethod().getParameterSpec()),
                 getSignatureMethod(getConfiguration().getSignatureAlgorithm(), fac), refs);
     }
 
-    private SignatureMethod getSignatureMethod(String signatureAlgorithm, XMLSignatureFactory fac) throws NoSuchAlgorithmException,
+    private SignatureMethod getSignatureMethod(String signatureAlgorithm, XMLSignatureFactory fac)
+            throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException {
         return fac.newSignatureMethod(signatureAlgorithm, null);
     }
 
-    protected Node getMessageBodyNode(Message message) throws Exception { //NOPMD
+    protected Node getMessageBodyNode(Message message) throws Exception {
         InputStream is = message.getMandatoryBody(InputStream.class);
 
         Boolean isPlainText = isPlainText(message);
@@ -451,7 +443,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return node;
     }
 
-    protected Schema getSchemaForSigner(Message message, ValidatorErrorHandler errorHandler) throws XmlSignatureException, SAXException,
+    protected Schema getSchemaForSigner(Message message, ValidatorErrorHandler errorHandler)
+            throws XmlSignatureException, SAXException,
             IOException {
         Schema schema;
         String schemaResourceUri = getSchemaResourceUri(message);
@@ -472,8 +465,9 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return isPlainText;
     }
 
-    protected Element getParentOfSignature(Message inMessage, Node messageBodyNode, String contentReferenceURI, SignatureType sigType)
-        throws Exception { //NOPMD
+    protected Element getParentOfSignature(
+            Message inMessage, Node messageBodyNode, String contentReferenceURI, SignatureType sigType)
+            throws Exception {
         if (SignatureType.enveloping == sigType) {
             // enveloping case
             return null;
@@ -491,32 +485,40 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
 
     }
-    
-    protected Element getParentForEnvelopedCase(Document doc, Message inMessage) throws Exception { //NOPMD
+
+    protected Element getParentForEnvelopedCase(Document doc, Message inMessage) throws Exception {
         if (getConfiguration().getParentXpath() != null) {
             XPathFilterParameterSpec xp = getConfiguration().getParentXpath();
             XPathExpression exp;
             try {
                 exp = XmlSignatureHelper.getXPathExpression(xp);
             } catch (XPathExpressionException e) {
-                throw new XmlSignatureException("The parent XPath " + getConfiguration().getParentXpath().getXPath() + " is wrongly configured: The XPath " + xp.getXPath() + " is invalid.", e);
+                throw new XmlSignatureException(
+                        "The parent XPath " + getConfiguration().getParentXpath().getXPath()
+                                                + " is wrongly configured: The XPath " + xp.getXPath() + " is invalid.",
+                        e);
             }
             NodeList list = (NodeList) exp.evaluate(doc.getDocumentElement(), XPathConstants.NODESET);
             if (list == null || list.getLength() == 0) {
-                throw new XmlSignatureException("The parent XPath " + xp.getXPath() + " returned no result. Check the configuration of the XML signer component.");
+                throw new XmlSignatureException(
+                        "The parent XPath " + xp.getXPath()
+                                                + " returned no result. Check the configuration of the XML signer component.");
             }
             int length = list.getLength();
             for (int i = 0; i < length; i++) {
                 Node node = list.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     // return the first element
-                    return (Element)node;
+                    return (Element) node;
                 }
             }
-            throw new XmlSignatureException("The parent XPath " + xp.getXPath() + " returned no element. Check the configuration of the XML signer component.");
+            throw new XmlSignatureException(
+                    "The parent XPath " + xp.getXPath()
+                                            + " returned no element. Check the configuration of the XML signer component.");
         } else {
             // parent local name is not null!
-            NodeList parents = doc.getElementsByTagNameNS(getConfiguration().getParentNamespace(), getConfiguration().getParentLocalName());
+            NodeList parents = doc.getElementsByTagNameNS(getConfiguration().getParentNamespace(),
+                    getConfiguration().getParentLocalName());
             if (parents == null || parents.getLength() == 0) {
                 throw new XmlSignatureFormatException(
                         String.format(
@@ -528,7 +530,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    private Element getParentForDetachedCase(Document doc, Message inMessage, String referenceUri) throws XmlSignatureException {
+    private Element getParentForDetachedCase(Document doc, Message inMessage, String referenceUri)
+            throws XmlSignatureException {
         String elementId = referenceUri;
         if (elementId.startsWith("#")) {
             elementId = elementId.substring(1);
@@ -539,15 +542,16 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             throw new IllegalStateException("No element found for element ID " + elementId);
         }
         LOG.debug("Sibling element of the detached XML Signature with reference URI {}: {}  {}",
-                new Object[] {referenceUri, el.getLocalName(), el.getNamespaceURI() });
+                new Object[] { referenceUri, el.getLocalName(), el.getNamespaceURI() });
         Element result = getParentElement(el);
         if (result != null) {
             return result;
         } else {
             throw new XmlSignatureException(
                     "Either the configuration of the XML Signature component is wrong or the incoming document has an invalid structure: The element "
-                            + el.getLocalName() + "{" + el.getNamespaceURI() + "} which is referenced by the reference URI " + referenceUri
-                            + " has no parent element. The element must have a parent element in the configured detached case.");
+                                            + el.getLocalName() + "{" + el.getNamespaceURI()
+                                            + "} which is referenced by the reference URI " + referenceUri
+                                            + " has no parent element. The element must have a parent element in the configured detached case.");
         }
     }
 
@@ -565,16 +569,20 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return null;
     }
 
-    protected List<? extends Reference> getReferences(XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties,
-            String keyInfoId) throws Exception { //NOPMD
+    protected List<? extends Reference> getReferences(
+            XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties,
+            String keyInfoId)
+            throws Exception {
 
         String referenceId = properties == null ? null : properties.getContentReferenceId();
         // Create Reference with URI="#<objectId>" for enveloping signature, URI="" for enveloped signature, and URI = <value from configuration> for detached signature and the transforms
         Reference ref = createReference(input.getSignatureFactory(), input.getContentReferenceUri(),
                 getContentReferenceType(input.getMessage()), input.getSignatureType(), referenceId, input.getMessage());
-        Reference keyInfoRef = createKeyInfoReference(input.getSignatureFactory(), keyInfoId, input.getContentDigestAlgorithm());
+        Reference keyInfoRef
+                = createKeyInfoReference(input.getSignatureFactory(), keyInfoId, input.getContentDigestAlgorithm());
 
-        int propsRefsSize = properties == null || properties.getReferences() == null || properties.getReferences().isEmpty() ? 0
+        int propsRefsSize = properties == null || properties.getReferences() == null || properties.getReferences().isEmpty()
+                ? 0
                 : properties.getReferences().size();
         int size = keyInfoRef == null ? propsRefsSize + 1 : propsRefsSize + 2;
         List<Reference> referenceList = new ArrayList<>(size);
@@ -589,7 +597,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     protected List<? extends XMLObject> getObjects(XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties)
-        throws Exception { //NOPMD
+            throws Exception {
 
         if (SignatureType.enveloped == input.getSignatureType() || SignatureType.detached == input.getSignatureType()) {
             if (properties == null || properties.getObjects() == null) {
@@ -612,13 +620,14 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return result;
     }
 
-    private Node getTextNode(Message inMessage, InputStream is) throws IOException, ParserConfigurationException, XmlSignatureException {
+    private Node getTextNode(Message inMessage, InputStream is)
+            throws IOException, ParserConfigurationException, XmlSignatureException {
         LOG.debug("Message body to be signed is plain text");
         String encoding = getMessageEncoding(inMessage);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, bos);
         try {
-            String text = new String(bos.toByteArray(), encoding);
+            String text = bos.toString(encoding);
             return XmlSignatureHelper.newDocumentBuilder(true).newDocument().createTextNode(text);
         } catch (UnsupportedEncodingException e) {
             throw new XmlSignatureException(String.format("The message encoding %s is not supported.", encoding), e);
@@ -635,7 +644,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     protected Document parseInput(InputStream is, Boolean disallowDoctypeDecl, Schema schema, ErrorHandler errorHandler)
-        throws ParserConfigurationException, IOException, XmlSignatureFormatException {
+            throws ParserConfigurationException, IOException, XmlSignatureFormatException {
         try {
             DocumentBuilder db = XmlSignatureHelper.newDocumentBuilder(disallowDoctypeDecl, schema);
             db.setErrorHandler(errorHandler);
@@ -648,8 +657,9 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    protected Reference createReference(XMLSignatureFactory fac, String uri, String type, SignatureType sigType, String id, Message message)
-        throws InvalidAlgorithmParameterException, XmlSignatureException {
+    protected Reference createReference(
+            XMLSignatureFactory fac, String uri, String type, SignatureType sigType, String id, Message message)
+            throws InvalidAlgorithmParameterException, XmlSignatureException {
         try {
             List<Transform> transforms = getTransforms(fac, sigType, message);
             Reference ref = fac.newReference(uri, fac.newDigestMethod(getDigestAlgorithmUri(), null), transforms, type, id);
@@ -669,7 +679,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     protected List<String> getContentReferenceUris(Message message, SignatureType signatureType, Node messageBodyNode)
-        throws XmlSignatureException, XPathExpressionException {
+            throws XmlSignatureException, XPathExpressionException {
 
         List<String> result;
         if (SignatureType.enveloping == signatureType) {
@@ -696,7 +706,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return result;
     }
 
-    private List<String> getContentReferenceUrisForDetachedCase(Message message, Node messageBodyNode) throws XmlSignatureException,
+    private List<String> getContentReferenceUrisForDetachedCase(Message message, Node messageBodyNode)
+            throws XmlSignatureException,
             XPathExpressionException {
         List<XPathFilterParameterSpec> xpathsToIdAttributes = getXpathToIdAttributes(message);
         if (xpathsToIdAttributes.isEmpty()) {
@@ -714,7 +725,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             NodeList list = (NodeList) exp.evaluate(messageBodyNode, XPathConstants.NODESET);
             if (list == null) {
                 //assume optional element, XSD validation has been done before
-                LOG.warn("No ID attribute found for xpath expression {}. Therfore this xpath expression will be ignored.", xp.getXPath());
+                LOG.warn("No ID attribute found for xpath expression {}. Therfore this xpath expression will be ignored.",
+                        xp.getXPath());
                 continue;
             }
             int length = list.getLength();
@@ -728,23 +740,25 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                     if (element == null) {
                         throw new XmlSignatureException(
                                 "Wrong configured xpath expression for ID attributes: The evaluation of the xpath expression "
-                                        + xp.getXPath() + " resulted in an attribute which is not of type ID. The attribute value is "
-                                        + value + ".");
+                                                        + xp.getXPath()
+                                                        + " resulted in an attribute which is not of type ID. The attribute value is "
+                                                        + value + ".");
                     }
                     result.add(new ComparableNode(element, "#" + value));
                     LOG.debug("ID attribute with value {} found for xpath {}", value, xp.getXPath());
                 } else {
                     throw new XmlSignatureException(
-                            "Wrong configured xpath expression for ID attributes: The evaluation of the xpath expression " + xp.getXPath()
-                                    + " returned a node which was not of type Attribute.");
+                            "Wrong configured xpath expression for ID attributes: The evaluation of the xpath expression "
+                                                    + xp.getXPath()
+                                                    + " returned a node which was not of type Attribute.");
                 }
             }
         }
-        if (result.size() == 0) {
+        if (result.isEmpty()) {
             throw new XmlSignatureException(
                     "No element to sign found in the detached case. No node found for the configured xpath expressions "
-                            + toString(xpathsToIdAttributes)
-                            + ". Either the configuration of the XML signature component is wrong or the incoming message has not the correct structure.");
+                                            + toString(xpathsToIdAttributes)
+                                            + ". Either the configuration of the XML signature component is wrong or the incoming message has not the correct structure.");
         }
         // sort so that elements with deeper hierarchy level are treated first
         Collections.sort(result);
@@ -768,14 +782,15 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return fac.newXMLObject(Collections.singletonList(new DOMStructure(node)), id, null, null);
     }
 
-    private List<Transform> getTransforms(XMLSignatureFactory fac, SignatureType sigType, Message message) throws NoSuchAlgorithmException,
+    private List<Transform> getTransforms(XMLSignatureFactory fac, SignatureType sigType, Message message)
+            throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException {
         String transformMethodsHeaderValue = message.getHeader(XmlSignatureConstants.HEADER_TRANSFORM_METHODS, String.class);
         if (transformMethodsHeaderValue == null) {
             List<AlgorithmMethod> configuredTrafos = getConfiguration().getTransformMethods();
             if (SignatureType.enveloped == sigType) {
                 // add enveloped transform if necessary
-                if (configuredTrafos.size() > 0) {
+                if (!configuredTrafos.isEmpty()) {
                     if (!containsEnvelopedTransform(configuredTrafos)) {
                         configuredTrafos = new ArrayList<>(configuredTrafos.size() + 1);
                         configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());
@@ -797,7 +812,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             }
             return transforms;
         } else {
-            LOG.debug("Header {} with value '{}' found", XmlSignatureConstants.HEADER_TRANSFORM_METHODS, transformMethodsHeaderValue);
+            LOG.debug("Header {} with value '{}' found", XmlSignatureConstants.HEADER_TRANSFORM_METHODS,
+                    transformMethodsHeaderValue);
             String[] transformAlgorithms = transformMethodsHeaderValue.split(",");
             List<Transform> transforms = new ArrayList<>(transformAlgorithms.length);
             for (String transformAlgorithm : transformAlgorithms) {
@@ -848,7 +864,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 "Digest algorithm missing for XML signature generation. Specify the digest algorithm in the configuration.");
     }
 
-    protected Reference createKeyInfoReference(XMLSignatureFactory fac, String keyInfoId, String digestAlgorithm) throws Exception { //NOPMD
+    protected Reference createKeyInfoReference(XMLSignatureFactory fac, String keyInfoId, String digestAlgorithm)
+            throws Exception {
 
         if (keyInfoId == null) {
             return null;
@@ -868,19 +885,18 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return fac.newReference("#" + keyInfoId, fac.newDigestMethod(digestAlgorithm, null), transforms, null, null);
     }
 
-    private String getKeyInfoId(KeyInfo keyInfo) throws Exception { //NOPMD
+    private String getKeyInfoId(KeyInfo keyInfo) throws Exception {
         if (keyInfo == null) {
             return null;
         }
         return keyInfo.getId();
     }
-    
+
     protected void setOutputEncodingToMessageHeader(Message message) {
         if (getConfiguration().getOutputXmlEncoding() != null) {
             message.setHeader(Exchange.CHARSET_NAME, getConfiguration().getOutputXmlEncoding());
         }
     }
-
 
     private static class InputBuilder {
 

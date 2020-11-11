@@ -18,8 +18,9 @@ package org.apache.camel.component.netty;
 
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * This test ensures LogCaptureAppender is configured properly
@@ -28,7 +29,7 @@ public class LogCaptureTest {
     @Test
     public void testCapture() {
         InternalLoggerFactory.getInstance(ResourceLeakDetector.class).error("testError");
-        Assert.assertFalse(LogCaptureAppender.getEvents().isEmpty());
+        assertFalse(LogCaptureAppender.getEvents().isEmpty());
         LogCaptureAppender.reset();
     }
 }

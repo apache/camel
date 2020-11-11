@@ -23,13 +23,18 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+@CamelSpringTest
 @ContextConfiguration
-public class JmsConsumerShutdownTest extends AbstractJUnit4SpringContextTests {
+public class JmsConsumerShutdownTest {
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     @Produce("activemq:start")
     protected ProducerTemplate activemq;
@@ -45,7 +50,7 @@ public class JmsConsumerShutdownTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     @DirtiesContext
-    public void testJmsConsumerShutdownWithMessageInFlight() throws InterruptedException {
+    void testJmsConsumerShutdownWithMessageInFlight() throws InterruptedException {
         end.expectedMessageCount(0);
         end.setResultWaitTime(2000);
 
@@ -65,7 +70,7 @@ public class JmsConsumerShutdownTest extends AbstractJUnit4SpringContextTests {
     // Just for the sake of comparison test the SedaConsumer as well
     @Test
     @DirtiesContext
-    public void testSedaConsumerShutdownWithMessageInFlight() throws InterruptedException {
+    void testSedaConsumerShutdownWithMessageInFlight() throws InterruptedException {
         end.expectedMessageCount(0);
         end.setResultWaitTime(2000);
 
@@ -82,10 +87,9 @@ public class JmsConsumerShutdownTest extends AbstractJUnit4SpringContextTests {
         end.assertIsSatisfied();
     }
 
-
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
-        public void configure() throws Exception {
+        public void configure() {
             from("activemq:start")
                     .to("direct:dir")
                     .to("mock:end");
@@ -96,8 +100,8 @@ public class JmsConsumerShutdownTest extends AbstractJUnit4SpringContextTests {
 
             from("direct:dir")
                     .onException(Exception.class)
-                        .redeliveryDelay(1000)
-                        .maximumRedeliveries(-1) // forever
+                    .redeliveryDelay(1000)
+                    .maximumRedeliveries(-1) // forever
                     .end()
                     .to("mock:exception");
 

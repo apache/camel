@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -29,7 +29,7 @@ import org.junit.Test;
 public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/pair");
         deleteDirectory("target/data/pair2");
@@ -81,15 +81,15 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("file:target/data/pair?initialDelay=0&delay=10")
-                    // split the order child tags, and inherit namespaces from
-                    // the orders root tag
-                    .split().tokenizeXML("order", "orders").to("mock:split");
+                        // split the order child tags, and inherit namespaces from
+                        // the orders root tag
+                        .split().tokenizeXML("order", "orders").to("mock:split");
                 // END SNIPPET: e1
 
                 from("file:target/data/pair2?initialDelay=0&delay=10")
-                    // split the order child tags, and inherit namespaces from
-                    // the orders root tag
-                    .split(body().tokenizeXML("order", "orders")).to("mock:split");
+                        // split the order child tags, and inherit namespaces from
+                        // the orders root tag
+                        .split(body().tokenizeXML("order", "orders")).to("mock:split");
             }
         };
     }

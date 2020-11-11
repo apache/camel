@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,7 +26,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for try .. handle routing (CAMEL-564).
@@ -57,7 +60,7 @@ public class TryProcessorTest extends ContextTestSupport {
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
         sendBody(endpointName, "<test>Hello World!</test>");
-        assertTrue("Should have been handled", handled);
+        assertTrue(handled, "Should have been handled");
 
         assertMockEndpointsSatisfied();
     }
@@ -66,14 +69,17 @@ public class TryProcessorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:processor").doTry().process(new ProcessorFail()).to("mock:result").doCatch(CamelException.class).process(new ProcessorHandle()).doFinally()
-                    .to("mock:finally").end().to("mock:last");
+                from("direct:processor").doTry().process(new ProcessorFail()).to("mock:result").doCatch(CamelException.class)
+                        .process(new ProcessorHandle()).doFinally()
+                        .to("mock:finally").end().to("mock:last");
 
-                from("direct:expression").doTry().setBody(new ProcessorFail()).to("mock:result").doCatch(CamelException.class).process(new ProcessorHandle()).doFinally()
-                    .to("mock:finally").end().to("mock:last");
+                from("direct:expression").doTry().setBody(new ProcessorFail()).to("mock:result").doCatch(CamelException.class)
+                        .process(new ProcessorHandle()).doFinally()
+                        .to("mock:finally").end().to("mock:last");
 
-                from("direct:predicate").doTry().to("direct:sub-predicate").doCatch(CamelException.class).process(new ProcessorHandle()).doFinally().to("mock:finally").end()
-                    .to("mock:last");
+                from("direct:predicate").doTry().to("direct:sub-predicate").doCatch(CamelException.class)
+                        .process(new ProcessorHandle()).doFinally().to("mock:finally").end()
+                        .to("mock:last");
 
                 from("direct:sub-predicate").errorHandler(noErrorHandler()).filter(new ProcessorFail()).to("mock:result");
             }
@@ -95,6 +101,10 @@ public class TryProcessorTest extends ContextTestSupport {
         public boolean matches(Exchange exchange) {
             throw new RuntimeCamelException(new CamelException("Force to fail"));
         }
+
+        @Override
+        public void init(CamelContext context) {
+        }
     }
 
     private class ProcessorHandle implements Processor {
@@ -102,10 +112,10 @@ public class TryProcessorTest extends ContextTestSupport {
         public void process(Exchange exchange) throws Exception {
             handled = true;
 
-            assertEquals("Should not be marked as failed", false, exchange.isFailed());
+            assertEquals(false, exchange.isFailed(), "Should not be marked as failed");
 
-            Exception e = (Exception)exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
-            assertNotNull("There should be an exception", e);
+            Exception e = (Exception) exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
+            assertNotNull(e, "There should be an exception");
 
             // If we handle CamelException it is what we should have as an
             // exception caught

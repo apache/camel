@@ -28,16 +28,18 @@ import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theory;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
 
     private static final String TEST_REQUEST_XML = "/test-request.xml";
     private static final String TEST_REQUEST_CSV = "/test-request.csv";
 
-    @DataPoints
     public static BatchTest[] getBatches() {
         List<BatchTest> result = new ArrayList<>();
         BatchTest test = new BatchTest();
@@ -54,8 +56,8 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
         return result.toArray(new BatchTest[result.size()]);
     }
 
-    @Theory
-    @Test
+    @ParameterizedTest
+    @MethodSource("getBatches")
     public void testBatchLifecycle(BatchTest request) throws Exception {
         log.info("Testing Batch lifecycle with {} content", request.contentType);
 
@@ -72,14 +74,14 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
         headers.put(SalesforceEndpointConfig.JOB_ID, jobInfo.getId());
         headers.put(SalesforceEndpointConfig.CONTENT_TYPE, jobInfo.getContentType());
         BatchInfo batchInfo = template().requestBodyAndHeaders("direct:createBatch", request.stream, headers, BatchInfo.class);
-        assertNotNull("Null batch", batchInfo);
-        assertNotNull("Null batch id", batchInfo.getId());
+        assertNotNull(batchInfo, "Null batch");
+        assertNotNull(batchInfo.getId(), "Null batch id");
 
         // test getAllBatches
         @SuppressWarnings("unchecked")
         List<BatchInfo> batches = template().requestBody("direct:getAllBatches", jobInfo, List.class);
-        assertNotNull("Null batches", batches);
-        assertFalse("Empty batch list", batches.isEmpty());
+        assertNotNull(batches, "Null batches");
+        assertFalse(batches.isEmpty(), "Empty batch list");
 
         // test getBatch
         batchInfo = batches.get(0);
@@ -87,7 +89,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
 
         // test getRequest
         InputStream requestStream = template().requestBody("direct:getRequest", batchInfo, InputStream.class);
-        assertNotNull("Null batch request", requestStream);
+        assertNotNull(requestStream, "Null batch request");
 
         // wait for batch to finish
         log.info("Waiting for batch to finish...");
@@ -98,11 +100,11 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
             batchInfo = getBatchInfo(batchInfo);
         }
         log.info("Batch finished with state " + batchInfo.getState());
-        assertEquals("Batch did not succeed", BatchStateEnum.COMPLETED, batchInfo.getState());
+        assertEquals(BatchStateEnum.COMPLETED, batchInfo.getState(), "Batch did not succeed");
 
         // test getResults
         InputStream results = template().requestBody("direct:getResults", batchInfo, InputStream.class);
-        assertNotNull("Null batch results", results);
+        assertNotNull(results, "Null batch results");
 
         // close the test job
         template().requestBody("direct:closeJob", jobInfo, JobInfo.class);

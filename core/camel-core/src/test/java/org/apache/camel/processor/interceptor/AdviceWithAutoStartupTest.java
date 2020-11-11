@@ -17,10 +17,13 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AdviceWithAutoStartupTest extends ContextTestSupport {
 
@@ -29,7 +32,7 @@ public class AdviceWithAutoStartupTest extends ContextTestSupport {
         assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
         assertFalse(context.getRouteController().getRouteStatus("bar").isStarted());
 
-        RouteReifier.adviceWith(context.getRouteDefinition("bar"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinition("bar"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("seda:newBar");

@@ -21,22 +21,29 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.HelloService;
 import org.apache.camel.component.cxf.HelloServiceImpl;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
-    private static int port1 = CXFTestSupport.getPort1(); 
+    private static final Logger LOG = LoggerFactory.getLogger(FileToCxfMessageDataFormatTest.class);
+    private static int port1 = CXFTestSupport.getPort1();
 
     private Server server;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/filetocxf");
 
@@ -54,7 +61,7 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -78,18 +85,18 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
 
         String out = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertNotNull(out);
-        log.info("Reply payload as a String:\n" + out);
-        assertTrue("Should invoke the echo operation", out.contains("echo Camel"));
+        LOG.info("Reply payload as a String:\n" + out);
+        assertTrue(out.contains("echo Camel"), "Should invoke the echo operation");
     }
 
     private String createBody() throws Exception {
         return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://cxf.component.camel.apache.org/\">\n"
-                + "   <soapenv:Header/>\n"
-                + "   <soapenv:Body>\n"
-                + "      <cxf:echo>\n"
-                + "          <cxf:arg0>Camel</cxf:arg0>\n"
-                + "      </cxf:echo>\n"
-                + "   </soapenv:Body>\n"
-                + "</soapenv:Envelope>";
+               + "   <soapenv:Header/>\n"
+               + "   <soapenv:Body>\n"
+               + "      <cxf:echo>\n"
+               + "          <cxf:arg0>Camel</cxf:arg0>\n"
+               + "      </cxf:echo>\n"
+               + "   </soapenv:Body>\n"
+               + "</soapenv:Envelope>";
     }
 }

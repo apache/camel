@@ -17,10 +17,13 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Advice with using to string matching
@@ -30,7 +33,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
     @Test
     public void testUnknownId() throws Exception {
         try {
-            RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+            AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     weaveByToString("xxx").replace().to("mock:xxx");
@@ -38,14 +41,14 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
             });
             fail("Should hve thrown exception");
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().startsWith("There are no outputs which matches: xxx in the route"));
+            assertTrue(e.getMessage().startsWith("There are no outputs which matches: xxx in the route"), e.getMessage());
         }
     }
 
     @Test
     public void testReplace() throws Exception {
         // START SNIPPET: e1
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave nodes in the route which has foo anywhere in their to
@@ -69,7 +72,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
 
     @Test
     public void testRemove() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*bar.*").remove();
@@ -83,12 +86,12 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should have removed mock:bar endpoint", context.hasEndpoint("mock:bar") == null);
+        assertTrue(context.hasEndpoint("mock:bar") == null, "Should have removed mock:bar endpoint");
     }
 
     @Test
     public void testBefore() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*bar.*").before().to("mock:a").transform(constant("Bye World"));
@@ -107,7 +110,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
 
     @Test
     public void testAfter() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*bar.*").after().to("mock:a").transform(constant("Bye World"));

@@ -17,8 +17,8 @@
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -47,7 +47,7 @@ public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClien
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();

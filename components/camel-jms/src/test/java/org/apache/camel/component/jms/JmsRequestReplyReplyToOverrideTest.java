@@ -23,13 +23,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
 
@@ -38,7 +38,7 @@ public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
     private static final String REQUEST_BODY = "Something";
     private static final String EXPECTED_REPLY_BODY = "Re: " + REQUEST_BODY;
     private static final String EXPECTED_REPLY_HEADER = "queue://bar";
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -53,12 +53,8 @@ public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
         Thread sender = new Thread(new Responder());
         sender.start();
 
-        Exchange reply = template.request("jms:queue:foo", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(REQUEST_BODY);
-            }
-        });
-        assertEquals(EXPECTED_REPLY_BODY, reply.getOut().getBody());
+        Exchange reply = template.request("jms:queue:foo", exchange -> exchange.getIn().setBody(REQUEST_BODY));
+        assertEquals(EXPECTED_REPLY_BODY, reply.getMessage().getBody());
     }
 
     @Override
@@ -84,18 +80,16 @@ public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
                 final String body = request.getIn().getBody(String.class);
                 final String cid = request.getIn().getHeader("JMSCorrelationID", String.class);
                 final Destination replyTo = request.getIn().getHeader("JMSReplyTo", Destination.class);
-                
-                assertEquals(EXPECTED_REPLY_HEADER, replyTo.toString());
-                
-                // send reply
-                template.send("jms:dummy", ExchangePattern.InOnly, new Processor() {
-                    public void process(Exchange exchange) throws Exception {
 
-                        Message in = exchange.getIn();
-                        in.setBody("Re: " + body);
-                        in.setHeader(JmsConstants.JMS_DESTINATION_NAME, "baz");
-                        in.setHeader("JMSCorrelationID", cid);
-                    }
+                assertEquals(EXPECTED_REPLY_HEADER, replyTo.toString());
+
+                // send reply
+                template.send("jms:dummy", ExchangePattern.InOnly, exchange -> {
+
+                    Message in = exchange.getIn();
+                    in.setBody("Re: " + body);
+                    in.setHeader(JmsConstants.JMS_DESTINATION_NAME, "baz");
+                    in.setHeader("JMSCorrelationID", cid);
                 });
             } catch (Exception e) {
                 // ignore

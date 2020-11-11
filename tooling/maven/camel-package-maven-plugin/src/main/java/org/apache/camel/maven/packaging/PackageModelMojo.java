@@ -17,13 +17,10 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -44,52 +41,45 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
     /**
      * The output directory for generated models file
      */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/models")
+    @Parameter(defaultValue = "${project.basedir}/src/generated/resources")
     protected File outDir;
 
     /**
      * Execute goal.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
-     *                 threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException something bad happened...
+     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the threads it
+     *                                                        generated failed.
+     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (buildDir == null) {
+            buildDir = new File(project.getBuild().getDirectory());
+        }
+        if (outDir == null) {
+            outDir = new File(project.getBasedir(), "src/generated/resources");
+        }
         File camelMetaDir = new File(outDir, "META-INF/services/org/apache/camel/");
         camelMetaDir.mkdirs();
 
-        Set<File> jsonFiles = new TreeSet<>();
-
         // find all json files in camel-core
-        if (buildDir != null && buildDir.isDirectory()) {
-            File target = new File(buildDir, "classes/org/apache/camel/model");
-            PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
-        }
-
-        List<String> models = new ArrayList<>();
-        // sort the names
-        for (File file : jsonFiles) {
-            String name = file.getName();
-            if (name.endsWith(".json")) {
+        List<String> models = PackageHelper.findJsonFiles(buildDir.toPath().resolve("classes/org/apache/camel/model"))
+                .map(p -> p.getFileName().toString())
                 // strip out .json from the name
-                String modelName = name.substring(0, name.length() - 5);
-                models.add(modelName);
+                .map(s -> s.substring(0, s.length() - PackageHelper.JSON_SUFIX.length()))
+                // sort
+                .sorted().collect(Collectors.toList());
+
+        if (!models.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("# " + GENERATED_MSG + NL);
+            for (String name : models) {
+                sb.append(name).append(NL);
             }
+
+            updateResource(camelMetaDir.toPath(), "model.properties", sb.toString());
+            getLog().info("Generated " + "model.properties" + " containing " + models.size() + " Camel models");
         }
-        Collections.sort(models);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("# " + GENERATED_MSG + NL);
-        for (String name : models) {
-            sb.append(name).append(NL);
-        }
-
-        Path outFile = camelMetaDir.toPath().resolve("model.properties");
-        updateResource(outFile, sb.toString());
-        getLog().info("Generated " + outFile + " containing " + models.size() + " Camel models");
-
-        addResourceDirectory(outDir.toPath());
     }
 
 }

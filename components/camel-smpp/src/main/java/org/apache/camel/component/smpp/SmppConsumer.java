@@ -34,11 +34,15 @@ import org.jsmpp.session.SMPPSession;
 import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of {@link Consumer} which use the SMPP protocol
+ * An implementation of consumer which use the SMPP protocol
  */
 public class SmppConsumer extends DefaultConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SmppConsumer.class);
 
     private SmppConfiguration configuration;
     private SMPPSession session;
@@ -48,8 +52,7 @@ public class SmppConsumer extends DefaultConsumer {
     private final ReentrantLock reconnectLock = new ReentrantLock();
 
     /**
-     * The constructor which gets a smpp endpoint, a smpp configuration and a
-     * processor
+     * The constructor which gets a smpp endpoint, a smpp configuration and a processor
      */
     public SmppConsumer(SmppEndpoint endpoint, SmppConfiguration config, Processor processor) {
         super(endpoint, processor);
@@ -61,9 +64,9 @@ public class SmppConsumer extends DefaultConsumer {
                 if (configuration.getSessionStateListener() != null) {
                     configuration.getSessionStateListener().onStateChange(newState, oldState, source);
                 }
-                
+
                 if (newState.equals(SessionState.CLOSED)) {
-                    log.warn("Lost connection to: {} - trying to reconnect...", getEndpoint().getConnectionString());
+                    LOG.warn("Lost connection to: {} - trying to reconnect...", getEndpoint().getConnectionString());
                     closeSession();
                     reconnect(configuration.getInitialReconnectDelay());
                 }
@@ -74,12 +77,12 @@ public class SmppConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        log.debug("Connecting to: {}...", getEndpoint().getConnectionString());
+        LOG.debug("Connecting to: {}...", getEndpoint().getConnectionString());
 
         super.doStart();
         session = createSession();
 
-        log.info("Connected to: {}", getEndpoint().getConnectionString());
+        LOG.info("Connected to: {}", getEndpoint().getConnectionString());
     }
 
     private SMPPSession createSession() throws IOException {
@@ -89,33 +92,37 @@ public class SmppConsumer extends DefaultConsumer {
         session.addSessionStateListener(internalSessionStateListener);
         session.setMessageReceiverListener(messageReceiverListener);
         session.connectAndBind(this.configuration.getHost(), this.configuration.getPort(),
-                new BindParameter(BindType.BIND_RX, this.configuration.getSystemId(),
+                new BindParameter(
+                        BindType.BIND_RX, this.configuration.getSystemId(),
                         this.configuration.getPassword(), this.configuration.getSystemType(),
                         TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN,
-                                  configuration.getAddressRange()));
+                        configuration.getAddressRange()));
 
         return session;
     }
-    
+
     /**
      * Factory method to easily instantiate a mock SMPPSession
      * 
      * @return the SMPPSession
      */
     SMPPSession createSMPPSession() {
-        return new SMPPSession(new SynchronizedPDUSender(new DefaultPDUSender(
-                    new DefaultComposer())), new DefaultPDUReader(), SmppConnectionFactory
-                    .getInstance(configuration));
+        return new SMPPSession(
+                new SynchronizedPDUSender(
+                        new DefaultPDUSender(
+                                new DefaultComposer())),
+                new DefaultPDUReader(), SmppConnectionFactory
+                        .getInstance(configuration));
     }
 
     @Override
     protected void doStop() throws Exception {
-        log.debug("Disconnecting from: {}...", getEndpoint().getConnectionString());
+        LOG.debug("Disconnecting from: {}...", getEndpoint().getConnectionString());
 
         super.doStop();
         closeSession();
 
-        log.info("Disconnected from: {}", getEndpoint().getConnectionString());
+        LOG.info("Disconnected from: {}", getEndpoint().getConnectionString());
     }
 
     private void closeSession() {
@@ -133,8 +140,8 @@ public class SmppConsumer extends DefaultConsumer {
                 Runnable r = new Runnable() {
                     public void run() {
                         boolean reconnected = false;
-                        
-                        log.info("Schedule reconnect after {} millis", initialReconnectDelay);
+
+                        LOG.info("Schedule reconnect after {} millis", initialReconnectDelay);
                         try {
                             Thread.sleep(initialReconnectDelay);
                         } catch (InterruptedException e) {
@@ -142,15 +149,17 @@ public class SmppConsumer extends DefaultConsumer {
                         }
 
                         int attempt = 0;
-                        while (!(isStopping() || isStopped()) && (session == null || session.getSessionState().equals(SessionState.CLOSED))
+                        while (!(isStopping() || isStopped())
+                                && (session == null || session.getSessionState().equals(SessionState.CLOSED))
                                 && attempt < configuration.getMaxReconnect()) {
                             try {
                                 attempt++;
-                                log.info("Trying to reconnect to {} - attempt #{}", getEndpoint().getConnectionString(), attempt);
+                                LOG.info("Trying to reconnect to {} - attempt #{}", getEndpoint().getConnectionString(),
+                                        attempt);
                                 session = createSession();
                                 reconnected = true;
                             } catch (IOException e) {
-                                log.warn("Failed to reconnect to {}", getEndpoint().getConnectionString());
+                                LOG.warn("Failed to reconnect to {}", getEndpoint().getConnectionString());
                                 closeSession();
                                 try {
                                     Thread.sleep(configuration.getReconnectDelay());
@@ -158,19 +167,19 @@ public class SmppConsumer extends DefaultConsumer {
                                 }
                             }
                         }
-                        
+
                         if (reconnected) {
-                            log.info("Reconnected to {}", getEndpoint().getConnectionString());
+                            LOG.info("Reconnected to {}", getEndpoint().getConnectionString());
                         }
                     }
                 };
-                
+
                 Thread t = new Thread(r);
-                t.start(); 
+                t.start();
                 t.join();
             } catch (InterruptedException e) {
                 // noop
-            }  finally {
+            } finally {
                 reconnectLock.unlock();
             }
         }

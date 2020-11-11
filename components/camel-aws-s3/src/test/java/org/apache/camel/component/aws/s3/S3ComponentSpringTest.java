@@ -25,9 +25,13 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class S3ComponentSpringTest extends CamelSpringTestSupport {
 
@@ -70,7 +74,7 @@ public class S3ComponentSpringTest extends CamelSpringTestSupport {
 
         assertResultExchange(result.getExchanges().get(0));
 
-        assertResponseMessage(exchange.getOut());
+        assertResponseMessage(exchange.getMessage());
     }
 
     private void assertResultExchange(Exchange resultExchange) {
@@ -79,10 +83,10 @@ public class S3ComponentSpringTest extends CamelSpringTestSupport {
         assertEquals("mycamelbucket", resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
         assertEquals("CamelUnitTest", resultExchange.getIn().getHeader(S3Constants.KEY));
         assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not
-                                                                              // enabled
-                                                                              // on
-                                                                              // this
-                                                                              // bucket
+                                                                             // enabled
+                                                                             // on
+                                                                             // this
+                                                                             // bucket
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
         assertNull(resultExchange.getIn().getHeader(S3Constants.E_TAG));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));

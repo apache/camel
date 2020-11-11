@@ -27,7 +27,7 @@ import org.apache.camel.cdi.pojo.TypeConverterOutput;
 public final class InjectedTestTypeConverter {
 
     private final CamelContext context;
-    
+
     @Inject
     InjectedTestTypeConverter(CamelContext context) {
         this.context = context;

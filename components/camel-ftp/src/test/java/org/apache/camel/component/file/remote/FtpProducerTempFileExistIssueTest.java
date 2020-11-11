@@ -38,8 +38,9 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
     public void testIllegalConfiguration() throws Exception {
         try {
             context.getEndpoint(getFtpUrl() + "&fileExist=Append&tempPrefix=foo").createProducer();
+            fail("Should throw exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("You cannot set both fileExist=Append and tempPrefix options", e.getMessage());
+            assertEquals("You cannot set both fileExist=Append and tempPrefix/tempFileName options", e.getMessage());
         }
     }
 
@@ -80,7 +81,8 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME,
+                "hello.txt");
 
         Thread.sleep(500);
 
@@ -95,7 +97,8 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME,
+                "hello.txt");
 
         Thread.sleep(500);
 
@@ -111,10 +114,12 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
         Thread.sleep(500);
 
         try {
-            template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
+            template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Fail", "Bye World", Exchange.FILE_NAME,
+                    "hello.txt");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
+            GenericFileOperationFailedException cause
+                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
             assertTrue(cause.getMessage().startsWith("File already exist"));
         }
 

@@ -28,16 +28,19 @@ import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerList;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Order;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Product;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests for the Simple Binding style of CXF JAX-RS consumers.
@@ -45,13 +48,13 @@ import org.junit.Test;
 public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     private static final String PORT_PATH = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
     private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + PORT_PATH
-        + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceImpl&bindingStyle=SimpleConsumer";
+                                                      + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerServiceImpl&bindingStyle=SimpleConsumer";
 
     private JAXBContext jaxb;
     private CloseableHttpClient httpclient;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         httpclient = HttpClientBuilder.create().build();
@@ -59,7 +62,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         httpclient.close();
@@ -71,14 +74,14 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI)
-                    .recipientList(simple("direct:${header.operationName}"));
+                        .recipientList(simple("direct:${header.operationName}"));
 
                 from("direct:getCustomer").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         assertEquals("123", exchange.getIn().getHeader("id"));
-                        exchange.getOut().setBody(new Customer(123, "Raul"));
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                        exchange.getMessage().setBody(new Customer(123, "Raul"));
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                     }
                 });
 
@@ -89,7 +92,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
                         assertNotNull(c);
                         assertEquals(123, c.getId());
                         assertEquals(12, exchange.getIn().getHeader("age"));
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                        exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
                     }
                 });
             }

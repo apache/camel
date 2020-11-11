@@ -21,13 +21,16 @@ import java.util.Comparator;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JohnzonAttributeOrderTest extends CamelTestSupport {
 
-    final String expectedJson = "{\"bool\":true,\"bg\":123.123,\"doubleNumber\":123.123,\"intNumber\":123,\"floatNumber\":123.0,\"longNumber\":123}";
-    
+    final String expectedJson
+            = "{\"bool\":true,\"bg\":123.123,\"doubleNumber\":123.123,\"intNumber\":123,\"floatNumber\":123.0,\"longNumber\":123}";
+
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
         NumberPojo nc = new NumberPojo();
@@ -53,11 +56,11 @@ public class JohnzonAttributeOrderTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 final Comparator<String> attributeOrder = new Comparator<String>() {
                     @Override
                     public int compare(final String o1, final String o2) {

@@ -17,11 +17,11 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -31,15 +31,16 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
     @Test
     public void testIssue() throws Exception {
         RouteDefinition testRoute = context.getRouteDefinition("TestRoute");
-        RouteReifier.adviceWith(testRoute, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(testRoute, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().to("log:seda").throwException(new IllegalArgumentException("Forced"));
+                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().to("log:seda")
+                        .throwException(new IllegalArgumentException("Forced"));
             }
         });
 
         RouteDefinition smtpRoute = context.getRouteDefinition("smtpRoute");
-        RouteReifier.adviceWith(smtpRoute, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(smtpRoute, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("smtp*").to("log:smtp").skipSendToOriginalEndpoint().to("mock:smtp");
@@ -66,7 +67,8 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
 
                 errorHandler(deadLetterChannel("direct:emailSupport").maximumRedeliveries(2).redeliveryDelay(0));
 
-                from("direct:emailSupport").routeId("smtpRoute").errorHandler(deadLetterChannel("log:dead?level=ERROR")).to("smtp://smtpServer");
+                from("direct:emailSupport").routeId("smtpRoute").errorHandler(deadLetterChannel("log:dead?level=ERROR"))
+                        .to("smtp://smtpServer");
 
                 from("timer://someTimer?delay=15000&fixedRate=true&period=5000").routeId("pollRoute").to("log:level=INFO");
 

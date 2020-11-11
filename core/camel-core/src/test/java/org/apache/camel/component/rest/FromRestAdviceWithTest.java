@@ -17,11 +17,13 @@
 package org.apache.camel.component.rest;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FromRestAdviceWithTest extends ContextTestSupport {
 
@@ -42,7 +44,7 @@ public class FromRestAdviceWithTest extends ContextTestSupport {
         });
 
         RouteDefinition route = context.getRouteDefinition("myRoute");
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("direct:foo");

@@ -63,58 +63,58 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
      * Location of generated DTO files, defaults to target/generated-sources/camel-salesforce.
      */
     @Parameter(
-        property = "camel.servicenow.output.directory",
-        defaultValue = "${project.build.directory}/generated-sources/camel-servicenow")
+               property = "camel.servicenow.output.directory",
+               defaultValue = "${project.build.directory}/generated-sources/camel-servicenow")
     protected File outputDirectory;
 
     /**
      * Java package name for generated DTOs.
      */
     @Parameter(
-        property = "camel.servicenow.output.package",
-        defaultValue = "org.apache.camel.servicenow.dto")
+               property = "camel.servicenow.output.package",
+               defaultValue = "org.apache.camel.servicenow.dto")
     protected String packageName;
 
     /**
      * ServiceNow instance name.
      */
     @Parameter(
-        property = "camel.servicenow.instance.name", required = true)
+               property = "camel.servicenow.instance.name", required = true)
     protected String instanceName;
 
     /**
      * ServiceName user name.
      */
     @Parameter(
-        property = "camel.servicenow.user.name", required = true)
+               property = "camel.servicenow.user.name", required = true)
     protected String userName;
 
     /**
      * ServiceNow user password.
      */
     @Parameter(
-        property = "camel.servicenow.user.password", required = true)
+               property = "camel.servicenow.user.password", required = true)
     protected String userPassword;
 
     /**
      * ServiceNow OAuth2 client id.
      */
     @Parameter(
-        property = "camel.servicenow.oauth2.client.id")
+               property = "camel.servicenow.oauth2.client.id")
     protected String oauthClientId;
 
     /**
      * ServiceNow OAuth2 client secret.
      */
     @Parameter(
-        property = "camel.servicenow.oauth2.client.secret")
+               property = "camel.servicenow.oauth2.client.secret")
     protected String oauthClientSecret;
 
     /**
      * SSL Context parameters.
      */
     @Parameter(
-        property = "camel.servicenow.ssl.parameters")
+               property = "camel.servicenow.ssl.parameters")
     protected SSLContextParameters sslParameters;
 
     /**
@@ -130,8 +130,7 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
     protected Map<String, String> fields = Collections.emptyMap();
 
     /**
-     * ServiceNow fields to exclude from generated DTOs, fields explicit included
-     * have the precedence.
+     * ServiceNow fields to exclude from generated DTOs, fields explicit included have the precedence.
      */
     @Parameter
     protected Map<String, String> fieldsExcludePattern = Collections.emptyMap();
@@ -163,10 +162,9 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
             }
 
             JsonNode schema = component.getExtension(MetaDataExtension.class)
-                .flatMap(e -> e.meta(parameters))
-                .flatMap(m -> Optional.ofNullable(m.getPayload(JsonNode.class)))
-                .orElseThrow(() -> new MojoExecutionException("Unable to get grab MetaData for object: " + objectName)
-            );
+                    .flatMap(e -> e.meta(parameters))
+                    .flatMap(m -> Optional.ofNullable(m.getPayload(JsonNode.class)))
+                    .orElseThrow(() -> new MojoExecutionException("Unable to get grab MetaData for object: " + objectName));
 
             validateSchema(schema);
 
@@ -181,34 +179,33 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
     private void generateBean(String name, JsonNode schema) throws MojoExecutionException {
         try {
             TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(toCamelCase(name, false))
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addAnnotation(Generated.class)
-                .addAnnotation(AnnotationSpec.builder(ServiceNowSysParm.class)
-                    .addMember("name", "$S", "sysparm_exclude_reference_link")
-                    .addMember("value", "$S", "true")
-                    .build())
-                .addAnnotation(AnnotationSpec.builder(JsonIgnoreProperties.class)
-                    .addMember("ignoreUnknown", "$L", "true")
-                    .build())
-                .addAnnotation(AnnotationSpec.builder(JsonInclude.class)
-                    .addMember("value", "$L", "JsonInclude.Include.NON_NULL")
-                    .build());
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                    .addAnnotation(Generated.class)
+                    .addAnnotation(AnnotationSpec.builder(ServiceNowSysParm.class)
+                            .addMember("name", "$S", "sysparm_exclude_reference_link")
+                            .addMember("value", "$S", "true")
+                            .build())
+                    .addAnnotation(AnnotationSpec.builder(JsonIgnoreProperties.class)
+                            .addMember("ignoreUnknown", "$L", "true")
+                            .build())
+                    .addAnnotation(AnnotationSpec.builder(JsonInclude.class)
+                            .addMember("value", "$L", "JsonInclude.Include.NON_NULL")
+                            .build());
 
             schema.get("properties").fields().forEachRemaining(
-                entry -> generateBeanProperty(typeBuilder, schema, entry.getKey(), entry.getValue())
-            );
+                    entry -> generateBeanProperty(typeBuilder, schema, entry.getKey(), entry.getValue()));
 
             JavaFile.builder(packageName, typeBuilder.build())
-                .indent("    ")
-                .build()
-                .writeTo(outputDirectory);
+                    .indent("    ")
+                    .build()
+                    .writeTo(outputDirectory);
         } catch (IOException e) {
             throw new MojoExecutionException("Unable to generate Class", e);
         }
     }
 
     private void generateBeanProperty(TypeSpec.Builder typeBuilder, JsonNode schema, String name, JsonNode definition) {
-        final ArrayNode required = (ArrayNode)schema.get("required");
+        final ArrayNode required = (ArrayNode) schema.get("required");
         final String fieldName = toCamelCase(name, true);
         final String methodName = toCamelCase(name, false);
         final JsonNode type = definition.get("type");
@@ -244,25 +241,25 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
         }
 
         FieldSpec field = FieldSpec.builder(javaType, toCamelCase(name, true))
-            .addModifiers(Modifier.PRIVATE)
-            .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
-                .addMember("value", "$S", name)
-                .addMember("required", "$L", required.has(name))
-                .build())
-            .build();
+                .addModifiers(Modifier.PRIVATE)
+                .addAnnotation(AnnotationSpec.builder(JsonProperty.class)
+                        .addMember("value", "$S", name)
+                        .addMember("required", "$L", required.has(name))
+                        .build())
+                .build();
 
         MethodSpec getter = MethodSpec.methodBuilder("get" + methodName)
-            .addModifiers(Modifier.PUBLIC)
-            .returns(javaType)
-            .addStatement("return this.$L", fieldName)
-            .build();
+                .addModifiers(Modifier.PUBLIC)
+                .returns(javaType)
+                .addStatement("return this.$L", fieldName)
+                .build();
 
         MethodSpec setter = MethodSpec.methodBuilder("set" + methodName)
-            .addModifiers(Modifier.PUBLIC)
-            .returns(void.class)
-            .addParameter(javaType, fieldName)
-            .addStatement("this.$L = $L", fieldName, fieldName)
-            .build();
+                .addModifiers(Modifier.PUBLIC)
+                .returns(void.class)
+                .addParameter(javaType, fieldName)
+                .addStatement("this.$L = $L", fieldName, fieldName)
+                .build();
 
         typeBuilder.addField(field);
         typeBuilder.addMethod(getter);
@@ -275,8 +272,8 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
 
     private String toCamelCase(String text, boolean lowerCaseFirst) {
         String result = Stream.of(text.split("[^a-zA-Z0-9]"))
-            .map(v -> v.substring(0, 1).toUpperCase() + v.substring(1).toLowerCase())
-            .collect(Collectors.joining());
+                .map(v -> v.substring(0, 1).toUpperCase() + v.substring(1).toLowerCase())
+                .collect(Collectors.joining());
 
         if (lowerCaseFirst) {
             result = result.substring(0, 1).toLowerCase() + result.substring(1);
@@ -303,6 +300,6 @@ public class CamelServiceNowGenerateMojo extends AbstractMojo {
 
     private void validateSchema(JsonNode schema) throws MojoExecutionException {
         getNode(schema, "required")
-            .orElseThrow(() -> new MojoExecutionException("Invalid JsonSchema: 'required' element not found"));
+                .orElseThrow(() -> new MojoExecutionException("Invalid JsonSchema: 'required' element not found"));
     }
 }

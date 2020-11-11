@@ -33,7 +33,8 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
     protected boolean throttleEntries;
     protected Object feed;
 
-    public FeedEntryPollingConsumer(FeedEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
+    public FeedEntryPollingConsumer(FeedEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate,
+                                    boolean throttleEntries) {
         super(endpoint, processor);
         if (filter) {
             entryFilter = createEntryFilter(lastUpdate);
@@ -76,11 +77,11 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
     }
 
     protected abstract EntryFilter createEntryFilter(Date lastUpdate);
-    
+
     protected abstract void resetList();
 
-    protected abstract void populateList(Object feed) throws Exception; 
-    
+    protected abstract void populateList(Object feed) throws Exception;
+
     private boolean hasNextEntry() {
         return entryIndex >= 0;
     }

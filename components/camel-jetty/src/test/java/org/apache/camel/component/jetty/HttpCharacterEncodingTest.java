@@ -19,7 +19,9 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpCharacterEncodingTest extends BaseJettyTest {
 
@@ -34,7 +36,7 @@ public class HttpCharacterEncodingTest extends BaseJettyTest {
 
         });
         // convert the response to a String
-        String body = exchange.getOut().getBody(String.class);
+        String body = exchange.getMessage().getBody(String.class);
         assertEquals("Response message is Thai Elephant \u0E08", body);
     }
 
@@ -57,8 +59,8 @@ public class HttpCharacterEncodingTest extends BaseJettyTest {
             assertEquals("Hello World Thai Elephant \u0E08", body);
 
             // send a html response
-            exchange.getOut().setHeader("Content-Type", "text/html; charset=utf-8");
-            exchange.getOut().setBody("Response message is Thai Elephant \u0E08");
+            exchange.getMessage().setHeader("Content-Type", "text/html; charset=utf-8");
+            exchange.getMessage().setBody("Response message is Thai Elephant \u0E08");
         }
     }
 

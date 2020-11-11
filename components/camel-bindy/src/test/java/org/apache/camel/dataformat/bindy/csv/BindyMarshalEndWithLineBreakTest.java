@@ -23,8 +23,8 @@ import org.apache.camel.dataformat.bindy.model.csv.MyCsvRecord;
 import org.apache.camel.dataformat.bindy.model.csv.MyCsvRecord2;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -39,16 +39,16 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
         csvRecord.setCity("London");
         csvRecord.setCountry("England");
         csvRecord.setAttention("1");
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().convertToString().endsWith(ConverterUtils.getStringCarriageReturn(record.crlf()));
-        
+
         template.sendBody("direct:withlb", csvRecord);
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testCsvWithoutEndingLineBreak() throws Exception {
         final CsvRecord record = MyCsvRecord2.class.getAnnotation(CsvRecord.class);
@@ -57,14 +57,14 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
         csvRecord2.setCity("London");
         csvRecord2.setCountry("England");
         csvRecord2.setAttention("1");
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().convertToString().endsWith(record.separator());
-        
+
         template.sendBody("direct:withoutlb", csvRecord2);
 
-        assertMockEndpointsSatisfied();        
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -73,14 +73,14 @@ public class BindyMarshalEndWithLineBreakTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:withoutlb")
-                    .marshal().bindy(BindyType.Csv, MyCsvRecord2.class)
-                    .to("log:after.unmarshal")
-                    .to("mock:result");
+                        .marshal().bindy(BindyType.Csv, MyCsvRecord2.class)
+                        .to("log:after.unmarshal")
+                        .to("mock:result");
 
                 from("direct:withlb")
-                    .marshal().bindy(BindyType.Csv, MyCsvRecord.class)
-                    .to("log:after.marshal")
-                    .to("mock:result");
+                        .marshal().bindy(BindyType.Csv, MyCsvRecord.class)
+                        .to("log:after.marshal")
+                        .to("mock:result");
             }
         };
     }

@@ -27,7 +27,8 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.ExchangeHelper;
 
 @ManagedResource(description = "Managed PerformanceCounter")
-public abstract class ManagedPerformanceCounter extends ManagedCounter implements PerformanceCounter, ManagedPerformanceCounterMBean {
+public abstract class ManagedPerformanceCounter extends ManagedCounter
+        implements PerformanceCounter, ManagedPerformanceCounterMBean {
 
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
@@ -230,8 +231,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         if (ExchangeHelper.isFailureHandled(exchange)) {
             failuresHandled.increment();
         }
-        Boolean externalRedelivered = exchange.isExternalRedelivered();
-        if (externalRedelivered != null && externalRedelivered) {
+        if (exchange.isExternalRedelivered()) {
             externalRedeliveries.increment();
         }
 
@@ -270,8 +270,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         if (ExchangeHelper.isRedelivered(exchange)) {
             redeliveries.increment();
         }
-        Boolean externalRedelivered = exchange.isExternalRedelivered();
-        if (externalRedelivered != null && externalRedelivered) {
+        if (exchange.isExternalRedelivered()) {
             externalRedeliveries.increment();
         }
 
@@ -306,13 +305,17 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         if (fullStats) {
             sb.append(String.format(" startTimestamp=\"%s\"", dateAsString(startTimestamp.getTime())));
             sb.append(String.format(" resetTimestamp=\"%s\"", dateAsString(resetTimestamp.getTime())));
-            sb.append(String.format(" firstExchangeCompletedTimestamp=\"%s\"", dateAsString(firstExchangeCompletedTimestamp.getValue())));
+            sb.append(String.format(" firstExchangeCompletedTimestamp=\"%s\"",
+                    dateAsString(firstExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" firstExchangeCompletedExchangeId=\"%s\"", nullSafe(firstExchangeCompletedExchangeId)));
-            sb.append(String.format(" firstExchangeFailureTimestamp=\"%s\"", dateAsString(firstExchangeFailureTimestamp.getValue())));
+            sb.append(String.format(" firstExchangeFailureTimestamp=\"%s\"",
+                    dateAsString(firstExchangeFailureTimestamp.getValue())));
             sb.append(String.format(" firstExchangeFailureExchangeId=\"%s\"", nullSafe(firstExchangeFailureExchangeId)));
-            sb.append(String.format(" lastExchangeCompletedTimestamp=\"%s\"", dateAsString(lastExchangeCompletedTimestamp.getValue())));
+            sb.append(String.format(" lastExchangeCompletedTimestamp=\"%s\"",
+                    dateAsString(lastExchangeCompletedTimestamp.getValue())));
             sb.append(String.format(" lastExchangeCompletedExchangeId=\"%s\"", nullSafe(lastExchangeCompletedExchangeId)));
-            sb.append(String.format(" lastExchangeFailureTimestamp=\"%s\"", dateAsString(lastExchangeFailureTimestamp.getValue())));
+            sb.append(String.format(" lastExchangeFailureTimestamp=\"%s\"",
+                    dateAsString(lastExchangeFailureTimestamp.getValue())));
             sb.append(String.format(" lastExchangeFailureExchangeId=\"%s\"", nullSafe(lastExchangeFailureExchangeId)));
         }
         sb.append("/>");
@@ -325,7 +328,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         }
         return new SimpleDateFormat(TIMESTAMP_FORMAT).format(value);
     }
-    
+
     private static String nullSafe(String s) {
         return s != null ? s : "";
     }

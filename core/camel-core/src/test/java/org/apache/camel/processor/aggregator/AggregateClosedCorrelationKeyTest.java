@@ -21,7 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
 
@@ -35,7 +37,8 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).closeCorrelationKeyOnCompletion(1000).to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2)
+                        .closeCorrelationKeyOnCompletion(1000).to("mock:result");
             }
         });
         context.start();
@@ -63,7 +66,8 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).closeCorrelationKeyOnCompletion(2).to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2)
+                        .closeCorrelationKeyOnCompletion(2).to("mock:result");
             }
         });
         context.start();
@@ -113,7 +117,7 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("There should be 2 closed", 2, closed);
+        assertEquals(2, closed, "There should be 2 closed");
     }
 
 }

@@ -22,11 +22,13 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FileProducerToDMoveExistingTest extends ContextTestSupport {
 
     @Override
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();
@@ -53,7 +55,9 @@ public class FileProducerToDMoveExistingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").toD("file:target/${header.myDir}?fileExist=Move&moveExisting=target/out/old-${file:onlyname}").to("mock:result");
+                from("direct:start")
+                        .toD("file:target/${header.myDir}?fileExist=Move&moveExisting=target/out/old-${file:onlyname}")
+                        .to("mock:result");
             }
         };
     }

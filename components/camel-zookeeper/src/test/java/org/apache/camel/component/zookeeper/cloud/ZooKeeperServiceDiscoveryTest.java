@@ -20,58 +20,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorHelper;
-import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.CloseableUtils;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceInstance;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ZooKeeperServiceDiscoveryTest {
 
     @Test
     public void testServiceDiscovery() throws Exception {
-        ZooKeeperCuratorConfiguration configuration  = new ZooKeeperCuratorConfiguration();
+        ZooKeeperCuratorConfiguration configuration = new ZooKeeperCuratorConfiguration();
         ServiceDiscovery<ZooKeeperServiceDiscovery.MetaData> zkDiscovery = null;
-        ZooKeeperTestSupport.TestZookeeperServer server = null;
-        int port = AvailablePortFinder.getNextAvailable();
+        ZooKeeperContainer container = null;
 
         try {
-            server = new ZooKeeperTestSupport.TestZookeeperServer(port, true);
-            ZooKeeperTestSupport.waitForServerUp("localhost:" + port, 1000);
+            container = new ZooKeeperContainer();
+            container.start();
 
             configuration.setBasePath("/camel");
             configuration.setCuratorFramework(CuratorFrameworkFactory.builder()
-                .connectString("localhost:" + port)
-                .retryPolicy(new ExponentialBackoffRetry(1000, 3))
-                .build()
-            );
+                    .connectString(container.getConnectionString())
+                    .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                    .build());
 
             zkDiscovery = ZooKeeperCuratorHelper.createServiceDiscovery(
-                configuration,
-                configuration.getCuratorFramework(),
-                ZooKeeperServiceDiscovery.MetaData.class
-            );
+                    configuration,
+                    configuration.getCuratorFramework(),
+                    ZooKeeperServiceDiscovery.MetaData.class);
 
             configuration.getCuratorFramework().start();
             zkDiscovery.start();
 
             List<ServiceInstance<ZooKeeperServiceDiscovery.MetaData>> instances = new ArrayList<>();
             for (int i = 0; i < 3; i++) {
-                ServiceInstance<ZooKeeperServiceDiscovery.MetaData> instance = ServiceInstance.<ZooKeeperServiceDiscovery.MetaData>builder()
-                    .address("127.0.0.1")
-                    .port(AvailablePortFinder.getNextAvailable())
-                    .name("my-service")
-                    .id("service-" + i)
-                    .build();
+                ServiceInstance<ZooKeeperServiceDiscovery.MetaData> instance
+                        = ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
+                                .address("127.0.0.1")
+                                .port(AvailablePortFinder.getNextAvailable())
+                                .name("my-service")
+                                .id("service-" + i)
+                                .build();
 
                 zkDiscovery.registerService(instance);
                 instances.add(instance);
@@ -85,26 +82,26 @@ public class ZooKeeperServiceDiscoveryTest {
             assertEquals(3, services.size());
 
             for (ServiceDefinition service : services) {
-                Assert.assertEquals(
-                    1,
-                    instances.stream()
-                        .filter(
-                            i ->  {
-                                return i.getPort() == service.getPort()
-                                    && i.getAddress().equals(service.getHost())
-                                    && i.getId().equals(service.getMetadata().get(ServiceDefinition.SERVICE_META_ID))
-                                    && i.getName().equals(service.getName());
-                            }
-                        ).count()
-                );
+                assertEquals(
+                        1,
+                        instances.stream()
+                                .filter(
+                                        i -> {
+                                            return i.getPort() == service.getPort()
+                                                    && i.getAddress().equals(service.getHost())
+                                                    && i.getId().equals(
+                                                            service.getMetadata().get(ServiceDefinition.SERVICE_META_ID))
+                                                    && i.getName().equals(service.getName());
+                                        })
+                                .count());
             }
 
         } finally {
             CloseableUtils.closeQuietly(zkDiscovery);
             CloseableUtils.closeQuietly(configuration.getCuratorFramework());
 
-            if (server != null) {
-                server.shutdown();
+            if (container != null) {
+                container.stop();
             }
         }
     }

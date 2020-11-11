@@ -21,18 +21,20 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultRoute;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteRemoveTest extends ContextTestSupport {
 
     @Test
     public void testStopRouteOnContext() throws Exception {
-        assertEquals(ServiceStatus.Started, ((DefaultRoute)context.getRoute("foo")).getStatus());
+        assertEquals(ServiceStatus.Started, ((DefaultRoute) context.getRoute("foo")).getStatus());
         assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
 
         context.getRouteController().stopRoute("foo");
 
-        assertEquals(ServiceStatus.Stopped, ((DefaultRoute)context.getRoute("foo")).getStatus());
+        assertEquals(ServiceStatus.Stopped, ((DefaultRoute) context.getRoute("foo")).getStatus());
         assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
     }
 

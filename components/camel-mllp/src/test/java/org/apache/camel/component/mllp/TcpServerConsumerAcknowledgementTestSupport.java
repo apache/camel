@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,19 +28,20 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Rule;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelTestSupport {
-    static final String TEST_MESSAGE =
-        "MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|||2.6" + '\r'
-        + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S" + '\r';
+    static final String TEST_MESSAGE = "MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|||2.6" + '\r'
+                                       + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S"
+                                       + '\r';
 
-    static final String EXPECTED_ACKNOWLEDGEMENT =
-        "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ADT_A04|||2.6" + '\r'
-        + "MSA|AA|" + '\r';
+    static final String EXPECTED_ACKNOWLEDGEMENT = "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ADT_A04|||2.6" + '\r'
+                                                   + "MSA|AA|" + '\r';
 
-    @Rule
+    @RegisterExtension
     public MllpClientResource mllpClient = new MllpClientResource();
 
     @EndpointInject("mock://result")
@@ -53,7 +55,6 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
 
     @EndpointInject("mock://invalid-ack-ex")
     MockEndpoint invalidAckEx;
-
 
     @EndpointInject("mock://ack-generation-ex")
     MockEndpoint ackGenerationEx;
@@ -93,33 +94,39 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
                 String routeId = "mllp-test-receiver-route";
 
                 onException(MllpInvalidAcknowledgementException.class)
-                    .handled(false)
-                    .to("mock://invalid-ack-ex");
+                        .handled(false)
+                        .to("mock://invalid-ack-ex");
 
                 onException(MllpAcknowledgementGenerationException.class)
-                    .handled(false)
-                    .to("mock://ack-generation-ex");
+                        .handled(false)
+                        .to("mock://ack-generation-ex");
 
                 onCompletion()
-                    .onCompleteOnly()
-                    .log(LoggingLevel.INFO, routeId, "Test route complete")
-                    .to("mock://on-complete-only");
+                        .onCompleteOnly()
+                        .log(LoggingLevel.INFO, routeId, "Test route complete")
+                        .to("mock://on-complete-only");
 
                 onCompletion()
-                    .onFailureOnly()
-                    .log(LoggingLevel.INFO, routeId, "Test route complete")
-                    .to("mock://on-failure-only");
+                        .onFailureOnly()
+                        .log(LoggingLevel.INFO, routeId, "Test route complete")
+                        .to("mock://on-failure-only");
 
-                fromF("mllp://%s:%d?bridgeErrorHandler=%b&autoAck=%b&connectTimeout=%d&receiveTimeout=%d",
-                    mllpClient.getMllpHost(), mllpClient.getMllpPort(), isBridgeErrorHandler(), isAutoAck(), connectTimeout, responseTimeout)
-                    .routeId(routeId)
-                    .to(result);
+                fromF("mllp://%s:%d?bridgeErrorHandler=%b&autoAck=%b&exchangePattern=%s&connectTimeout=%d&receiveTimeout=%d",
+                        mllpClient.getMllpHost(), mllpClient.getMllpPort(), isBridgeErrorHandler(), isAutoAck(),
+                        exchangePattern(), connectTimeout, responseTimeout)
+                                .routeId(routeId)
+                                .to(result);
             }
         };
     }
 
     protected abstract boolean isBridgeErrorHandler();
+
     protected abstract boolean isAutoAck();
+
+    protected ExchangePattern exchangePattern() {
+        return ExchangePattern.InOut;
+    }
 
     public void receiveSingleMessage() throws Exception {
         NotifyBuilder done = new NotifyBuilder(context).whenDone(1).create();
@@ -128,7 +135,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
 
         mllpClient.sendFramedData(TEST_MESSAGE);
 
-        assertTrue("Exchange should have completed", done.matches(10, TimeUnit.SECONDS));
+        assertTrue(done.matches(10, TimeUnit.SECONDS), "Exchange should have completed");
 
         assertMockEndpointsSatisfied();
     }
@@ -149,8 +156,7 @@ public abstract class TcpServerConsumerAcknowledgementTestSupport extends CamelT
         mllpClient.connect();
         mllpClient.sendFramedData(testMessage);
 
-        assertTrue("One exchange should have complete", done.matches(5, TimeUnit.SECONDS));
+        assertTrue(done.matches(5, TimeUnit.SECONDS), "One exchange should have complete");
         assertMockEndpointsSatisfied();
     }
 }
-

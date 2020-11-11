@@ -26,13 +26,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
+
+    private Config config;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -43,12 +46,19 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         prop.put("my-mock", "result");
 
         // create PMC config source and register it so we can use it for testing
-        final PropertiesConfigSource pcs = new PropertiesConfigSource(prop, "my-smallrye-config");
-        final Config config = new SmallRyeConfigBuilder().withSources(pcs).build();
+        PropertiesConfigSource pcs = new PropertiesConfigSource(prop, "my-smallrye-config");
+        config = new SmallRyeConfigBuilder().withSources(pcs).build();
 
         ConfigProviderResolver.instance().registerConfig(config, CamelMicroProfilePropertiesSourceTest.class.getClassLoader());
 
         return super.createCamelContext();
+    }
+
+    @Override
+    @AfterEach
+    public void tearDown() throws Exception {
+        ConfigProviderResolver.instance().releaseConfig(config);
+        super.tearDown();
     }
 
     @Override

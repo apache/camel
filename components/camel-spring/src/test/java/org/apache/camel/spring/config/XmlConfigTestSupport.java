@@ -26,23 +26,26 @@ import org.apache.camel.model.RouteDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class XmlConfigTestSupport extends TestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBeanTest.class);
 
     protected void assertValidContext(CamelContext context) {
-        assertNotNull("No context found!", context);
+        assertNotNull(context, "No context found!");
 
-        List<RouteDefinition> routes = ((ModelCamelContext)context).getRouteDefinitions();
+        List<RouteDefinition> routes = ((ModelCamelContext) context).getRouteDefinitions();
         LOG.debug("Found routes: " + routes);
 
-        assertEquals("One Route should be found", 1, routes.size());
+        assertEquals(1, routes.size(), "One Route should be found");
 
         for (RouteDefinition route : routes) {
             FromDefinition fromType = route.getInput();
-            assertEquals("from URI", "seda:test.a", fromType.getUri());
+            assertEquals("seda:test.a", fromType.getUri(), "from URI");
 
             List<?> outputs = route.getOutputs();
-            assertEquals("Number of outputs", 1, outputs.size());
+            assertEquals(1, outputs.size(), "Number of outputs");
         }
     }
 }

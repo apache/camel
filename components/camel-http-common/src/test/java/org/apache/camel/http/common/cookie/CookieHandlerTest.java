@@ -20,35 +20,28 @@ import java.io.IOException;
 import java.net.CookiePolicy;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
+import org.apache.camel.http.base.cookie.InstanceCookieHandler;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class CookieHandlerTest extends CamelTestSupport {
-    private CookieHandler cookieHandler;
-    private CookiePolicy cookiePolicy;
-    private int expectedNumberOfCookieValues;
-    private String uriStr;
     private Exchange exchange;
 
-    public CookieHandlerTest(CookieHandler cookieHandler, CookiePolicy cookiePolicy, String uri, int expectedNumberOfCookieValues, String description) {
-        this.cookieHandler = cookieHandler;
-        this.cookiePolicy = cookiePolicy;
-        this.uriStr = uri;
-        this.expectedNumberOfCookieValues = expectedNumberOfCookieValues;
-    }
-    
     /*
      * This test tries to set a cookie for domain .example.com from host
      * www.example.com or www.sub.example.com According to RFC 2965 section
@@ -57,34 +50,40 @@ public class CookieHandlerTest extends CamelTestSupport {
      * set, the resulting Cookie header has two lines, one containing the
      * version and one the (single) cookie.
      */
-    @Parameters(name = "{index}: {4} policy for {2} returns {3} Cookie header lines")
-    public static Iterable<Object[]> data() {
-        return Arrays
-            .asList(new Object[][] {{new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.example.com/acme/foo", 2,
-                                     "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"},
-                                    {new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.sub.example.com/acme/foo", 0,
-                                     "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"},
-                                    {new InstanceCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "InstanceCookieHandler with ACCEPT_ALL"},
-                                    {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.example.com/acme/foo", 2,
-                                     "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"},
-                                    {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER, "http://www.sub.example.com/acme/foo", 0,
-                                     "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"},
-                                    {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "ExchangeCookieHandler with ACCEPT_ALL"}});
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of(new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER,
+                        "http://www.example.com/acme/foo", 2, "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"),
+                Arguments.of(new InstanceCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER,
+                        "http://www.sub.example.com/acme/foo", 0, "InstanceCookieHandler with ACCEPT_ORIGINAL_SERVER"),
+                Arguments.of(new InstanceCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2,
+                        "InstanceCookieHandler with ACCEPT_ALL"),
+                Arguments.of(new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER,
+                        "http://www.example.com/acme/foo", 2, "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"),
+                Arguments.of(new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ORIGINAL_SERVER,
+                        "http://www.sub.example.com/acme/foo", 0, "ExchangeCookieHandler with ACCEPT_ORIGINAL_SERVER"),
+                Arguments.of(new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2,
+                        "ExchangeCookieHandler with ACCEPT_ALL"));
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         exchange = createExchangeWithBody(null);
     }
 
-    @Test
-    public void setReceiveAndTestCookie() throws IOException, URISyntaxException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void setReceiveAndTestCookie(
+            CookieHandler cookieHandler, CookiePolicy cookiePolicy, String uriStr, int expectedNumberOfCookieValues,
+            String description)
+            throws IOException, URISyntaxException {
         URI uri = new URI(uriStr);
         cookieHandler.setCookiePolicy(cookiePolicy);
         Map<String, List<String>> headerMap = new HashMap<>();
-        headerMap.put("Set-Cookie", Collections.singletonList("Customer=\"WILE_E_COYOTE\";Version=1;Path=\"/acme\";Domain=\".example.com\""));
+        headerMap.put("Set-Cookie",
+                Collections.singletonList("Customer=\"WILE_E_COYOTE\";Version=1;Path=\"/acme\";Domain=\".example.com\""));
         cookieHandler.storeCookies(exchange, uri, headerMap);
 
         Map<String, List<String>> cookieHeaders = cookieHandler.loadCookies(exchange, uri);

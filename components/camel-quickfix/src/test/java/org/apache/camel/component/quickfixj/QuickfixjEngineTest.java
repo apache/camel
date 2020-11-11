@@ -17,6 +17,7 @@
 package org.apache.camel.component.quickfixj;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
@@ -27,18 +28,18 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import quickfix.Acceptor;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
-import quickfix.FieldConvertError;
 import quickfix.FieldNotFound;
 import quickfix.FileLogFactory;
 import quickfix.FileStoreFactory;
@@ -73,20 +74,28 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSupport {
+public class QuickfixjEngineTest {
     private File settingsFile;
     private ClassLoader contextClassLoader;
     private SessionSettings settings;
     private SessionID sessionID;
     private File tempdir;
     private QuickfixjEngine quickfixjEngine;
+    private CamelContext camelContext;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        camelContext = new DefaultCamelContext();
+
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
         tempdir = settingsFile.getParentFile();
-        URL[] urls = new URL[] {tempdir.toURI().toURL()};
+        URL[] urls = new URL[] { tempdir.toURI().toURL() };
 
         contextClassLoader = Thread.currentThread().getContextClassLoader();
         ClassLoader testClassLoader = new URLClassLoader(urls, contextClassLoader);
@@ -102,7 +111,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         TestSupport.setSessionID(settings, sessionID);
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         Thread.currentThread().setContextClassLoader(contextClassLoader);
         if (quickfixjEngine != null) {
@@ -110,9 +119,10 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void missingSettingsResource() throws Exception {
-        new QuickfixjEngine("quickfix:test", "bogus.cfg");
+        assertThrows(FileNotFoundException.class,
+                () -> new QuickfixjEngine(camelContext, "quickfix:test", "bogus.cfg"));
     }
 
     @Test
@@ -121,7 +131,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), instanceOf(SocketInitiator.class));
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -135,7 +145,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), instanceOf(ThreadedSocketInitiator.class));
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -149,7 +159,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), nullValue());
         assertThat(quickfixjEngine.getAcceptor(), instanceOf(SocketAcceptor.class));
@@ -164,7 +174,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), nullValue());
         assertThat(quickfixjEngine.getAcceptor(), instanceOf(ThreadedSocketAcceptor.class));
@@ -177,12 +187,13 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 1234);
 
         SessionID initiatorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FARGLE", "BARGLE");
-        settings.setString(initiatorSessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+        settings.setString(initiatorSessionID, SessionFactory.SETTING_CONNECTION_TYPE,
+                SessionFactory.INITIATOR_CONNECTION_TYPE);
         TestSupport.setSessionID(settings, initiatorSessionID);
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), notNullValue());
@@ -196,7 +207,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -219,7 +230,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -238,7 +249,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -266,7 +277,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -282,7 +293,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -298,7 +309,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -314,7 +325,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
         assertThat(quickfixjEngine.getAcceptor(), nullValue());
@@ -334,9 +345,9 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         doAmbiguityTest("Ambiguous log");
     }
 
-    private void doAmbiguityTest(String exceptionText) throws FieldConvertError, IOException, JMException {
+    private void doAmbiguityTest(String exceptionText) throws Exception {
         try {
-            quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+            quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
             fail("Expected exception, but none raised");
         } catch (ConfigError e) {
             assertTrue(e.getMessage().contains(exceptionText));
@@ -354,7 +365,9 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         LogFactory logFactory = Mockito.mock(LogFactory.class);
         MessageFactory messageFactory = Mockito.mock(MessageFactory.class);
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), messageStoreFactory, logFactory, messageFactory);
+        quickfixjEngine
+                = new QuickfixjEngine(
+                        camelContext, "quickfix:test", settingsFile.getName(), messageStoreFactory, logFactory, messageFactory);
 
         assertThat(quickfixjEngine.getMessageStoreFactory(), is(messageStoreFactory));
         assertThat(quickfixjEngine.getLogFactory(), is(logFactory));
@@ -369,12 +382,12 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
         quickfixjEngine.start();
 
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> n = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Initiator,*"), null);
-        assertFalse("QFJ mbean not registered", n.isEmpty());
+        assertFalse(n.isEmpty(), "QFJ mbean not registered");
     }
 
     @Test
@@ -385,12 +398,12 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         writeSettings();
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName());
+        quickfixjEngine = new QuickfixjEngine(camelContext, "quickfix:test", settingsFile.getName());
         quickfixjEngine.start();
 
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> n = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Acceptor,*"), null);
-        assertFalse("QFJ mbean not registered", n.isEmpty());
+        assertFalse(n.isEmpty(), "QFJ mbean not registered");
     }
 
     @Test
@@ -398,7 +411,9 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         SessionID acceptorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "MARKET", "TRADER");
         SessionID initiatorSessionID = new SessionID(FixVersions.BEGINSTRING_FIX42, "TRADER", "MARKET");
 
-        quickfixjEngine = new QuickfixjEngine("quickfix:test", "examples/inprocess.cfg");
+        quickfixjEngine = new QuickfixjEngine(
+                camelContext,
+                "quickfix:test", "examples/inprocess.cfg");
 
         doLogonEventsTest(acceptorSessionID, initiatorSessionID, quickfixjEngine);
 
@@ -407,7 +422,8 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         doLogoffEventsTest(acceptorSessionID, initiatorSessionID, quickfixjEngine);
     }
 
-    private void doLogonEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine) throws Exception {
+    private void doLogonEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine)
+            throws Exception {
 
         final List<EventRecord> events = new ArrayList<>();
         final CountDownLatch logonLatch = new CountDownLatch(2);
@@ -426,7 +442,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         quickfixjEngine.start();
 
-        assertTrue("Logons not completed", logonLatch.await(5000, TimeUnit.MILLISECONDS));
+        assertTrue(logonLatch.await(5000, TimeUnit.MILLISECONDS), "Logons not completed");
         quickfixjEngine.removeEventListener(logonListener);
 
         assertThat(events.size(), is(8));
@@ -436,16 +452,21 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         // to work we have've defined a relaxed comparison about the messages being sent, see the EventRecord.equals() method
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionCreated, acceptorSessionID, null)));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionCreated, initiatorSessionID, null)));
-        assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.AdminMessageSent, initiatorSessionID, new Message())));
-        assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.AdminMessageReceived, acceptorSessionID, new Message())));
+        assertTrue(
+                events.contains(new EventRecord(QuickfixjEventCategory.AdminMessageSent, initiatorSessionID, new Message())));
+        assertTrue(events
+                .contains(new EventRecord(QuickfixjEventCategory.AdminMessageReceived, acceptorSessionID, new Message())));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.AdminMessageSent, acceptorSessionID, new Message())));
-        assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.AdminMessageReceived, initiatorSessionID, new Message())));
+        assertTrue(events
+                .contains(new EventRecord(QuickfixjEventCategory.AdminMessageReceived, initiatorSessionID, new Message())));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogon, initiatorSessionID, null)));
         assertTrue(events.contains(new EventRecord(QuickfixjEventCategory.SessionLogon, acceptorSessionID, null)));
     }
 
-    private void doApplicationMessageEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine) throws SessionNotFound,
-        InterruptedException, FieldNotFound {
+    private void doApplicationMessageEventsTest(
+            SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine)
+            throws SessionNotFound,
+            InterruptedException, FieldNotFound {
 
         final List<EventRecord> events = new ArrayList<>();
         final CountDownLatch messageLatch = new CountDownLatch(1);
@@ -465,7 +486,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         Email email = TestSupport.createEmailMessage("Test");
         Session.sendToTarget(email, initiatorSessionID);
 
-        assertTrue("Application message not received", messageLatch.await(5000, TimeUnit.MILLISECONDS));
+        assertTrue(messageLatch.await(5000, TimeUnit.MILLISECONDS), "Application message not received");
         quickfixjEngine.removeEventListener(messageListener);
 
         assertThat(events.size(), is(2));
@@ -481,7 +502,8 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
         assertThat(events.get(receiveEventIndex).message.getHeader().getString(MsgType.FIELD), is(MsgType.EMAIL));
     }
 
-    private void doLogoffEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine) throws Exception {
+    private void doLogoffEventsTest(SessionID acceptorSessionID, SessionID initiatorSessionID, QuickfixjEngine quickfixjEngine)
+            throws Exception {
 
         final List<EventRecord> events = new ArrayList<>();
         final CountDownLatch logoffLatch = new CountDownLatch(2);
@@ -501,7 +523,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         quickfixjEngine.stop();
 
-        assertTrue("Logoffs not received", logoffLatch.await(5000, TimeUnit.MILLISECONDS));
+        assertTrue(logoffLatch.await(5000, TimeUnit.MILLISECONDS), "Logoffs not received");
         quickfixjEngine.removeEventListener(logoffListener);
 
         assertThat(events.size(), is(6));
@@ -565,7 +587,7 @@ public class QuickfixjEngineTest extends org.apache.camel.test.junit4.TestSuppor
 
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.quickfixj:*"), null);
-        assertTrue("QFJ Connector/Initiator mbeans should not have been registered", names.isEmpty());
+        assertTrue(names.isEmpty(), "QFJ Connector/Initiator mbeans should not have been registered");
     }
 
     private void writeSettings() throws IOException {

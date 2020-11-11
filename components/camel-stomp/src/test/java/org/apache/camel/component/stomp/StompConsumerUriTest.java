@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.fusesource.stomp.client.BlockingConnection;
 import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.fusesource.hawtbuf.UTF8Buffer.utf8;
 import static org.fusesource.stomp.client.Constants.DESTINATION;
@@ -64,8 +64,8 @@ public class StompConsumerUriTest extends StompBaseTest {
         return new RouteBuilder() {
             public void configure() {
                 fromF("stomp:test?brokerURL=tcp://localhost:%d", getPort())
-                    .transform(body().convertToString())
-                    .to("mock:result");
+                        .transform(body().convertToString())
+                        .to("mock:result");
             }
         };
     }

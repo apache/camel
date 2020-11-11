@@ -16,7 +16,22 @@
  */
 package org.apache.camel.util.function;
 
+import java.util.function.Supplier;
+
+/**
+ * Represents a supplier of results that may thrown an exception.
+ *
+ * @param <T> the type of the exception the accept method may throw.
+ *
+ * @see       Supplier
+ */
 @FunctionalInterface
 public interface ThrowingSupplier<V, T extends Throwable> {
+    /**
+     * Get a result, potentially throwing an exception.
+     *
+     * @return   the result
+     * @throws T the exception that may be thrown
+     */
     V get() throws T;
 }

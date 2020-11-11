@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dns;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -26,12 +27,14 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * To lookup domain information and run DNS queries using DNSJava.
+ * Perform DNS queries using DNSJava.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true, label = "networking")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true,
+             category = { Category.NETWORKING })
 public class DnsEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private DnsType dnsType;
 
     public DnsEndpoint(String endpointUri, Component component) {
@@ -56,11 +59,6 @@ public class DnsEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return false;
     }
 
     public DnsType getDnsType() {

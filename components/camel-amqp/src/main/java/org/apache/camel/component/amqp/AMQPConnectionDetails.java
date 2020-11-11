@@ -31,7 +31,7 @@ public class AMQPConnectionDetails {
     public static final String AMQP_USERNAME = "AMQP_SERVICE_USERNAME";
 
     public static final String AMQP_PASSWORD = "AMQP_SERVICE_PASSWORD";
-    
+
     public static final String AMQP_SET_TOPIC_PREFIX = "AMQP_SET_TOPIC_PREFIX";
 
     private final String uri;
@@ -39,16 +39,16 @@ public class AMQPConnectionDetails {
     private final String username;
 
     private final String password;
-    
+
     private final boolean setTopicPrefix;
 
     public AMQPConnectionDetails(String uri, String username, String password) {
         this.uri = uri;
         this.username = username;
         this.password = password;
-        this.setTopicPrefix = true; 
+        this.setTopicPrefix = true;
     }
-    
+
     public AMQPConnectionDetails(String uri, String username, String password, boolean setTopicPrefix) {
         this.uri = uri;
         this.username = username;
@@ -87,7 +87,7 @@ public class AMQPConnectionDetails {
     public String password() {
         return password;
     }
-    
+
     public boolean setTopicPrefix() {
         return setTopicPrefix;
     }

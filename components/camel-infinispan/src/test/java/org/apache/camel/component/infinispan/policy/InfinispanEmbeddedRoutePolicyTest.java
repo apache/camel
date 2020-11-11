@@ -26,7 +26,7 @@ public class InfinispanEmbeddedRoutePolicyTest extends InfinispanRoutePolicyTest
 
     @Override
     protected BasicCacheContainer createCacheManager() throws Exception {
-        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("default").build();
+        GlobalConfiguration global = new GlobalConfigurationBuilder().defaultCacheName("camel-route-policy").build();
         return new DefaultCacheManager(global, new ConfigurationBuilder().build());
     }
 }

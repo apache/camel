@@ -19,10 +19,13 @@ package org.apache.camel.component.jackson;
 import java.util.List;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringJacksonMarshalUnmarshalListTest extends CamelSpringTestSupport {
 
@@ -41,9 +44,9 @@ public class SpringJacksonMarshalUnmarshalListTest extends CamelSpringTestSuppor
         assertNotNull(list);
         assertEquals(2, list.size());
 
-        TestPojo pojo = (TestPojo)list.get(0);
+        TestPojo pojo = (TestPojo) list.get(0);
         assertEquals("Camel", pojo.getName());
-        pojo = (TestPojo)list.get(1);
+        pojo = (TestPojo) list.get(1);
         assertEquals("World", pojo.getName());
     }
 
@@ -62,13 +65,14 @@ public class SpringJacksonMarshalUnmarshalListTest extends CamelSpringTestSuppor
         assertNotNull(list);
         assertEquals(1, list.size());
 
-        TestPojo pojo = (TestPojo)list.get(0);
+        TestPojo pojo = (TestPojo) list.get(0);
         assertEquals("Camel", pojo.getName());
     }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jackson/SpringJacksonMarshalUnmarshalListTest.xml");
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/jackson/SpringJacksonMarshalUnmarshalListTest.xml");
     }
 
 }

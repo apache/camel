@@ -24,7 +24,9 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedRouteStopUsingMBeanAPITest extends ManagementTestSupport {
 
@@ -47,18 +49,19 @@ public class ManagedRouteStopUsingMBeanAPITest extends ManagementTestSupport {
 
         ObjectName on = set.iterator().next();
 
-        ManagedRouteMBean mbean = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+        ManagedRouteMBean mbean
+                = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
 
         // the route has this starting endpoint uri
         assertEquals("direct://start", mbean.getEndpointUri());
 
         // should be started
-        assertEquals("Should be started", ServiceStatus.Started.name(), mbean.getState());
+        assertEquals(ServiceStatus.Started.name(), mbean.getState(), "Should be started");
 
         mbean.stop();
 
         // should be stopped
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), mbean.getState());
+        assertEquals(ServiceStatus.Stopped.name(), mbean.getState(), "Should be stopped");
     }
 
     @Override

@@ -26,8 +26,10 @@ import com.github.brainlag.nsq.lookup.DefaultNSQLookup;
 import com.github.brainlag.nsq.lookup.NSQLookup;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +55,7 @@ public class NsqConsumer extends DefaultConsumer {
 
     @Override
     public NsqEndpoint getEndpoint() {
-        return (NsqEndpoint)super.getEndpoint();
+        return (NsqEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -62,14 +64,23 @@ public class NsqConsumer extends DefaultConsumer {
         LOG.debug("Starting NSQ Consumer");
         executor = getEndpoint().createExecutor();
 
-        LOG.debug("Getting NSQ Connection");
-        NSQLookup lookup = new DefaultNSQLookup();
+        NSQLookup lookup;
 
-        for (ServerAddress server : configuration.getServerAddresses()) {
-            lookup.addLookupAddress(server.getHost(), server.getPort() == 0 ? configuration.getLookupServerPort() : server.getPort());
+        LOG.debug("Getting NSQ Connection");
+        if (ObjectHelper.isEmpty(configuration.getCustomNSQLookup())) {
+            lookup = new DefaultNSQLookup();
+        } else {
+            lookup = configuration.getCustomNSQLookup();
         }
 
-        consumer = new NSQConsumer(lookup, configuration.getTopic(), configuration.getChannel(), new CamelNsqMessageHandler(), getEndpoint().getNsqConfig());
+        for (ServerAddress server : configuration.getServerAddresses()) {
+            lookup.addLookupAddress(server.getHost(),
+                    server.getPort() == 0 ? configuration.getLookupServerPort() : server.getPort());
+        }
+
+        consumer = new NSQConsumer(
+                lookup, configuration.getTopic(), configuration.getChannel(), new CamelNsqMessageHandler(),
+                getEndpoint().getNsqConfig());
         consumer.setLookupPeriod(configuration.getLookupInterval());
         consumer.setExecutor(getEndpoint().createExecutor());
         consumer.start();
@@ -109,12 +120,13 @@ public class NsqConsumer extends DefaultConsumer {
                 if (configuration.getAutoFinish()) {
                     msg.finished();
                 } else {
-                    exchange.addOnCompletion(new NsqSynchronization(msg, (int)configuration.getRequeueInterval()));
+                    exchange.adapt(ExtendedExchange.class)
+                            .addOnCompletion(new NsqSynchronization(msg, (int) configuration.getRequeueInterval()));
                 }
                 processor.process(exchange);
             } catch (Exception e) {
                 if (!configuration.getAutoFinish()) {
-                    msg.requeue((int)configuration.getRequeueInterval());
+                    msg.requeue((int) configuration.getRequeueInterval());
                 }
                 getExceptionHandler().handleException("Error during processing", exchange, e);
             }

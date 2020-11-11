@@ -33,49 +33,85 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Path separator as either unix or windows style.
      * <p/>
-     * UNIX = Path separator / is used
-     * Windows = Path separator \ is used
-     * Auto = Use existing path separator in file name
+     * UNIX = Path separator / is used Windows = Path separator \ is used Auto = Use existing path separator in file
+     * name
      */
-    public enum PathSeparator { UNIX, Windows, Auto }
+    public enum PathSeparator {
+        UNIX,
+        Windows,
+        Auto
+    }
 
     // component name is implied as the protocol, eg ftp/ftps etc
     private String protocol;
-    @UriPath @Metadata(required = true)
+    @UriPath(description = "Hostname of the FTP server")
+    @Metadata(required = true)
     private String host;
-    @UriPath
+    @UriPath(description = "Port of the FTP server")
     private int port;
-    @UriPath(name = "directoryName")
+    @UriPath(name = "directoryName", description = "The starting directory")
     private String directoryName;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", secret = true, description = "Username to use for login")
     private String username;
-    @UriParam(label = "security", secret = true)
+    @UriParam(label = "security", secret = true, description = "Password to use for login")
     private String password;
-    @UriParam
+    @UriParam(description = "Specifies the file transfer mode, BINARY or ASCII. Default is ASCII (false).")
     private boolean binary;
-    @UriParam
+    @UriParam(description = "Sets passive mode connections.<br/> Default is active mode connections.")
     private boolean passiveMode;
-    @UriParam(defaultValue = "10000", label = "advanced")
+    @UriParam(defaultValue = "10000", label = "advanced", description = "Sets the connect timeout for waiting "
+                                                                        + "for a connection to be established <p/> Used by both FTPClient and JSCH",
+              javaType = "java.time.Duration")
     private int connectTimeout = 10000;
-    @UriParam(defaultValue = "30000", label = "advanced")
+    @UriParam(defaultValue = "30s", label = "advanced",
+              description = "Sets the data timeout for waiting for " + "reply <p/> Used only by FTPClient",
+              javaType = "java.time.Duration")
     private int timeout = 30000;
-    @UriParam(defaultValue = "300000", label = "advanced")
+    @UriParam(defaultValue = "5m", label = "advanced", description = "Sets the so timeout <p/> FTP and FTPS "
+                                                                     + "Only for Camel 2.4. SFTP for Camel 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value "
+                                                                     + "in millis. Recommended option is to set this to 300000 so as not have a hanged connection. On SFTP this "
+                                                                     + "option is set as timeout on the JSCH Session instance.",
+              javaType = "java.time.Duration")
     private int soTimeout = 300000;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", description = "Should an exception be thrown if connection failed (exhausted) <p/> "
+                                                + "By default exception is not thrown and a <tt>WARN</tt> is logged. You can use this to enable exception "
+                                                + "being thrown and handle the thrown exception from the {@link "
+                                                + "org.apache.camel.spi.PollingConsumerPollStrategy} rollback method.")
     private boolean throwExceptionOnConnectFailed;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", description = "Sets optional site command(s) to be executed after successful "
+                                                + "login. <p/> Multiple site commands can be separated using a new line character.")
     private String siteCommand;
-    @UriParam(defaultValue = "true", label = "advanced")
+    @UriParam(defaultValue = "true", label = "advanced", description = "Sets whether we should stepwise change "
+                                                                       + "directories while traversing file structures when downloading files, or as well when uploading a file "
+                                                                       + "to a directory. <p/> You can disable this if you for example are in a situation where you cannot change "
+                                                                       + "directory on the FTP server due security reasons. "
+                                                                       + "Stepwise cannot be used together with streamDownload.")
     private boolean stepwise = true;
-    @UriParam(defaultValue = "UNIX")
+    @UriParam(defaultValue = "UNIX", description = "Sets the path separator to be used. <p/> UNIX = Uses unix style "
+                                                   + "path separator Windows = Uses windows style path separator Auto = (is default) Use existing path "
+                                                   + "separator in file name")
     private PathSeparator separator = PathSeparator.UNIX;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Sets the download method to use when not using a local working "
+                                                + "directory.  If set to true, the remote files are streamed to the route as they are read.  When set to "
+                                                + "false, the remote files are loaded into memory before being sent into the route. "
+                                                + "If enabling this option then you must set stepwise=false as both cannot be enabled at the same time.")
     private boolean streamDownload;
-    @UriParam(defaultValue = "true", label = "consumer,advanced")
+    @UriParam(defaultValue = "true", label = "consumer,advanced", description = "Whether to allow using LIST "
+                                                                                + "command when downloading a file. <p/> Default is <tt>true</tt>. In some use cases you may want to "
+                                                                                + "download a specific file and are not allowed to use the LIST command, and therefore you can set "
+                                                                                + "this option to <tt>false</tt>. Notice when using this option, then the specific file to download "
+                                                                                + "does <b>not</b> include meta-data information such as file size, timestamp, permissions etc, because "
+                                                                                + "those information is only possible to retrieve when LIST command is in use.")
     private boolean useList = true;
-    @UriParam(label = "consumer,advanced")
+    @UriParam(label = "consumer,advanced", description = "Whether to ignore when (trying to list files in "
+                                                         + "directories or when downloading a file), which does not exist or due to permission error. <p/> "
+                                                         + "By default when a directory or file does not exists or insufficient permission, then an exception "
+                                                         + "is thrown. Setting this option to <tt>true</tt> allows to ignore that instead.")
     private boolean ignoreFileNotFoundOrPermissionError;
-    @UriParam(label = "producer,advanced", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true", description = "Whether to send a noop command "
+                                                                                + "as a pre-write check before uploading files to the FTP server. <p/> This is enabled by default as "
+                                                                                + "a validation of the connection is still valid, which allows to silently re-connect to be able to "
+                                                                                + "upload the file. However if this causes problems, you can turn this option off.")
     private boolean sendNoop = true;
 
     public RemoteFileConfiguration() {
@@ -84,7 +120,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     public RemoteFileConfiguration(URI uri) {
         configure(uri);
     }
-    
+
     @Override
     public boolean needToNormalize() {
         return false;
@@ -93,13 +129,16 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     @Override
     public void configure(URI uri) {
         super.configure(uri);
-        // after configure the directory has been resolved, so we can use it for directoryName
-        // (directoryName is the name we use in the other file components, to use consistent name)
+        // after configure the directory has been resolved, so we can use it for
+        // directoryName
+        // (directoryName is the name we use in the other file components, to
+        // use consistent name)
         setDirectoryName(getDirectory());
         setProtocol(uri.getScheme());
         setDefaultPort();
 
-        // UserInfo can contain both username and password as: user:pwd@ftpserver
+        // UserInfo can contain both username and password as:
+        // user:pwd@ftpserver
         // see: http://en.wikipedia.org/wiki/URI_scheme
         String username = uri.getUserInfo();
         String pw = null;
@@ -212,8 +251,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     }
 
     /**
-     * Sets passive mode connections.
-     * <br/>
+     * Sets passive mode connections. <br/>
      * Default is active mode connections.
      */
     public void setPassiveMode(boolean passiveMode) {
@@ -253,10 +291,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Sets the so timeout
      * <p/>
-     * FTP and FTPS Only for Camel 2.4. SFTP for Camel 2.14.3/2.15.3/2.16 onwards.
-     * Is the SocketOptions.SO_TIMEOUT value in millis.
-     * Recommended option is to set this to 300000 so as not have a hanged connection.
-     * On SFTP this option is set as timeout on the JSCH Session instance.
+     * FTP and FTPS Only for Camel 2.4. SFTP for Camel 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value
+     * in millis. Recommended option is to set this to 300000 so as not have a hanged connection. On SFTP this option is
+     * set as timeout on the JSCH Session instance.
      */
     public void setSoTimeout(int soTimeout) {
         this.soTimeout = soTimeout;
@@ -269,9 +306,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Should an exception be thrown if connection failed (exhausted)
      * <p/>
-     * By default exception is not thrown and a <tt>WARN</tt> is logged.
-     * You can use this to enable exception being thrown and handle the thrown exception
-     * from the {@link org.apache.camel.spi.PollingConsumerPollStrategy} rollback method.
+     * By default exception is not thrown and a <tt>WARN</tt> is logged. You can use this to enable exception being
+     * thrown and handle the thrown exception from the {@link org.apache.camel.spi.PollingConsumerPollStrategy} rollback
+     * method.
      */
     public void setThrowExceptionOnConnectFailed(boolean throwExceptionOnConnectFailed) {
         this.throwExceptionOnConnectFailed = throwExceptionOnConnectFailed;
@@ -295,11 +332,11 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     }
 
     /**
-     * Sets whether we should stepwise change directories while traversing file structures
-     * when downloading files, or as well when uploading a file to a directory.
+     * Sets whether we should stepwise change directories while traversing file structures when downloading files, or as
+     * well when uploading a file to a directory.
      * <p/>
-     * You can disable this if you for example are in a situation where you cannot change directory
-     * on the FTP server due security reasons.
+     * You can disable this if you for example are in a situation where you cannot change directory on the FTP server
+     * due security reasons.
      *
      * @param stepwise whether to use change directory or not
      */
@@ -314,22 +351,21 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Sets the path separator to be used.
      * <p/>
-     * UNIX = Uses unix style path separator
-     * Windows = Uses windows style path separator
-     * Auto = (is default) Use existing path separator in file name
+     * UNIX = Uses unix style path separator Windows = Uses windows style path separator Auto = (is default) Use
+     * existing path separator in file name
      */
     public void setSeparator(PathSeparator separator) {
         this.separator = separator;
     }
-    
+
     public boolean isStreamDownload() {
         return streamDownload;
     }
 
     /**
-     * Sets the download method to use when not using a local working directory.  If set to true,
-     * the remote files are streamed to the route as they are read.  When set to false, the remote files
-     * are loaded into memory before being sent into the route.
+     * Sets the download method to use when not using a local working directory. If set to true, the remote files are
+     * streamed to the route as they are read. When set to false, the remote files are loaded into memory before being
+     * sent into the route.
      */
     public void setStreamDownload(boolean streamDownload) {
         this.streamDownload = streamDownload;
@@ -342,12 +378,10 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Whether to allow using LIST command when downloading a file.
      * <p/>
-     * Default is <tt>true</tt>. In some use cases you may want to download
-     * a specific file and are not allowed to use the LIST command, and therefore
-     * you can set this option to <tt>false</tt>.
-     * Notice when using this option, then the specific file to download does <b>not</b>
-     * include meta-data information such as file size, timestamp, permissions etc, because
-     * those information is only possible to retrieve when LIST command is in use.
+     * Default is <tt>true</tt>. In some use cases you may want to download a specific file and are not allowed to use
+     * the LIST command, and therefore you can set this option to <tt>false</tt>. Notice when using this option, then
+     * the specific file to download does <b>not</b> include meta-data information such as file size, timestamp,
+     * permissions etc, because those information is only possible to retrieve when LIST command is in use.
      */
     public void setUseList(boolean useList) {
         this.useList = useList;
@@ -358,7 +392,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     }
 
     /**
-     * Whether to ignore when (trying to list files in directories or when downloading a file), which does not exist or due to permission error.
+     * Whether to ignore when (trying to list files in directories or when downloading a file), which does not exist or
+     * due to permission error.
      * <p/>
      * By default when a directory or file does not exists or insufficient permission, then an exception is thrown.
      * Setting this option to <tt>true</tt> allows to ignore that instead.
@@ -374,8 +409,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Whether to send a noop command as a pre-write check before uploading files to the FTP server.
      * <p/>
-     * This is enabled by default as a validation of the connection is still valid, which allows to silently
-     * re-connect to be able to upload the file. However if this causes problems, you can turn this option off.
+     * This is enabled by default as a validation of the connection is still valid, which allows to silently re-connect
+     * to be able to upload the file. However if this causes problems, you can turn this option off.
      */
     public void setSendNoop(boolean sendNoop) {
         this.sendNoop = sendNoop;
@@ -384,8 +419,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Normalizes the given path according to the configured path separator.
      *
-     * @param path  the given path
-     * @return the normalized path
+     * @param  path the given path
+     * @return      the normalized path
      */
     public String normalizePath(String path) {
         if (ObjectHelper.isEmpty(path) || separator == PathSeparator.Auto) {

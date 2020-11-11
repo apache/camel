@@ -22,7 +22,9 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ManagedThreadsTest extends ManagementTestSupport {
 
@@ -63,7 +65,7 @@ public class ManagedThreadsTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .threads(1, 2).id("mysend")
+                        .threads(1, 2).id("mysend")
                         .to("mock:foo");
             }
         };

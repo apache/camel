@@ -26,7 +26,11 @@ import org.apache.camel.api.management.mbean.ManagedAggregateProcessorMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.DefaultAggregateController;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
@@ -122,7 +126,8 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         Integer pending = (Integer) mbeanServer.invoke(on, "aggregationRepositoryGroups", null, null);
         assertEquals(2, pending.intValue());
 
-        Integer groups = (Integer) mbeanServer.invoke(on, "forceCompletionOfGroup", new Object[]{"1"}, new String[]{"java.lang.String"});
+        Integer groups = (Integer) mbeanServer.invoke(on, "forceCompletionOfGroup", new Object[] { "1" },
+                new String[] { "java.lang.String" });
         assertEquals(1, groups.intValue());
 
         assertMockEndpointsSatisfied();
@@ -158,7 +163,8 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         assertEquals(1, pending.intValue());
 
         // we can also use the client mbean
-        ManagedAggregateProcessorMBean client = context.getExtension(ManagedCamelContext.class).getManagedProcessor("myAggregator", ManagedAggregateProcessorMBean.class);
+        ManagedAggregateProcessorMBean client = context.getExtension(ManagedCamelContext.class)
+                .getManagedProcessor("myAggregator", ManagedAggregateProcessorMBean.class);
         assertNotNull(client);
 
         assertEquals(1, client.getCompletedByForce());
@@ -172,9 +178,9 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy()).aggregateController(controller).id("myAggregator")
+                        .aggregate(header("id"), new MyAggregationStrategy()).aggregateController(controller).id("myAggregator")
                         .completionSize(10)
-                    .to("mock:aggregated");
+                        .to("mock:aggregated");
             }
         };
     }

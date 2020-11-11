@@ -33,7 +33,7 @@ public class RandomServiceChooser implements ServiceChooser {
 
         int size = definitions.size();
         if (size == 1) {
-            return  definitions.get(0);
+            return definitions.get(0);
         } else {
             return definitions.get(ThreadLocalRandom.current().nextInt(size));
         }

@@ -4,26 +4,26 @@
 Camel uses a Java based xref:dsl.adoc[Routing Domain Specific Language (DSL)] 
 or an XML Configuration to configure
 routing and mediation rules which are added to a
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext]
 to implement the various
-xref:enterprise-integration-patterns.adoc[Enterprise Integration Patterns].
+xref:{eip-vc}:eips:enterprise-integration-patterns.adoc[Enterprise Integration Patterns].
 
 At a high level Camel consists of a
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/CamelContext.html[CamelContext]
 which contains a collection of Component instances.
 A Component is essentially a factory of
 Endpoint instances. You can explicitly configure
 Component instances in Java code or an IoC
-container like Spring or Guice, or they can be auto-discovered using
+container like Spring, or they can be auto-discovered using
 URIs.
 
 An Endpoint acts rather like a URI or URL in a web
 application or a Destination in a JMS system; you can communicate with
 an endpoint; either sending messages to it or consuming messages from
 it. You can then create a
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Producer.html[Producer]
 or
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Consumer.html[Consumer]
+https://www.javadoc.io/doc/org.apache.camel/camel-api/current/org/apache/camel/Consumer.html[Consumer]
 on an Endpoint to exchange messages with it.
 
 The DSL makes heavy use of pluggable

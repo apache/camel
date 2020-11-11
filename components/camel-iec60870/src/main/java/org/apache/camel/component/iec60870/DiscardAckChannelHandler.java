@@ -42,7 +42,7 @@ public class DiscardAckChannelHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
         if (msg instanceof AbstractMessage) {
-            final AbstractMessage amsg = (AbstractMessage)msg;
+            final AbstractMessage amsg = (AbstractMessage) msg;
             final Cause cause = amsg.getHeader().getCauseOfTransmission().getCause();
             if (this.discards.contains(cause)) {
                 LOG.debug("Discarding: {}", cause);

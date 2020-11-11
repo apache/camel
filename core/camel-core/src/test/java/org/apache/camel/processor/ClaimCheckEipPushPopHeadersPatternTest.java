@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ClaimCheckOperation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ClaimCheckEipPushPopHeadersPatternTest extends ContextTestSupport {
 
@@ -59,10 +59,11 @@ public class ClaimCheckEipPushPopHeadersPatternTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World").setHeader("foo", constant(456)).removeHeader("bar")
-                    .to("mock:b")
-                    // only merge in the message headers
-                    .claimCheck(ClaimCheckOperation.Pop, null, "header:(foo|bar)").to("mock:c");
+                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World")
+                        .setHeader("foo", constant(456)).removeHeader("bar")
+                        .to("mock:b")
+                        // only merge in the message headers
+                        .claimCheck(ClaimCheckOperation.Pop, null, "header:(foo|bar)").to("mock:c");
             }
         };
     }

@@ -1,0 +1,50 @@
+= Camel Component Maven Plugin
+
+The
+https://github.com/apache/camel/tree/master/tooling/maven/camel-component-maven-plugin[Camel Component
+Maven Plugin] allows third party component developers to generate all the necessary metadata and Java classes for configurations to be used with Camel 3.x. These metadata files and Java files allows for more efficiency and faster runs for your component.
+
+== Goals Supported
+
+=== :generate
+This goal will generate the following metadata files and Java files:
+
+* Jandex index: it will generate a Jandex index for used Java annotations within the project which allows to more efficiency to search and load the annotations to generate other metadata as mentioned below.
+* Type Converter Loader: it will xref:type-converter.adoc[generate a loader for type converter] annotated with `@Converter(loader = true)` to allow faster way for Camel to load these converter.
+* SPIs: it will generate all Service Provider Interfaces (SPI) for the component. This allows Camel to auto-discover your component without adding it manually to the Camel context.
+* Configurers: it will generate all configurer Java classes from `@Configuer` annotated classes.
+* Endpoint Schema: it will generate the property configurers as well as schema JSONs extracted from the component's Endpoint and Component classes. This allows Camel to avoid reflections while configuring the properties, thus allows for better efficiency.
+* Prepare Component: it analyzes if the maven module contains Camel modules such as `components`, `dataformats`, `languages` and others. And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling. 
+* Validate Component: it validates the Camel component if the meta-files for `components`, `dataformats`, `languages` and others, all contains the needed meta-data such as assigned labels, documentation for each option.
+
+[NOTE]
+====
+
+
+In order for the plugin to work probably, you will need to have the proper Camel annotations in your component. Example, `@Component` for component class, `@UriEndpoint` for endpoint class, `@UriParams` ..etc. You can take a look at these annotation how being used in any of the existing Camel components in github. Or even better, you can use xref:camel-maven-archetypes.adoc[Camel Maven Archetypes] to bootstrap the initial component, this already include all the necessary batteries for your component such as necessary initial Java classes, annotation and maven `pom.xml`.
+
+====
+
+== Adding the plugin to your pom.xml
+
+In case you *did not* use the Camel Maven Archetypes to bootstrap the initial component project, you will need to add the following to your `pom.xml` build section:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-component-maven-plugin</artifactId>
+  <version>${camel-version}</version>
+  <executions>
+    <execution>
+      <id>generate</id>
+      <goals>
+        <goal>generate</goal>
+      </goals>
+      <phase>process-classes</phase>
+    </execution>
+   </executions>
+</plugin>
+----
+
+This will attach this plugin `:generate` goal to Maven's `process-classes`, in order to generate all the necessary files being describe above upon compilation. Thus, `mvn test`, `mvn package`, `mvn verify` and `mvn install` phases should run this plugin.

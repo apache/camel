@@ -19,8 +19,8 @@ package org.apache.camel.component.hazelcast.list;
 import java.util.Collection;
 import java.util.Map;
 
+import com.hazelcast.collection.IList;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IList;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
@@ -60,40 +60,42 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
 
         switch (operation) {
 
-        case ADD:
-            this.add(pos, exchange);
-            break;
+            case ADD:
+                this.add(pos, exchange);
+                break;
 
-        case GET:
-            this.get(pos, exchange);
-            break;
+            case GET:
+                this.get(pos, exchange);
+                break;
 
-        case SET_VALUE:
-            this.set(pos, exchange);
-            break;
+            case SET_VALUE:
+                this.set(pos, exchange);
+                break;
 
-        case REMOVE_VALUE:
-            this.remove(pos, exchange);
-            break;
-            
-        case CLEAR:
-            this.clear();
-            break;
-            
-        case ADD_ALL:
-            this.addAll(pos, exchange);
-            break;
-            
-        case REMOVE_ALL:
-            this.removeAll(exchange);
-            break;
+            case REMOVE_VALUE:
+                this.remove(pos, exchange);
+                break;
 
-        case RETAIN_ALL:
-            this.retainAll(exchange);
-            break;
-            
-        default:
-            throw new IllegalArgumentException(String.format("The value '%s' is not allowed for parameter '%s' on the LIST cache.", operation, HazelcastConstants.OPERATION));
+            case CLEAR:
+                this.clear();
+                break;
+
+            case ADD_ALL:
+                this.addAll(pos, exchange);
+                break;
+
+            case REMOVE_ALL:
+                this.removeAll(exchange);
+                break;
+
+            case RETAIN_ALL:
+                this.retainAll(exchange);
+                break;
+
+            default:
+                throw new IllegalArgumentException(
+                        String.format("The value '%s' is not allowed for parameter '%s' on the LIST cache.", operation,
+                                HazelcastConstants.OPERATION));
         }
 
         // finally copy headers
@@ -135,11 +137,11 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
             list.remove(position);
         }
     }
-    
+
     private void clear() {
         list.clear();
     }
-    
+
     private void addAll(Integer pos, Exchange exchange) {
         final Object body = exchange.getIn().getBody();
         if (null == pos) {
@@ -148,12 +150,12 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
             list.addAll(pos, (Collection<? extends Object>) body);
         }
     }
-    
+
     private void removeAll(Exchange exchange) {
         final Object body = exchange.getIn().getBody();
         list.removeAll((Collection<?>) body);
     }
-    
+
     private void retainAll(Exchange exchange) {
         final Object body = exchange.getIn().getBody();
         list.retainAll((Collection<?>) body);

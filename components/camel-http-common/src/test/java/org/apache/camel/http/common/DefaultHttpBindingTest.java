@@ -20,8 +20,11 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class DefaultHttpBindingTest extends CamelTestSupport {
 
@@ -30,7 +33,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
         DefaultHttpBinding binding = new DefaultHttpBinding();
         Date date = new Date();
         Exchange exchange = super.createExchangeWithBody(null);
-        
+
         String value = binding.convertHeaderValueToString(exchange, date);
         assertNotEquals(value, date.toString());
         assertEquals(value, DefaultHttpBinding.getHttpDateFormat().format(date));
@@ -51,7 +54,7 @@ public class DefaultHttpBindingTest extends CamelTestSupport {
         DefaultHttpBinding binding = new DefaultHttpBinding();
         Locale l = Locale.SIMPLIFIED_CHINESE;
         Exchange exchange = super.createExchangeWithBody(null);
-        
+
         String value = binding.convertHeaderValueToString(exchange, l);
         assertNotEquals(value, l.toString());
         assertEquals("zh-CN", value);

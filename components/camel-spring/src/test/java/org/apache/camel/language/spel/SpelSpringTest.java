@@ -19,7 +19,7 @@ package org.apache.camel.language.spel;
 import org.apache.camel.CamelContext;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.spring.processor.SpringTestHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test access to beans defined in Spring XML file from SpEL expressions/predicates.
@@ -37,7 +37,7 @@ public class SpelSpringTest extends LanguageTestSupport {
         assertExpression("#{@myDummy.bar == 789}", true);
         assertExpression("#{@myDummy.bar.toString()}", "789");
     }
-    
+
     @Test
     public void testSpelBeanPredicates() throws Exception {
         assertPredicate("@myDummy.foo == 'xyz'");

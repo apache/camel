@@ -19,11 +19,12 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * This not only set SimpleTrigger as a timer endpoint in a route, and also test the trigger.XXX properties setter.
@@ -37,14 +38,16 @@ public class QuartzSimpleRouteTest extends BaseQuartzTest {
 
         assertMockEndpointsSatisfied();
         Trigger trigger = mock.getReceivedExchanges().get(0).getIn().getHeader("trigger", Trigger.class);
-        Assert.assertThat(trigger instanceof SimpleTrigger, CoreMatchers.is(true));
+        assertThat(trigger instanceof SimpleTrigger, CoreMatchers.is(true));
 
         JobDetail detail = mock.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
-        Assert.assertThat(detail.getJobClass().equals(CamelJob.class), CoreMatchers.is(true));
+        assertThat(detail.getJobClass().equals(CamelJob.class), CoreMatchers.is(true));
 
-        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE).equals("simple"), CoreMatchers.is(true));
-        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER).equals(-1), CoreMatchers.is(true));
-        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL).equals(2000L), CoreMatchers.is(true));
+        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE).equals("simple"), CoreMatchers.is(true));
+        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER).equals(-1),
+                CoreMatchers.is(true));
+        assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL).equals(2000L),
+                CoreMatchers.is(true));
     }
 
     @Override

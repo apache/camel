@@ -25,9 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.reactor.engine.suport.TestSubscriber;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsServiceTestSupport {
 
@@ -39,9 +41,9 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
             @Override
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
-                    .setBody()
-                    .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:integers");
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers");
             }
         });
 
@@ -50,22 +52,21 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         CountDownLatch latch = new CountDownLatch(1);
 
         Flux.range(0, 50)
-            .zipWith(integers, (l, i) -> i)
-            .timeout(Duration.ofMillis(2000), Flux.empty())
-            .doOnComplete(latch::countDown)
-            .subscribe(queue::add);
+                .zipWith(integers, (l, i) -> i)
+                .timeout(Duration.ofMillis(2000), Flux.empty())
+                .doOnComplete(latch::countDown)
+                .subscribe(queue::add);
 
         context.start();
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
-        Assert.assertEquals(20, queue.size());
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertEquals(20, queue.size());
 
         int num = 1;
         for (int i : queue) {
-            Assert.assertEquals(num++, i);
+            assertEquals(num++, i);
         }
     }
-
 
     @Test
     public void testDropStrategy() throws Exception {
@@ -75,9 +76,9 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
             @Override
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
-                    .setBody()
-                    .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:integers");
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers");
             }
         });
 
@@ -99,17 +100,17 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         crs.fromStream("integers", Integer.class).subscribe(subscriber);
         context.start();
 
-        Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
         Thread.sleep(1000); // wait for all numbers to be generated
 
         subscriber.request(19);
-        Assert.assertTrue(latch2.await(1, TimeUnit.SECONDS));
+        assertTrue(latch2.await(1, TimeUnit.SECONDS));
 
         Thread.sleep(200); // add other time to ensure no other items arrive
-        Assert.assertEquals(2, queue.size());
+        assertEquals(2, queue.size());
 
-        int sum = queue.stream().reduce((i, j) -> i + j).get();
-        Assert.assertEquals(3, sum); // 1 + 2 = 3
+        int sum = queue.stream().reduce(Integer::sum).get();
+        assertEquals(3, sum); // 1 + 2 = 3
 
         subscriber.cancel();
     }
@@ -122,9 +123,9 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
             @Override
             public void configure() throws Exception {
                 from("timer:gen?period=20&repeatCount=20")
-                    .setBody()
-                    .header(Exchange.TIMER_COUNTER)
-                    .to("reactive-streams:integers");
+                        .setBody()
+                        .header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers");
             }
         });
 
@@ -146,21 +147,21 @@ public class ReactorStreamsServiceBackpressureTest extends ReactorStreamsService
         crs.fromStream("integers", Integer.class).subscribe(subscriber);
         context.start();
 
-        Assert.assertTrue(latch1.await(5, TimeUnit.SECONDS));
+        assertTrue(latch1.await(5, TimeUnit.SECONDS));
         Thread.sleep(1000); // wait for all numbers to be generated
 
         subscriber.request(19);
-        Assert.assertTrue(latch2.await(1, TimeUnit.SECONDS));
+        assertTrue(latch2.await(1, TimeUnit.SECONDS));
 
         Thread.sleep(200); // add other time to ensure no other items arrive
 
         // TODO: the chain caches two elements instead of one: change it if you find an EmitterProcessor without prefetch
-        // Assert.assertEquals(2, queue.size());
-        Assert.assertEquals(3, queue.size());
+        // assertEquals(2, queue.size());
+        assertEquals(3, queue.size());
 
-        int sum = queue.stream().reduce((i, j) -> i + j).get();
-        // Assert.assertEquals(21, sum); // 1 + 20 = 21
-        Assert.assertEquals(23, sum); // 1 + 2 + 20 = 23
+        int sum = queue.stream().reduce(Integer::sum).get();
+        // assertEquals(21, sum); // 1 + 20 = 21
+        assertEquals(23, sum); // 1 + 2 + 20 = 23
 
         subscriber.cancel();
     }

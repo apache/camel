@@ -24,26 +24,29 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ResourceConverterTest extends TestSupport {
 
     @Test
     public void testResourceConverterRegistry() {
-        Assert.assertNotNull(getResourceTypeConverter());
+        assertNotNull(getResourceTypeConverter());
     }
 
     @Test
     public void testNonNullConversion() throws IOException {
         Resource resource = new ClassPathResource("testresource.txt", ResourceConverterTest.class);
-        Assert.assertTrue(resource.exists());
+        assertTrue(resource.exists());
         InputStream inputStream = getResourceTypeConverter().convertTo(InputStream.class, resource);
         byte[] resourceBytes = IOConverter.toBytes(resource.getInputStream());
         byte[] inputStreamBytes = IOConverter.toBytes(inputStream);
-        Assert.assertArrayEquals(resourceBytes, inputStreamBytes);
+        assertArrayEquals(resourceBytes, inputStreamBytes);
     }
 
     private TypeConverter getResourceTypeConverter() {

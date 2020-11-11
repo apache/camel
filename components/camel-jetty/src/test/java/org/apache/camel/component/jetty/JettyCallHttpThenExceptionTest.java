@@ -19,7 +19,11 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
 
@@ -37,9 +41,9 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
         assertMockEndpointsSatisfied();
 
         assertNotNull(reply);
-        assertTrue(reply.getOut().getBody(String.class).startsWith("java.lang.IllegalArgumentException: I cannot do this"));
-        assertEquals(500, reply.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Server Error", reply.getOut().getHeader(Exchange.HTTP_RESPONSE_TEXT));
+        assertTrue(reply.getMessage().getBody(String.class).startsWith("java.lang.IllegalArgumentException: I cannot do this"));
+        assertEquals(500, reply.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("Server Error", reply.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT));
     }
 
     @Override
@@ -48,13 +52,15 @@ public class JettyCallHttpThenExceptionTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 from("jetty://http://localhost:{{port}}/myserver").to("log:A")
-                    // remove http headers before and after invoking http
-                    // service
-                    .removeHeaders("CamelHttp*").to("http://localhost:{{port}}/other").removeHeaders("CamelHttp*").to("mock:bar")
-                    // now just force an exception immediately
-                    .throwException(new IllegalArgumentException("I cannot do this"));
+                        // remove http headers before and after invoking http
+                        // service
+                        .removeHeaders("CamelHttp*").to("http://localhost:{{port}}/other").removeHeaders("CamelHttp*")
+                        .to("mock:bar")
+                        // now just force an exception immediately
+                        .throwException(new IllegalArgumentException("I cannot do this"));
 
-                from("jetty://http://localhost:{{port}}/other").convertBodyTo(String.class).to("log:C").to("mock:foo").transform().simple("Bye ${body}");
+                from("jetty://http://localhost:{{port}}/other").convertBodyTo(String.class).to("log:C").to("mock:foo")
+                        .transform().simple("Bye ${body}");
             }
         };
     }

@@ -37,8 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Offers a finder for a webservice interface to determine the QName of a
- * webservice data element
+ * Offers a finder for a webservice interface to determine the QName of a webservice data element
  */
 public class ServiceInterfaceStrategy implements ElementNameStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceInterfaceStrategy.class);
@@ -53,15 +52,14 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
      * Init with JAX-WS service interface
      * 
      * @param serviceInterface
-     * @param isClient
-     *            determines if marhalling looks at input or output of method
+     * @param isClient         determines if marhalling looks at input or output of method
      */
     public ServiceInterfaceStrategy(Class<?> serviceInterface, boolean isClient) {
         analyzeServiceInterface(serviceInterface);
         this.isClient = isClient;
         this.fallBackStrategy = new TypeNameStrategy();
     }
-    
+
     public String getMethodForSoapAction(String soapAction) {
         MethodInfo methodInfo = soapActionToMethodInfo.get(soapAction);
         return (methodInfo == null) ? null : methodInfo.getName();
@@ -70,7 +68,8 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     private TypeInfo getOutInfo(Method method) {
         ResponseWrapper respWrap = method.getAnnotation(ResponseWrapper.class);
         if (respWrap != null && respWrap.className() != null) {
-            return new TypeInfo(respWrap.className(), 
+            return new TypeInfo(
+                    respWrap.className(),
                     new QName(respWrap.targetNamespace(), respWrap.localName()));
         }
         Class<?> returnType = method.getReturnType();
@@ -82,8 +81,9 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             if (webResult != null) {
                 return new TypeInfo(type.getName(), new QName(webResult.targetNamespace(), webResult.name()));
             } else {
-                throw new IllegalArgumentException("Result type of method " + method.getName()
-                    + " is not annotated with WebParam. This is not yet supported");
+                throw new IllegalArgumentException(
+                        "Result type of method " + method.getName()
+                                                   + " is not annotated with WebParam. This is not yet supported");
             }
         }
     }
@@ -98,11 +98,12 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             return typeInfos;
         }
         if (requestWrapper != null && requestWrapper.className() != null) {
-            typeInfos.add(new TypeInfo(requestWrapper.className(), 
+            typeInfos.add(new TypeInfo(
+                    requestWrapper.className(),
                     new QName(requestWrapper.targetNamespace(), requestWrapper.localName())));
             return typeInfos;
         }
-                      
+
         // annotations are returned in declaration order
         Annotation[][] annotations = method.getParameterAnnotations();
 
@@ -110,34 +111,33 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
 
         for (Annotation[] singleParameterAnnotations : annotations) {
             for (Annotation annotation : singleParameterAnnotations) {
-                if (annotation instanceof WebParam) {                   
+                if (annotation instanceof WebParam) {
                     webParams.add((WebParam) annotation);
                 }
             }
         }
-        
+
         if (webParams.size() != types.length) {
             throw new IllegalArgumentException(
                     "The number of @WebParam annotations for Method " + method.getName()
-                     + " does not match the number of parameters. This is not supported.");
+                                               + " does not match the number of parameters. This is not supported.");
         }
 
         Iterator<WebParam> webParamIter = webParams.iterator();
         int paramCounter = -1;
-        while (webParamIter.hasNext()) {   
-            WebParam webParam = webParamIter.next();        
-            typeInfos.add(new TypeInfo(types[++paramCounter].getName(),
+        while (webParamIter.hasNext()) {
+            WebParam webParam = webParamIter.next();
+            typeInfos.add(new TypeInfo(
+                    types[++paramCounter].getName(),
                     new QName(webParam.targetNamespace(), webParam.name())));
         }
 
         return typeInfos;
     }
-    
 
     /**
-     * Determines how the parameter object of the service method will be named
-     * in xml. It will use either the RequestWrapper annotation of the method if
-     * present or the WebParam method of the parameter.
+     * Determines how the parameter object of the service method will be named in xml. It will use either the
+     * RequestWrapper annotation of the method if present or the WebParam method of the parameter.
      *
      * @param method
      */
@@ -146,7 +146,8 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         TypeInfo outInfo = getOutInfo(method);
         WebMethod webMethod = method.getAnnotation(WebMethod.class);
         String soapAction = (webMethod != null) ? webMethod.action() : null;
-        return new MethodInfo(method.getName(), soapAction, 
+        return new MethodInfo(
+                method.getName(), soapAction,
                 inInfos.toArray(new TypeInfo[inInfos.size()]), outInfo);
     }
 
@@ -159,9 +160,9 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                 if (inTypeNameToQName.containsKey(ti.getTypeName())) {
                     if (ti.getTypeName() != null) {
                         if (!(ti.getTypeName().equals("javax.xml.ws.Holder"))
-                            && (!(inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())))) {
-                            LOG.warn("Ambiguous QName mapping. The type [ " + ti.getTypeName()
-                                     + " ] is already mapped to a QName in this context.");
+                                && (!(inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())))) {
+                            LOG.warn("Ambiguous QName mapping. The type [{}] is already mapped to a QName in this context.",
+                                    ti.getTypeName());
                             continue;
                         }
                     }
@@ -191,13 +192,12 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     }
 
     /**
-     * Determine the QName of the method parameter of the method that matches
-     * either soapAction and type or if not possible only the type
+     * Determine the QName of the method parameter of the method that matches either soapAction and type or if not
+     * possible only the type
      * 
-     * @param soapAction
-     * @param type
-     * @return matching QName throws RuntimeException if no matching QName was
-     *         found
+     * @param  soapAction
+     * @param  type
+     * @return            matching QName throws RuntimeException if no matching QName was found
      */
     @Override
     public QName findQNameForSoapActionOrType(String soapAction, Class<?> type) {

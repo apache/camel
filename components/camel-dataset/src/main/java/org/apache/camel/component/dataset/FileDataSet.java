@@ -26,15 +26,12 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.Scanner;
 
 /**
- * A DataSet that reads payloads from a file that are used to create each message exchange
- * along with using a pluggable transformer to customize the messages.  The file contents may optionally
- * be split using a supplied token.
+ * A DataSet that reads payloads from a file that are used to create each message exchange along with using a pluggable
+ * transformer to customize the messages. The file contents may optionally be split using a supplied token.
  */
 public class FileDataSet extends ListDataSet {
     private File sourceFile;
     private String delimiter;
-
-    private List<Object> defaultBodies;
 
     public FileDataSet(String sourceFileName) throws IOException {
         this(new File(sourceFileName));

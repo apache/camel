@@ -1,0 +1,38 @@
+[[reactive-executor-vertx-other]]
+= Reactive Executor Vert.x Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-reactive-executor-vertx/src/main/docs/reactive-executor-vertx.adoc
+:docTitle: Reactive Executor Vert.x
+:artifactId: camel-reactive-executor-vertx
+:description: Reactive Executor for camel-core using Vert.x
+:since: 3.0
+:supportLevel: Experimental
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/reactive-executor-vertx.adoc[opts=optional]
+
+*Since Camel {since}*
+
+The camel-reactive-executor-vertx is a VertX based implementation of the `ReactiveExecutor` SPI.
+
+By default Camel uses its own reactive engine for routing messages, but you can plugin
+different engines via a SPI interface. This is a VertX based plugin that uses the VertX event loop
+for processing message during routing.
+
+[NOTE]
+====
+At this time this component is an experiment so use it with care.
+====
+
+== VertX instance
+
+This implementation will first lookup in the registry for an existing `io.vertx.core.Vertx` to be used.
+However you can configure an existing instance using the getter/setter on the `VertXReactiveExecutor` class.
+
+== Auto detection from classpath
+
+To use this implementation all you need to do is to add the `camel-reactive-executor-vertx` dependency to the classpath,
+and Camel should auto-detect this on startup and log as follows:
+
+[source,text]
+----
+Using ReactiveExecutor: camel-reactive-executor-vertx
+----

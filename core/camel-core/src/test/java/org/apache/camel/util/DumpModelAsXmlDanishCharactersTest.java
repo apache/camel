@@ -17,11 +17,14 @@
 package org.apache.camel.util;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.MyBarSingleton;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.ModelHelper;
-import org.junit.Test;
+import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -29,15 +32,16 @@ import org.junit.Test;
 public class DumpModelAsXmlDanishCharactersTest extends ContextTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createRegistry() throws Exception {
+        Registry jndi = super.createRegistry();
         jndi.bind("myCoolBean", new MyBarSingleton());
         return jndi;
     }
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -50,7 +54,8 @@ public class DumpModelAsXmlDanishCharactersTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute").description("Hello danish \u00C6\u00D8\u00C5").setBody(simple("Hello ${body}")).to("mock:result");
+                from("direct:start").routeId("myRoute").description("Hello danish \u00C6\u00D8\u00C5")
+                        .setBody(simple("Hello ${body}")).to("mock:result");
             }
         };
     }

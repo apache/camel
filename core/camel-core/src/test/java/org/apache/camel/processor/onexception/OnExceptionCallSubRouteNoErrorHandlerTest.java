@@ -18,7 +18,7 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OnExceptionCallSubRouteNoErrorHandlerTest extends ContextTestSupport {
 
@@ -43,12 +43,13 @@ public class OnExceptionCallSubRouteNoErrorHandlerTest extends ContextTestSuppor
             public void configure() throws Exception {
                 onException(Exception.class).to("mock:error").end();
 
-                from("direct:start").to("mock:start").doTry().to("direct:bar").to("mock:afterbar").doCatch(Exception.class).to("mock:catch").end().to("mock:result");
+                from("direct:start").to("mock:start").doTry().to("direct:bar").to("mock:afterbar").doCatch(Exception.class)
+                        .to("mock:catch").end().to("mock:result");
 
                 from("direct:bar")
-                    // disable error handling so we can handle the exceptions in
-                    // the doTry .. doCatch
-                    .errorHandler(noErrorHandler()).to("mock:bar").throwException(new IllegalArgumentException("Damn"));
+                        // disable error handling so we can handle the exceptions in
+                        // the doTry .. doCatch
+                        .errorHandler(noErrorHandler()).to("mock:bar").throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

@@ -48,24 +48,19 @@ public class XStreamDataFormatOmitFieldsTest extends CamelTestSupport {
         assertFalse(body.contains("price"), "Should not contain price field");
         assertTrue(body.contains("<amount>"), "Should contain amount field");
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 XStreamDataFormat xStreamDataFormat = new XStreamDataFormat();
-                Map<String, String[]> omitFields = new HashMap<>();
-                omitFields.put(PurchaseOrder.class.getName(), new String[]{"price"});
+                Map<String, String> omitFields = new HashMap<>();
+                omitFields.put(PurchaseOrder.class.getName(), "price");
                 xStreamDataFormat.setOmitFields(omitFields);
 
-                from("direct:start").
-                        marshal(xStreamDataFormat).
-                        convertBodyTo(String.class).
-                        to("mock:result");
+                from("direct:start").marshal(xStreamDataFormat).convertBodyTo(String.class).to("mock:result");
             }
         };
     }
-    
 
 }

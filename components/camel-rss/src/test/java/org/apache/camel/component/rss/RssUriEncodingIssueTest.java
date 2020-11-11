@@ -18,16 +18,23 @@ package org.apache.camel.component.rss;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Ignore("Must be online")
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled("Must be online")
 public class RssUriEncodingIssueTest extends CamelTestSupport {
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Test
     public void testUriIssue() throws Exception {
-        String uri = "rss:http://api.flickr.com/services/feeds/photos_public.gne?id=23353282@N05&tags=lowlands&lang=en-us&format=rss_200";
+        String uri
+                = "rss:http://api.flickr.com/services/feeds/photos_public.gne?id=23353282@N05&tags=lowlands&lang=en-us&format=rss_200";
 
         PollingConsumer consumer = context.getEndpoint(uri).createPollingConsumer();
         consumer.start();

@@ -25,9 +25,9 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test the cache when reloading .vm files in the classpath
@@ -35,14 +35,15 @@ import org.junit.Test;
 public class VelocityContentCacheTest extends CamelTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
         // create a vm file in the classpath as this is the tricky reloading stuff
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override", "Hello $headers.name", Exchange.FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override",
+                "Hello $headers.name", Exchange.FILE_NAME, "hello.vm");
     }
-    
+
     @Override
     public boolean useJmx() {
         return true;
@@ -57,7 +58,8 @@ public class VelocityContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override",
+                "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
         mock.expectedBodiesReceived("Bye Paris", "Bye World");
@@ -76,7 +78,8 @@ public class VelocityContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override",
+                "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
         // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
@@ -95,7 +98,8 @@ public class VelocityContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override",
+                "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
         // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
@@ -104,7 +108,7 @@ public class VelocityContentCacheTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:c", "Body", "name", "Paris");
         mock.assertIsSatisfied();
     }
-    
+
     @Test
     public void testClearCacheViaJmx() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -114,7 +118,8 @@ public class VelocityContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override",
+                "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
         // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
@@ -122,39 +127,43 @@ public class VelocityContentCacheTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
         mock.assertIsSatisfied();
-        
+
         // clear the cache via the mbean server
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
-        Set<ObjectName> objNameSet = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"velocity:*contentCache=true*\",*"), null);
-        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);        
+        Set<ObjectName> objNameSet = mbeanServer
+                .queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"velocity:*contentCache=true*\",*"), null);
+        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);
         mbeanServer.invoke(managedObjName, "clearContentCache", null, null);
-           
+
         // now change content in the file in the classpath
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override",
+                "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
         // we expect the update to work now since the cache has been cleared
         mock.expectedBodiesReceived("Bye Paris");
         template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
         mock.assertIsSatisfied();
-        
+
         // change the content in the file again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override", "Hello $headers.name", Exchange.FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?fileExist=Override",
+                "Hello $headers.name", Exchange.FILE_NAME, "hello.vm");
         mock.reset();
         // we expect the new value to be ignored since the cache was re-established with the prior exchange
         mock.expectedBodiesReceived("Bye Paris");
         template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
         mock.assertIsSatisfied();
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("velocity://org/apache/camel/component/velocity/hello.vm?contentCache=false").to("mock:result");
+                from("direct:a").to("velocity://org/apache/camel/component/velocity/hello.vm?contentCache=false")
+                        .to("mock:result");
 
-                from("direct:b").to("velocity://org/apache/camel/component/velocity/hello.vm?contentCache=true").to("mock:result");
+                from("direct:b").to("velocity://org/apache/camel/component/velocity/hello.vm?contentCache=true")
+                        .to("mock:result");
 
                 from("direct:c").to("velocity://org/apache/camel/component/velocity/hello.vm").to("mock:result");
             }

@@ -20,11 +20,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpringGrokDataFormatTest extends CamelSpringTestSupport {
 
@@ -39,12 +40,12 @@ public class SpringGrokDataFormatTest extends CamelSpringTestSupport {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> body = result.getExchanges().get(0).getIn().getBody(List.class);
 
-        Assert.assertEquals(4, body.size());
+        assertEquals(4, body.size());
 
-        Assert.assertEquals("178.21.82.201", body.get(0).get("ip"));
-        Assert.assertEquals("178.21.82.202", body.get(1).get("ip"));
-        Assert.assertEquals("178.21.82.203", body.get(2).get("ip"));
-        Assert.assertEquals("178.21.82.204", body.get(3).get("ip"));
+        assertEquals("178.21.82.201", body.get(0).get("ip"));
+        assertEquals("178.21.82.202", body.get(1).get("ip"));
+        assertEquals("178.21.82.203", body.get(2).get("ip"));
+        assertEquals("178.21.82.204", body.get(3).get("ip"));
     }
 
     @Test
@@ -58,12 +59,12 @@ public class SpringGrokDataFormatTest extends CamelSpringTestSupport {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> body = result.getExchanges().get(0).getIn().getBody(List.class);
 
-        Assert.assertEquals(4, body.size());
+        assertEquals(4, body.size());
 
-        Assert.assertEquals("178.21.82.201", body.get(0).get("ip"));
-        Assert.assertEquals("178.21.82.202", body.get(1).get("ip"));
-        Assert.assertEquals("178.21.82.203", body.get(2).get("ip"));
-        Assert.assertEquals("178.21.82.204", body.get(3).get("ip"));
+        assertEquals("178.21.82.201", body.get(0).get("ip"));
+        assertEquals("178.21.82.202", body.get(1).get("ip"));
+        assertEquals("178.21.82.203", body.get(2).get("ip"));
+        assertEquals("178.21.82.204", body.get(3).get("ip"));
     }
 
     @Test
@@ -73,7 +74,7 @@ public class SpringGrokDataFormatTest extends CamelSpringTestSupport {
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-        Assert.assertEquals(
+        assertEquals(
                 "-- barbarfoobarfoobar --",
                 result.getExchanges().get(0).getIn().getBody(Map.class).get("fooBar"));
     }

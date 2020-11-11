@@ -29,9 +29,12 @@ import com.google.api.services.calendar.model.EventDateTime;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarEventsApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$Events} APIs.
@@ -39,7 +42,8 @@ import org.slf4j.LoggerFactory;
 public class CalendarEventsIntegrationTest extends AbstractGoogleCalendarTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CalendarEventsIntegrationTest.class);
-    private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection().getApiName(CalendarEventsApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = GoogleCalendarApiCollection.getCollection().getApiName(CalendarEventsApiMethod.class).getName();
 
     @Test
     public void testInsert() throws Exception {
@@ -80,7 +84,7 @@ public class CalendarEventsIntegrationTest extends AbstractGoogleCalendarTestSup
         // parameter type is String
         headers.put("CamelGoogleCalendar.text", "Feed the Camel");
         com.google.api.services.calendar.model.Event result = requestBodyAndHeaders("direct://QUICKADD", null, headers);
-        assertNotNull("quickAdd result", result);
+        assertNotNull(result, "quickAdd result");
 
         // Check if it is in the list of events for this calendar
         com.google.api.services.calendar.model.Events events = requestBody("direct://LIST", getCalendar().getId());

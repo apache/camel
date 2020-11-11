@@ -19,16 +19,16 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class QuartzTwoCamelContextSuspendResumeTest {
 
     private DefaultCamelContext camel1;
     private DefaultCamelContext camel2;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         camel1 = new DefaultCamelContext();
         camel1.setName("camel-1");
@@ -51,7 +51,7 @@ public class QuartzTwoCamelContextSuspendResumeTest {
         camel2.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         camel1.stop();
         camel2.stop();
@@ -77,6 +77,5 @@ public class QuartzTwoCamelContextSuspendResumeTest {
 
         mock1.assertIsSatisfied();
     }
-
 
 }

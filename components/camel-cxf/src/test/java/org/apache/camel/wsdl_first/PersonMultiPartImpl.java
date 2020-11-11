@@ -19,19 +19,18 @@ package org.apache.camel.wsdl_first;
 import javax.xml.ws.Holder;
 
 /**
- * Test Impl class for PersonMultiPartType port type that verifies multi part SOAP message
- * functionality.
+ * Test Impl class for PersonMultiPartType port type that verifies multi part SOAP message functionality.
  */
-
 
 public class PersonMultiPartImpl implements PersonMultiPartPortType {
 
-    public void getPersonMultiPartOperation(String nameIn, int ssnIn, Holder<String> nameOut,
-                                            Holder<Integer> ssnOut) {
-        
+    public void getPersonMultiPartOperation(
+            String nameIn, int ssnIn, Holder<String> nameOut,
+            Holder<Integer> ssnOut) {
+
         nameOut.value = "New Person Name";
         ssnOut.value = 123456789;
-        
+
     }
 
 }

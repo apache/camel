@@ -19,10 +19,11 @@ package org.apache.camel.component.mail;
 import javax.mail.search.SearchTerm;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 import static org.apache.camel.component.mail.SearchTermBuilder.Op;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MailSearchTermNotSpamTest extends MailSearchTermTest {
 

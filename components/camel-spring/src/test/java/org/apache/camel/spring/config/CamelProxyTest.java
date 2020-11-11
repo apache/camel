@@ -16,44 +16,36 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.util.IOHelper;
-import org.junit.Test;
-import org.springframework.context.support.AbstractApplicationContext;
+import org.apache.camel.spring.SpringTestSupport;
+import org.junit.jupiter.api.Test;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CamelProxyTest extends TestSupport {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CamelProxyTest extends SpringTestSupport {
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyTest.xml");
+    }
 
     @Test
     public void testCamelProxy() throws Exception {
-        AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyTest.xml");
-
-        MyProxySender sender = ac.getBean("myProxySender", MyProxySender.class);
+        SpringCamelContext scc = context.adapt(SpringCamelContext.class);
+        MyProxySender sender = scc.getApplicationContext().getBean("myProxySender", MyProxySender.class);
         String reply = sender.hello("World");
 
         assertEquals("Hello World", reply);
-        
+
         // test sending inOnly message
-        MyProxySender anotherSender = ac.getBean("myAnotherProxySender", MyProxySender.class);
-        SpringCamelContext context = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
-        MockEndpoint result = resolveMandatoryEndpoint(context, "mock:result", MockEndpoint.class);
+        MyProxySender anotherSender = scc.getApplicationContext().getBean("myAnotherProxySender", MyProxySender.class);
+        MockEndpoint result = resolveMandatoryEndpoint(scc, "mock:result", MockEndpoint.class);
         result.expectedBodiesReceived("Hello my friends!");
-        
+
         anotherSender.greeting("Hello my friends!");
         result.assertIsSatisfied();
-        
-        result.reset();
-        // test sending inOnly message with other sender
-        MyProxySender myProxySenderWithCamelContextId = ac.getBean("myProxySenderWithCamelContextId", MyProxySender.class);
-        
-        result.expectedBodiesReceived("Hello my friends again!");
-        myProxySenderWithCamelContextId.greeting("Hello my friends again!");
-        result.assertIsSatisfied();
-
-        // we're done so let's properly close the application context
-        IOHelper.close(ac);
     }
-    
 }

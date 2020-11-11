@@ -66,11 +66,6 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
         throw new IllegalStateException("There is no consumer available for OpenStack");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     private OSClient.OSClientV3 createV3Client() {
         IOSClientBuilder.V3 builder = OSFactory.builderV3()
                 .endpoint(getHost());

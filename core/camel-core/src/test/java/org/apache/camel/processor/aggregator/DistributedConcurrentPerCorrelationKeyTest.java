@@ -27,7 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistributedTest {
 
@@ -75,8 +77,9 @@ public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistribu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(sharedAggregationRepository).optimisticLocking()
-                    .completionSize(8).to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
+                        .aggregationRepository(sharedAggregationRepository).optimisticLocking()
+                        .completionSize(8).to("mock:result");
             }
         };
     }

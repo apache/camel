@@ -34,22 +34,22 @@ import org.apache.camel.maven.CamelSpringNamespace;
 import org.apache.camel.maven.Constants;
 import org.apache.camel.maven.EipDocumentationEnricherMojo;
 import org.apache.camel.maven.ResourceUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EIPDocumentationMojoTest {
     EipDocumentationEnricherMojo eipDocumentationEnricherMojo = new EipDocumentationEnricherMojo();
     XPath xPath = XPathFactory.newInstance().newXPath();
     File tempFile;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        eipDocumentationEnricherMojo.camelCoreDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
+        eipDocumentationEnricherMojo.camelCoreModelDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
         eipDocumentationEnricherMojo.camelCoreXmlDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
         eipDocumentationEnricherMojo.camelSpringDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
         eipDocumentationEnricherMojo.inputCamelSchemaFile = ResourceUtils.getResourceAsFile("integration/camel-spring.xsd");

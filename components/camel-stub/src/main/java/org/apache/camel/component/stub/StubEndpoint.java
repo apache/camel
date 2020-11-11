@@ -18,6 +18,7 @@ package org.apache.camel.component.stub;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,16 +28,16 @@ import org.apache.camel.component.vm.VmEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
 /**
- * The stub component provides a simple way to stub out any physical endpoints while in development or testing.
+ * Stub out any physical endpoints while in development or testing.
  *
- * For example to run a route without needing to actually connect to a specific SMTP or HTTP endpoint.
- * Just add stub: in front of any endpoint URI to stub out the endpoint.
- * Internally the Stub component creates VM endpoints. The main difference between Stub and VM is that VM
- * will validate the URI and parameters you give it, so putting vm: in front of a typical URI with
- * query arguments will usually fail. Stub won't though, as it basically ignores all query parameters
- * to let you quickly stub out one or more endpoints in your route temporarily.
+ * For example to run a route without needing to actually connect to a specific SMTP or HTTP endpoint. Just add stub: in
+ * front of any endpoint URI to stub out the endpoint. Internally the Stub component creates VM endpoints. The main
+ * difference between Stub and VM is that VM will validate the URI and parameters you give it, so putting vm: in front
+ * of a typical URI with query arguments will usually fail. Stub won't though, as it basically ignores all query
+ * parameters to let you quickly stub out one or more endpoints in your route temporarily.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "stub", title = "Stub", syntax = "stub:name", label = "core,testing")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "stub", title = "Stub", syntax = "stub:name",
+             category = { Category.CORE, Category.TESTING })
 public class StubEndpoint extends VmEndpoint {
 
     public StubEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
@@ -47,7 +48,8 @@ public class StubEndpoint extends VmEndpoint {
         super(endpointUri, component, queue, concurrentConsumers);
     }
 
-    public StubEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+    public StubEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory,
+                        int concurrentConsumers) {
         super(endpointUri, component, queueFactory, concurrentConsumers);
     }
 
@@ -58,6 +60,7 @@ public class StubEndpoint extends VmEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new StubProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), isDiscardWhenFull(), getOfferTimeout());
+        return new StubProducer(
+                this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), isDiscardWhenFull(), getOfferTimeout());
     }
 }

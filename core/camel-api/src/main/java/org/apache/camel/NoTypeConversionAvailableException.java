@@ -51,8 +51,7 @@ public class NoTypeConversionAvailableException extends CamelException {
     }
 
     /**
-     * Returns the required <tt>from</tt> type.
-     * Returns <tt>null</tt> if the provided value was null.
+     * Returns the required <tt>from</tt> type. Returns <tt>null</tt> if the provided value was null.
      */
     public Class<?> getFromType() {
         if (value != null) {
@@ -66,10 +65,11 @@ public class NoTypeConversionAvailableException extends CamelException {
      * Returns an error message for no type converter available.
      */
     public static String createMessage(Object value, Class<?> type) {
-        return "No type converter available to convert from type: " + (value != null ? value.getClass().getCanonicalName() : null)
-              + " to the required type: " + type.getCanonicalName() + " with value " + value;
+        return "No type converter available to convert from type: "
+               + (value != null ? value.getClass().getCanonicalName() : null)
+               + " to the required type: " + type.getCanonicalName() + " with value " + value;
     }
-    
+
     /**
      * Returns an error message for no type converter available with the cause.
      */

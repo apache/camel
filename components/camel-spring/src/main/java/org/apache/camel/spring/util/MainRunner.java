@@ -28,9 +28,8 @@ import org.springframework.beans.factory.InitializingBean;
 import static org.apache.camel.util.ObjectHelper.name;
 
 /**
- * A simple helper bean for running main classes from within the spring.xml
- * usually asynchronous in a background thread; which is useful for demos such
- * as running Swing programs in the same JVM.
+ * A simple helper bean for running main classes from within the spring.xml usually asynchronous in a background thread;
+ * which is useful for demos such as running Swing programs in the same JVM.
  */
 public class MainRunner implements InitializingBean, Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(MainRunner.class);
@@ -50,16 +49,17 @@ public class MainRunner implements InitializingBean, Runnable {
         try {
             runMethodWithoutCatchingExceptions();
         } catch (NoSuchMethodException e) {
-            LOG.error("Class: " + name(main) + " does not have a main method: " + e, e);
+            LOG.error("Class: {} does not have a main method: {}", name(main), e.getMessage(), e);
         } catch (IllegalAccessException e) {
-            LOG.error("Failed to run: " + this + ". Reason: " + e, e);
+            LOG.error("Failed to run: {}. Reason: {}", this, e.getMessage(), e);
         } catch (InvocationTargetException e) {
             Throwable throwable = e.getTargetException();
-            LOG.error("Failed to run: " + this + ". Reason: " + throwable, throwable);
+            LOG.error("Failed to run: {}. Reason: {}", this, throwable.getMessage(), throwable);
         }
     }
 
-    public void runMethodWithoutCatchingExceptions() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public void runMethodWithoutCatchingExceptions()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (delay > 0) {
             try {
                 Thread.sleep(delay);
@@ -71,7 +71,7 @@ public class MainRunner implements InitializingBean, Runnable {
         if (!Modifier.isStatic(method.getModifiers())) {
             throw new IllegalArgumentException("The main method is not static!: " + method);
         }
-        Object[] arguments = {getArgs()};
+        Object[] arguments = { getArgs() };
         method.invoke(null, arguments);
     }
 

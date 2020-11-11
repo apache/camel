@@ -19,7 +19,10 @@ package org.apache.camel.component.xslt;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XsltMessageTerminateTest extends ContextTestSupport {
 
@@ -50,8 +53,9 @@ public class XsltMessageTerminateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("file:src/test/data/?fileName=terminate.xml&noop=true&initialDelay=0&delay=10").to("xslt:org/apache/camel/component/xslt/terminate.xsl").to("log:foo")
-                    .to("mock:result");
+                from("file:src/test/data/?fileName=terminate.xml&noop=true&initialDelay=0&delay=10")
+                        .to("xslt:org/apache/camel/component/xslt/terminate.xsl").to("log:foo")
+                        .to("mock:result");
             }
         };
     }

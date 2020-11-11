@@ -31,7 +31,7 @@ public class LuceneQueryProducer extends DefaultProducer {
     File indexDirectory;
     int maxNumberOfHits;
     int totalHitsThreshold;
-    
+
     public LuceneQueryProducer(Endpoint endpoint, LuceneConfiguration config) throws Exception {
         super(endpoint);
         this.config = config;
@@ -39,7 +39,7 @@ public class LuceneQueryProducer extends DefaultProducer {
         analyzer = config.getAnalyzer();
         maxNumberOfHits = config.getMaxHits();
     }
-    
+
     @Override
     public void doStart() throws Exception {
         searcher = new LuceneSearcher();
@@ -55,19 +55,20 @@ public class LuceneQueryProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         Hits hits;
-        
+
         String phrase = exchange.getIn().getHeader("QUERY", String.class);
         String returnLuceneDocs = exchange.getIn().getHeader("RETURN_LUCENE_DOCS", String.class);
-        boolean isReturnLuceneDocs = (returnLuceneDocs != null && returnLuceneDocs.equalsIgnoreCase("true")) ? true : false;
+        boolean isReturnLuceneDocs = returnLuceneDocs != null && returnLuceneDocs.equalsIgnoreCase("true");
 
         if (phrase != null) {
             searcher.open(indexDirectory, analyzer);
-            hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, config.getLuceneVersion(), isReturnLuceneDocs);
+            hits = searcher.search(phrase, maxNumberOfHits, totalHitsThreshold, isReturnLuceneDocs);
         } else {
-            throw new IllegalArgumentException("SearchPhrase for LucenePhraseQuerySearcher not set. Set the Header value: QUERY");
-        }            
-        
-        exchange.getIn().setBody(hits);                           
+            throw new IllegalArgumentException(
+                    "SearchPhrase for LucenePhraseQuerySearcher not set. Set the Header value: QUERY");
+        }
+
+        exchange.getIn().setBody(hits);
     }
 
     public LuceneConfiguration getConfig() {

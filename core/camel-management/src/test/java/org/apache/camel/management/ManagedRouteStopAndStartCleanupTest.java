@@ -25,9 +25,10 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Extended test to see if mbeans is removed and stats are correct
@@ -54,7 +55,7 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // need a bit time to let JMX update
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -65,10 +66,10 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
 
         // should be 1 consumer and 2 processors
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
-        assertEquals("Should be 1 consumer", 1, set.size());
+        assertEquals(1, set.size(), "Should be 1 consumer");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals("Should be 2 processors", 2, set.size());
+        assertEquals(2, set.size(), "Should be 2 processors");
 
         // stop
         log.info(">>>>>>>>>>>>>>>>>> invoking stop <<<<<<<<<<<<<<<<<<<<<");
@@ -76,14 +77,14 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         log.info(">>>>>>>>>>>>>>>>>> invoking stop DONE <<<<<<<<<<<<<<<<<<<<<");
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+        assertEquals(ServiceStatus.Stopped.name(), state, "Should be stopped");
 
         // should be 0 consumer and 0 processor
         set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
-        assertEquals("Should be 0 consumer", 0, set.size());
+        assertEquals(0, set.size(), "Should be 0 consumer");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals("Should be 0 processor", 0, set.size());
+        assertEquals(0, set.size(), "Should be 0 processor");
 
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
@@ -105,14 +106,14 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         log.info(">>>>>>>>>>>>>>>>> invoking start DONE <<<<<<<<<<<<<<<<<<");
 
         state = (String) mbeanServer.getAttribute(on, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         // should be 1 consumer and 1 processor
         set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
-        assertEquals("Should be 1 consumer", 1, set.size());
+        assertEquals(1, set.size(), "Should be 1 consumer");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
-        assertEquals("Should be 2 processors", 2, set.size());
+        assertEquals(2, set.size(), "Should be 2 processors");
 
         // this time the file is consumed
         mock.assertIsSatisfied();

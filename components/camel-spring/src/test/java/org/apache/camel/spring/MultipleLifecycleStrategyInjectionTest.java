@@ -16,9 +16,11 @@
  */
 package org.apache.camel.spring;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test for LifecycleStrategy injection.
@@ -32,9 +34,7 @@ public class MultipleLifecycleStrategyInjectionTest extends SpringTestSupport {
 
     @Test
     public void testInjectedStrategy() throws Exception {
-        assertEquals(2, context.getLifecycleStrategies().size());
-        assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(0));
-        assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(1));
+        assertEquals(2, context.getLifecycleStrategies().stream().filter(s -> s instanceof DummyLifecycleStrategy).count());
     }
 
 }

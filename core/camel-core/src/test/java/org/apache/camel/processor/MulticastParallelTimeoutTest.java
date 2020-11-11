@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MulticastParallelTimeoutTest extends ContextTestSupport {
 
@@ -57,8 +57,8 @@ public class MulticastParallelTimeoutTest extends ContextTestSupport {
                         return oldExchange;
                     }
                 }).parallelProcessing().timeout(250).to("direct:a", "direct:b", "direct:c")
-                    // use end to indicate end of multicast route
-                    .end().to("mock:result");
+                        // use end to indicate end of multicast route
+                        .end().to("mock:result");
 
                 from("direct:a").delay(1000).to("mock:A").setBody(constant("A"));
 

@@ -30,13 +30,7 @@
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	
-    <broker:broker useJmx="false" persistent="false" brokerName="localhost">
-        <broker:transportConnectors>
-            <broker:transportConnector name="vm" uri="vm://localhost"/>
-        </broker:transportConnectors>
-    </broker:broker>
-
-	<import resource="classpath:spring-config/jms-applicationContext.xml" />
+    <import resource="classpath:spring-config/jms-applicationContext.xml" />
 
 	<endpoint xmlns="http://cxf.apache.org/jaxws"
 		id="org.apache.camel.itest.customerrelations.CustomerServiceV1"

@@ -50,12 +50,14 @@ public class CamelActivityImplementationFactory extends ActivityImplementationFa
         ActivityTypeExecutionOptions activityTypeExecutionOptions = configuration.getActivityTypeExecutionOptions() != null
                 ? configuration.getActivityTypeExecutionOptions() : new ActivityTypeExecutionOptions();
 
-        ActivityTypeRegistrationOptions activityTypeRegistrationOptions = configuration.getActivityTypeRegistrationOptions() != null
-                ? configuration.getActivityTypeRegistrationOptions() : new ActivityTypeRegistrationOptions();
+        ActivityTypeRegistrationOptions activityTypeRegistrationOptions
+                = configuration.getActivityTypeRegistrationOptions() != null
+                        ? configuration.getActivityTypeRegistrationOptions() : new ActivityTypeRegistrationOptions();
 
         DataConverter dataConverter = configuration.getDataConverter() != null
                 ? configuration.getDataConverter() : new JsonDataConverter();
 
-        return new CamelActivityImplementation(swfWorkflowConsumer, activityTypeRegistrationOptions, activityTypeExecutionOptions, dataConverter);
+        return new CamelActivityImplementation(
+                swfWorkflowConsumer, activityTypeRegistrationOptions, activityTypeExecutionOptions, dataConverter);
     }
 }

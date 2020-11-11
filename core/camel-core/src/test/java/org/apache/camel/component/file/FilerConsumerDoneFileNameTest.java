@@ -21,8 +21,11 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for writing done files
@@ -30,7 +33,7 @@ import org.junit.Test;
 public class FilerConsumerDoneFileNameTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/done");
         super.setUp();
@@ -56,15 +59,15 @@ public class FilerConsumerDoneFileNameTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done");
 
         assertMockEndpointsSatisfied();
-        oneExchangeDone.matchesMockWaitTime();
+        oneExchangeDone.matchesWaitTime();
 
         // done file should be deleted now
         File file = new File("target/data/done/done");
-        assertFalse("Done file should be deleted: " + file, file.exists());
+        assertFalse(file.exists(), "Done file should be deleted: " + file);
 
         // as well the original file should be moved to backup
         file = new File("target/data/done/.camel/hello.txt");
-        assertTrue("Original file should be moved: " + file, file.exists());
+        assertTrue(file.exists(), "Original file should be moved: " + file);
     }
 
     @Override

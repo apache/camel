@@ -50,7 +50,6 @@ public class TcpServerBindThread extends Thread {
         this.setName(String.format("%s - %s", this.getClass().getSimpleName(), endpointKey));
     }
 
-
     /**
      * Bind the TCP ServerSocket within the specified timeout.
      */
@@ -99,10 +98,12 @@ public class TcpServerBindThread extends Thread {
                     consumer.startAcceptThread(serverSocket);
                 } catch (BindException bindException) {
                     if (System.currentTimeMillis() > startTicks + consumer.getConfiguration().getBindTimeout()) {
-                        log.error("Failed to bind to address {} within timeout {}", socketAddress, consumer.getConfiguration().getBindTimeout(), bindException);
+                        log.error("Failed to bind to address {} within timeout {}", socketAddress,
+                                consumer.getConfiguration().getBindTimeout(), bindException);
                         break;
                     } else {
-                        log.warn("Failed to bind to address {} - retrying in {} milliseconds", socketAddress, consumer.getConfiguration().getBindRetryInterval());
+                        log.warn("Failed to bind to address {} - retrying in {} milliseconds", socketAddress,
+                                consumer.getConfiguration().getBindRetryInterval());
                         try {
                             Thread.sleep(consumer.getConfiguration().getBindRetryInterval());
                         } catch (InterruptedException interruptedEx) {

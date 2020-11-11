@@ -30,8 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} beans
- * in the {@link BeanManager}.
+ * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} beans in the {@link BeanManager}.
  */
 final class ContextScanRouteBuilderFinder {
 

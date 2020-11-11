@@ -26,10 +26,9 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.data.Stat;
 
 /**
- * <code>ZooKeeperMessage</code> is a {@link org.apache.camel.Message}
- * representing interactions with a ZooKeeper service. It contains a number of
- * optional Header Constants that are used by the Producer and consumer
- * mechanisms to finely control these interactions.
+ * <code>ZooKeeperMessage</code> is a {@link org.apache.camel.Message} representing interactions with a ZooKeeper
+ * service. It contains a number of optional Header Constants that are used by the Producer and consumer mechanisms to
+ * finely control these interactions.
  */
 public class ZooKeeperMessage extends DefaultMessage {
 
@@ -54,14 +53,15 @@ public class ZooKeeperMessage extends DefaultMessage {
     }
 
     public ZooKeeperMessage(CamelContext camelContext, String node, Stat statistics, WatchedEvent watchedEvent) {
-        this(camelContext, node, statistics, Collections.<String, Object>emptyMap(), watchedEvent);
+        this(camelContext, node, statistics, Collections.<String, Object> emptyMap(), watchedEvent);
     }
 
     public ZooKeeperMessage(CamelContext camelContext, String node, Stat statistics, Map<String, Object> headers) {
         this(camelContext, node, statistics, headers, null);
     }
 
-    public ZooKeeperMessage(CamelContext camelContext, String node, Stat statistics, Map<String, Object> headers, WatchedEvent watchedEvent) {
+    public ZooKeeperMessage(CamelContext camelContext, String node, Stat statistics, Map<String, Object> headers,
+                            WatchedEvent watchedEvent) {
         super(camelContext);
         setHeaders(headers);
         this.setHeader(ZOOKEEPER_NODE, node);

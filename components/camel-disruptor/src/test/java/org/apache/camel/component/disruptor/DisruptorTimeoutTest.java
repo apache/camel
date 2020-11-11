@@ -24,14 +24,19 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorTimeoutTest extends CamelTestSupport {
     private int timeout = 100;
 
     @Test
-    public void testDisruptorNoTimeout() throws Exception {
+    void testDisruptorNoTimeout() throws Exception {
         final MockEndpoint result = getMockEndpoint("mock:result");
         result.setExpectedMessageCount(1);
         final Future<String> out = template.asyncRequestBody("disruptor:foo", "World", String.class);
@@ -41,7 +46,7 @@ public class DisruptorTimeoutTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDisruptorTimeout() throws Exception {
+    void testDisruptorTimeout() throws Exception {
         final MockEndpoint result = getMockEndpoint("mock:result");
         result.setExpectedMessageCount(0);
 
@@ -54,8 +59,8 @@ public class DisruptorTimeoutTest extends CamelTestSupport {
             assertIsInstanceOf(CamelExecutionException.class, e.getCause());
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
 
-            final DisruptorEndpoint de = (DisruptorEndpoint)context.getRoute("disruptor").getEndpoint();
-            assertNotNull("Consumer endpoint cannot be null", de);
+            final DisruptorEndpoint de = (DisruptorEndpoint) context.getRoute("disruptor").getEndpoint();
+            assertNotNull(de, "Consumer endpoint cannot be null");
             //we can't remove the exchange from a Disruptor once it is published, but it should never reach the
             //mock:result endpoint because it should be filtered out by the DisruptorConsumer
             result.await(1, TimeUnit.SECONDS);
@@ -64,17 +69,17 @@ public class DisruptorTimeoutTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDisruptorTimeoutWithStoppedRoute() throws Exception {
+    void testDisruptorTimeoutWithStoppedRoute() throws Exception {
         context.getRouteController().stopRoute("disruptor");
         timeout = 500;
         testDisruptorTimeout();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("disruptor:foo").routeId("disruptor").to("mock:before").delay(250)
                         .transform(body().prepend("Bye ")).to("mock:result");
             }

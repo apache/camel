@@ -21,13 +21,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/movefile");
         super.setUp();
@@ -48,11 +48,12 @@ public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/movefile?initialDelay=0&delay=10&moveFailed=error").convertBodyTo(String.class).to("mock:foo").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        throw new IllegalArgumentException("Forced by unittest");
-                    }
-                });
+                from("file://target/data/movefile?initialDelay=0&delay=10&moveFailed=error").convertBodyTo(String.class)
+                        .to("mock:foo").process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                throw new IllegalArgumentException("Forced by unittest");
+                            }
+                        });
             }
         };
     }

@@ -17,12 +17,11 @@
 package org.apache.camel.component.velocity;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class VelocitySetHeaderTest extends CamelSpringTestSupport {
@@ -36,7 +35,7 @@ public class VelocitySetHeaderTest extends CamelSpringTestSupport {
         assertRespondsWith("orange", "I am an orange");
     }
 
-    protected void assertRespondsWith(final String value, String expectedBody) throws InvalidPayloadException, InterruptedException {
+    protected void assertRespondsWith(final String value, String expectedBody) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("fruit", value);
@@ -55,6 +54,5 @@ public class VelocitySetHeaderTest extends CamelSpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/velocity/camel-context.xml");
     }
-
 
 }

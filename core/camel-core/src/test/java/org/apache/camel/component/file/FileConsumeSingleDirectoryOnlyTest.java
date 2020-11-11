@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for consuming the single directory only.
@@ -29,7 +29,7 @@ import org.junit.Test;
 public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/data/singledirectoryonly");
         super.setUp();
@@ -40,7 +40,8 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader("file://target/data/singledirectoryonly/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader("file://target/data/singledirectoryonly/2008", "2008 Report", Exchange.FILE_NAME,
+                "report2008.txt");
         template.sendBodyAndHeader("file://target/data/singledirectoryonly", "Hello World", Exchange.FILE_NAME, "report.txt");
         template.sendBodyAndHeader("file://target/data/singledirectoryonly", "Bye World", Exchange.FILE_NAME, "report2.txt");
 
@@ -51,7 +52,8 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/singledirectoryonly/?recursive=false&delete=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/singledirectoryonly/?recursive=false&delete=true&initialDelay=0&delay=10")
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

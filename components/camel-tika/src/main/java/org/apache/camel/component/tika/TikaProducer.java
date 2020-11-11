@@ -55,16 +55,24 @@ public class TikaProducer extends DefaultProducer {
     private final Parser parser;
 
     private final Detector detector;
-    
+
     private final String encoding;
 
     public TikaProducer(TikaEndpoint endpoint) {
+        this(endpoint, null);
+    }
+
+    public TikaProducer(TikaEndpoint endpoint, Parser parser) {
         super(endpoint);
         this.tikaConfiguration = endpoint.getTikaConfiguration();
         this.encoding = this.tikaConfiguration.getTikaParseOutputEncoding();
         TikaConfig config = this.tikaConfiguration.getTikaConfig();
-        this.parser = new AutoDetectParser(config);
         this.detector = config.getDetector();
+        if (parser == null) {
+            this.parser = new AutoDetectParser(this.tikaConfiguration.getTikaConfig());
+        } else {
+            this.parser = parser;
+        }
     }
 
     @Override
@@ -72,39 +80,43 @@ public class TikaProducer extends DefaultProducer {
         TikaOperation operation = this.tikaConfiguration.getOperation();
         Object result;
         switch (operation) {
-        case detect:
-            result = doDetect(exchange);
-            break;
-        case parse:
-            result = doParse(exchange);
-            break;
-        default:
-            throw new IllegalArgumentException(String.format("Unknown operation %s", tikaConfiguration.getOperation()));
+            case detect:
+                result = doDetect(exchange);
+                break;
+            case parse:
+                result = doParse(exchange);
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("Unknown operation %s", tikaConfiguration.getOperation()));
         }
         // propagate headers
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        exchange.getMessage().setHeaders(exchange.getIn().getHeaders());
         // and set result
-        exchange.getOut().setBody(result);
+        exchange.getMessage().setBody(result);
     }
 
     private Object doDetect(Exchange exchange) throws IOException {
-        InputStream inputStream = exchange.getIn().getBody(InputStream.class);
-        Metadata metadata = new Metadata();
-        MediaType result = this.detector.detect(inputStream, metadata);
-        convertMetadataToHeaders(metadata, exchange);
+        MediaType result;
+        try (InputStream inputStream = exchange.getIn().getBody(InputStream.class)) {
+            Metadata metadata = new Metadata();
+            result = this.detector.detect(inputStream, metadata);
+            convertMetadataToHeaders(metadata, exchange);
+        }
         return result.toString();
     }
 
     private Object doParse(Exchange exchange)
             throws TikaException, IOException, SAXException, TransformerConfigurationException {
-        InputStream inputStream = exchange.getIn().getBody(InputStream.class);
+
         OutputStream result = new ByteArrayOutputStream();
-        ContentHandler contentHandler = getContentHandler(this.tikaConfiguration, result);
-        ParseContext context = new ParseContext();
-        context.set(Parser.class, this.parser);
-        Metadata metadata = new Metadata();
-        this.parser.parse(inputStream, contentHandler, metadata, context);
-        convertMetadataToHeaders(metadata, exchange);
+        try (InputStream inputStream = exchange.getIn().getBody(InputStream.class)) {
+            ContentHandler contentHandler = getContentHandler(this.tikaConfiguration, result);
+            ParseContext context = new ParseContext();
+            context.set(Parser.class, this.parser);
+            Metadata metadata = new Metadata();
+            this.parser.parse(inputStream, contentHandler, metadata, context);
+            convertMetadataToHeaders(metadata, exchange);
+        }
         return result;
     }
 
@@ -128,27 +140,29 @@ public class TikaProducer extends DefaultProducer {
 
         TikaParseOutputFormat outputFormat = configuration.getTikaParseOutputFormat();
         switch (outputFormat) {
-        case xml:
-            result = getTransformerHandler(outputStream, "xml", true);
-            break;
-        case text:
-            result = new BodyContentHandler(new OutputStreamWriter(outputStream, this.encoding));
-            break;
-        case textMain:
-            result = new BoilerpipeContentHandler(new OutputStreamWriter(outputStream, this.encoding));
-            break;
-        case html:
-            result = new ExpandedTitleContentHandler(getTransformerHandler(outputStream, "html", true));
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    String.format("Unknown format %s", tikaConfiguration.getTikaParseOutputFormat()));
+            case xml:
+                result = getTransformerHandler(outputStream, "xml", true);
+                break;
+            case text:
+                result = new BodyContentHandler(new OutputStreamWriter(outputStream, this.encoding));
+                break;
+            case textMain:
+                result = new BoilerpipeContentHandler(new OutputStreamWriter(outputStream, this.encoding));
+                break;
+            case html:
+                result = new ExpandedTitleContentHandler(getTransformerHandler(outputStream, "html", true));
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        String.format("Unknown format %s", tikaConfiguration.getTikaParseOutputFormat()));
         }
         return result;
     }
 
-    private TransformerHandler getTransformerHandler(OutputStream output, String method,
-            boolean prettyPrint) throws TransformerConfigurationException, UnsupportedEncodingException {
+    private TransformerHandler getTransformerHandler(
+            OutputStream output, String method,
+            boolean prettyPrint)
+            throws TransformerConfigurationException, UnsupportedEncodingException {
         SAXTransformerFactory factory = (SAXTransformerFactory) TransformerFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         TransformerHandler handler = factory.newTransformerHandler();

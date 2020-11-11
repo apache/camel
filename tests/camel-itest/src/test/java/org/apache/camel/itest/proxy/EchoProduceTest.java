@@ -18,30 +18,29 @@ package org.apache.camel.itest.proxy;
 
 import org.apache.camel.Produce;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
-/**
- *
- */
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class EchoProduceTest extends CamelTestSupport {
 
     @Produce("direct:start")
     private Echo echo;
 
     @Test
-    public void testEchoProduce() throws Exception {
+    void testEchoProduce() {
         String reply = echo.hello("Camel");
         assertEquals("Hello Camel", reply);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
-                    .transform().simple("Hello ${body}");
+                        .transform().simple("Hello ${body}");
             }
         };
     }

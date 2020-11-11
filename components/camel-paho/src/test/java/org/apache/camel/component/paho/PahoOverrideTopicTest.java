@@ -19,9 +19,9 @@ package org.apache.camel.component.paho;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class PahoOverrideTopicTest extends CamelTestSupport {
 
@@ -44,7 +44,7 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         broker.stop();
@@ -56,7 +56,7 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 PahoComponent paho = context.getComponent("paho", PahoComponent.class);
-                paho.setBrokerUrl("tcp://localhost:" + mqttPort);
+                paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
 
                 from("direct:test").to("paho:queue").log("Message sent");
 

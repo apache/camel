@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AggregationStrategyBeanAdapterWithHeadersTest extends ContextTestSupport {
 
@@ -44,14 +44,16 @@ public class AggregationStrategyBeanAdapterWithHeadersTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").aggregate(constant(true), AggregationStrategies.bean(appender, "appendWithHeaders")).completionSize(3).to("mock:result");
+                from("direct:start").aggregate(constant(true), AggregationStrategies.bean(appender, "appendWithHeaders"))
+                        .completionSize(3).to("mock:result");
             }
         };
     }
 
     public static final class MyBodyAppender {
 
-        public String appendWithHeaders(String existing, Map<String, Integer> oldHeaders, String next, Map<String, Integer> newHeaders) {
+        public String appendWithHeaders(
+                String existing, Map<String, Integer> oldHeaders, String next, Map<String, Integer> newHeaders) {
             if (next != null) {
                 Integer count = oldHeaders.get("count") + newHeaders.get("count");
                 oldHeaders.put("count", count);

@@ -24,13 +24,15 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.BindyType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
-public class BindyComplexCsvUnmarshallUnwrapSingleInstanceTest extends AbstractJUnit4SpringContextTests {
+@CamelSpringTest
+public class BindyComplexCsvUnmarshallUnwrapSingleInstanceTest {
 
     private static final Class<?> TYPE = org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
 
@@ -54,15 +56,15 @@ public class BindyComplexCsvUnmarshallUnwrapSingleInstanceTest extends AbstractJ
 
         // there should be 1 element in the list
         List list = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(List.class);
-        Assert.assertEquals(1, list.size());
+        assertEquals(1, list.size());
     }
 
     public static class ContextConfig extends RouteBuilder {
         @Override
         public void configure() {
             from("direct:start")
-                .unmarshal().bindy(BindyType.Csv, TYPE, false)
-                .to("mock:result");
+                    .unmarshal().bindy(BindyType.Csv, TYPE, false)
+                    .to("mock:result");
         }
     }
 }

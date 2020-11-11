@@ -18,7 +18,9 @@ package org.apache.camel.impl.event;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CamelEvent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EventNotifierExchangeSentParallelTest extends EventNotifierExchangeSentTest {
 
@@ -31,12 +33,12 @@ public class EventNotifierExchangeSentParallelTest extends EventNotifierExchange
 
         // wait for the message to be fully done using oneExchangeDone
         assertMockEndpointsSatisfied();
-        assertTrue(oneExchangeDone.matchesMockWaitTime());
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
         // stop Camel to let all the events complete
         context.stop();
 
-        assertTrue("Should be 11 or more, was: " + events.size(), events.size() >= 11);
+        assertTrue(events.size() >= 11, "Should be 11 or more, was: " + events.size());
 
         // we run parallel so just assert we got 6 sending and 6 sent events
         int sent = 0;
@@ -49,8 +51,8 @@ public class EventNotifierExchangeSentParallelTest extends EventNotifierExchange
             }
         }
 
-        assertTrue("There should be 5 or more, was " + sending, sending >= 5);
-        assertTrue("There should be 5 or more, was " + sent, sent >= 5);
+        assertTrue(sending >= 5, "There should be 5 or more, was " + sending);
+        assertTrue(sent >= 5, "There should be 5 or more, was " + sent);
     }
 
     @Override

@@ -34,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Acquires read lock to the given file using a marker file so other Camel consumers wont acquire the same file.
- * This is the default behavior in Camel 1.x.
+ * Acquires read lock to the given file using a marker file so other Camel consumers wont acquire the same file. This is
+ * the default behavior in Camel 1.x.
  */
 public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategy.class);
@@ -57,18 +57,20 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             String endpointPath = endpoint.getConfiguration().getDirectory();
 
             StopWatch watch = new StopWatch();
-            deleteLockFiles(file, endpoint.isRecursive(), endpointPath, endpoint.getFilter(), endpoint.getAntFilter(), excludePattern, includePattern);
+            deleteLockFiles(file, endpoint.isRecursive(), endpointPath, endpoint.getFilter(), endpoint.getAntFilter(),
+                    excludePattern, includePattern);
 
             // log anything that takes more than a second
             if (watch.taken() > 1000) {
-                LOG.info("Prepared on startup by deleting orphaned lock files from: {} took {} millis to complete.", dir, watch.taken());
+                LOG.info("Prepared on startup by deleting orphaned lock files from: {} took {} millis to complete.", dir,
+                        watch.taken());
             }
         }
     }
 
     @Override
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations,
-                                            GenericFile<File> file, Exchange exchange) throws Exception {
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
 
         if (!markerFile) {
             // if not using marker file then we assume acquired
@@ -89,22 +91,28 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     @Override
-    public void releaseExclusiveReadLockOnAbort(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnAbort(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         doReleaseExclusiveReadLock(operations, file, exchange);
     }
 
     @Override
-    public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnRollback(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         doReleaseExclusiveReadLock(operations, file, exchange);
     }
 
     @Override
-    public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
+    public void releaseExclusiveReadLockOnCommit(
+            GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         doReleaseExclusiveReadLock(operations, file, exchange);
     }
 
-    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations,
-                                              GenericFile<File> file, Exchange exchange) throws Exception {
+    protected void doReleaseExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         if (!markerFile) {
             // if not using marker file then nothing to release
             return;
@@ -150,9 +158,10 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         this.deleteOrphanLockFiles = deleteOrphanLockFiles;
     }
 
-    private static void deleteLockFiles(File dir, boolean recursive, String endpointPath,
-                                        GenericFileFilter filter, GenericFileFilter antFilter,
-                                        Pattern excludePattern, Pattern includePattern) {
+    private static void deleteLockFiles(
+            File dir, boolean recursive, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter,
+            Pattern excludePattern,
+            Pattern includePattern) {
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
             return;
@@ -165,14 +174,17 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
                 continue;
             }
 
-            // filter unwanted files and directories to avoid traveling everything
+            // filter unwanted files and directories to avoid traveling
+            // everything
             if (filter != null || antFilter != null || excludePattern != null || includePattern != null) {
 
                 File targetFile = file;
 
-                // if its a lock file then check if we accept its target file to know if we should delete the orphan lock file
+                // if its a lock file then check if we accept its target file to
+                // know if we should delete the orphan lock file
                 if (file.getName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
-                    String target = file.getName().substring(0, file.getName().length() - FileComponent.DEFAULT_LOCK_FILE_POSTFIX.length());
+                    String target = file.getName().substring(0,
+                            file.getName().length() - FileComponent.DEFAULT_LOCK_FILE_POSTFIX.length());
                     if (file.getParent() != null) {
                         targetFile = new File(file.getParent(), target);
                     } else {
@@ -196,18 +208,23 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     @SuppressWarnings("unchecked")
-    private static boolean acceptFile(File file, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter,
-                                      Pattern excludePattern, Pattern includePattern) {
+    private static boolean acceptFile(
+            File file, String endpointPath, GenericFileFilter filter, GenericFileFilter antFilter, Pattern excludePattern,
+            Pattern includePattern) {
         GenericFile gf = new GenericFile();
         gf.setEndpointPath(endpointPath);
         gf.setFile(file);
         gf.setFileNameOnly(file.getName());
         gf.setFileLength(file.length());
         gf.setDirectory(file.isDirectory());
-        // must use FileUtil.isAbsolute to have consistent check for whether the file is
-        // absolute or not. As windows do not consider \ paths as absolute where as all
-        // other OS platforms will consider \ as absolute. The logic in Camel mandates
-        // that we align this for all OS. That is why we must use FileUtil.isAbsolute
+        // must use FileUtil.isAbsolute to have consistent check for whether the
+        // file is
+        // absolute or not. As windows do not consider \ paths as absolute where
+        // as all
+        // other OS platforms will consider \ as absolute. The logic in Camel
+        // mandates
+        // that we align this for all OS. That is why we must use
+        // FileUtil.isAbsolute
         // to return a consistent answer for all OS platforms.
         gf.setAbsolute(FileUtil.isAbsolute(file));
         gf.setAbsoluteFilePath(file.getAbsolutePath());
@@ -239,7 +256,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             }
         }
 
-        // the following filters only works on files so allow any directory from this point
+        // the following filters only works on files so allow any directory from
+        // this point
         if (file.isDirectory()) {
             return true;
         }
@@ -251,12 +269,12 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         }
 
         // exclude take precedence over include
-        if (excludePattern != null)  {
+        if (excludePattern != null) {
             if (excludePattern.matcher(file.getName()).matches()) {
                 return false;
             }
         }
-        if (includePattern != null)  {
+        if (includePattern != null) {
             if (!includePattern.matcher(file.getName()).matches()) {
                 return false;
             }
@@ -270,10 +288,13 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     private static String asReadLockKey(GenericFile file, String key) {
-        // use the copy from absolute path as that was the original path of the file when the lock was acquired
-        // for example if the file consumer uses preMove then the file is moved and therefore has another name
+        // use the copy from absolute path as that was the original path of the
+        // file when the lock was acquired
+        // for example if the file consumer uses preMove then the file is moved
+        // and therefore has another name
         // that would no longer match
-        String path = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
+        String path
+                = file.getCopyFromAbsoluteFilePath() != null ? file.getCopyFromAbsoluteFilePath() : file.getAbsoluteFilePath();
         return path + "-" + key;
     }
 

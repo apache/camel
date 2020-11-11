@@ -25,7 +25,7 @@ public class MultipartReportEntity extends MultipartMimeEntity {
     public MultipartReportEntity(String charset,
                                  boolean isMainBody,
                                  String boundary)
-            throws HttpException {
+                                                  throws HttpException {
 
         super(ContentType.create(AS2MimeType.MULTIPART_REPORT, charset), isMainBody, boundary);
 
@@ -34,6 +34,5 @@ public class MultipartReportEntity extends MultipartMimeEntity {
     protected MultipartReportEntity() {
 
     }
-
 
 }

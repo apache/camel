@@ -22,40 +22,43 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.SubscriptionGatewayApiMethod;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionGatewayIntegrationTest.class);
-    private static final String PATH_PREFIX = BraintreeApiCollection.getCollection().getApiName(SubscriptionGatewayApiMethod.class).getName();
+    private static final String PATH_PREFIX
+            = BraintreeApiCollection.getCollection().getApiName(SubscriptionGatewayApiMethod.class).getName();
 
     // TODO provide parameter values for cancel
-    @Ignore
+    @Disabled
     @Test
     public void testCancel() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Result result = requestBody("direct://CANCEL", null);
 
-        assertNotNull("cancel result", result);
+        assertNotNull(result, "cancel result");
         LOG.debug("cancel: " + result);
     }
 
     // TODO provide parameter values for create
-    @Ignore
+    @Disabled
     @Test
     public void testCreate() throws Exception {
         // using com.braintreegateway.SubscriptionRequest message body for single parameter "request"
         final com.braintreegateway.Result result = requestBody("direct://CREATE", null);
 
-        assertNotNull("create result", result);
+        assertNotNull(result, "create result");
         LOG.debug("create: " + result);
     }
 
     // TODO provide parameter values for delete
-    @Ignore
+    @Disabled
     @Test
     public void testDelete() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -66,34 +69,34 @@ public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSup
 
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://DELETE", null, headers);
 
-        assertNotNull("delete result", result);
+        assertNotNull(result, "delete result");
         LOG.debug("delete: " + result);
     }
 
     // TODO provide parameter values for find
-    @Ignore
+    @Disabled
     @Test
     public void testFind() throws Exception {
         // using String message body for single parameter "id"
         final com.braintreegateway.Subscription result = requestBody("direct://FIND", null);
 
-        assertNotNull("find result", result);
+        assertNotNull(result, "find result");
         LOG.debug("find: " + result);
     }
 
     // TODO provide parameter values for retryCharge
-    @Ignore
+    @Disabled
     @Test
     public void testRetryCharge() throws Exception {
         // using String message body for single parameter "subscriptionId"
         final com.braintreegateway.Result result = requestBody("direct://RETRYCHARGE", null);
 
-        assertNotNull("retryCharge result", result);
+        assertNotNull(result, "retryCharge result");
         LOG.debug("retryCharge: " + result);
     }
 
     // TODO provide parameter values for retryCharge
-    @Ignore
+    @Disabled
     @Test
     public void testRetryChargeWithAmount() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -104,23 +107,23 @@ public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSup
 
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://RETRYCHARGE_1", null, headers);
 
-        assertNotNull("retryCharge result", result);
+        assertNotNull(result, "retryCharge result");
         LOG.debug("retryCharge: " + result);
     }
 
     // TODO provide parameter values for search
-    @Ignore
+    @Disabled
     @Test
     public void testSearch() throws Exception {
         // using com.braintreegateway.SubscriptionSearchRequest message body for single parameter "searchRequest"
         final com.braintreegateway.ResourceCollection result = requestBody("direct://SEARCH", null);
 
-        assertNotNull("search result", result);
+        assertNotNull(result, "search result");
         LOG.debug("search: " + result);
     }
 
     // TODO provide parameter values for update
-    @Ignore
+    @Disabled
     @Test
     public void testUpdate() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
@@ -131,7 +134,7 @@ public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSup
 
         final com.braintreegateway.Result result = requestBodyAndHeaders("direct://UPDATE", null, headers);
 
-        assertNotNull("update result", result);
+        assertNotNull(result, "update result");
         LOG.debug("update: " + result);
     }
 
@@ -141,28 +144,28 @@ public class SubscriptionGatewayIntegrationTest extends AbstractBraintreeTestSup
             public void configure() {
                 // test route for cancel
                 from("direct://CANCEL")
-                    .to("braintree://" + PATH_PREFIX + "/cancel?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/cancel?inBody=id");
                 // test route for create
                 from("direct://CREATE")
-                    .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
+                        .to("braintree://" + PATH_PREFIX + "/create?inBody=request");
                 // test route for delete
                 from("direct://DELETE")
-                    .to("braintree://" + PATH_PREFIX + "/delete");
+                        .to("braintree://" + PATH_PREFIX + "/delete");
                 // test route for find
                 from("direct://FIND")
-                    .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
+                        .to("braintree://" + PATH_PREFIX + "/find?inBody=id");
                 // test route for retryCharge
                 from("direct://RETRYCHARGE")
-                    .to("braintree://" + PATH_PREFIX + "/retryCharge?inBody=subscriptionId");
+                        .to("braintree://" + PATH_PREFIX + "/retryCharge?inBody=subscriptionId");
                 // test route for retryCharge
                 from("direct://RETRYCHARGE_1")
-                    .to("braintree://" + PATH_PREFIX + "/retryCharge");
+                        .to("braintree://" + PATH_PREFIX + "/retryCharge");
                 // test route for search
                 from("direct://SEARCH")
-                    .to("braintree://" + PATH_PREFIX + "/search?inBody=searchRequest");
+                        .to("braintree://" + PATH_PREFIX + "/search?inBody=searchRequest");
                 // test route for update
                 from("direct://UPDATE")
-                    .to("braintree://" + PATH_PREFIX + "/update");
+                        .to("braintree://" + PATH_PREFIX + "/update");
             }
         };
     }

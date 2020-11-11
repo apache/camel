@@ -24,8 +24,8 @@ import org.apache.zookeeper.data.Stat;
 import static java.lang.String.format;
 
 /**
- * <code>GetChildrenOperation</code> is a basic ZooKeeper operation used to
- * retrieve the list of children belonging to a given ZooKeeper node.
+ * <code>GetChildrenOperation</code> is a basic ZooKeeper operation used to retrieve the list of children belonging to a
+ * given ZooKeeper node.
  */
 public class GetChildrenOperation extends ZooKeeperOperation<List<String>> {
 

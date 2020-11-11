@@ -22,11 +22,11 @@ import java.sql.SQLException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -41,7 +41,8 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
     class MyAdviceWithRouteBuilder extends AdviceWithRouteBuilder {
         @Override
         public void configure() {
-            onException(SQLException.class).handled(true).transform(constant("Intercepted SQL!")).log("sending ${body}").to("mock:b");
+            onException(SQLException.class).handled(true).transform(constant("Intercepted SQL!")).log("sending ${body}")
+                    .to("mock:b");
 
             interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint().log("intercepted message").bean(new Processor() {
                 @Override
@@ -62,7 +63,7 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
         });
 
         RouteDefinition routeDefinition = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(routeDefinition, context, new MyAdviceWithRouteBuilder());
+        AdviceWith.adviceWith(routeDefinition, context, new MyAdviceWithRouteBuilder());
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(0);

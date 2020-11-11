@@ -1,0 +1,47 @@
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 525704899,
+      "message": {
+        "message_id": 180,
+        "from": {
+          "id": 1585844777,
+          "first_name": "John",
+          "last_name": "Doe"
+        },
+        "chat": {
+          "id": 158584478,
+          "first_name": "John",
+          "last_name": "Doe",
+          "type": "private"
+        },
+        "date": 1463479642,
+        "game": {
+          "title": "test_game",
+          "text": "game text",
+          "description": "test",
+          "photo": [
+            {
+              "file_id": "AgADBAADnrAxG1rhiVAsV1IghUpUwn4eqhsABAEAAwIAA20AA32sBQABFgQ",
+              "file_unique_id": "AQADfh6qGwAEfawFAAE",
+              "file_size": 2469,
+              "width": 320,
+              "height": 180
+            }
+          ]
+        },
+        "reply_markup": {
+          "inline_keyboard": [
+            [
+              {
+                "text": "Play test_game",
+                "callback_game": {}
+              }
+            ]
+          ]
+        }
+      }
+    }
+  ]
+}

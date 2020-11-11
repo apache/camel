@@ -24,23 +24,23 @@ import org.apache.cxf.jaxrs.client.Client;
  * A pluggable strategy for configuring the Camel CXF RS by using java code
  */
 public interface CxfRsConfigurer {
-    
+
     /**
      * Configure the CXF-RS Server/Client factory bean
      *
      * @param factoryBean the factory bean
      */
     void configure(AbstractJAXRSFactoryBean factoryBean);
-    
+
     /**
-     * Configure the CXF Client such as setting some parameters on the client conduit 
+     * Configure the CXF Client such as setting some parameters on the client conduit
      *
      * @param client the CXF client
      */
     void configureClient(Client client);
 
     /**
-     * Configure the CXF Server such as setting some parameters on the server destination 
+     * Configure the CXF Server such as setting some parameters on the server destination
      *
      * @param server the CXF server
      */

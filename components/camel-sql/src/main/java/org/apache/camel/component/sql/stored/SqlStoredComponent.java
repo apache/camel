@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.sql.DataSource;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,6 +30,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Component("sql-stored")
 public class SqlStoredComponent extends DefaultComponent {
 
+    @Metadata
     private DataSource dataSource;
 
     @Override
@@ -48,9 +50,10 @@ public class SqlStoredComponent extends DefaultComponent {
             // check if the registry contains a single instance of DataSource
             Set<DataSource> dataSources = getCamelContext().getRegistry().findByType(DataSource.class);
             if (dataSources.size() > 1) {
-                throw new IllegalArgumentException("Multiple DataSources found in the registry and no explicit configuration provided");
+                throw new IllegalArgumentException(
+                        "Multiple DataSources found in the registry and no explicit configuration provided");
             } else if (dataSources.size() == 1) {
-                target = dataSources.stream().findFirst().orElse(null);
+                target = dataSources.iterator().next();
             }
         }
         if (target == null) {

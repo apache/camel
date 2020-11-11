@@ -1,0 +1,30 @@
+[[lra-other]]
+= LRA Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-lra/src/main/docs/lra.adoc
+:docTitle: LRA
+:artifactId: camel-lra
+:description: Camel saga binding for Long-Running-Action framework
+:since: 2.21
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/lra.adoc[opts=optional]
+
+*Since Camel {since}*
+
+The LRA module provides bindings of the Saga EIP with any https://github.com/eclipse/microprofile-lra[MicroProfile compatible LRA Coordinator].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-lra</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+include::camel-spring-boot::page$lra-starter.adoc[]

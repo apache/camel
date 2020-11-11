@@ -16,24 +16,27 @@
  */
 package org.apache.camel.spring.postprocessor;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class PlainSpringCustomPostProcessorOnRouteBuilderTest extends Assert {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+public class PlainSpringCustomPostProcessorOnRouteBuilderTest {
 
     @Test
     public void testShouldProcessAnnotatedFields() {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/org/apache/camel/spring/postprocessor/plainSpringCustomPostProcessorOnRouteBuilderTest.xml");
-        assertNotNull("Context not created", context);
-        assertNotNull("Post processor not registered", context.getBeansOfType(MagicAnnotationPostProcessor.class));
+        ApplicationContext context = new ClassPathXmlApplicationContext(
+                "classpath:/org/apache/camel/spring/postprocessor/plainSpringCustomPostProcessorOnRouteBuilderTest.xml");
+        assertNotNull(context, "Context not created");
+        assertNotNull(context.getBeansOfType(MagicAnnotationPostProcessor.class), "Post processor not registered");
 
         TestPojo pojo = context.getBean("testPojo", TestPojo.class);
-        assertNotNull("Test pojo not registered", pojo);
+        assertNotNull(pojo, "Test pojo not registered");
 
-        assertEquals("Processor has not changed field value", "Changed Value", pojo.getTestValue());
+        assertEquals("Changed Value", pojo.getTestValue(), "Processor has not changed field value");
     }
 
 }

@@ -25,4 +25,8 @@ public class Jt400PgmCallException extends RuntimeCamelException {
     public Jt400PgmCallException(String message) {
         super(message);
     }
+
+    public Jt400PgmCallException(Exception e) {
+        super(e);
+    }
 }

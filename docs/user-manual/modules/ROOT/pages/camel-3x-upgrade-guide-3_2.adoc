@@ -1,0 +1,561 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.1 to 3.2
+
+=== JndiRegistry
+
+The deprecated class `org.apache.camel.impl.JndiRegistry` has been removed. The class `org.apache.camel.support.jndi.JndiBeanRepository` located in `org.apache.camel:camel-support` should be used instead.
+
+=== Rest Configuration
+
+The rest configuration has been simplified and there is now a single RestConfiguration instance (https://issues.apache.org/jira/browse/CAMEL-13844[CAMEL-13844]) per Camel Context.
+
+The following methods have been removed:
+
+* org.apache.camel.CamelContext#addRestConfiguration(RestConfiguration restConfiguration)
+* org.apache.camel.CamelContext#getRestConfiguration(String component, boolean defaultIfNotFound)
+* org.apache.camel.CamelContext#getRestConfigurations
+
+https://issues.apache.org/jira/browse/CAMEL-13844
+
+=== Camel Cloud
+
+The following `ServiceDiscovery` implementation has been removed: 
+
+* org.apache.camel.impl.cloud.CachingServiceDiscovery
+* org.apache.camel.impl.cloud.CachingServiceDiscoveryFactory
+
+https://issues.apache.org/jira/browse/CAMEL-14813
+
+=== Camel with Karaf and OSGi
+
+Camel on Apache Karaf / OSGi has been moved to its own project at: https://github.com/apache/camel-karaf
+
+The Maven dependencies has changed the groupid from `org.apache.camel` to `org.apache.camel.karaf`.
+
+For example the `camel-blueprint` would be changed from
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-blueprint</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-blueprint</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+The Camel Karaf features are the same as before, you can still install Camel in Karaf shell via:
+[source,text]
+----
+feature:repo-add camel 3.2.0
+feature:install camel
+----
+
+==== Other components involved
+
+- Camel-test-blueprint
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-test-blueprint</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-test-blueprint</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-test-karaf
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-test-karaf</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-test-karaf</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-eventadmin
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-eventadmin</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-eventadmin</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-kura
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-kura</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-kura</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-osgi-activator
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-osgi-activator</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-osgi-activator</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+- Camel-paxlogging
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-paxlogging</artifactId>
+  <version>3.1.0</version>
+</dependency>
+----
+
+To:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.karaf</groupId>
+  <artifactId>camel-paxlogging</artifactId>
+  <version>3.2.0</version>
+</dependency>
+----
+
+==== Introducing a camel-karaf-bom
+
+We introduce a camel-karaf-bom too, so the end-users should be able to have all of this dependencies easier:
+
+[source,xml]
+----
+    <dependencyManagement>
+        <dependencies>
+            <!-- Add Camel BOM -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Add Camel Karaf BOM -->
+            <dependency>
+                <groupId>org.apache.camel.karaf</groupId>
+                <artifactId>camel-karaf-bom</artifactId>
+                <version>${camel.karaf.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+----
+
+In this way you'll get both the boms and all the "goodies"
+
+=== camel-elytron
+
+Transitive dependencies from org.wildfly.security:wildfly-elytron were removed.
+
+=== camel-spark-rest
+
+This component has been removed. Use any of the other REST capable components, such as `camel-jetty`, `camel-netty-http`
+or `camel-undertow`.
+
+=== EIPs with cacheSize option
+
+The `cacheSize` option on EIPs has been improved to reduce memory usage when the cache is disabled by
+setting the value to -1. One of the optimizations is that new endpoints will not be added to the endpoint registry,
+but discarded after use. This avoids storing additional endpoints in the cache (memory) as the cache should be disabled (cacheSize=-1).
+
+See more details in the documentation for the `cacheSize` option on the EIPs.
+
+=== Configuring components via Java setters
+
+Configuring Camel components from plain Java code has changed in some components where they were using
+delegate setters for a nested configuration class. These delegates has been removed, to ensure configuration
+is more consistent and aligned with how endpoints is configured as well, and by using source code generated configurer classes.
+
+The following Camel components has been affected and changed on the component level:
+
+- camel-aws
+- camel-aws2
+- camel-consul
+- camel-etcd
+- camel-infinispan
+- camel-kafka
+- camel-servicenow
+- camel-ssh
+- camel-stomp
+- camel-xmlsecurity
+- camel-yammer
+
+This only affects if you are configuring these components using Java code or XML `<bean>` style.
+
+For example
+
+[source,java]
+----
+KafkaComponent kafka = new KafkaComponent();
+kafka.setBrokers("mybroker1:1234,mybroker2:1234");
+----
+
+Should now be:
+
+[source,java]
+----
+KafkaComponent kafka = new KafkaComponent();
+kafka.getConfiguration().setBrokers("mybroker1:1234,mybroker2:1234");
+----
+
+And in XML:
+
+[source,xml]
+----
+<bean id="kafka" class="org.apache.camel.component.kafka.KafkaComponent">
+  <property name="brokers" value="mybroker1:1234,mybroker2:1234"/>
+</bean>
+----
+
+Should now be:
+
+[source,xml]
+----
+<bean id="kafka" class="org.apache.camel.component.kafka.KafkaComponent">
+  <property name="configuration">
+    <property name="brokers" value="mybroker1:1234,mybroker2:1234"/>
+  </property>
+</bean>
+----
+
+=== Configuring components via Spring Boot auto configuration
+
+Configuring Camel spring boot components has changed its option keys to be flattened and have the `.configuration` prefix
+removed now.
+
+Before in application.properties
+
+[source,properties]
+----
+camel.component.kafka.configuration.brokers=mybroker1:1234,mybroker2:1234
+----
+
+Should now be
+[source,properties]
+----
+camel.component.kafka.brokers=mybroker1:1234,mybroker2:1234
+----
+
+This applies to all the Camel spring boot _starter_ JARs where basically `.configuration` should be removed.
+
+=== Configuring camel-activemq, camel-amqp and camel-stomp via Spring Boot auto configuration
+
+When configuring these components from spring boot auto-configuration then the URL for the broker was named `broker-u-r-l`
+in the spring boot auto configuration support. This has been renamed to `broker-url` and a few other options too.
+
+Before:
+
+[source,properties]
+----
+camel.component.activemq.broker-u-r-l=tcp://localhost:61616
+----
+
+After:
+
+[source,properties]
+----
+camel.component.activemq.broker-url=tcp://localhost:61616
+----
+
+=== camel-any23
+
+The XML DSL has changed for the `<configuration>` element, which now
+is flattened so the key/values should be configured on it directly:
+
+Before:
+[source,xml]
+----
+<dataFormats>
+  <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
+    <configuration>
+      <property key="any23.extraction.metadata.nesting" value="off" />
+      <property key="another-key" value="another-value" />
+    </configuration>
+    <extractors>html-head-title</extractors>
+  </any23>
+</dataFormats>
+----
+
+After:
+
+[source,xml]
+----
+<dataFormats>
+  <any23 id="any23" baseURI ="http://mock.foo/bar" outputFormat="TURTLE" >
+    <configuration key="any23.extraction.metadata.nesting" value="off"/>
+    <configuration key="another-key" value="another-value"/>
+    <extractors>html-head-title</extractors>
+  </any23>
+</dataFormats>
+----
+
+=== camel-avro
+
+The avro component and data format has been split up into two JARs. The dataformat is in `camel-avro` JAR
+and the component in `camel-avro-rpc` JAR.
+
+=== camel-infinispan
+
+Camel now requires endpoint URIs to include context-path which means
+the endpoint URI `infinispan` should be changed to `infinispan:current`.
+
+=== google-pubnub
+
+The google-pubnub component has been improved to use a new Java library and become faster.
+
+Support for Apache Karaf has been removed.
+
+=== camel-xstream
+
+The XML DSL has changed for the `<converters>`, `<alias>`, `implicitCollections`, and `omitFields` elements,
+which now is flattened so the key/values should be configured on it directly.
+
+Before:
+[source,xml]
+----
+<xstream id="xstream-1" mode="NO_REFERENCES"
+    permissions="-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseHistory,org.apache.camel.dataformat.xstream.PurchaseOrder">
+    <converters>
+        <converter class="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter" />
+    </converters>
+    <aliases>
+                <alias name="purchase-order" class="org.apache.camel.dataformat.xstream.PurchaseOrder" />
+    </aliases>
+    <implicitCollections>
+       <class name="org.apache.camel.dataformat.xstream.PurchaseHistory">
+          <field>history</field>
+       </class>
+    </implicitCollections>
+</xstream>
+----
+
+After:
+[source,xml]
+----
+<xstream id="xstream-1" mode="NO_REFERENCES"
+    permissions="-org.apache.camel.dataformat.xstream.*,org.apache.camel.dataformat.xstream.PurchaseHistory,org.apache.camel.dataformat.xstream.PurchaseOrder">
+    <converters key="purchase-converter" value="org.apache.camel.dataformat.xstream.XStreamConfigurationTest$PurchaseOrderConverter"/>
+    <aliases key="purchase-order" value="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
+    <implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history"/>
+</xstream>
+----
+
+Multiple values for `implicitCollections` and `omitFields` can be separated by comma
+
+For example:
+[source,xml]
+----
+<implicitCollections key="org.apache.camel.dataformat.xstream.PurchaseHistory" value="history,adress"/>
+----
+
+=== camel-weather
+
+This component has been upgraded from using Apache Http Client 3.x to 4.x and is therefore not fully backwards compatible.
+Some options for configurer and setting proxy is removed. You can however configure this directly on a custom `HttpClient` instance
+and set this on the `WeatherComponent` to use.
+
+=== Endpoint URIs without context path
+
+Previously Camel components may work by referring to their name only without a colon and context path (eg `log`)
+that for a few components would allow them to create an endpoint anyway.
+
+Now this is not allowed and Camel will throw an `NoSuchEndpointException`.
+
+An endpoint by its logical id can still be referred by the id only, eg
+[source,java]
+----
+Endpoint endpoint = camelContext.getEndpoint("myCoolEndpoint");
+----
+
+=== Error handling
+
+The context scope error handling has been modified a bit.  The processors in those `onException` and
+`onCompletion` are not shared between routes anymore.  This should have little effect in most cases.
+If there is a need to have a single set of processors involved (such as when using a loadbalancer or
+other stateful patterns), then an intermediary route needs to be used. The following excerpt:
+
+[source,java]
+----
+onException(Exception.class).handled(true)
+    .loadBalance().roundRobin().id("round")
+    .to("mock:error", "mock:error2", "mock:error3");
+----
+
+... needs to be rewritten as:
+
+[source,java]
+----
+onException(Exception.class).handled(true).to("direct:error");
+
+from("direct:error").loadBalance().roundRobin().id("round")
+    .to("mock:error", "mock:error2", "mock:error3");
+----
+
+=== camel-cluster
+
+The base support for cluster in `org.apache.camel.cluster` has been moved
+out of `camel-core-engine` into separate JAR named `camel-cluster`.
+
+=== Configuring milli seconds
+
+NOTE: If upgrading to Camel 3.4 or newer then do NOT do this because Camel 3.4 adds back support for this.
+
+Camel was using a type converter from `String` -> `long` that accepted
+a time pattern which allowed to configure long values such as `2s` for 2 seconds, e.g. `2000`.
+And more complex such as `8h15m` for 8 hours and 15 minutes.
+
+However as this was implemented as part of `String` -> `long` type conversion
+which then adds a little bit of overhead during routing, when converting from String to plain numbers.
+
+To make Camel routing engine as fast as possible this feature has been removed.
+
+For example a timer with a 5 second period
+
+[source,java]
+----
+from("timer:foo?period=5s")
+----
+
+Should now be specified as numeric only:
+
+[source,java]
+----
+from("timer:foo?period=5000")
+----
+
+=== Main in camel-spring
+
+The `org.apache.camel.spring.Main` class has been moved out of `camel-spring` JAR into its own
+JAR named `camel-spring-main`.
+
+=== Main in camel-test-blueprint
+
+The `org.apache.camel.test.blueprint.Main` class has been renamed to `org.apache.camel.test.blueprint.Main`
+and moved into its own `camel-test-blueprint` JAR.
+
+To use the camel-maven-plugin goal `camel:run` with OSGi plugin, you now need to add the following dependency
+to the classpath `org.apache.camel.karaf:camel-blueprint-main`.
+
+=== API changes
+
+==== DefaultComponent
+
+The deprecated method `preProcessUri` has been removed.
+
+==== CamelContext
+
+The method `getEndpoint` now throws `NoSuchEndpointException` directly instead of being wrapped
+within an `FailedToResolveEndpoint`.
+
+==== JavaUuidGenerator
+
+The `org.apache.camel.impl.engine.JavaUuidGenerator` class has been removed.
+Its a very slow UUID generator and its not recommended to be used.
+
+==== PropertiesComponent
+
+The `org.apache.camel.component.properties.PropertiesFunction` has been moved to `org.apache.camel.spi.PropertiesFunction`
+and its now possible to add custom functions on the `org.apache.camel.spi.PropertiesComponent` interface.
+
+====  JMX Connector configuration removed
+
+The JMX Connector configuration in camel-management has been https://issues.apache.org/jira/browse/CAMEL-14811[removed]
+in Camel 3.2.0. If you want to support the ability to use JMX with Camel remotely, then
+just use the default JVM JMX remote capabilities. For example, use the following (insecure)
+JVM settings to be able to manage Camel remotely on localhost, port 9913:
+
+[source]
+----
+-Dcom.sun.management.jmxremote.port=9913
+-Dcom.sun.management.jmxremote.authenticate=false
+-Dcom.sun.management.jmxremote.ssl=false
+-Djava.rmi.server.hostname=localhost
+----
+

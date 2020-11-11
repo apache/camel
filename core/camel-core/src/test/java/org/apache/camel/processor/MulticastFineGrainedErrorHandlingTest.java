@@ -18,7 +18,9 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
@@ -51,7 +53,8 @@ public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
-                from("direct:start").to("mock:a").multicast().stopOnException().to("mock:foo", "mock:bar").throwException(new IllegalArgumentException("Damn")).to("mock:baz");
+                from("direct:start").to("mock:a").multicast().stopOnException().to("mock:foo", "mock:bar")
+                        .throwException(new IllegalArgumentException("Damn")).to("mock:baz");
             }
         });
         context.start();

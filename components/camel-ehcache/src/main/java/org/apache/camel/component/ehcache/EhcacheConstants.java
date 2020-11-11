@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ehcache;
 
-
 public interface EhcacheConstants {
     String ACTION = "CamelEhcacheAction";
     String ACTION_HAS_RESULT = "CamelEhcacheActionHasResult";

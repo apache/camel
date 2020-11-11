@@ -22,7 +22,9 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MyBatisUpdateListTest extends MyBatisTestSupport {
 
@@ -52,7 +54,7 @@ public class MyBatisUpdateListTest extends MyBatisTestSupport {
 
         // there should be 2 rows now
         Integer rows = template.requestBody("mybatis:count?statementType=SelectOne", null, Integer.class);
-        assertEquals("There should be 2 rows", 2, rows.intValue());
+        assertEquals(2, rows.intValue(), "There should be 2 rows");
 
         Account james = template.requestBody("mybatis:selectAccountById?statementType=SelectOne", 123, Account.class);
         assertEquals("James", james.getFirstName());
@@ -72,8 +74,8 @@ public class MyBatisUpdateListTest extends MyBatisTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .to("mybatis:batchUpdateAccount?statementType=UpdateList")
-                    .to("mock:result");
+                        .to("mybatis:batchUpdateAccount?statementType=UpdateList")
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         };

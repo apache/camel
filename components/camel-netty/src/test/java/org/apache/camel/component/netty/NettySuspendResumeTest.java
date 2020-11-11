@@ -17,7 +17,10 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettySuspendResumeTest extends BaseNettyTest {
 
@@ -51,9 +54,9 @@ public class NettySuspendResumeTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty:tcp://localhost:{{port}}?sync=true").routeId("foo")
-                    .to("log:result")
-                    .to("mock:result")
-                    .transform(body().prepend("Bye "));
+                        .to("log:result")
+                        .to("mock:result")
+                        .transform(body().prepend("Bye "));
             }
         };
     }

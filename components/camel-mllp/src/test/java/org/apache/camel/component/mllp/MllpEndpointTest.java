@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for the MllpEndpoint class.
@@ -36,8 +36,8 @@ public class MllpEndpointTest {
     }
 
     /**
-     * Assert that the maxConcurrentConsumers property overridden in the MllpConfiguration
-     * object is correctly set on the endpoint instance.
+     * Assert that the maxConcurrentConsumers property overridden in the MllpConfiguration object is correctly set on
+     * the endpoint instance.
      */
     @Test
     public void testCreateEndpointWithCustomMaxConcurrentConsumers() {

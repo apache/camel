@@ -18,6 +18,7 @@ package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileOperations;
 
 /**
  * Used for renaming files.
@@ -27,9 +28,10 @@ public interface GenericFileRenamer<T> {
     /**
      * Renames the given file
      *
-     * @param exchange  the exchange
-     * @param file      the original file.
-     * @return the renamed file name.
+     * @param  operations the generic file operations
+     * @param  exchange   the exchange
+     * @param  file       the original file.
+     * @return            the renamed file name.
      */
-    GenericFile<T> renameFile(Exchange exchange, GenericFile<T> file);
+    GenericFile<T> renameFile(GenericFileOperations<T> operations, Exchange exchange, GenericFile<T> file);
 }

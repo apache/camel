@@ -19,9 +19,11 @@ package org.apache.camel.spring.config;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spring.SpringTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
 
@@ -32,7 +34,8 @@ public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
 
     @Test
     public void testSetAcceptableSchema() throws Exception {
-        DefaultPackageScanClassResolver resolver = (DefaultPackageScanClassResolver)context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
+        DefaultPackageScanClassResolver resolver
+                = (DefaultPackageScanClassResolver) context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
         assertNotNull(resolver);
     }
 

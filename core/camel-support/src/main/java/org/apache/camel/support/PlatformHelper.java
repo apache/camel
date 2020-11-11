@@ -34,8 +34,8 @@ public final class PlatformHelper {
      * Determine whether Camel is OSGi-aware. Current implementation of the method checks if the name of the
      * {@link CamelContext} matches the names of the known OSGi-aware contexts.
      *
-     * @param camelContext context to be tested against OSGi-awareness
-     * @return true if given context is OSGi-aware, false otherwise
+     * @param  camelContext context to be tested against OSGi-awareness
+     * @return              true if given context is OSGi-aware, false otherwise
      */
     public static boolean isOsgiContext(CamelContext camelContext) {
         String contextType = camelContext.getClass().getSimpleName();

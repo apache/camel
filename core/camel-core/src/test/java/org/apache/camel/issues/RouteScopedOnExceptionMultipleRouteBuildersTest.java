@@ -22,7 +22,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class RouteScopedOnExceptionMultipleRouteBuildersTest extends ContextTestSupport {
 
@@ -59,20 +59,22 @@ public class RouteScopedOnExceptionMultipleRouteBuildersTest extends ContextTest
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {new RouteBuilder() {
+        return new RouteBuilder[] { new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:bar").onException(IllegalArgumentException.class).handled(true).to("mock:handled").end().to("mock:bar")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:bar").onException(IllegalArgumentException.class).handled(true).to("mock:handled").end()
+                        .to("mock:bar")
+                        .throwException(new IllegalArgumentException("Damn"));
 
             }
         }, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
 
-                from("direct:foo").onException(Exception.class).handled(true).to("mock:exc").end().to("mock:foo").throwException(new IllegalArgumentException("Damn"));
+                from("direct:foo").onException(Exception.class).handled(true).to("mock:exc").end().to("mock:foo")
+                        .throwException(new IllegalArgumentException("Damn"));
 
             }
-        }};
+        } };
     }
 }

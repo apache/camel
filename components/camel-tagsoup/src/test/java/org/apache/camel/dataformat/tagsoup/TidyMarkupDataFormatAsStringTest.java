@@ -19,17 +19,22 @@ package org.apache.camel.dataformat.tagsoup;
 import java.io.File;
 import java.util.List;
 
-import org.w3c.dom.Node;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
-   
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     @Test
     public void testUnMarshalToStringOfXml() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
@@ -48,11 +53,11 @@ public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
         for (Exchange exchange : list) {
             try {
                 Message in = exchange.getIn();
-                Node tidyMarkup = in.getBody(Node.class);
+                String tidyMarkup = in.getBody(String.class);
 
                 log.debug("Received " + tidyMarkup);
-                assertNotNull("Should be able to convert received body to a string", tidyMarkup);
-                
+                assertNotNull(tidyMarkup, "Should be able to convert received body to a string");
+
             } catch (Exception e) {
                 fail("Failed to convert the resulting String to XML: " + e.getLocalizedMessage());
             }
@@ -63,7 +68,7 @@ public class TidyMarkupDataFormatAsStringTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").unmarshal().tidyMarkup().to("mock:result");
+                from("direct:start").unmarshal().tidyMarkup(String.class).to("mock:result");
             }
         };
     }

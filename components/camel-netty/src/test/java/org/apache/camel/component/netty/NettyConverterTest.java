@@ -19,10 +19,13 @@ package org.apache.camel.component.netty;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Utility test to verify netty type converter.
@@ -36,7 +39,7 @@ public class NettyConverterTest extends CamelTestSupport {
 
     private ByteBuf buf;
 
-    @Before
+    @BeforeEach
     public void startUp() {
         byte[] bytes = PAYLOAD.getBytes();
         buf = PooledByteBufAllocator.DEFAULT.buffer(bytes.length);
@@ -44,7 +47,7 @@ public class NettyConverterTest extends CamelTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() {
         buf.release();
     }

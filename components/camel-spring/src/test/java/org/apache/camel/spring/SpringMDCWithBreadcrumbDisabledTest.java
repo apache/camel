@@ -22,6 +22,9 @@ import org.slf4j.MDC;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 public class SpringMDCWithBreadcrumbDisabledTest extends SpringMDCTest {
 
     @Override
@@ -34,7 +37,7 @@ public class SpringMDCWithBreadcrumbDisabledTest extends SpringMDCTest {
         @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("route-a", MDC.get("camel.routeId"));
-            assertNull("Should not have breadcrumb", exchange.getIn().getHeader("camel.breadcrumbId"));
+            assertNull(exchange.getIn().getHeader("camel.breadcrumbId"), "Should not have breadcrumb");
         }
     }
 
@@ -43,7 +46,7 @@ public class SpringMDCWithBreadcrumbDisabledTest extends SpringMDCTest {
         @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("route-b", MDC.get("camel.routeId"));
-            assertNull("Should not have breadcrumb", exchange.getIn().getHeader("camel.breadcrumbId"));
+            assertNull(exchange.getIn().getHeader("camel.breadcrumbId"), "Should not have breadcrumb");
         }
     }
 

@@ -25,8 +25,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.async.MyAsyncComponent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AsyncLoopTest extends ContextTestSupport {
 
@@ -93,7 +95,7 @@ public class AsyncLoopTest extends ContextTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
 
@@ -117,7 +119,8 @@ public class AsyncLoopTest extends ContextTestSupport {
 
                 from("direct:d").loop(2).to("async:hello:camel?append=true").to("mock:result").end().to("mock:last");
 
-                from("direct:e").loop(10).to("async:hello:camel?append=true").process(loopTest).to("mock:result").end().to("mock:last");
+                from("direct:e").loop(10).to("async:hello:camel?append=true").process(loopTest).to("mock:result").end()
+                        .to("mock:last");
             }
         };
     }

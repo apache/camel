@@ -22,16 +22,18 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3EncryptionClient;
 import org.apache.camel.component.aws.s3.S3Configuration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Basic testing to ensure that the StandardAWSS3ClientImpl class is returning a
- * standard client that is capable of encryption given certain parameters. These
- * clients have been in existence for a long time, but haven't been properly
+ * Basic testing to ensure that the StandardAWSS3ClientImpl class is returning a standard client that is capable of
+ * encryption given certain parameters. These clients have been in existence for a long time, but haven't been properly
  * unit tested.
  */
 public class StandardAWSS3ClientImplTest {
@@ -41,27 +43,27 @@ public class StandardAWSS3ClientImplTest {
     public void standardAWSS3ClientImplNoEncryption() {
         S3ClientStandardImpl standardAWSS3Client = new S3ClientStandardImpl(getS3ConfigurationNoEncryption(), MAX_CONNECTIONS);
         AmazonS3 s3Client = standardAWSS3Client.getS3Client();
-        Assert.assertNotNull(s3Client);
-        Assert.assertFalse(s3Client instanceof AmazonS3EncryptionClient);
+        assertNotNull(s3Client);
+        assertFalse(s3Client instanceof AmazonS3EncryptionClient);
     }
 
     @Test
     public void standardAWSS3ClientImplUseEncryption() {
         S3ClientStandardImpl standardAWSS3Client = new S3ClientStandardImpl(getS3ConfigurationUseEncryption(), MAX_CONNECTIONS);
         AmazonS3 s3Client = standardAWSS3Client.getS3Client();
-        Assert.assertNotNull(s3Client);
-        Assert.assertTrue(s3Client instanceof AmazonS3EncryptionClient);
+        assertNotNull(s3Client);
+        assertTrue(s3Client instanceof AmazonS3EncryptionClient);
     }
 
     @Test
     public void standardAWSS3ClientImplWithProxy() {
         S3ClientStandardImpl standardAWSS3Client = new S3ClientStandardImpl(getS3ConfigurationUseProxy(), MAX_CONNECTIONS);
         AmazonS3 s3Client = standardAWSS3Client.getS3Client();
-        Assert.assertNotNull(s3Client);
-        Assert.assertFalse(s3Client instanceof AmazonS3EncryptionClient);
+        assertNotNull(s3Client);
+        assertFalse(s3Client instanceof AmazonS3EncryptionClient);
 
-        ClientConfiguration configuration = ((AmazonS3Client)s3Client).getClientConfiguration();
-        Assert.assertEquals(Protocol.HTTP, configuration.getProxyProtocol());
+        ClientConfiguration configuration = ((AmazonS3Client) s3Client).getClientConfiguration();
+        assertEquals(Protocol.HTTP, configuration.getProxyProtocol());
     }
 
     private S3Configuration getS3ConfigurationNoEncryption() {

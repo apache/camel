@@ -19,7 +19,7 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StringHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MethodCallStaticMethodTest extends ContextTestSupport {
 
@@ -38,7 +38,8 @@ public class MethodCallStaticMethodTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setHeader("foo", method(StringHelper.class, "removeLeadingAndEndingQuotes(${header.bar})")).to("mock:result");
+                from("direct:start").setHeader("foo", method(StringHelper.class, "removeLeadingAndEndingQuotes(${header.bar})"))
+                        .to("mock:result");
             }
         };
     }

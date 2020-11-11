@@ -19,13 +19,18 @@ package org.apache.camel.component.disruptor;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
     @Test
-    public void testDisruptorInOutChainedTimeout() throws Exception {
+    void testDisruptorInOutChainedTimeout() throws Exception {
         // time timeout after 2 sec should trigger a immediately reply
         final StopWatch watch = new StopWatch();
         try {
@@ -38,14 +43,14 @@ public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
         }
         final long delta = watch.taken();
 
-        assertTrue("Should be faster than 4000 millis, was: " + delta, delta < 4000);
+        assertTrue(delta < 4000, "Should be faster than 4000 millis, was: " + delta);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 errorHandler(noErrorHandler());
 
                 from("disruptor:a").to("mock:a")

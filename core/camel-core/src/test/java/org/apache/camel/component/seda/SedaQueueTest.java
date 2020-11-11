@@ -22,7 +22,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SedaQueueTest extends ContextTestSupport {
 
@@ -45,7 +47,8 @@ public class SedaQueueTest extends ContextTestSupport {
         template.sendBody("seda:array?queue=#arrayQueue", "Hello World");
 
         SedaEndpoint sedaEndpoint = resolveMandatoryEndpoint("seda:array?queue=#arrayQueue", SedaEndpoint.class);
-        assertTrue(sedaEndpoint.getQueue() instanceof ArrayBlockingQueue);
+        boolean b = sedaEndpoint.getQueue() instanceof ArrayBlockingQueue;
+        assertTrue(b);
     }
 
     @Override

@@ -24,9 +24,14 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BacklogDebuggerTest extends ManagementTestSupport {
 
@@ -44,16 +49,16 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -72,18 +77,19 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar" },
+                new String[] { "java.lang.String" });
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain our body", xml.contains("Hello World"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
+        assertTrue(xml.contains("Hello World"), "Should contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
 
         resetMocks();
         mock.expectedMessageCount(1);
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         assertMockEndpointsSatisfied();
 
@@ -107,17 +113,17 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -134,11 +140,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("foo", nodes.iterator().next());
 
         // update body and header
-        mbeanServer.invoke(on, "setMessageBodyOnBreakpoint", new Object[]{"foo", "Changed body"}, new String[]{"java.lang.String", "java.lang.Object"});
-        mbeanServer.invoke(on, "setMessageHeaderOnBreakpoint", new Object[]{"foo", "beer", "Carlsberg"}, new String[]{"java.lang.String", "java.lang.String", "java.lang.Object"});
+        mbeanServer.invoke(on, "setMessageBodyOnBreakpoint", new Object[] { "foo", "Changed body" },
+                new String[] { "java.lang.String", "java.lang.Object" });
+        mbeanServer.invoke(on, "setMessageHeaderOnBreakpoint", new Object[] { "foo", "beer", "Carlsberg" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.Object" });
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         // wait for breakpoint at bar
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -149,19 +157,21 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar" },
+                new String[] { "java.lang.String" });
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain our body", xml.contains("Changed body"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
-        assertTrue("Should contain our added header", xml.contains("<header key=\"beer\" type=\"java.lang.String\">Carlsberg</header>"));
+        assertTrue(xml.contains("Changed body"), "Should contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
+        assertTrue(xml.contains("<header key=\"beer\" type=\"java.lang.String\">Carlsberg</header>"),
+                "Should contain our added header");
 
         resetMocks();
         mock.expectedMessageCount(1);
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         assertMockEndpointsSatisfied();
 
@@ -185,17 +195,17 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -212,13 +222,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("foo", nodes.iterator().next());
 
         // update body and header
-        mbeanServer.invoke(on, "setMessageBodyOnBreakpoint", new Object[]{"foo", "444", "java.lang.Integer"},
-                new String[]{"java.lang.String", "java.lang.Object", "java.lang.String"});
-        mbeanServer.invoke(on, "setMessageHeaderOnBreakpoint", new Object[]{"foo", "beer", "123", "java.lang.Integer"},
-                new String[]{"java.lang.String", "java.lang.String", "java.lang.Object", "java.lang.String"});
+        mbeanServer.invoke(on, "setMessageBodyOnBreakpoint", new Object[] { "foo", "444", "java.lang.Integer" },
+                new String[] { "java.lang.String", "java.lang.Object", "java.lang.String" });
+        mbeanServer.invoke(on, "setMessageHeaderOnBreakpoint", new Object[] { "foo", "beer", "123", "java.lang.Integer" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.Object", "java.lang.String" });
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         // wait for breakpoint at bar
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -229,19 +239,21 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar" },
+                new String[] { "java.lang.String" });
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain our body", xml.contains("444"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
-        assertTrue("Should contain our added header", xml.contains("<header key=\"beer\" type=\"java.lang.Integer\">123</header>"));
+        assertTrue(xml.contains("444"), "Should contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
+        assertTrue(xml.contains("<header key=\"beer\" type=\"java.lang.Integer\">123</header>"),
+                "Should contain our added header");
 
         resetMocks();
         mock.expectedMessageCount(1);
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         assertMockEndpointsSatisfied();
 
@@ -265,17 +277,17 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -292,11 +304,12 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("foo", nodes.iterator().next());
 
         // update body and header
-        mbeanServer.invoke(on, "removeMessageBodyOnBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
-        mbeanServer.invoke(on, "removeMessageHeaderOnBreakpoint", new Object[]{"foo", "beer"}, new String[]{"java.lang.String", "java.lang.String"});
+        mbeanServer.invoke(on, "removeMessageBodyOnBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
+        mbeanServer.invoke(on, "removeMessageHeaderOnBreakpoint", new Object[] { "foo", "beer" },
+                new String[] { "java.lang.String", "java.lang.String" });
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         // wait for breakpoint at bar
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -307,19 +320,20 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar" },
+                new String[] { "java.lang.String" });
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should not contain our body", xml.contains("<body>[Body is null]</body>"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
-        assertFalse("Should not contain any headers", xml.contains("<header"));
+        assertTrue(xml.contains("<body>[Body is null]</body>"), "Should not contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
+        assertFalse(xml.contains("<header"), "Should not contain any headers");
 
         resetMocks();
         mock.expectedMessageCount(1);
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         assertMockEndpointsSatisfied();
 
@@ -343,16 +357,16 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -371,17 +385,18 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("bar", nodes.iterator().next());
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar" },
+                new String[] { "java.lang.String" });
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
 
         resetMocks();
         mock.expectedMessageCount(1);
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         assertMockEndpointsSatisfied();
 
@@ -405,29 +420,33 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // validate conditional breakpoint (mistake on purpose)
-        Object out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[]{"unknown", "${body contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String"});
+        Object out = mbeanServer.invoke(on, "validateConditionalBreakpoint",
+                new Object[] { "unknown", "${body contains 'Camel'" }, new String[] { "java.lang.String", "java.lang.String" });
         assertEquals("No language could be found for: unknown", out);
 
         // validate conditional breakpoint (mistake on purpose)
-        out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[]{"simple", "${body contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String"});
+        out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[] { "simple", "${body contains 'Camel'" },
+                new String[] { "java.lang.String", "java.lang.String" });
         assertNotNull(out);
         assertTrue(out.toString().startsWith("Invalid syntax ${body contains 'Camel'"));
 
         // validate conditional breakpoint (is correct)
-        out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[]{"simple", "${body} contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String"});
+        out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[] { "simple", "${body} contains 'Camel'" },
+                new String[] { "java.lang.String", "java.lang.String" });
         assertNull(out);
 
         // add breakpoint at bar
-        mbeanServer.invoke(on, "addConditionalBreakpoint", new Object[]{"bar", "simple", "${body} contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String", "java.lang.String"});
+        mbeanServer.invoke(on, "addConditionalBreakpoint", new Object[] { "bar", "simple", "${body} contains 'Camel'" },
+                new String[] { "java.lang.String", "java.lang.String", "java.lang.String" });
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -456,18 +475,19 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("bar", nodes.iterator().next());
 
         // the message should be ours
-        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[] { "bar" },
+                new String[] { "java.lang.String" });
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue("Should contain our body", xml.contains("Hello Camel"));
-        assertTrue("Should contain bar node", xml.contains("<toNode>bar</toNode>"));
+        assertTrue(xml.contains("Hello Camel"), "Should contain our body");
+        assertTrue(xml.contains("<toNode>bar</toNode>"), "Should contain bar node");
 
         resetMocks();
         mock.expectedMessageCount(1);
 
         // resume breakpoint
-        mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "resumeBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         assertMockEndpointsSatisfied();
 
@@ -491,16 +511,16 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -517,10 +537,10 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("foo", nodes.iterator().next());
 
         Boolean stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+        assertEquals(Boolean.FALSE, stepMode, "Should not be in step mode");
 
         // step breakpoint
-        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         // then at bar now
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -575,7 +595,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         // should no longer be in step mode
         stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+        assertEquals(Boolean.FALSE, stepMode, "Should not be in step mode");
     }
 
     @SuppressWarnings("unchecked")
@@ -592,16 +612,16 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
 
         // enable debugger
         mbeanServer.invoke(on, "enableDebugger", null, null);
 
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         // add breakpoint at bar
-        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "addBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -618,10 +638,10 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("foo", nodes.iterator().next());
 
         Boolean stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+        assertEquals(Boolean.FALSE, stepMode, "Should not be in step mode");
 
         // step breakpoint
-        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[] { "foo" }, new String[] { "java.lang.String" });
 
         // then at bar now
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -632,7 +652,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // step
-        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[] { "bar" }, new String[] { "java.lang.String" });
 
         // then at transform now
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -643,7 +663,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // step
-        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"transform"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[] { "transform" }, new String[] { "java.lang.String" });
 
         // then at cheese now
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -654,7 +674,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // step
-        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"cheese"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[] { "cheese" }, new String[] { "java.lang.String" });
 
         // then at result now
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -665,7 +685,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         });
 
         // step
-        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"result"}, new String[]{"java.lang.String"});
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[] { "result" }, new String[] { "java.lang.String" });
 
         // then the exchange is completed
         await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -676,7 +696,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         // should no longer be in step mode
         stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+        assertEquals(Boolean.FALSE, stepMode, "Should not be in step mode");
     }
 
     @Override

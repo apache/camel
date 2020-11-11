@@ -20,9 +20,14 @@ import org.apache.camel.Message;
 
 public interface ServiceNowParam {
     String getId();
+
     String getHeader();
+
     Class<?> getType();
+
     Object getDefaultValue(ServiceNowConfiguration configuration);
+
     Object getHeaderValue(Message message);
+
     Object getHeaderValue(Message message, ServiceNowConfiguration configuration);
 }

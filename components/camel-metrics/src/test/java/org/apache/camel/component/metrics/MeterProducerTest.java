@@ -20,23 +20,24 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METER_MARK;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MeterProducerTest {
 
     private static final String METRICS_NAME = "metrics.name";
@@ -61,12 +62,12 @@ public class MeterProducerTest {
 
     private InOrder inOrder;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         producer = new MeterProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, registry, meter, exchange, in);
-        when(registry.meter(METRICS_NAME)).thenReturn(meter);
-        when(exchange.getIn()).thenReturn(in);
+        lenient().when(registry.meter(METRICS_NAME)).thenReturn(meter);
+        lenient().when(exchange.getIn()).thenReturn(in);
     }
 
     @Test

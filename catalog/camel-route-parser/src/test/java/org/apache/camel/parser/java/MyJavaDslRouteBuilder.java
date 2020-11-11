@@ -21,22 +21,22 @@ import org.apache.camel.builder.RouteBuilder;
 public class MyJavaDslRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         // setProperty is also a model name but this should not be parsed as part of a Camel route
         System.setProperty("ENV", "src/test/resources/");
 
         from("direct:start").routeId("bar")
-            .log("I was here")
-            .setHeader("foo", constant("123"))
-            .choice()
-                .when(header("foo"))
-                    .to("log:a")
-                    .toD("log:a2")
-                .when().header("bar")
-                    .toD("log:b")
-                .otherwise()
-                    .log("none")
-            .end()
-            .to("mock:result");
+                .log("I was here")
+                .setHeader("foo", constant("123"))
+                .choice()
+                    .when(header("foo"))
+                        .to("log:a")
+                        .toD("log:a2")
+                    .when().header("bar")
+                        .toD("log:b")
+                    .otherwise()
+                        .log("none")
+                .end()
+                .to("mock:result");
     }
 }

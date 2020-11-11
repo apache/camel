@@ -27,12 +27,16 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.PropertiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>
  */
 @Component("cxf")
 public class CxfComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
 
     @Metadata(label = "advanced")
     private Boolean allowStreaming;
@@ -47,14 +51,15 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages
-     * into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases.
+     * This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming
+     * messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming
+     * in some cases.
      */
     public void setAllowStreaming(Boolean allowStreaming) {
         this.allowStreaming = allowStreaming;
     }
 
-    public Boolean isAllowStreaming() {
+    public Boolean getAllowStreaming() {
         return allowStreaming;
     }
 
@@ -72,9 +77,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having
-     * URI format cxf:bean:<i>beanId</i> or transport address endpoint having URI format
-     * cxf://<i>transportAddress</i>.
+     * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having URI format cxf:bean:<i>beanId</i> or
+     * transport address endpoint having URI format cxf://<i>transportAddress</i>.
      */
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -83,7 +87,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
 
         Object value = parameters.remove("setDefaultBus");
         if (value != null) {
-            log.warn("The option setDefaultBus is @deprecated, use name defaultBus instead");
+            LOG.warn("The option setDefaultBus is @deprecated, use name defaultBus instead");
             if (!parameters.containsKey("defaultBus")) {
                 parameters.put("defaultBus", value);
             }
@@ -101,20 +105,14 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
             }
 
             result = createCxfSpringEndpoint(beanId);
-            // need to check the CamelContext value
-            if (getCamelContext().equals(result.getCamelContext())) {
-                result.setCamelContext(getCamelContext());
-            }
             result.setBeanId(beanId);
 
         } else {
             // endpoint URI does not specify a bean
             result = createCxfEndpoint(remaining);
         }
-
-        if (result.getCamelContext() == null) {
-            result.setCamelContext(getCamelContext());
-        }
+        result.setComponent(this);
+        result.setCamelContext(getCamelContext());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
 
@@ -139,7 +137,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     @Override
-    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
+    protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters)
+            throws Exception {
         CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
         cxfEndpoint.updateEndpointUri(uri);
     }

@@ -19,12 +19,15 @@ package org.apache.camel.spring.interceptor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
  */
-public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackUsingTransactedTest extends TransactionalClientDataSourceTest {
+public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackUsingTransactedTest
+        extends TransactionalClientDataSourceTest {
 
     @Override
     @Test
@@ -38,7 +41,7 @@ public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackUsing
         assertMockEndpointsSatisfied();
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
-        assertEquals("Number of books", 1, count);
+        assertEquals(1, count, "Number of books");
     }
 
     @Override
@@ -49,14 +52,14 @@ public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackUsing
                         .handled(true).to("mock:error").transform(constant("Sorry")).markRollbackOnly();
 
                 from("direct:okay")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Elephant in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Elephant in Action")).bean("bookService");
 
                 from("direct:fail")
-                    .transacted()
-                    .setBody(constant("Tiger in Action")).bean("bookService")
-                    .setBody(constant("Donkey in Action")).bean("bookService");
+                        .transacted()
+                        .setBody(constant("Tiger in Action")).bean("bookService")
+                        .setBody(constant("Donkey in Action")).bean("bookService");
             }
         };
     }

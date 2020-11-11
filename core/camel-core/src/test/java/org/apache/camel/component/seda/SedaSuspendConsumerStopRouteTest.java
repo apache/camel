@@ -20,7 +20,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SedaSuspendConsumerStopRouteTest extends ContextTestSupport {
 
@@ -36,9 +38,9 @@ public class SedaSuspendConsumerStopRouteTest extends ContextTestSupport {
         seda.getConsumers().iterator().next().suspend();
 
         boolean stopped = context.getRouteController().stopRoute("foo", 2, TimeUnit.SECONDS, true);
-        assertTrue("Route should be stopped", stopped);
+        assertTrue(stopped, "Route should be stopped");
 
-        assertTrue("Route should be stopped", context.getRouteController().getRouteStatus("foo").isStopped());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStopped(), "Route should be stopped");
     }
 
     @Override

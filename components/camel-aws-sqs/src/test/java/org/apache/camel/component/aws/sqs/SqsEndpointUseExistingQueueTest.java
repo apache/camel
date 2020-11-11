@@ -34,8 +34,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
 
@@ -78,17 +78,20 @@ public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
         }
 
         @Override
-        public CreateQueueResult createQueue(CreateQueueRequest createQueueRequest) throws AmazonServiceException, AmazonClientException {
+        public CreateQueueResult createQueue(CreateQueueRequest createQueueRequest)
+                throws AmazonServiceException, AmazonClientException {
             throw new AmazonServiceException("forced exception for test if this method is called");
         }
 
         @Override
-        public SetQueueAttributesResult setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest) throws AmazonServiceException, AmazonClientException {
+        public SetQueueAttributesResult setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest)
+                throws AmazonServiceException, AmazonClientException {
             return new SetQueueAttributesResult();
         }
 
         @Override
-        public ReceiveMessageResult receiveMessage(ReceiveMessageRequest receiveMessageRequest) throws AmazonServiceException, AmazonClientException {
+        public ReceiveMessageResult receiveMessage(ReceiveMessageRequest receiveMessageRequest)
+                throws AmazonServiceException, AmazonClientException {
             ReceiveMessageResult result = new ReceiveMessageResult();
             List<Message> resultMessages = result.getMessages();
             Message message = new Message();

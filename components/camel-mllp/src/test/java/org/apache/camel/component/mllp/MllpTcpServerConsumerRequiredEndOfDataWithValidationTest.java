@@ -20,9 +20,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class MllpTcpServerConsumerRequiredEndOfDataWithValidationTest extends TcpServerConsumerEndOfDataAndValidationTestSupport {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+public class MllpTcpServerConsumerRequiredEndOfDataWithValidationTest
+        extends TcpServerConsumerEndOfDataAndValidationTestSupport {
 
     @Override
     boolean validatePayload() {
@@ -75,9 +78,10 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithValidationTest extends Tc
 
         NotifyBuilder done = new NotifyBuilder(context()).whenDone(1).create();
 
-        mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
+        mllpClient.sendFramedData(
+                Hl7TestMessageGenerator.generateMessage().replaceFirst("PID", "PID" + MllpProtocolConstants.END_OF_BLOCK));
 
-        assertFalse("Exchange should not have completed", done.matches(5, TimeUnit.SECONDS));
+        assertFalse(done.matches(5, TimeUnit.SECONDS), "Exchange should not have completed");
     }
 
     @Override
@@ -106,4 +110,3 @@ public class MllpTcpServerConsumerRequiredEndOfDataWithValidationTest extends Tc
     }
 
 }
-

@@ -52,26 +52,22 @@ public class AS2AsynchronousMDNManager {
     //
 
     /**
-     * Prefix for all AS2 HTTP Context Attributes used by the AS2 Asynchronous MDN
-     * Manager.
+     * Prefix for all AS2 HTTP Context Attributes used by the AS2 Asynchronous MDN Manager.
      */
     public static final String CAMEL_AS2_ASYNC_MDN_PREFIX = "camel-as2.async-mdn.";
 
     /**
-     * The HTTP Context Attribute containing the HTTP request message
-     * transporting the EDI message
+     * The HTTP Context Attribute containing the HTTP request message transporting the EDI message
      */
     public static final String HTTP_REQUEST = HttpCoreContext.HTTP_REQUEST;
 
     /**
-     * The HTTP Context Attribute containing the HTTP response message
-     * transporting the EDI message
+     * The HTTP Context Attribute containing the HTTP response message transporting the EDI message
      */
     public static final String HTTP_RESPONSE = HttpCoreContext.HTTP_RESPONSE;
 
     /**
-     * The HTTP Context Attribute containing the AS2 Connection used to send
-     * request message.
+     * The HTTP Context Attribute containing the AS2 Connection used to send request message.
      */
     public static final String AS2_CONNECTION = CAMEL_AS2_ASYNC_MDN_PREFIX + "as2-connection";
 
@@ -86,7 +82,7 @@ public class AS2AsynchronousMDNManager {
     public static final String ASYNCHRONOUS_MDN = CAMEL_AS2_ASYNC_MDN_PREFIX + "asynchronous-mdn";
 
     private HttpProcessor httpProcessor;
-    
+
     @SuppressWarnings("unused")
     private Certificate[] signingCertificateChain;
     @SuppressWarnings("unused")
@@ -107,33 +103,34 @@ public class AS2AsynchronousMDNManager {
                 .build();
     }
 
-    public HttpCoreContext send(DispositionNotificationMultipartReportEntity mdn, 
-                                String recipientDeliveryAddress)
+    public HttpCoreContext send(
+            DispositionNotificationMultipartReportEntity mdn,
+            String recipientDeliveryAddress)
             throws HttpException {
         Args.notNull(mdn, "mdn");
         Args.notNull(recipientDeliveryAddress, "recipientDeliveryAddress");
-        
+
         URI uri = null;
         try {
             URIBuilder uriBuilder = new URIBuilder(recipientDeliveryAddress);
             uri = uriBuilder.build();
-            
+
         } catch (URISyntaxException e) {
             throw new HttpException("Invalid recipient delivery address URL", e);
         }
-        
+
         String requestUri = buildRequestURI(uri);
-        
+
         DefaultBHttpClientConnection httpConnection = new DefaultBHttpClientConnection(8 * 1024);
-        
+
         try {
-            
+
             HttpHost targetHost = new HttpHost(uri.getHost(), uri.getPort(), uri.getScheme());
 
             // Create socket and bind to connection;
             Socket socket = new Socket(targetHost.getHostName(), targetHost.getPort());
             httpConnection.bind(socket);
-            
+
             // Add Context attributes
             HttpCoreContext httpContext = HttpCoreContext.create();
             httpContext.setTargetHost(targetHost);
@@ -144,7 +141,7 @@ public class AS2AsynchronousMDNManager {
             httpContext.setAttribute(HttpCoreContext.HTTP_REQUEST, request);
             mdn.setMainBody(true);
             EntityUtils.setMessageEntity(request, mdn);
-            
+
             HttpResponse response;
             try {
                 httpContext.setAttribute(AS2_CONNECTION, httpConnection);
@@ -167,7 +164,8 @@ public class AS2AsynchronousMDNManager {
         }
     }
 
-    private HttpResponse send(DefaultBHttpClientConnection httpConnection, HttpRequest request, HttpCoreContext httpContext) throws HttpException, IOException {
+    private HttpResponse send(DefaultBHttpClientConnection httpConnection, HttpRequest request, HttpCoreContext httpContext)
+            throws HttpException, IOException {
 
         // Execute Request
         HttpRequestExecutor httpexecutor = new HttpRequestExecutor();
@@ -177,7 +175,7 @@ public class AS2AsynchronousMDNManager {
 
         return response;
     }
-    
+
     private String buildRequestURI(URI uri) {
         StringBuilder sb = new StringBuilder();
         if (uri.getPath() != null) {

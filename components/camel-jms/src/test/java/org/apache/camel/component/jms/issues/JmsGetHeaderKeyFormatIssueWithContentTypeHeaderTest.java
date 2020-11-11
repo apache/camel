@@ -19,21 +19,21 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Unit test to verify that we can route a JMS message and do header lookup by name
- * without mutating it and that it can handle the default keyFormatStrategy with _HYPHEN_
- * in the key name 
+ * Unit test to verify that we can route a JMS message and do header lookup by name without mutating it and that it can
+ * handle the default keyFormatStrategy with _HYPHEN_ in the key name
  */
 public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTestSupport {
 
@@ -70,16 +70,14 @@ public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTe
             @Override
             public void configure() throws Exception {
                 from(uri)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
+                        .process(exchange -> {
                             assertEquals("text/plain", exchange.getIn().getHeader("Content-Type"));
 
                             // do not mutate it
                             JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                            assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
-                        }
-                    })
-                    .to("activemq:queue:copy", "mock:result");
+                            assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
+                        })
+                        .to("activemq:queue:copy", "mock:result");
 
                 from("activemq:queue:copy").to("mock:copy");
             }

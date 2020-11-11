@@ -23,12 +23,13 @@ import org.apache.camel.component.soroushbot.utils.CongestionException;
 import org.apache.camel.component.soroushbot.utils.MultiQueueWithTopicThreadPool;
 
 /**
- * create a thread pool and process each message using one of threads,
- * it is guaranteed that all message from a same person will processed by the same thread.
- * thread pool size could be configured using {@link SoroushBotEndpoint#getConcurrentConsumers()}
- * this consumer support both Sync and Async processors.
+ * create a thread pool and process each message using one of threads, it is guaranteed that all message from a same
+ * person will processed by the same thread. thread pool size could be configured using
+ * {@link SoroushBotEndpoint#getConcurrentConsumers()} this consumer support both Sync and Async processors.
  */
+//CHECKSTYLE:OFF
 public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
+
     /**
      * Since we want that every message from the same user to be processed one by one,
      * i.e. no 2 message from the same user execute concurrently,
@@ -51,15 +52,19 @@ public class SoroushBotMultiThreadConsumer extends SoroushBotAbstractConsumer {
                     if (endpoint.isSynchronous()) {
                         getProcessor().process(exchange);
                     } else {
-                        getAsyncProcessor().process(exchange, e -> {
-                        });
+                        getAsyncProcessor().process(exchange, doneSync -> {});
                     }
-                } catch (Exception ex) {
-                    log.error("internal error occurs", ex);
+                } catch (Exception e) {
+                    exchange.setException(e);
                 }
             });
         } catch (IllegalStateException ex) {
             throw new CongestionException(ex, exchange.getIn().getBody(SoroushMessage.class));
+        }
+
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException("Error processing exchange",
+                    exchange, exchange.getException());
         }
     }
 }

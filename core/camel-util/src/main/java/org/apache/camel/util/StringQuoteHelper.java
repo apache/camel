@@ -44,10 +44,10 @@ public final class StringQuoteHelper {
     /**
      * Wraps the text in the given quote text
      *
-     * @param text the text to wrap in quotes
-     * @param quote the quote text added to the prefix and postfix of the text
+     * @param  text  the text to wrap in quotes
+     * @param  quote the quote text added to the prefix and postfix of the text
      *
-     * @return the text wrapped in the given quotes
+     * @return       the text wrapped in the given quotes
      */
     public static String quote(String text, String quote) {
         return quote + text + quote;
@@ -56,15 +56,14 @@ public final class StringQuoteHelper {
     /**
      * Splits the input safely honoring if values is enclosed in quotes.
      * <p/>
-     * Though this method does not support double quoting values. A quoted value
-     * must start with the same start and ending quote, which is either a single
-     * quote or double quote value.
+     * Though this method does not support double quoting values. A quoted value must start with the same start and
+     * ending quote, which is either a single quote or double quote value.
      * <p/>
      * Will <i>trim</i> each splitted value by default.
      *
-     * @param input    the input
-     * @param separator the separator char to split the input, for example a comma.
-     * @return the input splitted, or <tt>null</tt> if the input is null.
+     * @param  input     the input
+     * @param  separator the separator char to split the input, for example a comma.
+     * @return           the input splitted, or <tt>null</tt> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator) {
         return splitSafeQuote(input, separator, true);
@@ -73,14 +72,13 @@ public final class StringQuoteHelper {
     /**
      * Splits the input safely honoring if values is enclosed in quotes.
      * <p/>
-     * Though this method does not support double quoting values. A quoted value
-     * must start with the same start and ending quote, which is either a single
-     * quote or double quote value.
-     * \
-     * @param input    the input
-     * @param separator the separator char to split the input, for example a comma.
-     * @param trim      whether to trim each splitted value
-     * @return the input splitted, or <tt>null</tt> if the input is null.
+     * Though this method does not support double quoting values. A quoted value must start with the same start and
+     * ending quote, which is either a single quote or double quote value. \
+     * 
+     * @param  input     the input
+     * @param  separator the separator char to split the input, for example a comma.
+     * @param  trim      whether to trim each splitted value
+     * @return           the input splitted, or <tt>null</tt> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator, boolean trim) {
         if (input == null) {
@@ -89,7 +87,7 @@ public final class StringQuoteHelper {
 
         if (input.indexOf(separator) == -1) {
             // no separator in data, so return single string with input as is
-            return new String[]{trim ? input.trim() : input};
+            return new String[] { trim ? input.trim() : input };
         }
 
         List<String> answer = new ArrayList<>();
@@ -104,7 +102,7 @@ public final class StringQuoteHelper {
             char prev = i > 0 ? input.charAt(i - 1) : 0;
             boolean isQuoting = singleQuoted || doubleQuoted;
 
-            if (!doubleQuoted &&  ch == '\'') {
+            if (!doubleQuoted && ch == '\'') {
                 if (singleQuoted && prev == ch && sb.length() == 0) {
                     // its an empty quote so add empty text
                     answer.add("");

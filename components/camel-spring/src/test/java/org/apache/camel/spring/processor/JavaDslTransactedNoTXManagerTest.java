@@ -19,7 +19,10 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -32,8 +35,8 @@ public class JavaDslTransactedNoTXManagerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transacted()
-                    .to("mock:result");
+                        .transacted()
+                        .to("mock:result");
             }
         });
         try {

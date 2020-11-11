@@ -21,8 +21,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.engine.InterceptSendToMockEndpointStrategy;
-import org.junit.Test;
+import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSupport {
 
@@ -69,7 +72,7 @@ public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSu
         assertNotNull(context.hasEndpoint("mock:direct:foo"));
         assertNotNull(context.hasEndpoint("mock:log:foo"));
 
-        assertTrue("Should be called", called);
+        assertTrue(called, "Should be called");
     }
 
     @Override

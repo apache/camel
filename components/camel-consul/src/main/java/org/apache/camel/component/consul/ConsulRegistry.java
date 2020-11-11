@@ -42,8 +42,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
 
 /**
- * Apache Camel Plug-in for Consul Registry (Objects stored under kv/key as well
- * as bookmarked under kv/[type]/key to avoid iteration over types)
+ * Apache Camel Plug-in for Consul Registry (Objects stored under kv/key as well as bookmarked under kv/[type]/key to
+ * avoid iteration over types)
  */
 public class ConsulRegistry implements Registry {
 
@@ -74,7 +74,7 @@ public class ConsulRegistry implements Registry {
     @Override
     public Object lookupByName(String key) {
         // Substitute $ character in key
-        key = key.replaceAll("\\$", "/");
+        key = key.replace('$', '/');
         kvClient = consul.keyValueClient();
 
         return kvClient.getValueAsString(key).map(result -> {
@@ -92,7 +92,8 @@ public class ConsulRegistry implements Registry {
         try {
             return type.cast(object);
         } catch (Throwable e) {
-            String msg = "Found bean: " + name + " in Consul Registry: " + this + " of type: " + object.getClass().getName() + "expected type was: " + type;
+            String msg = "Found bean: " + name + " in Consul Registry: " + this + " of type: " + object.getClass().getName()
+                         + "expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);
         }
     }
@@ -101,7 +102,7 @@ public class ConsulRegistry implements Registry {
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> result = new HashMap<>();
         // encode $ signs as they occur in subclass types
-        String keyPrefix = type.getName().replaceAll("\\$", "/");
+        String keyPrefix = type.getName().replace('$', '/');
         kvClient = consul.keyValueClient();
 
         List<String> keys;
@@ -117,7 +118,7 @@ public class ConsulRegistry implements Registry {
             for (String key : keys) {
                 // change bookmark back into actual key
                 key = key.substring(key.lastIndexOf('/') + 1);
-                obj = lookupByName(key.replaceAll("\\$", "/"));
+                obj = lookupByName(key.replace('$', '/'));
                 if (type.isInstance(obj)) {
                     result.put(key, type.cast(obj));
                 }
@@ -128,7 +129,7 @@ public class ConsulRegistry implements Registry {
 
     @Override
     public <T> Set<T> findByType(Class<T> type) {
-        String keyPrefix = type.getName().replaceAll("\\$", "/");
+        String keyPrefix = type.getName().replace('$', '/');
         Set<T> result = new HashSet<>();
 
         List<String> keys;
@@ -144,7 +145,7 @@ public class ConsulRegistry implements Registry {
             for (String key : keys) {
                 // change bookmark back into actual key
                 key = key.substring(key.lastIndexOf('/') + 1);
-                obj = lookupByName(key.replaceAll("\\$", "/"));
+                obj = lookupByName(key.replace('$', '/'));
                 if (type.isInstance(obj)) {
                     result.add(type.cast(obj));
                 }
@@ -180,7 +181,7 @@ public class ConsulRegistry implements Registry {
 
     public void put(String key, Object object) {
         // Substitute $ character in key
-        key = key.replaceAll("\\$", "/");
+        key = key.replace('$', '/');
         // create session to avoid conflicts
         // (not sure if that is safe enough, again)
         SessionClient sessionClient = consul.sessionClient();
@@ -195,14 +196,14 @@ public class ConsulRegistry implements Registry {
         if (lookupByName(key) != null) {
             remove(key);
         }
-        Object clone = ConsulRegistryUtils.clone((Serializable)object);
-        byte[] serializedObject = ConsulRegistryUtils.serialize((Serializable)clone);
+        Object clone = ConsulRegistryUtils.clone((Serializable) object);
+        byte[] serializedObject = ConsulRegistryUtils.serialize((Serializable) clone);
         // pre-encode due native encoding issues
         String value = ConsulRegistryUtils.encodeBase64(serializedObject);
         // store the actual class
         kvClient.putValue(key, value);
         // store just as a bookmark
-        kvClient.putValue(object.getClass().getName().replaceAll("\\$", "/") + "/" + key, "1");
+        kvClient.putValue(object.getClass().getName().replace('$', '/') + "/" + key, "1");
         kvClient.releaseLock(lockKey, sessionId);
     }
 
@@ -246,8 +247,8 @@ public class ConsulRegistry implements Registry {
         /**
          * Decodes using Base64.
          *
-         * @param base64String the {@link String} to decode
-         * @return a decoded data as a byte array
+         * @param  base64String the {@link String} to decode
+         * @return              a decoded data as a byte array
          */
         static byte[] decodeBase64(final String base64String) {
             return Base64.getDecoder().decode(base64String.getBytes(StandardCharsets.ISO_8859_1));
@@ -256,8 +257,8 @@ public class ConsulRegistry implements Registry {
         /**
          * Encodes using Base64.
          * 
-         * @param binaryData the data to encode
-         * @return an encoded data as a {@link String}
+         * @param  binaryData the data to encode
+         * @return            an encoded data as a {@link String}
          */
         static String encodeBase64(final byte[] binaryData) {
             final byte[] encoded = Base64.getEncoder().encode(binaryData);
@@ -267,8 +268,8 @@ public class ConsulRegistry implements Registry {
         /**
          * Deserializes an object out of the given byte array.
          *
-         * @param bytes the byte array to deserialize from
-         * @return an {@link Object} deserialized from the given byte array
+         * @param  bytes the byte array to deserialize from
+         * @return       an {@link Object} deserialized from the given byte array
          */
         static Object deserialize(byte[] bytes) {
             try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
@@ -281,8 +282,8 @@ public class ConsulRegistry implements Registry {
         /**
          * A deep serialization based clone
          *
-         * @param object the object to clone
-         * @return a deep clone
+         * @param  object the object to clone
+         * @return        a deep clone
          */
         static Object clone(Serializable object) {
             return deserialize(serialize(object));
@@ -291,11 +292,12 @@ public class ConsulRegistry implements Registry {
         /**
          * Serializes the given {@code serializable} using Java Serialization
          * 
-         * @param serializable
-         * @return the serialized object as a byte array
+         * @param  serializable
+         * @return              the serialized object as a byte array
          */
         static byte[] serialize(Serializable serializable) {
-            try (ByteArrayOutputStream baos = new ByteArrayOutputStream(512); ObjectOutputStream out = new ObjectOutputStream(baos)) {
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+                 ObjectOutputStream out = new ObjectOutputStream(baos)) {
                 out.writeObject(serializable);
                 return baos.toByteArray();
             } catch (IOException e) {

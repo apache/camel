@@ -16,63 +16,36 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.AsyncCallback;
-
 /**
  * SPI to plugin different reactive engines in the Camel routing engine.
  */
 public interface ReactiveExecutor {
 
     /**
-     * Schedules the task to be run
-     *
-     * @param runnable    the task
+     * Service factory key.
      */
-    default void schedule(Runnable runnable) {
-        schedule(runnable, null);
-    }
+    String FACTORY = "reactive-executor";
 
     /**
-     * Schedules the task to be run
+     * Schedules the task to be run (fairly)
      *
-     * @param runnable    the task
-     * @param description a human readable description for logging purpose
+     * @param runnable the task
      */
-    void schedule(Runnable runnable, String description);
+    void schedule(Runnable runnable);
 
     /**
      * Schedules the task to be prioritized and run asap
      *
-     * @param runnable    the task
+     * @param runnable the task
      */
-    default void scheduleMain(Runnable runnable) {
-        scheduleMain(runnable, null);
-    }
+    void scheduleMain(Runnable runnable);
 
     /**
-     * Schedules the task to be prioritized and run asap
+     * Schedules the task to run synchronously (current thread)
      *
-     * @param runnable    the task
-     * @param description a human readable description for logging purpose
+     * @param runnable the task
      */
-    void scheduleMain(Runnable runnable, String description);
-
-    /**
-     * Schedules the task to run synchronously
-     *
-     * @param runnable    the task
-     */
-    default void scheduleSync(Runnable runnable) {
-        scheduleSync(runnable, null);
-    }
-
-    /**
-     * Schedules the task to run synchronously
-     *
-     * @param runnable    the task
-     * @param description a human readable description for logging purpose
-     */
-    void scheduleSync(Runnable runnable, String description);
+    void scheduleSync(Runnable runnable);
 
     /**
      * Executes the next task (if supported by the reactive executor implementation)
@@ -80,25 +53,5 @@ public interface ReactiveExecutor {
      * @return true if a task was executed or false if no more pending tasks
      */
     boolean executeFromQueue();
-
-    /**
-     * Schedules the callback to be run
-     *
-     * @param callback    the callable
-     */
-    default void callback(AsyncCallback callback) {
-        schedule(new Runnable() {
-
-            @Override
-            public void run() {
-                callback.done(false);
-            }
-
-            @Override
-            public String toString() {
-                return "Callback[" + callback + "]";
-            }
-        });
-    }
 
 }

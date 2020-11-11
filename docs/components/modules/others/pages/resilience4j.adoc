@@ -1,0 +1,29 @@
+[[resilience4j-other]]
+= Resilience4j Component
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: components/camel-resilience4j/src/main/docs/resilience4j.adoc
+:docTitle: Resilience4j
+:artifactId: camel-resilience4j
+:description: Circuit Breaker EIP using Resilience4j
+:since: 3.0
+:supportLevel: Stable
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/others/resilience4j.adoc[opts=optional]
+
+*Since Camel {since}*
+
+This component supports the Circuit Breaker EIP with the Resilience4j library.
+
+For more details see the Circuit Breaker EIP documentation.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-resilience4j</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----

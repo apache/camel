@@ -17,10 +17,13 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.reifier.RouteReifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -30,24 +33,26 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
     @Test
     public void testNoErrorHandler() throws Exception {
         try {
-            RouteReifier.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
+            AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     errorHandler(defaultErrorHandler());
 
-                    interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint().throwException(new IllegalArgumentException("Forced"));
+                    interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint()
+                            .throwException(new IllegalArgumentException("Forced"));
                 }
             });
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.", e.getMessage());
+            assertEquals("You can not advice with error handlers. Remove the error handlers from the route builder.",
+                    e.getMessage());
         }
     }
 
     @Test
     public void testNoExtraRoutes() throws Exception {
         try {
-            RouteReifier.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
+            AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     from("direct:foo").to("mock:foo");
@@ -56,7 +61,9 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
             });
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("You can only advice from a RouteBuilder which has no existing routes. Remove all routes from the route builder.", e.getMessage());
+            assertEquals(
+                    "You can only advice from a RouteBuilder which has no existing routes. Remove all routes from the route builder.",
+                    e.getMessage());
         }
     }
 

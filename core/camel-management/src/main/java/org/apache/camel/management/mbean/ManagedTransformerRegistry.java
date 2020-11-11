@@ -94,11 +94,14 @@ public class ManagedTransformerRegistry extends ManagedService implements Manage
                 DataType from = transformer.getFrom();
                 DataType to = transformer.getTo();
                 String desc = transformer.toString();
-                boolean fromStatic = scheme != null ? transformerRegistry.isStatic(scheme) : transformerRegistry.isStatic(from, to);
-                boolean fromDynamic = scheme != null ? transformerRegistry.isDynamic(scheme) : transformerRegistry.isDynamic(from, to);
+                boolean fromStatic
+                        = scheme != null ? transformerRegistry.isStatic(scheme) : transformerRegistry.isStatic(from, to);
+                boolean fromDynamic
+                        = scheme != null ? transformerRegistry.isDynamic(scheme) : transformerRegistry.isDynamic(from, to);
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"scheme", "from", "to", "static", "dynamic", "description"},
-                                                              new Object[]{scheme, from.toString(), to.toString(), fromStatic, fromDynamic, desc});
+                CompositeData data = new CompositeDataSupport(
+                        ct, new String[] { "scheme", "from", "to", "static", "dynamic", "description" },
+                        new Object[] { scheme, from.toString(), to.toString(), fromStatic, fromDynamic, desc });
                 answer.put(data);
             }
             return answer;

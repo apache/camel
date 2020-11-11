@@ -18,7 +18,10 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileInvalidStartingPathTest extends ContextTestSupport {
 
@@ -34,7 +37,8 @@ public class FileInvalidStartingPathTest extends ContextTestSupport {
 
     @Test
     public void testValidStartingPath() {
-        context.getEndpoint("file://target/path/?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt");
+        context.getEndpoint(
+                "file://target/path/?fileName=${date:now:yyyyMMdd}/${in.header.messageType}-${date:now:hhmmss}.txt");
     }
 
 }

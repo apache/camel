@@ -18,23 +18,23 @@ package org.apache.camel.parser.helper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.JSonSchemaHelper;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelNodeDetailsFactory;
+import org.apache.camel.tooling.model.JsonMapper;
 
 public final class CamelXmlTreeParserHelper {
 
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
-    public List<CamelNodeDetails> parseCamelRouteTree(Node xmlNode, String routeId, CamelNodeDetails route,
-                                                             String baseDir, String fullyQualifiedFileName) {
+    public List<CamelNodeDetails> parseCamelRouteTree(
+            Node xmlNode, String routeId, CamelNodeDetails route,
+            String baseDir, String fullyQualifiedFileName) {
 
         CamelNodeDetailsFactory nodeFactory = CamelNodeDetailsFactory.newInstance();
         List<CamelNodeDetails> answer = new ArrayList<>();
@@ -44,22 +44,25 @@ public final class CamelXmlTreeParserHelper {
         // now parse the route node and build the correct model/tree structure of the EIPs
         // re-create factory as we rebuild the tree
         nodeFactory = CamelNodeDetailsFactory.newInstance();
-        CamelNodeDetails parent = route.getOutputs().get(0);
+        List<CamelNodeDetails> outputs = route.getOutputs();
+        if (outputs != null && !outputs.isEmpty()) {
+            CamelNodeDetails parent = outputs.get(0);
 
-        // we dont want the route element and only start with from
-        for (int i = 0; i < route.getOutputs().size(); i++) {
-            CamelNodeDetails node = route.getOutputs().get(i);
-            String name = node.getName();
+            // we dont want the route element and only start with from
+            for (int i = 0; i < outputs.size(); i++) {
+                CamelNodeDetails node = outputs.get(i);
+                String name = node.getName();
 
-            if ("from".equals(name)) {
-                CamelNodeDetails from = nodeFactory.copyNode(null, "from", node);
-                from.setFileName(fullyQualifiedFileName);
-                answer.add(from);
-                parent = from;
-            } else {
-                // add straight to parent
-                parent.addOutput(node);
-                node.setFileName(fullyQualifiedFileName);
+                if ("from".equals(name)) {
+                    CamelNodeDetails from = nodeFactory.copyNode(null, "from", node);
+                    from.setFileName(fullyQualifiedFileName);
+                    answer.add(from);
+                    parent = from;
+                } else {
+                    // add straight to parent
+                    parent.addOutput(node);
+                    node.setFileName(fullyQualifiedFileName);
+                }
             }
         }
 
@@ -70,6 +73,11 @@ public final class CamelXmlTreeParserHelper {
         CamelNodeDetails newNode = null;
 
         String name = node.getNodeName();
+        // clip namespace prefix if in use, eg camel:from => from
+        String prefix = node.getPrefix();
+        if (prefix != null && name.startsWith(prefix + ":")) {
+            name = name.substring(prefix.length() + 1);
+        }
 
         boolean isRoute = "route".equals(name) || "from".equals(name);
         // must be an eip model that has either input or output as we only want to track processors (also accept from)
@@ -105,32 +113,12 @@ public final class CamelXmlTreeParserHelper {
 
     private boolean hasOutput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelOutput(rows);
-    }
-
-    private static boolean isModelOutput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("output")) {
-                return "true".equals(row.get("output"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isOutput();
     }
 
     private boolean hasInput(String name) {
         String json = camelCatalog.modelJSonSchema(name);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-        return isModelInput(rows);
-    }
-
-    private static boolean isModelInput(List<Map<String, String>> rows) {
-        for (Map<String, String> row : rows) {
-            if (row.containsKey("input")) {
-                return "true".equals(row.get("input"));
-            }
-        }
-        return false;
+        return JsonMapper.generateEipModel(json).isInput();
     }
 
 }

@@ -34,7 +34,6 @@ public class GoogleMailComponentVerifierExtension extends DefaultComponentVerifi
         super(scheme);
     }
 
-
     // *********************************
     // Parameters validation
     // *********************************
@@ -42,8 +41,10 @@ public class GoogleMailComponentVerifierExtension extends DefaultComponentVerifi
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
 
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("applicationName", parameters))
-            .error(ResultErrorHelper.requiresOption("clientId", parameters)).error(ResultErrorHelper.requiresOption("clientSecret", parameters));
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+                .error(ResultErrorHelper.requiresOption("applicationName", parameters))
+                .error(ResultErrorHelper.requiresOption("clientId", parameters))
+                .error(ResultErrorHelper.requiresOption("clientSecret", parameters));
 
         return builder.build();
     }
@@ -65,9 +66,11 @@ public class GoogleMailComponentVerifierExtension extends DefaultComponentVerifi
                     configuration.getRefreshToken(), configuration.getAccessToken());
             client.users().getProfile((String) parameters.get("userId")).execute();
         } catch (Exception e) {
-            ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("gmail_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+            ResultErrorBuilder errorBuilder
+                    = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
+                            .detail("gmail_exception_message", e.getMessage())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                            .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         }

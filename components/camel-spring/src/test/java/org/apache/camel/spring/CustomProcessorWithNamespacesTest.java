@@ -26,10 +26,13 @@ import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.spring.example.MyProcessor;
 import org.apache.camel.util.IOHelper;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CustomProcessorWithNamespacesTest extends TestSupport {
     protected String body = "<hello>world!</hello>";
@@ -56,15 +59,15 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
 
         MyProcessor myProcessor = applicationContext.getBean("myProcessor", MyProcessor.class);
         List<Exchange> list = myProcessor.getExchanges();
-        assertEquals("Should have received a single exchange: " + list, 1, list.size());
+        assertEquals(1, list.size(), "Should have received a single exchange: " + list);
     }
 
     protected void assertValidContext(SpringCamelContext context) {
-        assertNotNull("No context found!", context);
+        assertNotNull(context, "No context found!");
 
         List<Route> routes = context.getRoutes();
-        assertNotNull("Should have some routes defined", routes);
-        assertEquals("Number of routes defined", 1, routes.size());
+        assertNotNull(routes, "Should have some routes defined");
+        assertEquals(1, routes.size(), "Number of routes defined");
         Route route = routes.get(0);
         log.debug("Found route: " + route);
     }
@@ -74,7 +77,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);

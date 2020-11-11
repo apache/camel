@@ -22,11 +22,11 @@ import com.amazonaws.services.simpledb.model.Item;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SelectCommandTest {
 
@@ -34,15 +34,15 @@ public class SelectCommandTest {
     private AmazonSDBClientMock sdbClient;
     private SdbConfiguration configuration;
     private Exchange exchange;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         sdbClient = new AmazonSDBClientMock();
         configuration = new SdbConfiguration();
         configuration.setDomainName("DOMAIN1");
         configuration.setConsistentRead(Boolean.TRUE);
         exchange = new DefaultExchange(new DefaultCamelContext());
-        
+
         command = new SelectCommand(sdbClient, configuration, exchange);
     }
 
@@ -51,20 +51,20 @@ public class SelectCommandTest {
     public void execute() {
         exchange.getIn().setHeader(SdbConstants.NEXT_TOKEN, "TOKEN1");
         exchange.getIn().setHeader(SdbConstants.SELECT_EXPRESSION, "SELECT NAME1 FROM DOMAIN1 WHERE NAME1 LIKE 'VALUE1'");
-        
+
         command.execute();
-        
+
         assertEquals(Boolean.TRUE, sdbClient.selectRequest.getConsistentRead());
         assertEquals("TOKEN1", sdbClient.selectRequest.getNextToken());
         assertEquals("SELECT NAME1 FROM DOMAIN1 WHERE NAME1 LIKE 'VALUE1'", sdbClient.selectRequest.getSelectExpression());
-        
+
         List<Item> items = exchange.getIn().getHeader(SdbConstants.ITEMS, List.class);
         assertEquals("TOKEN2", exchange.getIn().getHeader(SdbConstants.NEXT_TOKEN));
         assertEquals(2, items.size());
         assertEquals("ITEM1", items.get(0).getName());
         assertEquals("ITEM2", items.get(1).getName());
     }
-    
+
     @Test
     public void determineSelectExpression() {
         assertNull(this.command.determineSelectExpression());

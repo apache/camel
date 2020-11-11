@@ -21,7 +21,9 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.
@@ -50,7 +52,7 @@ public class ManagedRouteAddSecondRouteTest extends ManagementTestSupport {
 
         // should be started
         String state = (String) mbeanServer.getAttribute(route1, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
         log.info(">>>>>>>>>>>>>>>>> adding 2nd route <<<<<<<<<<<<<<");
         // add a 2nd route
@@ -67,7 +69,7 @@ public class ManagedRouteAddSecondRouteTest extends ManagementTestSupport {
 
         // should be started
         state = (String) mbeanServer.getAttribute(route2, "State");
-        assertEquals("Should be started", ServiceStatus.Started.name(), state);
+        assertEquals(ServiceStatus.Started.name(), state, "Should be started");
     }
 
 }

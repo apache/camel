@@ -45,25 +45,25 @@ class SyntheticBeanAttributes<T> {
 
     public Class<? extends Annotation> getScope() {
         return annotated.getAnnotations().stream()
-            .map(Annotation::annotationType)
-            .filter(manager::isScope)
-            .findAny()
-            .orElse(Dependent.class);
+                .map(Annotation::annotationType)
+                .filter(manager::isScope)
+                .findAny()
+                .orElse(Dependent.class);
     }
 
     public Set<Annotation> getQualifiers() {
         return annotated.getAnnotations().stream()
-            .filter(a -> manager.isQualifier(a.annotationType()))
-            .collect(toSet());
+                .filter(a -> manager.isQualifier(a.annotationType()))
+                .collect(toSet());
     }
 
     public String getName() {
         return annotated.getAnnotations().stream()
-            .filter(isAnnotationType(Named.class))
-            .map(Named.class::cast)
-            .map(Named::value)
-            .findFirst()
-            .orElse(null);
+                .filter(isAnnotationType(Named.class))
+                .map(Named.class::cast)
+                .map(Named::value)
+                .findFirst()
+                .orElse(null);
     }
 
     public Set<Class<? extends Annotation>> getStereotypes() {

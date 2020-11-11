@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.fusesource.stomp.client.BlockingConnection;
 import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.fusesource.hawtbuf.UTF8Buffer.utf8;
 import static org.fusesource.stomp.client.Constants.DESTINATION;

@@ -54,6 +54,6 @@ public class Relationships {
     @Override
     public String toString() {
         return "Relationships [subordinates=" + subordinates + ", superiors=" + superiors + ", colleagues=" + colleagues + "]";
-    }   
-    
+    }
+
 }

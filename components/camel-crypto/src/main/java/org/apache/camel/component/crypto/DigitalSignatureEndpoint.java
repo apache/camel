@@ -22,6 +22,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -32,14 +33,16 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
+ * Sign and verify exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "crypto", title = "Crypto (JCE)", syntax = "crypto:cryptoOperation:name", producerOnly = true, label = "security,transformation")
+@UriEndpoint(firstVersion = "2.3.0", scheme = "crypto", title = "Crypto (JCE)", syntax = "crypto:cryptoOperation:name",
+             producerOnly = true, category = { Category.SECURITY, Category.TRANSFORMATION })
 public class DigitalSignatureEndpoint extends DefaultEndpoint {
     @UriParam
     private DigitalSignatureConfiguration configuration;
 
-    public DigitalSignatureEndpoint(String uri, DigitalSignatureComponent component, DigitalSignatureConfiguration configuration) {
+    public DigitalSignatureEndpoint(String uri, DigitalSignatureComponent component,
+                                    DigitalSignatureConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -55,7 +58,8 @@ public class DigitalSignatureEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Digital Signatures endpoints are not meant to be consumed from. They are meant be used as an intermediate endpoints");
+        throw new UnsupportedOperationException(
+                "Digital Signatures endpoints are not meant to be consumed from. They are meant be used as an intermediate endpoints");
     }
 
     /**

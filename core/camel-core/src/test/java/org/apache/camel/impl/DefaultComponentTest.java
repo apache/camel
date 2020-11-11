@@ -27,8 +27,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for helper methods on the DefaultComponent.
@@ -60,7 +63,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         Map<String, Object> parameters = new HashMap<>();
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "size", Integer.class, 5);
-        assertEquals(value.intValue(), 5);
+        assertEquals(5, value.intValue());
     }
 
     @Test
@@ -77,7 +80,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         parameters.put("size", 200);
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "size", Integer.class);
-        assertEquals(value.intValue(), 200);
+        assertEquals(200, value.intValue());
     }
 
     @Test
@@ -86,7 +89,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         parameters.put("size", 200);
         MyComponent my = new MyComponent(this.context);
         Integer value = my.getAndRemoveParameter(parameters, "level", Integer.class, 4);
-        assertEquals(value.intValue(), 4);
+        assertEquals(4, value.intValue());
     }
 
     @Test
@@ -119,8 +122,10 @@ public class DefaultComponentTest extends ContextTestSupport {
         try {
             my.resolveAndRemoveReferenceParameter(parameters, "number", Integer.class);
         } catch (TypeConversionException ex) {
-            assertEquals("Error during type conversion from type: java.lang.String " + "to the required type: java.lang.Integer "
-                         + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"", ex.getMessage());
+            assertEquals(
+                    "Error during type conversion from type: java.lang.String " + "to the required type: java.lang.Integer "
+                         + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"",
+                    ex.getMessage());
         }
     }
 
@@ -263,17 +268,17 @@ public class DefaultComponentTest extends ContextTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected Registry createRegistry() throws Exception {
         Date bean1 = new Date(10);
         Date bean2 = new Date(11);
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("beginning", new Date(0));
-        jndiRegistry.bind("bean1", bean1);
-        jndiRegistry.bind("bean2", bean2);
-        jndiRegistry.bind("listBean", Arrays.asList(bean1, bean2));
-        jndiRegistry.bind("numeric", "12345");
-        jndiRegistry.bind("non-numeric", "abc");
-        return jndiRegistry;
+        Registry registry = super.createRegistry();
+        registry.bind("beginning", new Date(0));
+        registry.bind("bean1", bean1);
+        registry.bind("bean2", bean2);
+        registry.bind("listBean", Arrays.asList(bean1, bean2));
+        registry.bind("numeric", "12345");
+        registry.bind("non-numeric", "abc");
+        return registry;
     }
 
 }

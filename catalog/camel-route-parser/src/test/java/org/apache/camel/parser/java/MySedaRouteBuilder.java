@@ -18,21 +18,21 @@ package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
 
-public class MySedaRouteBuilder extends RouteBuilder  {
+public class MySedaRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("timer:hello?period={{timer.period}}").routeId("hello").routeGroup("hello-group")
-            .transform().method("myBean", "saySomething")
-            .filter(simple("${body} contains 'foo'"))
-                .to("seda:bar")
-            .end()
-            .to("stream:out");
+                .transform().method("myBean", "saySomething")
+                .filter(simple("${body} contains 'foo'"))
+                    .to("seda:bar")
+                .end()
+                .to("stream:out");
 
         from("seda:foo")
-            .to("log:foo");
+                .to("log:foo");
 
         from("seda:bar")
-            .to("log:bar");
+                .to("log:bar");
     }
 }

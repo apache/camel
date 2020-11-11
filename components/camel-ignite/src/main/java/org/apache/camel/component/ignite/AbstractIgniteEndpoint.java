@@ -22,7 +22,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.ignite.Ignite;
 
 /**
- * Base class for all Ignite endpoints. 
+ * Base class for all Ignite endpoints.
  */
 public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
 
@@ -38,11 +38,6 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     protected AbstractIgniteComponent igniteComponent() {
         if (component == null) {
             component = (AbstractIgniteComponent) getComponent();
@@ -55,40 +50,28 @@ public abstract class AbstractIgniteEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets whether to propagate the incoming body if the return type of the underlying 
-     * Ignite operation is void.
-     * 
-     * @return
+     * Gets whether to propagate the incoming body if the return type of the underlying Ignite operation is void.
      */
     public boolean isPropagateIncomingBodyIfNoReturnValue() {
         return propagateIncomingBodyIfNoReturnValue;
     }
 
     /**
-     * Sets whether to propagate the incoming body if the return type of the underlying 
-     * Ignite operation is void.
-     * 
-     * @param propagateIncomingBodyIfNoReturnValue
+     * Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void.
      */
     public void setPropagateIncomingBodyIfNoReturnValue(boolean propagateIncomingBodyIfNoReturnValue) {
         this.propagateIncomingBodyIfNoReturnValue = propagateIncomingBodyIfNoReturnValue;
     }
 
     /**
-     * Gets whether to treat Collections as cache objects or as Collections of items to 
-     * insert/update/compute, etc.
-     * 
-     * @return
+     * Gets whether to treat Collections as cache objects or as Collections of items to insert/update/compute, etc.
      */
     public boolean isTreatCollectionsAsCacheObjects() {
         return treatCollectionsAsCacheObjects;
     }
 
     /**
-     * Sets whether to treat Collections as cache objects or as Collections of items to 
-     * insert/update/compute, etc.
-     * 
-     * @param treatCollectionsAsCacheObjects
+     * Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute, etc.
      */
     public void setTreatCollectionsAsCacheObjects(boolean treatCollectionsAsCacheObjects) {
         this.treatCollectionsAsCacheObjects = treatCollectionsAsCacheObjects;

@@ -19,6 +19,7 @@ package org.apache.camel.component.fop;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,12 +32,14 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.fop.apps.FopFactory;
 
 /**
- * The fop component allows you to render a message into different output formats using Apache FOP.
+ * Render messages into PDF and other output formats supported by Apache FOP.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true,
+             category = { Category.FILE, Category.TRANSFORMATION })
 public class FopEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private FopOutputType outputType;
     @UriParam
     private String userConfigURL;
@@ -91,19 +94,33 @@ public class FopEndpoint extends DefaultEndpoint {
         this.fopFactory = fopFactory;
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (fopFactory == null && userConfigURL == null) {
+            fopFactory = FopFactory.newInstance(new URI("./"));
+        } else if (fopFactory != null && userConfigURL != null) {
+            throw new FopConfigException(
+                    "More than one configuration. "
+                                         + "You can configure fop either by config file or by supplying FopFactory but not both.");
+        } else if (fopFactory == null && userConfigURL != null) {
+            if (ResourceHelper.isClasspathUri(userConfigURL)) {
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), userConfigURL);
+                fopFactory = FopFactory.newInstance(new URI(userConfigURL), is);
+            }
+        }
+    }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (fopFactory == null && userConfigURL == null) {
-            fopFactory = FopFactory.newInstance(new URI("./"));
-        } else if (fopFactory != null && userConfigURL != null) {
-            throw new FopConfigException("More than one configuration. "
-                    + "You can configure fop either by config file or by supplying FopFactory but not both.");
-        } else if (fopFactory == null && userConfigURL != null) {
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), userConfigURL);
-            fopFactory = FopFactory.newInstance(new URI(userConfigURL), is);
+        if (fopFactory == null && userConfigURL != null) {
+            if (!ResourceHelper.isClasspathUri(userConfigURL)) {
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), userConfigURL);
+                fopFactory = FopFactory.newInstance(new URI(userConfigURL), is);
+            }
         }
     }
 }

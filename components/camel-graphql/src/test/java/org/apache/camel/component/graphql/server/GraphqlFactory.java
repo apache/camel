@@ -50,11 +50,11 @@ public final class GraphqlFactory {
 
     private static RuntimeWiring buildWiring() {
         return RuntimeWiring.newRuntimeWiring()
-            .type(newTypeWiring("Query").dataFetcher("books", GraphqlDataFetchers.getBooksDataFetcher()))
-            .type(newTypeWiring("Query").dataFetcher("bookById", GraphqlDataFetchers.getBookByIdDataFetcher()))
-            .type(newTypeWiring("Book").dataFetcher("author", GraphqlDataFetchers.getAuthorDataFetcher()))
-            .type(newTypeWiring("Mutation").dataFetcher("addBook", GraphqlDataFetchers.addBookDataFetcher()))
-            .build();
+                .type(newTypeWiring("Query").dataFetcher("books", GraphqlDataFetchers.getBooksDataFetcher()))
+                .type(newTypeWiring("Query").dataFetcher("bookById", GraphqlDataFetchers.getBookByIdDataFetcher()))
+                .type(newTypeWiring("Book").dataFetcher("author", GraphqlDataFetchers.getAuthorDataFetcher()))
+                .type(newTypeWiring("Mutation").dataFetcher("addBook", GraphqlDataFetchers.addBookDataFetcher()))
+                .build();
     }
 
 }

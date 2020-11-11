@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.asterisk;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -27,9 +28,10 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The asterisk component is used to interact with Asterisk PBX Server.
+ * Interact with Asterisk PBX Server.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", label = "voip")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name",
+             category = { Category.VOIP })
 public class AsteriskEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of component")
     @Metadata(required = true)
@@ -55,7 +57,8 @@ public class AsteriskEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
+        super.doInit();
         // Validate mandatory option
         ObjectHelper.notNull(hostname, "hostname");
         ObjectHelper.notNull(username, "username");

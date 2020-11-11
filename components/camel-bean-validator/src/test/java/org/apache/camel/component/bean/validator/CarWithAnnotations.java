@@ -27,7 +27,7 @@ public class CarWithAnnotations implements Car {
     @NotNull
     @Size(min = 5, max = 14, groups = OptionalChecks.class)
     private String licensePlate;
-    
+
     public CarWithAnnotations(String manufacturer, String licencePlate) {
         this.manufacturer = manufacturer;
         this.licensePlate = licencePlate;

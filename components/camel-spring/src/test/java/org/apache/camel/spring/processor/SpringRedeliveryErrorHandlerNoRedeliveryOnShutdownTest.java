@@ -25,6 +25,7 @@ public class SpringRedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends Rede
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringRedeliveryErrorHandlerNoRedeliveryOnShutdownTest.xml");
+        return createSpringCamelContext(this,
+                "org/apache/camel/spring/processor/SpringRedeliveryErrorHandlerNoRedeliveryOnShutdownTest.xml");
     }
 }

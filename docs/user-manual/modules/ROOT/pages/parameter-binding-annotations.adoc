@@ -10,7 +10,7 @@ beans in the xref:dsl.adoc[DSL]
 
 Annotations can be used to define an xref:expression.adoc[Expression] or
 to extract various headers, properties or payloads from a
-xref:message.adoc[Message] when invoking a bean method (see
+xref:{eip-vc}:eips:message.adoc[Message] when invoking a bean method (see
 xref:bean-integration.adoc[Bean Integration] for more detail of how to
 invoke bean methods) together with being useful to help disambiguate
 which method to invoke.
@@ -151,31 +151,31 @@ any of these annotations:
 |=======================================================================
 |Annotation |Description
 |`org.apache.camel.language.Bean`
-|Inject a xref:components::bean-language.adoc[Bean] expression
+|Inject a xref:components:languages:bean-language.adoc[Bean] expression
 
 |`org.apache.camel.language.Constant`
-|Inject a xref:constant-language.adoc[Constant] expression
+|Inject a xref:components:languages:constant-language.adoc[Constant] expression
 
 |`org.apache.camel.builder.script.Groovy`
-|Inject a  xref:components::groovy-language.adoc[Groovy] expression
+|Inject a  xref:components:languages:groovy-language.adoc[Groovy] expression
 
 |`org.apache.camel.Header`
-|Inject a xref:header-language.adoc[Header] expression
+|Inject a xref:components:languages:header-language.adoc[Header] expression
 
 |`org.apache.camel.language.mvel.MVEL`
-|Inject a xref:components::mvel-language.adoc[MVEL] expression
+|Inject a xref:components:languages:mvel-language.adoc[MVEL] expression
 
 |`org.apache.camel.language.ognl.OGNL`
-|Inject an xref:components::ognl-language.adoc[OGNL] expression
+|Inject an xref:components:languages:ognl-language.adoc[OGNL] expression
 
 |`org.apache.camel.language.Simple`
-|Inject an xref:simple-language.adoc[Simple] expression
+|Inject an xref:components:languages:simple-language.adoc[Simple] expression
 
 |`org.apache.camel.language.XPath`
-|Inject an xref:components::xpath-language.adoc[XPath] expression
+|Inject an xref:components:languages:xpath-language.adoc[XPath] expression
 
 |`org.apache.camel.component.xquery.XQuery`
-|Inject an xref:components::xquery-language.adoc[XQuery] expression
+|Inject an xref:components:languages:xquery-language.adoc[XQuery] expression
 |=======================================================================
 
 [[ParameterBindingAnnotations-Example:]]
@@ -192,7 +192,7 @@ public class Foo {
 }
 ----
 
-[[ParameterBindingAnnotations-Advancedexampleusing@Bean]]
+[[ParameterBindingAnnotations-AdvancedexampleusingBean]]
 ==== Advanced example using @Bean
 
 And an example of using the the
@@ -258,11 +258,11 @@ Spring xref:registry.adoc[Registry]:
 ----
 
 [[ParameterBindingAnnotations-Exampleusing]]
-==== Example using xref:components::groovy-language.adoc[Groovy]
+==== Example using xref:components:languages:groovy-language.adoc[Groovy]
 
 In this example we have an Exchange that has a User object stored in the
 in header. This User object has methods to get some user information. We
-want to use xref:components::groovy-language.adoc[Groovy] to inject an expression that
+want to use xref:components:languages:groovy-language.adoc[Groovy] to inject an expression that
 extracts and concats the fullname of the user into the fullName
 parameter.
 

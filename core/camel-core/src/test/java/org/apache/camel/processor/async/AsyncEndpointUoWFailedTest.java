@@ -21,10 +21,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AsyncEndpointUoWFailedTest extends ContextTestSupport {
 
@@ -49,9 +52,9 @@ public class AsyncEndpointUoWFailedTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a bit to ensure UoW has been run
-        assertTrue(oneExchangeDone.matchesMockWaitTime());
+        assertTrue(oneExchangeDone.matchesWaitTime());
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertFalse(beforeThreadName.equalsIgnoreCase(afterThreadName), "Should use different threads");
         assertEquals(0, sync.isOnComplete());
         assertEquals(1, sync.isOnFailure());
     }
@@ -66,7 +69,7 @@ public class AsyncEndpointUoWFailedTest extends ContextTestSupport {
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         beforeThreadName = Thread.currentThread().getName();
-                        exchange.addOnCompletion(sync);
+                        exchange.adapt(ExtendedExchange.class).addOnCompletion(sync);
                     }
                 }).to("mock:before").to("log:before").to("async:bye:camel").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

@@ -19,6 +19,7 @@ package org.apache.camel.component.google.sheets;
 import java.util.Map;
 
 import com.google.api.services.sheets.v4.Sheets;
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,9 +34,11 @@ import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
- * The google-sheets component provides access to Google Sheets.
+ * Manage spreadsheets in Google Sheets.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets", syntax = "google-sheets:apiName/methodName", consumerPrefix = "consumer", label = "api,cloud,sheets")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets",
+             syntax = "google-sheets:apiName/methodName", apiSyntax = "apiName/methodName",
+             category = { Category.API, Category.CLOUD, Category.SHEETS })
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
     @UriParam
@@ -43,8 +46,10 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
 
     private Object apiProxy;
 
-    public GoogleSheetsEndpoint(String uri, GoogleSheetsComponent component, GoogleSheetsApiName apiName, String methodName, GoogleSheetsConfiguration endpointConfiguration) {
-        super(uri, component, apiName, methodName, GoogleSheetsApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+    public GoogleSheetsEndpoint(String uri, GoogleSheetsComponent component, GoogleSheetsApiName apiName, String methodName,
+                                GoogleSheetsConfiguration endpointConfiguration) {
+        super(uri, component, apiName, methodName, GoogleSheetsApiCollection.getCollection().getHelper(apiName),
+              endpointConfiguration);
         this.configuration = endpointConfiguration;
     }
 
@@ -60,14 +65,13 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
         }
         final GoogleSheetsConsumer consumer = new GoogleSheetsConsumer(this, processor);
-        // also set consumer.* properties
         configureConsumer(consumer);
         return consumer;
     }
 
     @Override
     protected ApiMethodPropertiesHelper<GoogleSheetsConfiguration> getPropertiesHelper() {
-        return GoogleSheetsPropertiesHelper.getHelper();
+        return GoogleSheetsPropertiesHelper.getHelper(getCamelContext());
     }
 
     @Override
@@ -78,19 +82,19 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
     @Override
     protected void afterConfigureProperties() {
         switch (apiName) {
-        case SPREADSHEETS:
-            apiProxy = getClient().spreadsheets();
-            break;
-        case DATA:
-            apiProxy = getClient().spreadsheets().values();
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid API name " + apiName);
+            case SPREADSHEETS:
+                apiProxy = getClient().spreadsheets();
+                break;
+            case DATA:
+                apiProxy = getClient().spreadsheets().values();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid API name " + apiName);
         }
     }
 
     public Sheets getClient() {
-        return ((GoogleSheetsComponent)getComponent()).getClient(configuration);
+        return ((GoogleSheetsComponent) getComponent()).getClient(configuration);
     }
 
     @Override
@@ -99,10 +103,10 @@ public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiNam
     }
 
     public GoogleSheetsClientFactory getClientFactory() {
-        return ((GoogleSheetsComponent)getComponent()).getClientFactory();
+        return ((GoogleSheetsComponent) getComponent()).getClientFactory();
     }
 
     public void setClientFactory(GoogleSheetsClientFactory clientFactory) {
-        ((GoogleSheetsComponent)getComponent()).setClientFactory(clientFactory);
+        ((GoogleSheetsComponent) getComponent()).setClientFactory(clientFactory);
     }
 }

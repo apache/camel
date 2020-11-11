@@ -37,10 +37,13 @@ public class RabbitMQDeclareSupport {
     }
 
     private void declareAndBindDeadLetterExchangeWithQueue(final Channel channel) throws IOException {
-        if (endpoint.getDeadLetterExchange() != null) {
-            // TODO Do we need to setup the args for the DeadLetter?
-            declareExchange(channel, endpoint.getDeadLetterExchange(), endpoint.getDeadLetterExchangeType(), Collections.<String, Object> emptyMap());
-            declareAndBindQueue(channel, endpoint.getDeadLetterQueue(), endpoint.getDeadLetterExchange(), endpoint.getDeadLetterRoutingKey(), null, null);
+        if (endpoint.getDeadLetterExchange() != null && !endpoint.isSkipDlqDeclare()) {
+            Map<String, Object> queueArgs = new HashMap<>(endpoint.getDlqArgs());
+            formatSpecialQueueArguments(queueArgs);
+            declareExchange(channel, endpoint.getDeadLetterExchange(), endpoint.getDeadLetterExchangeType(),
+                    Collections.<String, Object> emptyMap());
+            declareAndBindQueue(channel, endpoint.getDeadLetterQueue(), endpoint.getDeadLetterExchange(),
+                    endpoint.getDeadLetterRoutingKey(), queueArgs, endpoint.getDlqBindingArgs());
         }
     }
 
@@ -52,7 +55,8 @@ public class RabbitMQDeclareSupport {
         if (shouldDeclareQueue()) {
             // need to make sure the queueDeclare is same with the exchange
             // declare
-            declareAndBindQueue(channel, endpoint.getQueue(), endpoint.getExchangeName(), endpoint.getRoutingKey(), resolvedQueueArguments(), endpoint.getBindingArgs());
+            declareAndBindQueue(channel, endpoint.getQueue(), endpoint.getExchangeName(), endpoint.getRoutingKey(),
+                    resolvedQueueArguments(), endpoint.getBindingArgs());
         }
     }
 
@@ -70,7 +74,7 @@ public class RabbitMQDeclareSupport {
         if (queueLengthLimit instanceof String) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY, Long.parseLong((String) queueLengthLimit));
         }
-        
+
         Object queueMaxPriority = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY);
         if (queueMaxPriority instanceof String) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY, Integer.parseInt((String) queueMaxPriority));
@@ -84,6 +88,12 @@ public class RabbitMQDeclareSupport {
         Object queueExpiration = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY);
         if (queueExpiration instanceof String) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_TTL_KEY, Long.parseLong((String) queueExpiration));
+        }
+
+        Object singleConsumer = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY);
+        if (singleConsumer instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_SINGLE_ACTIVE_CONSUMER_KEY,
+                    Boolean.parseBoolean((String) singleConsumer));
         }
     }
 
@@ -113,7 +123,9 @@ public class RabbitMQDeclareSupport {
         return !endpoint.isSkipQueueBind();
     }
 
-    private void declareExchange(final Channel channel, final String exchange, final String exchangeType, final Map<String, Object> exchangeArgs) throws IOException {
+    private void declareExchange(
+            final Channel channel, final String exchange, final String exchangeType, final Map<String, Object> exchangeArgs)
+            throws IOException {
         if (endpoint.isPassive()) {
             channel.exchangeDeclarePassive(exchange);
         } else {
@@ -121,10 +133,12 @@ public class RabbitMQDeclareSupport {
         }
     }
 
-    private void declareAndBindQueue(final Channel channel, final String queue, final String exchange, final String routingKey, final Map<String, Object> queueArgs,
-                                     final Map<String, Object> bindingArgs)
+    private void declareAndBindQueue(
+            final Channel channel, final String queue, final String exchange, final String routingKey,
+            final Map<String, Object> queueArgs,
+            final Map<String, Object> bindingArgs)
 
-        throws IOException {
+            throws IOException {
 
         if (endpoint.isPassive()) {
             channel.queueDeclarePassive(queue);

@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.sjms.jms;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author jkorab
@@ -35,24 +36,26 @@ public class DestinationNameParserTest {
         assertFalse(parser.isTopic("bar"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIsTopicNullDestinationName() throws Exception {
         DestinationNameParser parser = new DestinationNameParser();
-        parser.isTopic(null);
+        assertThrows(IllegalArgumentException.class,
+                () -> parser.isTopic(null));
     }
 
     @Test
     public void testGetShortName() throws Exception {
         DestinationNameParser parser = new DestinationNameParser();
         assertEquals("foo", parser.getShortName("topic:foo"));
-        assertFalse("bar", parser.isTopic("queue:bar"));
-        assertFalse("bar", parser.isTopic("bar"));
+        assertFalse(parser.isTopic("queue:bar"), "bar");
+        assertFalse(parser.isTopic("bar"), "bar");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetShortNameNullDestinationName() throws Exception {
         DestinationNameParser parser = new DestinationNameParser();
-        parser.getShortName(null);
+        assertThrows(IllegalArgumentException.class,
+                () -> parser.getShortName(null));
     }
 
 }

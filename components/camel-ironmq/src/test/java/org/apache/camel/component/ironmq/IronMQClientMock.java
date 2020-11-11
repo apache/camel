@@ -24,7 +24,7 @@ import io.iron.ironmq.Queue;
 
 public class IronMQClientMock extends Client {
     private final Map<String, Queue> memQueues = new ConcurrentHashMap<>();
-    
+
     public IronMQClientMock(String projectId, String token) {
         super(projectId, token);
     }

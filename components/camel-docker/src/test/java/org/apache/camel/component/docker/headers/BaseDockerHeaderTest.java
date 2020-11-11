@@ -27,13 +27,13 @@ import org.apache.camel.component.docker.DockerComponent;
 import org.apache.camel.component.docker.DockerConfiguration;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
     @Mock
@@ -45,11 +45,11 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
     T mockObject;
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:in").to("docker://" + getOperation().toString());
 
             }
@@ -57,7 +57,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
     }
 
-    @Before
+    @BeforeEach
     public void setupTest() {
         setupMocks();
     }

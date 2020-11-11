@@ -22,11 +22,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.transformer.ProcessorTransformer;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.transformer.ProcessorTransformer;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TransformerBuilderTest extends TestSupport {
 
@@ -45,12 +48,12 @@ public class TransformerBuilderTest extends TestSupport {
         Transformer transformer = ctx.resolveTransformer(new DataType("json:foo"), new DataType("xml:bar"));
         assertNotNull(transformer);
         assertEquals(ProcessorTransformer.class, transformer.getClass());
-        ProcessorTransformer pt = (ProcessorTransformer)transformer;
+        ProcessorTransformer pt = (ProcessorTransformer) transformer;
         Field f = ProcessorTransformer.class.getDeclaredField("processor");
         f.setAccessible(true);
         Object processor = f.get(pt);
         assertEquals(SendProcessor.class, processor.getClass());
-        SendProcessor sp = (SendProcessor)processor;
+        SendProcessor sp = (SendProcessor) processor;
         assertEquals("direct://transformer", sp.getEndpoint().getEndpointUri());
     }
 

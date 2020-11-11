@@ -25,10 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for sending the filename for file producer over the JMS wire.
@@ -46,7 +47,7 @@ public class JmsFilenameHeaderTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         File file = new File("target/" + filename);
-        assertTrue("The file should have been produced with filename: " + filename, file.exists());
+        assertTrue(file.exists(), "The file should have been produced with filename: " + filename);
     }
 
     @Override

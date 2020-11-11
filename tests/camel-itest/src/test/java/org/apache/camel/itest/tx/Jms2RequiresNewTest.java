@@ -23,25 +23,24 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.ITestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
- * Unit test will look for the spring .xml file with the same class name
- * but postfixed with -config.xml as filename.
+ * Unit test will look for the spring .xml file with the same class name but postfixed with -config.xml as filename.
  * <p/>
- * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests
- * that is a Spring class.
  */
+@CamelSpringTest
 @ContextConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class Jms2RequiresNewTest extends AbstractJUnit4SpringContextTests {
+public class Jms2RequiresNewTest {
 
     private static final int PORT3 = ITestSupport.getPort3();
+
     @Autowired
     private CamelContext camelContext;
 
@@ -57,11 +56,11 @@ public class Jms2RequiresNewTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject("direct:start")
     private ProducerTemplate start;
 
-    @Before
+    @BeforeEach
     public void setUpRoute() throws Exception {
         camelContext.addRoutes(new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 onException(Exception.class)
                         .markRollbackOnly();
 
@@ -76,8 +75,8 @@ public class Jms2RequiresNewTest extends AbstractJUnit4SpringContextTests {
                         .to("activemq:queue:result1")
                         .to("direct:route2")
                         .choice()
-                            .when(body().contains("Neverland"))
-                                .throwException(new RuntimeException("Expected!"));
+                        .when(body().contains("Neverland"))
+                        .throwException(new RuntimeException("Expected!"));
 
                 from("direct:route2")
                         .transacted("PROPAGATION_REQUIRES_NEW")
@@ -89,7 +88,7 @@ public class Jms2RequiresNewTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    public void testSendThrowingException() throws Exception {
+    void testSendThrowingException() throws Exception {
         result1.expectedMessageCount(0);
         result2.expectedMessageCount(1);
         dlq.expectedMessageCount(1);
@@ -102,7 +101,7 @@ public class Jms2RequiresNewTest extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    public void testSend() throws Exception {
+    void testSend() throws Exception {
         result1.expectedMessageCount(1);
         result2.expectedMessageCount(1);
         dlq.expectedMessageCount(0);
