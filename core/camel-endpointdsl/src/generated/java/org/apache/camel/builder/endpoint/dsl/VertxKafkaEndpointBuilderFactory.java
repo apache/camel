@@ -255,6 +255,34 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The partition to which the record will be sent (or null if no
+         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
+         * configured, it will take precedence over this config.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointConsumerBuilder partitionId(
+                Integer partitionId) {
+            doSetProperty("partitionId", partitionId);
+            return this;
+        }
+        /**
+         * The partition to which the record will be sent (or null if no
+         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
+         * configured, it will take precedence over this config.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointConsumerBuilder partitionId(String partitionId) {
+            doSetProperty("partitionId", partitionId);
+            return this;
+        }
+        /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
          * data. If the value is -1, the OS default will be used.
          * 
@@ -2045,6 +2073,34 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The partition to which the record will be sent (or null if no
+         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
+         * configured, it will take precedence over this config.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointProducerBuilder partitionId(
+                Integer partitionId) {
+            doSetProperty("partitionId", partitionId);
+            return this;
+        }
+        /**
+         * The partition to which the record will be sent (or null if no
+         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
+         * configured, it will take precedence over this config.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointProducerBuilder partitionId(String partitionId) {
+            doSetProperty("partitionId", partitionId);
+            return this;
+        }
+        /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
          * data. If the value is -1, the OS default will be used.
          * 
@@ -2456,6 +2512,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
          */
         default VertxKafkaEndpointProducerBuilder keySerializer(
@@ -2823,6 +2880,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
          */
         default VertxKafkaEndpointProducerBuilder valueSerializer(
@@ -3708,6 +3766,33 @@ public interface VertxKafkaEndpointBuilderFactory {
         default VertxKafkaEndpointBuilder metricsSampleWindowMs(
                 String metricsSampleWindowMs) {
             doSetProperty("metricsSampleWindowMs", metricsSampleWindowMs);
+            return this;
+        }
+        /**
+         * The partition to which the record will be sent (or null if no
+         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
+         * configured, it will take precedence over this config.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointBuilder partitionId(Integer partitionId) {
+            doSetProperty("partitionId", partitionId);
+            return this;
+        }
+        /**
+         * The partition to which the record will be sent (or null if no
+         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
+         * configured, it will take precedence over this config.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointBuilder partitionId(String partitionId) {
+            doSetProperty("partitionId", partitionId);
             return this;
         }
         /**

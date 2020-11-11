@@ -20,7 +20,7 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(94);
+        Set<String> props = new HashSet<>(95);
         props.add("maxPollIntervalMs");
         props.add("reconnectBackoffMs");
         props.add("synchronous");
@@ -100,6 +100,7 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("clientId");
         props.add("maxRequestSize");
         props.add("maxInFlightRequestsPerConnection");
+        props.add("partitionId");
         props.add("exchangePattern");
         props.add("valueSerializer");
         props.add("sslEngineFactoryClass");

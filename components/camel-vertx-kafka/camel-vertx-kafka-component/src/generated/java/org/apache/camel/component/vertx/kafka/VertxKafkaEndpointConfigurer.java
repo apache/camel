@@ -114,6 +114,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "metricsSampleWindowMs": target.getConfiguration().setMetricsSampleWindowMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "partitionassignmentstrategy":
         case "partitionAssignmentStrategy": target.getConfiguration().setPartitionAssignmentStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "partitionid":
+        case "partitionId": target.getConfiguration().setPartitionId(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitionerclass":
         case "partitionerClass": target.getConfiguration().setPartitionerClass(property(camelContext, java.lang.String.class, value)); return true;
         case "receivebufferbytes":
@@ -304,6 +306,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "metricsSampleWindowMs": return long.class;
         case "partitionassignmentstrategy":
         case "partitionAssignmentStrategy": return java.lang.String.class;
+        case "partitionid":
+        case "partitionId": return java.lang.Integer.class;
         case "partitionerclass":
         case "partitionerClass": return java.lang.String.class;
         case "receivebufferbytes":
@@ -495,6 +499,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "metricsSampleWindowMs": return target.getConfiguration().getMetricsSampleWindowMs();
         case "partitionassignmentstrategy":
         case "partitionAssignmentStrategy": return target.getConfiguration().getPartitionAssignmentStrategy();
+        case "partitionid":
+        case "partitionId": return target.getConfiguration().getPartitionId();
         case "partitionerclass":
         case "partitionerClass": return target.getConfiguration().getPartitionerClass();
         case "receivebufferbytes":

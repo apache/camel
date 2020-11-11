@@ -73,7 +73,9 @@ public class VertxKafkaProducerOperations {
 
     @SuppressWarnings("unchecked")
     private Iterable<KafkaProducerRecord<Object, Object>> createKafkaProducerRecords(final Exchange exchange) {
-        final String topic = configurationOptionsProxy.getTopic(exchange);
+        final String overrideTopic = configurationOptionsProxy.getOverrideTopic(exchange);
+        final String topic = ObjectHelper.isEmpty(overrideTopic) ? configurationOptionsProxy.getTopic(exchange) : overrideTopic;
+
         // check if our exchange is list or contain some values
         if (exchange.getIn().getBody() instanceof Iterable) {
             return createProducerRecordFromIterable((Iterable<Object>) exchange.getIn().getBody(), topic, exchange);

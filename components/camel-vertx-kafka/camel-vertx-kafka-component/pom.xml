@@ -68,6 +68,11 @@
             <artifactId>log4j-1.2-api</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -99,6 +104,12 @@
                 <configuration>
                     <className>VertxKafkaConfiguration</className>
                     <additionalCommonConfigs>
+                        <partition.id>
+                            <name>partition.id</name>
+                            <type>INT</type>
+                            <documentation>The partition to which the record will be sent (or null if no partition was specified). Header {@link VertxKafkaConstants#PARTITION_ID} If configured,
+                                it will take precedence over this config</documentation>
+                        </partition.id>
                         <topic>
                             <name>topic</name>
                             <type>STRING</type>
@@ -109,6 +120,10 @@
                             </documentation>
                         </topic>
                     </additionalCommonConfigs>
+                    <overriddenDefaultValues>
+                        <key.serializer>org.apache.kafka.common.serialization.StringSerializer</key.serializer>
+                        <value.serializer>org.apache.kafka.common.serialization.StringSerializer</value.serializer>
+                    </overriddenDefaultValues>
                     <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                 </configuration>
             </plugin>

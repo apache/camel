@@ -118,6 +118,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "metricsSampleWindowMs": getOrCreateConfiguration(target).setMetricsSampleWindowMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "partitionassignmentstrategy":
         case "partitionAssignmentStrategy": getOrCreateConfiguration(target).setPartitionAssignmentStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "partitionid":
+        case "partitionId": getOrCreateConfiguration(target).setPartitionId(property(camelContext, java.lang.Integer.class, value)); return true;
         case "partitionerclass":
         case "partitionerClass": getOrCreateConfiguration(target).setPartitionerClass(property(camelContext, java.lang.String.class, value)); return true;
         case "receivebufferbytes":
@@ -304,6 +306,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "metricsSampleWindowMs": return long.class;
         case "partitionassignmentstrategy":
         case "partitionAssignmentStrategy": return java.lang.String.class;
+        case "partitionid":
+        case "partitionId": return java.lang.Integer.class;
         case "partitionerclass":
         case "partitionerClass": return java.lang.String.class;
         case "receivebufferbytes":
@@ -491,6 +495,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "metricsSampleWindowMs": return getOrCreateConfiguration(target).getMetricsSampleWindowMs();
         case "partitionassignmentstrategy":
         case "partitionAssignmentStrategy": return getOrCreateConfiguration(target).getPartitionAssignmentStrategy();
+        case "partitionid":
+        case "partitionId": return getOrCreateConfiguration(target).getPartitionId();
         case "partitionerclass":
         case "partitionerClass": return getOrCreateConfiguration(target).getPartitionerClass();
         case "receivebufferbytes":

@@ -10,6 +10,9 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class VertxKafkaConfiguration {
 
+    // partition.id
+    @UriParam(label = "common")
+    private Integer partitionId;
     // topic
     @UriPath(label = "common")
     @Metadata(required = true)
@@ -258,11 +261,11 @@ public class VertxKafkaConfiguration {
     @UriParam(label = "producer", defaultValue = "5")
     private int maxInFlightRequestsPerConnection = 5;
     // key.serializer
-    @UriParam(label = "producer")
-    private String keySerializer;
+    @UriParam(label = "producer", defaultValue = "org.apache.kafka.common.serialization.StringSerializer")
+    private String keySerializer = "org.apache.kafka.common.serialization.StringSerializer";
     // value.serializer
-    @UriParam(label = "producer")
-    private String valueSerializer;
+    @UriParam(label = "producer", defaultValue = "org.apache.kafka.common.serialization.StringSerializer")
+    private String valueSerializer = "org.apache.kafka.common.serialization.StringSerializer";
     // partitioner.class
     @UriParam(label = "producer", defaultValue = "org.apache.kafka.clients.producer.internals.DefaultPartitioner")
     private String partitionerClass = "org.apache.kafka.clients.producer.internals.DefaultPartitioner";
@@ -275,6 +278,20 @@ public class VertxKafkaConfiguration {
     // transactional.id
     @UriParam(label = "producer")
     private String transactionalId;
+
+    /**
+     * The partition to which the record will be sent (or null if no partition
+     * was specified). Header {@link VertxKafkaConstants#PARTITION_ID} If
+     * configured,
+     * it will take precedence over this config
+     */
+    public void setPartitionId(Integer partitionId) {
+        this.partitionId = partitionId;
+    }
+
+    public Integer getPartitionId() {
+        return partitionId;
+    }
 
     /**
      * Name of the topic to use. On the consumer you can use comma to separate
@@ -1604,6 +1621,7 @@ public class VertxKafkaConfiguration {
 
     public Properties createConsumerConfiguration() {
         final Properties props = new Properties();
+        addPropertyIfNotNull(props, "partition.id", partitionId);
         addPropertyIfNotNull(props, "topic", topic);
         addPropertyIfNotNull(props, "bootstrap.servers", bootstrapServers);
         addPropertyIfNotNull(props, "client.dns.lookup", clientDnsLookup);
@@ -1680,6 +1698,7 @@ public class VertxKafkaConfiguration {
 
     public Properties createProducerConfiguration() {
         final Properties props = new Properties();
+        addPropertyIfNotNull(props, "partition.id", partitionId);
         addPropertyIfNotNull(props, "topic", topic);
         addPropertyIfNotNull(props, "bootstrap.servers", bootstrapServers);
         addPropertyIfNotNull(props, "client.dns.lookup", clientDnsLookup);

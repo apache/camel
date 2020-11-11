@@ -15,7 +15,7 @@ public class VertxKafkaConfigurationOptionsProxy {
     }
 
     public Integer getPartitionId(final Exchange exchange) {
-        return getOption(exchange, VertxKafkaConstants.PARTITION_ID, () -> null, Integer.class);
+        return getOption(exchange, VertxKafkaConstants.PARTITION_ID, configuration::getPartitionId, Integer.class);
     }
 
     public Object getMessageKey(final Exchange exchange) {
@@ -31,7 +31,17 @@ public class VertxKafkaConfigurationOptionsProxy {
     }
 
     public String getTopic(final Exchange exchange) {
-        return configuration.getTopic();
+        return getOption(exchange, VertxKafkaConstants.TOPIC, configuration::getTopic, String.class);
+    }
+
+    public String getOverrideTopic(final Exchange exchange) {
+        final String topic = getOption(exchange, VertxKafkaConstants.OVERRIDE_TOPIC, () -> null, String.class);
+        if (ObjectHelper.isNotEmpty(topic)) {
+            // must remove header so its not propagated
+            exchange.getIn().removeHeader(VertxKafkaConstants.OVERRIDE_TOPIC);
+        }
+
+        return topic;
     }
 
     public VertxKafkaConfiguration getConfiguration() {

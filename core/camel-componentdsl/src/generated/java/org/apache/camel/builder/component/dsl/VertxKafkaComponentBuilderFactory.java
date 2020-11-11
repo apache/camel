@@ -221,6 +221,20 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * The partition to which the record will be sent (or null if no
+         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
+         * configured, it will take precedence over this config.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaComponentBuilder partitionId(
+                java.lang.Integer partitionId) {
+            doSetProperty("partitionId", partitionId);
+            return this;
+        }
+        /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
          * data. If the value is -1, the OS default will be used.
          * 
@@ -845,6 +859,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
          */
         default VertxKafkaComponentBuilder keySerializer(
@@ -1053,6 +1068,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
          */
         default VertxKafkaComponentBuilder valueSerializer(
@@ -1590,6 +1606,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "metricsNumSamples": getOrCreateConfiguration((VertxKafkaComponent) component).setMetricsNumSamples((int) value); return true;
             case "metricsRecordingLevel": getOrCreateConfiguration((VertxKafkaComponent) component).setMetricsRecordingLevel((java.lang.String) value); return true;
             case "metricsSampleWindowMs": getOrCreateConfiguration((VertxKafkaComponent) component).setMetricsSampleWindowMs((long) value); return true;
+            case "partitionId": getOrCreateConfiguration((VertxKafkaComponent) component).setPartitionId((java.lang.Integer) value); return true;
             case "receiveBufferBytes": getOrCreateConfiguration((VertxKafkaComponent) component).setReceiveBufferBytes((int) value); return true;
             case "reconnectBackoffMaxMs": getOrCreateConfiguration((VertxKafkaComponent) component).setReconnectBackoffMaxMs((long) value); return true;
             case "reconnectBackoffMs": getOrCreateConfiguration((VertxKafkaComponent) component).setReconnectBackoffMs((long) value); return true;

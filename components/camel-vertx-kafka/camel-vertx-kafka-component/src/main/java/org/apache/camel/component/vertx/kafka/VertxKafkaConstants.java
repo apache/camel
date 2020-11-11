@@ -5,6 +5,7 @@ public final class VertxKafkaConstants {
     // common headers, set by the consumer and evaluated by the producer
     public static final String PARTITION_ID = HEADER_PREFIX + "PartitionId";
     public static final String MESSAGE_KEY = HEADER_PREFIX + "MessageKey";
+    public static final String TOPIC = HEADER_PREFIX + "Topic";
     // headers set by the consumer only
     // headers evaluated by the producer only
     public static final String OVERRIDE_TOPIC = HEADER_PREFIX + "OverrideTopic";
