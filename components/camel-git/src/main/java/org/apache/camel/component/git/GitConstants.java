@@ -29,4 +29,6 @@ public interface GitConstants {
     String GIT_COMMIT_TIME = "CamelGitCommitTime";
     String GIT_BRANCH_LEAF = "CamelGitBranchLeaf";
     String GIT_BRANCH_OBJECT_ID = "CamelGitBranchObjectId";
+    String GIT_TAG_LEAF = "CamelGitTagLeaf";
+    String GIT_TAG_OBJECT_ID = "CamelGitTagObjectId";
 }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
 import org.eclipse.jgit.lib.Ref;
 
@@ -39,7 +40,9 @@ public class GitTagConsumer extends AbstractGitConsumer {
         for (Ref ref : call) {
             if (!tagsConsumed.contains(ref.getName())) {
                 Exchange e = getEndpoint().createExchange();
-                e.getOut().setBody(ref);
+                e.getMessage().setBody(ref.getName());
+                e.getMessage().setHeader(GitConstants.GIT_BRANCH_LEAF, ref.getLeaf().getName());
+                e.getMessage().setHeader(GitConstants.GIT_BRANCH_OBJECT_ID, ref.getObjectId().getName());
                 getProcessor().process(e);
                 tagsConsumed.add(ref.getName());
                 count++;
