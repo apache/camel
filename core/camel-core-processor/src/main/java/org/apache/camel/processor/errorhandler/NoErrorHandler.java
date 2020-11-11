@@ -16,22 +16,34 @@
  */
 package org.apache.camel.processor.errorhandler;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ErrorHandler;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorHelper;
 
-public class NoErrorHandler extends DelegateAsyncProcessor implements ErrorHandler {
+public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ErrorHandler {
+
+    private final AsyncProcessor output;
 
     public NoErrorHandler(Processor processor) {
-        super(processor);
+        this.output = AsyncProcessorConverterHelper.convert(processor);
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
-        return super.process(exchange, new AsyncCallback() {
+        return output.process(exchange, new AsyncCallback() {
             @Override
             public void done(boolean doneSync) {
                 exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
@@ -41,12 +53,33 @@ public class NoErrorHandler extends DelegateAsyncProcessor implements ErrorHandl
     }
 
     @Override
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        process(exchange, callback);
+        return callback.getFuture();
+    }
+
+    @Override
     public String toString() {
-        if (processor == null) {
+        if (output == null) {
             // if no output then dont do any description
             return "";
         }
-        return "NoErrorHandler[" + processor + "]";
+        return "NoErrorHandler[" + output + "]";
     }
 
+    @Override
+    public boolean supportTransacted() {
+        return false;
+    }
+
+    @Override
+    public Processor getOutput() {
+        return output;
+    }
+
+    @Override
+    public ErrorHandler clone(Processor output) {
+        return new NoErrorHandler(output);
+    }
 }

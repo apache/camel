@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Sets a proper error handler. This class is based on {@link org.apache.camel.spring.spi.SpringTransactionPolicy}.
+ * Sets a proper error handler. This class is based on org.apache.camel.spring.spi.SpringTransactionPolicy.
  * <p>
  * This class requires the resource {@link TransactionManager} to be available through JNDI url
  * &quot;java:/TransactionManager&quot;

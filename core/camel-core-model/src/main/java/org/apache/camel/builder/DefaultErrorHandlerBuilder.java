@@ -24,6 +24,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.errorhandler.DefaultErrorHandlerConfiguration;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
@@ -34,27 +35,16 @@ import org.slf4j.LoggerFactory;
 /**
  * The default error handler builder.
  */
-public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements DefaultErrorHandlerConfiguration {
+public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements DefaultErrorHandlerProperties {
 
-    protected CamelLogger logger;
-    protected RedeliveryPolicy redeliveryPolicy;
-    protected Processor onRedelivery;
-    protected String onRedeliveryRef;
-    protected Predicate retryWhile;
-    protected String retryWhileRef;
-    protected String deadLetterUri;
-    protected boolean deadLetterHandleNewException = true;
-    protected boolean useOriginalMessage;
-    protected boolean useOriginalBody;
-    protected boolean asyncDelayedRedelivery;
-    protected ScheduledExecutorService executorService;
-    protected String executorServiceRef;
-    protected Processor onPrepareFailure;
-    protected String onPrepareFailureRef;
-    protected Processor onExceptionOccurred;
-    protected String onExceptionOccurredRef;
+    private final DefaultErrorHandlerConfiguration configuration;
 
     public DefaultErrorHandlerBuilder() {
+        configuration = createConfiguration();
+    }
+
+    DefaultErrorHandlerConfiguration createConfiguration() {
+        return new DefaultErrorHandlerConfiguration();
     }
 
     @Override
@@ -70,26 +60,24 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
     }
 
     protected void cloneBuilder(DefaultErrorHandlerBuilder other) {
-        super.cloneBuilder(other);
-
-        other.logger = logger;
-        if (redeliveryPolicy != null) {
-            other.redeliveryPolicy = redeliveryPolicy.copy();
+        other.setLogger(configuration.getLogger());
+        if (configuration.getRedeliveryPolicy() != null) {
+            other.setRedeliveryPolicy(configuration.getRedeliveryPolicy().copy());
         }
-        other.setOnRedelivery(onRedelivery);
-        other.setOnRedeliveryRef(onRedeliveryRef);
-        other.setRetryWhile(retryWhile);
-        other.setRetryWhileRef(retryWhileRef);
-        other.setDeadLetterUri(deadLetterUri);
-        other.setOnPrepareFailure(onPrepareFailure);
-        other.setOnPrepareFailureRef(onPrepareFailureRef);
-        other.setOnExceptionOccurred(onExceptionOccurred);
-        other.setOnExceptionOccurredRef(onExceptionOccurredRef);
-        other.setDeadLetterHandleNewException(deadLetterHandleNewException);
-        other.setUseOriginalMessage(useOriginalMessage);
-        other.setUseOriginalBody(useOriginalBody);
-        other.setAsyncDelayedRedelivery(asyncDelayedRedelivery);
-        other.setExecutorServiceRef(executorServiceRef);
+        other.setOnRedelivery(configuration.getOnRedelivery());
+        other.setOnRedeliveryRef(configuration.getOnRedeliveryRef());
+        other.setRetryWhile(configuration.getRetryWhile());
+        other.setRetryWhileRef(configuration.getRetryWhileRef());
+        other.setDeadLetterUri(configuration.getDeadLetterUri());
+        other.setOnPrepareFailure(configuration.getOnPrepareFailure());
+        other.setOnPrepareFailureRef(configuration.getOnPrepareFailureRef());
+        other.setOnExceptionOccurred(configuration.getOnExceptionOccurred());
+        other.setOnExceptionOccurredRef(configuration.getOnExceptionOccurredRef());
+        other.setDeadLetterHandleNewException(configuration.isDeadLetterHandleNewException());
+        other.setUseOriginalMessage(configuration.isUseOriginalMessage());
+        other.setUseOriginalBody(configuration.isUseOriginalBody());
+        other.setAsyncDelayedRedelivery(configuration.isAsyncDelayedRedelivery());
+        other.setExecutorServiceRef(configuration.getExecutorServiceRef());
     }
 
     // Builder methods
@@ -490,7 +478,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
 
     @Override
     public boolean hasRedeliveryPolicy() {
-        return redeliveryPolicy != null;
+        return configuration.getRedeliveryPolicy() != null;
     }
 
     @Override
@@ -499,49 +487,49 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
     }
 
     public RedeliveryPolicy getRedeliveryPolicy() {
-        if (redeliveryPolicy == null) {
-            redeliveryPolicy = createRedeliveryPolicy();
+        if (configuration.getRedeliveryPolicy() == null) {
+            configuration.setRedeliveryPolicy(createRedeliveryPolicy());
         }
-        return redeliveryPolicy;
+        return configuration.getRedeliveryPolicy();
     }
 
     /**
      * Sets the redelivery policy
      */
     public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
-        this.redeliveryPolicy = redeliveryPolicy;
+        configuration.setRedeliveryPolicy(redeliveryPolicy);
     }
 
     @Override
     public boolean hasLogger() {
-        return logger != null;
+        return configuration.hasLogger();
     }
 
     public CamelLogger getLogger() {
-        if (logger == null) {
-            logger = createLogger();
+        if (configuration.getLogger() == null) {
+            configuration.setLogger(createLogger());
         }
-        return logger;
+        return configuration.getLogger();
     }
 
     public void setLogger(CamelLogger logger) {
-        this.logger = logger;
+        configuration.setLogger(logger);
     }
 
     public Processor getOnRedelivery() {
-        return onRedelivery;
+        return configuration.getOnRedelivery();
     }
 
     public void setOnRedelivery(Processor onRedelivery) {
-        this.onRedelivery = onRedelivery;
+        configuration.setOnRedelivery(onRedelivery);
     }
 
     public String getOnRedeliveryRef() {
-        return onRedeliveryRef;
+        return configuration.getOnRedeliveryRef();
     }
 
     public void setOnRedeliveryRef(String onRedeliveryRef) {
-        this.onRedeliveryRef = onRedeliveryRef;
+        configuration.setOnRedeliveryRef(onRedeliveryRef);
     }
 
     public Predicate getRetryWhilePolicy(CamelContext context) {
@@ -557,107 +545,107 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport imple
     }
 
     public Predicate getRetryWhile() {
-        return retryWhile;
+        return configuration.getRetryWhile();
     }
 
     public void setRetryWhile(Predicate retryWhile) {
-        this.retryWhile = retryWhile;
+        configuration.setRetryWhile(retryWhile);
     }
 
     public String getRetryWhileRef() {
-        return retryWhileRef;
+        return configuration.getRetryWhileRef();
     }
 
     public void setRetryWhileRef(String retryWhileRef) {
-        this.retryWhileRef = retryWhileRef;
+        configuration.setRetryWhileRef(retryWhileRef);
     }
 
     public String getDeadLetterUri() {
-        return deadLetterUri;
+        return configuration.getDeadLetterUri();
     }
 
     public void setDeadLetterUri(String deadLetterUri) {
-        this.deadLetterUri = deadLetterUri;
+        configuration.setDeadLetterUri(deadLetterUri);
     }
 
     public boolean isDeadLetterHandleNewException() {
-        return deadLetterHandleNewException;
+        return configuration.isDeadLetterHandleNewException();
     }
 
     public void setDeadLetterHandleNewException(boolean deadLetterHandleNewException) {
-        this.deadLetterHandleNewException = deadLetterHandleNewException;
+        configuration.setDeadLetterHandleNewException(deadLetterHandleNewException);
     }
 
     public boolean isUseOriginalMessage() {
-        return useOriginalMessage;
+        return configuration.isUseOriginalMessage();
     }
 
     public void setUseOriginalMessage(boolean useOriginalMessage) {
-        this.useOriginalMessage = useOriginalMessage;
+        configuration.setUseOriginalMessage(useOriginalMessage);
     }
 
     public boolean isUseOriginalBody() {
-        return useOriginalBody;
+        return configuration.isUseOriginalBody();
     }
 
     public void setUseOriginalBody(boolean useOriginalBody) {
-        this.useOriginalBody = useOriginalBody;
+        configuration.setUseOriginalBody(useOriginalBody);
     }
 
     public boolean isAsyncDelayedRedelivery() {
-        return asyncDelayedRedelivery;
+        return configuration.isAsyncDelayedRedelivery();
     }
 
     public void setAsyncDelayedRedelivery(boolean asyncDelayedRedelivery) {
-        this.asyncDelayedRedelivery = asyncDelayedRedelivery;
+        configuration.setAsyncDelayedRedelivery(asyncDelayedRedelivery);
     }
 
     public ScheduledExecutorService getExecutorService() {
-        return executorService;
+        return configuration.getExecutorService();
     }
 
     public void setExecutorService(ScheduledExecutorService executorService) {
-        this.executorService = executorService;
+        configuration.setExecutorService(executorService);
     }
 
     public String getExecutorServiceRef() {
-        return executorServiceRef;
+        return configuration.getExecutorServiceRef();
     }
 
     public void setExecutorServiceRef(String executorServiceRef) {
-        this.executorServiceRef = executorServiceRef;
+        configuration.setExecutorServiceRef(executorServiceRef);
     }
 
     public Processor getOnPrepareFailure() {
-        return onPrepareFailure;
+        return configuration.getOnPrepareFailure();
     }
 
     public void setOnPrepareFailure(Processor onPrepareFailure) {
-        this.onPrepareFailure = onPrepareFailure;
+        configuration.setOnPrepareFailure(onPrepareFailure);
     }
 
     public String getOnPrepareFailureRef() {
-        return onPrepareFailureRef;
+        return configuration.getOnPrepareFailureRef();
     }
 
     public void setOnPrepareFailureRef(String onPrepareFailureRef) {
-        this.onPrepareFailureRef = onPrepareFailureRef;
+        configuration.setOnPrepareFailureRef(onPrepareFailureRef);
     }
 
     public Processor getOnExceptionOccurred() {
-        return onExceptionOccurred;
+        return configuration.getOnExceptionOccurred();
     }
 
     public void setOnExceptionOccurred(Processor onExceptionOccurred) {
-        this.onExceptionOccurred = onExceptionOccurred;
+        configuration.setOnExceptionOccurred(onExceptionOccurred);
     }
 
     public String getOnExceptionOccurredRef() {
-        return onExceptionOccurredRef;
+        return configuration.getOnExceptionOccurredRef();
     }
 
     public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
-        this.onExceptionOccurredRef = onExceptionOccurredRef;
+        configuration.setOnExceptionOccurredRef(onExceptionOccurredRef);
     }
 
     protected RedeliveryPolicy createRedeliveryPolicy() {

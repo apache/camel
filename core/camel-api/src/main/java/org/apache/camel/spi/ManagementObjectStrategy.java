@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -45,10 +44,6 @@ public interface ManagementObjectStrategy {
     Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat);
 
     Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint);
-
-    Object getManagedObjectForErrorHandler(
-            CamelContext context, Route route,
-            Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     Object getManagedObjectForRouteController(CamelContext context, RouteController routeController);
 

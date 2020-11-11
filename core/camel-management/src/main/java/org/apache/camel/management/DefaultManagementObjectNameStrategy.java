@@ -27,11 +27,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 import org.apache.camel.cluster.CamelClusterService;
@@ -44,7 +42,6 @@ import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDataFormat;
 import org.apache.camel.management.mbean.ManagedEndpoint;
-import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
@@ -55,8 +52,6 @@ import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
-import org.apache.camel.model.errorhandler.ErrorHandlerHelper;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
@@ -86,7 +81,6 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     public static final String TYPE_STEP = "steps";
     public static final String TYPE_TRACER = "tracer";
     public static final String TYPE_EVENT_NOTIFIER = "eventnotifiers";
-    public static final String TYPE_ERRORHANDLER = "errorhandlers";
     public static final String TYPE_THREAD_POOL = "threadpools";
     public static final String TYPE_SERVICE = "services";
     public static final String TYPE_HA = "clusterservices";
@@ -151,9 +145,6 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         } else if (managedObject instanceof ManagedRoute) {
             ManagedRoute mr = (ManagedRoute) managedObject;
             objectName = getObjectNameForRoute(mr.getRoute());
-        } else if (managedObject instanceof ManagedErrorHandler) {
-            ManagedErrorHandler meh = (ManagedErrorHandler) managedObject;
-            objectName = getObjectNameForErrorHandler(meh.getRoute(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
         } else if (managedObject instanceof ManagedStep) {
             ManagedStep mp = (ManagedStep) managedObject;
             objectName = getObjectNameForStep(mp.getContext(), mp.getProcessor(), mp.getDefinition());
@@ -306,56 +297,6 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_STEP).append(",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(definition.getId()));
-        return createObjectName(buffer);
-    }
-
-    @Override
-    public ObjectName getObjectNameForErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder)
-            throws MalformedObjectNameException {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(route.getCamelContext())).append(",");
-        buffer.append(KEY_TYPE + "=").append(TYPE_ERRORHANDLER + ",");
-
-        // we want to only register one instance of the various error handler types and thus do some lookup
-        // if its a ErrorHandlerBuildRef. We need a bit of work to do that as there are potential indirection.
-        String ref = null;
-        if (builder instanceof ErrorHandlerRefConfiguration) {
-            ErrorHandlerRefConfiguration builderRef = (ErrorHandlerRefConfiguration) builder;
-
-            // it has not then its an indirection and we should do some work to lookup the real builder
-            ref = builderRef.getRef();
-            ErrorHandlerFactory refBuilder = ErrorHandlerHelper.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
-            if (refBuilder != null) {
-                builder = refBuilder;
-            }
-
-            // must do a 2nd lookup in case this is also a reference
-            // (this happens with spring DSL using errorHandlerRef on <route> as it gets a bit
-            // complex with indirections for error handler references
-            if (builder instanceof ErrorHandlerRefConfiguration) {
-                builderRef = (ErrorHandlerRefConfiguration) builder;
-                // does it refer to a non default error handler then do a 2nd lookup
-                if (!builderRef.getRef().equals(ErrorHandlerRefConfiguration.DEFAULT_ERROR_HANDLER_BUILDER)) {
-                    refBuilder = ErrorHandlerHelper.lookupErrorHandlerFactory(route, builderRef.getRef(), false);
-                    if (refBuilder != null) {
-                        ref = builderRef.getRef();
-                        builder = refBuilder;
-                    }
-                }
-            }
-        }
-
-        if (ref != null) {
-            String name = builder.getClass().getSimpleName() + "(ref:" + ref + ")";
-            buffer.append(KEY_NAME + "=").append(ObjectName.quote(name));
-        } else {
-            // create a name based on its instance
-            buffer.append(KEY_NAME + "=")
-                    .append(builder.getClass().getSimpleName())
-                    .append("(").append(ObjectHelper.getIdentityHashCode(builder)).append(")");
-        }
-
         return createObjectName(buffer);
     }
 

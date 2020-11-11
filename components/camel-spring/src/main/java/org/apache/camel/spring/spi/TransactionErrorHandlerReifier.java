@@ -98,7 +98,7 @@ public class TransactionErrorHandlerReifier extends DefaultErrorHandlerReifier<T
         TransactionErrorHandler answer = new TransactionErrorHandler(
                 camelContext, processor,
                 definition.getLogger(), definition.getOnRedelivery(),
-                definition.getRedeliveryPolicy(), definition.getExceptionPolicyStrategy(), transactionTemplate,
+                definition.getRedeliveryPolicy(), transactionTemplate,
                 definition.getRetryWhilePolicy(camelContext),
                 getExecutorService(definition.getExecutorService(), definition.getExecutorServiceRef()),
                 definition.getRollbackLoggingLevel(), definition.getOnExceptionOccurred());

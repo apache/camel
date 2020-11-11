@@ -39,7 +39,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         DEFAULT_EXCHANGE_FORMATTER.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
     }
     // optimize to use a shared instance
-    protected ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
+    protected final ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
     protected Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies;
 
     public void addErrorHandler(Processor errorHandler) {
@@ -54,8 +54,7 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
     }
 
     /**
-     * CamelContextHelper Attempts to find the best suited {@link ExceptionPolicy} to be used for handling the given
-     * thrown exception.
+     * Attempts to find the best suited {@link ExceptionPolicy} to be used for handling the given thrown exception.
      *
      * @param  exchange  the exchange
      * @param  exception the exception that was thrown
@@ -70,15 +69,6 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         }
         ExceptionPolicyKey key = exceptionPolicy.getExceptionPolicy(exceptionPolicies.keySet(), exchange, exception);
         return key != null ? exceptionPolicies.get(key) : null;
-    }
-
-    /**
-     * Sets the strategy to use for resolving the {@link ExceptionPolicy} to use for handling thrown exceptions.
-     */
-    public void setExceptionPolicy(ExceptionPolicyStrategy exceptionPolicy) {
-        if (exceptionPolicy != null) {
-            this.exceptionPolicy = exceptionPolicy;
-        }
     }
 
     /**
@@ -97,5 +87,10 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
      * Gets the output
      */
     public abstract Processor getOutput();
+
+    /**
+     * Clones the current error handler and changes the output
+     */
+    public abstract ErrorHandler clone(Processor output);
 
 }

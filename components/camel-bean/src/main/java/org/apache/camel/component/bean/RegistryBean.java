@@ -36,6 +36,7 @@ public class RegistryBean implements BeanHolder {
     private final ParameterMappingStrategy parameterMappingStrategy;
     private final BeanComponent beanComponent;
     private volatile BeanInfo beanInfo;
+    private volatile Processor errorHandler;
     private volatile Class<?> clazz;
     private Map<String, Object> options;
 
@@ -63,6 +64,18 @@ public class RegistryBean implements BeanHolder {
     @Override
     public String toString() {
         return "bean: " + name;
+    }
+
+    @Override
+    public void setErrorHandler(Processor errorHandler) {
+        if (beanInfo != null) {
+            for (MethodInfo mi : beanInfo.getMethods()) {
+                mi.setErrorHandler(errorHandler);
+            }
+        } else {
+            // need to store it temporary until bean info is created
+            this.errorHandler = errorHandler;
+        }
     }
 
     @Override
@@ -164,7 +177,14 @@ public class RegistryBean implements BeanHolder {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected BeanInfo createBeanInfo(Object bean) {
-        return new BeanInfo(context, bean.getClass(), parameterMappingStrategy, beanComponent);
+        BeanInfo bi = new BeanInfo(context, bean.getClass(), parameterMappingStrategy, beanComponent);
+        if (errorHandler != null) {
+            for (MethodInfo mi : bi.getMethods()) {
+                mi.setErrorHandler(errorHandler);
+            }
+            errorHandler = null;
+        }
+        return bi;
     }
 
     protected Object lookupBean() {

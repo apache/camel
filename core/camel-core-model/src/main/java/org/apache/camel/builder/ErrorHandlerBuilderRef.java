@@ -17,62 +17,58 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
 
 /**
  * Represents a proxy to an error handler builder which is resolved by named reference
  */
-public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport implements ErrorHandlerRefConfiguration {
+public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport implements ErrorHandlerRefProperties {
 
-    public static final String DEFAULT_ERROR_HANDLER_BUILDER = ErrorHandlerRefConfiguration.DEFAULT_ERROR_HANDLER_BUILDER;
+    public static final String DEFAULT_ERROR_HANDLER_BUILDER = ErrorHandlerRefProperties.DEFAULT_ERROR_HANDLER_BUILDER;
 
-    private String ref;
-    private boolean supportTransacted;
+    private final ErrorHandlerRefConfiguration configuration = new ErrorHandlerRefConfiguration();
 
     public ErrorHandlerBuilderRef(String ref) {
-        this.ref = ref;
+        this.configuration.setRef(ref);
     }
 
     @Override
     public boolean supportTransacted() {
-        return supportTransacted;
+        return configuration.isSupportTransacted();
     }
 
     @Override
     public ErrorHandlerBuilder cloneBuilder() {
-        ErrorHandlerBuilderRef answer = new ErrorHandlerBuilderRef(ref);
+        ErrorHandlerBuilderRef answer = new ErrorHandlerBuilderRef(configuration.getRef());
         cloneBuilder(answer);
         return answer;
     }
 
     protected void cloneBuilder(ErrorHandlerBuilderRef other) {
-        super.cloneBuilder(other);
-
-        // no need to copy the handlers
-
-        other.supportTransacted = supportTransacted;
+        other.setSupportTransacted(configuration.isSupportTransacted());
     }
 
     public String getRef() {
-        return ref;
+        return configuration.getRef();
     }
 
     @Override
     public void setRef(String ref) {
-        this.ref = ref;
+        configuration.setRef(ref);
     }
 
     @Override
     public boolean isSupportTransacted() {
-        return supportTransacted;
+        return configuration.isSupportTransacted();
     }
 
     @Override
     public void setSupportTransacted(boolean supportTransacted) {
-        this.supportTransacted = supportTransacted;
+        configuration.setSupportTransacted(supportTransacted);
     }
 
     @Override
     public String toString() {
-        return "ErrorHandlerBuilderRef[" + ref + "]";
+        return "ErrorHandlerBuilderRef[" + configuration.getRef() + "]";
     }
 }

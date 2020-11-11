@@ -104,10 +104,10 @@ import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.util.ObjectHelper;
@@ -719,7 +719,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         if (inheritErrorHandler == null || inheritErrorHandler) {
             LOG.trace("{} is configured to inheritErrorHandler", definition);
             Processor output = channel.getOutput();
-            Processor errorHandler = wrapInErrorHandler(output, true);
+            Processor errorHandler = wrapInErrorHandler(output);
             // set error handler on channel
             channel.setErrorHandler(errorHandler);
         } else {
@@ -731,22 +731,18 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Wraps the given output in an error handler
      *
      * @param  output    the output
-     * @param  longLived if the processor is longLived or not
      * @return           the output wrapped with the error handler
      * @throws Exception can be thrown if failed to create error handler builder
      */
-    protected Processor wrapInErrorHandler(Processor output, boolean longLived) throws Exception {
+    protected Processor wrapInErrorHandler(Processor output) throws Exception {
         ErrorHandlerFactory builder = route.getErrorHandlerFactory();
 
         // create error handler
         Processor errorHandler = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createErrorHandler(route,
                 builder, output);
 
-        if (longLived) {
-            // invoke lifecycles so we can manage this error handler builder
-            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onErrorHandlerAdd(route, errorHandler, builder);
-            }
+        if (output instanceof ErrorHandlerAware) {
+            ((ErrorHandlerAware) output).setErrorHandler(errorHandler);
         }
 
         return errorHandler;

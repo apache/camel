@@ -20,7 +20,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
+import org.apache.camel.model.errorhandler.DeadLetterChannelProperties;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
@@ -28,7 +28,7 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 
-public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelConfiguration> {
+public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLetterChannelProperties> {
 
     public DeadLetterChannelReifier(Route route, ErrorHandlerFactory definition) {
         super(route, definition);
@@ -48,7 +48,7 @@ public class DeadLetterChannelReifier extends DefaultErrorHandlerReifier<DeadLet
         DeadLetterChannel answer = new DeadLetterChannel(
                 camelContext, processor, logger,
                 getBean(Processor.class, definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
-                redeliveryPolicy, definition.getExceptionPolicyStrategy(), deadLetterProcessor,
+                redeliveryPolicy, deadLetterProcessor,
                 definition.getDeadLetterUri(), definition.isDeadLetterHandleNewException(), definition.isUseOriginalMessage(),
                 definition.isUseOriginalBody(),
                 definition.getRetryWhilePolicy(camelContext),

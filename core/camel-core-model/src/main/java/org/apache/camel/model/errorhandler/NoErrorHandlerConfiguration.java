@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.model.errorhandler;
 
-/**
- * Base class for builders of error handling.
- */
-public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
+// TODO: Maybe not needed
+// TODO: Maybe not needed
+import javax.xml.bind.annotation.XmlTransient;
 
-    @Override
-    public boolean supportTransacted() {
-        return false;
-    }
+@XmlTransient
+public class NoErrorHandlerConfiguration implements NoErrorHandlerProperties {
+
+    // no configuration
 
 }

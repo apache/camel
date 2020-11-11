@@ -44,9 +44,11 @@ import org.apache.camel.InOut;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.StreamCache;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
@@ -237,6 +239,19 @@ public class MethodInfo {
     @Override
     public String toString() {
         return method.toString();
+    }
+
+    /**
+     * For fine grained error handling for outputs of this EIP. The base error handler is used as base and then cloned
+     * for each output processor.
+     *
+     * This is used internally only by Camel - not for end users.
+     */
+    public void setErrorHandler(Processor errorHandler) {
+        // special for @RecipientList which needs to be injected with error handler it should use
+        if (recipientList instanceof ErrorHandlerAware) {
+            ((ErrorHandlerAware) recipientList).setErrorHandler(errorHandler);
+        }
     }
 
     public MethodInvocation createMethodInvocation(final Object pojo, boolean hasParameters, final Exchange exchange) {

@@ -17,7 +17,7 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.errorhandler.NoErrorHandlerConfiguraiton;
+import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
 
 /**
  * A builder to disable the use of an error handler so that any exceptions are thrown. This not recommended in general,
@@ -25,7 +25,7 @@ import org.apache.camel.model.errorhandler.NoErrorHandlerConfiguraiton;
  * unsure; however it can be useful sometimes to disable an error handler inside a complex route so that exceptions
  * bubble up to the parent {@link Processor}
  */
-public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements NoErrorHandlerConfiguraiton {
+public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements NoErrorHandlerProperties {
 
     @Override
     public boolean supportTransacted() {
@@ -34,8 +34,6 @@ public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements
 
     @Override
     public ErrorHandlerBuilder cloneBuilder() {
-        NoErrorHandlerBuilder answer = new NoErrorHandlerBuilder();
-        cloneBuilder(answer);
-        return answer;
+        return new NoErrorHandlerBuilder();
     }
 }

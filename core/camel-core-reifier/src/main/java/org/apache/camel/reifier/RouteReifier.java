@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConsumerResolver;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
@@ -32,6 +33,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -39,6 +41,7 @@ import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
@@ -320,10 +323,27 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             }
         }
 
+        // inject the route error handler for processors that are error handler aware
+        // this needs to be done here at the end because the route may be transactional and have a transaction error handler
+        // automatic be configured which some EIPs like Multicast/RecipientList needs to be using for special fine grained error handling
+        ErrorHandlerFactory builder = route.getErrorHandlerFactory();
+        Processor errorHandler = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createErrorHandler(route,
+                builder, null);
+        prepareErrorHandlerAware(route, errorHandler);
+
         // okay route has been created from the model, then the model is no longer needed and we can de-reference
         route.clearRouteModel();
 
         return route;
+    }
+
+    private void prepareErrorHandlerAware(Route route, Processor errorHandler) {
+        List<Processor> processors = route.filter("*");
+        for (Processor p : processors) {
+            if (p instanceof ErrorHandlerAware) {
+                ((ErrorHandlerAware) p).setErrorHandler(errorHandler);
+            }
+        }
     }
 
     protected Map<String, Object> computeRouteProperties() {

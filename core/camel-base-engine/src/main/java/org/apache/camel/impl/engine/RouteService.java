@@ -31,7 +31,6 @@ import org.apache.camel.Channel;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
@@ -39,7 +38,6 @@ import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.RoutePolicy;
@@ -337,16 +335,8 @@ public class RouteService extends ChildServiceSupport {
 
     protected void stopChildService(Route route, Set<Service> services, boolean shutdown) {
         for (Service service : services) {
-            if (service instanceof ErrorHandler) {
-                // special for error handlers
-                for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                    ErrorHandlerFactory errorHandlerFactory = route.getErrorHandlerFactory();
-                    strategy.onErrorHandlerRemove(route, (Processor) service, errorHandlerFactory);
-                }
-            } else {
-                for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                    strategy.onServiceRemove(camelContext, service, route);
-                }
+            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
+                strategy.onServiceRemove(camelContext, service, route);
             }
             if (shutdown) {
                 ServiceHelper.stopAndShutdownService(service);

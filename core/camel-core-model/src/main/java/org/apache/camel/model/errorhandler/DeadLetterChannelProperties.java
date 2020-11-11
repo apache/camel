@@ -14,23 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.management;
+package org.apache.camel.model.errorhandler;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.management.ManagedErrorHandlerTest;
+import org.apache.camel.Predicate;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+public interface DeadLetterChannelProperties extends DefaultErrorHandlerProperties {
 
-public class SpringManagedErrorHandlerTest extends ManagedErrorHandlerTest {
+    // has no additional configurations
 
-    @Override
-    protected boolean useJmx() {
-        return true;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedErrorHandlerTest.xml");
-    }
+    Predicate getRetryWhilePolicy(CamelContext context);
 
 }

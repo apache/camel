@@ -82,9 +82,12 @@ public class DefaultRoute extends ServiceSupport implements Route {
     private ShutdownRunningTask shutdownRunningTask;
     private final Map<String, Processor> onCompletions = new HashMap<>();
     private final Map<String, Processor> onExceptions = new HashMap<>();
+
+    // camel-core-model
     private ErrorHandlerFactory errorHandlerFactory;
-    // must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
+    // camel-core-model: must be concurrent as error handlers can be mutated concurrently via multicast/recipientlist EIPs
     private final ConcurrentMap<ErrorHandlerFactory, Set<NamedNode>> errorHandlers = new ConcurrentHashMap<>();
+
     private final Endpoint endpoint;
     private final Map<String, Object> properties = new HashMap<>();
     private final List<Service> services = new ArrayList<>();
@@ -229,14 +232,17 @@ public class DefaultRoute extends ServiceSupport implements Route {
         this.startupOrder = startupOrder;
     }
 
+    @Override
     public RouteController getRouteController() {
         return routeController;
     }
 
+    @Override
     public void setRouteController(RouteController routeController) {
         this.routeController = routeController;
     }
 
+    @Override
     public Boolean isAutoStartup() {
         return autoStartup;
     }
@@ -254,6 +260,8 @@ public class DefaultRoute extends ServiceSupport implements Route {
     @Override
     public void clearRouteModel() {
         route = null;
+        errorHandlerFactory = null;
+        errorHandlers.clear();
     }
 
     @Override
@@ -266,6 +274,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
         return routeDescription;
     }
 
+    @Override
     public List<Processor> getEventDrivenProcessors() {
         return eventDrivenProcessors;
     }

@@ -51,7 +51,6 @@ public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport impleme
     @Override
     public ErrorHandlerBuilder cloneBuilder() {
         DummyErrorHandlerBuilder answer = new DummyErrorHandlerBuilder();
-        super.cloneBuilder(answer);
         answer.beanName = beanName;
         return answer;
     }

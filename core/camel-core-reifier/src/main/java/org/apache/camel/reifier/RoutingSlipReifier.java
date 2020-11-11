@@ -50,7 +50,7 @@ public class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<
 
         // and wrap this in an error handler
         AsyncProcessor processor = routingSlip.newRoutingSlipProcessorForErrorHandler();
-        AsyncProcessor errorHandler = (AsyncProcessor) wrapInErrorHandler(processor, false);
+        AsyncProcessor errorHandler = (AsyncProcessor) wrapInErrorHandler(processor);
         routingSlip.setErrorHandler(errorHandler);
 
         return routingSlip;

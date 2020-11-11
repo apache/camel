@@ -18,94 +18,182 @@ package org.apache.camel.model.errorhandler;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.ErrorHandlerFactory;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.apache.camel.spi.CamelLogger;
 
-public interface DefaultErrorHandlerConfiguration extends ErrorHandlerFactory {
+@XmlTransient
+public class DefaultErrorHandlerConfiguration implements DefaultErrorHandlerProperties {
 
-    ExceptionPolicyStrategy getExceptionPolicyStrategy();
+    private CamelLogger logger;
+    private RedeliveryPolicy redeliveryPolicy;
+    private Processor onRedelivery;
+    private String onRedeliveryRef;
+    private Predicate retryWhile;
+    private String retryWhileRef;
+    private String deadLetterUri;
+    private boolean deadLetterHandleNewException = true;
+    private boolean useOriginalMessage;
+    private boolean useOriginalBody;
+    private boolean asyncDelayedRedelivery;
+    private ScheduledExecutorService executorService;
+    private String executorServiceRef;
+    private Processor onPrepareFailure;
+    private String onPrepareFailureRef;
+    private Processor onExceptionOccurred;
+    private String onExceptionOccurredRef;
 
-    void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy);
+    @Override
+    public boolean hasLogger() {
+        return logger != null;
+    }
 
-    String getExceptionPolicyStrategyRef();
+    public CamelLogger getLogger() {
+        return logger;
+    }
 
-    void setExceptionPolicyStrategyRef(String exceptionPolicyStrategyRef);
+    public void setLogger(CamelLogger logger) {
+        this.logger = logger;
+    }
 
-    boolean hasLogger();
+    @Override
+    public RedeliveryPolicy getDefaultRedeliveryPolicy() {
+        return RedeliveryPolicy.DEFAULT_POLICY;
+    }
 
-    CamelLogger getLogger();
+    @Override
+    public boolean hasRedeliveryPolicy() {
+        return redeliveryPolicy != null;
+    }
 
-    void setLogger(CamelLogger logger);
+    public RedeliveryPolicy getRedeliveryPolicy() {
+        return redeliveryPolicy;
+    }
 
-    boolean hasRedeliveryPolicy();
+    public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
+        this.redeliveryPolicy = redeliveryPolicy;
+    }
 
-    RedeliveryPolicy getRedeliveryPolicy();
+    public Processor getOnRedelivery() {
+        return onRedelivery;
+    }
 
-    RedeliveryPolicy getDefaultRedeliveryPolicy();
+    public void setOnRedelivery(Processor onRedelivery) {
+        this.onRedelivery = onRedelivery;
+    }
 
-    void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy);
+    public String getOnRedeliveryRef() {
+        return onRedeliveryRef;
+    }
 
-    Processor getOnRedelivery();
+    public void setOnRedeliveryRef(String onRedeliveryRef) {
+        this.onRedeliveryRef = onRedeliveryRef;
+    }
 
-    void setOnRedelivery(Processor onRedelivery);
+    public Predicate getRetryWhile() {
+        return retryWhile;
+    }
 
-    String getOnRedeliveryRef();
+    public void setRetryWhile(Predicate retryWhile) {
+        this.retryWhile = retryWhile;
+    }
 
-    void setOnRedeliveryRef(String onRedeliveryRef);
+    public String getRetryWhileRef() {
+        return retryWhileRef;
+    }
 
-    Predicate getRetryWhile();
+    public void setRetryWhileRef(String retryWhileRef) {
+        this.retryWhileRef = retryWhileRef;
+    }
 
-    void setRetryWhile(Predicate retryWhile);
+    public String getDeadLetterUri() {
+        return deadLetterUri;
+    }
 
-    String getRetryWhileRef();
+    public void setDeadLetterUri(String deadLetterUri) {
+        this.deadLetterUri = deadLetterUri;
+    }
 
-    void setRetryWhileRef(String retryWhileRef);
+    public boolean isDeadLetterHandleNewException() {
+        return deadLetterHandleNewException;
+    }
 
-    String getDeadLetterUri();
+    public void setDeadLetterHandleNewException(boolean deadLetterHandleNewException) {
+        this.deadLetterHandleNewException = deadLetterHandleNewException;
+    }
 
-    void setDeadLetterUri(String deadLetterUri);
+    public boolean isUseOriginalMessage() {
+        return useOriginalMessage;
+    }
 
-    boolean isDeadLetterHandleNewException();
+    public void setUseOriginalMessage(boolean useOriginalMessage) {
+        this.useOriginalMessage = useOriginalMessage;
+    }
 
-    void setDeadLetterHandleNewException(boolean deadLetterHandleNewException);
+    public boolean isUseOriginalBody() {
+        return useOriginalBody;
+    }
 
-    boolean isUseOriginalMessage();
+    public void setUseOriginalBody(boolean useOriginalBody) {
+        this.useOriginalBody = useOriginalBody;
+    }
 
-    void setUseOriginalMessage(boolean useOriginalMessage);
+    public boolean isAsyncDelayedRedelivery() {
+        return asyncDelayedRedelivery;
+    }
 
-    boolean isUseOriginalBody();
+    public void setAsyncDelayedRedelivery(boolean asyncDelayedRedelivery) {
+        this.asyncDelayedRedelivery = asyncDelayedRedelivery;
+    }
 
-    void setUseOriginalBody(boolean useOriginalBody);
+    public ScheduledExecutorService getExecutorService() {
+        return executorService;
+    }
 
-    boolean isAsyncDelayedRedelivery();
+    public void setExecutorService(ScheduledExecutorService executorService) {
+        this.executorService = executorService;
+    }
 
-    void setAsyncDelayedRedelivery(boolean asyncDelayedRedelivery);
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
 
-    ScheduledExecutorService getExecutorService();
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
+    }
 
-    void setExecutorService(ScheduledExecutorService executorService);
+    public Processor getOnPrepareFailure() {
+        return onPrepareFailure;
+    }
 
-    String getExecutorServiceRef();
+    public void setOnPrepareFailure(Processor onPrepareFailure) {
+        this.onPrepareFailure = onPrepareFailure;
+    }
 
-    void setExecutorServiceRef(String executorServiceRef);
+    public String getOnPrepareFailureRef() {
+        return onPrepareFailureRef;
+    }
 
-    Processor getOnPrepareFailure();
+    public void setOnPrepareFailureRef(String onPrepareFailureRef) {
+        this.onPrepareFailureRef = onPrepareFailureRef;
+    }
 
-    void setOnPrepareFailure(Processor onPrepareFailure);
+    public Processor getOnExceptionOccurred() {
+        return onExceptionOccurred;
+    }
 
-    String getOnPrepareFailureRef();
+    public void setOnExceptionOccurred(Processor onExceptionOccurred) {
+        this.onExceptionOccurred = onExceptionOccurred;
+    }
 
-    void setOnPrepareFailureRef(String onPrepareFailureRef);
+    public String getOnExceptionOccurredRef() {
+        return onExceptionOccurredRef;
+    }
 
-    Processor getOnExceptionOccurred();
-
-    void setOnExceptionOccurred(Processor onExceptionOccurred);
-
-    String getOnExceptionOccurredRef();
-
-    void setOnExceptionOccurredRef(String onExceptionOccurredRef);
+    public void setOnExceptionOccurredRef(String onExceptionOccurredRef) {
+        this.onExceptionOccurredRef = onExceptionOccurredRef;
+    }
 }

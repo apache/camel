@@ -33,10 +33,10 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
-import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
-import org.apache.camel.model.errorhandler.DefaultErrorHandlerConfiguration;
-import org.apache.camel.model.errorhandler.ErrorHandlerRefConfiguration;
-import org.apache.camel.model.errorhandler.NoErrorHandlerConfiguraiton;
+import org.apache.camel.model.errorhandler.DeadLetterChannelProperties;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
+import org.apache.camel.model.errorhandler.ErrorHandlerRefProperties;
+import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy;
 import org.apache.camel.processor.errorhandler.ExceptionPolicy.RedeliveryOption;
@@ -90,13 +90,13 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
     }
 
     private static ErrorHandlerReifier<? extends ErrorHandlerFactory> coreReifier(Route route, ErrorHandlerFactory definition) {
-        if (definition instanceof DeadLetterChannelConfiguration) {
+        if (definition instanceof DeadLetterChannelProperties) {
             return new DeadLetterChannelReifier(route, definition);
-        } else if (definition instanceof DefaultErrorHandlerConfiguration) {
+        } else if (definition instanceof DefaultErrorHandlerProperties) {
             return new DefaultErrorHandlerReifier<>(route, definition);
-        } else if (definition instanceof ErrorHandlerRefConfiguration) {
+        } else if (definition instanceof ErrorHandlerRefProperties) {
             return new ErrorHandlerRefReifier(route, definition);
-        } else if (definition instanceof NoErrorHandlerConfiguraiton) {
+        } else if (definition instanceof NoErrorHandlerProperties) {
             return new NoErrorHandlerReifier(route, definition);
         }
         return null;
