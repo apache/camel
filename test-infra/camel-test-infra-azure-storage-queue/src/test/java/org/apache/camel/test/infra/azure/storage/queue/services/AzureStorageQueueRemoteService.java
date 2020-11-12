@@ -24,8 +24,13 @@ import org.apache.camel.test.infra.azure.common.services.AzureService;
 public class AzureStorageQueueRemoteService implements AzureService {
 
     @Override
-    public void initialize() {
+    public void registerProperties() {
         // NO-OP
+    }
+
+    @Override
+    public void initialize() {
+        registerProperties();
     }
 
     @Override

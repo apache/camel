@@ -17,20 +17,27 @@
 
 package org.apache.camel.test.infra.mongodb.services;
 
+import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
+
 public class MongoDBRemoteService implements MongoDBService {
 
     public String getReplicaSetUrl() {
-        return System.getProperty("mongodb.url");
+        return System.getProperty(MongoDBProperties.MONGODB_URL);
     }
 
     @Override
     public String getConnectionAddress() {
-        return System.getProperty("mongodb.connection.address");
+        return System.getProperty(MongoDBProperties.MONGODB_URL);
+    }
+
+    @Override
+    public void registerProperties() {
+        // NO-OP
     }
 
     @Override
     public void initialize() {
-        // NO-OP
+        registerProperties();
     }
 
     @Override

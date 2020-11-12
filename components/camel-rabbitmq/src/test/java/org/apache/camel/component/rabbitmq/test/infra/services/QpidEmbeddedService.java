@@ -80,6 +80,11 @@ public class QpidEmbeddedService implements RabbitMQService {
     }
 
     @Override
+    public void registerProperties() {
+        // NO-OP
+    }
+
+    @Override
     public void initialize() {
         LOG.info("Trying to start Qpid embedded container");
         try {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.cassandra.services;
 
+import org.apache.camel.test.infra.cassandra.common.CassandraProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ public class RemoteCassandraService implements CassandraService {
 
     @Override
     public int getCQL3Port() {
-        String strPort = System.getProperty("cassandra.cql3.port");
+        String strPort = System.getProperty(CassandraProperties.CASSANDRA_CQL3_PORT);
 
         if (strPort != null) {
             return Integer.parseInt(strPort);
@@ -40,12 +41,17 @@ public class RemoteCassandraService implements CassandraService {
 
     @Override
     public String getCassandraHost() {
-        return System.getProperty("cassandra.host");
+        return System.getProperty(CassandraProperties.CASSANDRA_HOST);
+    }
+
+    @Override
+    public void registerProperties() {
+        // NO-OP
     }
 
     @Override
     public void initialize() {
-        // NO-OP
+        registerProperties();
     }
 
     @Override

@@ -17,12 +17,14 @@
 
 package org.apache.camel.test.infra.elasticsearch.services;
 
+import org.apache.camel.test.infra.elasticsearch.common.ElasticSearchProperties;
+
 public class RemoteElasticSearchService implements ElasticSearchService {
     private static final int ELASTIC_SEARCH_PORT = 9200;
 
     @Override
     public int getPort() {
-        String strPort = System.getProperty("elasticsearch.port");
+        String strPort = System.getProperty(ElasticSearchProperties.ELASTIC_SEARCH_PORT);
 
         if (strPort != null) {
             return Integer.parseInt(strPort);
@@ -33,12 +35,17 @@ public class RemoteElasticSearchService implements ElasticSearchService {
 
     @Override
     public String getElasticSearchHost() {
-        return System.getProperty("elasticsearch.host");
+        return System.getProperty(ElasticSearchProperties.ELASTIC_SEARCH_HOST);
+    }
+
+    @Override
+    public void registerProperties() {
+        // NO-OP
     }
 
     @Override
     public void initialize() {
-        // NO-OP
+        registerProperties();
     }
 
     @Override

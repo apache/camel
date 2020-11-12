@@ -61,6 +61,17 @@ public abstract class AWSLocalContainerService<T> implements AWSService<T>, Cont
         properties.put(AWSConfigs.AMAZON_AWS_HOST, container.getAmazonHost());
         properties.put(AWSConfigs.PROTOCOL, "http");
 
+        return properties;
+    }
+
+    public URI getServiceEndpoint() {
+        return container.getServiceEndpoint();
+    }
+
+    @Override
+    public void registerProperties() {
+        AwsCredentials credentials = container.getCredentialsProvider().resolveCredentials();
+
         /**
          * We need to set these. For some sets, when they instantiate the clients within Camel, they need to know what
          * is the Amazon host being used (ie.: when creating them using the withEndpointConfiguration()). Because this
@@ -75,12 +86,6 @@ public abstract class AWSLocalContainerService<T> implements AWSService<T>, Cont
         System.setProperty(AWSConfigs.AMAZON_AWS_HOST, getAmazonHost());
         System.setProperty(AWSConfigs.REGION, Region.US_EAST_1.toString());
         System.setProperty(AWSConfigs.PROTOCOL, "http");
-
-        return properties;
-    }
-
-    public URI getServiceEndpoint() {
-        return container.getServiceEndpoint();
     }
 
     @Override
@@ -88,8 +93,8 @@ public abstract class AWSLocalContainerService<T> implements AWSService<T>, Cont
         LOG.debug("Trying to start the container");
         container.start();
 
+        registerProperties();
         LOG.info("AWS service running at address {}", getServiceEndpoint());
-        getConnectionProperties();
     }
 
     @Override

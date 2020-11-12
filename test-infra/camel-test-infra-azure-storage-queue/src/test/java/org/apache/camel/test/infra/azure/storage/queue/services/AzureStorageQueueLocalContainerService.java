@@ -25,7 +25,7 @@ import org.apache.camel.test.infra.azure.common.services.AzureStorageService;
 public class AzureStorageQueueLocalContainerService extends AzureStorageService {
 
     @Override
-    protected void registerProperties() {
+    public void registerProperties() {
         super.registerProperties();
 
         System.setProperty(AzureConfigs.PORT, String.valueOf(getContainer().getMappedPort(AzureServices.QUEUE_SERVICE)));

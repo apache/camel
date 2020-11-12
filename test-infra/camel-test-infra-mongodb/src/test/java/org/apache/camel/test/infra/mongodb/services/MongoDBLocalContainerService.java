@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.mongodb.services;
 
 import org.apache.camel.test.infra.common.services.ContainerService;
+import org.apache.camel.test.infra.mongodb.common.MongoDBProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.MongoDBContainer;
@@ -51,9 +52,16 @@ public class MongoDBLocalContainerService implements MongoDBService, ContainerSe
     }
 
     @Override
+    public void registerProperties() {
+        System.setProperty(MongoDBProperties.MONGODB_URL, getReplicaSetUrl());
+        System.setProperty(MongoDBProperties.MONGODB_CONNECTION_ADDRESS, getConnectionAddress());
+    }
+
+    @Override
     public void initialize() {
         LOG.info("Trying to start the MongoDB service");
         container.start();
+        registerProperties();
         LOG.info("MongoDB service running at {}", container.getReplicaSetUrl());
     }
 

@@ -15,33 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.kafka.services;
+package org.apache.camel.test.infra.cassandra.common;
 
-import org.apache.camel.test.infra.kafka.common.KafkaProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public final class CassandraProperties {
+    public static final String CASSANDRA_CQL3_PORT = "cassandra.cql3.port";
+    public static final String CASSANDRA_HOST = "cassandra.host";
 
-public class RemoteKafkaService implements KafkaService {
-    private static final Logger LOG = LoggerFactory.getLogger(RemoteKafkaService.class);
+    private CassandraProperties() {
 
-    @Override
-    public String getBootstrapServers() {
-        return System.getProperty(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS);
-    }
-
-    @Override
-    public void registerProperties() {
-        // NO-OP
-    }
-
-    @Override
-    public void initialize() {
-        registerProperties();
-        LOG.info("Kafka bootstrap server running at address {}", getBootstrapServers());
-    }
-
-    @Override
-    public void shutdown() {
-        // NO-OP
     }
 }

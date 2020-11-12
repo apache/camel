@@ -36,6 +36,11 @@ public class AWSRemoteService<T> implements AWSService<T> {
     }
 
     @Override
+    public void registerProperties() {
+        // NO-OP
+    }
+
+    @Override
     public T getClient() {
         return remoteClientSupplier.get();
     }
@@ -59,7 +64,7 @@ public class AWSRemoteService<T> implements AWSService<T> {
 
     @Override
     public void initialize() {
-
+        registerProperties();
     }
 
     @Override
