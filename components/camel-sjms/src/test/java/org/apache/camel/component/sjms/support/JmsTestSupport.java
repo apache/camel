@@ -59,12 +59,12 @@ public class JmsTestSupport extends CamelTestSupport {
     protected String brokerUri;
     protected boolean externalAmq;
     protected Properties properties;
+    protected ActiveMQConnectionFactory connectionFactory;
 
     private BrokerService broker;
     private Connection connection;
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
-    protected ActiveMQConnectionFactory connectionFactory;
 
     /**
      * Set up the Broker
