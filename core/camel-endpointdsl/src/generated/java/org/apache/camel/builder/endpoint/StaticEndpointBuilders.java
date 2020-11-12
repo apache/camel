@@ -5875,9 +5875,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * What git operation to execute
-     * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
      * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
      * 
      * Path parameter: branchName
      * Name of branch
@@ -5900,9 +5900,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: type (required)
      * What git operation to execute
-     * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
      * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
      * 
      * Path parameter: branchName
      * Name of branch
