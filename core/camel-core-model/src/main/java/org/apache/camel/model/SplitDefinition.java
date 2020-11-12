@@ -110,6 +110,19 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     // -------------------------------------------------------------------------
 
     /**
+     * Delimiter used in splitting messages. Can be turned off using the value <tt>false</tt>.
+     * <p/>
+     * The default value is ,
+     *
+     * @param  delimiter the delimiter
+     * @return           the builder
+     */
+    public SplitDefinition delimiter(String delimiter) {
+        setDelimiter(delimiter);
+        return this;
+    }
+
+    /**
      * Sets the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single
      * outgoing message from the Splitter. By default Camel will use the original incoming message to the splitter
      * (leave it unchanged). You can also use a POJO as the AggregationStrategy
