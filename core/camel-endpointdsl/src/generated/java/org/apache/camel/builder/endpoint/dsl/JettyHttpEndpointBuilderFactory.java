@@ -43,6 +43,32 @@ public interface JettyHttpEndpointBuilderFactory {
             return (AdvancedJettyHttpEndpointBuilder) this;
         }
         /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default JettyHttpEndpointBuilder chunked(boolean chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         */
+        default JettyHttpEndpointBuilder chunked(String chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
          * Determines whether or not the raw input stream from Servlet is cached
          * or not (Camel will read the stream into a in memory/overflow to file,
          * Stream caching) cache. By default Camel will cache the Servlet input
@@ -186,32 +212,6 @@ public interface JettyHttpEndpointBuilderFactory {
         default JettyHttpEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: consumer
-         */
-        default JettyHttpEndpointBuilder chunked(boolean chunked) {
-            doSetProperty("chunked", chunked);
-            return this;
-        }
-        /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: consumer
-         */
-        default JettyHttpEndpointBuilder chunked(String chunked) {
-            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -904,34 +904,6 @@ public interface JettyHttpEndpointBuilderFactory {
         default AdvancedJettyHttpEndpointBuilder traceEnabled(
                 String traceEnabled) {
             doSetProperty("traceEnabled", traceEnabled);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJettyHttpEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJettyHttpEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**

@@ -32,8 +32,8 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "addresses": getOrCreateConfiguration(target).setAddresses(property(camelContext, java.util.List.class, value)); return true;
         case "atblock":
         case "atBlock": getOrCreateConfiguration(target).setAtBlock(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "blockhash":
         case "blockHash": getOrCreateConfiguration(target).setBlockHash(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -101,8 +101,8 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "addresses": return java.util.List.class;
         case "atblock":
         case "atBlock": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "blockhash":
         case "blockHash": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -171,8 +171,8 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "addresses": return getOrCreateConfiguration(target).getAddresses();
         case "atblock":
         case "atBlock": return getOrCreateConfiguration(target).getAtBlock();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "blockhash":
         case "blockHash": return getOrCreateConfiguration(target).getBlockHash();
         case "bridgeerrorhandler":

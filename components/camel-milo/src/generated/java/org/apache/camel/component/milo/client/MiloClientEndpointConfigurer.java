@@ -27,8 +27,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationName": target.getConfiguration().setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
         case "applicationUri": target.getConfiguration().setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channellifetime":
@@ -91,8 +89,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationName": return java.lang.String.class;
         case "applicationuri":
         case "applicationUri": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "channellifetime":
@@ -156,8 +152,6 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "applicationName": return target.getConfiguration().getApplicationName();
         case "applicationuri":
         case "applicationUri": return target.getConfiguration().getApplicationUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channellifetime":

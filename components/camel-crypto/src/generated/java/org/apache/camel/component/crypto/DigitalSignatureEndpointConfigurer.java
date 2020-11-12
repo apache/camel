@@ -23,8 +23,6 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "algorithm": target.getConfiguration().setAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "alias": target.getConfiguration().setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "buffersize":
         case "bufferSize": target.getConfiguration().setBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "certificate": target.getConfiguration().setCertificate(property(camelContext, java.security.cert.Certificate.class, value)); return true;
@@ -65,8 +63,6 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "algorithm": return java.lang.String.class;
         case "alias": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "buffersize":
         case "bufferSize": return java.lang.Integer.class;
         case "certificate": return java.security.cert.Certificate.class;
@@ -108,8 +104,6 @@ public class DigitalSignatureEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "algorithm": return target.getConfiguration().getAlgorithm();
         case "alias": return target.getConfiguration().getAlias();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "buffersize":
         case "bufferSize": return target.getConfiguration().getBufferSize();
         case "certificate": return target.getConfiguration().getCertificate();

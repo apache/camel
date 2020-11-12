@@ -25,8 +25,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobname":
         case "blobName": target.getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
         case "bloboffset":
@@ -88,8 +86,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return java.lang.String.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "blobname":
         case "blobName": return java.lang.String.class;
         case "bloboffset":
@@ -152,8 +148,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobname":
         case "blobName": return target.getConfiguration().getBlobName();
         case "bloboffset":

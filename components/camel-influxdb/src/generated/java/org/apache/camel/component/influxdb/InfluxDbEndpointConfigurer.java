@@ -21,8 +21,6 @@ public class InfluxDbEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         InfluxDbEndpoint target = (InfluxDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batch": target.setBatch(property(camelContext, boolean.class, value)); return true;
         case "databasename":
         case "databaseName": target.setDatabaseName(property(camelContext, java.lang.String.class, value)); return true;
@@ -40,8 +38,6 @@ public class InfluxDbEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "batch": return boolean.class;
         case "databasename":
         case "databaseName": return java.lang.String.class;
@@ -60,8 +56,6 @@ public class InfluxDbEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         InfluxDbEndpoint target = (InfluxDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "batch": return target.isBatch();
         case "databasename":
         case "databaseName": return target.getDatabaseName();

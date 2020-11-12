@@ -23,8 +23,6 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ackmode":
         case "ackMode": target.setAckMode(property(camelContext, org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -51,8 +49,6 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ackmode":
         case "ackMode": return org.apache.camel.component.google.pubsub.GooglePubsubConstants.AckMode.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
@@ -80,8 +76,6 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "ackmode":
         case "ackMode": return target.getAckMode();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":

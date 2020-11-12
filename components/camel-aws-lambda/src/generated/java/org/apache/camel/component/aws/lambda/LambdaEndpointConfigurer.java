@@ -27,8 +27,6 @@ public class LambdaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "awslambdaclient":
         case "awsLambdaClient": target.getConfiguration().setAwsLambdaClient(property(camelContext, com.amazonaws.services.lambda.AWSLambda.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.lambda.LambdaOperations.class, value)); return true;
@@ -55,8 +53,6 @@ public class LambdaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "autoDiscoverClient": return boolean.class;
         case "awslambdaclient":
         case "awsLambdaClient": return com.amazonaws.services.lambda.AWSLambda.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws.lambda.LambdaOperations.class;
@@ -84,8 +80,6 @@ public class LambdaEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "awslambdaclient":
         case "awsLambdaClient": return target.getConfiguration().getAwsLambdaClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();

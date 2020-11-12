@@ -21,8 +21,6 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PdfEndpoint target = (PdfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "font": target.getPdfConfiguration().setFont(property(camelContext, java.lang.String.class, value)); return true;
         case "fontsize":
         case "fontSize": target.getPdfConfiguration().setFontSize(property(camelContext, float.class, value)); return true;
@@ -48,8 +46,6 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "font": return java.lang.String.class;
         case "fontsize":
         case "fontSize": return float.class;
@@ -76,8 +72,6 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PdfEndpoint target = (PdfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "font": return target.getPdfConfiguration().getFont();
         case "fontsize":
         case "fontSize": return target.getPdfConfiguration().getFontSize();

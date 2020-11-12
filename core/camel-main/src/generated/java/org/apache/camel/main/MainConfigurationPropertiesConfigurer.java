@@ -33,6 +33,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationLogSummary": target.setAutoConfigurationLogSummary(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "AutoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "AutowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "backlogtracing":
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, boolean.class, value)); return true;
         case "beanintrospectionextendedstatistics":
@@ -200,6 +202,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationLogSummary": return boolean.class;
         case "autostartup":
         case "AutoStartup": return boolean.class;
+        case "autowiredenabled":
+        case "AutowiredEnabled": return boolean.class;
         case "backlogtracing":
         case "BacklogTracing": return boolean.class;
         case "beanintrospectionextendedstatistics":
@@ -368,6 +372,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationLogSummary": return target.isAutoConfigurationLogSummary();
         case "autostartup":
         case "AutoStartup": return target.isAutoStartup();
+        case "autowiredenabled":
+        case "AutowiredEnabled": return target.isAutowiredEnabled();
         case "backlogtracing":
         case "BacklogTracing": return target.isBacklogTracing();
         case "beanintrospectionextendedstatistics":

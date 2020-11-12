@@ -140,18 +140,21 @@ public interface MiloClientComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default MiloClientComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MiloClientComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -393,7 +396,7 @@ public interface MiloClientComponentBuilderFactory {
             case "discoveryEndpointUri": getOrCreateConfiguration((MiloClientComponent) component).setDiscoveryEndpointUri((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((MiloClientComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((MiloClientComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((MiloClientComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MiloClientComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "allowedSecurityPolicies": getOrCreateConfiguration((MiloClientComponent) component).setAllowedSecurityPolicies((java.lang.String) value); return true;
             case "applicationName": getOrCreateConfiguration((MiloClientComponent) component).setApplicationName((java.lang.String) value); return true;
             case "applicationUri": getOrCreateConfiguration((MiloClientComponent) component).setApplicationUri((java.lang.String) value); return true;

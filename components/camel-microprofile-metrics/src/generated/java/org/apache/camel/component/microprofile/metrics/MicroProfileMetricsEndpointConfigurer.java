@@ -22,8 +22,6 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         MicroProfileMetricsEndpoint target = (MicroProfileMetricsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "counterincrement":
         case "counterIncrement": target.setCounterIncrement(property(camelContext, java.lang.Long.class, value)); return true;
         case "description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
@@ -51,8 +49,6 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "counterincrement":
         case "counterIncrement": return java.lang.Long.class;
         case "description": return java.lang.String.class;
@@ -81,8 +77,6 @@ public class MicroProfileMetricsEndpointConfigurer extends PropertyConfigurerSup
         MicroProfileMetricsEndpoint target = (MicroProfileMetricsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "counterincrement":
         case "counterIncrement": return target.getCounterIncrement();
         case "description": return target.getDescription();

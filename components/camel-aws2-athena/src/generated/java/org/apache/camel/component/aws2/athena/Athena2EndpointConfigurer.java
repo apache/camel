@@ -27,8 +27,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "amazonAthenaClient": target.getConfiguration().setAmazonAthenaClient(property(camelContext, software.amazon.awssdk.services.athena.AthenaClient.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientrequesttoken":
         case "clientRequestToken": target.getConfiguration().setClientRequestToken(property(camelContext, java.lang.String.class, value)); return true;
         case "database": target.getConfiguration().setDatabase(property(camelContext, java.lang.String.class, value)); return true;
@@ -88,8 +86,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "amazonAthenaClient": return software.amazon.awssdk.services.athena.AthenaClient.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "clientrequesttoken":
         case "clientRequestToken": return java.lang.String.class;
         case "database": return java.lang.String.class;
@@ -150,8 +146,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "amazonAthenaClient": return target.getConfiguration().getAmazonAthenaClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientrequesttoken":
         case "clientRequestToken": return target.getConfiguration().getClientRequestToken();
         case "database": return target.getConfiguration().getDatabase();

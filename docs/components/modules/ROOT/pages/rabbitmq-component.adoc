@@ -105,7 +105,7 @@ The RabbitMQ component supports 55 options, which are listed below.
 | *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ Binding: arg.dlq.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *autoDetectConnectionFactory* (advanced) | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | boolean
 | *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
 | *connectionFactoryException{zwsp}Handler* (advanced) | Custom rabbitmq ExceptionHandler for ConnectionFactory |  | ExceptionHandler
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
@@ -144,7 +144,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (67 parameters):
+=== Query Parameters (66 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -199,7 +199,6 @@ with the following path and query parameters:
 | *publisherAcknowledgements* (producer) | When true, the message will be published with publisher acknowledgements turned on | false | boolean
 | *publisherAcknowledgements{zwsp}Timeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
 | *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. DLQ: arg.dlq.queue. DLQ binding: arg.dlq.binding. For example to declare a queue with message ttl argument: \http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
 | *connectionFactoryException{zwsp}Handler* (advanced) | Custom rabbitmq ExceptionHandler for ConnectionFactory |  | ExceptionHandler
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int

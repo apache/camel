@@ -326,18 +326,21 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default InfinispanComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default InfinispanComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -482,7 +485,7 @@ public interface InfinispanComponentBuilderFactory {
             case "securityRealm": getOrCreateConfiguration((InfinispanComponent) component).setSecurityRealm((java.lang.String) value); return true;
             case "securityServerName": getOrCreateConfiguration((InfinispanComponent) component).setSecurityServerName((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((InfinispanComponent) component).setUsername((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((InfinispanComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((InfinispanComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "cacheContainer": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainer((org.infinispan.commons.api.BasicCacheContainer) value); return true;
             case "cacheContainerConfiguration": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainerConfiguration((java.lang.Object) value); return true;
             case "configurationProperties": getOrCreateConfiguration((InfinispanComponent) component).setConfigurationProperties((java.util.Map) value); return true;

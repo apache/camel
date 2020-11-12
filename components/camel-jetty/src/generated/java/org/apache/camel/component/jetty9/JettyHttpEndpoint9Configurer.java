@@ -22,8 +22,6 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         JettyHttpEndpoint9 target = (JettyHttpEndpoint9) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
@@ -92,8 +90,6 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "async": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "chunked": return boolean.class;
@@ -163,8 +159,6 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         JettyHttpEndpoint9 target = (JettyHttpEndpoint9) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "async": return target.isAsync();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chunked": return target.isChunked();

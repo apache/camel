@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.test.infra.common.services.ContainerService;
+import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.KafkaContainer;
@@ -31,8 +32,14 @@ public class ContainerLocalKafkaService implements KafkaService, ContainerServic
     }
 
     @Override
+    public void registerProperties() {
+        System.setProperty(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS, getBootstrapServers());
+    }
+
+    @Override
     public void initialize() {
         kafka.start();
+        registerProperties();
 
         LOG.info("Kafka bootstrap server running at address {}", kafka.getBootstrapServers());
     }

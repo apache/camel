@@ -23,8 +23,6 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "columnblacklist":
@@ -160,8 +158,6 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": return java.util.Map.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "columnblacklist":
@@ -298,8 +294,6 @@ public class DebeziumSqlserverEndpointConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "columnblacklist":

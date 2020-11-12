@@ -21,10 +21,10 @@ public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport im
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestSwaggerComponent target = (RestSwaggerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "basepath":
         case "basePath": target.setBasePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "componentname":
         case "componentName": target.setComponentName(property(camelContext, java.lang.String.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
@@ -45,10 +45,10 @@ public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "basepath":
         case "basePath": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "componentname":
         case "componentName": return java.lang.String.class;
         case "consumes": return java.lang.String.class;
@@ -70,10 +70,10 @@ public class RestSwaggerComponentConfigurer extends PropertyConfigurerSupport im
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RestSwaggerComponent target = (RestSwaggerComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "basepath":
         case "basePath": return target.getBasePath();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "componentname":
         case "componentName": return target.getComponentName();
         case "consumes": return target.getConsumes();

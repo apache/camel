@@ -23,8 +23,8 @@ public class AhcComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.ahc.AhcBinding.class, value)); return true;
         case "client": target.setClient(property(camelContext, org.asynchttpclient.AsyncHttpClient.class, value)); return true;
         case "clientconfig":
@@ -46,8 +46,8 @@ public class AhcComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "binding": return org.apache.camel.component.ahc.AhcBinding.class;
         case "client": return org.asynchttpclient.AsyncHttpClient.class;
         case "clientconfig":
@@ -70,8 +70,8 @@ public class AhcComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "binding": return target.getBinding();
         case "client": return target.getClient();
         case "clientconfig":

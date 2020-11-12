@@ -25,8 +25,6 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "iamclient":
         case "iamClient": target.getConfiguration().setIamClient(property(camelContext, com.amazonaws.services.identitymanagement.AmazonIdentityManagement.class, value)); return true;
         case "lazystartproducer":
@@ -53,8 +51,6 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": return java.lang.String.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "iamclient":
         case "iamClient": return com.amazonaws.services.identitymanagement.AmazonIdentityManagement.class;
         case "lazystartproducer":
@@ -82,8 +78,6 @@ public class IAMEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "iamclient":
         case "iamClient": return target.getConfiguration().getIamClient();
         case "lazystartproducer":

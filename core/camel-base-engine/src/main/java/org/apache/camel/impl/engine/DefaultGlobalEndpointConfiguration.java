@@ -22,7 +22,7 @@ public final class DefaultGlobalEndpointConfiguration implements GlobalEndpointC
 
     private boolean lazyStartProducer;
     private boolean bridgeErrorHandler;
-    private boolean basicPropertyBinding;
+    private boolean autowiredEnabled = true;
 
     @Override
     public boolean isLazyStartProducer() {
@@ -45,12 +45,12 @@ public final class DefaultGlobalEndpointConfiguration implements GlobalEndpointC
     }
 
     @Override
-    public boolean isBasicPropertyBinding() {
-        return basicPropertyBinding;
+    public boolean isAutowiredEnabled() {
+        return autowiredEnabled;
     }
 
     @Override
-    public void setBasicPropertyBinding(boolean basicPropertyBinding) {
-        this.basicPropertyBinding = basicPropertyBinding;
+    public void setAutowiredEnabled(boolean autowiredEnabled) {
+        this.autowiredEnabled = autowiredEnabled;
     }
 }

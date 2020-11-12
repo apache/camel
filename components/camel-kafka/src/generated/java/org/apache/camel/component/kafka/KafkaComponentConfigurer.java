@@ -40,8 +40,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoCommitOnStop": getOrCreateConfiguration(target).setAutoCommitOnStop(property(camelContext, java.lang.String.class, value)); return true;
         case "autooffsetreset":
         case "autoOffsetReset": getOrCreateConfiguration(target).setAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "breakonfirsterror":
         case "breakOnFirstError": getOrCreateConfiguration(target).setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -236,8 +236,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoCommitOnStop": return java.lang.String.class;
         case "autooffsetreset":
         case "autoOffsetReset": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "breakonfirsterror":
         case "breakOnFirstError": return boolean.class;
         case "bridgeerrorhandler":
@@ -433,8 +433,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoCommitOnStop": return getOrCreateConfiguration(target).getAutoCommitOnStop();
         case "autooffsetreset":
         case "autoOffsetReset": return getOrCreateConfiguration(target).getAutoOffsetReset();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "breakonfirsterror":
         case "breakOnFirstError": return getOrCreateConfiguration(target).isBreakOnFirstError();
         case "bridgeerrorhandler":

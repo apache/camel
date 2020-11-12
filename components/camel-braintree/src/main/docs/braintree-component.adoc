@@ -53,7 +53,7 @@ The Braintree component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *configuration* (advanced) | Component configuration |  | BraintreeConfiguration
 |===
 // component options: END
@@ -82,7 +82,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (15 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +92,6 @@ with the following path and query parameters:
 | *inBody* (producer) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *merchantId* (producer) | The merchant id provided by Braintree. |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *httpReadTimeout* (advanced) | Set read timeout for http calls. |  | Integer
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *httpLogLevel* (logging) | Set logging level for http calls, see java.util.logging.Level. There are 9 enums and the value can be one of: OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL |  | String
@@ -197,7 +196,7 @@ The address API method(s) has the following set of parameters listed in the tabl
 | update | *request* |  The request object containing the AddressRequest parameters | AddressRequest
 |===
 
-In addition to the parameters above, the address API can also use from the 15 endpoint query option
+In addition to the parameters above, the address API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -248,7 +247,7 @@ The clientToken API method(s) has the following set of parameters listed in the 
 | generate | *request* |   | ClientTokenRequest
 |===
 
-In addition to the parameters above, the clientToken API can also use from the 15 endpoint query option
+In addition to the parameters above, the clientToken API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -305,7 +304,7 @@ The creditCardVerification API method(s) has the following set of parameters lis
 | search | *query* |   | CreditCardVerificationSearchRequest
 |===
 
-In addition to the parameters above, the creditCardVerification API can also use from the 15 endpoint query option
+In addition to the parameters above, the creditCardVerification API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -374,7 +373,7 @@ The customer API method(s) has the following set of parameters listed in the tab
 | update | *request* |  The request | CustomerRequest
 |===
 
-In addition to the parameters above, the customer API can also use from the 15 endpoint query option
+In addition to the parameters above, the customer API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -456,7 +455,7 @@ The dispute API method(s) has the following set of parameters listed in the tabl
 | search | *query* |  The query for what disputes to find | DisputeSearchRequest
 |===
 
-In addition to the parameters above, the dispute API can also use from the 15 endpoint query option
+In addition to the parameters above, the dispute API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -505,7 +504,7 @@ The documentUpload API method(s) has the following set of parameters listed in t
 | create | *request* |   | DocumentUploadRequest
 |===
 
-In addition to the parameters above, the documentUpload API can also use from the 15 endpoint query option
+In addition to the parameters above, the documentUpload API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -571,7 +570,7 @@ The merchantAccount API method(s) has the following set of parameters listed in 
 | update | *request* |   | MerchantAccountRequest
 |===
 
-In addition to the parameters above, the merchantAccount API can also use from the 15 endpoint query option
+In addition to the parameters above, the merchantAccount API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -647,7 +646,7 @@ The paymentMethod API method(s) has the following set of parameters listed in th
 | update | *token* |   | String
 |===
 
-In addition to the parameters above, the paymentMethod API can also use from the 15 endpoint query option
+In addition to the parameters above, the paymentMethod API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -703,7 +702,7 @@ The paymentMethodNonce API method(s) has the following set of parameters listed 
 | find | *paymentMethodNonce* |   | String
 |===
 
-In addition to the parameters above, the paymentMethodNonce API can also use from the 15 endpoint query option
+In addition to the parameters above, the paymentMethodNonce API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -752,7 +751,7 @@ The report API method(s) has the following set of parameters listed in the table
 | transactionLevelFees | *request* |  The request | TransactionLevelFeeReportRequest
 |===
 
-In addition to the parameters above, the report API can also use from the 15 endpoint query option
+In addition to the parameters above, the report API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -804,7 +803,7 @@ The settlementBatchSummary API method(s) has the following set of parameters lis
 | generate | *settlementDate* |   | Calendar
 |===
 
-In addition to the parameters above, the settlementBatchSummary API can also use from the 15 endpoint query option
+In addition to the parameters above, the settlementBatchSummary API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -887,7 +886,7 @@ The subscription API method(s) has the following set of parameters listed in the
 | update | *request* |  The request | SubscriptionRequest
 |===
 
-In addition to the parameters above, the subscription API can also use from the 15 endpoint query option
+In addition to the parameters above, the subscription API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1002,7 +1001,7 @@ The transaction API method(s) has the following set of parameters listed in the 
 | voidTransaction | *id* |  Of the transaction to void | String
 |===
 
-In addition to the parameters above, the transaction API can also use from the 15 endpoint query option
+In addition to the parameters above, the transaction API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1056,7 +1055,7 @@ The webhookNotification API method(s) has the following set of parameters listed
 | verify | *challenge* |   | String
 |===
 
-In addition to the parameters above, the webhookNotification API can also use from the 15 endpoint query option
+In addition to the parameters above, the webhookNotification API can also use from the 14 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.

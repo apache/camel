@@ -21,8 +21,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElasticsearchComponent target = (ElasticsearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "client": target.setClient(property(camelContext, org.elasticsearch.client.RestClient.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, int.class, value)); return true;
@@ -51,8 +51,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "client": return org.elasticsearch.client.RestClient.class;
         case "connectiontimeout":
         case "connectionTimeout": return int.class;
@@ -82,8 +82,8 @@ public class ElasticsearchComponentConfigurer extends PropertyConfigurerSupport 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ElasticsearchComponent target = (ElasticsearchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "client": return target.getClient();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConnectionTimeout();

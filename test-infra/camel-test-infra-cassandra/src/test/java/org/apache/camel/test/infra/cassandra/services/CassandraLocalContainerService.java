@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.cassandra.services;
 
+import org.apache.camel.test.infra.cassandra.common.CassandraProperties;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +45,16 @@ public class CassandraLocalContainerService implements CassandraService, Contain
     }
 
     @Override
+    public void registerProperties() {
+        System.setProperty(CassandraProperties.CASSANDRA_HOST, getCassandraHost());
+        System.setProperty(CassandraProperties.CASSANDRA_CQL3_PORT, String.valueOf(getCQL3Port()));
+    }
+
+    @Override
     public void initialize() {
         container.start();
 
+        registerProperties();
         LOG.info("Cassandra server running at address {}", getCQL3Endpoint());
     }
 

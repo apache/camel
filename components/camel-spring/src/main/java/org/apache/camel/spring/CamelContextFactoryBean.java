@@ -153,6 +153,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute
     private String caseInsensitiveHeaders;
     @XmlAttribute
+    private String autowiredEnabled;
+    @XmlAttribute
     private String runtimeEndpointRegistryEnabled;
     @XmlAttribute
     @Metadata(defaultValue = "#name#")
@@ -1004,6 +1006,23 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setCaseInsensitiveHeaders(String caseInsensitiveHeaders) {
         this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
+    @Override
+    public String getAutowiredEnabled() {
+        return autowiredEnabled;
+    }
+
+    /**
+     * Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as
+     * autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets
+     * configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection
+     * factories, AWS Clients, etc.
+     *
+     * Default is true.
+     */
+    public void setAutowiredEnabled(String autowiredEnabled) {
+        this.autowiredEnabled = autowiredEnabled;
     }
 
     @Override

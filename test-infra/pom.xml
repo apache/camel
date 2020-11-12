@@ -45,5 +45,8 @@
         <module>camel-test-infra-couchbase</module>
         <module>camel-test-infra-mongodb</module>
         <module>camel-test-infra-rabbitmq</module>
+        <module>camel-test-infra-azure-common</module>
+        <module>camel-test-infra-azure-storage-blob</module>
+        <module>camel-test-infra-azure-storage-queue</module>
     </modules>
 </project>

@@ -25,8 +25,6 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -45,8 +43,6 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowContextMapAll": return boolean.class;
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "contentcache":
         case "contentCache": return boolean.class;
         case "lazystartproducer":
@@ -66,8 +62,6 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowContextMapAll": return target.isAllowContextMapAll();
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
         case "contentCache": return target.isContentCache();
         case "lazystartproducer":

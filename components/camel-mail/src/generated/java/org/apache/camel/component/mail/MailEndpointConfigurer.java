@@ -34,8 +34,6 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bcc": target.getConfiguration().setBcc(property(camelContext, java.lang.String.class, value)); return true;
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.mail.MailBinding.class, value)); return true;
         case "bridgeerrorhandler":
@@ -157,8 +155,6 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return int.class;
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bcc": return java.lang.String.class;
         case "binding": return org.apache.camel.component.mail.MailBinding.class;
         case "bridgeerrorhandler":
@@ -281,8 +277,6 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bcc": return target.getConfiguration().getBcc();
         case "binding": return target.getBinding();
         case "bridgeerrorhandler":

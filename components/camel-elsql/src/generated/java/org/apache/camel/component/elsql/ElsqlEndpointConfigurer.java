@@ -31,8 +31,6 @@ public class ElsqlEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batch": target.setBatch(property(camelContext, boolean.class, value)); return true;
         case "breakbatchonconsumefail":
         case "breakBatchOnConsumeFail": target.setBreakBatchOnConsumeFail(property(camelContext, boolean.class, value)); return true;
@@ -129,8 +127,6 @@ public class ElsqlEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": return int.class;
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "batch": return boolean.class;
         case "breakbatchonconsumefail":
         case "breakBatchOnConsumeFail": return boolean.class;
@@ -228,8 +224,6 @@ public class ElsqlEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "batch": return target.isBatch();
         case "breakbatchonconsumefail":
         case "breakBatchOnConsumeFail": return target.isBreakBatchOnConsumeFail();

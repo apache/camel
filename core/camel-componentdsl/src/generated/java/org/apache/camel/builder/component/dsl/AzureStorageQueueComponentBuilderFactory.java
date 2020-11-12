@@ -166,18 +166,21 @@ public interface AzureStorageQueueComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default AzureStorageQueueComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AzureStorageQueueComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -329,7 +332,7 @@ public interface AzureStorageQueueComponentBuilderFactory {
             case "createQueue": getOrCreateConfiguration((QueueComponent) component).setCreateQueue((boolean) value); return true;
             case "lazyStartProducer": ((QueueComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((QueueComponent) component).setOperation((org.apache.camel.component.azure.storage.queue.QueueOperationDefinition) value); return true;
-            case "basicPropertyBinding": ((QueueComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((QueueComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "maxMessages": getOrCreateConfiguration((QueueComponent) component).setMaxMessages((java.lang.Integer) value); return true;
             case "messageId": getOrCreateConfiguration((QueueComponent) component).setMessageId((java.lang.String) value); return true;
             case "popReceipt": getOrCreateConfiguration((QueueComponent) component).setPopReceipt((java.lang.String) value); return true;

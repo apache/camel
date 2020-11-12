@@ -37,8 +37,6 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "binary": target.getConfiguration().setBinary(property(camelContext, boolean.class, value)); return true;
         case "bindaddress":
         case "bindAddress": target.getConfiguration().setBindAddress(property(camelContext, java.lang.String.class, value)); return true;
@@ -258,8 +256,6 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return int.class;
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "binary": return boolean.class;
         case "bindaddress":
         case "bindAddress": return java.lang.String.class;
@@ -480,8 +476,6 @@ public class SftpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "binary": return target.getConfiguration().isBinary();
         case "bindaddress":
         case "bindAddress": return target.getConfiguration().getBindAddress();

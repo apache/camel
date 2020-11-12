@@ -711,6 +711,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                 boolean required = metadata != null && metadata.required();
                 String label = metadata != null ? metadata.label() : null;
                 boolean secret = metadata != null && metadata.secret();
+                boolean autowired = metadata != null && metadata.autowired();
 
                 // we do not yet have default values / notes / as no annotation
                 // support yet
@@ -808,6 +809,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setDeprecated(deprecated);
                     option.setDeprecationNote(deprecationNote);
                     option.setSecret(secret);
+                    option.setAutowired(autowired);
                     option.setGroup(group);
                     option.setLabel(label);
                     option.setEnums(enums);
@@ -935,6 +937,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
 
                     boolean isSecret = secret != null && secret || path.secret();
+                    boolean isAutowired = metadata != null && metadata.autowired();
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
                             componentModel.isProducerOnly());
                     BaseOptionModel option;
@@ -955,6 +958,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     option.setDeprecated(deprecated);
                     option.setDeprecationNote(deprecationNote);
                     option.setSecret(isSecret);
+                    option.setAutowired(isAutowired);
                     option.setGroup(group);
                     option.setLabel(label);
                     option.setEnums(enums);
@@ -1055,6 +1059,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         defaultValue = getDefaultValue(defaultValue, fieldTypeName, isDuration);
 
                         boolean isSecret = secret != null && secret || param.secret();
+                        boolean isAutowired = metadata != null && metadata.autowired();
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(),
                                 componentModel.isProducerOnly());
                         BaseOptionModel option;
@@ -1076,6 +1081,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                         option.setDeprecated(deprecated);
                         option.setDeprecationNote(deprecationNote);
                         option.setSecret(isSecret);
+                        option.setAutowired(isAutowired);
                         option.setGroup(group);
                         option.setLabel(label);
                         option.setEnums(enums);

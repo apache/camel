@@ -187,18 +187,21 @@ public interface EtcdStatsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default EtcdStatsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default EtcdStatsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -283,7 +286,7 @@ public interface EtcdStatsComponentBuilderFactory {
             case "fromIndex": getOrCreateConfiguration((EtcdStatsComponent) component).setFromIndex((long) value); return true;
             case "lazyStartProducer": ((EtcdStatsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "timeToLive": getOrCreateConfiguration((EtcdStatsComponent) component).setTimeToLive((java.lang.Integer) value); return true;
-            case "basicPropertyBinding": ((EtcdStatsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((EtcdStatsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "password": getOrCreateConfiguration((EtcdStatsComponent) component).setPassword((java.lang.String) value); return true;
             case "sslContextParameters": getOrCreateConfiguration((EtcdStatsComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((EtcdStatsComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;

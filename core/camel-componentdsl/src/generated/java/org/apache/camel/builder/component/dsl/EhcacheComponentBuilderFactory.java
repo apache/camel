@@ -202,18 +202,21 @@ public interface EhcacheComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default EhcacheComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default EhcacheComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -299,7 +302,7 @@ public interface EhcacheComponentBuilderFactory {
             case "action": getOrCreateConfiguration((EhcacheComponent) component).setAction((java.lang.String) value); return true;
             case "key": getOrCreateConfiguration((EhcacheComponent) component).setKey((java.lang.Object) value); return true;
             case "lazyStartProducer": ((EhcacheComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((EhcacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((EhcacheComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": getOrCreateConfiguration((EhcacheComponent) component).setConfiguration((org.ehcache.config.CacheConfiguration) value); return true;
             case "configurations": getOrCreateConfiguration((EhcacheComponent) component).setConfigurations((java.util.Map) value); return true;
             case "keyType": getOrCreateConfiguration((EhcacheComponent) component).setKeyType((java.lang.String) value); return true;

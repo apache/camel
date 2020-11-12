@@ -28,10 +28,10 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BlobServiceComponent target = (BlobServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "azureblobclient":
         case "azureBlobClient": getOrCreateConfiguration(target).setAzureBlobClient(property(camelContext, com.microsoft.azure.storage.blob.CloudBlob.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobmetadata":
         case "blobMetadata": getOrCreateConfiguration(target).setBlobMetadata(property(camelContext, java.util.Map.class, value)); return true;
         case "bloboffset":
@@ -76,10 +76,10 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "azureblobclient":
         case "azureBlobClient": return com.microsoft.azure.storage.blob.CloudBlob.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "blobmetadata":
         case "blobMetadata": return java.util.Map.class;
         case "bloboffset":
@@ -125,10 +125,10 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BlobServiceComponent target = (BlobServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "azureblobclient":
         case "azureBlobClient": return getOrCreateConfiguration(target).getAzureBlobClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobmetadata":
         case "blobMetadata": return getOrCreateConfiguration(target).getBlobMetadata();
         case "bloboffset":

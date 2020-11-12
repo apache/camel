@@ -27,8 +27,6 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
         case "amazonKinesisFirehoseClient": target.getConfiguration().setAmazonKinesisFirehoseClient(property(camelContext, com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -54,8 +52,6 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
         case "amazonKinesisFirehoseClient": return com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "proxyhost":
@@ -82,8 +78,6 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
         case "amazonKinesisFirehoseClient": return target.getConfiguration().getAmazonKinesisFirehoseClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "proxyhost":

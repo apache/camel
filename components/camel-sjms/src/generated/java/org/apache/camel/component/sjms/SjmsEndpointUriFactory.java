@@ -20,8 +20,7 @@ public class SjmsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(40);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(39);
         props.add("reconnectBackOff");
         props.add("connectionCount");
         props.add("mapJmsMessage");

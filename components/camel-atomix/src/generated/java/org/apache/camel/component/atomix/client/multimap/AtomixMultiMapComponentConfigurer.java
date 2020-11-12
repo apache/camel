@@ -29,8 +29,8 @@ public class AtomixMultiMapComponentConfigurer extends PropertyConfigurerSupport
         AtomixMultiMapComponent target = (AtomixMultiMapComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": getOrCreateConfiguration(target).setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration.class, value)); return true;
         case "configurationuri":
         case "configurationUri": target.setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
@@ -64,8 +64,8 @@ public class AtomixMultiMapComponentConfigurer extends PropertyConfigurerSupport
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": return io.atomix.Atomix.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration.class;
         case "configurationuri":
         case "configurationUri": return java.lang.String.class;
@@ -100,8 +100,8 @@ public class AtomixMultiMapComponentConfigurer extends PropertyConfigurerSupport
         AtomixMultiMapComponent target = (AtomixMultiMapComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": return getOrCreateConfiguration(target).getAtomix();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "configurationuri":
         case "configurationUri": return target.getConfigurationUri();

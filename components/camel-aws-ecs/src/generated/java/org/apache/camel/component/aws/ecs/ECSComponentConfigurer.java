@@ -32,8 +32,8 @@ public class ECSComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.ecs.ECSConfiguration.class, value)); return true;
         case "ecsclient":
         case "ecsClient": getOrCreateConfiguration(target).setEcsClient(property(camelContext, com.amazonaws.services.ecs.AmazonECS.class, value)); return true;
@@ -60,8 +60,8 @@ public class ECSComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return java.lang.String.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws.ecs.ECSConfiguration.class;
         case "ecsclient":
         case "ecsClient": return com.amazonaws.services.ecs.AmazonECS.class;
@@ -89,8 +89,8 @@ public class ECSComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "ecsclient":
         case "ecsClient": return getOrCreateConfiguration(target).getEcsClient();

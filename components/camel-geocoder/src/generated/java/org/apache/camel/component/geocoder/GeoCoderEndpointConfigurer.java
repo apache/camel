@@ -23,8 +23,6 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientid":
         case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientkey":
@@ -61,8 +59,6 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientkey":
@@ -100,8 +96,6 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return target.getApiKey();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientid":
         case "clientId": return target.getClientId();
         case "clientkey":

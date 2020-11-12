@@ -32,8 +32,8 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
         case "apiUrl": getOrCreateConfiguration(target).setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "apiversion":
         case "apiVersion": getOrCreateConfiguration(target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.servicenow.ServiceNowConfiguration.class, value)); return true;
         case "dateformat":
         case "dateFormat": getOrCreateConfiguration(target).setDateFormat(property(camelContext, java.lang.String.class, value)); return true;
@@ -124,8 +124,8 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
         case "apiUrl": return java.lang.String.class;
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.servicenow.ServiceNowConfiguration.class;
         case "dateformat":
         case "dateFormat": return java.lang.String.class;
@@ -217,8 +217,8 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
         case "apiUrl": return getOrCreateConfiguration(target).getApiUrl();
         case "apiversion":
         case "apiVersion": return getOrCreateConfiguration(target).getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "dateformat":
         case "dateFormat": return getOrCreateConfiguration(target).getDateFormat();

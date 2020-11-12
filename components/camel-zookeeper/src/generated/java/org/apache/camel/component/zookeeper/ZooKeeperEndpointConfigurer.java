@@ -22,8 +22,6 @@ public class ZooKeeperEndpointConfigurer extends PropertyConfigurerSupport imple
         ZooKeeperEndpoint target = (ZooKeeperEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "backoff": target.getConfiguration().setBackoff(property(camelContext, long.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "create": target.getConfiguration().setCreate(property(camelContext, boolean.class, value)); return true;
@@ -50,8 +48,6 @@ public class ZooKeeperEndpointConfigurer extends PropertyConfigurerSupport imple
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "backoff": return long.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "create": return boolean.class;
@@ -79,8 +75,6 @@ public class ZooKeeperEndpointConfigurer extends PropertyConfigurerSupport imple
         ZooKeeperEndpoint target = (ZooKeeperEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "backoff": return target.getConfiguration().getBackoff();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "create": return target.getConfiguration().isCreate();

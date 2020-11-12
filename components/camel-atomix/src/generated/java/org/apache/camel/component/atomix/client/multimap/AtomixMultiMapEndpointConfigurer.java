@@ -22,8 +22,6 @@ public class AtomixMultiMapEndpointConfigurer extends PropertyConfigurerSupport 
         AtomixMultiMapEndpoint target = (AtomixMultiMapEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": target.getConfiguration().setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configurationuri":
         case "configurationUri": target.getConfiguration().setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "defaultaction":
@@ -57,8 +55,6 @@ public class AtomixMultiMapEndpointConfigurer extends PropertyConfigurerSupport 
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": return io.atomix.Atomix.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "configurationuri":
         case "configurationUri": return java.lang.String.class;
         case "defaultaction":
@@ -93,8 +89,6 @@ public class AtomixMultiMapEndpointConfigurer extends PropertyConfigurerSupport 
         AtomixMultiMapEndpoint target = (AtomixMultiMapEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": return target.getConfiguration().getAtomix();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "configurationuri":
         case "configurationUri": return target.getConfiguration().getConfigurationUri();
         case "defaultaction":

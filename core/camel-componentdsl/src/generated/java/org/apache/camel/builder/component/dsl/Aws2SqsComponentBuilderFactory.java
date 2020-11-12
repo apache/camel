@@ -461,18 +461,21 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Aws2SqsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2SqsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -663,7 +666,7 @@ public interface Aws2SqsComponentBuilderFactory {
             case "messageDeduplicationIdStrategy": getOrCreateConfiguration((Sqs2Component) component).setMessageDeduplicationIdStrategy((java.lang.String) value); return true;
             case "messageGroupIdStrategy": getOrCreateConfiguration((Sqs2Component) component).setMessageGroupIdStrategy((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((Sqs2Component) component).setOperation((org.apache.camel.component.aws2.sqs.Sqs2Operations) value); return true;
-            case "basicPropertyBinding": ((Sqs2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Sqs2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "delayQueue": getOrCreateConfiguration((Sqs2Component) component).setDelayQueue((boolean) value); return true;
             case "queueUrl": getOrCreateConfiguration((Sqs2Component) component).setQueueUrl((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Sqs2Component) component).setProxyHost((java.lang.String) value); return true;

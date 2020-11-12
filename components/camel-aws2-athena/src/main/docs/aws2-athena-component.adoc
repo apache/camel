@@ -95,7 +95,7 @@ The AWS 2 Athena component supports 30 options, which are listed below.
 | *secretKey* (producer) | Amazon AWS Secret Key. |  | String
 | *waitTimeout* (producer) | Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 0 | long
 | *workGroup* (producer) | The workgroup to use for running the query. |  | String
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String
 |===
 // component options: END
@@ -129,7 +129,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (30 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -162,7 +162,6 @@ with the following path and query parameters:
 | *secretKey* (producer) | Amazon AWS Secret Key. |  | String
 | *waitTimeout* (producer) | Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 0 | long
 | *workGroup* (producer) | The workgroup to use for running the query. |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

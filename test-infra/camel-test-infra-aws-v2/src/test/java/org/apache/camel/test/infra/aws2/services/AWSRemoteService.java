@@ -52,8 +52,13 @@ public class AWSRemoteService<T> implements AWSService<T> {
     }
 
     @Override
-    public void initialize() {
+    public void registerProperties() {
 
+    }
+
+    @Override
+    public void initialize() {
+        registerProperties();
     }
 
     @Override

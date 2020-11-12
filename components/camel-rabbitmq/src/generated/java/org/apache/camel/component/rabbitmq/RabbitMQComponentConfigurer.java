@@ -37,8 +37,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "autoDetectConnectionFactory": target.setAutoDetectConnectionFactory(property(camelContext, boolean.class, value)); return true;
         case "automaticrecoveryenabled":
         case "automaticRecoveryEnabled": target.setAutomaticRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channelpoolmaxsize":
@@ -142,8 +142,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "autoDetectConnectionFactory": return boolean.class;
         case "automaticrecoveryenabled":
         case "automaticRecoveryEnabled": return java.lang.Boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "channelpoolmaxsize":
@@ -248,8 +248,8 @@ public class RabbitMQComponentConfigurer extends PropertyConfigurerSupport imple
         case "autoDetectConnectionFactory": return target.isAutoDetectConnectionFactory();
         case "automaticrecoveryenabled":
         case "automaticRecoveryEnabled": return target.getAutomaticRecoveryEnabled();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channelpoolmaxsize":

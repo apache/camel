@@ -23,8 +23,6 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -47,8 +45,6 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "contentcache":
         case "contentCache": return boolean.class;
         case "lazystartproducer":
@@ -72,8 +68,6 @@ public class AtlasMapEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcontextmapall":
         case "allowContextMapAll": return target.isAllowContextMapAll();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
         case "contentCache": return target.isContentCache();
         case "lazystartproducer":

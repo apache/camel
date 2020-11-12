@@ -33,8 +33,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoCommitOnStop": target.getConfiguration().setAutoCommitOnStop(property(camelContext, java.lang.String.class, value)); return true;
         case "autooffsetreset":
         case "autoOffsetReset": target.getConfiguration().setAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "breakonfirsterror":
         case "breakOnFirstError": target.getConfiguration().setBreakOnFirstError(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -229,8 +227,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoCommitOnStop": return java.lang.String.class;
         case "autooffsetreset":
         case "autoOffsetReset": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "breakonfirsterror":
         case "breakOnFirstError": return boolean.class;
         case "bridgeerrorhandler":
@@ -426,8 +422,6 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoCommitOnStop": return target.getConfiguration().getAutoCommitOnStop();
         case "autooffsetreset":
         case "autoOffsetReset": return target.getConfiguration().getAutoOffsetReset();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "breakonfirsterror":
         case "breakOnFirstError": return target.getConfiguration().isBreakOnFirstError();
         case "bridgeerrorhandler":

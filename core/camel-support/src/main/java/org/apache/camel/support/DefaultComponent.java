@@ -65,10 +65,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
     private CamelContext camelContext;
 
-    @Metadata(label = "advanced",
-              description = "Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
-    @Deprecated
-    private boolean basicPropertyBinding;
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired)"
+                            + " by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component."
+                            + " This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc.")
+    private boolean autowiredEnabled = true;
     @Metadata(label = "consumer",
               description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
                             + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
@@ -144,13 +145,23 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             LOG.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
         }
 
-        // extract these global options and infer their value based on global/component level configuration
-        boolean basic = getAndRemoveParameter(parameters, "basicPropertyBinding", boolean.class, basicPropertyBinding
-                ? basicPropertyBinding : getCamelContext().getGlobalEndpointConfiguration().isBasicPropertyBinding());
-        boolean bridge = getAndRemoveParameter(parameters, "bridgeErrorHandler", boolean.class, bridgeErrorHandler
-                ? bridgeErrorHandler : getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler());
-        boolean lazy = getAndRemoveParameter(parameters, "lazyStartProducer", boolean.class, lazyStartProducer
-                ? lazyStartProducer : getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer());
+        boolean bridge = bridgeErrorHandler || getCamelContext().getGlobalEndpointConfiguration().isBridgeErrorHandler();
+        Boolean bool = getAndRemoveParameter(parameters, "bridgeErrorHandler", Boolean.class);
+        if (bool != null) {
+            bridge = bool;
+        }
+        boolean lazy = lazyStartProducer || getCamelContext().getGlobalEndpointConfiguration().isLazyStartProducer();
+        bool = getAndRemoveParameter(parameters, "lazyStartProducer", Boolean.class);
+        if (bool != null) {
+            lazy = bool;
+        }
+        // camel context can turn off autowire globally unless there is a uri parameter
+        boolean autowire = camelContext.isAutowiredEnabled()
+                && (autowiredEnabled || getCamelContext().getGlobalEndpointConfiguration().isAutowiredEnabled());
+        bool = getAndRemoveParameter(parameters, "autowiredEnabled", Boolean.class);
+        if (bool != null) {
+            autowire = bool;
+        }
 
         // create endpoint
         Endpoint endpoint = createEndpoint(uri, path, parameters);
@@ -163,9 +174,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         // and setup those global options afterwards
         if (endpoint instanceof DefaultEndpoint) {
             DefaultEndpoint de = (DefaultEndpoint) endpoint;
-            de.setBasicPropertyBinding(basic);
             de.setBridgeErrorHandler(bridge);
             de.setLazyStartProducer(lazy);
+            de.setAutowiredEnabled(autowire);
         }
 
         // configure remainder of the parameters
@@ -195,24 +206,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     public boolean useRawUri() {
         // should use encoded uri by default
         return false;
-    }
-
-    /**
-     * Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional
-     * capabilities.
-     */
-    @Deprecated
-    public boolean isBasicPropertyBinding() {
-        return basicPropertyBinding;
-    }
-
-    /**
-     * Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional
-     * capabilities.
-     */
-    @Deprecated
-    public void setBasicPropertyBinding(boolean basicPropertyBinding) {
-        this.basicPropertyBinding = basicPropertyBinding;
     }
 
     public boolean isLazyStartProducer() {
@@ -245,6 +238,20 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
         this.bridgeErrorHandler = bridgeErrorHandler;
+    }
+
+    public boolean isAutowiredEnabled() {
+        return autowiredEnabled;
+    }
+
+    /**
+     * Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as
+     * autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets
+     * configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection
+     * factories, AWS Clients, etc.
+     */
+    public void setAutowiredEnabled(boolean autowiredEnabled) {
+        this.autowiredEnabled = autowiredEnabled;
     }
 
     /**
@@ -350,8 +357,13 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
     }
 
     @Override
@@ -409,26 +421,18 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             return;
         }
 
-        boolean basic = basicPropertyBinding || "true".equals(parameters.getOrDefault("basicPropertyBinding", "false"));
-        if (basic) {
-            // use basic binding
-            PropertyBindingSupport.build()
-                    .withPlaceholder(false).withNesting(false).withDeepNesting(false).withReference(false)
-                    .bind(camelContext, bean, parameters);
+        PropertyConfigurer configurer;
+        if (bean instanceof Component) {
+            configurer = getComponentPropertyConfigurer();
+        } else if (bean instanceof Endpoint) {
+            configurer = getEndpointPropertyConfigurer();
+        } else if (bean instanceof PropertyConfigurerAware) {
+            configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
         } else {
-            PropertyConfigurer configurer;
-            if (bean instanceof Component) {
-                configurer = getComponentPropertyConfigurer();
-            } else if (bean instanceof Endpoint) {
-                configurer = getEndpointPropertyConfigurer();
-            } else if (bean instanceof PropertyConfigurerAware) {
-                configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
-            } else {
-                configurer = null;
-            }
-            // use advanced binding
-            PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
+            configurer = null;
         }
+        // use advanced binding
+        PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
     }
 
     @Override

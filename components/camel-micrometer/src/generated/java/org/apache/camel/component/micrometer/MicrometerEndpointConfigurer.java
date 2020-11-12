@@ -22,8 +22,6 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         MicrometerEndpoint target = (MicrometerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "decrement": target.setDecrement(property(camelContext, java.lang.String.class, value)); return true;
         case "increment": target.setIncrement(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -38,8 +36,6 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "decrement": return java.lang.String.class;
         case "increment": return java.lang.String.class;
         case "lazystartproducer":
@@ -55,8 +51,6 @@ public class MicrometerEndpointConfigurer extends PropertyConfigurerSupport impl
         MicrometerEndpoint target = (MicrometerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "decrement": return target.getDecrement();
         case "increment": return target.getIncrement();
         case "lazystartproducer":

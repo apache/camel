@@ -22,8 +22,6 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
         WekaEndpoint target = (WekaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apply": target.getConfiguration().setApply(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "build": target.getConfiguration().setBuild(property(camelContext, java.lang.String.class, value)); return true;
         case "dsname": target.getConfiguration().setDsname(property(camelContext, java.lang.String.class, value)); return true;
         case "folds": target.getConfiguration().setFolds(property(camelContext, int.class, value)); return true;
@@ -45,8 +43,6 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apply": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "build": return java.lang.String.class;
         case "dsname": return java.lang.String.class;
         case "folds": return int.class;
@@ -69,8 +65,6 @@ public class WekaEndpointConfigurer extends PropertyConfigurerSupport implements
         WekaEndpoint target = (WekaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apply": return target.getConfiguration().getApply();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "build": return target.getConfiguration().getBuild();
         case "dsname": return target.getConfiguration().getDsname();
         case "folds": return target.getConfiguration().getFolds();

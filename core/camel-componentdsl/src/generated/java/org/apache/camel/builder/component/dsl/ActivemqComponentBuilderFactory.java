@@ -1069,18 +1069,21 @@ public interface ActivemqComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default ActivemqComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ActivemqComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -1746,7 +1749,7 @@ public interface ActivemqComponentBuilderFactory {
             case "artemisStreamingEnabled": getOrCreateConfiguration((ActiveMQComponent) component).setArtemisStreamingEnabled((boolean) value); return true;
             case "asyncStartListener": getOrCreateConfiguration((ActiveMQComponent) component).setAsyncStartListener((boolean) value); return true;
             case "asyncStopListener": getOrCreateConfiguration((ActiveMQComponent) component).setAsyncStopListener((boolean) value); return true;
-            case "basicPropertyBinding": ((ActiveMQComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ActiveMQComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((ActiveMQComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
             case "destinationResolver": getOrCreateConfiguration((ActiveMQComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
             case "errorHandler": getOrCreateConfiguration((ActiveMQComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;

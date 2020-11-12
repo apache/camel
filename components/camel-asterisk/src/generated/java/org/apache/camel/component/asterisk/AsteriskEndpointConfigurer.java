@@ -22,8 +22,6 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
         AsteriskEndpoint target = (AsteriskEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.setAction(property(camelContext, org.apache.camel.component.asterisk.AsteriskAction.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -44,8 +42,6 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return org.apache.camel.component.asterisk.AsteriskAction.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "exceptionhandler":
@@ -67,8 +63,6 @@ public class AsteriskEndpointConfigurer extends PropertyConfigurerSupport implem
         AsteriskEndpoint target = (AsteriskEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":

@@ -40,10 +40,10 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autoclosebody":
         case "autocloseBody": getOrCreateConfiguration(target).setAutocloseBody(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "awskmskeyid":
         case "awsKMSKeyId": getOrCreateConfiguration(target).setAwsKMSKeyId(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chunkedencodingdisabled":
@@ -119,10 +119,10 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         case "autoDiscoverClient": return boolean.class;
         case "autoclosebody":
         case "autocloseBody": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "awskmskeyid":
         case "awsKMSKeyId": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "chunkedencodingdisabled":
@@ -199,10 +199,10 @@ public class S3ComponentConfigurer extends PropertyConfigurerSupport implements 
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autoclosebody":
         case "autocloseBody": return getOrCreateConfiguration(target).isAutocloseBody();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "awskmskeyid":
         case "awsKMSKeyId": return getOrCreateConfiguration(target).getAwsKMSKeyId();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chunkedencodingdisabled":

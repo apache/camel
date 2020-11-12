@@ -24,8 +24,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": target.setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
@@ -76,8 +74,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "async": return boolean.class;
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "chunked": return boolean.class;
@@ -129,8 +125,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "async": return target.isAsync();
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": return target.isAttachmentMultipartBinding();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chunked": return target.isChunked();

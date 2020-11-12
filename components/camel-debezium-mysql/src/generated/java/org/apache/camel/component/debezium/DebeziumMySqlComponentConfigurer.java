@@ -30,8 +30,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": getOrCreateConfiguration(target).setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binaryhandlingmode":
@@ -194,8 +194,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": return java.util.Map.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return java.lang.String.class;
         case "binaryhandlingmode":
@@ -359,8 +359,8 @@ public class DebeziumMySqlComponentConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": return getOrCreateConfiguration(target).getAdditionalProperties();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return getOrCreateConfiguration(target).getBigintUnsignedHandlingMode();
         case "binaryhandlingmode":

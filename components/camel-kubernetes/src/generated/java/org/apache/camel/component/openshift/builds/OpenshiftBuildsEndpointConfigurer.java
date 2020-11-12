@@ -23,8 +23,6 @@ public class OpenshiftBuildsEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "cacertdata":
         case "caCertData": target.getConfiguration().setCaCertData(property(camelContext, java.lang.String.class, value)); return true;
         case "cacertfile":
@@ -70,8 +68,6 @@ public class OpenshiftBuildsEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "cacertdata":
         case "caCertData": return java.lang.String.class;
         case "cacertfile":
@@ -118,8 +114,6 @@ public class OpenshiftBuildsEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "cacertdata":
         case "caCertData": return target.getConfiguration().getCaCertData();
         case "cacertfile":

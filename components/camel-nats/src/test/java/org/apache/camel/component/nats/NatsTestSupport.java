@@ -21,9 +21,10 @@ import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.camel.test.testcontainers.junit5.Wait;
 import org.testcontainers.containers.GenericContainer;
 
+import static org.apache.camel.component.nats.NatsTestConstants.CONTAINER_IMAGE;
+
 public class NatsTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.1.8";
     public static final String CONTAINER_NAME = "nats";
 
     @Override

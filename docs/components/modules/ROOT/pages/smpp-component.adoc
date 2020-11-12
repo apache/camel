@@ -197,7 +197,7 @@ The SMPP component supports 38 options, which are listed below.
 | *sourceAddrNpi* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum). There are 10 enums and the value can be one of: 0, 1, 2, 3, 6, 8, 9, 10, 13, 18 |  | byte
 | *sourceAddrTon* (producer) | Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. There are 7 enums and the value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
 | *typeOfNumber* (producer) | Defines the type of number (TON) to be used in the SME. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. There are 7 enums and the value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *configuration* (advanced) | To use the shared SmppConfiguration as configuration. |  | SmppConfiguration
 | *enquireLinkTimer* (advanced) | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 5000 | Integer
 | *sessionStateListener* (advanced) | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
@@ -241,7 +241,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (40 parameters):
+=== Query Parameters (39 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -271,7 +271,6 @@ with the following path and query parameters:
 | *sourceAddrNpi* (producer) | Defines the numeric plan indicator (NPI) to be used in the SME originator address parameters. The following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2: Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined by WAP Forum). There are 10 enums and the value can be one of: 0, 1, 2, 3, 6, 8, 9, 10, 13, 18 |  | byte
 | *sourceAddrTon* (producer) | Defines the type of number (TON) to be used in the SME originator address parameters. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. There are 7 enums and the value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
 | *typeOfNumber* (producer) | Defines the type of number (TON) to be used in the SME. The following TON values are defined: 0: Unknown 1: International 2: National 3: Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated. There are 7 enums and the value can be one of: 0, 1, 2, 3, 4, 5, 6 |  | byte
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *enquireLinkTimer* (advanced) | Defines the interval in milliseconds between the confidence checks. The confidence check is used to test the communication path between an ESME and an SMSC. | 5000 | Integer
 | *sessionStateListener* (advanced) | You can refer to a org.jsmpp.session.SessionStateListener in the Registry to receive callbacks when the session state changed. |  | SessionStateListener
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

@@ -26,7 +26,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         map.put("inBody", java.lang.String.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("merchantId", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
         map.put("httpReadTimeout", java.lang.Integer.class);
         map.put("synchronous", boolean.class);
         map.put("httpLogLevel", java.lang.String.class);
@@ -46,8 +45,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.getConfiguration().setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "environment": target.getConfiguration().setEnvironment(property(camelContext, java.lang.String.class, value)); return true;
         case "httploglevel":
         case "httpLogLevel": target.getConfiguration().setHttpLogLevel(property(camelContext, java.lang.String.class, value)); return true;
@@ -86,8 +83,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "environment": return java.lang.String.class;
         case "httploglevel":
         case "httpLogLevel": return java.lang.String.class;
@@ -122,8 +117,6 @@ public class BraintreeEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getConfiguration().getAccessToken();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "environment": return target.getConfiguration().getEnvironment();
         case "httploglevel":
         case "httpLogLevel": return target.getConfiguration().getHttpLogLevel();

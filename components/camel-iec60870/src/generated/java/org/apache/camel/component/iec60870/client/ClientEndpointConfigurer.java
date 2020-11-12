@@ -25,8 +25,6 @@ public class ClientEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "acknowledgeWindow": target.getConnectionOptions().setAcknowledgeWindow(property(camelContext, short.class, value)); return true;
         case "adsuaddresstype":
         case "adsuAddressType": target.getConnectionOptions().setAdsuAddressType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "causeoftransmissiontype":
@@ -72,8 +70,6 @@ public class ClientEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "acknowledgeWindow": return short.class;
         case "adsuaddresstype":
         case "adsuAddressType": return org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "causeoftransmissiontype":
@@ -120,8 +116,6 @@ public class ClientEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "acknowledgeWindow": return target.getConnectionOptions().getAcknowledgeWindow();
         case "adsuaddresstype":
         case "adsuAddressType": return target.getConnectionOptions().getAdsuAddressType();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "causeoftransmissiontype":

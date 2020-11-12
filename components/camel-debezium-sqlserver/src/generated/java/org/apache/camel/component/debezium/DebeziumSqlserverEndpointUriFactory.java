@@ -20,7 +20,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(67);
+        Set<String> props = new HashSet<>(66);
         props.add("maxBatchSize");
         props.add("internalKeyConverter");
         props.add("synchronous");
@@ -55,7 +55,6 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("exceptionHandler");
         props.add("sourceTimestampMode");
         props.add("databasePort");
-        props.add("basicPropertyBinding");
         props.add("databaseUser");
         props.add("databaseHistoryFileFilename");
         props.add("databaseHistory");

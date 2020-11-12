@@ -22,8 +22,6 @@ public class AtomixMapEndpointConfigurer extends PropertyConfigurerSupport imple
         AtomixMapEndpoint target = (AtomixMapEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": target.getConfiguration().setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configurationuri":
@@ -63,8 +61,6 @@ public class AtomixMapEndpointConfigurer extends PropertyConfigurerSupport imple
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": return io.atomix.Atomix.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "configurationuri":
@@ -105,8 +101,6 @@ public class AtomixMapEndpointConfigurer extends PropertyConfigurerSupport imple
         AtomixMapEndpoint target = (AtomixMapEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": return target.getConfiguration().getAtomix();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configurationuri":

@@ -28,10 +28,10 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QueueServiceComponent target = (QueueServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "azurequeueclient":
         case "azureQueueClient": getOrCreateConfiguration(target).setAzureQueueClient(property(camelContext, com.microsoft.azure.storage.queue.CloudQueue.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.queue.QueueServiceConfiguration.class, value)); return true;
@@ -58,10 +58,10 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "azurequeueclient":
         case "azureQueueClient": return com.microsoft.azure.storage.queue.CloudQueue.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.azure.queue.QueueServiceConfiguration.class;
@@ -89,10 +89,10 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         QueueServiceComponent target = (QueueServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "azurequeueclient":
         case "azureQueueClient": return getOrCreateConfiguration(target).getAzureQueueClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();

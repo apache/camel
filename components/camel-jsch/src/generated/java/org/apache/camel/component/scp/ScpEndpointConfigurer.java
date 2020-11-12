@@ -23,8 +23,6 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
         case "ciphers": target.getConfiguration().setCiphers(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
@@ -70,8 +68,6 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "chmod": return java.lang.String.class;
         case "ciphers": return java.lang.String.class;
         case "connecttimeout":
@@ -118,8 +114,6 @@ public class ScpEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownullbody":
         case "allowNullBody": return target.isAllowNullBody();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "chmod": return target.getConfiguration().getChmod();
         case "ciphers": return target.getConfiguration().getCiphers();
         case "connecttimeout":

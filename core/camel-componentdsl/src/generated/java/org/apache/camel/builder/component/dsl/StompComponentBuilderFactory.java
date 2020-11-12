@@ -135,18 +135,20 @@ public interface StompComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default StompComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default StompComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -255,7 +257,7 @@ public interface StompComponentBuilderFactory {
             case "version": getOrCreateConfiguration((StompComponent) component).setVersion((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((StompComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((StompComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((StompComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((StompComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((StompComponent) component).setConfiguration((org.apache.camel.component.stomp.StompConfiguration) value); return true;
             case "headerFilterStrategy": ((StompComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "login": getOrCreateConfiguration((StompComponent) component).setLogin((java.lang.String) value); return true;

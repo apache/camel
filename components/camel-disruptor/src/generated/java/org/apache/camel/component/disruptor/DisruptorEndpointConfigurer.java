@@ -21,8 +21,6 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DisruptorEndpoint target = (DisruptorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blockwhenfull":
         case "blockWhenFull": target.setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -53,8 +51,6 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "blockwhenfull":
         case "blockWhenFull": return boolean.class;
         case "bridgeerrorhandler":
@@ -86,8 +82,6 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DisruptorEndpoint target = (DisruptorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blockwhenfull":
         case "blockWhenFull": return target.isBlockWhenFull();
         case "bridgeerrorhandler":

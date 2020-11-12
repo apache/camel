@@ -143,7 +143,7 @@ The Netty HTTP component supports 75 options, which are listed below.
 | *udpConnectionlessSending* (producer) | This option supports connection less udp sending which is a real fire and forget. A connected udp send receive the PortUnreachableException if no one is listen on the receiving port. | false | boolean
 | *useByteBuf* (producer) | If the useByteBuf is true, netty producer will turn the message body into ByteBuf before sending it out. | false | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *headerFilterStrategy* (advanced) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers. |  | HeaderFilterStrategy
 | *nativeTransport* (advanced) | Whether to use native transport instead of NIO. Native transport takes advantage of the host operating system and is only supported on some platforms. You need to add the netty JAR for the host operating system you are using. See more details at: \http://netty.io/wiki/native-transports.html | false | boolean
@@ -213,7 +213,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (80 parameters):
+=== Query Parameters (79 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -266,7 +266,6 @@ with the following path and query parameters:
 | *producerPoolMinIdle* (producer) | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects. |  | int
 | *useRelativePath* (producer) | Sets whether to use a relative path in HTTP requests. | true | boolean
 | *allowSerializedHeaders* (advanced) | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *channelGroup* (advanced) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *configuration* (advanced) | To use a custom configured NettyHttpConfiguration for configuring this endpoint. |  | NettyHttpConfiguration
 | *disableStreamCache* (advanced) | Determines whether or not the raw input stream from Netty HttpRequest#getContent() or HttpResponset#getContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. Mind that if you enable this option, then you cannot read the Netty stream multiple times out of the box, and you would need manually to reset the reader index on the Netty raw stream. Also Netty will auto-close the Netty stream when the Netty HTTP server/HTTP client is done processing, which means that if the asynchronous routing engine is in use then any asynchronous thread that may continue routing the org.apache.camel.Exchange may not be able to read the Netty stream, because Netty has closed it. | false | boolean

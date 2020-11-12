@@ -21,8 +21,8 @@ public class CryptoCmsComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CryptoCmsComponent target = (CryptoCmsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "envelopeddatadecryptorconfiguration":
         case "envelopedDataDecryptorConfiguration": target.setEnvelopedDataDecryptorConfiguration(property(camelContext, org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration.class, value)); return true;
         case "lazystartproducer":
@@ -36,8 +36,8 @@ public class CryptoCmsComponentConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "envelopeddatadecryptorconfiguration":
         case "envelopedDataDecryptorConfiguration": return org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration.class;
         case "lazystartproducer":
@@ -52,8 +52,8 @@ public class CryptoCmsComponentConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CryptoCmsComponent target = (CryptoCmsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "envelopeddatadecryptorconfiguration":
         case "envelopedDataDecryptorConfiguration": return target.getEnvelopedDataDecryptorConfiguration();
         case "lazystartproducer":

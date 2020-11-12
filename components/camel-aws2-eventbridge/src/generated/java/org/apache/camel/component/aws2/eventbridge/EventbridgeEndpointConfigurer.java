@@ -25,8 +25,6 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "eventpatternfile":
         case "eventPatternFile": target.getConfiguration().setEventPatternFile(property(camelContext, java.lang.String.class, value)); return true;
         case "eventbridgeclient":
@@ -59,8 +57,6 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "accessKey": return java.lang.String.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "eventpatternfile":
         case "eventPatternFile": return java.lang.String.class;
         case "eventbridgeclient":
@@ -94,8 +90,6 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "eventpatternfile":
         case "eventPatternFile": return target.getConfiguration().getEventPatternFile();
         case "eventbridgeclient":

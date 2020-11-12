@@ -23,8 +23,6 @@ public class BlobServiceEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azureblobclient":
         case "azureBlobClient": target.getConfiguration().setAzureBlobClient(property(camelContext, com.microsoft.azure.storage.blob.CloudBlob.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobmetadata":
         case "blobMetadata": target.getConfiguration().setBlobMetadata(property(camelContext, java.util.Map.class, value)); return true;
         case "bloboffset":
@@ -75,8 +73,6 @@ public class BlobServiceEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azureblobclient":
         case "azureBlobClient": return com.microsoft.azure.storage.blob.CloudBlob.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "blobmetadata":
         case "blobMetadata": return java.util.Map.class;
         case "bloboffset":
@@ -128,8 +124,6 @@ public class BlobServiceEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azureblobclient":
         case "azureBlobClient": return target.getConfiguration().getAzureBlobClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobmetadata":
         case "blobMetadata": return target.getConfiguration().getBlobMetadata();
         case "bloboffset":

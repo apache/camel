@@ -21,8 +21,8 @@ public class JcloudsComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JcloudsComponent target = (JcloudsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "blobstores":
         case "blobStores": target.setBlobStores(property(camelContext, java.util.List.class, value)); return true;
         case "bridgeerrorhandler":
@@ -38,8 +38,8 @@ public class JcloudsComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "blobstores":
         case "blobStores": return java.util.List.class;
         case "bridgeerrorhandler":
@@ -56,8 +56,8 @@ public class JcloudsComponentConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JcloudsComponent target = (JcloudsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "blobstores":
         case "blobStores": return target.getBlobStores();
         case "bridgeerrorhandler":

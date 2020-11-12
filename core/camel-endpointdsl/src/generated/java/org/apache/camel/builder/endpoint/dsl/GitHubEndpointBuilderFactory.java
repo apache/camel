@@ -566,6 +566,34 @@ public interface GitHubEndpointBuilderFactory {
             return (GitHubEndpointConsumerBuilder) this;
         }
         /**
+         * To specify a custom strategy that configures how the EventsConsumer
+         * fetches events.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.github.event.GitHubEventFetchStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedGitHubEndpointConsumerBuilder eventFetchStrategy(
+                Object eventFetchStrategy) {
+            doSetProperty("eventFetchStrategy", eventFetchStrategy);
+            return this;
+        }
+        /**
+         * To specify a custom strategy that configures how the EventsConsumer
+         * fetches events.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.github.event.GitHubEventFetchStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedGitHubEndpointConsumerBuilder eventFetchStrategy(
+                String eventFetchStrategy) {
+            doSetProperty("eventFetchStrategy", eventFetchStrategy);
+            return this;
+        }
+        /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
@@ -652,34 +680,6 @@ public interface GitHubEndpointBuilderFactory {
         default AdvancedGitHubEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -865,34 +865,6 @@ public interface GitHubEndpointBuilderFactory {
             return (GitHubEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1002,34 +974,6 @@ public interface GitHubEndpointBuilderFactory {
             return (GitHubEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1070,9 +1014,9 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * What git operation to execute
-         * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+         * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
          * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
          * 
          * Path parameter: branchName
          * Name of branch
@@ -1094,9 +1038,9 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * What git operation to execute
-         * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+         * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
          * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
          * 
          * Path parameter: branchName
          * Name of branch

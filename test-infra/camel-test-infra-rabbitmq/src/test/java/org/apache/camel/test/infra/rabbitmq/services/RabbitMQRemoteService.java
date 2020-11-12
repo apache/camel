@@ -56,8 +56,13 @@ public class RabbitMQRemoteService implements RabbitMQService {
     }
 
     @Override
-    public void initialize() {
+    public void registerProperties() {
+        // NO-OP
+    }
 
+    @Override
+    public void initialize() {
+        registerProperties();
     }
 
     @Override

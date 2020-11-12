@@ -11,7 +11,7 @@
     "output": false
   },
   "properties": {
-    "name": { "kind": "value", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Header name" },
-    "length": { "kind": "attribute", "displayName": "Length", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "Header length" }
+    "name": { "kind": "value", "displayName": "Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Header name" },
+    "length": { "kind": "attribute", "displayName": "Length", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Header length" }
   }
 }

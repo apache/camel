@@ -21,8 +21,6 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanValidatorEndpoint target = (BeanValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "constraintvalidatorfactory":
         case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
         case "group": target.setGroup(property(camelContext, java.lang.String.class, value)); return true;
@@ -46,8 +44,6 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "constraintvalidatorfactory":
         case "constraintValidatorFactory": return javax.validation.ConstraintValidatorFactory.class;
         case "group": return java.lang.String.class;
@@ -72,8 +68,6 @@ public class BeanValidatorEndpointConfigurer extends PropertyConfigurerSupport i
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BeanValidatorEndpoint target = (BeanValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "constraintvalidatorfactory":
         case "constraintValidatorFactory": return target.getConstraintValidatorFactory();
         case "group": return target.getGroup();

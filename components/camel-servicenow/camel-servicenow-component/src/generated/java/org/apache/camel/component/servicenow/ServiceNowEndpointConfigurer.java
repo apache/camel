@@ -25,8 +25,6 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiUrl": target.getConfiguration().setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "dateformat":
         case "dateFormat": target.getConfiguration().setDateFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "datetimeformat":
@@ -113,8 +111,6 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiUrl": return java.lang.String.class;
         case "apiversion":
         case "apiVersion": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "dateformat":
         case "dateFormat": return java.lang.String.class;
         case "datetimeformat":
@@ -202,8 +198,6 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiUrl": return target.getConfiguration().getApiUrl();
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "dateformat":
         case "dateFormat": return target.getConfiguration().getDateFormat();
         case "datetimeformat":

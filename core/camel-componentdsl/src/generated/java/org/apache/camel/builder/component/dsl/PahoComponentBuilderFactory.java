@@ -392,18 +392,20 @@ public interface PahoComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default PahoComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default PahoComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -607,7 +609,7 @@ public interface PahoComponentBuilderFactory {
             case "willTopic": getOrCreateConfiguration((PahoComponent) component).setWillTopic((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((PahoComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((PahoComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((PahoComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((PahoComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "client": ((PahoComponent) component).setClient((org.eclipse.paho.client.mqttv3.MqttClient) value); return true;
             case "customWebSocketHeaders": getOrCreateConfiguration((PahoComponent) component).setCustomWebSocketHeaders((java.util.Properties) value); return true;
             case "executorServiceTimeout": getOrCreateConfiguration((PahoComponent) component).setExecutorServiceTimeout((int) value); return true;

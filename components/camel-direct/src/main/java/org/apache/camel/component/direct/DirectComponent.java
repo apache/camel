@@ -62,7 +62,7 @@ public class DirectComponent extends DefaultComponent {
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(consumers);
         consumers.clear();
-        super.doStop();
+        super.doShutdown();
     }
 
     public boolean isBlock() {

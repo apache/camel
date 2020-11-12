@@ -27,8 +27,6 @@ public class DdbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonDDBClient": target.getConfiguration().setAmazonDDBClient(property(camelContext, com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "consistentread":
         case "consistentRead": target.getConfiguration().setConsistentRead(property(camelContext, boolean.class, value)); return true;
         case "keyattributename":
@@ -65,8 +63,6 @@ public class DdbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonDDBClient": return com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "consistentread":
         case "consistentRead": return boolean.class;
         case "keyattributename":
@@ -104,8 +100,6 @@ public class DdbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonDDBClient": return target.getConfiguration().getAmazonDDBClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "consistentread":
         case "consistentRead": return target.getConfiguration().isConsistentRead();
         case "keyattributename":

@@ -21,8 +21,6 @@ public class JingEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JingEndpoint target = (JingEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "compactsyntax":
         case "compactSyntax": target.setCompactSyntax(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -35,8 +33,6 @@ public class JingEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "compactsyntax":
         case "compactSyntax": return boolean.class;
         case "lazystartproducer":
@@ -50,8 +46,6 @@ public class JingEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JingEndpoint target = (JingEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "compactsyntax":
         case "compactSyntax": return target.isCompactSyntax();
         case "lazystartproducer":

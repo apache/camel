@@ -21,8 +21,6 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WorkdayEndpoint target = (WorkdayEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientid":
         case "clientId": target.getWorkdayConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -45,8 +43,6 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientsecret":
@@ -70,8 +66,6 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WorkdayEndpoint target = (WorkdayEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientid":
         case "clientId": return target.getWorkdayConfiguration().getClientId();
         case "clientsecret":

@@ -38,10 +38,10 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "apiVersion": getOrCreateConfig(target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "authenticationtype":
         case "authenticationType": target.setAuthenticationType(property(camelContext, org.apache.camel.component.salesforce.AuthenticationType.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "backoffincrement":
         case "backoffIncrement": getOrCreateConfig(target).setBackoffIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batchid":
         case "batchId": getOrCreateConfig(target).setBatchId(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -183,10 +183,10 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "apiVersion": return java.lang.String.class;
         case "authenticationtype":
         case "authenticationType": return org.apache.camel.component.salesforce.AuthenticationType.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "backoffincrement":
         case "backoffIncrement": return long.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "batchid":
         case "batchId": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -329,10 +329,10 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "apiVersion": return getOrCreateConfig(target).getApiVersion();
         case "authenticationtype":
         case "authenticationType": return target.getAuthenticationType();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "backoffincrement":
         case "backoffIncrement": return getOrCreateConfig(target).getBackoffIncrement();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "batchid":
         case "batchId": return getOrCreateConfig(target).getBatchId();
         case "bridgeerrorhandler":

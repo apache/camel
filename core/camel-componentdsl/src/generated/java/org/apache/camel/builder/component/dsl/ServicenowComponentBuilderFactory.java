@@ -411,18 +411,21 @@ public interface ServicenowComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default ServicenowComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default ServicenowComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -723,7 +726,7 @@ public interface ServicenowComponentBuilderFactory {
             case "target": getOrCreateConfiguration((ServiceNowComponent) component).setTarget((java.lang.Boolean) value); return true;
             case "topLevelOnly": getOrCreateConfiguration((ServiceNowComponent) component).setTopLevelOnly((java.lang.Boolean) value); return true;
             case "apiVersion": getOrCreateConfiguration((ServiceNowComponent) component).setApiVersion((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((ServiceNowComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ServiceNowComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "dateFormat": getOrCreateConfiguration((ServiceNowComponent) component).setDateFormat((java.lang.String) value); return true;
             case "dateTimeFormat": getOrCreateConfiguration((ServiceNowComponent) component).setDateTimeFormat((java.lang.String) value); return true;
             case "httpClientPolicy": getOrCreateConfiguration((ServiceNowComponent) component).setHttpClientPolicy((org.apache.cxf.transports.http.configuration.HTTPClientPolicy) value); return true;

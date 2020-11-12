@@ -27,8 +27,6 @@ public class IronMQEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batchdelete":
         case "batchDelete": target.getConfiguration().setBatchDelete(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -92,8 +90,6 @@ public class IronMQEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "backoffIdleThreshold": return int.class;
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "batchdelete":
         case "batchDelete": return boolean.class;
         case "bridgeerrorhandler":
@@ -158,8 +154,6 @@ public class IronMQEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "batchdelete":
         case "batchDelete": return target.getConfiguration().isBatchDelete();
         case "bridgeerrorhandler":

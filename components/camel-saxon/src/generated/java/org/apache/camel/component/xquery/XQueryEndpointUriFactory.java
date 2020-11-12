@@ -20,8 +20,7 @@ public class XQueryEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(35);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(34);
         props.add("backoffMultiplier");
         props.add("configuration");
         props.add("synchronous");

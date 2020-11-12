@@ -20,7 +20,7 @@ public class FacebookEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(105);
+        Set<String> props = new HashSet<>(104);
         props.add("httpMaxTotalConnections");
         props.add("tabId");
         props.add("synchronous");
@@ -101,7 +101,6 @@ public class FacebookEndpointUriFactory extends org.apache.camel.support.compone
         props.add("ids");
         props.add("exceptionHandler");
         props.add("permissionName");
-        props.add("basicPropertyBinding");
         props.add("distance");
         props.add("mbeanEnabled");
         props.add("link");

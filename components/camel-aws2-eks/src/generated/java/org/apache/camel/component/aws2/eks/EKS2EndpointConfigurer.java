@@ -25,8 +25,6 @@ public class EKS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "eksclient":
         case "eksClient": target.getConfiguration().setEksClient(property(camelContext, software.amazon.awssdk.services.eks.EksClient.class, value)); return true;
         case "lazystartproducer":
@@ -57,8 +55,6 @@ public class EKS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return java.lang.String.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "eksclient":
         case "eksClient": return software.amazon.awssdk.services.eks.EksClient.class;
         case "lazystartproducer":
@@ -90,8 +86,6 @@ public class EKS2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "eksclient":
         case "eksClient": return target.getConfiguration().getEksClient();
         case "lazystartproducer":

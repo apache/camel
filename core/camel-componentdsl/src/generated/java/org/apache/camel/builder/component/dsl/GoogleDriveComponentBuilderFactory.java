@@ -140,18 +140,21 @@ public interface GoogleDriveComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default GoogleDriveComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GoogleDriveComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -237,7 +240,7 @@ public interface GoogleDriveComponentBuilderFactory {
             case "scopes": getOrCreateConfiguration((GoogleDriveComponent) component).setScopes((java.util.List) value); return true;
             case "bridgeErrorHandler": ((GoogleDriveComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GoogleDriveComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((GoogleDriveComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GoogleDriveComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleDriveComponent) component).setClientFactory((org.apache.camel.component.google.drive.GoogleDriveClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleDriveComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleDriveComponent) component).setClientSecret((java.lang.String) value); return true;

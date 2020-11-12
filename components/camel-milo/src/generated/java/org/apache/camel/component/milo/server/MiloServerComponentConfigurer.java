@@ -25,8 +25,8 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
         case "applicationUri": target.setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bindaddresses":
         case "bindAddresses": target.setBindAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -69,8 +69,8 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "applicationName": return java.lang.String.class;
         case "applicationuri":
         case "applicationUri": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bindaddresses":
         case "bindAddresses": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -114,8 +114,8 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "applicationName": return target.getApplicationName();
         case "applicationuri":
         case "applicationUri": return target.getApplicationUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bindaddresses":
         case "bindAddresses": return target.getBindAddresses();
         case "bridgeerrorhandler":

@@ -20,20 +20,19 @@ public class ArangoDbEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(13);
-        props.add("basicPropertyBinding");
-        props.add("vertexCollection");
-        props.add("synchronous");
-        props.add("documentCollection");
-        props.add("graph");
+        Set<String> props = new HashSet<>(12);
         props.add("edgeCollection");
         props.add("database");
         props.add("lazyStartProducer");
         props.add("password");
+        props.add("vertexCollection");
         props.add("port");
+        props.add("synchronous");
+        props.add("documentCollection");
         props.add("host");
         props.add("operation");
         props.add("user");
+        props.add("graph");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("password");

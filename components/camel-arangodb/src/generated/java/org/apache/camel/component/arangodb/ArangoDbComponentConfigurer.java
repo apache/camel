@@ -28,8 +28,8 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ArangoDbComponent target = (ArangoDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.arangodb.ArangoDbConfiguration.class, value)); return true;
         case "documentcollection":
         case "documentCollection": getOrCreateConfiguration(target).setDocumentCollection(property(camelContext, java.lang.String.class, value)); return true;
@@ -52,8 +52,8 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.arangodb.ArangoDbConfiguration.class;
         case "documentcollection":
         case "documentCollection": return java.lang.String.class;
@@ -77,8 +77,8 @@ public class ArangoDbComponentConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ArangoDbComponent target = (ArangoDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "documentcollection":
         case "documentCollection": return getOrCreateConfiguration(target).getDocumentCollection();

@@ -218,18 +218,20 @@ public interface Aws2CwComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Aws2CwComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2CwComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -291,7 +293,7 @@ public interface Aws2CwComponentBuilderFactory {
             case "trustAllCertificates": getOrCreateConfiguration((Cw2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "unit": getOrCreateConfiguration((Cw2Component) component).setUnit((java.lang.String) value); return true;
             case "value": getOrCreateConfiguration((Cw2Component) component).setValue((java.lang.Double) value); return true;
-            case "basicPropertyBinding": ((Cw2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Cw2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Cw2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Cw2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

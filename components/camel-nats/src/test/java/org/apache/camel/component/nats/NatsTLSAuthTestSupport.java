@@ -22,11 +22,12 @@ import org.apache.camel.test.testcontainers.junit5.Wait;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 
+import static org.apache.camel.component.nats.NatsTestConstants.CONTAINER_IMAGE;
+
 /*Certificates used for tests with TLS authentication come from:
  *https://github.com/nats-io/jnats/tree/master/src/test/resources */
 public class NatsTLSAuthTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.1.8";
     public static final String CONTAINER_NAME = "nats-tls";
 
     @Override

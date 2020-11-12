@@ -51,7 +51,7 @@ The Atomix MultiMap component supports 17 options, which are listed below.
 | *resultHeader* (producer) | The header that wil carry the result. |  | String
 | *transportClassName* (producer) | The class name (fqn) of the Atomix transport | io.atomix.catalyst.transport.netty.NettyTransport | String
 | *ttl* (producer) | The resource ttl. |  | long
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *defaultResourceConfig* (advanced) | The cluster wide default resource configuration. |  | Properties
 | *defaultResourceOptions* (advanced) | The local default resource options. |  | Properties
 | *ephemeral* (advanced) | Sets if the local member should join groups as PersistentMember or not. If set to ephemeral the local member will receive an auto generated ID thus the local one is ignored. | false | boolean
@@ -80,7 +80,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (17 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,7 +95,6 @@ with the following path and query parameters:
 | *resultHeader* (producer) | The header that wil carry the result. |  | String
 | *transportClassName* (producer) | The class name (fqn) of the Atomix transport | io.atomix.catalyst.transport.netty.NettyTransport | String
 | *ttl* (producer) | The resource ttl. |  | long
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *defaultResourceConfig* (advanced) | The cluster wide default resource configuration. |  | Properties
 | *defaultResourceOptions* (advanced) | The local default resource options. |  | Properties
 | *ephemeral* (advanced) | Sets if the local member should join groups as PersistentMember or not. If set to ephemeral the local member will receive an auto generated ID thus the local one is ignored. | false | boolean

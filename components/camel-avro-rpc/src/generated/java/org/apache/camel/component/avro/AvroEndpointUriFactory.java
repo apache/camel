@@ -20,10 +20,9 @@ public class AvroEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(15);
         props.add("messageName");
         props.add("protocolClassName");
-        props.add("basicPropertyBinding");
         props.add("reflectionProtocol");
         props.add("protocolLocation");
         props.add("synchronous");

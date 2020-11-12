@@ -21,8 +21,6 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DigitalOceanEndpoint target = (DigitalOceanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "digitaloceanclient":
         case "digitalOceanClient": target.getConfiguration().setDigitalOceanClient(property(camelContext, com.myjeeva.digitalocean.impl.DigitalOceanClient.class, value)); return true;
         case "httpproxyhost":
@@ -49,8 +47,6 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "digitaloceanclient":
         case "digitalOceanClient": return com.myjeeva.digitalocean.impl.DigitalOceanClient.class;
         case "httpproxyhost":
@@ -78,8 +74,6 @@ public class DigitalOceanEndpointConfigurer extends PropertyConfigurerSupport im
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DigitalOceanEndpoint target = (DigitalOceanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "digitaloceanclient":
         case "digitalOceanClient": return target.getConfiguration().getDigitalOceanClient();
         case "httpproxyhost":

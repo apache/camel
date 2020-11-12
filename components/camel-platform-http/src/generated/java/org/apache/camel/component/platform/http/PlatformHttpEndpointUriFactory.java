@@ -20,17 +20,16 @@ public class PlatformHttpEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(13);
-        props.add("basicPropertyBinding");
-        props.add("httpMethodRestrict");
-        props.add("synchronous");
-        props.add("matchOnUriPrefix");
-        props.add("exchangePattern");
+        Set<String> props = new HashSet<>(12);
         props.add("fileNameExtWhitelist");
         props.add("path");
         props.add("bridgeErrorHandler");
+        props.add("httpMethodRestrict");
         props.add("headerFilterStrategy");
+        props.add("synchronous");
+        props.add("matchOnUriPrefix");
         props.add("produces");
+        props.add("exchangePattern");
         props.add("exceptionHandler");
         props.add("platformHttpEngine");
         props.add("consumes");

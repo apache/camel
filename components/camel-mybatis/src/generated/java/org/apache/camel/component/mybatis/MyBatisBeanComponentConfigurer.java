@@ -21,8 +21,8 @@ public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport im
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MyBatisBeanComponent target = (MyBatisBeanComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configurationuri":
         case "configurationUri": target.setConfigurationUri(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -36,8 +36,8 @@ public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "configurationuri":
         case "configurationUri": return java.lang.String.class;
         case "lazystartproducer":
@@ -52,8 +52,8 @@ public class MyBatisBeanComponentConfigurer extends PropertyConfigurerSupport im
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MyBatisBeanComponent target = (MyBatisBeanComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configurationuri":
         case "configurationUri": return target.getConfigurationUri();
         case "lazystartproducer":
