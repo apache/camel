@@ -21,8 +21,8 @@ public class HazelcastAtomicnumberComponentConfigurer extends PropertyConfigurer
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HazelcastAtomicnumberComponent target = (HazelcastAtomicnumberComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "hazelcastinstance":
         case "hazelcastInstance": target.setHazelcastInstance(property(camelContext, com.hazelcast.core.HazelcastInstance.class, value)); return true;
         case "hazelcastmode":
@@ -36,8 +36,8 @@ public class HazelcastAtomicnumberComponentConfigurer extends PropertyConfigurer
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "hazelcastinstance":
         case "hazelcastInstance": return com.hazelcast.core.HazelcastInstance.class;
         case "hazelcastmode":
@@ -52,8 +52,8 @@ public class HazelcastAtomicnumberComponentConfigurer extends PropertyConfigurer
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HazelcastAtomicnumberComponent target = (HazelcastAtomicnumberComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "hazelcastinstance":
         case "hazelcastInstance": return target.getHazelcastInstance();
         case "hazelcastmode":

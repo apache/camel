@@ -28,10 +28,10 @@ public class XmlVerifierComponentConfigurer extends PropertyConfigurerSupport im
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XmlVerifierComponent target = (XmlVerifierComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "baseuri":
         case "baseUri": getOrCreateVerifierConfiguration(target).setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clearheaders":
         case "clearHeaders": getOrCreateVerifierConfiguration(target).setClearHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "cryptocontextproperties":
@@ -73,10 +73,10 @@ public class XmlVerifierComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "baseuri":
         case "baseUri": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "clearheaders":
         case "clearHeaders": return java.lang.Boolean.class;
         case "cryptocontextproperties":
@@ -119,10 +119,10 @@ public class XmlVerifierComponentConfigurer extends PropertyConfigurerSupport im
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XmlVerifierComponent target = (XmlVerifierComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "baseuri":
         case "baseUri": return getOrCreateVerifierConfiguration(target).getBaseUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clearheaders":
         case "clearHeaders": return getOrCreateVerifierConfiguration(target).getClearHeaders();
         case "cryptocontextproperties":

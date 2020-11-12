@@ -22,8 +22,6 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         CoAPEndpoint target = (CoAPEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": target.setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "ciphersuites":
@@ -59,8 +57,6 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "ciphersuites":
@@ -97,8 +93,6 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         CoAPEndpoint target = (CoAPEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "alias": return target.getAlias();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "ciphersuites":

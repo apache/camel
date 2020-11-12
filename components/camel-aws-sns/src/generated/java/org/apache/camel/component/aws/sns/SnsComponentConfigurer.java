@@ -38,8 +38,8 @@ public class SnsComponentConfigurer extends PropertyConfigurerSupport implements
         case "autoCreateTopic": getOrCreateConfiguration(target).setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.sns.SnsConfiguration.class, value)); return true;
         case "kmsmasterkeyid":
         case "kmsMasterKeyId": getOrCreateConfiguration(target).setKmsMasterKeyId(property(camelContext, java.lang.String.class, value)); return true;
@@ -81,8 +81,8 @@ public class SnsComponentConfigurer extends PropertyConfigurerSupport implements
         case "autoCreateTopic": return boolean.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws.sns.SnsConfiguration.class;
         case "kmsmasterkeyid":
         case "kmsMasterKeyId": return java.lang.String.class;
@@ -125,8 +125,8 @@ public class SnsComponentConfigurer extends PropertyConfigurerSupport implements
         case "autoCreateTopic": return getOrCreateConfiguration(target).isAutoCreateTopic();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "kmsmasterkeyid":
         case "kmsMasterKeyId": return getOrCreateConfiguration(target).getKmsMasterKeyId();

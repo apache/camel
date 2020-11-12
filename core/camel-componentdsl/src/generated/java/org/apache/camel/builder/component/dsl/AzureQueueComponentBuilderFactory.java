@@ -179,18 +179,21 @@ public interface AzureQueueComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default AzureQueueComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AzureQueueComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -263,7 +266,7 @@ public interface AzureQueueComponentBuilderFactory {
             case "messageVisibilityDelay": getOrCreateConfiguration((QueueServiceComponent) component).setMessageVisibilityDelay((int) value); return true;
             case "operation": getOrCreateConfiguration((QueueServiceComponent) component).setOperation((org.apache.camel.component.azure.queue.QueueServiceOperations) value); return true;
             case "queuePrefix": getOrCreateConfiguration((QueueServiceComponent) component).setQueuePrefix((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((QueueServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((QueueServiceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((QueueServiceComponent) component).setConfiguration((org.apache.camel.component.azure.queue.QueueServiceConfiguration) value); return true;
             case "credentialsAccountKey": getOrCreateConfiguration((QueueServiceComponent) component).setCredentialsAccountKey((java.lang.String) value); return true;
             case "credentialsAccountName": getOrCreateConfiguration((QueueServiceComponent) component).setCredentialsAccountName((java.lang.String) value); return true;

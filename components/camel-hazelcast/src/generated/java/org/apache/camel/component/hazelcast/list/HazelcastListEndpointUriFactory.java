@@ -20,8 +20,7 @@ public class HazelcastListEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(10);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(9);
         props.add("lazyStartProducer");
         props.add("cacheName");
         props.add("bridgeErrorHandler");

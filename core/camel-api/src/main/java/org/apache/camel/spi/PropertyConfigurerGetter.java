@@ -37,6 +37,15 @@ public interface PropertyConfigurerGetter {
     Class<?> getOptionType(String name, boolean ignoreCase);
 
     /**
+     * Gets the names of the autowired options.
+     *
+     * @return the names as an array, or null if there are no autowire options.
+     */
+    default String[] getAutowiredNames() {
+        return null;
+    }
+
+    /**
      * This method can be used to retrieve the class type for an option if the option is a collection kind (list, map,
      * or array). For maps, then the nested type returned is the type of the value in the map (not the map key type).
      *

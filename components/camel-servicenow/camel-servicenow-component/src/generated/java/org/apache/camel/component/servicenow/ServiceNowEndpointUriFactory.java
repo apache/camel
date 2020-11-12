@@ -20,9 +20,8 @@ public class ServiceNowEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(47);
+        Set<String> props = new HashSet<>(46);
         props.add("favorites");
-        props.add("basicPropertyBinding");
         props.add("suppressPaginationHeader");
         props.add("oauthClientId");
         props.add("instanceName");

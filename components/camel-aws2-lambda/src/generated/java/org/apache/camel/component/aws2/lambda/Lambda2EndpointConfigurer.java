@@ -27,8 +27,6 @@ public class Lambda2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "awslambdaclient":
         case "awsLambdaClient": target.getConfiguration().setAwsLambdaClient(property(camelContext, software.amazon.awssdk.services.lambda.LambdaClient.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.lambda.Lambda2Operations.class, value)); return true;
@@ -59,8 +57,6 @@ public class Lambda2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "autoDiscoverClient": return boolean.class;
         case "awslambdaclient":
         case "awsLambdaClient": return software.amazon.awssdk.services.lambda.LambdaClient.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.lambda.Lambda2Operations.class;
@@ -92,8 +88,6 @@ public class Lambda2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "awslambdaclient":
         case "awsLambdaClient": return target.getConfiguration().getAwsLambdaClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();

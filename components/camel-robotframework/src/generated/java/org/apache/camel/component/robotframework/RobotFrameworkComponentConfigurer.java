@@ -34,8 +34,8 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "allowTemplateFromHeader": getOrCreateConfiguration(target).setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "argumentfile":
         case "argumentFile": getOrCreateConfiguration(target).setArgumentFile(property(camelContext, java.io.File.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "combinedtagstats":
@@ -126,8 +126,8 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "allowTemplateFromHeader": return boolean.class;
         case "argumentfile":
         case "argumentFile": return java.io.File.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "combinedtagstats":
@@ -219,8 +219,8 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "allowTemplateFromHeader": return getOrCreateConfiguration(target).isAllowTemplateFromHeader();
         case "argumentfile":
         case "argumentFile": return getOrCreateConfiguration(target).getArgumentFile();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "combinedtagstats":

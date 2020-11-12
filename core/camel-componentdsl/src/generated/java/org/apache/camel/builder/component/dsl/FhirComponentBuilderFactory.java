@@ -146,18 +146,20 @@ public interface FhirComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default FhirComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default FhirComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -423,7 +425,7 @@ public interface FhirComponentBuilderFactory {
             case "serverUrl": getOrCreateConfiguration((FhirComponent) component).setServerUrl((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((FhirComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((FhirComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((FhirComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((FhirComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "client": getOrCreateConfiguration((FhirComponent) component).setClient((ca.uhn.fhir.rest.client.api.IGenericClient) value); return true;
             case "clientFactory": getOrCreateConfiguration((FhirComponent) component).setClientFactory((ca.uhn.fhir.rest.client.api.IRestfulClientFactory) value); return true;
             case "compress": getOrCreateConfiguration((FhirComponent) component).setCompress((boolean) value); return true;

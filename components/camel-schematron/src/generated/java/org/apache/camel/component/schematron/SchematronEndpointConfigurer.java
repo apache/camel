@@ -22,8 +22,6 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
         SchematronEndpoint target = (SchematronEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abort": target.setAbort(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "rules": target.setRules(property(camelContext, javax.xml.transform.Templates.class, value)); return true;
@@ -38,8 +36,6 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abort": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "rules": return javax.xml.transform.Templates.class;
@@ -55,8 +51,6 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
         SchematronEndpoint target = (SchematronEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abort": return target.isAbort();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "rules": return target.getRules();

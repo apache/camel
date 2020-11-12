@@ -32,8 +32,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "allowDefaultCodec": getOrCreateConfiguration(target).setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
         case "autostarttls":
         case "autoStartTls": getOrCreateConfiguration(target).setAutoStartTls(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachedaddress":
@@ -87,8 +87,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "allowDefaultCodec": return boolean.class;
         case "autostarttls":
         case "autoStartTls": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "cachedaddress":
@@ -143,8 +143,8 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         case "allowDefaultCodec": return getOrCreateConfiguration(target).isAllowDefaultCodec();
         case "autostarttls":
         case "autoStartTls": return getOrCreateConfiguration(target).isAutoStartTls();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachedaddress":

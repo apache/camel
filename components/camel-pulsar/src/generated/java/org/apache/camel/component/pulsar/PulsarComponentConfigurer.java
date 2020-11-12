@@ -36,8 +36,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "allowManualAcknowledgement": getOrCreateConfiguration(target).setAllowManualAcknowledgement(property(camelContext, boolean.class, value)); return true;
         case "autoconfiguration":
         case "autoConfiguration": target.setAutoConfiguration(property(camelContext, org.apache.camel.component.pulsar.utils.AutoConfiguration.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "batcherbuilder":
         case "batcherBuilder": getOrCreateConfiguration(target).setBatcherBuilder(property(camelContext, org.apache.pulsar.client.api.BatcherBuilder.class, value)); return true;
         case "batchingenabled":
@@ -114,8 +114,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "allowManualAcknowledgement": return boolean.class;
         case "autoconfiguration":
         case "autoConfiguration": return org.apache.camel.component.pulsar.utils.AutoConfiguration.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "batcherbuilder":
         case "batcherBuilder": return org.apache.pulsar.client.api.BatcherBuilder.class;
         case "batchingenabled":
@@ -193,8 +193,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "allowManualAcknowledgement": return getOrCreateConfiguration(target).isAllowManualAcknowledgement();
         case "autoconfiguration":
         case "autoConfiguration": return target.getAutoConfiguration();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "batcherbuilder":
         case "batcherBuilder": return getOrCreateConfiguration(target).getBatcherBuilder();
         case "batchingenabled":

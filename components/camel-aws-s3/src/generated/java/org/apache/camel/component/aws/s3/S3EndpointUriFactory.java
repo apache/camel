@@ -20,7 +20,7 @@ public class S3EndpointUriFactory extends org.apache.camel.support.component.End
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(60);
+        Set<String> props = new HashSet<>(59);
         props.add("useIAMCredentials");
         props.add("fileName");
         props.add("serverSideEncryption");
@@ -55,7 +55,6 @@ public class S3EndpointUriFactory extends org.apache.camel.support.component.End
         props.add("deleteAfterWrite");
         props.add("region");
         props.add("exceptionHandler");
-        props.add("basicPropertyBinding");
         props.add("backoffMultiplier");
         props.add("partSize");
         props.add("chunkedEncodingDisabled");

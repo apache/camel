@@ -151,6 +151,22 @@ public final class PropertyConfigurerGenerator {
                 w.write("    }\n");
             }
 
+            // generate method for autowired
+            if (options.stream().anyMatch(BaseOptionModel::isAutowired)) {
+                w.write("\n");
+                w.write("    @Override\n");
+                w.write("    public String[] getAutowiredNames() {\n");
+                String names = options.stream()
+                        .filter(BaseOptionModel::isAutowired)
+                        .map(BaseOptionModel::getName)
+                        .map(PropertyConfigurerGenerator::quote)
+                        .collect(Collectors.joining(","));
+                w.write("        return new String[]{");
+                w.write(names);
+                w.write("};\n");
+                w.write("    }\n");
+            }
+
             // generate method for getting a property type
             w.write("\n");
             w.write("    @Override\n");
@@ -383,6 +399,10 @@ public final class PropertyConfigurerGenerator {
 
         sb.append(line1).append(line2).append(line3).append(line4).append(line5).append(line6);
         return sb.toString();
+    }
+
+    private static String quote(String n) {
+        return "\"" + n + "\"";
     }
 
 }

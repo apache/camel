@@ -21,7 +21,7 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(69);
+        Set<String> props = new HashSet<>(68);
         props.add("disconnect");
         props.add("contentTypeResolver");
         props.add("subject");
@@ -58,7 +58,6 @@ public class MailEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("folderName");
         props.add("exceptionHandler");
         props.add("debugMode");
-        props.add("basicPropertyBinding");
         props.add("backoffMultiplier");
         props.add("bcc");
         props.add("session");

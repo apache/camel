@@ -56,8 +56,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "asyncStopListener": getOrCreateConfiguration(target).setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "autoStartup": getOrCreateConfiguration(target).setAutoStartup(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "cachelevel":
         case "cacheLevel": getOrCreateConfiguration(target).setCacheLevel(property(camelContext, int.class, value)); return true;
         case "cachelevelname":
@@ -249,8 +249,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "asyncStopListener": return boolean.class;
         case "autostartup":
         case "autoStartup": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "cachelevel":
         case "cacheLevel": return int.class;
         case "cachelevelname":
@@ -443,8 +443,8 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "asyncStopListener": return getOrCreateConfiguration(target).isAsyncStopListener();
         case "autostartup":
         case "autoStartup": return getOrCreateConfiguration(target).isAutoStartup();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "cachelevel":
         case "cacheLevel": return getOrCreateConfiguration(target).getCacheLevel();
         case "cachelevelname":

@@ -24,8 +24,6 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "addressrange":
         case "addressRange": target.getConfiguration().setAddressRange(property(camelContext, java.lang.String.class, value)); return true;
         case "alphabet": target.getConfiguration().setAlphabet(property(camelContext, byte.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "datacoding":
@@ -107,8 +105,6 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "addressrange":
         case "addressRange": return java.lang.String.class;
         case "alphabet": return byte.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "datacoding":
@@ -191,8 +187,6 @@ public class SmppEndpointConfigurer extends PropertyConfigurerSupport implements
         case "addressrange":
         case "addressRange": return target.getConfiguration().getAddressRange();
         case "alphabet": return target.getConfiguration().getAlphabet();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "datacoding":

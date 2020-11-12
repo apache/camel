@@ -20,7 +20,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(74);
+        Set<String> props = new HashSet<>(73);
         props.add("usingExecutorService");
         props.add("disconnect");
         props.add("enabledProtocols");
@@ -61,7 +61,6 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         props.add("decoderMaxLineLength");
         props.add("exceptionHandler");
         props.add("broadcast");
-        props.add("basicPropertyBinding");
         props.add("trustStoreResource");
         props.add("bossCount");
         props.add("serverInitializerFactory");

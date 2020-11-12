@@ -42,7 +42,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
 
     private ExecutorService asyncStartStopExecutorService;
 
-    @Metadata(label = "advanced",
+    @Metadata(label = "common", autowired = true,
               description = "A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource.")
     private ConnectionFactory connectionFactory;
     @Metadata(label = "advanced",
@@ -67,26 +67,26 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private DestinationCreationStrategy destinationCreationStrategy;
     @Metadata(label = "advanced",
               description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
-                            + " of <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.")
+                            + " of javax.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
     @Metadata(label = "advanced", defaultValue = "true",
-              description = "When using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}"
-                            + " then should each {@link javax.jms.Connection} be tested (calling start) before returned from the pool.")
+              description = "When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource"
+                            + " then should each javax.jms.Connection be tested (calling start) before returned from the pool.")
     private boolean connectionTestOnBorrow = true;
     @Metadata(label = "security", secret = true,
-              description = "The username to use when creating {@link javax.jms.Connection} when using the"
-                            + " default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
+              description = "The username to use when creating javax.jms.Connection when using the"
+                            + " default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.")
     private String connectionUsername;
     @Metadata(label = "security", secret = true,
-              description = "The password to use when creating {@link javax.jms.Connection} when using the"
-                            + " default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
+              description = "The password to use when creating javax.jms.Connection when using the"
+                            + " default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.")
     private String connectionPassword;
-    @Metadata(label = "advanced", description = "The client ID to use when creating {@link javax.jms.Connection} when using the"
-                                                + " default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
+    @Metadata(label = "advanced", description = "The client ID to use when creating javax.jms.Connection when using the"
+                                                + " default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.")
     private String connectionClientId;
     @Metadata(label = "advanced", defaultValue = "5000",
               description = "The max wait time in millis to block and wait on free connection when the pool"
-                            + " is exhausted when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.")
+                            + " is exhausted when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.")
     private long connectionMaxWait = 5000;
     @Metadata(label = "consumer", description = "Try to apply reconnection logic on consumer pool", defaultValue = "true")
     private boolean reconnectOnError = true;

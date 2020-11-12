@@ -84,18 +84,20 @@ public interface JsltComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default JsltComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default JsltComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -143,7 +145,7 @@ public interface JsltComponentBuilderFactory {
             switch (name) {
             case "allowTemplateFromHeader": ((JsltComponent) component).setAllowTemplateFromHeader((boolean) value); return true;
             case "lazyStartProducer": ((JsltComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((JsltComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((JsltComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "functions": ((JsltComponent) component).setFunctions((java.util.Collection) value); return true;
             case "objectFilter": ((JsltComponent) component).setObjectFilter((com.schibsted.spt.data.jslt.filters.JsonFilter) value); return true;
             default: return false;

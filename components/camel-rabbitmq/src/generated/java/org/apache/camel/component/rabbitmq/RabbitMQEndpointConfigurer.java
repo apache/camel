@@ -39,8 +39,6 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "autoDelete": target.setAutoDelete(property(camelContext, boolean.class, value)); return true;
         case "automaticrecoveryenabled":
         case "automaticRecoveryEnabled": target.setAutomaticRecoveryEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeendpoint":
         case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -166,8 +164,6 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "autoDelete": return boolean.class;
         case "automaticrecoveryenabled":
         case "automaticRecoveryEnabled": return java.lang.Boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeendpoint":
         case "bridgeEndpoint": return boolean.class;
         case "bridgeerrorhandler":
@@ -294,8 +290,6 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "autoDelete": return target.isAutoDelete();
         case "automaticrecoveryenabled":
         case "automaticRecoveryEnabled": return target.getAutomaticRecoveryEnabled();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeendpoint":
         case "bridgeEndpoint": return target.isBridgeEndpoint();
         case "bridgeerrorhandler":

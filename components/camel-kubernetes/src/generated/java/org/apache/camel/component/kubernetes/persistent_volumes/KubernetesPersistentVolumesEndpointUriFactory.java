@@ -20,8 +20,7 @@ public class KubernetesPersistentVolumesEndpointUriFactory extends org.apache.ca
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(23);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(22);
         props.add("portProtocol");
         props.add("synchronous");
         props.add("caCertData");

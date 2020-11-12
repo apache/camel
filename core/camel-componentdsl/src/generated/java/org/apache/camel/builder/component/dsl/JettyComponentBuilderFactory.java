@@ -248,18 +248,20 @@ public interface JettyComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default JettyComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default JettyComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -516,7 +518,7 @@ public interface JettyComponentBuilderFactory {
             case "useXForwardedForHeader": ((JettyHttpComponent9) component).setUseXForwardedForHeader((boolean) value); return true;
             case "threadPool": ((JettyHttpComponent9) component).setThreadPool((org.eclipse.jetty.util.thread.ThreadPool) value); return true;
             case "allowJavaSerializedObject": ((JettyHttpComponent9) component).setAllowJavaSerializedObject((boolean) value); return true;
-            case "basicPropertyBinding": ((JettyHttpComponent9) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((JettyHttpComponent9) component).setAutowiredEnabled((boolean) value); return true;
             case "errorHandler": ((JettyHttpComponent9) component).setErrorHandler((org.eclipse.jetty.server.handler.ErrorHandler) value); return true;
             case "httpBinding": ((JettyHttpComponent9) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
             case "httpConfiguration": ((JettyHttpComponent9) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;

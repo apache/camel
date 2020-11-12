@@ -29,8 +29,6 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "albumUpdate": target.getConfiguration().setAlbumUpdate(property(camelContext, facebook4j.AlbumUpdate.class, value)); return true;
         case "appid":
         case "appId": target.getConfiguration().setAppId(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "center": target.getConfiguration().setCenter(property(camelContext, facebook4j.GeoLocation.class, value)); return true;
@@ -226,8 +224,6 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "albumUpdate": return facebook4j.AlbumUpdate.class;
         case "appid":
         case "appId": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "center": return facebook4j.GeoLocation.class;
@@ -424,8 +420,6 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "albumUpdate": return target.getConfiguration().getAlbumUpdate();
         case "appid":
         case "appId": return target.getConfiguration().getAppId();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "center": return target.getConfiguration().getCenter();

@@ -38,6 +38,7 @@ public abstract class BaseOptionModel {
     protected boolean deprecated;
     protected String deprecationNote;
     protected boolean secret;
+    protected boolean autowired;
     protected Object defaultValue;
     protected String defaultValueNote;
     protected boolean asPredicate;
@@ -177,6 +178,14 @@ public abstract class BaseOptionModel {
 
     public void setSecret(boolean secret) {
         this.secret = secret;
+    }
+
+    public boolean isAutowired() {
+        return autowired;
+    }
+
+    public void setAutowired(boolean autowired) {
+        this.autowired = autowired;
     }
 
     public Object getDefaultValue() {

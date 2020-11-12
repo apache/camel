@@ -21,8 +21,6 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DrillEndpoint target = (DrillEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clusterid":
         case "clusterId": target.setClusterId(property(camelContext, java.lang.String.class, value)); return true;
         case "directory": target.setDirectory(property(camelContext, java.lang.String.class, value)); return true;
@@ -38,8 +36,6 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "clusterid":
         case "clusterId": return java.lang.String.class;
         case "directory": return java.lang.String.class;
@@ -56,8 +52,6 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DrillEndpoint target = (DrillEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clusterid":
         case "clusterId": return target.getClusterId();
         case "directory": return target.getDirectory();

@@ -20,8 +20,7 @@ public class JiraEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(19);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(18);
         props.add("jql");
         props.add("sendOnlyUpdatedField");
         props.add("synchronous");

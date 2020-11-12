@@ -45,12 +45,14 @@ public interface GlobalEndpointConfiguration {
      */
     void setBridgeErrorHandler(boolean bridgeErrorHandler);
 
-    boolean isBasicPropertyBinding();
+    boolean isAutowiredEnabled();
 
     /**
-     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional
-     * capabilities.
+     * Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as
+     * autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets
+     * configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection
+     * factories, AWS Clients, etc.
      */
-    void setBasicPropertyBinding(boolean basicPropertyBinding);
+    void setAutowiredEnabled(boolean autowiredEnabled);
 
 }

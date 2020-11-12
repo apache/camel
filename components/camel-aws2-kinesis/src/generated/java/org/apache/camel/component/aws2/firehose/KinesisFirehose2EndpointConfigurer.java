@@ -27,8 +27,6 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "amazonKinesisFirehoseClient": target.getConfiguration().setAmazonKinesisFirehoseClient(property(camelContext, software.amazon.awssdk.services.firehose.FirehoseClient.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "cborenabled":
         case "cborEnabled": target.getConfiguration().setCborEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -59,8 +57,6 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "amazonKinesisFirehoseClient": return software.amazon.awssdk.services.firehose.FirehoseClient.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "cborenabled":
         case "cborEnabled": return boolean.class;
         case "lazystartproducer":
@@ -92,8 +88,6 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "amazonKinesisFirehoseClient": return target.getConfiguration().getAmazonKinesisFirehoseClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "cborenabled":
         case "cborEnabled": return target.getConfiguration().isCborEnabled();
         case "lazystartproducer":

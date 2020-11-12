@@ -20,8 +20,7 @@ public class TelegramEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(33);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(32);
         props.add("backoffMultiplier");
         props.add("chatId");
         props.add("synchronous");

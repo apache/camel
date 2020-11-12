@@ -89,6 +89,24 @@ public interface TelegramComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default TelegramComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+        /**
          * Can be used to set an alternative base URI, e.g. when you want to
          * test the component against a mock Telegram API.
          * 
@@ -99,21 +117,6 @@ public interface TelegramComponentBuilderFactory {
          */
         default TelegramComponentBuilder baseUri(java.lang.String baseUri) {
             doSetProperty("baseUri", baseUri);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        @Deprecated
-        default TelegramComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -175,8 +178,8 @@ public interface TelegramComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((TelegramComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((TelegramComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "autowiredEnabled": ((TelegramComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "baseUri": ((TelegramComponent) component).setBaseUri((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((TelegramComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "client": ((TelegramComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
             case "clientConfig": ((TelegramComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;
             case "authorizationToken": ((TelegramComponent) component).setAuthorizationToken((java.lang.String) value); return true;

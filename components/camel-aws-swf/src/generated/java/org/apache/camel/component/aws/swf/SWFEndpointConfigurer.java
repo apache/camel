@@ -35,8 +35,6 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "activityTypeRegistrationOptions": target.getConfiguration().setActivityTypeRegistrationOptions(property(camelContext, com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions.class, value)); return true;
         case "amazonswclient":
         case "amazonSWClient": target.getConfiguration().setAmazonSWClient(property(camelContext, com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "childpolicy":
@@ -102,8 +100,6 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "activityTypeRegistrationOptions": return com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions.class;
         case "amazonswclient":
         case "amazonSWClient": return com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "childpolicy":
@@ -170,8 +166,6 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "activityTypeRegistrationOptions": return target.getConfiguration().getActivityTypeRegistrationOptions();
         case "amazonswclient":
         case "amazonSWClient": return target.getConfiguration().getAmazonSWClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "childpolicy":

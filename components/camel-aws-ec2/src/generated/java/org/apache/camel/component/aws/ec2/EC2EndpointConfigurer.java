@@ -27,8 +27,6 @@ public class EC2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonEc2Client": target.getConfiguration().setAmazonEc2Client(property(camelContext, com.amazonaws.services.ec2.AmazonEC2.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws.ec2.EC2Operations.class, value)); return true;
@@ -55,8 +53,6 @@ public class EC2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonEc2Client": return com.amazonaws.services.ec2.AmazonEC2.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws.ec2.EC2Operations.class;
@@ -84,8 +80,6 @@ public class EC2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonEc2Client": return target.getConfiguration().getAmazonEc2Client();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();

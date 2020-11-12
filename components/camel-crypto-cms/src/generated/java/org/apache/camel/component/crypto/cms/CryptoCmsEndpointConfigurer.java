@@ -21,8 +21,6 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CryptoCmsEndpoint target = (CryptoCmsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentencryptionalgorithm":
         case "contentEncryptionAlgorithm": target.getEncryptConfig().setContentEncryptionAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "frombase64":
@@ -58,8 +56,6 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "contentencryptionalgorithm":
         case "contentEncryptionAlgorithm": return java.lang.String.class;
         case "frombase64":
@@ -96,8 +92,6 @@ public class CryptoCmsEndpointConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CryptoCmsEndpoint target = (CryptoCmsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentencryptionalgorithm":
         case "contentEncryptionAlgorithm": return target.getEncryptConfig().getContentEncryptionAlgorithm();
         case "frombase64":

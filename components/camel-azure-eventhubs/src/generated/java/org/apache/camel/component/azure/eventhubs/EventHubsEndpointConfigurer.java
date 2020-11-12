@@ -27,8 +27,6 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "amqpTransportType": target.getConfiguration().setAmqpTransportType(property(camelContext, com.azure.core.amqp.AmqpTransportType.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobaccesskey":
         case "blobAccessKey": target.getConfiguration().setBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "blobaccountname":
@@ -79,8 +77,6 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "amqpTransportType": return com.azure.core.amqp.AmqpTransportType.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "blobaccesskey":
         case "blobAccessKey": return java.lang.String.class;
         case "blobaccountname":
@@ -132,8 +128,6 @@ public class EventHubsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "amqpTransportType": return target.getConfiguration().getAmqpTransportType();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobaccesskey":
         case "blobAccessKey": return target.getConfiguration().getBlobAccessKey();
         case "blobaccountname":

@@ -138,6 +138,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     private String caseInsensitiveHeaders;
 
     @XmlAttribute
+    private String autowiredEnabled;
+
+    @XmlAttribute
     private String runtimeEndpointRegistryEnabled;
 
     @XmlAttribute
@@ -798,6 +801,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setCaseInsensitiveHeaders(String caseInsensitiveHeaders) {
         this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
+    @Override
+    public String getAutowiredEnabled() {
+        return autowiredEnabled;
+    }
+
+    public void setAutowiredEnabled(String autowiredEnabled) {
+        this.autowiredEnabled = autowiredEnabled;
     }
 
     @Override

@@ -21,8 +21,6 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GangliaEndpoint target = (GangliaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "dmax": target.getConfiguration().setDmax(property(camelContext, int.class, value)); return true;
         case "groupname":
         case "groupName": target.getConfiguration().setGroupName(property(camelContext, java.lang.String.class, value)); return true;
@@ -49,8 +47,6 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "dmax": return int.class;
         case "groupname":
         case "groupName": return java.lang.String.class;
@@ -78,8 +74,6 @@ public class GangliaEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GangliaEndpoint target = (GangliaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "dmax": return target.getConfiguration().getDmax();
         case "groupname":
         case "groupName": return target.getConfiguration().getGroupName();

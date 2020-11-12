@@ -34,8 +34,8 @@ public class DdbComponentConfigurer extends PropertyConfigurerSupport implements
         case "amazonDDBClient": getOrCreateConfiguration(target).setAmazonDDBClient(property(camelContext, com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.ddb.DdbConfiguration.class, value)); return true;
         case "consistentread":
         case "consistentRead": getOrCreateConfiguration(target).setConsistentRead(property(camelContext, boolean.class, value)); return true;
@@ -72,8 +72,8 @@ public class DdbComponentConfigurer extends PropertyConfigurerSupport implements
         case "amazonDDBClient": return com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws.ddb.DdbConfiguration.class;
         case "consistentread":
         case "consistentRead": return boolean.class;
@@ -111,8 +111,8 @@ public class DdbComponentConfigurer extends PropertyConfigurerSupport implements
         case "amazonDDBClient": return getOrCreateConfiguration(target).getAmazonDDBClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "consistentread":
         case "consistentRead": return getOrCreateConfiguration(target).isConsistentRead();

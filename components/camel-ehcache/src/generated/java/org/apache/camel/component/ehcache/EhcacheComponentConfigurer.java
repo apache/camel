@@ -29,8 +29,8 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
         EhcacheComponent target = (EhcacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachemanager":
@@ -64,8 +64,8 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "cachemanager":
@@ -100,8 +100,8 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
         EhcacheComponent target = (EhcacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return getOrCreateConfiguration(target).getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachemanager":

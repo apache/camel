@@ -20,7 +20,7 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(71);
+        Set<String> props = new HashSet<>(70);
         props.add("tagStatIncludes");
         props.add("metadata");
         props.add("excludes");
@@ -63,7 +63,6 @@ public class RobotFrameworkEndpointUriFactory extends org.apache.camel.support.c
         props.add("exceptionHandler");
         props.add("monitorWidth");
         props.add("runEmptySuite");
-        props.add("basicPropertyBinding");
         props.add("backoffMultiplier");
         props.add("allowTemplateFromHeader");
         props.add("log");

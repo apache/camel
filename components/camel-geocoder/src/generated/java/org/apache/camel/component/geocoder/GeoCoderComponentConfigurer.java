@@ -21,8 +21,8 @@ public class GeoCoderComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GeoCoderComponent target = (GeoCoderComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "geoapicontext":
         case "geoApiContext": target.setGeoApiContext(property(camelContext, com.google.maps.GeoApiContext.class, value)); return true;
         case "lazystartproducer":
@@ -34,8 +34,8 @@ public class GeoCoderComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "geoapicontext":
         case "geoApiContext": return com.google.maps.GeoApiContext.class;
         case "lazystartproducer":
@@ -48,8 +48,8 @@ public class GeoCoderComponentConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GeoCoderComponent target = (GeoCoderComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "geoapicontext":
         case "geoApiContext": return target.getGeoApiContext();
         case "lazystartproducer":

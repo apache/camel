@@ -30,8 +30,8 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "algorithm": getOrCreateConfiguration(target).setAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "alias": getOrCreateConfiguration(target).setAlias(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "buffersize":
         case "bufferSize": getOrCreateConfiguration(target).setBufferSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "certificate": getOrCreateConfiguration(target).setCertificate(property(camelContext, java.security.cert.Certificate.class, value)); return true;
@@ -72,8 +72,8 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "algorithm": return java.lang.String.class;
         case "alias": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "buffersize":
         case "bufferSize": return java.lang.Integer.class;
         case "certificate": return java.security.cert.Certificate.class;
@@ -115,8 +115,8 @@ public class DigitalSignatureComponentConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "algorithm": return getOrCreateConfiguration(target).getAlgorithm();
         case "alias": return getOrCreateConfiguration(target).getAlias();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "buffersize":
         case "bufferSize": return getOrCreateConfiguration(target).getBufferSize();
         case "certificate": return getOrCreateConfiguration(target).getCertificate();

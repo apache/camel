@@ -20,8 +20,7 @@ public class MinaEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(32);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(31);
         props.add("disconnect");
         props.add("lazySessionCreation");
         props.add("synchronous");

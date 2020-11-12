@@ -20,7 +20,7 @@ public class HdfsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(50);
+        Set<String> props = new HashSet<>(49);
         props.add("checkIdleInterval");
         props.add("synchronous");
         props.add("compressionType");
@@ -49,7 +49,6 @@ public class HdfsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("splitStrategy");
         props.add("exceptionHandler");
         props.add("readSuffix");
-        props.add("basicPropertyBinding");
         props.add("backoffMultiplier");
         props.add("hostName");
         props.add("pattern");

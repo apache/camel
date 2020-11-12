@@ -20,8 +20,7 @@ public class MQ2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(15);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(14);
         props.add("amazonMqClient");
         props.add("autoDiscoverClient");
         props.add("proxyProtocol");

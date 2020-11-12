@@ -321,18 +321,21 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default XmlsecurityVerifyComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default XmlsecurityVerifyComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -405,7 +408,7 @@ public interface XmlsecurityVerifyComponentBuilderFactory {
             case "validationFailedHandler": getOrCreateConfiguration((XmlVerifierComponent) component).setValidationFailedHandler((org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler) value); return true;
             case "xmlSignature2Message": getOrCreateConfiguration((XmlVerifierComponent) component).setXmlSignature2Message((org.apache.camel.component.xmlsecurity.api.XmlSignature2Message) value); return true;
             case "xmlSignatureChecker": getOrCreateConfiguration((XmlVerifierComponent) component).setXmlSignatureChecker((org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker) value); return true;
-            case "basicPropertyBinding": ((XmlVerifierComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((XmlVerifierComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "uriDereferencer": getOrCreateConfiguration((XmlVerifierComponent) component).setUriDereferencer((javax.xml.crypto.URIDereferencer) value); return true;
             case "verifierConfiguration": ((XmlVerifierComponent) component).setVerifierConfiguration((org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration) value); return true;
             default: return false;

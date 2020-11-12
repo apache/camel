@@ -35,8 +35,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authUsername": target.setAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "authenticationpreemptive":
         case "authenticationPreemptive": target.setAuthenticationPreemptive(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeendpoint":
         case "bridgeEndpoint": target.setBridgeEndpoint(property(camelContext, boolean.class, value)); return true;
         case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
@@ -146,8 +144,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authUsername": return java.lang.String.class;
         case "authenticationpreemptive":
         case "authenticationPreemptive": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeendpoint":
         case "bridgeEndpoint": return boolean.class;
         case "chunked": return boolean.class;
@@ -258,8 +254,6 @@ public class HttpEndpointConfigurer extends PropertyConfigurerSupport implements
         case "authUsername": return target.getAuthUsername();
         case "authenticationpreemptive":
         case "authenticationPreemptive": return target.isAuthenticationPreemptive();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeendpoint":
         case "bridgeEndpoint": return target.isBridgeEndpoint();
         case "chunked": return target.isChunked();

@@ -21,8 +21,6 @@ public class KeystoneEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KeystoneEndpoint target = (KeystoneEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "config": target.setConfig(property(camelContext, org.openstack4j.core.transport.Config.class, value)); return true;
         case "domain": target.setDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -40,8 +38,6 @@ public class KeystoneEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "config": return org.openstack4j.core.transport.Config.class;
         case "domain": return java.lang.String.class;
         case "lazystartproducer":
@@ -60,8 +56,6 @@ public class KeystoneEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         KeystoneEndpoint target = (KeystoneEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "config": return target.getConfig();
         case "domain": return target.getDomain();
         case "lazystartproducer":

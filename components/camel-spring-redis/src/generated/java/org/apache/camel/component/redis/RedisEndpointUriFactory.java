@@ -20,8 +20,7 @@ public class RedisEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(14);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(13);
         props.add("redisTemplate");
         props.add("synchronous");
         props.add("exchangePattern");

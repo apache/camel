@@ -31,8 +31,8 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "acltoken":
         case "aclToken": getOrCreateConfiguration(target).setAclToken(property(camelContext, java.lang.String.class, value)); return true;
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "blockseconds":
         case "blockSeconds": getOrCreateConfiguration(target).setBlockSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "bridgeerrorhandler":
@@ -88,8 +88,8 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "acltoken":
         case "aclToken": return java.lang.String.class;
         case "action": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "blockseconds":
         case "blockSeconds": return java.lang.Integer.class;
         case "bridgeerrorhandler":
@@ -146,8 +146,8 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         case "acltoken":
         case "aclToken": return getOrCreateConfiguration(target).getAclToken();
         case "action": return getOrCreateConfiguration(target).getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "blockseconds":
         case "blockSeconds": return getOrCreateConfiguration(target).getBlockSeconds();
         case "bridgeerrorhandler":

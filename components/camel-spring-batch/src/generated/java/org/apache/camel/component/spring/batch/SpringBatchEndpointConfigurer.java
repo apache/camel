@@ -21,8 +21,6 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringBatchEndpoint target = (SpringBatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "jobfromheader":
         case "jobFromHeader": target.setJobFromHeader(property(camelContext, boolean.class, value)); return true;
         case "joblauncher":
@@ -39,8 +37,6 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "jobfromheader":
         case "jobFromHeader": return boolean.class;
         case "joblauncher":
@@ -58,8 +54,6 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringBatchEndpoint target = (SpringBatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "jobfromheader":
         case "jobFromHeader": return target.isJobFromHeader();
         case "joblauncher":

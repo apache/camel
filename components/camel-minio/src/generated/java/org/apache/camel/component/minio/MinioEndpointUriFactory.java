@@ -20,7 +20,7 @@ public class MinioEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(66);
+        Set<String> props = new HashSet<>(65);
         props.add("bucketName");
         props.add("serverSideEncryption");
         props.add("prefix");
@@ -58,7 +58,6 @@ public class MinioEndpointUriFactory extends org.apache.camel.support.component.
         props.add("autoCloseBody");
         props.add("exceptionHandler");
         props.add("customHttpClient");
-        props.add("basicPropertyBinding");
         props.add("backoffMultiplier");
         props.add("includeVersions");
         props.add("matchETag");

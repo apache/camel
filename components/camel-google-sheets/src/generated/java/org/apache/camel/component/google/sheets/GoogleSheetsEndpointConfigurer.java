@@ -32,7 +32,6 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
         map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         map.put("backoffErrorThreshold", int.class);
         map.put("backoffIdleThreshold", int.class);
@@ -68,8 +67,6 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientid":
@@ -134,8 +131,6 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "backoffIdleThreshold": return int.class;
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clientid":
@@ -196,8 +191,6 @@ public class GoogleSheetsEndpointConfigurer extends PropertyConfigurerSupport im
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientid":

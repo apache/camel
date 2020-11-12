@@ -21,8 +21,8 @@ public class GoogleBigQuerySQLComponentConfigurer extends PropertyConfigurerSupp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleBigQuerySQLComponent target = (GoogleBigQuerySQLComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class, value)); return true;
         case "lazystartproducer":
@@ -36,8 +36,8 @@ public class GoogleBigQuerySQLComponentConfigurer extends PropertyConfigurerSupp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "connectionfactory":
         case "connectionFactory": return org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class;
         case "lazystartproducer":
@@ -52,8 +52,8 @@ public class GoogleBigQuerySQLComponentConfigurer extends PropertyConfigurerSupp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoogleBigQuerySQLComponent target = (GoogleBigQuerySQLComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "connectionfactory":
         case "connectionFactory": return target.getConnectionFactory();
         case "lazystartproducer":

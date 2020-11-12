@@ -219,18 +219,20 @@ public interface MinaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default MinaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default MinaComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -477,7 +479,7 @@ public interface MinaComponentBuilderFactory {
             case "lazyStartProducer": ((MinaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "cachedAddress": getOrCreateConfiguration((MinaComponent) component).setCachedAddress((boolean) value); return true;
             case "lazySessionCreation": getOrCreateConfiguration((MinaComponent) component).setLazySessionCreation((boolean) value); return true;
-            case "basicPropertyBinding": ((MinaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MinaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((MinaComponent) component).setConfiguration((org.apache.camel.component.mina.MinaConfiguration) value); return true;
             case "maximumPoolSize": getOrCreateConfiguration((MinaComponent) component).setMaximumPoolSize((int) value); return true;
             case "orderedThreadPoolExecutor": getOrCreateConfiguration((MinaComponent) component).setOrderedThreadPoolExecutor((boolean) value); return true;
