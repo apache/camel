@@ -27,7 +27,7 @@ import org.testcontainers.containers.GenericContainer;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InfinispanTestContainerSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "infinispan/server:11.0.4.Final-1";
+    public static final String CONTAINER_IMAGE = "infinispan/server:11.0.5.Final-1";
     public static final String CONTAINER_NAME = "infinispan";
 
     @Override
@@ -42,7 +42,7 @@ public class InfinispanTestContainerSupport extends ContainerAwareTestSupport {
                 .withEnv("PASS", "password")
                 .withExposedPorts(11222)
                 .waitingFor(Wait.forListeningPort())
-                .waitingFor(Wait.forLogMessageContaining("Infinispan Server 11.0.4.Final started", 1));
+                .waitingFor(Wait.forLogMessageContaining("Infinispan Server 11.0.5.Final started", 1));
     }
 
     public String getInfispanUrl() {
