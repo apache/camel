@@ -1664,6 +1664,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a> Creates a splitter allowing you split a message
      * into a number of pieces and process them individually.
      * <p>
+     * This splitter responds with the original input message. You can use a custom {@link AggregationStrategy} to
+     * control what to respond from the splitter.
+     *
+     * @param  expression the expression on which to split the message
+     * @param  delimiter  a custom delimiter to use
+     * @return            the builder
+     */
+    public SplitDefinition split(Expression expression, String delimiter) {
+        SplitDefinition answer = new SplitDefinition(expression);
+        answer.setDelimiter(delimiter);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a> Creates a splitter allowing you split a message
+     * into a number of pieces and process them individually.
+     * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
      *
      * @param  expression          the expression on which to split

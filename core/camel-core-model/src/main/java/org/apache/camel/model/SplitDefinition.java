@@ -43,6 +43,9 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
+    @Metadata(defaultValue = ",")
+    private String delimiter;
+    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
@@ -105,6 +108,19 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * Delimiter used in splitting messages. Can be turned off using the value <tt>false</tt>.
+     * <p/>
+     * The default value is ,
+     *
+     * @param  delimiter the delimiter
+     * @return           the builder
+     */
+    public SplitDefinition delimiter(String delimiter) {
+        setDelimiter(delimiter);
+        return this;
+    }
 
     /**
      * Sets the AggregationStrategy to be used to assemble the replies from the splitted messages, into a single
@@ -515,6 +531,14 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
     public void setExpression(ExpressionDefinition expression) {
         // override to include javadoc what the expression is used for
         super.setExpression(expression);
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 
     public AggregationStrategy getAggregationStrategy() {
