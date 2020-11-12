@@ -34,7 +34,7 @@ public abstract class AzureStorageService implements AzureService, ContainerServ
         return container;
     }
 
-    protected void registerProperties() {
+    public void registerProperties() {
         System.setProperty(AzureConfigs.ACCOUNT_NAME, container.azureCredentials().accountName());
         System.setProperty(AzureConfigs.ACCOUNT_KEY, container.azureCredentials().accountKey());
         System.setProperty(AzureConfigs.HOST, container.getContainerIpAddress());

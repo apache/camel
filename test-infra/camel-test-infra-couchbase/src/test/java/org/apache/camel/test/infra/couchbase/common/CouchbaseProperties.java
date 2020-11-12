@@ -15,33 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.kafka.services;
+package org.apache.camel.test.infra.couchbase.common;
 
-import org.apache.camel.test.infra.kafka.common.KafkaProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public final class CouchbaseProperties {
+    public static final String COUCHBASE_USERNAME = "couchbase.username";
+    public static final String COUCHBASE_PASSWORD = "couchbase.password";
+    public static final String COUCHBASE_HOSTNAME = "couchbase.hostname";
+    public static final String COUCHBASE_PORT = "couchbase.port";
 
-public class RemoteKafkaService implements KafkaService {
-    private static final Logger LOG = LoggerFactory.getLogger(RemoteKafkaService.class);
+    private CouchbaseProperties() {
 
-    @Override
-    public String getBootstrapServers() {
-        return System.getProperty(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS);
-    }
-
-    @Override
-    public void registerProperties() {
-        // NO-OP
-    }
-
-    @Override
-    public void initialize() {
-        registerProperties();
-        LOG.info("Kafka bootstrap server running at address {}", getBootstrapServers());
-    }
-
-    @Override
-    public void shutdown() {
-        // NO-OP
     }
 }

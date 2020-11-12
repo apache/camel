@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
+import org.apache.camel.test.infra.couchbase.common.CouchbaseProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.couchbase.BucketDefinition;
@@ -77,8 +78,17 @@ public class CouchbaseLocalContainerService implements CouchbaseService {
     }
 
     @Override
+    public void registerProperties() {
+        System.setProperty(CouchbaseProperties.COUCHBASE_HOSTNAME, getHostname());
+        System.setProperty(CouchbaseProperties.COUCHBASE_PORT, String.valueOf(getPort()));
+        System.setProperty(CouchbaseProperties.COUCHBASE_USERNAME, getUsername());
+        System.setProperty(CouchbaseProperties.COUCHBASE_PASSWORD, getPassword());
+    }
+
+    @Override
     public void initialize() {
         container.start();
+        registerProperties();
 
         LOG.debug("Couchbase container running at {}", getConnectionString());
     }
