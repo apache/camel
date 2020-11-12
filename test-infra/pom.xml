@@ -48,5 +48,9 @@
         <module>camel-test-infra-azure-common</module>
         <module>camel-test-infra-azure-storage-blob</module>
         <module>camel-test-infra-azure-storage-queue</module>
+        <module>camel-test-infra-messaging-common</module>
+        <module>camel-test-infra-artemis</module>
+        <module>camel-test-infra-dispatch-router</module>
+
     </modules>
 </project>
