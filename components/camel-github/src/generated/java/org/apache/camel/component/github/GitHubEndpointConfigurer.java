@@ -33,6 +33,8 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
+        case "eventfetchstrategy":
+        case "eventFetchStrategy": target.setEventFetchStrategy(property(camelContext, org.apache.camel.component.github.event.GitHubEventFetchStrategy.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -92,6 +94,8 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return boolean.class;
         case "delay": return long.class;
         case "encoding": return java.lang.String.class;
+        case "eventfetchstrategy":
+        case "eventFetchStrategy": return org.apache.camel.component.github.event.GitHubEventFetchStrategy.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -152,6 +156,8 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "delay": return target.getDelay();
         case "encoding": return target.getEncoding();
+        case "eventfetchstrategy":
+        case "eventFetchStrategy": return target.getEventFetchStrategy();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

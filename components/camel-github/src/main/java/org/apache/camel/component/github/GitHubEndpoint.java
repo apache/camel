@@ -21,9 +21,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.github.consumer.CommitConsumer;
+import org.apache.camel.component.github.consumer.EventsConsumer;
 import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
 import org.apache.camel.component.github.consumer.PullRequestConsumer;
 import org.apache.camel.component.github.consumer.TagConsumer;
+import org.apache.camel.component.github.event.GitHubEventFetchStrategy;
 import org.apache.camel.component.github.producer.ClosePullRequestProducer;
 import org.apache.camel.component.github.producer.CreateIssueProducer;
 import org.apache.camel.component.github.producer.GetCommitFileProducer;
@@ -84,6 +86,8 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
     private String targetUrl;
     @UriParam(label = "producer")
     private String encoding;
+    @UriParam(label = "consumer,advanced")
+    private GitHubEventFetchStrategy eventFetchStrategy;
 
     public GitHubEndpoint(String uri, GitHubComponent component) {
         super(uri, component);
@@ -119,6 +123,8 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
             consumer = new PullRequestCommentConsumer(this, processor);
         } else if (type == GitHubType.TAG) {
             consumer = new TagConsumer(this, processor);
+        } else if (type == GitHubType.EVENT) {
+            consumer = new EventsConsumer(this, processor);
         }
 
         if (consumer == null) {
@@ -241,5 +247,16 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public GitHubEventFetchStrategy getEventFetchStrategy() {
+        return eventFetchStrategy;
+    }
+
+    /**
+     * To specify a custom strategy that configures how the EventsConsumer fetches events.
+     */
+    public void setEventFetchStrategy(GitHubEventFetchStrategy eventFetchStrategy) {
+        this.eventFetchStrategy = eventFetchStrategy;
     }
 }
