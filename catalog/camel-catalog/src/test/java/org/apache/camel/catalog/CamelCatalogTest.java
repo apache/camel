@@ -1430,7 +1430,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testValidateConfigurationPropertyComponentJClouds() throws Exception {
-        String text = "camel.component.jclouds.basicPropertyBinding=true";
+        String text = "camel.component.jclouds.autowiredEnabled=true";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
