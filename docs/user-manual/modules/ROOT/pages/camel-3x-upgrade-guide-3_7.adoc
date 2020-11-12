@@ -88,6 +88,10 @@ of using methods on `org.apache.camel.builder.AdviceWith`.
 Support for using multiple languages in the toD EIP has been removed as it was a rare feature in use, and is causing some
 problems for maintenance. toD uses simple language by default, but an alternative language can still be specified.
 
+=== Components
+
+The option `basicPropertyBinding` that was deprecated has been removed.
+
 === camel-couchbase
 
 The original URI path has been changed, now the bucket part is simply a required option and it's not part of the URI anymore.
