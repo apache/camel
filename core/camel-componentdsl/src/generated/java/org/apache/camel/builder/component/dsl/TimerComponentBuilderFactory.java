@@ -66,18 +66,20 @@ public interface TimerComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default TimerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default TimerComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -98,7 +100,7 @@ public interface TimerComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "bridgeErrorHandler": ((TimerComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "basicPropertyBinding": ((TimerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((TimerComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

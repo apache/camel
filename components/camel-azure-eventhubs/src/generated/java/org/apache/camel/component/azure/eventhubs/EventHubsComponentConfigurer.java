@@ -34,8 +34,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "amqpTransportType": getOrCreateConfiguration(target).setAmqpTransportType(property(camelContext, com.azure.core.amqp.AmqpTransportType.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "blobaccesskey":
         case "blobAccessKey": getOrCreateConfiguration(target).setBlobAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "blobaccountname":
@@ -82,8 +82,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "amqpTransportType": return com.azure.core.amqp.AmqpTransportType.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "blobaccesskey":
         case "blobAccessKey": return java.lang.String.class;
         case "blobaccountname":
@@ -131,8 +131,8 @@ public class EventHubsComponentConfigurer extends PropertyConfigurerSupport impl
         case "amqpTransportType": return getOrCreateConfiguration(target).getAmqpTransportType();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "blobaccesskey":
         case "blobAccessKey": return getOrCreateConfiguration(target).getBlobAccessKey();
         case "blobaccountname":

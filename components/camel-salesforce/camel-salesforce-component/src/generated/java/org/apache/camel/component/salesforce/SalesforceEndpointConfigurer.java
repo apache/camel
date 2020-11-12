@@ -31,8 +31,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "backoffincrement":
         case "backoffIncrement": target.getConfiguration().setBackoffIncrement(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batchid":
         case "batchId": target.getConfiguration().setBatchId(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -125,8 +123,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiVersion": return java.lang.String.class;
         case "backoffincrement":
         case "backoffIncrement": return long.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "batchid":
         case "batchId": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -220,8 +216,6 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiVersion": return target.getConfiguration().getApiVersion();
         case "backoffincrement":
         case "backoffIncrement": return target.getConfiguration().getBackoffIncrement();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "batchid":
         case "batchId": return target.getConfiguration().getBatchId();
         case "bridgeerrorhandler":

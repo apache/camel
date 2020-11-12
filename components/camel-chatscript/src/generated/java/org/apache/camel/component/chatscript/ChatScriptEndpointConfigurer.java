@@ -21,8 +21,6 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ChatScriptEndpoint target = (ChatScriptEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "chatusername":
         case "chatUserName": target.setChatUserName(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -37,8 +35,6 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "chatusername":
         case "chatUserName": return java.lang.String.class;
         case "lazystartproducer":
@@ -54,8 +50,6 @@ public class ChatScriptEndpointConfigurer extends PropertyConfigurerSupport impl
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ChatScriptEndpoint target = (ChatScriptEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "chatusername":
         case "chatUserName": return target.getChatUserName();
         case "lazystartproducer":

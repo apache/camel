@@ -90,7 +90,7 @@ The AWS S3 Storage Service component supports 39 options, which are listed below
 | *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
 | *forceGlobalBucketAccessEnabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
 | *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
@@ -125,7 +125,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (59 parameters):
+=== Query Parameters (58 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -172,7 +172,6 @@ with the following path and query parameters:
 | *dualstackEnabled* ( advanced) | Define if Dualstack enabled is true or false | false | boolean
 | *forceGlobalBucketAccessEnabled* ( advanced) | Define if Force Global Bucket Access enabled is true or false | false | boolean
 | *payloadSigningEnabled* ( advanced) | Define if Payload Signing enabled is true or false | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int

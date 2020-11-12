@@ -21,8 +21,6 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FlinkEndpoint target = (FlinkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "collect": target.setCollect(property(camelContext, boolean.class, value)); return true;
         case "dataset":
         case "dataSet": target.setDataSet(property(camelContext, org.apache.flink.api.java.DataSet.class, value)); return true;
@@ -42,8 +40,6 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "collect": return boolean.class;
         case "dataset":
         case "dataSet": return org.apache.flink.api.java.DataSet.class;
@@ -64,8 +60,6 @@ public class FlinkEndpointConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FlinkEndpoint target = (FlinkEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "collect": return target.isCollect();
         case "dataset":
         case "dataSet": return target.getDataSet();

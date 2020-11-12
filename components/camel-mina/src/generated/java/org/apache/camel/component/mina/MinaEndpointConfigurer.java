@@ -25,8 +25,6 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowDefaultCodec": target.getConfiguration().setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
         case "autostarttls":
         case "autoStartTls": target.getConfiguration().setAutoStartTls(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachedaddress":
@@ -82,8 +80,6 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowDefaultCodec": return boolean.class;
         case "autostarttls":
         case "autoStartTls": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "cachedaddress":
@@ -140,8 +136,6 @@ public class MinaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "allowDefaultCodec": return target.getConfiguration().isAllowDefaultCodec();
         case "autostarttls":
         case "autoStartTls": return target.getConfiguration().isAutoStartTls();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachedaddress":

@@ -23,8 +23,6 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apidoc":
         case "apiDoc": target.setApiDoc(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bindingmode":
         case "bindingMode": target.setBindingMode(property(camelContext, org.apache.camel.spi.RestConfiguration.RestBindingMode.class, value)); return true;
         case "bridgeerrorhandler":
@@ -61,8 +59,6 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apidoc":
         case "apiDoc": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bindingmode":
         case "bindingMode": return org.apache.camel.spi.RestConfiguration.RestBindingMode.class;
         case "bridgeerrorhandler":
@@ -100,8 +96,6 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apidoc":
         case "apiDoc": return target.getApiDoc();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bindingmode":
         case "bindingMode": return target.getBindingMode();
         case "bridgeerrorhandler":

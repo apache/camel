@@ -466,6 +466,18 @@ public class DefaultRoute extends ServiceSupport implements Route {
     }
 
     @Override
+    public Boolean isAutowiredEnabled() {
+        // can only be configured on CamelContext
+        return camelContext.isAutowiredEnabled();
+    }
+
+    @Override
+    public void setAutowiredEnabled(Boolean autowiredEnabled) {
+        // can only be configured on CamelContext
+        camelContext.setAutowiredEnabled(autowiredEnabled);
+    }
+
+    @Override
     public ShutdownRoute getShutdownRoute() {
         if (shutdownRoute != null) {
             return shutdownRoute;

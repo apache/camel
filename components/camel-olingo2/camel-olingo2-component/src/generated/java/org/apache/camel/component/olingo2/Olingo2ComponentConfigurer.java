@@ -33,7 +33,7 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
         map.put("bridgeErrorHandler", boolean.class);
         map.put("splitResult", boolean.class);
         map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
+        map.put("autowiredEnabled", boolean.class);
         map.put("httpAsyncClientBuilder", org.apache.http.impl.nio.client.HttpAsyncClientBuilder.class);
         map.put("httpClientBuilder", org.apache.http.impl.client.HttpClientBuilder.class);
         map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
@@ -52,8 +52,8 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Olingo2Component target = (Olingo2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.olingo2.Olingo2Configuration.class, value)); return true;
@@ -98,8 +98,8 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.olingo2.Olingo2Configuration.class;
@@ -140,8 +140,8 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Olingo2Component target = (Olingo2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();

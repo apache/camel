@@ -34,8 +34,8 @@ public class AWS2EC2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "amazonEc2Client": getOrCreateConfiguration(target).setAmazonEc2Client(property(camelContext, software.amazon.awssdk.services.ec2.Ec2Client.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ec2.AWS2EC2Configuration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -66,8 +66,8 @@ public class AWS2EC2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "amazonEc2Client": return software.amazon.awssdk.services.ec2.Ec2Client.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.ec2.AWS2EC2Configuration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -99,8 +99,8 @@ public class AWS2EC2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "amazonEc2Client": return getOrCreateConfiguration(target).getAmazonEc2Client();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

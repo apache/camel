@@ -21,8 +21,6 @@ public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         IOTAEndpoint target = (IOTAEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "depth": target.setDepth(property(camelContext, java.lang.Integer.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -41,8 +39,6 @@ public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "depth": return java.lang.Integer.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -62,8 +58,6 @@ public class IOTAEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         IOTAEndpoint target = (IOTAEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "depth": return target.getDepth();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

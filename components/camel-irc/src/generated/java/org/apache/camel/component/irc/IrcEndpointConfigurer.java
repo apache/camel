@@ -23,8 +23,6 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autorejoin":
         case "autoRejoin": target.getConfiguration().setAutoRejoin(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channels": target.getConfiguration().setChannels(property(camelContext, java.lang.String.class, value)); return true;
@@ -79,8 +77,6 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autorejoin":
         case "autoRejoin": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "channels": return java.lang.String.class;
@@ -136,8 +132,6 @@ public class IrcEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autorejoin":
         case "autoRejoin": return target.getConfiguration().isAutoRejoin();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channels": return target.getConfiguration().getChannels();

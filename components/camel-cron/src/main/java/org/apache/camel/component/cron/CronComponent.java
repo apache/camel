@@ -58,7 +58,7 @@ public class CronComponent extends DefaultComponent {
         answer.setDelegate(delegate);
         if (delegate instanceof DefaultEndpoint) {
             DefaultEndpoint de = (DefaultEndpoint) delegate;
-            de.setBasicPropertyBinding(answer.isBasicPropertyBinding());
+            de.setAutowiredEnabled(answer.isAutowiredEnabled());
             de.setBridgeErrorHandler(answer.isBridgeErrorHandler());
             de.setExceptionHandler(answer.getExceptionHandler());
             de.setExchangePattern(answer.getExchangePattern());

@@ -34,8 +34,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "amazonAthenaClient": getOrCreateConfiguration(target).setAmazonAthenaClient(property(camelContext, software.amazon.awssdk.services.athena.AthenaClient.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "clientrequesttoken":
         case "clientRequestToken": getOrCreateConfiguration(target).setClientRequestToken(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.athena.Athena2Configuration.class, value)); return true;
@@ -95,8 +95,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "amazonAthenaClient": return software.amazon.awssdk.services.athena.AthenaClient.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "clientrequesttoken":
         case "clientRequestToken": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.aws2.athena.Athena2Configuration.class;
@@ -157,8 +157,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "amazonAthenaClient": return getOrCreateConfiguration(target).getAmazonAthenaClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "clientrequesttoken":
         case "clientRequestToken": return getOrCreateConfiguration(target).getClientRequestToken();
         case "configuration": return target.getConfiguration();

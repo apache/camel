@@ -21,8 +21,8 @@ public class InfluxDbComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         InfluxDbComponent target = (InfluxDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "influxdb":
         case "influxDB": target.setInfluxDB(property(camelContext, org.influxdb.InfluxDB.class, value)); return true;
         case "lazystartproducer":
@@ -34,8 +34,8 @@ public class InfluxDbComponentConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "influxdb":
         case "influxDB": return org.influxdb.InfluxDB.class;
         case "lazystartproducer":
@@ -48,8 +48,8 @@ public class InfluxDbComponentConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         InfluxDbComponent target = (InfluxDbComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "influxdb":
         case "influxDB": return target.getInfluxDB();
         case "lazystartproducer":

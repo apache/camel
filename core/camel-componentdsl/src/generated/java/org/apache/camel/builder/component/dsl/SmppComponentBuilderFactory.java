@@ -383,18 +383,20 @@ public interface SmppComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default SmppComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SmppComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -643,7 +645,7 @@ public interface SmppComponentBuilderFactory {
             case "sourceAddrNpi": getOrCreateConfiguration((SmppComponent) component).setSourceAddrNpi((byte) value); return true;
             case "sourceAddrTon": getOrCreateConfiguration((SmppComponent) component).setSourceAddrTon((byte) value); return true;
             case "typeOfNumber": getOrCreateConfiguration((SmppComponent) component).setTypeOfNumber((byte) value); return true;
-            case "basicPropertyBinding": ((SmppComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((SmppComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((SmppComponent) component).setConfiguration((org.apache.camel.component.smpp.SmppConfiguration) value); return true;
             case "enquireLinkTimer": getOrCreateConfiguration((SmppComponent) component).setEnquireLinkTimer((java.lang.Integer) value); return true;
             case "sessionStateListener": getOrCreateConfiguration((SmppComponent) component).setSessionStateListener((org.jsmpp.session.SessionStateListener) value); return true;

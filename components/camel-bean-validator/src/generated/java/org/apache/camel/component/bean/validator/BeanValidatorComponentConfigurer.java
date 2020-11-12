@@ -21,8 +21,8 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BeanValidatorComponent target = (BeanValidatorComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "constraintvalidatorfactory":
         case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
         case "ignorexmlconfiguration":
@@ -44,8 +44,8 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "constraintvalidatorfactory":
         case "constraintValidatorFactory": return javax.validation.ConstraintValidatorFactory.class;
         case "ignorexmlconfiguration":
@@ -68,8 +68,8 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         BeanValidatorComponent target = (BeanValidatorComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "constraintvalidatorfactory":
         case "constraintValidatorFactory": return target.getConstraintValidatorFactory();
         case "ignorexmlconfiguration":

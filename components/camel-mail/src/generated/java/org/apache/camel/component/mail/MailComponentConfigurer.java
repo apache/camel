@@ -35,8 +35,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "attachmentscontenttransferencodingresolver":
         case "attachmentsContentTransferEncodingResolver": getOrCreateConfiguration(target).setAttachmentsContentTransferEncodingResolver(property(camelContext, org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class, value)); return true;
         case "authenticator": getOrCreateConfiguration(target).setAuthenticator(property(camelContext, org.apache.camel.component.mail.MailAuthenticator.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bcc": getOrCreateConfiguration(target).setBcc(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
@@ -112,8 +112,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "attachmentscontenttransferencodingresolver":
         case "attachmentsContentTransferEncodingResolver": return org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver.class;
         case "authenticator": return org.apache.camel.component.mail.MailAuthenticator.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bcc": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
@@ -190,8 +190,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "attachmentscontenttransferencodingresolver":
         case "attachmentsContentTransferEncodingResolver": return getOrCreateConfiguration(target).getAttachmentsContentTransferEncodingResolver();
         case "authenticator": return getOrCreateConfiguration(target).getAuthenticator();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bcc": return getOrCreateConfiguration(target).getBcc();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();

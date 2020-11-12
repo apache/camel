@@ -23,12 +23,12 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "basicauthpassword":
         case "basicAuthPassword": target.setBasicAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "basicauthusername":
         case "basicAuthUsername": target.setBasicAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "headerfilterstrategy":
@@ -63,12 +63,12 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "basicauthpassword":
         case "basicAuthPassword": return java.lang.String.class;
         case "basicauthusername":
         case "basicAuthUsername": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
         case "headerfilterstrategy":
@@ -104,12 +104,12 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "basicauthpassword":
         case "basicAuthPassword": return target.getBasicAuthPassword();
         case "basicauthusername":
         case "basicAuthUsername": return target.getBasicAuthUsername();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bearertoken":
         case "bearerToken": return target.getBearerToken();
         case "headerfilterstrategy":

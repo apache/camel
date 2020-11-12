@@ -25,8 +25,6 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "addresses": target.getConfiguration().setAddresses(property(camelContext, java.util.List.class, value)); return true;
         case "atblock":
         case "atBlock": target.getConfiguration().setAtBlock(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blockhash":
         case "blockHash": target.getConfiguration().setBlockHash(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -98,8 +96,6 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "addresses": return java.util.List.class;
         case "atblock":
         case "atBlock": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "blockhash":
         case "blockHash": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -172,8 +168,6 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         case "addresses": return target.getConfiguration().getAddresses();
         case "atblock":
         case "atBlock": return target.getConfiguration().getAtBlock();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blockhash":
         case "blockHash": return target.getConfiguration().getBlockHash();
         case "bridgeerrorhandler":

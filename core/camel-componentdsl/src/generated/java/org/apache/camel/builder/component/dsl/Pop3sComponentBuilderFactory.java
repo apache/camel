@@ -430,18 +430,20 @@ public interface Pop3sComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Pop3sComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Pop3sComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -692,7 +694,7 @@ public interface Pop3sComponentBuilderFactory {
             case "alternativeBodyHeader": getOrCreateConfiguration((MailComponent) component).setAlternativeBodyHeader((java.lang.String) value); return true;
             case "attachmentsContentTransferEncodingResolver": getOrCreateConfiguration((MailComponent) component).setAttachmentsContentTransferEncodingResolver((org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver) value); return true;
             case "authenticator": getOrCreateConfiguration((MailComponent) component).setAuthenticator((org.apache.camel.component.mail.MailAuthenticator) value); return true;
-            case "basicPropertyBinding": ((MailComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MailComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((MailComponent) component).setConfiguration((org.apache.camel.component.mail.MailConfiguration) value); return true;
             case "connectionTimeout": getOrCreateConfiguration((MailComponent) component).setConnectionTimeout((int) value); return true;
             case "contentType": getOrCreateConfiguration((MailComponent) component).setContentType((java.lang.String) value); return true;

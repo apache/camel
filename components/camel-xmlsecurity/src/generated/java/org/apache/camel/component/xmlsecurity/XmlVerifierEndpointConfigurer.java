@@ -23,8 +23,6 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "baseuri":
         case "baseUri": target.getConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clearheaders":
         case "clearHeaders": target.getConfiguration().setClearHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "cryptocontextproperties":
@@ -67,8 +65,6 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "baseuri":
         case "baseUri": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "clearheaders":
         case "clearHeaders": return java.lang.Boolean.class;
         case "cryptocontextproperties":
@@ -112,8 +108,6 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "baseuri":
         case "baseUri": return target.getConfiguration().getBaseUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clearheaders":
         case "clearHeaders": return target.getConfiguration().getClearHeaders();
         case "cryptocontextproperties":

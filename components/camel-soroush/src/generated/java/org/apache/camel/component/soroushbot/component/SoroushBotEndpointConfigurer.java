@@ -29,8 +29,6 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoUploadFile": target.setAutoUploadFile(property(camelContext, boolean.class, value)); return true;
         case "backoffstrategy":
         case "backOffStrategy": target.setBackOffStrategy(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -79,8 +77,6 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoUploadFile": return boolean.class;
         case "backoffstrategy":
         case "backOffStrategy": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
@@ -130,8 +126,6 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoUploadFile": return target.isAutoUploadFile();
         case "backoffstrategy":
         case "backOffStrategy": return target.getBackOffStrategy();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":

@@ -23,8 +23,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "clientconnectionmanager":
         case "clientConnectionManager": target.setClientConnectionManager(property(camelContext, org.apache.http.conn.HttpClientConnectionManager.class, value)); return true;
         case "connecttimeout":
@@ -82,8 +82,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "clientconnectionmanager":
         case "clientConnectionManager": return org.apache.http.conn.HttpClientConnectionManager.class;
         case "connecttimeout":
@@ -142,8 +142,8 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "clientconnectionmanager":
         case "clientConnectionManager": return target.getClientConnectionManager();
         case "connecttimeout":

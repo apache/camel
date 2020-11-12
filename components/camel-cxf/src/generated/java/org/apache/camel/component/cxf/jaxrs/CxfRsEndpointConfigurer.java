@@ -21,8 +21,6 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CxfRsEndpoint target = (CxfRsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class, value)); return true;
         case "bindingstyle":
         case "bindingStyle": target.setBindingStyle(property(camelContext, org.apache.camel.component.cxf.jaxrs.BindingStyle.class, value)); return true;
@@ -87,8 +85,6 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "binding": return org.apache.camel.component.cxf.jaxrs.CxfRsBinding.class;
         case "bindingstyle":
         case "bindingStyle": return org.apache.camel.component.cxf.jaxrs.BindingStyle.class;
@@ -154,8 +150,6 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CxfRsEndpoint target = (CxfRsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "binding": return target.getBinding();
         case "bindingstyle":
         case "bindingStyle": return target.getBindingStyle();

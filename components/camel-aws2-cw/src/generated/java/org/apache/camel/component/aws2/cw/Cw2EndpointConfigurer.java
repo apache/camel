@@ -27,8 +27,6 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonCwClient": target.getConfiguration().setAmazonCwClient(property(camelContext, software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "name": target.getConfiguration().setName(property(camelContext, java.lang.String.class, value)); return true;
@@ -60,8 +58,6 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonCwClient": return software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "name": return java.lang.String.class;
@@ -94,8 +90,6 @@ public class Cw2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "amazonCwClient": return target.getConfiguration().getAmazonCwClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "name": return target.getConfiguration().getName();

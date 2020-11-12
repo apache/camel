@@ -22,8 +22,6 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
         LuceneEndpoint target = (LuceneEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "analyzer": target.getConfig().setAnalyzer(property(camelContext, org.apache.lucene.analysis.Analyzer.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "indexdir":
         case "indexDir": target.getConfig().setIndexDir(property(camelContext, java.io.File.class, value)); return true;
         case "lazystartproducer":
@@ -41,8 +39,6 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "analyzer": return org.apache.lucene.analysis.Analyzer.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "indexdir":
         case "indexDir": return java.io.File.class;
         case "lazystartproducer":
@@ -61,8 +57,6 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
         LuceneEndpoint target = (LuceneEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "analyzer": return target.getConfig().getAnalyzer();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "indexdir":
         case "indexDir": return target.getConfig().getIndexDir();
         case "lazystartproducer":

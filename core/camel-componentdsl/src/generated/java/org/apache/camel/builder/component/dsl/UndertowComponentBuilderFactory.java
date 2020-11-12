@@ -104,18 +104,21 @@ public interface UndertowComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default UndertowComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default UndertowComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -236,7 +239,7 @@ public interface UndertowComponentBuilderFactory {
             case "bridgeErrorHandler": ((UndertowComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "muteException": ((UndertowComponent) component).setMuteException((boolean) value); return true;
             case "lazyStartProducer": ((UndertowComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((UndertowComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((UndertowComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "hostOptions": ((UndertowComponent) component).setHostOptions((org.apache.camel.component.undertow.UndertowHostOptions) value); return true;
             case "undertowHttpBinding": ((UndertowComponent) component).setUndertowHttpBinding((org.apache.camel.component.undertow.UndertowHttpBinding) value); return true;
             case "allowedRoles": ((UndertowComponent) component).setAllowedRoles((java.lang.String) value); return true;

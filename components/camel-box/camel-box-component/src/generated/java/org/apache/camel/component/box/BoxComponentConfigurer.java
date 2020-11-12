@@ -26,7 +26,7 @@ public class BoxComponentConfigurer extends PropertyConfigurerSupport implements
         map.put("userId", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
+        map.put("autowiredEnabled", boolean.class);
         map.put("httpParams", java.util.Map.class);
         map.put("authenticationType", java.lang.String.class);
         map.put("accessTokenCache", com.box.sdk.IAccessTokenCache.class);
@@ -57,8 +57,8 @@ public class BoxComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessTokenCache": getOrCreateConfiguration(target).setAccessTokenCache(property(camelContext, com.box.sdk.IAccessTokenCache.class, value)); return true;
         case "authenticationtype":
         case "authenticationType": getOrCreateConfiguration(target).setAuthenticationType(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientid":
@@ -106,8 +106,8 @@ public class BoxComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessTokenCache": return com.box.sdk.IAccessTokenCache.class;
         case "authenticationtype":
         case "authenticationType": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clientid":
@@ -151,8 +151,8 @@ public class BoxComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessTokenCache": return getOrCreateConfiguration(target).getAccessTokenCache();
         case "authenticationtype":
         case "authenticationType": return getOrCreateConfiguration(target).getAuthenticationType();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientid":

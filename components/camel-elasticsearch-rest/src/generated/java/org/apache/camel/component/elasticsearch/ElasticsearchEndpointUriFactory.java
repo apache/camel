@@ -20,9 +20,8 @@ public class ElasticsearchEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(20);
+        Set<String> props = new HashSet<>(19);
         props.add("waitForActiveShards");
-        props.add("basicPropertyBinding");
         props.add("disconnect");
         props.add("sniffAfterFailureDelay");
         props.add("maxRetryTimeout");

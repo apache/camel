@@ -30,10 +30,10 @@ public class XmlSignerComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "addkeyinforeference":
         case "addKeyInfoReference": getOrCreateSignerConfiguration(target).setAddKeyInfoReference(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "baseuri":
         case "baseUri": getOrCreateSignerConfiguration(target).setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "canonicalizationmethod":
         case "canonicalizationMethod": getOrCreateSignerConfiguration(target).setCanonicalizationMethod(property(camelContext, javax.xml.crypto.AlgorithmMethod.class, value)); return true;
         case "clearheaders":
@@ -94,10 +94,10 @@ public class XmlSignerComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "addkeyinforeference":
         case "addKeyInfoReference": return java.lang.Boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "baseuri":
         case "baseUri": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "canonicalizationmethod":
         case "canonicalizationMethod": return javax.xml.crypto.AlgorithmMethod.class;
         case "clearheaders":
@@ -159,10 +159,10 @@ public class XmlSignerComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "addkeyinforeference":
         case "addKeyInfoReference": return getOrCreateSignerConfiguration(target).getAddKeyInfoReference();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "baseuri":
         case "baseUri": return getOrCreateSignerConfiguration(target).getBaseUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "canonicalizationmethod":
         case "canonicalizationMethod": return getOrCreateSignerConfiguration(target).getCanonicalizationMethod();
         case "clearheaders":

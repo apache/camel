@@ -460,6 +460,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public Boolean isAutowiredEnabled() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setAutowiredEnabled(Boolean autowiredEnabled) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Registry getRegistry() {
         return registry;
     }

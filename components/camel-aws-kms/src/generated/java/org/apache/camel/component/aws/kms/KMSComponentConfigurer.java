@@ -32,8 +32,8 @@ public class KMSComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.kms.KMSConfiguration.class, value)); return true;
         case "kmsclient":
         case "kmsClient": getOrCreateConfiguration(target).setKmsClient(property(camelContext, com.amazonaws.services.kms.AWSKMS.class, value)); return true;
@@ -60,8 +60,8 @@ public class KMSComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return java.lang.String.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws.kms.KMSConfiguration.class;
         case "kmsclient":
         case "kmsClient": return com.amazonaws.services.kms.AWSKMS.class;
@@ -89,8 +89,8 @@ public class KMSComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "kmsclient":
         case "kmsClient": return getOrCreateConfiguration(target).getKmsClient();

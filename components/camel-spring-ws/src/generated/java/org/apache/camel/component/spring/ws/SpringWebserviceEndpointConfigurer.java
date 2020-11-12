@@ -25,8 +25,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "allowResponseAttachmentOverride": target.getConfiguration().setAllowResponseAttachmentOverride(property(camelContext, boolean.class, value)); return true;
         case "allowresponseheaderoverride":
         case "allowResponseHeaderOverride": target.getConfiguration().setAllowResponseHeaderOverride(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "endpointdispatcher":
@@ -76,8 +74,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "allowResponseAttachmentOverride": return boolean.class;
         case "allowresponseheaderoverride":
         case "allowResponseHeaderOverride": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "endpointdispatcher":
@@ -128,8 +124,6 @@ public class SpringWebserviceEndpointConfigurer extends PropertyConfigurerSuppor
         case "allowResponseAttachmentOverride": return target.getConfiguration().isAllowResponseAttachmentOverride();
         case "allowresponseheaderoverride":
         case "allowResponseHeaderOverride": return target.getConfiguration().isAllowResponseHeaderOverride();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "endpointdispatcher":

@@ -31,8 +31,6 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
         case "baseuri":
         case "baseUri": target.getConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "buffersize":
@@ -96,8 +94,6 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "backoffMultiplier": return int.class;
         case "baseuri":
         case "baseUri": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "buffersize":
@@ -162,8 +158,6 @@ public class TelegramEndpointConfigurer extends PropertyConfigurerSupport implem
         case "backoffMultiplier": return target.getBackoffMultiplier();
         case "baseuri":
         case "baseUri": return target.getConfiguration().getBaseUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "buffersize":

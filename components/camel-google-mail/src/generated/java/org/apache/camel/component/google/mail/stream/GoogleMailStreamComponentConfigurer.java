@@ -32,8 +32,8 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
         case "applicationName": getOrCreateConfiguration(target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientfactory":
@@ -62,8 +62,8 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "accessToken": return java.lang.String.class;
         case "applicationname":
         case "applicationName": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clientfactory":
@@ -93,8 +93,8 @@ public class GoogleMailStreamComponentConfigurer extends PropertyConfigurerSuppo
         case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "applicationname":
         case "applicationName": return getOrCreateConfiguration(target).getApplicationName();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientfactory":

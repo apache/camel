@@ -31,6 +31,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AsyncProcessorAwaitManager": target.setAsyncProcessorAwaitManager(property(camelContext, org.apache.camel.spi.AsyncProcessorAwaitManager.class, value)); return true;
         case "autostartup":
         case "AutoStartup": target.setAutoStartup(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "AutowiredEnabled": target.setAutowiredEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "backlogtracing":
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "beanintrospection":
@@ -190,6 +192,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AsyncProcessorAwaitManager": return org.apache.camel.spi.AsyncProcessorAwaitManager.class;
         case "autostartup":
         case "AutoStartup": return java.lang.Boolean.class;
+        case "autowiredenabled":
+        case "AutowiredEnabled": return java.lang.Boolean.class;
         case "backlogtracing":
         case "BacklogTracing": return java.lang.Boolean.class;
         case "beanintrospection":
@@ -350,6 +354,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AsyncProcessorAwaitManager": return target.getAsyncProcessorAwaitManager();
         case "autostartup":
         case "AutoStartup": return target.isAutoStartup();
+        case "autowiredenabled":
+        case "AutowiredEnabled": return target.isAutowiredEnabled();
         case "backlogtracing":
         case "BacklogTracing": return target.isBacklogTracing();
         case "beanintrospection":

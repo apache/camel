@@ -21,8 +21,6 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MyBatisBeanEndpoint target = (MyBatisBeanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "executortype":
         case "executorType": target.setExecutorType(property(camelContext, org.apache.ibatis.session.ExecutorType.class, value)); return true;
         case "inputheader":
@@ -39,8 +37,6 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "executortype":
         case "executorType": return org.apache.ibatis.session.ExecutorType.class;
         case "inputheader":
@@ -58,8 +54,6 @@ public class MyBatisBeanEndpointConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MyBatisBeanEndpoint target = (MyBatisBeanEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "executortype":
         case "executorType": return target.getExecutorType();
         case "inputheader":

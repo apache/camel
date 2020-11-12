@@ -289,18 +289,21 @@ public interface AzureBlobComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default AzureBlobComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AzureBlobComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -382,7 +385,7 @@ public interface AzureBlobComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((BlobServiceComponent) component).setOperation((org.apache.camel.component.azure.blob.BlobServiceOperations) value); return true;
             case "streamWriteSize": getOrCreateConfiguration((BlobServiceComponent) component).setStreamWriteSize((int) value); return true;
             case "useFlatListing": getOrCreateConfiguration((BlobServiceComponent) component).setUseFlatListing((boolean) value); return true;
-            case "basicPropertyBinding": ((BlobServiceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((BlobServiceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((BlobServiceComponent) component).setConfiguration((org.apache.camel.component.azure.blob.BlobServiceConfiguration) value); return true;
             case "credentialsAccountKey": getOrCreateConfiguration((BlobServiceComponent) component).setCredentialsAccountKey((java.lang.String) value); return true;
             case "credentialsAccountName": getOrCreateConfiguration((BlobServiceComponent) component).setCredentialsAccountName((java.lang.String) value); return true;

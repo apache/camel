@@ -21,8 +21,6 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HazelcastAtomicnumberEndpoint target = (HazelcastAtomicnumberEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "defaultoperation":
         case "defaultOperation": target.setDefaultOperation(property(camelContext, org.apache.camel.component.hazelcast.HazelcastOperation.class, value)); return true;
         case "hazelcastinstance":
@@ -39,8 +37,6 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "defaultoperation":
         case "defaultOperation": return org.apache.camel.component.hazelcast.HazelcastOperation.class;
         case "hazelcastinstance":
@@ -58,8 +54,6 @@ public class HazelcastAtomicnumberEndpointConfigurer extends PropertyConfigurerS
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HazelcastAtomicnumberEndpoint target = (HazelcastAtomicnumberEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "defaultoperation":
         case "defaultOperation": return target.getDefaultOperation();
         case "hazelcastinstance":

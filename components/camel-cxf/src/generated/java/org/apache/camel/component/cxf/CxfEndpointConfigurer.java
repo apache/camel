@@ -23,8 +23,6 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowstreaming":
         case "allowStreaming": target.setAllowStreaming(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bindingid":
         case "bindingId": target.setBindingId(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -96,8 +94,6 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowstreaming":
         case "allowStreaming": return java.lang.Boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bindingid":
         case "bindingId": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -170,8 +166,6 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowstreaming":
         case "allowStreaming": return target.getAllowStreaming();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bindingid":
         case "bindingId": return target.getBindingId();
         case "bridgeerrorhandler":

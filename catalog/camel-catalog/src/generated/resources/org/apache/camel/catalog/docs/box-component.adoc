@@ -70,7 +70,7 @@ The Box component supports 19 options, which are listed below.
 | *userId* (common) | The user ID to use for an App User. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *httpParams* (advanced) | Custom HTTP params for settings like proxy host |  | Map
 | *authenticationType* (authentication) | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
 | *accessTokenCache* (security) | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
@@ -106,7 +106,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (21 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -119,7 +119,6 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *httpParams* (advanced) | Custom HTTP params for settings like proxy host |  | Map
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *authenticationType* (authentication) | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
@@ -231,7 +230,7 @@ The collaborations API method(s) has the following set of parameters listed in t
 | updateCollaborationInfo | *info* |  Collaboration information to update | Info
 |===
 
-In addition to the parameters above, the collaborations API can also use from the 21 endpoint query option
+In addition to the parameters above, the collaborations API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -303,7 +302,7 @@ The comments API method(s) has the following set of parameters listed in the tab
 | replyToComment | *message* |  The message for the reply | String
 |===
 
-In addition to the parameters above, the comments API can also use from the 21 endpoint query option
+In addition to the parameters above, the comments API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -355,7 +354,7 @@ The event-logs API method(s) has the following set of parameters listed in the t
 | getEnterpriseEvents | *types* | *Optional*  An optional list of event types to filter by | Type[]
 |===
 
-In addition to the parameters above, the event-logs API can also use from the 21 endpoint query option
+In addition to the parameters above, the event-logs API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -404,7 +403,7 @@ The events API method(s) has the following set of parameters listed in the table
 | listen | *startingPosition* | *Optional*  The starting position of the event stream | Long
 |===
 
-In addition to the parameters above, the events API can also use from the 21 endpoint query option
+In addition to the parameters above, the events API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -578,7 +577,7 @@ The files API method(s) has the following set of parameters listed in the table 
 | uploadNewFileVersion | *modified* | *Optional*  The content modified date that will be given to the uploaded file | Date
 |===
 
-In addition to the parameters above, the files API can also use from the 21 endpoint query option
+In addition to the parameters above, the files API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -680,7 +679,7 @@ The folders API method(s) has the following set of parameters listed in the tabl
 | updateFolderInfo | *info* |  The updated information | Info
 |===
 
-In addition to the parameters above, the folders API can also use from the 21 endpoint query option
+In addition to the parameters above, the folders API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -770,7 +769,7 @@ The groups API method(s) has the following set of parameters listed in the table
 | updateGroupMembershipInfo | *info* |  The updated information | Info
 |===
 
-In addition to the parameters above, the groups API can also use from the 21 endpoint query option
+In addition to the parameters above, the groups API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -820,7 +819,7 @@ The search API method(s) has the following set of parameters listed in the table
 | searchFolder | *query* |  The search query | String
 |===
 
-In addition to the parameters above, the search API can also use from the 21 endpoint query option
+In addition to the parameters above, the search API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -906,7 +905,7 @@ The tasks API method(s) has the following set of parameters listed in the table 
 | updateTaskInfo | *taskId* |  The id of task | String
 |===
 
-In addition to the parameters above, the tasks API can also use from the 21 endpoint query option
+In addition to the parameters above, the tasks API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1001,7 +1000,7 @@ The users API method(s) has the following set of parameters listed in the table 
 | updateUserInfo | *userId* |  The id of user to update | String
 |===
 
-In addition to the parameters above, the users API can also use from the 21 endpoint query option
+In addition to the parameters above, the users API can also use from the 20 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.

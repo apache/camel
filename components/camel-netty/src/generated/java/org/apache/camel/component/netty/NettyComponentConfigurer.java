@@ -34,9 +34,9 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "allowSerializedHeaders": getOrCreateConfiguration(target).setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "autoappenddelimiter":
         case "autoAppendDelimiter": getOrCreateConfiguration(target).setAutoAppendDelimiter(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "backlog": getOrCreateConfiguration(target).setBacklog(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bosscount":
         case "bossCount": getOrCreateConfiguration(target).setBossCount(property(camelContext, int.class, value)); return true;
         case "bossgroup":
@@ -171,9 +171,9 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "allowSerializedHeaders": return boolean.class;
         case "autoappenddelimiter":
         case "autoAppendDelimiter": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "backlog": return int.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bosscount":
         case "bossCount": return int.class;
         case "bossgroup":
@@ -309,9 +309,9 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "allowSerializedHeaders": return getOrCreateConfiguration(target).isAllowSerializedHeaders();
         case "autoappenddelimiter":
         case "autoAppendDelimiter": return getOrCreateConfiguration(target).isAutoAppendDelimiter();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "backlog": return getOrCreateConfiguration(target).getBacklog();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bosscount":
         case "bossCount": return getOrCreateConfiguration(target).getBossCount();
         case "bossgroup":

@@ -24,8 +24,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "acltoken":
         case "aclToken": target.getConfiguration().setAclToken(property(camelContext, java.lang.String.class, value)); return true;
         case "action": target.getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blockseconds":
         case "blockSeconds": target.getConfiguration().setBlockSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
         case "bridgeerrorhandler":
@@ -83,8 +81,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "acltoken":
         case "aclToken": return java.lang.String.class;
         case "action": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "blockseconds":
         case "blockSeconds": return java.lang.Integer.class;
         case "bridgeerrorhandler":
@@ -143,8 +139,6 @@ public class ConsulEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "acltoken":
         case "aclToken": return target.getConfiguration().getAclToken();
         case "action": return target.getConfiguration().getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blockseconds":
         case "blockSeconds": return target.getConfiguration().getBlockSeconds();
         case "bridgeerrorhandler":

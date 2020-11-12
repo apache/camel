@@ -25,8 +25,6 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "addKeyInfoReference": target.getConfiguration().setAddKeyInfoReference(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "baseuri":
         case "baseUri": target.getConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "canonicalizationmethod":
         case "canonicalizationMethod": target.getConfiguration().setCanonicalizationMethod(property(camelContext, javax.xml.crypto.AlgorithmMethod.class, value)); return true;
         case "clearheaders":
@@ -88,8 +86,6 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "addKeyInfoReference": return java.lang.Boolean.class;
         case "baseuri":
         case "baseUri": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "canonicalizationmethod":
         case "canonicalizationMethod": return javax.xml.crypto.AlgorithmMethod.class;
         case "clearheaders":
@@ -152,8 +148,6 @@ public class XmlSignerEndpointConfigurer extends PropertyConfigurerSupport imple
         case "addKeyInfoReference": return target.getConfiguration().getAddKeyInfoReference();
         case "baseuri":
         case "baseUri": return target.getConfiguration().getBaseUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "canonicalizationmethod":
         case "canonicalizationMethod": return target.getConfiguration().getCanonicalizationMethod();
         case "clearheaders":

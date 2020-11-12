@@ -29,8 +29,8 @@ public class AtomixMessagingComponentConfigurer extends PropertyConfigurerSuppor
         AtomixMessagingComponent target = (AtomixMessagingComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": getOrCreateConfiguration(target).setAtomix(property(camelContext, io.atomix.Atomix.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "broadcasttype":
@@ -70,8 +70,8 @@ public class AtomixMessagingComponentConfigurer extends PropertyConfigurerSuppor
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": return io.atomix.Atomix.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "broadcasttype":
@@ -112,8 +112,8 @@ public class AtomixMessagingComponentConfigurer extends PropertyConfigurerSuppor
         AtomixMessagingComponent target = (AtomixMessagingComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "atomix": return getOrCreateConfiguration(target).getAtomix();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "broadcasttype":

@@ -28,8 +28,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoappenddelimiter":
         case "autoAppendDelimiter": target.getConfiguration().setAutoAppendDelimiter(property(camelContext, boolean.class, value)); return true;
         case "backlog": target.getConfiguration().setBacklog(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bosscount":
         case "bossCount": target.getConfiguration().setBossCount(property(camelContext, int.class, value)); return true;
         case "bossgroup":
@@ -163,8 +161,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoappenddelimiter":
         case "autoAppendDelimiter": return boolean.class;
         case "backlog": return int.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bosscount":
         case "bossCount": return int.class;
         case "bossgroup":
@@ -299,8 +295,6 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "autoappenddelimiter":
         case "autoAppendDelimiter": return target.getConfiguration().isAutoAppendDelimiter();
         case "backlog": return target.getConfiguration().getBacklog();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bosscount":
         case "bossCount": return target.getConfiguration().getBossCount();
         case "bossgroup":

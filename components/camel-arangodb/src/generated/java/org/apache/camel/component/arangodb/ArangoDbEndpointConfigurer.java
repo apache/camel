@@ -21,8 +21,6 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ArangoDbEndpoint target = (ArangoDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "documentcollection":
         case "documentCollection": target.getConfiguration().setDocumentCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "edgecollection":
@@ -45,8 +43,6 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "documentcollection":
         case "documentCollection": return java.lang.String.class;
         case "edgecollection":
@@ -70,8 +66,6 @@ public class ArangoDbEndpointConfigurer extends PropertyConfigurerSupport implem
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ArangoDbEndpoint target = (ArangoDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "documentcollection":
         case "documentCollection": return target.getConfiguration().getDocumentCollection();
         case "edgecollection":

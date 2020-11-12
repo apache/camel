@@ -22,7 +22,7 @@ public class AS2ComponentConfigurer extends PropertyConfigurerSupport implements
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
+        map.put("autowiredEnabled", boolean.class);
         map.put("configuration", org.apache.camel.component.as2.AS2Configuration.class);
         ALL_OPTIONS = map;
     }
@@ -31,8 +31,8 @@ public class AS2ComponentConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AS2Component target = (AS2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.as2.AS2Configuration.class, value)); return true;
@@ -50,8 +50,8 @@ public class AS2ComponentConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "configuration": return org.apache.camel.component.as2.AS2Configuration.class;
@@ -65,8 +65,8 @@ public class AS2ComponentConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AS2Component target = (AS2Component) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();

@@ -89,18 +89,21 @@ public interface HazelcastQueueComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default HazelcastQueueComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default HazelcastQueueComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -152,7 +155,7 @@ public interface HazelcastQueueComponentBuilderFactory {
             switch (name) {
             case "bridgeErrorHandler": ((HazelcastQueueComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((HazelcastQueueComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((HazelcastQueueComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((HazelcastQueueComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "hazelcastInstance": ((HazelcastQueueComponent) component).setHazelcastInstance((com.hazelcast.core.HazelcastInstance) value); return true;
             case "hazelcastMode": ((HazelcastQueueComponent) component).setHazelcastMode((java.lang.String) value); return true;
             default: return false;

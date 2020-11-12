@@ -62,6 +62,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
     private boolean caseInsensitiveHeaders = true;
+    private boolean autowiredEnabled = true;
     private boolean endpointRuntimeStatisticsEnabled;
     private boolean endpointLazyStartProducer;
     private boolean endpointBridgeErrorHandler;
@@ -552,6 +553,22 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setCaseInsensitiveHeaders(boolean caseInsensitiveHeaders) {
         this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
+    public boolean isAutowiredEnabled() {
+        return autowiredEnabled;
+    }
+
+    /**
+     * Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as
+     * autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets
+     * configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection
+     * factories, AWS Clients, etc.
+     *
+     * Default is true.
+     */
+    public void setAutowiredEnabled(boolean autowiredEnabled) {
+        this.autowiredEnabled = autowiredEnabled;
     }
 
     public boolean isEndpointRuntimeStatisticsEnabled() {

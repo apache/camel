@@ -240,18 +240,20 @@ public interface AwsSwfComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default AwsSwfComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AwsSwfComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -477,7 +479,7 @@ public interface AwsSwfComponentBuilderFactory {
             case "activityThreadPoolSize": getOrCreateConfiguration((SWFComponent) component).setActivityThreadPoolSize((int) value); return true;
             case "activityTypeExecutionOptions": getOrCreateConfiguration((SWFComponent) component).setActivityTypeExecutionOptions((com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions) value); return true;
             case "activityTypeRegistrationOptions": getOrCreateConfiguration((SWFComponent) component).setActivityTypeRegistrationOptions((com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions) value); return true;
-            case "basicPropertyBinding": ((SWFComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((SWFComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientConfigurationParameters": getOrCreateConfiguration((SWFComponent) component).setClientConfigurationParameters((java.util.Map) value); return true;
             case "startWorkflowOptionsParameters": getOrCreateConfiguration((SWFComponent) component).setStartWorkflowOptionsParameters((java.util.Map) value); return true;
             case "sWClientParameters": getOrCreateConfiguration((SWFComponent) component).setSWClientParameters((java.util.Map) value); return true;

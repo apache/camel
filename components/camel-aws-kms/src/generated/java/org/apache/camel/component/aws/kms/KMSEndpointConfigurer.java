@@ -25,8 +25,6 @@ public class KMSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "kmsclient":
         case "kmsClient": target.getConfiguration().setKmsClient(property(camelContext, com.amazonaws.services.kms.AWSKMS.class, value)); return true;
         case "lazystartproducer":
@@ -53,8 +51,6 @@ public class KMSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": return java.lang.String.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "kmsclient":
         case "kmsClient": return com.amazonaws.services.kms.AWSKMS.class;
         case "lazystartproducer":
@@ -82,8 +78,6 @@ public class KMSEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "kmsclient":
         case "kmsClient": return target.getConfiguration().getKmsClient();
         case "lazystartproducer":

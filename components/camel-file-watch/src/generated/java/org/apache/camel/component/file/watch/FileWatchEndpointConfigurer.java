@@ -25,8 +25,6 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "antInclude": target.setAntInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreate":
         case "autoCreate": target.setAutoCreate(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -57,8 +55,6 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "antInclude": return java.lang.String.class;
         case "autocreate":
         case "autoCreate": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
@@ -90,8 +86,6 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "antInclude": return target.getAntInclude();
         case "autocreate":
         case "autoCreate": return target.isAutoCreate();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":

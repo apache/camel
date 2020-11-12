@@ -20,8 +20,7 @@ public class SplunkEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(46);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(45);
         props.add("backoffMultiplier");
         props.add("scheme");
         props.add("synchronous");

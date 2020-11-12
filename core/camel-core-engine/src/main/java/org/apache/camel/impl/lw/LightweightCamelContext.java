@@ -1064,6 +1064,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         delegate.setCaseInsensitiveHeaders(caseInsensitiveHeaders);
     }
 
+    @Override
+    public Boolean isAutowiredEnabled() {
+        return delegate.isAutowiredEnabled();
+    }
+
+    @Override
+    public void setAutowiredEnabled(Boolean autowiredEnabled) {
+        delegate.setAutowiredEnabled(autowiredEnabled);
+    }
+
     //
     // ExtendedCamelContext
     //

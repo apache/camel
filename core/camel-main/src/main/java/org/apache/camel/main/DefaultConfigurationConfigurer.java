@@ -156,6 +156,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setAutoStartup(config.isAutoStartup());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
         camelContext.setCaseInsensitiveHeaders(config.isCaseInsensitiveHeaders());
+        camelContext.setAutowiredEnabled(config.isAutowiredEnabled());
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
@@ -172,7 +173,7 @@ public final class DefaultConfigurationConfigurer {
         }
 
         // global endpoint configurations
-        camelContext.getGlobalEndpointConfiguration().setBasicPropertyBinding(config.isEndpointBasicPropertyBinding());
+        camelContext.getGlobalEndpointConfiguration().setAutowiredEnabled(config.isAutowiredEnabled());
         camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
         camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
 

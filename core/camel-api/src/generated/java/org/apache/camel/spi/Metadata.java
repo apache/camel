@@ -84,6 +84,17 @@ public @interface Metadata {
     boolean secret() default false;
 
     /**
+     * Whether to parameter can be configured as autowired
+     * <p/>
+     * This is used for automatic autowiring the option via its Java type, by looking up in the registry to find if
+     * there is a single instance of matching type, which then gets configured. This can be used for automatic
+     * configuring JDBC data sources, JMS connection factories, AWS Clients, etc.
+     * <p/>
+     * This is only supported on components, data formats, languages, etc; not on endpoints.
+     */
+    boolean autowired() default false;
+
+    /**
      * To re-associate the preferred Java type of this parameter.
      * <p/>
      * This is used for parameters which are of a specialized type but can be configured by another Java type, such as

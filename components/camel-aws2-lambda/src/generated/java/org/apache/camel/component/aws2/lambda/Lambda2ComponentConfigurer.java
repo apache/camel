@@ -32,10 +32,10 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "awslambdaclient":
         case "awsLambdaClient": getOrCreateConfiguration(target).setAwsLambdaClient(property(camelContext, software.amazon.awssdk.services.lambda.LambdaClient.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.lambda.Lambda2Configuration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -64,10 +64,10 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": return java.lang.String.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "awslambdaclient":
         case "awsLambdaClient": return software.amazon.awssdk.services.lambda.LambdaClient.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.lambda.Lambda2Configuration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -97,10 +97,10 @@ public class Lambda2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "awslambdaclient":
         case "awsLambdaClient": return getOrCreateConfiguration(target).getAwsLambdaClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

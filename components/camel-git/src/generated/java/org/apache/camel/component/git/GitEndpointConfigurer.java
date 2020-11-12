@@ -23,8 +23,6 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowempty":
         case "allowEmpty": target.setAllowEmpty(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "branchname":
         case "branchName": target.setBranchName(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -55,8 +53,6 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowempty":
         case "allowEmpty": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "branchname":
         case "branchName": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -88,8 +84,6 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowempty":
         case "allowEmpty": return target.isAllowEmpty();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "branchname":
         case "branchName": return target.getBranchName();
         case "bridgeerrorhandler":

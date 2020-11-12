@@ -27,8 +27,6 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": target.getConfiguration().setAutodetectSourceLanguage(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.translate.Translate2Operations.class, value)); return true;
@@ -65,8 +63,6 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoDiscoverClient": return boolean.class;
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.translate.Translate2Operations.class;
@@ -104,8 +100,6 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": return target.getConfiguration().isAutodetectSourceLanguage();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();

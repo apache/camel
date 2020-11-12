@@ -246,6 +246,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
+    private Boolean autowiredEnabled = Boolean.TRUE;
     private boolean lightweight;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
@@ -342,6 +343,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         // add a default LifecycleStrategy that discover strategies on the registry and invoke them
         this.lifecycleStrategies.add(new OnCamelContextLifecycleStrategy());
+
+        // add a default autowired strategy
+        this.lifecycleStrategies.add(new AutowiredLifecycleStrategy(this));
 
         // add a default LifecycleStrategy to customize services using customizers from registry
         this.lifecycleStrategies.add(new CustomizersLifecycleStrategy(this));
@@ -3848,12 +3852,24 @@ public abstract class AbstractCamelContext extends BaseService
         return allowUseOriginalMessage != null && allowUseOriginalMessage;
     }
 
+    @Override
     public Boolean isCaseInsensitiveHeaders() {
         return caseInsensitiveHeaders != null && caseInsensitiveHeaders;
     }
 
+    @Override
     public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
         this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
+    @Override
+    public Boolean isAutowiredEnabled() {
+        return autowiredEnabled != null && autowiredEnabled;
+    }
+
+    @Override
+    public void setAutowiredEnabled(Boolean autowiredEnabled) {
+        this.autowiredEnabled = autowiredEnabled;
     }
 
     @Override

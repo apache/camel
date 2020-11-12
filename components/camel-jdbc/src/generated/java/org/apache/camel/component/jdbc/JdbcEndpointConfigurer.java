@@ -23,8 +23,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
         case "allowNamedParameters": target.setAllowNamedParameters(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "beanrowmapper":
         case "beanRowMapper": target.setBeanRowMapper(property(camelContext, org.apache.camel.component.jdbc.BeanRowMapper.class, value)); return true;
         case "lazystartproducer":
@@ -57,8 +55,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
         case "allowNamedParameters": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "beanrowmapper":
         case "beanRowMapper": return org.apache.camel.component.jdbc.BeanRowMapper.class;
         case "lazystartproducer":
@@ -92,8 +88,6 @@ public class JdbcEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allownamedparameters":
         case "allowNamedParameters": return target.isAllowNamedParameters();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "beanrowmapper":
         case "beanRowMapper": return target.getBeanRowMapper();
         case "lazystartproducer":

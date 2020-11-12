@@ -21,8 +21,6 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ValidatorEndpoint target = (ValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "errorhandler":
         case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.support.processor.validation.ValidatorErrorHandler.class, value)); return true;
         case "failonnullbody":
@@ -51,8 +49,6 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "errorhandler":
         case "errorHandler": return org.apache.camel.support.processor.validation.ValidatorErrorHandler.class;
         case "failonnullbody":
@@ -82,8 +78,6 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ValidatorEndpoint target = (ValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "errorhandler":
         case "errorHandler": return target.getErrorHandler();
         case "failonnullbody":

@@ -29,7 +29,6 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
         map.put("httpParams", java.util.Map.class);
         map.put("synchronous", boolean.class);
         map.put("authenticationType", java.lang.String.class);
@@ -54,8 +53,6 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessTokenCache": target.getConfiguration().setAccessTokenCache(property(camelContext, com.box.sdk.IAccessTokenCache.class, value)); return true;
         case "authenticationtype":
         case "authenticationType": target.getConfiguration().setAuthenticationType(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientid":
         case "clientId": target.getConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -107,8 +104,6 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessTokenCache": return com.box.sdk.IAccessTokenCache.class;
         case "authenticationtype":
         case "authenticationType": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientsecret":
@@ -156,8 +151,6 @@ public class BoxEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "accessTokenCache": return target.getConfiguration().getAccessTokenCache();
         case "authenticationtype":
         case "authenticationType": return target.getConfiguration().getAuthenticationType();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientid":
         case "clientId": return target.getConfiguration().getClientId();
         case "clientsecret":

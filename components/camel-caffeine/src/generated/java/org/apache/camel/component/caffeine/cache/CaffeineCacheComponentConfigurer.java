@@ -29,8 +29,8 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         CaffeineCacheComponent target = (CaffeineCacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": getOrCreateConfiguration(target).setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "cacheloader":
         case "cacheLoader": getOrCreateConfiguration(target).setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.caffeine.CaffeineConfiguration.class, value)); return true;
@@ -67,8 +67,8 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "cacheloader":
         case "cacheLoader": return com.github.benmanes.caffeine.cache.CacheLoader.class;
         case "configuration": return org.apache.camel.component.caffeine.CaffeineConfiguration.class;
@@ -106,8 +106,8 @@ public class CaffeineCacheComponentConfigurer extends PropertyConfigurerSupport 
         CaffeineCacheComponent target = (CaffeineCacheComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return getOrCreateConfiguration(target).getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "cacheloader":
         case "cacheLoader": return getOrCreateConfiguration(target).getCacheLoader();
         case "configuration": return target.getConfiguration();

@@ -21,10 +21,10 @@ public class ReactiveStreamsComponentConfigurer extends PropertyConfigurerSuppor
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ReactiveStreamsComponent target = (ReactiveStreamsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "backpressurestrategy":
         case "backpressureStrategy": target.setBackpressureStrategy(property(camelContext, org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -46,10 +46,10 @@ public class ReactiveStreamsComponentConfigurer extends PropertyConfigurerSuppor
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "backpressurestrategy":
         case "backpressureStrategy": return org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "lazystartproducer":
@@ -72,10 +72,10 @@ public class ReactiveStreamsComponentConfigurer extends PropertyConfigurerSuppor
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ReactiveStreamsComponent target = (ReactiveStreamsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "backpressurestrategy":
         case "backpressureStrategy": return target.getBackpressureStrategy();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "lazystartproducer":

@@ -25,8 +25,6 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowedOrigins": target.setAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
         case "baseresource":
         case "baseResource": target.setBaseResource(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "crossoriginfilteron":
@@ -65,8 +63,6 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowedOrigins": return java.lang.String.class;
         case "baseresource":
         case "baseResource": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "crossoriginfilteron":
@@ -106,8 +102,6 @@ public class CometdEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "allowedOrigins": return target.getAllowedOrigins();
         case "baseresource":
         case "baseResource": return target.getBaseResource();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "crossoriginfilteron":

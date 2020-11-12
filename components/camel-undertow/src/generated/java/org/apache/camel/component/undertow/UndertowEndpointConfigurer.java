@@ -27,8 +27,6 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessLogReceiver": target.setAccessLogReceiver(property(camelContext, io.undertow.server.handlers.accesslog.AccessLogReceiver.class, value)); return true;
         case "allowedroles":
         case "allowedRoles": target.setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cookiehandler":
@@ -93,8 +91,6 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessLogReceiver": return io.undertow.server.handlers.accesslog.AccessLogReceiver.class;
         case "allowedroles":
         case "allowedRoles": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "cookiehandler":
@@ -160,8 +156,6 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         case "accessLogReceiver": return target.getAccessLogReceiver();
         case "allowedroles":
         case "allowedRoles": return target.getAllowedRoles();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cookiehandler":

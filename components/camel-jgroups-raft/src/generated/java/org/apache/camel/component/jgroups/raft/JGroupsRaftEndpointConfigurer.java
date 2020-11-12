@@ -21,8 +21,6 @@ public class JGroupsRaftEndpointConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JGroupsRaftEndpoint target = (JGroupsRaftEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "enablerolechangeevents":
@@ -41,8 +39,6 @@ public class JGroupsRaftEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "enablerolechangeevents":
@@ -62,8 +58,6 @@ public class JGroupsRaftEndpointConfigurer extends PropertyConfigurerSupport imp
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JGroupsRaftEndpoint target = (JGroupsRaftEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "enablerolechangeevents":

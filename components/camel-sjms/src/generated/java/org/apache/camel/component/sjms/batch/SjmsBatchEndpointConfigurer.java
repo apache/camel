@@ -27,8 +27,6 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
         case "asyncstartlistener":
         case "asyncStartListener": target.setAsyncStartListener(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "completioninterval":
@@ -81,8 +79,6 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "allowNullBody": return boolean.class;
         case "asyncstartlistener":
         case "asyncStartListener": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "completioninterval":
@@ -136,8 +132,6 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "allowNullBody": return target.isAllowNullBody();
         case "asyncstartlistener":
         case "asyncStartListener": return target.isAsyncStartListener();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "completioninterval":

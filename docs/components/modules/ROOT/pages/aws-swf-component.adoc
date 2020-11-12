@@ -60,7 +60,7 @@ The AWS Simple Workflow (SWF) component supports 30 options, which are listed be
 | *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
 | *activityTypeExecutionOptions* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
 | *activityTypeRegistration{zwsp}Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
 | *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
 | *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
@@ -101,7 +101,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (32 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -122,7 +122,6 @@ with the following path and query parameters:
 | *activityThreadPoolSize* (activity) | Maximum number of threads in work pool for activity. | 100 | int
 | *activityTypeExecutionOptions* (activity) | Activity execution options |  | ActivityTypeExecutionOptions
 | *activityTypeRegistration{zwsp}Options* (activity) | Activity registration options |  | ActivityTypeRegistrationOptions
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientConfigurationParameters* (advanced) | To configure the ClientConfiguration using the key/values from the Map. |  | Map
 | *startWorkflowOptionsParameters* (advanced) | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
 | *sWClientParameters* (advanced) | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map

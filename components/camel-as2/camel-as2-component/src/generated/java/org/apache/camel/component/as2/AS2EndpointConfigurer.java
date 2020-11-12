@@ -52,7 +52,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
         map.put("synchronous", boolean.class);
         ALL_OPTIONS = map;
     }
@@ -69,8 +68,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": target.getConfiguration().setAs2To(property(camelContext, java.lang.String.class, value)); return true;
         case "as2version":
         case "as2Version": target.getConfiguration().setAs2Version(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientfqdn":
         case "clientFqdn": target.getConfiguration().setClientFqdn(property(camelContext, java.lang.String.class, value)); return true;
         case "compressionalgorithm":
@@ -141,8 +138,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": return java.lang.String.class;
         case "as2version":
         case "as2Version": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "clientfqdn":
         case "clientFqdn": return java.lang.String.class;
         case "compressionalgorithm":
@@ -209,8 +204,6 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "as2To": return target.getConfiguration().getAs2To();
         case "as2version":
         case "as2Version": return target.getConfiguration().getAs2Version();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientfqdn":
         case "clientFqdn": return target.getConfiguration().getClientFqdn();
         case "compressionalgorithm":

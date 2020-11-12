@@ -331,18 +331,21 @@ public interface AzureEventhubsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default AzureEventhubsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AzureEventhubsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -427,7 +430,7 @@ public interface AzureEventhubsComponentBuilderFactory {
             case "partitionId": getOrCreateConfiguration((EventHubsComponent) component).setPartitionId((java.lang.String) value); return true;
             case "partitionKey": getOrCreateConfiguration((EventHubsComponent) component).setPartitionKey((java.lang.String) value); return true;
             case "producerAsyncClient": getOrCreateConfiguration((EventHubsComponent) component).setProducerAsyncClient((com.azure.messaging.eventhubs.EventHubProducerAsyncClient) value); return true;
-            case "basicPropertyBinding": ((EventHubsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((EventHubsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionString": getOrCreateConfiguration((EventHubsComponent) component).setConnectionString((java.lang.String) value); return true;
             case "sharedAccessKey": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessKey((java.lang.String) value); return true;
             case "sharedAccessName": getOrCreateConfiguration((EventHubsComponent) component).setSharedAccessName((java.lang.String) value); return true;

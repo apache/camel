@@ -29,8 +29,8 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
         LuceneComponent target = (LuceneComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "analyzer": getOrCreateConfig(target).setAnalyzer(property(camelContext, org.apache.lucene.analysis.Analyzer.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "config": target.setConfig(property(camelContext, org.apache.camel.component.lucene.LuceneConfiguration.class, value)); return true;
         case "indexdir":
         case "indexDir": getOrCreateConfig(target).setIndexDir(property(camelContext, java.io.File.class, value)); return true;
@@ -48,8 +48,8 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "analyzer": return org.apache.lucene.analysis.Analyzer.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "config": return org.apache.camel.component.lucene.LuceneConfiguration.class;
         case "indexdir":
         case "indexDir": return java.io.File.class;
@@ -68,8 +68,8 @@ public class LuceneComponentConfigurer extends PropertyConfigurerSupport impleme
         LuceneComponent target = (LuceneComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "analyzer": return getOrCreateConfig(target).getAnalyzer();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "config": return target.getConfig();
         case "indexdir":
         case "indexDir": return getOrCreateConfig(target).getIndexDir();

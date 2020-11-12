@@ -187,18 +187,20 @@ public interface YammerComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default YammerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default YammerComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -295,7 +297,7 @@ public interface YammerComponentBuilderFactory {
             case "threaded": getOrCreateConfiguration((YammerComponent) component).setThreaded((java.lang.String) value); return true;
             case "userId": getOrCreateConfiguration((YammerComponent) component).setUserId((java.lang.String) value); return true;
             case "lazyStartProducer": ((YammerComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((YammerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((YammerComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((YammerComponent) component).setConfiguration((org.apache.camel.component.yammer.YammerConfiguration) value); return true;
             case "requestor": getOrCreateConfiguration((YammerComponent) component).setRequestor((org.apache.camel.component.yammer.ApiRequestor) value); return true;
             case "accessToken": getOrCreateConfiguration((YammerComponent) component).setAccessToken((java.lang.String) value); return true;

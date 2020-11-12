@@ -25,8 +25,6 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthPassword": target.getConfiguration().setBasicAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "basicauthusername":
         case "basicAuthUsername": target.getConfiguration().setBasicAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.getConfiguration().setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
@@ -78,8 +76,6 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthPassword": return java.lang.String.class;
         case "basicauthusername":
         case "basicAuthUsername": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bearertoken":
         case "bearerToken": return java.lang.String.class;
         case "connecttimeout":
@@ -132,8 +128,6 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthPassword": return target.getConfiguration().getBasicAuthPassword();
         case "basicauthusername":
         case "basicAuthUsername": return target.getConfiguration().getBasicAuthUsername();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bearertoken":
         case "bearerToken": return target.getConfiguration().getBearerToken();
         case "connecttimeout":

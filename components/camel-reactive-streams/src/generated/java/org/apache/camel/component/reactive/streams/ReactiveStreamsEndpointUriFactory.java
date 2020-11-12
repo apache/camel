@@ -20,17 +20,16 @@ public class ReactiveStreamsEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(13);
-        props.add("basicPropertyBinding");
-        props.add("synchronous");
-        props.add("exchangesRefillLowWatermark");
-        props.add("exchangePattern");
-        props.add("concurrentConsumers");
+        Set<String> props = new HashSet<>(12);
         props.add("maxInflightExchanges");
         props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
         props.add("stream");
+        props.add("synchronous");
+        props.add("exchangesRefillLowWatermark");
+        props.add("exchangePattern");
         props.add("forwardOnError");
+        props.add("concurrentConsumers");
         props.add("exceptionHandler");
         props.add("forwardOnComplete");
         props.add("backpressureStrategy");

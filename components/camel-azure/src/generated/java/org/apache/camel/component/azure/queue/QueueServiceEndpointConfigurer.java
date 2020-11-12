@@ -23,8 +23,6 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azurequeueclient":
         case "azureQueueClient": target.getConfiguration().setAzureQueueClient(property(camelContext, com.microsoft.azure.storage.queue.CloudQueue.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "credentials": target.getConfiguration().setCredentials(property(camelContext, com.microsoft.azure.storage.StorageCredentials.class, value)); return true;
@@ -57,8 +55,6 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azurequeueclient":
         case "azureQueueClient": return com.microsoft.azure.storage.queue.CloudQueue.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "credentials": return com.microsoft.azure.storage.StorageCredentials.class;
@@ -92,8 +88,6 @@ public class QueueServiceEndpointConfigurer extends PropertyConfigurerSupport im
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "azurequeueclient":
         case "azureQueueClient": return target.getConfiguration().getAzureQueueClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "credentials": return target.getConfiguration().getCredentials();

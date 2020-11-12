@@ -21,8 +21,6 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XChangeEndpoint target = (XChangeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "currency": target.getConfiguration().setCurrency(property(camelContext, org.knowm.xchange.currency.Currency.class, value)); return true;
         case "currencypair":
         case "currencyPair": target.getConfiguration().setCurrencyPair(property(camelContext, java.lang.String.class, value)); return true;
@@ -38,8 +36,6 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "currency": return org.knowm.xchange.currency.Currency.class;
         case "currencypair":
         case "currencyPair": return java.lang.String.class;
@@ -56,8 +52,6 @@ public class XChangeEndpointConfigurer extends PropertyConfigurerSupport impleme
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         XChangeEndpoint target = (XChangeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "currency": return target.getConfiguration().getCurrency();
         case "currencypair":
         case "currencyPair": return target.getConfiguration().getCurrencyPair();

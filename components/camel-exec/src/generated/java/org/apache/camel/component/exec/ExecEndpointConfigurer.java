@@ -22,8 +22,6 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         ExecEndpoint target = (ExecEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": target.setArgs(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.exec.ExecBinding.class, value)); return true;
         case "commandexecutor":
         case "commandExecutor": target.setCommandExecutor(property(camelContext, org.apache.camel.component.exec.ExecCommandExecutor.class, value)); return true;
@@ -47,8 +45,6 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "binding": return org.apache.camel.component.exec.ExecBinding.class;
         case "commandexecutor":
         case "commandExecutor": return org.apache.camel.component.exec.ExecCommandExecutor.class;
@@ -73,8 +69,6 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         ExecEndpoint target = (ExecEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": return target.getArgs();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "binding": return target.getBinding();
         case "commandexecutor":
         case "commandExecutor": return target.getCommandExecutor();

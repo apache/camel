@@ -34,8 +34,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "amazonKinesisFirehoseClient": getOrCreateConfiguration(target).setAmazonKinesisFirehoseClient(property(camelContext, software.amazon.awssdk.services.firehose.FirehoseClient.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "cborenabled":
         case "cborEnabled": getOrCreateConfiguration(target).setCborEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration.class, value)); return true;
@@ -66,8 +66,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "amazonKinesisFirehoseClient": return software.amazon.awssdk.services.firehose.FirehoseClient.class;
         case "autodiscoverclient":
         case "autoDiscoverClient": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "cborenabled":
         case "cborEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration.class;
@@ -99,8 +99,8 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "amazonKinesisFirehoseClient": return getOrCreateConfiguration(target).getAmazonKinesisFirehoseClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "cborenabled":
         case "cborEnabled": return getOrCreateConfiguration(target).isCborEnabled();
         case "configuration": return target.getConfiguration();

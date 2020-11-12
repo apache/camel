@@ -23,8 +23,6 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedoriginpattern":
         case "allowedOriginPattern": target.getConfiguration().setAllowedOriginPattern(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientoptions":
@@ -54,8 +52,6 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedoriginpattern":
         case "allowedOriginPattern": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "clientoptions":
@@ -86,8 +82,6 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedoriginpattern":
         case "allowedOriginPattern": return target.getConfiguration().getAllowedOriginPattern();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientoptions":

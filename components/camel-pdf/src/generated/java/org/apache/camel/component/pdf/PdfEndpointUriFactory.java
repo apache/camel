@@ -20,9 +20,8 @@ public class PdfEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
+        Set<String> props = new HashSet<>(11);
         props.add("marginRight");
-        props.add("basicPropertyBinding");
         props.add("lazyStartProducer");
         props.add("synchronous");
         props.add("textProcessingFactory");

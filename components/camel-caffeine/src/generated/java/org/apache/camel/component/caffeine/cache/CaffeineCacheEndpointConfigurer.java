@@ -22,8 +22,6 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
         CaffeineCacheEndpoint target = (CaffeineCacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "cacheloader":
         case "cacheLoader": target.getConfiguration().setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
         case "createcacheifnotexist":
@@ -60,8 +58,6 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "cacheloader":
         case "cacheLoader": return com.github.benmanes.caffeine.cache.CacheLoader.class;
         case "createcacheifnotexist":
@@ -99,8 +95,6 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
         CaffeineCacheEndpoint target = (CaffeineCacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getConfiguration().getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "cacheloader":
         case "cacheLoader": return target.getConfiguration().getCacheLoader();
         case "createcacheifnotexist":

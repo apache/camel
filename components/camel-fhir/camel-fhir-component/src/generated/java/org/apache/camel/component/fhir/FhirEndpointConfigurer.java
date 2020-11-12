@@ -34,7 +34,6 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
         map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
         map.put("client", ca.uhn.fhir.rest.client.api.IGenericClient.class);
         map.put("clientFactory", ca.uhn.fhir.rest.client.api.IRestfulClientFactory.class);
         map.put("compress", boolean.class);
@@ -83,8 +82,6 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "client": target.getConfiguration().setClient(property(camelContext, ca.uhn.fhir.rest.client.api.IGenericClient.class, value)); return true;
@@ -176,8 +173,6 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return int.class;
         case "backoffmultiplier":
         case "backoffMultiplier": return int.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "client": return ca.uhn.fhir.rest.client.api.IGenericClient.class;
@@ -265,8 +260,6 @@ public class FhirEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "client": return target.getConfiguration().getClient();

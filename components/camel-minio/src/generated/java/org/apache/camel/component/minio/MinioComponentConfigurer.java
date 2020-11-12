@@ -34,8 +34,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoCloseBody": getOrCreateConfiguration(target).setAutoCloseBody(property(camelContext, boolean.class, value)); return true;
         case "autocreatebucket":
         case "autoCreateBucket": getOrCreateConfiguration(target).setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "bypassgovernancemode":
@@ -124,8 +124,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoCloseBody": return boolean.class;
         case "autocreatebucket":
         case "autoCreateBucket": return boolean.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "bypassgovernancemode":
@@ -215,8 +215,8 @@ public class MinioComponentConfigurer extends PropertyConfigurerSupport implemen
         case "autoCloseBody": return getOrCreateConfiguration(target).isAutoCloseBody();
         case "autocreatebucket":
         case "autoCreateBucket": return getOrCreateConfiguration(target).isAutoCreateBucket();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "bypassgovernancemode":

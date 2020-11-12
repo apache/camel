@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
@@ -29,8 +30,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -56,6 +59,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private volatile String endpointUri;
     private CamelContext camelContext;
     private Component component;
+    @Metadata(label = "advanced", defaultValue = "true",
+              description = "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired)"
+                            + " by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component."
+                            + " This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc.")
+    private boolean autowiredEnabled = true;
     @UriParam(label = "producer",
               description = "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup"
                             + " in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then"
@@ -81,9 +89,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     @UriParam(defaultValue = "false", label = "advanced",
               description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous;
-    @UriParam(label = "advanced",
-              description = "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
-    private boolean basicPropertyBinding;
     // pooling consumer options only related to EventDrivenPollingConsumer which are very seldom in use
     // so lets not expose them in the component docs as it will be included in every component
     private int pollingConsumerQueueSize = 1000;
@@ -267,20 +272,18 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.synchronous = synchronous;
     }
 
-    /**
-     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional
-     * capabilities.
-     */
-    public boolean isBasicPropertyBinding() {
-        return basicPropertyBinding;
+    public boolean isAutowiredEnabled() {
+        return autowiredEnabled;
     }
 
     /**
-     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional
-     * capabilities.
+     * Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as
+     * autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets
+     * configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection
+     * factories, AWS Clients, etc.
      */
-    public void setBasicPropertyBinding(boolean basicPropertyBinding) {
-        this.basicPropertyBinding = basicPropertyBinding;
+    public void setAutowiredEnabled(boolean autowiredEnabled) {
+        this.autowiredEnabled = autowiredEnabled;
     }
 
     public boolean isLazyStartProducer() {
@@ -416,24 +419,16 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             return;
         }
 
-        boolean basic = basicPropertyBinding || "true".equals(parameters.getOrDefault("basicPropertyBinding", "false"));
-        if (basic) {
-            // use basic binding
-            PropertyBindingSupport.build()
-                    .withPlaceholder(false).withNesting(false).withDeepNesting(false).withReference(false)
-                    .bind(camelContext, bean, parameters);
-        } else {
-            PropertyConfigurer configurer = null;
-            if (bean instanceof Component) {
-                configurer = getComponent().getComponentPropertyConfigurer();
-            } else if (bean instanceof Endpoint) {
-                configurer = getComponent().getEndpointPropertyConfigurer();
-            } else if (bean instanceof PropertyConfigurerAware) {
-                configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
-            }
-            // use advanced binding
-            PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
+        PropertyConfigurer configurer = null;
+        if (bean instanceof Component) {
+            configurer = getComponent().getComponentPropertyConfigurer();
+        } else if (bean instanceof Endpoint) {
+            configurer = getComponent().getEndpointPropertyConfigurer();
+        } else if (bean instanceof PropertyConfigurerAware) {
+            configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
         }
+        // use advanced binding
+        PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
     }
 
     /**
@@ -507,7 +502,40 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     protected void doInit() throws Exception {
-        // noop
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
+
+        if (autowiredEnabled && getComponent() != null) {
+            PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
+            if (configurer instanceof PropertyConfigurerGetter) {
+                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+                String[] names = getter.getAutowiredNames();
+                if (names != null) {
+                    for (String name : names) {
+                        // is there already a configured value?
+                        Object value = getter.getOptionValue(this, name, true);
+                        if (value == null) {
+                            Class<?> type = getter.getOptionType(name, true);
+                            if (type != null) {
+                                Set<?> set = camelContext.getRegistry().findByType(type);
+                                if (set.size() == 1) {
+                                    value = set.iterator().next();
+                                }
+                            }
+                            if (value != null) {
+                                boolean hit = configurer.configure(camelContext, this, name, value, true);
+                                if (hit) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug(
+                                                "Autowired property: {} on endpoint: {} as exactly one instance of type: {} found in the registry",
+                                                name, toString(), type.getName());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
