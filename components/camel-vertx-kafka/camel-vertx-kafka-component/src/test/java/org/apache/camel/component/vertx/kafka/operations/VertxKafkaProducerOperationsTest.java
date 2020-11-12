@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import io.vertx.core.Vertx;
 import io.vertx.kafka.client.producer.KafkaProducer;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.vertx.kafka.VertxKafkaConstants;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -58,6 +59,13 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
 
         operations.sentEvents(exchange, doneSync -> {});
 
+        final Exchange exchange2 = new DefaultExchange(context);
+
+        exchange2.getIn().setHeader(VertxKafkaConstants.MESSAGE_KEY, "6");
+        exchange2.getIn().setBody("test message 6");
+
+        operations.sentEvents(exchange2, doneSync -> {});
+
         Awaitility
                 .await()
                 .atMost(2, TimeUnit.SECONDS)
@@ -66,7 +74,7 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
                     if (!mockProducer.history().isEmpty()) {
                         final List<ProducerRecord<Object, Object>> records = mockProducer.history();
                         // assert the size
-                        assertEquals(records.size(), 5);
+                        assertEquals(records.size(), 6);
 
                         // assert the content
                         final ProducerRecord<Object, Object> record1 = records.get(0);
@@ -74,15 +82,23 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
                         final ProducerRecord<Object, Object> record3 = records.get(2);
                         final ProducerRecord<Object, Object> record4 = records.get(3);
                         final ProducerRecord<Object, Object> record5 = records.get(4);
+                        final ProducerRecord<Object, Object> record6 = records.get(5);
 
                         assertEquals("test message 1", record1.value().toString());
                         assertEquals("test message 2", record2.value().toString());
                         assertEquals("test message 3", record3.value().toString());
                         assertEquals("test message 4", record4.value().toString());
                         assertEquals("test message 5", record5.value().toString());
+                        assertEquals("test message 6", record6.value().toString());
+
+                        assertNull(record1.key());
+                        assertNull(record2.key());
+                        assertNull(record3.key());
+                        assertNull(record4.key());
+                        assertNull(record5.key());
+                        assertEquals("6", record6.key().toString());
 
                         records.forEach(record -> {
-                            assertNull(record.key());
                             // assert is the correct topic
                             assertEquals("testSimpleEventsTopic", record.topic());
                             assertNull(record.partition());
