@@ -18,11 +18,18 @@ package org.apache.camel.maven.generator.openapi;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +40,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
+import io.swagger.v3.parser.core.models.AuthorizationValue;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -44,9 +52,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.openapitools.codegen.auth.AuthParser;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 import org.yaml.snakeyaml.Yaml;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
@@ -98,6 +108,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/spec/openapi.json", required = true)
     String specificationUri;
+
+    @Parameter(name = "auth")
+    String auth;
 
     @Parameter(defaultValue = "3.0.19")
     String swaggerCodegenMavenPluginVersion;
@@ -282,9 +295,32 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     OasDocument readOpenApiDoc(String specificationUri) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
+
+        URL inputSpecRemoteUrl = inputSpecRemoteUrl(specificationUri);
+        File inputSpecTempFile = new File(specificationUri);
+
+        if (inputSpecRemoteUrl != null) {
+            inputSpecTempFile = File.createTempFile("openapi-spec", ".tmp");
+
+            URLConnection conn = inputSpecRemoteUrl.openConnection();
+            if (isNotEmpty(auth)) {
+                List<AuthorizationValue> authList = AuthParser.parse(auth);
+                for (AuthorizationValue a : authList) {
+                    conn.setRequestProperty(a.getKeyName(), a.getValue());
+                }
+            }
+            try (ReadableByteChannel readableByteChannel = Channels.newChannel(conn.getInputStream())) {
+                FileChannel fileChannel;
+                try (FileOutputStream fileOutputStream = new FileOutputStream(inputSpecTempFile)) {
+                    fileChannel = fileOutputStream.getChannel();
+                    fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+                }
+            }
+        }
+
         InputStream is;
         try {
-            is = new FileInputStream(new File(specificationUri));
+            is = new FileInputStream(inputSpecTempFile);
         } catch (Exception ex) {
             //use classloader resource stream as fallback
             is = this.getClass().getClassLoader().getResourceAsStream(specificationUri);
@@ -332,5 +368,13 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         }
 
         return comp;
+    }
+
+    private URL inputSpecRemoteUrl(String specificationUri) {
+        try {
+            return new URI(specificationUri).toURL();
+        } catch (URISyntaxException | MalformedURLException | IllegalArgumentException e) {
+            return null;
+        }
     }
 }
