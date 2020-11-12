@@ -566,6 +566,34 @@ public interface GitHubEndpointBuilderFactory {
             return (GitHubEndpointConsumerBuilder) this;
         }
         /**
+         * To specify a custom strategy that configures how the EventsConsumer
+         * fetches events.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.github.event.GitHubEventFetchStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedGitHubEndpointConsumerBuilder eventFetchStrategy(
+                Object eventFetchStrategy) {
+            doSetProperty("eventFetchStrategy", eventFetchStrategy);
+            return this;
+        }
+        /**
+         * To specify a custom strategy that configures how the EventsConsumer
+         * fetches events.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.github.event.GitHubEventFetchStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedGitHubEndpointConsumerBuilder eventFetchStrategy(
+                String eventFetchStrategy) {
+            doSetProperty("eventFetchStrategy", eventFetchStrategy);
+            return this;
+        }
+        /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
@@ -1070,9 +1098,9 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * What git operation to execute
-         * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+         * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
          * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
          * 
          * Path parameter: branchName
          * Name of branch
@@ -1094,9 +1122,9 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * What git operation to execute
-         * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+         * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
          * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
          * 
          * Path parameter: branchName
          * Name of branch
