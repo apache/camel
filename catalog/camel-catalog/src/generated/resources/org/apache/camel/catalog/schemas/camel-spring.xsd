@@ -10450,6 +10450,14 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
+        <xs:attribute name="delimiter" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Delimiter used in splitting messages. Can be turned off using the value false.
+The default value is ,. Default value: ,
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="parallelProcessing" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[

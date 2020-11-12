@@ -1191,6 +1191,7 @@ public class ModelParser extends BaseParser {
     protected SplitDefinition doParseSplitDefinition() throws IOException, XmlPullParserException {
         return doParse(new SplitDefinition(), (def, key, val) -> {
             switch (key) {
+                case "delimiter": def.setDelimiter(val); break;
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
                 case "onPrepareRef": def.setOnPrepareRef(val); break;
                 case "parallelAggregate": def.setParallelAggregate(val); break;
