@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.kafka.services;
 
 import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.infra.common.services.ContainerService;
+import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
@@ -59,6 +60,11 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
     }
 
     @Override
+    public void registerProperties() {
+        System.setProperty(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS, getBootstrapServers());
+    }
+
+    @Override
     public void initialize() {
         if (!zookeeperContainer.isRunning()) {
             /*
@@ -79,6 +85,7 @@ public class StrimziService implements KafkaService, ContainerService<StrimziCon
             strimziContainer.start();
         }
 
+        registerProperties();
         LOG.info("Kafka bootstrap server running at address {}", getBootstrapServers());
     }
 

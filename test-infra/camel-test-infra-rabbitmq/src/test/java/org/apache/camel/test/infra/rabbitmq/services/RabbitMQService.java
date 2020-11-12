@@ -17,11 +17,12 @@
 
 package org.apache.camel.test.infra.rabbitmq.services;
 
+import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-public interface RabbitMQService extends BeforeAllCallback, AfterAllCallback {
+public interface RabbitMQService extends TestService, BeforeAllCallback, AfterAllCallback {
 
     /**
      * The connection properties for the service
