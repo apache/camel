@@ -21,9 +21,10 @@ import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
 import org.apache.camel.test.testcontainers.junit5.Wait;
 import org.testcontainers.containers.GenericContainer;
 
+import static org.apache.camel.component.nats.NatsTestConstants.CONTAINER_IMAGE;
+
 public class NatsAuthTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.1.8";
     public static final String CONTAINER_NAME = "nats-auth";
     public static final String USERNAME = "admin";
     public static final String PASSWORD = "password";
