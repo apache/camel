@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2EC2BaseTest extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.12.1";
+    public static final String CONTAINER_IMAGE = "localstack/localstack:0.12.2";
     public static final String CONTAINER_NAME = "ec2";
 
     @Override
