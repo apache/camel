@@ -68,7 +68,7 @@ The Bean Validator component supports 8 options, which are listed below.
 | *messageInterpolator* (advanced) | To use a custom MessageInterpolator |  | MessageInterpolator
 | *traversableResolver* (advanced) | To use a custom TraversableResolver |  | TraversableResolver
 | *validationProviderResolver* (advanced) | To use a a custom ValidationProviderResolver |  | ValidationProviderResolver
-| *validatorFactory* (advanced) | To use a custom ValidatorFactory |  | ValidatorFactory
+| *validatorFactory* (advanced) | *Autowired* To use a custom ValidatorFactory |  | ValidatorFactory
 |===
 // component options: END
 

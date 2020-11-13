@@ -46,7 +46,7 @@ public class BeanValidatorComponent extends DefaultComponent {
     private TraversableResolver traversableResolver;
     @Metadata(label = "advanced")
     private ConstraintValidatorFactory constraintValidatorFactory;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", autowired = true)
     private ValidatorFactory validatorFactory;
 
     public BeanValidatorComponent() {
