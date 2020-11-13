@@ -37,10 +37,37 @@
         <label>java</label>
         <title>CDI</title>
 
+        <camel.osgi.provide.capability>
+            osgi.cdi.extension;osgi.cdi.extension="org.apache.camel.cdi";
+                version:Version="${camel.osgi.version}";
+                aries.cdi.extension.bean.classes:List&lt;String&gt;="org.apache.camel.cdi.CdiCamelFactory,org.apache.camel.cdi.CdiEventComponent";
+                    uses:="javax.annotation,javax.enterprise.event,javax.enterprise.inject.spi",
+            osgi.service;objectClass:List&lt;String&gt;="javax.enterprise.inject.spi.Extension",
+                osgi.service;objectClass:List&lt;String&gt;="javax.enterprise.inject.spi.Extension";
+                    uses:="javax.enterprise.inject.spi";
+                    osgi.cdi.extension="org.apache.camel.cdi";
+                service.scope=prototype;service.vendor="Apache Software Foundation";
+                version:Version="${camel.osgi.version}";
+                effective:=active,
+            osgi.serviceloader;osgi.serviceloader="javax.enterprise.inject.spi.Extension";
+                register:="org.apache.camel.cdi.CdiCamelExtension";
+                    uses:="javax.enterprise.inject.spi";
+                    osgi.cdi.extension="org.apache.camel.cdi";
+                    service.scope=prototype;
+                    service.vendor="Apache Software Foundation";
+                version:Version="${camel.osgi.version}"
+        </camel.osgi.provide.capability>
+        <camel.osgi.require.capability>
+            osgi.extender;filter:="(&amp;(osgi.extender=osgi.cdi)(version>=1.0.0)(!(version>=2.0.0)))",
+            osgi.extender;filter:="(&amp;(osgi.extender=osgi.serviceloader.registrar)(version>=1.0.0)(!(version>=2.0.0)))",
+            osgi.contract;osgi.contract=JavaInject;filter:="(&amp;(osgi.contract=JavaInject)(version=1.0.0))",
+            osgi.contract;osgi.contract=JavaCDI;filter:="(&amp;(osgi.contract=JavaCDI)(version=2.0.0))",
+            osgi.contract;osgi.contract=JavaAnnotation;filter:="(&amp;(osgi.contract=JavaAnnotation)(version=1.3.0))"
+        </camel.osgi.require.capability>
         <camel.osgi.import>
             !org.apache.camel.cdi.*,
             !org.apache.deltaspike.cdise.api.*,
-            javax.xml.bind*;version="[2.2,3.0)",
+            javax.xml.bind*;version="[2.2,3.0);optional=true",
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import>
@@ -70,7 +97,6 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
-
         <!-- compile dependencies -->
 
         <dependency>

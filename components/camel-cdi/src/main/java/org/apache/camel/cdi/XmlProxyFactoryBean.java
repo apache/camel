@@ -21,6 +21,7 @@ import java.util.function.Function;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
@@ -36,6 +37,7 @@ import static org.apache.camel.component.bean.ProxyHelper.createProxy;
 import static org.apache.camel.support.service.ServiceHelper.startService;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
+@Vetoed
 final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
 
     private final BeanManager manager;

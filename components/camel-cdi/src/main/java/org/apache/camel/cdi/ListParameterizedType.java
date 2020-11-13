@@ -20,6 +20,9 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import javax.enterprise.inject.Vetoed;
+
+@Vetoed
 final class ListParameterizedType implements ParameterizedType {
 
     private final Type argument;
