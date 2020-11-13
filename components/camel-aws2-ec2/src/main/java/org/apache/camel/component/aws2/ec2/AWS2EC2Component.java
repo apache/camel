@@ -57,9 +57,6 @@ public class AWS2EC2Component extends DefaultComponent {
                 = this.configuration != null ? this.configuration.copy() : new AWS2EC2Configuration();
         AWS2EC2Endpoint endpoint = new AWS2EC2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getAmazonEc2Client() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonEC2Client or accessKey and secretKey must be specified");
@@ -77,20 +74,5 @@ public class AWS2EC2Component extends DefaultComponent {
      */
     public void setConfiguration(AWS2EC2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(AWS2EC2Configuration configuration, AWS2EC2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonEc2Client())) {
-            LOG.debug("Looking for an Ec2Client instance in the registry");
-            Set<Ec2Client> clients = getCamelContext().getRegistry().findByType(Ec2Client.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one Ec2Client instance in the registry");
-                configuration.setAmazonEc2Client(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No Ec2Client instance in the registry");
-            }
-        } else {
-            LOG.debug("Ec2Client instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }
