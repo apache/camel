@@ -63,9 +63,6 @@ public class Cw2Component extends DefaultComponent {
         // parameters
         setProperties(endpoint, parameters);
 
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getAmazonCwClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonCwClient or accessKey and secretKey must be specified");
@@ -83,20 +80,5 @@ public class Cw2Component extends DefaultComponent {
      */
     public void setConfiguration(Cw2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(Cw2Configuration configuration, Cw2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonCwClient())) {
-            LOG.debug("Looking for an CloudWatchClient instance in the registry");
-            Set<CloudWatchClient> clients = getCamelContext().getRegistry().findByType(CloudWatchClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one CloudWatchClient instance in the registry");
-                configuration.setAmazonCwClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No CloudWatchClient instance in the registry");
-            }
-        } else {
-            LOG.debug("CloudWatchClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }
