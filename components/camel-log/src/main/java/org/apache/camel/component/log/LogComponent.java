@@ -40,7 +40,7 @@ public class LogComponent extends DefaultComponent {
 
     private ExchangeFormatter defaultExchangeFormatter;
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", autowired = true)
     private ExchangeFormatter exchangeFormatter;
 
     public LogComponent() {
