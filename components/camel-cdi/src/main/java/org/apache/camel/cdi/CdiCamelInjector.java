@@ -19,6 +19,7 @@ package org.apache.camel.cdi;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.RuntimeCamelException;
@@ -26,6 +27,7 @@ import org.apache.camel.spi.Injector;
 
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByType;
 
+@Vetoed
 final class CdiCamelInjector implements Injector {
 
     private final Injector injector;

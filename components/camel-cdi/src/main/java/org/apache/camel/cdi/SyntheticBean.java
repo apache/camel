@@ -24,6 +24,7 @@ import java.util.function.Function;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.InjectionException;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -32,6 +33,7 @@ import javax.enterprise.inject.spi.PassivationCapable;
 
 import static org.apache.camel.cdi.CdiSpiHelper.createBeanId;
 
+@Vetoed
 class SyntheticBean<T> extends SyntheticBeanAttributes<T> implements Bean<T>, PassivationCapable {
 
     private final Class<?> type;
