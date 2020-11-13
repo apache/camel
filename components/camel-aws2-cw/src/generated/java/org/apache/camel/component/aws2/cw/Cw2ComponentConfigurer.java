@@ -32,8 +32,6 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazoncwclient":
         case "amazonCwClient": getOrCreateConfiguration(target).setAmazonCwClient(property(camelContext, software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.cw.Cw2Configuration.class, value)); return true;
@@ -59,14 +57,17 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonCwClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazoncwclient":
         case "amazonCwClient": return software.amazon.awssdk.services.cloudwatch.CloudWatchClient.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.cw.Cw2Configuration.class;
@@ -99,8 +100,6 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazoncwclient":
         case "amazonCwClient": return getOrCreateConfiguration(target).getAmazonCwClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
