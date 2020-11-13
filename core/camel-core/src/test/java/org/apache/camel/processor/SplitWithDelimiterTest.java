@@ -38,6 +38,7 @@ public class SplitWithDelimiterTest extends ContextTestSupport {
         String body = "some , # false text";
         MockEndpoint m = getMockEndpoint("mock:result-1");
         m.expectedPropertyReceived("CamelSplitSize", 2);
+        template.sendBody("direct:start-1", body);
         m.expectedBodiesReceived("some ", " # false text");
         m.assertIsSatisfied();
     }
