@@ -27,9 +27,7 @@ public class AWSSQSLocalContainerService extends AWSLocalContainerService<SqsCli
     private static final Logger LOG = LoggerFactory.getLogger(AWSSQSLocalContainerService.class);
 
     public AWSSQSLocalContainerService() {
-        // Current latest container - localstack/localstack:0.11.3 - is broken for SQS
-        // therefore uses an older version
-        super("localstack/localstack:0.12.1", Service.SQS);
+        super("localstack/localstack:0.12.2", Service.SQS);
     }
 
     @Override
