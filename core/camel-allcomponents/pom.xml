@@ -484,11 +484,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-etcd</artifactId>
+			<artifactId>camel-etcd3</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-etcd3</artifactId>
+			<artifactId>camel-etcd</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -1116,11 +1116,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-sip</artifactId>
+			<artifactId>camel-shiro</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-shiro</artifactId>
+			<artifactId>camel-sip</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -1256,10 +1256,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-cdi</artifactId>
 		</dependency>
 		<dependency>
@@ -1268,15 +1264,15 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-spring-junit5</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-testcontainers</artifactId>
+			<artifactId>camel-test-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -1284,11 +1280,15 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-testcontainers-spring-junit5</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-testcontainers-spring</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-testcontainers-spring-junit5</artifactId>
+			<artifactId>camel-testcontainers</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -1320,11 +1320,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-undertow</artifactId>
+			<artifactId>camel-undertow-spring-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-undertow-spring-security</artifactId>
+			<artifactId>camel-undertow</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
