@@ -28,7 +28,7 @@ import org.influxdb.InfluxDB;
 @Component("influxdb")
 public class InfluxDbComponent extends DefaultComponent {
 
-    @Metadata
+    @Metadata(autowired = true)
     private InfluxDB influxDB;
 
     public InfluxDbComponent() {
