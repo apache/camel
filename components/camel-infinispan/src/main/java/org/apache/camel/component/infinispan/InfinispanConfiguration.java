@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.infinispan.commons.api.BasicCacheContainer;
@@ -62,6 +63,7 @@ public class InfinispanConfiguration implements Cloneable {
     private String configurationUri;
     @UriParam(label = "advanced")
     private Map<String, String> configurationProperties;
+    @Metadata(autowired = true)
     @UriParam(label = "advanced")
     private BasicCacheContainer cacheContainer;
     @UriParam(label = "advanced")

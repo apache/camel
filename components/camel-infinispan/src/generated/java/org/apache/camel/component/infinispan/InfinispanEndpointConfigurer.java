@@ -75,6 +75,11 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"cacheContainer"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "bridgeerrorhandler":

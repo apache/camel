@@ -92,7 +92,7 @@ The Infinispan component supports 29 options, which are listed below.
 | *securityServerName* ( security) | Define the security server name to access the infinispan instance |  | String
 | *username* ( security) | Define the username to access the infinispan instance |  | String
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *cacheContainer* (advanced) | Specifies the cache Container to connect |  | BasicCacheContainer
+| *cacheContainer* (advanced) | *Autowired* Specifies the cache Container to connect |  | BasicCacheContainer
 | *cacheContainerConfiguration* (advanced) | The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types: org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration; org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration; |  | Object
 | *configurationProperties* (advanced) | Implementation specific properties for the CacheManager |  | Map
 | *configurationUri* (advanced) | An implementation specific URI for the CacheManager |  | String
@@ -152,7 +152,7 @@ with the following path and query parameters:
 | *securityRealm* ( security) | Define the security realm to access the infinispan instance |  | String
 | *securityServerName* ( security) | Define the security server name to access the infinispan instance |  | String
 | *username* ( security) | Define the username to access the infinispan instance |  | String
-| *cacheContainer* (advanced) | Specifies the cache Container to connect |  | BasicCacheContainer
+| *cacheContainer* (advanced) | *Autowired* Specifies the cache Container to connect |  | BasicCacheContainer
 | *cacheContainerConfiguration* (advanced) | The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types: org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration; org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration; |  | Object
 | *configurationProperties* (advanced) | Implementation specific properties for the CacheManager |  | Map
 | *configurationUri* (advanced) | An implementation specific URI for the CacheManager |  | String
