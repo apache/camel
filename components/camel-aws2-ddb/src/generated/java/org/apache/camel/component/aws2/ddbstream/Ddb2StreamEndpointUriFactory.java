@@ -20,7 +20,7 @@ public class Ddb2StreamEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(33);
+        Set<String> props = new HashSet<>(32);
         props.add("backoffMultiplier");
         props.add("synchronous");
         props.add("initialDelay");
@@ -36,7 +36,6 @@ public class Ddb2StreamEndpointUriFactory extends org.apache.camel.support.compo
         props.add("scheduledExecutorService");
         props.add("repeatCount");
         props.add("timeUnit");
-        props.add("autoDiscoverClient");
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("iteratorType");

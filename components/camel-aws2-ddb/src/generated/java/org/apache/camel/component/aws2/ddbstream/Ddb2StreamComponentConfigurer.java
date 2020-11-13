@@ -32,8 +32,6 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": getOrCreateConfiguration(target).setAmazonDynamoDbStreamsClient(property(camelContext, software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -61,14 +59,17 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonDynamoDbStreamsClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": return software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -103,8 +104,6 @@ public class Ddb2StreamComponentConfigurer extends PropertyConfigurerSupport imp
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": return getOrCreateConfiguration(target).getAmazonDynamoDbStreamsClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":

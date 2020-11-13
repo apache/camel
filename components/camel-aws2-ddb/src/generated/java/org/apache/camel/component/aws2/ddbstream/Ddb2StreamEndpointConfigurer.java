@@ -25,8 +25,6 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": target.getConfiguration().setAmazonDynamoDbStreamsClient(property(camelContext, software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": target.setBackoffErrorThreshold(property(camelContext, int.class, value)); return true;
         case "backoffidlethreshold":
@@ -85,14 +83,17 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonDynamoDbStreamsClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": return software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return int.class;
         case "backoffidlethreshold":
@@ -158,8 +159,6 @@ public class Ddb2StreamEndpointConfigurer extends PropertyConfigurerSupport impl
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazondynamodbstreamsclient":
         case "amazonDynamoDbStreamsClient": return target.getConfiguration().getAmazonDynamoDbStreamsClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "backofferrorthreshold":
         case "backoffErrorThreshold": return target.getBackoffErrorThreshold();
         case "backoffidlethreshold":
