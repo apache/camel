@@ -87,8 +87,8 @@ class AutowiredLifecycleStrategy extends LifecycleStrategySupport {
                             boolean hit = pc.configure(camelContext, target, option, value, true);
                             if (hit) {
                                 LOG.info(
-                                        "Autowired property: {} on {}: {} as exactly one instance of type: {} found in the registry",
-                                        option, kind, name, type.getName());
+                                        "Autowired property: {} on {}: {} as exactly one instance of type: {} ({}) found in the registry",
+                                        option, kind, name, type.getName(), value.getClass().getName());
                             }
                         }
                     }
