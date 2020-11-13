@@ -34,6 +34,7 @@ import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.junit.jupiter.api.Test;
 
@@ -138,6 +139,7 @@ public class CMISProducerTest extends CMISTestSupport {
         exchange.getIn().getHeaders().put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_ACTION, CamelCMISActions.CREATE);
         exchange.getIn().getHeaders().put(CamelCMISConstants.CMIS_OBJECT_ID, createSession().getRootFolder().getId());
+        exchange.getIn().getHeaders().put(CamelCMISConstants.VERSIONING_STATE, VersioningState.MAJOR);
 
         template.send(exchange);
         CmisObject cmisObject = exchange.getMessage().getBody(CmisObject.class);
