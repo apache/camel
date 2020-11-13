@@ -45,7 +45,7 @@ public class DdbComponentRegistryClientTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
         AmazonDDBClientMock ddbClient = new AmazonDDBClientMock();
         context.getRegistry().bind("ddbClient", ddbClient);
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
