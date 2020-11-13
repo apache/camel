@@ -42,6 +42,11 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"validatorFactory"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
