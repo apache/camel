@@ -192,6 +192,7 @@ public class CMISProducer extends DefaultProducer {
         Message message = exchange.getIn();
         String parentFolderId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
         Folder parentFolder = (Folder) getSessionFacade().getObjectById(parentFolderId);
+        String versioning = message.getHeader(CamelCMISConstants.VERSIONING_STATE, String.class);
         Map<String, Object> cmisProperties = filterTypeProperties(message.getHeaders());
 
         if (isDocument(exchange)) {
@@ -199,11 +200,11 @@ public class CMISProducer extends DefaultProducer {
             String mimeType = getMimeType(message);
             byte[] buf = getBodyData(message);
             ContentStream contentStream = getSessionFacade().createContentStream(fileName, buf, mimeType);
-            return storeDocument(parentFolder, cmisProperties, contentStream);
+            return storeDocument(parentFolder, cmisProperties, contentStream, versioning);
         } else if (isFolder(message)) {
             return storeFolder(parentFolder, cmisProperties);
         } else { // other types
-            return storeDocument(parentFolder, cmisProperties, null);
+            return storeDocument(parentFolder, cmisProperties, null, null);
         }
     }
 
@@ -337,13 +338,24 @@ public class CMISProducer extends DefaultProducer {
 
         Document document = (Document) getSessionFacade().getObjectById(objectId);
 
+        VersioningState versioningState = VersioningState.NONE;
+
+        if (getSessionFacade().isObjectTypeVersionable(message.getHeader(PropertyIds.OBJECT_TYPE_ID, String.class))) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(message.getHeader(CamelCMISConstants.VERSIONING_STATE))) {
+                versioningState = VersioningState.valueOf(message.getHeader(CamelCMISConstants.VERSIONING_STATE, String.class));
+            } else {
+                versioningState = VersioningState.MAJOR;
+            }
+        }
+
         String newDocumentName = message.getHeader(PropertyIds.NAME, String.class);
         if (org.apache.camel.util.ObjectHelper.isNotEmpty(newDocumentName)) {
             return document.copy(destinationFolder, Collections.singletonMap(PropertyIds.NAME, newDocumentName),
-                    VersioningState.NONE, null, null, null, getSessionFacade().createOperationContext());
+                    versioningState, null, null, null, getSessionFacade().createOperationContext());
         }
 
-        return document.copy(destinationFolder);
+        return document.copy(destinationFolder, null,
+                versioningState, null, null, null, getSessionFacade().createOperationContext());
     }
 
     /**
@@ -454,8 +466,12 @@ public class CMISProducer extends DefaultProducer {
 
         ContentStream contentStream = getSessionFacade().createContentStream(fileName, bytes, mimeType);
 
+        String versioningState = message.getHeader(CamelCMISConstants.VERSIONING_STATE, String.class);
+        Boolean versioning = org.apache.camel.util.ObjectHelper.isNotEmpty(versioningState)
+                && versioningState.equals(VersioningState.MINOR.value()) ? false : true;
+
         try {
-            return document.checkIn(true, properties, contentStream, checkInComment);
+            return document.checkIn(versioning, properties, contentStream, checkInComment);
         } catch (Exception e) {
             document.cancelCheckOut();
             throw e;
@@ -511,15 +527,21 @@ public class CMISProducer extends DefaultProducer {
         return parentFolder.createFolder(cmisProperties);
     }
 
-    private Document storeDocument(Folder parentFolder, Map<String, Object> cmisProperties, ContentStream contentStream)
+    private Document storeDocument(
+            Folder parentFolder, Map<String, Object> cmisProperties, ContentStream contentStream, String versioning)
             throws Exception {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_DOCUMENT);
         }
 
         VersioningState versioningState = VersioningState.NONE;
+
         if (getSessionFacade().isObjectTypeVersionable((String) cmisProperties.get(PropertyIds.OBJECT_TYPE_ID))) {
-            versioningState = VersioningState.MAJOR;
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(versioning)) {
+                versioningState = VersioningState.valueOf(versioning);
+            } else {
+                versioningState = VersioningState.MAJOR;
+            }
         }
         LOG.debug("Creating document with properties: {}", cmisProperties);
 

@@ -30,4 +30,5 @@ public interface CamelCMISConstants {
     String CAMEL_CMIS_READ_SIZE = "CamelCMISReadSize";
     String CAMEL_CMIS_CONTENT_STREAM = "CamelCMISContent";
     String ALL_VERSIONS = "CamelCMISAllVersions";
+    String VERSIONING_STATE = "cmis:versioningState";
 }
