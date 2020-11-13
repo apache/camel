@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.s3;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import software.amazon.awssdk.core.Protocol;
@@ -27,6 +28,7 @@ public class AWS2S3Configuration implements Cloneable {
 
     private String bucketName;
     @UriParam
+    @Metadata(autowired = true)
     private S3Client amazonS3Client;
     @UriParam(label = "security", secret = true)
     private String accessKey;

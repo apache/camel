@@ -47,7 +47,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
                 "aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1&autoDiscoverClient=false");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
-        assertNotSame(client, endpoint.getConfiguration().getAmazonS3Client());
+        assertSame(client, endpoint.getConfiguration().getAmazonS3Client());
     }
 
     @Test
