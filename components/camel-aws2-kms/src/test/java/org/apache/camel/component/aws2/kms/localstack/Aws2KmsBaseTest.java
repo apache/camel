@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2KmsBaseTest extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.12.1";
+    public static final String CONTAINER_IMAGE = "localstack/localstack:0.12.2";
     public static final String CONTAINER_NAME = "kms";
 
     @Override
