@@ -25,8 +25,6 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonec2client":
         case "amazonEc2Client": target.getConfiguration().setAmazonEc2Client(property(camelContext, software.amazon.awssdk.services.ec2.Ec2Client.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.aws2.ec2.AWS2EC2Operations.class, value)); return true;
@@ -49,14 +47,17 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonEc2Client"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonec2client":
         case "amazonEc2Client": return software.amazon.awssdk.services.ec2.Ec2Client.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operation": return org.apache.camel.component.aws2.ec2.AWS2EC2Operations.class;
@@ -86,8 +87,6 @@ public class AWS2EC2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonec2client":
         case "amazonEc2Client": return target.getConfiguration().getAmazonEc2Client();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operation": return target.getConfiguration().getOperation();
