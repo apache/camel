@@ -32,7 +32,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2S3BaseTest extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.12.1";
+    public static final String CONTAINER_IMAGE = "localstack/localstack:0.12.2";
     public static final String CONTAINER_NAME = "s3";
 
     @Override
