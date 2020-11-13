@@ -58,6 +58,11 @@ public class TwilioComponentConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"restClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accountsid":
