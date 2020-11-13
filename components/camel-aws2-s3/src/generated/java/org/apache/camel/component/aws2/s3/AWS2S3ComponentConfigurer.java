@@ -34,8 +34,6 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "amazonS3Client": getOrCreateConfiguration(target).setAmazonS3Client(property(camelContext, software.amazon.awssdk.services.s3.S3Client.class, value)); return true;
         case "autocreatebucket":
         case "autoCreateBucket": getOrCreateConfiguration(target).setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autoclosebody":
         case "autocloseBody": getOrCreateConfiguration(target).setAutocloseBody(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
@@ -124,8 +122,6 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "amazonS3Client": return software.amazon.awssdk.services.s3.S3Client.class;
         case "autocreatebucket":
         case "autoCreateBucket": return boolean.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autoclosebody":
         case "autocloseBody": return boolean.class;
         case "autowiredenabled":
@@ -210,8 +206,6 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "amazonS3Client": return getOrCreateConfiguration(target).getAmazonS3Client();
         case "autocreatebucket":
         case "autoCreateBucket": return getOrCreateConfiguration(target).isAutoCreateBucket();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autoclosebody":
         case "autocloseBody": return getOrCreateConfiguration(target).isAutocloseBody();
         case "autowiredenabled":
