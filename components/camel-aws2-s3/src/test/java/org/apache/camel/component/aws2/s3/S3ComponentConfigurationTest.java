@@ -44,14 +44,14 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         context.getRegistry().bind("amazonS3Client", client);
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
         AWS2S3Endpoint endpoint = (AWS2S3Endpoint) component.createEndpoint(
-                "aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1&autoDiscoverClient=false");
+                "aws2-s3://MyBucket?accessKey=RAW(XXX)&secretKey=RAW(XXX)&region=eu-west-1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertSame(client, endpoint.getConfiguration().getAmazonS3Client());
     }
 
     @Test
-    public void createEndpointWithCredentialsAndClientExistInRegistryWithAutodiscover() throws Exception {
+    public void createEndpointWithCredentialsAndClientExistInRegistryWithAutowire() throws Exception {
         S3Client client = S3Client.builder().region(Region.EU_WEST_1).build();
         context.getRegistry().bind("amazonS3Client", client);
         AWS2S3Component component = context.getComponent("aws2-s3", AWS2S3Component.class);
