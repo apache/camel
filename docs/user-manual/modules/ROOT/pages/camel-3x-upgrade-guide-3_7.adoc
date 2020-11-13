@@ -163,3 +163,8 @@ Other information have been stored in headers declared in GitConstants class
 The camel-aws2-s3 has now support for autowiring the amazonS3Client option with S3Client instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
+=== Camel-AWS2-Cloudwatch Autowire support
+
+The camel-aws2-cw has now support for autowiring the amazonCwClient option with CloudWatchClient instance coming from the registry.
+In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
+
