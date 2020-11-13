@@ -61,9 +61,6 @@ public class AWS2S3Component extends DefaultComponent {
         configuration.setBucketName(remaining);
         AWS2S3Endpoint endpoint = new AWS2S3Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (!configuration.isUseIAMCredentials() && configuration.getAmazonS3Client() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
@@ -82,20 +79,5 @@ public class AWS2S3Component extends DefaultComponent {
      */
     public void setConfiguration(AWS2S3Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(AWS2S3Configuration configuration, AWS2S3Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonS3Client())) {
-            LOG.debug("Looking for an S3Client instance in the registry");
-            Set<S3Client> clients = getCamelContext().getRegistry().findByType(S3Client.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one S3Client instance in the registry");
-                configuration.setAmazonS3Client(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No S3Client instance in the registry");
-            }
-        } else {
-            LOG.debug("S3Client instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }
