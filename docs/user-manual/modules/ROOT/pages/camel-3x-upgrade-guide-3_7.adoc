@@ -176,3 +176,8 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 The camel-aws2-ddbstreams has now support for autowiring the amazonDynamoDbStreamsClient option with DynamoDbStreamsClient instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
+=== Camel-AWS2-EC2 Autowire support
+
+The camel-aws2-ec2 has now support for autowiring the amazonEc2Client option with Ec2Client instance coming from the registry.
+In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
+
