@@ -46,10 +46,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-support</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
     
     <!-- logging -->
     <dependency>
@@ -66,7 +62,7 @@
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
+      <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
