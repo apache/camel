@@ -32,8 +32,6 @@ public class MQ2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonmqclient":
         case "amazonMqClient": getOrCreateConfiguration(target).setAmazonMqClient(property(camelContext, software.amazon.awssdk.services.mq.MqClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.mq.MQ2Configuration.class, value)); return true;
@@ -58,14 +56,17 @@ public class MQ2ComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonMqClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonmqclient":
         case "amazonMqClient": return software.amazon.awssdk.services.mq.MqClient.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.mq.MQ2Configuration.class;
@@ -97,8 +98,6 @@ public class MQ2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonmqclient":
         case "amazonMqClient": return getOrCreateConfiguration(target).getAmazonMqClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();

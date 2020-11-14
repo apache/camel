@@ -31,7 +31,7 @@ public class MQ2Configuration implements Cloneable {
     @Metadata(required = true)
     private String label;
     @UriParam
-    @Metadata(autowired = true)    
+    @Metadata(autowired = true)
     private MqClient amazonMqClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
