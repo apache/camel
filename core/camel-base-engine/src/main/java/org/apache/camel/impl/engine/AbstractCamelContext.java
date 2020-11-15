@@ -2842,7 +2842,7 @@ public abstract class AbstractCamelContext extends BaseService
         } else {
             // log if stream caching is not in use as this can help people to
             // enable it if they use streams
-            LOG.info("StreamCaching is not in use. If using streams then its recommended to enable stream caching."
+            LOG.info("StreamCaching is not in use. If using streams then it's recommended to enable stream caching."
                      + " See more details at http://camel.apache.org/stream-caching.html");
         }
 
