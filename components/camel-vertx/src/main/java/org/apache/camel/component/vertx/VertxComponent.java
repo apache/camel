@@ -17,7 +17,6 @@
 package org.apache.camel.component.vertx;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -36,9 +35,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * A Camel Component for <a href="http://vertx.io/">vert.x</a>
- */
 @Component("vertx")
 public class VertxComponent extends DefaultComponent {
 
@@ -48,7 +44,7 @@ public class VertxComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private VertxFactory vertxFactory;
-    @Metadata
+    @Metadata(autowired = true)
     private Vertx vertx;
     @Metadata
     private String host;
@@ -139,18 +135,6 @@ public class VertxComponent extends DefaultComponent {
         VertxEndpoint endpoint = new VertxEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         return endpoint;
-    }
-
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-
-        if (vertx == null) {
-            Set<Vertx> vertxes = getCamelContext().getRegistry().findByType(Vertx.class);
-            if (vertxes.size() == 1) {
-                vertx = vertxes.iterator().next();
-            }
-        }
     }
 
     @Override
