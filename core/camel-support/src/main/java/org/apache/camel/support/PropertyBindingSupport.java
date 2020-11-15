@@ -201,7 +201,7 @@ public final class PropertyBindingSupport {
             Object value = entry.getValue();
 
             // if nesting is not allowed, then only bind properties without dots (OGNL graph)
-            if (!nesting && key.indexOf('.') != -1) {
+            if (!nesting && isDotKey(key)) {
                 continue;
             }
 
@@ -215,6 +215,56 @@ public final class PropertyBindingSupport {
         }
 
         return answer;
+    }
+
+    // TODO: Move these methods to other location
+    private static String[] splitKey(String key) {
+        List<String> parts = new ArrayList<>();
+
+        boolean mapKey = false;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < key.length(); i++) {
+            char ch = key.charAt(i);
+            if (ch == '[') {
+                mapKey = true;
+            } else if (ch == ']') {
+                mapKey = false;
+            }
+            if (ch == '.' && !mapKey) {
+                // dont include the separator dot
+                parts.add(sb.toString());
+                sb.setLength(0);
+            } else {
+                sb.append(ch);
+            }
+        }
+        if (sb.length() > 0) {
+            parts.add(sb.toString());
+        }
+
+        return parts.toArray(new String[parts.size()]);
+    }
+
+    private static boolean isDotKey(String key) {
+        // we only want to know if there is a dot in OGNL path, so any map keys [iso.code] is accepted
+
+        if (key.indexOf('[') == -1 && key.indexOf('.') != -1) {
+            return true;
+        }
+
+        boolean mapKey = false;
+        for (int i = 0; i < key.length(); i++) {
+            char ch = key.charAt(i);
+            if (ch == '[') {
+                mapKey = true;
+            } else if (ch == ']') {
+                mapKey = false;
+            }
+            if (ch == '.' && !mapKey) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean doBuildPropertyOgnlPath(
@@ -239,8 +289,8 @@ public final class PropertyBindingSupport {
 
         // we should only walk and create OGNL path for the middle graph
         String[] parts;
-        if (name.contains(".")) {
-            parts = name.split("\\.");
+        if (isDotKey(name)) {
+            parts = splitKey(name);
         } else {
             parts = new String[] { name };
         }
@@ -1808,7 +1858,7 @@ public final class PropertyBindingSupport {
             // so we can remove the corresponding key from the original map
 
             // walk key with dots to remove right node
-            String[] parts = key.toString().split("\\.");
+            String[] parts = splitKey(key.toString());
             Map map = originalMap;
             for (int i = 0; i < parts.length; i++) {
                 String part = parts[i];
