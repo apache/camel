@@ -217,56 +217,6 @@ public final class PropertyBindingSupport {
         return answer;
     }
 
-    // TODO: Move these methods to other location
-    private static String[] splitKey(String key) {
-        List<String> parts = new ArrayList<>();
-
-        boolean mapKey = false;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < key.length(); i++) {
-            char ch = key.charAt(i);
-            if (ch == '[') {
-                mapKey = true;
-            } else if (ch == ']') {
-                mapKey = false;
-            }
-            if (ch == '.' && !mapKey) {
-                // dont include the separator dot
-                parts.add(sb.toString());
-                sb.setLength(0);
-            } else {
-                sb.append(ch);
-            }
-        }
-        if (sb.length() > 0) {
-            parts.add(sb.toString());
-        }
-
-        return parts.toArray(new String[parts.size()]);
-    }
-
-    private static boolean isDotKey(String key) {
-        // we only want to know if there is a dot in OGNL path, so any map keys [iso.code] is accepted
-
-        if (key.indexOf('[') == -1 && key.indexOf('.') != -1) {
-            return true;
-        }
-
-        boolean mapKey = false;
-        for (int i = 0; i < key.length(); i++) {
-            char ch = key.charAt(i);
-            if (ch == '[') {
-                mapKey = true;
-            } else if (ch == ']') {
-                mapKey = false;
-            }
-            if (ch == '.' && !mapKey) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private static boolean doBuildPropertyOgnlPath(
             final CamelContext camelContext, final Object originalTarget, String name, final Object value,
             boolean deepNesting, boolean fluentBuilder, boolean allowPrivateSetter,
@@ -1537,6 +1487,54 @@ public final class PropertyBindingSupport {
         // as we un-dash property keys then we need to prepare this for the configurer (reflection does this automatic)
         key = StringHelper.dashToCamelCase(key);
         return key;
+    }
+
+    private static boolean isDotKey(String key) {
+        // we only want to know if there is a dot in OGNL path, so any map keys [iso.code] is accepted
+
+        if (key.indexOf('[') == -1 && key.indexOf('.') != -1) {
+            return true;
+        }
+
+        boolean mapKey = false;
+        for (char ch : key.toCharArray()) {
+            if (ch == '[') {
+                mapKey = true;
+            } else if (ch == ']') {
+                mapKey = false;
+            }
+            if (ch == '.' && !mapKey) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String[] splitKey(String key) {
+        // split the key into parts separated by dot (but handle map keys [iso.code] etc.
+        List<String> parts = new ArrayList<>();
+
+        boolean mapKey = false;
+        StringBuilder sb = new StringBuilder();
+        for (char ch : key.toCharArray()) {
+            if (ch == '[') {
+                mapKey = true;
+            } else if (ch == ']') {
+                mapKey = false;
+            }
+            if (ch == '.' && !mapKey) {
+                // dont include the separator dot
+                parts.add(sb.toString());
+                sb.setLength(0);
+            } else {
+                sb.append(ch);
+            }
+        }
+        if (sb.length() > 0) {
+            parts.add(sb.toString());
+        }
+
+        return parts.toArray(new String[parts.size()]);
     }
 
     @FunctionalInterface
