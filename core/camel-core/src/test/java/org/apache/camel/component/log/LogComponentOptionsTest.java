@@ -84,6 +84,8 @@ public class LogComponentOptionsTest extends ContextTestSupport {
 
         DefaultExchangeFormatter myFormatter = new DefaultExchangeFormatter();
         context.getRegistry().bind("myGreatFormatter", myFormatter);
+        DefaultExchangeFormatter mySecondFormatter = new DefaultExchangeFormatter();
+        context.getRegistry().bind("mySecondFormatter", mySecondFormatter);
 
         LogComponent log = context.getComponent("log", LogComponent.class);
         assertNull(log.getExchangeFormatter());
@@ -130,6 +132,8 @@ public class LogComponentOptionsTest extends ContextTestSupport {
 
         DefaultExchangeFormatter myFormatter = new DefaultExchangeFormatter();
         context.getRegistry().bind("myGreatFormatter", myFormatter);
+        DefaultExchangeFormatter mySecondFormatter = new DefaultExchangeFormatter();
+        context.getRegistry().bind("mySecondFormatter", mySecondFormatter);
 
         LogComponent log = context.getComponent("log", LogComponent.class);
         assertNull(log.getExchangeFormatter());
