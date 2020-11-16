@@ -249,7 +249,7 @@ aggregate this number of messages.
 
 |`CamelAwsS3LastModified` |`java.util.Date` |The last modified timestamp of this object.
 
-|`CamelAwsS3Operation` |`String` |The operation to perform. Permitted values are copyObject, deleteObject, listBuckets, deleteBucket, downloadLink, listObjects
+|`CamelAwsS3Operation` |`String` |The operation to perform. Permitted values are copyObject, deleteObject, listBuckets, deleteBucket, listObjects
 
 |`CamelAwsS3StorageClass` |`String` |The storage class of this object.
 
@@ -277,7 +277,6 @@ the object using AWS-managed keys. For example use AES256.
 
 |`CamelAwsS3VersionId` |`String` |The *optional* version ID of the newly uploaded object.
 
-|`CamelAwsS3DownloadLinkExpiration` | `String` | The expiration (millis) of URL download link. The link will be stored into *CamelAwsS3DownloadLink* response header.
 
 |=======================================================================
 
@@ -476,23 +475,6 @@ This operation will list the buckets for this account
 --------------------------------------------------------------------------------
 
 This operation will delete the bucket mycamelbucket
-
-- DownloadLink: this operation create a download link for the file specified in the key header
-
-[source,java]
---------------------------------------------------------------------------------
-  from("direct:start").process(new Processor() {
-                    
-      @Override
-      public void process(Exchange exchange) throws Exception {
-          exchange.getIn().setHeader(S3Constants.KEY, "camelKey"); 
-      }
-  })
-  .to("aws2-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=downloadLink")
-  .to("mock:result");
---------------------------------------------------------------------------------
-
-This operation will create a downloadLink for the file camelKey in the bucket mycamelbucket
 
 - ListObjects: this operation list object in a specific bucket
 
