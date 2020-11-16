@@ -64,21 +64,6 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2KinesisFirehoseComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
          * The option is a: <code>boolean</code> type.
@@ -276,7 +261,6 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonKinesisFirehoseClient": getOrCreateConfiguration((KinesisFirehose2Component) component).setAmazonKinesisFirehoseClient((software.amazon.awssdk.services.firehose.FirehoseClient) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((KinesisFirehose2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "cborEnabled": getOrCreateConfiguration((KinesisFirehose2Component) component).setCborEnabled((boolean) value); return true;
             case "configuration": ((KinesisFirehose2Component) component).setConfiguration((org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration) value); return true;
             case "lazyStartProducer": ((KinesisFirehose2Component) component).setLazyStartProducer((boolean) value); return true;

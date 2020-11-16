@@ -32,8 +32,6 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisfirehoseclient":
         case "amazonKinesisFirehoseClient": getOrCreateConfiguration(target).setAmazonKinesisFirehoseClient(property(camelContext, software.amazon.awssdk.services.firehose.FirehoseClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "cborenabled":
@@ -58,14 +56,17 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonKinesisFirehoseClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonkinesisfirehoseclient":
         case "amazonKinesisFirehoseClient": return software.amazon.awssdk.services.firehose.FirehoseClient.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "cborenabled":
@@ -97,8 +98,6 @@ public class KinesisFirehose2ComponentConfigurer extends PropertyConfigurerSuppo
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonkinesisfirehoseclient":
         case "amazonKinesisFirehoseClient": return getOrCreateConfiguration(target).getAmazonKinesisFirehoseClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "cborenabled":

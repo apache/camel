@@ -91,6 +91,5 @@ public class KinesisFirehoseComponentConfigurationTest extends CamelTestSupport 
         assertEquals("some_stream_name", endpoint.getConfiguration().getStreamName());
         assertEquals("xxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
-        assertEquals(false, endpoint.getConfiguration().isAutoDiscoverClient());
     }
 }
