@@ -181,6 +181,11 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 The camel-aws2-ec2 has now support for autowiring the amazonEc2Client option with Ec2Client instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
+=== Camel-AWS2-ECS Autowire support
+
+The camel-aws2-ecs has now support for autowiring the ecsClient option with EcsClient instance coming from the registry.
+In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
+
 === Camel-AWS2-MQ Autowire support
 
 The camel-aws2-mq has now support for autowiring the amazonMqClient option with MqClient instance coming from the registry.
