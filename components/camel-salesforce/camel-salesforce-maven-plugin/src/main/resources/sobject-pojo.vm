@@ -162,16 +162,16 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
 #foreach ( $rel in $desc.childRelationships )
 #set (  $hasDescription = $sObjectNames.contains($rel.childSObject) )
 #if ( $utility.notNull($rel.relationshipName) && $hasDescription )
-    private QueryRecords${rel.childSObject} $rel.relationshipName;
+    private QueryRecords${rel.childSObject} ${rel.relationshipName}${childRelationshipNameSuffix};
 
     @JsonProperty("$rel.relationshipName")
-    public QueryRecords${rel.childSObject} get${rel.relationshipName}() {
-        return $rel.relationshipName;
+    public QueryRecords${rel.childSObject} get${rel.relationshipName}${childRelationshipNameSuffix}() {
+        return ${rel.relationshipName}${childRelationshipNameSuffix};
     }
 
     @JsonProperty("$rel.relationshipName")
-    public void set${rel.relationshipName}(QueryRecords${rel.childSObject} ${rel.relationshipName}) {
-        this.${rel.relationshipName} = ${rel.relationshipName};
+    public void set${rel.relationshipName}${childRelationshipNameSuffix}(QueryRecords${rel.childSObject} ${rel.relationshipName}) {
+        this.${rel.relationshipName}${childRelationshipNameSuffix} = ${rel.relationshipName};
     }
 #end
 #end
