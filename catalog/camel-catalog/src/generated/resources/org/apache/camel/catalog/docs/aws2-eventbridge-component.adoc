@@ -83,13 +83,14 @@ aws2-eventbridge://eventbusNameOrArn
 
 with the following path and query parameters:
 
-=== Path Parameters (1 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *eventbusNameOrArn* | *Required* Event bus name or ARN |  | String
+| *eventbusName* | *Required* Logical name | default | String
 |===
 
 

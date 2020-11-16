@@ -1182,6 +1182,10 @@ public class StaticEndpointBuilders {
      * Path parameter: eventbusNameOrArn (required)
      * Event bus name or ARN
      * 
+     * Path parameter: eventbusName (required)
+     * Logical name
+     * Default value: default
+     * 
      * @param path //eventbusNameOrArn
      */
     public static org.apache.camel.builder.endpoint.dsl.EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(
@@ -1200,6 +1204,10 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: eventbusNameOrArn (required)
      * Event bus name or ARN
+     * 
+     * Path parameter: eventbusName (required)
+     * Logical name
+     * Default value: default
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
