@@ -348,6 +348,13 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     String packageName;
 
     /**
+     * Suffix for child relationship property name. Necessary if an SObject has a lookup field with the same name as its
+     * Child Relationship Name. If setting to something other than default, "List" is a sensible value.
+     */
+    @Parameter(property = "camelSalesforce.childRelationshipNameSuffix")
+    String childRelationshipNameSuffix;
+
+    /**
      * Names of specific picklist/multipicklist fields, which should be converted to Enum (default case) if property
      * {@link this#useStringsForPicklists} is set to true. Format: SObjectApiName.FieldApiName (e.g. Account.DataSource)
      */
@@ -409,6 +416,9 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         parsePicklistToEnums();
         parsePicklistToStrings();
 
+        childRelationshipNameSuffix = childRelationshipNameSuffix != null
+                ? childRelationshipNameSuffix : "";
+
         // generate a source file for SObject
         final VelocityContext context = new VelocityContext();
         context.put("packageName", packageName);
@@ -416,6 +426,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         context.put("esc", StringEscapeUtils.class);
         context.put("desc", description);
         context.put("useStringsForPicklists", useStringsForPicklists);
+        context.put("childRelationshipNameSuffix", childRelationshipNameSuffix);
 
         final String pojoFileName = description.getName() + JAVA_EXT;
         final File pojoFile = new File(pkgDir, pojoFileName);

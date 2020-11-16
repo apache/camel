@@ -20,6 +20,9 @@ The plugin configuration has the following properties.
 * packageName - Java package name for generated DTOs, defaults to org.apache.camel.salesforce.dto.
 * customTypes - override default types in generated DTOs
 * useStringsForPicklists - Use strings instead of enumerations for picklists. Default is false.
+* childRelationshipNameSuffix - Suffix for child relationship property name. Necessary if an SObject 
+has a lookup field with the same name as its Child Relationship Name. If setting to something other 
+than default, "List" is a sensible value. 
 
 Additonal properties to provide proxy information, if behind a firewall.
 
