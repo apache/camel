@@ -49,9 +49,6 @@ public class KinesisFirehose2Component extends DefaultComponent {
         configuration.setStreamName(remaining);
         KinesisFirehose2Endpoint endpoint = new KinesisFirehose2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration);
-        }
         if (configuration.getAmazonKinesisFirehoseClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonKinesisFirehoseClient or accessKey and secretKey must be specified");
@@ -68,12 +65,5 @@ public class KinesisFirehose2Component extends DefaultComponent {
      */
     public void setConfiguration(KinesisFirehose2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(KinesisFirehose2Configuration configuration) {
-        Set<FirehoseClient> clients = getCamelContext().getRegistry().findByType(FirehoseClient.class);
-        if (clients.size() == 1) {
-            configuration.setAmazonKinesisFirehoseClient(clients.stream().findFirst().get());
-        }
     }
 }
