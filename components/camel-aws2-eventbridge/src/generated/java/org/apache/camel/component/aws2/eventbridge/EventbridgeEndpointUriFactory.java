@@ -20,7 +20,7 @@ public class EventbridgeEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(14);
+        Set<String> props = new HashSet<>(15);
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("synchronous");
@@ -33,6 +33,7 @@ public class EventbridgeEndpointUriFactory extends org.apache.camel.support.comp
         props.add("eventbusNameOrArn");
         props.add("accessKey");
         props.add("eventbridgeClient");
+        props.add("eventbusName");
         props.add("region");
         props.add("operation");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
@@ -55,6 +56,7 @@ public class EventbridgeEndpointUriFactory extends org.apache.camel.support.comp
         Map<String, Object> copy = new HashMap<>(properties);
 
         uri = buildPathParameter(syntax, uri, "eventbusNameOrArn", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "eventbusName", "default", true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

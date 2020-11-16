@@ -376,6 +376,10 @@ public interface EventbridgeEndpointBuilderFactory {
          * Path parameter: eventbusNameOrArn (required)
          * Event bus name or ARN
          * 
+         * Path parameter: eventbusName (required)
+         * Logical name
+         * Default value: default
+         * 
          * @param path //eventbusNameOrArn
          */
         default EventbridgeEndpointBuilder aws2Eventbridge(String path) {
@@ -393,6 +397,10 @@ public interface EventbridgeEndpointBuilderFactory {
          * 
          * Path parameter: eventbusNameOrArn (required)
          * Event bus name or ARN
+         * 
+         * Path parameter: eventbusName (required)
+         * Logical name
+         * Default value: default
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
