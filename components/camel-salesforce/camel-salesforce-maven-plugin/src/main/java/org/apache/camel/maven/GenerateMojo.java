@@ -255,6 +255,10 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             stack.pop();
         }
 
+        public String javaSafeString(final String val) {
+            return StringEscapeUtils.escapeJava(val);
+        }
+
         public Set<Map.Entry<String, Object>> propertiesOf(final Object object) {
             final Map<String, Object> properties = new TreeMap<>();
             IntrospectionSupport.getProperties(object, properties, null, false);

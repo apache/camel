@@ -202,7 +202,7 @@ ${utility.pop()}
 #foreach ( $i in ${p.value} )## BEAN LIST LOOP
 #set ( $var = ${utility.variableName(${i.class.simpleName})} )
 #if ( ${i.class.simpleName} == "SObjectField" )
-        final ${i.class.simpleName} $var = createField("${i.name}", "${i.label}", "${i.type}", "${i.soapType}", ${i.length}, ${i.unique}, ${i.nillable}, ${i.nameField}, ${i.externalId}, ${i.custom}, ${i.caseSensitive}, ${i.idLookup});
+        final ${i.class.simpleName} $var = createField("${i.name}", "${utility.javaSafeString(${i.label})}", "${i.type}", "${i.soapType}", ${i.length}, ${i.unique}, ${i.nillable}, ${i.nameField}, ${i.externalId}, ${i.custom}, ${i.caseSensitive}, ${i.idLookup});
         ${utility.current()}.add(${var});
 #else
         final ${i.class.simpleName} $var = new ${i.class.simpleName}();
