@@ -25,8 +25,6 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonkinesisfirehoseclient":
         case "amazonKinesisFirehoseClient": target.getConfiguration().setAmazonKinesisFirehoseClient(property(camelContext, software.amazon.awssdk.services.firehose.FirehoseClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "cborenabled":
         case "cborEnabled": target.getConfiguration().setCborEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -49,14 +47,17 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonKinesisFirehoseClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonkinesisfirehoseclient":
         case "amazonKinesisFirehoseClient": return software.amazon.awssdk.services.firehose.FirehoseClient.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "cborenabled":
         case "cborEnabled": return boolean.class;
         case "lazystartproducer":
@@ -86,8 +87,6 @@ public class KinesisFirehose2EndpointConfigurer extends PropertyConfigurerSuppor
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonkinesisfirehoseclient":
         case "amazonKinesisFirehoseClient": return target.getConfiguration().getAmazonKinesisFirehoseClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "cborenabled":
         case "cborEnabled": return target.getConfiguration().isCborEnabled();
         case "lazystartproducer":

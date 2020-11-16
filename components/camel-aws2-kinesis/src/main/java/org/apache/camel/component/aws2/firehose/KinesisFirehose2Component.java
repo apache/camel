@@ -17,14 +17,12 @@
 package org.apache.camel.component.aws2.firehose;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import software.amazon.awssdk.services.firehose.FirehoseClient;
 
 @Component("aws2-kinesis-firehose")
 public class KinesisFirehose2Component extends DefaultComponent {
