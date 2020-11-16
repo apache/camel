@@ -55,7 +55,7 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
 
         assertSame(clientMock, endpoint.getConfiguration().getEcsClient());
     }
-    
+
     @Test
     public void createEndpointWithAutowireAndNoCreds() throws Exception {
 
