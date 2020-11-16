@@ -55,4 +55,15 @@ public class ECS2ComponentClientRegistryTest extends CamelTestSupport {
 
         assertSame(clientMock, endpoint.getConfiguration().getEcsClient());
     }
+    
+    @Test
+    public void createEndpointWithAutowireAndNoCreds() throws Exception {
+
+        AmazonECSClientMock clientMock = new AmazonECSClientMock();
+        context.getRegistry().bind("amazonEcsClient", clientMock);
+        ECS2Component component = context.getComponent("aws2-ecs", ECS2Component.class);
+        ECS2Endpoint endpoint = (ECS2Endpoint) component.createEndpoint("aws2-ecs://TestDomain");
+
+        assertSame(clientMock, endpoint.getConfiguration().getEcsClient());
+    }
 }
