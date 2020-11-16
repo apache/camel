@@ -196,6 +196,11 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 The camel-aws2-eventbridge has now support for autowiring the eventBridgeClient option with EventBridgeClient instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
+=== Camel-AWS2-IAM Autowire support
+
+The camel-aws2-iam has now support for autowiring the iamClient option with IamClient instance coming from the registry.
+In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
+
 === Camel-AWS2-MQ Autowire support
 
 The camel-aws2-mq has now support for autowiring the amazonMqClient option with MqClient instance coming from the registry.
