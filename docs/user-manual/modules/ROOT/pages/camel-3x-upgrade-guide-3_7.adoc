@@ -203,6 +203,9 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 
 === Camel-AWS2-Kinesis Autowire support
 
+The camel-aws2-kinesis has now support for autowiring the amazonKinesisClient option with KinesisClient instance coming from the registry.
+In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
+
 The camel-aws2-kinesis-firehose has now support for autowiring the amazonKinesisFirehoseClient option with FirehoseClient instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
