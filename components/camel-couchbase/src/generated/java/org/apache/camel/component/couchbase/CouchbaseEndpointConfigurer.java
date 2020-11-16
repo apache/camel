@@ -35,6 +35,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "bucket": target.setBucket(property(camelContext, java.lang.String.class, value)); return true;
         case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "connecttimeout":
+        case "connectTimeout": target.setConnectTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": target.setConsumerProcessedStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -45,6 +47,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "fulldocument":
+        case "fullDocument": target.setFullDocument(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
@@ -116,6 +120,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return boolean.class;
         case "bucket": return java.lang.String.class;
         case "collection": return java.lang.String.class;
+        case "connecttimeout":
+        case "connectTimeout": return long.class;
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": return java.lang.String.class;
         case "delay": return long.class;
@@ -126,6 +132,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fulldocument":
+        case "fullDocument": return boolean.class;
         case "greedy": return boolean.class;
         case "initialdelay":
         case "initialDelay": return long.class;
@@ -198,6 +206,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "bucket": return target.getBucket();
         case "collection": return target.getCollection();
+        case "connecttimeout":
+        case "connectTimeout": return target.getConnectTimeout();
         case "consumerprocessedstrategy":
         case "consumerProcessedStrategy": return target.getConsumerProcessedStrategy();
         case "delay": return target.getDelay();
@@ -208,6 +218,8 @@ public class CouchbaseEndpointConfigurer extends PropertyConfigurerSupport imple
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "fulldocument":
+        case "fullDocument": return target.isFullDocument();
         case "greedy": return target.isGreedy();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();

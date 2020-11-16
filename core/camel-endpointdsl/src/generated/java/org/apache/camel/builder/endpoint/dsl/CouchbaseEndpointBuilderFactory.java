@@ -181,6 +181,34 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true consumer will return complete document instead data defined
+         * in view.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default CouchbaseEndpointConsumerBuilder fullDocument(
+                boolean fullDocument) {
+            doSetProperty("fullDocument", fullDocument);
+            return this;
+        }
+        /**
+         * If true consumer will return complete document instead data defined
+         * in view.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default CouchbaseEndpointConsumerBuilder fullDocument(
+                String fullDocument) {
+            doSetProperty("fullDocument", fullDocument);
+            return this;
+        }
+        /**
          * The output limit to use.
          * 
          * The option is a: <code>int</code> type.
@@ -813,6 +841,32 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the timeoutconnect in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 2500
+         * Group: advanced
+         */
+        default AdvancedCouchbaseEndpointConsumerBuilder connectTimeout(
+                long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Define the timeoutconnect in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 2500
+         * Group: advanced
+         */
+        default AdvancedCouchbaseEndpointConsumerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
          * Define the operation timeout in milliseconds.
          * 
          * The option is a: <code>long</code> type.
@@ -1174,6 +1228,32 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * Define the timeoutconnect in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 2500
+         * Group: advanced
+         */
+        default AdvancedCouchbaseEndpointProducerBuilder connectTimeout(
+                long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Define the timeoutconnect in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 2500
+         * Group: advanced
+         */
+        default AdvancedCouchbaseEndpointProducerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
          * Define the operation timeout in milliseconds.
          * 
          * The option is a: <code>long</code> type.
@@ -1328,6 +1408,32 @@ public interface CouchbaseEndpointBuilderFactory {
         default AdvancedCouchbaseEndpointBuilder additionalHosts(
                 String additionalHosts) {
             doSetProperty("additionalHosts", additionalHosts);
+            return this;
+        }
+        /**
+         * Define the timeoutconnect in milliseconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 2500
+         * Group: advanced
+         */
+        default AdvancedCouchbaseEndpointBuilder connectTimeout(
+                long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
+            return this;
+        }
+        /**
+         * Define the timeoutconnect in milliseconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 2500
+         * Group: advanced
+         */
+        default AdvancedCouchbaseEndpointBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
