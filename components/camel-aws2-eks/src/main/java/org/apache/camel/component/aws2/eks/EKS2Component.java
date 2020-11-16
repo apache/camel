@@ -17,17 +17,14 @@
 package org.apache.camel.component.aws2.eks;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.eks.EksClient;
 
 /**
  * For working with Amazon EKS SDK v2.
@@ -55,9 +52,6 @@ public class EKS2Component extends DefaultComponent {
         EKS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new EKS2Configuration();
         EKS2Endpoint endpoint = new EKS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getEksClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon eks client or accessKey and secretKey must be specified");
@@ -75,20 +69,5 @@ public class EKS2Component extends DefaultComponent {
      */
     public void setConfiguration(EKS2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(EKS2Configuration configuration, EKS2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getEksClient())) {
-            LOG.debug("Looking for an EksClient instance in the registry");
-            Set<EksClient> clients = getCamelContext().getRegistry().findByType(EksClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one EksClient instance in the registry");
-                configuration.setEksClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No EksClient instance in the registry");
-            }
-        } else {
-            LOG.debug("EksClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }
