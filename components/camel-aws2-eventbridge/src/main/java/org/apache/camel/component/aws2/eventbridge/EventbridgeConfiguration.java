@@ -49,8 +49,6 @@ public class EventbridgeConfiguration implements Cloneable {
     private boolean pojoRequest;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
     @UriParam
     private String eventPatternFile;
 
