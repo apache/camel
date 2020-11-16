@@ -30,6 +30,7 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.env.ClusterEnvironment;
+import org.apache.camel.CamelException;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -42,6 +43,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_PUT;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_URI_ERROR;
+import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_CONNECT_TIMEOUT;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_CONSUME_PROCESSED_STRATEGY;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_COUCHBASE_PORT;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_DESIGN_DOCUMENT_NAME;
@@ -124,6 +126,8 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     private String rangeStartKey;
     @UriParam(label = "consumer")
     private String rangeEndKey = "";
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean fullDocument = true;
 
     // Consumer strategy
     @UriParam(label = "consumer", defaultValue = DEFAULT_CONSUME_PROCESSED_STRATEGY)
@@ -132,6 +136,10 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     // Connection fine tuning parameters
     @UriParam(label = "advanced", defaultValue = "2500", javaType = "java.time.Duration")
     private long queryTimeout = DEFAULT_QUERY_TIMEOUT;
+
+    // Connection fine tuning parameters
+    @UriParam(label = "advanced", defaultValue = "2500", javaType = "java.time.Duration")
+    private long connectTimeout = DEFAULT_CONNECT_TIMEOUT;
 
     public CouchbaseEndpoint() {
     }
@@ -433,6 +441,17 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
         this.rangeEndKey = rangeEndKey;
     }
 
+    public boolean isFullDocument() {
+        return fullDocument;
+    }
+
+    /**
+     * If true consumer will return complete document instead data defined in view
+     */
+    public void setFullDocument(boolean fullDocument) {
+        this.fullDocument = fullDocument;
+    }
+
     public String getConsumerProcessedStrategy() {
         return consumerProcessedStrategy;
     }
@@ -453,6 +472,17 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
      */
     public void setQueryTimeout(long queryTimeout) {
         this.queryTimeout = queryTimeout;
+    }
+
+    public long getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Define the timeoutconnect in milliseconds
+     */
+    public void setConnectTimeout(long connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 
     public URI[] makeBootstrapURI() throws URISyntaxException {
@@ -492,9 +522,15 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
         List<URI> hosts = Arrays.asList(makeBootstrapURI());
         String connectionString;
 
+        if (bucket == null || bucket.isEmpty()) {
+            throw new CamelException(COUCHBASE_URI_ERROR);
+        }
+
         ClusterEnvironment.Builder cfb = ClusterEnvironment.builder();
         if (queryTimeout != DEFAULT_QUERY_TIMEOUT) {
-            cfb.timeoutConfig().queryTimeout(Duration.ofMillis(queryTimeout));
+            cfb.timeoutConfig()
+                    .connectTimeout(Duration.ofMillis(connectTimeout))
+                    .queryTimeout(Duration.ofMillis(queryTimeout));
         }
 
         ClusterEnvironment env = cfb.build();
