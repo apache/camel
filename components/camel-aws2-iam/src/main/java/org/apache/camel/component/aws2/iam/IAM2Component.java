@@ -55,9 +55,6 @@ public class IAM2Component extends DefaultComponent {
         IAM2Configuration configuration = this.configuration != null ? this.configuration.copy() : new IAM2Configuration();
         IAM2Endpoint endpoint = new IAM2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getIamClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon IAM client or accessKey and secretKey must be specified");
@@ -75,20 +72,5 @@ public class IAM2Component extends DefaultComponent {
      */
     public void setConfiguration(IAM2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(IAM2Configuration configuration, IAM2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getIamClient())) {
-            LOG.debug("Looking for an IamClient instance in the registry");
-            Set<IamClient> clients = getCamelContext().getRegistry().findByType(IamClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one IamClient instance in the registry");
-                configuration.setIamClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No IamClient instance in the registry");
-            }
-        } else {
-            LOG.debug("IamClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }
