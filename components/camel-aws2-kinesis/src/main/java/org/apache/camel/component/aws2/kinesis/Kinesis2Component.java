@@ -17,14 +17,12 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
 
 @Component("aws2-kinesis")
 public class Kinesis2Component extends DefaultComponent {
