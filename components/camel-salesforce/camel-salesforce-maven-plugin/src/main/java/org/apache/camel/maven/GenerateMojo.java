@@ -436,18 +436,22 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         }
 
         // write required Enumerations for any picklists
-        for (final SObjectField field : description.getFields()) {
-            if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
-                final String enumName = utility.enumTypeName(description.getName(), field.getName());
-                final String enumFileName = enumName + JAVA_EXT;
-                final File enumFile = new File(pkgDir, enumFileName);
+        if (!useStringsForPicklists || (picklistToEnums != null && picklistToEnums.length > 0)) {
+            for (final SObjectField field : description.getFields()) {
+                if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
+                    final String enumName = utility.enumTypeName(description.getName(),
+                            field.getName());
+                    final String enumFileName = enumName + JAVA_EXT;
+                    final File enumFile = new File(pkgDir, enumFileName);
 
-                context.put("field", field);
-                context.put("enumName", enumName);
-                final Template enumTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM, UTF_8);
+                    context.put("field", field);
+                    context.put("enumName", enumName);
+                    final Template enumTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM, UTF_8);
 
-                try (final Writer writer = new OutputStreamWriter(new FileOutputStream(enumFile), StandardCharsets.UTF_8)) {
-                    enumTemplate.merge(context, writer);
+                    try (final Writer writer = new OutputStreamWriter(
+                            new FileOutputStream(enumFile), StandardCharsets.UTF_8)) {
+                        enumTemplate.merge(context, writer);
+                    }
                 }
             }
         }
