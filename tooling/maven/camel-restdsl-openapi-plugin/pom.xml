@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>openapi-generator</artifactId>
-            <version>4.3.1</version>
+            <version>${openapi-generator-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
