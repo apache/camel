@@ -57,9 +57,6 @@ public class Lambda2Component extends DefaultComponent {
         Lambda2Endpoint endpoint = new Lambda2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         endpoint.setFunction(remaining);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getAwsLambdaClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("accessKey/secretKey or awsLambdaClient must be specified");
@@ -77,20 +74,5 @@ public class Lambda2Component extends DefaultComponent {
      */
     public void setConfiguration(Lambda2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(Lambda2Configuration configuration, Lambda2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAwsLambdaClient())) {
-            LOG.debug("Looking for an LambdaClient instance in the registry");
-            Set<LambdaClient> clients = getCamelContext().getRegistry().findByType(LambdaClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one LambdaClient instance in the registry");
-                configuration.setAwsLambdaClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No LambdaClient instance in the registry");
-            }
-        } else {
-            LOG.debug("LambdaClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }
