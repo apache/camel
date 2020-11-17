@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.google.pubsub;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -95,7 +92,7 @@ public class GooglePubsubProducer extends DefaultProducer {
         } else if (body instanceof byte[]) {
             byteString = ByteString.copyFrom((byte[]) body);
         } else {
-            byteString = ByteString.copyFrom(serialize(body));
+            byteString = ByteString.copyFrom(endpoint.getSerializer().serialize(body));
         }
 
         PubsubMessage.Builder messageBuilder = PubsubMessage.newBuilder().setData(byteString);
@@ -111,12 +108,5 @@ public class GooglePubsubProducer extends DefaultProducer {
 
         ApiFuture<String> messageIdFuture = publisher.publish(message);
         exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, messageIdFuture.get());
-    }
-
-    public static byte[] serialize(Object obj) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ObjectOutputStream os = new ObjectOutputStream(out);
-        os.writeObject(obj);
-        return out.toByteArray();
     }
 }
