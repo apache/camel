@@ -27,8 +27,6 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 @UriParams
 public class EventbridgeConfiguration implements Cloneable {
 
-    @UriPath(description = "Logical name", defaultValue = "default")
-    @Metadata(required = true)
     private String eventbusName = "default";
     @UriParam
     @Metadata(autowired = true)
