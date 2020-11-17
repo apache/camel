@@ -29,8 +29,9 @@ public class SESComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonSESClientMock awsSESClient = new AmazonSESClientMock();
         context.getRegistry().bind("awsSesClient", awsSESClient);
-        Ses2Component component = new Ses2Component(context);
-        Ses2Endpoint endpoint = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com?accessKey=xxx&secretKey=yyy");
+        Ses2Component component = context.getComponent("aws2-ses", Ses2Component.class);
+        Ses2Endpoint endpoint
+                = (Ses2Endpoint) component.createEndpoint("aws2-ses://from@example.com");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSESClient());
     }
