@@ -32,8 +32,6 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsesclient":
         case "amazonSESClient": getOrCreateConfiguration(target).setAmazonSESClient(property(camelContext, software.amazon.awssdk.services.ses.SesClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ses.Ses2Configuration.class, value)); return true;
@@ -61,14 +59,17 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonSESClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonsesclient":
         case "amazonSESClient": return software.amazon.awssdk.services.ses.SesClient.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.ses.Ses2Configuration.class;
@@ -103,8 +104,6 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonsesclient":
         case "amazonSESClient": return getOrCreateConfiguration(target).getAmazonSESClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
