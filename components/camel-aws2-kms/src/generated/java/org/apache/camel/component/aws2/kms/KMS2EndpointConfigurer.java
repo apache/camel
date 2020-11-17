@@ -23,8 +23,6 @@ public class KMS2EndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "kmsclient":
         case "kmsClient": target.getConfiguration().setKmsClient(property(camelContext, software.amazon.awssdk.services.kms.KmsClient.class, value)); return true;
         case "lazystartproducer":
@@ -49,12 +47,15 @@ public class KMS2EndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"kmsClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "kmsclient":
         case "kmsClient": return software.amazon.awssdk.services.kms.KmsClient.class;
         case "lazystartproducer":
@@ -84,8 +85,6 @@ public class KMS2EndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "kmsclient":
         case "kmsClient": return target.getConfiguration().getKmsClient();
         case "lazystartproducer":
