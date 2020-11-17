@@ -53,20 +53,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
-
-        LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
-        context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
-        Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        Lambda2Endpoint endpoint = (Lambda2Endpoint) component
-                .createEndpoint(
-                        "aws2-lambda://myFunction?operation=getFunction&accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(awsLambdaClient, endpoint.getConfiguration().getAwsLambdaClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
