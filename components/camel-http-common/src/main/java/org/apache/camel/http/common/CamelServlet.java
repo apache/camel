@@ -299,7 +299,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             }
             // process the exchange
             final Processor processor = consumer.getProcessor();
-            isAsync = !forceAwait && AsyncProcessor.class.isInstance(processor);
+            isAsync = isAsync() && !forceAwait && AsyncProcessor.class.isInstance(processor);
             if (isAsync) {
                 result = AsyncProcessor.class.cast(processor)
                         .processAsync(exchange)
