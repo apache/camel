@@ -349,6 +349,47 @@ public abstract class AbstractCamelCatalog {
             }
         }
 
+        // for api component then check that the apiName/methodName combo is valid
+        if (model.isApi()) {
+            String[] apiSyntax = StringHelper.splitWords(model.getApiSyntax());
+            String key1 = properties.get(apiSyntax[0]);
+            String key2 = apiSyntax.length > 1 ? properties.get(apiSyntax[1]) : null;
+
+            if (key1 != null && key2 != null) {
+                ApiModel api = model.getApiOptions().stream().filter(o -> o.getName().equalsIgnoreCase(key1)).findFirst().orElse(null);
+                if (api == null) {
+                    result.addInvalidEnum(apiSyntax[0], key1);
+                    List<String> choices = model.getApiOptions().stream().map(ApiModel::getName).collect(Collectors.toList());
+                    result.addInvalidEnumChoices(apiSyntax[0], choices.toArray(new String[choices.size()]));
+                } else {
+                    // walk each method and match against its name/alias
+                    boolean found = false;
+                    for (ApiMethodModel m : api.getMethods()) {
+                        String key3 = apiMethodAlias(api, m);
+                        if (m.getName().equalsIgnoreCase(key2) || key2.equalsIgnoreCase(key3)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        result.addInvalidEnum(apiSyntax[1], key2);
+                        List<String> choices = api.getMethods().stream()
+                                .map(m -> {
+                                    // favour using method alias in choices
+                                    String answer = apiMethodAlias(api, m);
+                                    if (answer == null) {
+                                        answer = m.getName();
+                                    }
+                                    return answer;
+                                })
+                                .collect(Collectors.toList());
+
+                        result.addInvalidEnumChoices(apiSyntax[1], choices.toArray(new String[choices.size()]));
+                    }
+                }
+            }
+        }
+
         // now check if all required values are there, and that a default value does not exists
         for (BaseOptionModel row : rows.values()) {
             if (row.isRequired()) {
