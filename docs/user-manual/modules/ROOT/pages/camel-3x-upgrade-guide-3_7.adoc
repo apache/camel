@@ -211,6 +211,11 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 
 === Camel-AWS2-KMS Autowire support
 
+The camel-aws2-kms has now support for autowiring the awsLambdaClient option with LambdaClient instance coming from the registry.
+In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
+
+=== Camel-AWS2-Lambda Autowire support
+
 The camel-aws2-kms has now support for autowiring the kmsClient option with KmsClient instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
