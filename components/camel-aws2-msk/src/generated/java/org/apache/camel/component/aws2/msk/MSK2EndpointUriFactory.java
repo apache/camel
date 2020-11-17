@@ -20,8 +20,7 @@ public class MSK2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(14);
-        props.add("autoDiscoverClient");
+        Set<String> props = new HashSet<>(13);
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("synchronous");
