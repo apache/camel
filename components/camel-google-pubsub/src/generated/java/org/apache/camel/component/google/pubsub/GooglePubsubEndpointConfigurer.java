@@ -37,11 +37,17 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": target.setLoggerId(property(camelContext, java.lang.String.class, value)); return true;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": target.setMaxMessagesPerPoll(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "serializer": target.setSerializer(property(camelContext, org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "synchronouspull":
         case "synchronousPull": target.setSynchronousPull(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"serializer"};
     }
 
     @Override
@@ -63,6 +69,7 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": return java.lang.String.class;
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return java.lang.Integer.class;
+        case "serializer": return org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer.class;
         case "synchronous": return boolean.class;
         case "synchronouspull":
         case "synchronousPull": return boolean.class;
@@ -90,6 +97,7 @@ public class GooglePubsubEndpointConfigurer extends PropertyConfigurerSupport im
         case "loggerId": return target.getLoggerId();
         case "maxmessagesperpoll":
         case "maxMessagesPerPoll": return target.getMaxMessagesPerPoll();
+        case "serializer": return target.getSerializer();
         case "synchronous": return target.isSynchronous();
         case "synchronouspull":
         case "synchronousPull": return target.isSynchronousPull();

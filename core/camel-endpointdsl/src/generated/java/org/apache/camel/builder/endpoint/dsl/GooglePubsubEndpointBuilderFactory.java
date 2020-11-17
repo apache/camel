@@ -482,6 +482,34 @@ public interface GooglePubsubEndpointBuilderFactory {
             return (GooglePubsubEndpointProducerBuilder) this;
         }
         /**
+         * A custom GooglePubsubSerializer to use for serializing message
+         * payloads in the producer.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder serializer(
+                Object serializer) {
+            doSetProperty("serializer", serializer);
+            return this;
+        }
+        /**
+         * A custom GooglePubsubSerializer to use for serializing message
+         * payloads in the producer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedGooglePubsubEndpointProducerBuilder serializer(
+                String serializer) {
+            doSetProperty("serializer", serializer);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 

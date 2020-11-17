@@ -24,6 +24,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.google.pubsub.serializer.DefaultGooglePubsubSerializer;
+import org.apache.camel.component.google.pubsub.serializer.GooglePubsubSerializer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -70,6 +72,12 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
               description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubConstants.AckMode ackMode = GooglePubsubConstants.AckMode.AUTO;
 
+    @UriParam(name = "serializer",
+              description = "A custom GooglePubsubSerializer to use for serializing message payloads in the producer",
+              label = "producer,advanced")
+    @Metadata(autowired = true)
+    private GooglePubsubSerializer serializer;
+
     public GooglePubsubEndpoint(String uri, Component component, String remaining) {
         super(uri, component);
 
@@ -102,6 +110,9 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         afterPropertiesSet();
+        if (ObjectHelper.isEmpty(serializer)) {
+            serializer = new DefaultGooglePubsubSerializer();
+        }
         return new GooglePubsubProducer(this);
     }
 
@@ -178,5 +189,13 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     public void setAckMode(GooglePubsubConstants.AckMode ackMode) {
         this.ackMode = ackMode;
+    }
+
+    public GooglePubsubSerializer getSerializer() {
+        return serializer;
+    }
+
+    public void setSerializer(GooglePubsubSerializer serializer) {
+        this.serializer = serializer;
     }
 }
