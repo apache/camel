@@ -224,4 +224,9 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 The camel-aws2-mq has now support for autowiring the amazonMqClient option with MqClient instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
+=== Camel-AWS2-MSK Autowire support
+
+The camel-aws2-msk has now support for autowiring the mskClient option with KafkaClient instance coming from the registry.
+In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
+
 
