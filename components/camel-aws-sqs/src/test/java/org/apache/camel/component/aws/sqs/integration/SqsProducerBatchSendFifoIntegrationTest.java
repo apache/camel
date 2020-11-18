@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.sqs.integration;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.amazonaws.services.sqs.AmazonSQS;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -42,7 +41,7 @@ public class SqsProducerBatchSendFifoIntegrationTest extends CamelTestSupport {
 
     @SuppressWarnings("unused")
     @RegisterExtension
-    public static AWSService<AmazonSQS> service = AWSServiceFactory.createSQSService();
+    public static AWSService service = AWSServiceFactory.createSQSService();
 
     @RegisterExtension
     public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();

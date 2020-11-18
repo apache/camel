@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.sqs.integration;
 
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.services.sqs.AmazonSQS;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -43,7 +42,7 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
 
     @SuppressWarnings("unused")
     @RegisterExtension
-    public static AWSService<AmazonSQS> service = AWSServiceFactory.createSQSService();
+    public static AWSService service = AWSServiceFactory.createSQSService();
 
     @RegisterExtension
     public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();

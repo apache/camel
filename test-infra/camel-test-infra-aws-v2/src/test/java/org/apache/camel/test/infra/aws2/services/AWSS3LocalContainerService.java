@@ -17,30 +17,13 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
 
-public class AWSS3LocalContainerService extends AWSLocalContainerService<S3Client> {
+public class AWSS3LocalContainerService extends AWSLocalContainerService {
     private static final Logger LOG = LoggerFactory.getLogger(AWSS3LocalContainerService.class);
 
     public AWSS3LocalContainerService() {
         super(Service.S3);
-
-        LOG.info("Initializing the local AWS services");
-        getContainer().start();
-    }
-
-    @Override
-    public S3Client getClient() {
-        Region region = Region.US_EAST_1;
-
-        return S3Client.builder()
-                .region(region)
-                .credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER)
-                .endpointOverride(getServiceEndpoint())
-                .build();
     }
 }
