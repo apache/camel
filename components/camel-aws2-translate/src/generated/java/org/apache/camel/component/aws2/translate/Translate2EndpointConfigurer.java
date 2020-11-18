@@ -23,8 +23,6 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": target.getConfiguration().setAutodetectSourceLanguage(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -55,12 +53,15 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"translateClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": return boolean.class;
         case "lazystartproducer":
@@ -96,8 +97,6 @@ public class Translate2EndpointConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": return target.getConfiguration().isAutodetectSourceLanguage();
         case "lazystartproducer":
