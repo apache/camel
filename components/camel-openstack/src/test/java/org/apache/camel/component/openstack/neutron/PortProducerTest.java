@@ -65,7 +65,7 @@ public class PortProducerTest extends NeutronProducerTestSupport {
         when(networkingService.port()).thenReturn(portService);
 
         producer = new PortProducer(endpoint, client);
-        when(portService.create(any())).thenReturn(testOSport);
+        when(portService.create((Port) any())).thenReturn(testOSport);
         when(portService.get(anyString())).thenReturn(testOSport);
 
         List<Port> getAllList = new ArrayList<>();
