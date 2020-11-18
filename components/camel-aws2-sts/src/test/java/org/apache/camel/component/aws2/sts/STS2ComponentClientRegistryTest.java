@@ -47,19 +47,7 @@ public class STS2ComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
-
-        AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
-        context.getRegistry().bind("amazonStsClient", clientMock);
-        STS2Component component = context.getComponent("aws2-sts", STS2Component.class);
-        STS2Endpoint endpoint = (STS2Endpoint) component
-                .createEndpoint("aws2-sts://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(clientMock, endpoint.getConfiguration().getStsClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         AmazonSTSClientMock clientMock = new AmazonSTSClientMock();
         context.getRegistry().bind("amazonStsClient", clientMock);
