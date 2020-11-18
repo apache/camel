@@ -20,7 +20,7 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(61);
+        Set<String> props = new HashSet<>(60);
         props.add("useIAMCredentials");
         props.add("synchronous");
         props.add("queueUrl");
@@ -69,7 +69,6 @@ public class Sqs2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("policy");
         props.add("timeUnit");
         props.add("delaySeconds");
-        props.add("autoDiscoverClient");
         props.add("messageAttributeNames");
         props.add("serverSideEncryptionEnabled");
         props.add("proxyProtocol");

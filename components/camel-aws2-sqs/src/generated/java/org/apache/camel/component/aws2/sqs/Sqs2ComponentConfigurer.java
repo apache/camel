@@ -38,8 +38,6 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "attributeNames": getOrCreateConfiguration(target).setAttributeNames(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreatequeue":
         case "autoCreateQueue": getOrCreateConfiguration(target).setAutoCreateQueue(property(camelContext, boolean.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -110,6 +108,11 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonSQSClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
@@ -122,8 +125,6 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "attributeNames": return java.lang.String.class;
         case "autocreatequeue":
         case "autoCreateQueue": return boolean.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -207,8 +208,6 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "attributeNames": return getOrCreateConfiguration(target).getAttributeNames();
         case "autocreatequeue":
         case "autoCreateQueue": return getOrCreateConfiguration(target).isAutoCreateQueue();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":

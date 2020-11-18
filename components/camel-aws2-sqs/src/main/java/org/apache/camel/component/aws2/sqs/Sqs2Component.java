@@ -17,18 +17,15 @@
 package org.apache.camel.component.aws2.sqs;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.sqs.SqsClient;
 
 /**
  * For working with Amazon SQS SDK v2.
