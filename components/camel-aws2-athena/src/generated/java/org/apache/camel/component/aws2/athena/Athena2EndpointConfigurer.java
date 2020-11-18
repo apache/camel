@@ -25,8 +25,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonathenaclient":
         case "amazonAthenaClient": target.getConfiguration().setAmazonAthenaClient(property(camelContext, software.amazon.awssdk.services.athena.AthenaClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "clientrequesttoken":
         case "clientRequestToken": target.getConfiguration().setClientRequestToken(property(camelContext, java.lang.String.class, value)); return true;
         case "database": target.getConfiguration().setDatabase(property(camelContext, java.lang.String.class, value)); return true;
@@ -78,14 +76,17 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonAthenaClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonathenaclient":
         case "amazonAthenaClient": return software.amazon.awssdk.services.athena.AthenaClient.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "clientrequesttoken":
         case "clientRequestToken": return java.lang.String.class;
         case "database": return java.lang.String.class;
@@ -144,8 +145,6 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonathenaclient":
         case "amazonAthenaClient": return target.getConfiguration().getAmazonAthenaClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "clientrequesttoken":
         case "clientRequestToken": return target.getConfiguration().getClientRequestToken();
         case "database": return target.getConfiguration().getDatabase();

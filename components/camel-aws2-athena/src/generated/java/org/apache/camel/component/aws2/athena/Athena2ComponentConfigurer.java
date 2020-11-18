@@ -32,8 +32,6 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonathenaclient":
         case "amazonAthenaClient": getOrCreateConfiguration(target).setAmazonAthenaClient(property(camelContext, software.amazon.awssdk.services.athena.AthenaClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "clientrequesttoken":
@@ -87,14 +85,17 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonAthenaClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "amazonathenaclient":
         case "amazonAthenaClient": return software.amazon.awssdk.services.athena.AthenaClient.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "clientrequesttoken":
@@ -155,8 +156,6 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonathenaclient":
         case "amazonAthenaClient": return getOrCreateConfiguration(target).getAmazonAthenaClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "clientrequesttoken":

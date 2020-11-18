@@ -20,7 +20,7 @@ public class Athena2EndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(29);
         props.add("outputLocation");
         props.add("workGroup");
         props.add("kmsKey");
@@ -36,7 +36,6 @@ public class Athena2EndpointUriFactory extends org.apache.camel.support.componen
         props.add("encryptionOption");
         props.add("amazonAthenaClient");
         props.add("retry");
-        props.add("autoDiscoverClient");
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("resetWaitTimeoutOnRetry");
