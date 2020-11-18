@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
 import org.apache.camel.support.language.LanguageAnnotation;
 
 /**
- * Datasonnet TODO: 7/21/20 docs
+ * Used to inject a DataSonnet expression into a field, property, method or parameter when using
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

@@ -96,7 +96,6 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
             Objects.requireNonNull(expression, "String expression property must be set!");
 
             Document<?> result = doEvaluate(exchange);
-            // TODO: 9/8/20 see if we can offload some of this to a Document specific custom type converter
             if (!type.equals(Object.class)) {
                 return ExchangeHelper.convertToType(exchange, type, result.getContent());
             } else if (resultType == null || resultType.equals(Document.class)) {
