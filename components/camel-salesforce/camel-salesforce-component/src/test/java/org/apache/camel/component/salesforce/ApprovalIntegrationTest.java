@@ -59,8 +59,8 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
 
         assertEquals(1, approvalResult.size(), "There should be one Account waiting approval");
 
-        assertEquals("Instance status of the item in approval result should be `Pending`", "Pending",
-                approvalResult.iterator().next().getInstanceStatus());
+        assertEquals("Pending", approvalResult.iterator().next().getInstanceStatus(),
+                "Instance status of the item in approval result should be `Pending`");
 
         // as it stands on 18.11.2016. the GET method on
         // /vXX.X/process/approvals/ with Accept other than
@@ -75,7 +75,7 @@ public class ApprovalIntegrationTest extends AbstractApprovalIntegrationTest {
     }
 
     @Test
-    public void shouldSubmitBulkApprovals(String format) {
+    public void shouldSubmitBulkApprovals() {
         final List<ApprovalRequest> approvalRequests = accountIds.stream().map(id -> {
             final ApprovalRequest request = new ApprovalRequest();
             request.setContextId(id);

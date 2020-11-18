@@ -68,16 +68,12 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
             = new HashSet<>(Arrays.asList(SalesforceEndpointConfig.DEFAULT_VERSION, "34.0", "36.0", "37.0", "39.0"));
 
     @Parameter
-    private final String version;
+    protected String format;
+
+    @Parameter(1)
+    protected String version;
 
     private String accountId;
-
-    private final String batchuri;
-
-    public CompositeApiBatchIntegrationTest(String format, String version) {
-        this.version = version;
-        batchuri = "salesforce:composite-batch?format=" + format;
-    }
 
     @AfterEach
     public void removeRecords() {
@@ -101,7 +97,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
     }
 
     @Test
-    public void shouldSubmitBatchUsingCompositeApi(String format, String version) {
+    public void shouldSubmitBatchUsingCompositeApi() {
         final SObjectBatch batch = new SObjectBatch(version);
 
         final Account updates = new Account();
@@ -116,7 +112,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
 
         batch.addDelete("Account", accountId);
 
-        final SObjectBatchResponse response = template.requestBody(batchuri, batch, SObjectBatchResponse.class);
+        final SObjectBatchResponse response = template.requestBody(batchUri(), batch, SObjectBatchResponse.class);
 
         assertNotNull(response, "Response should be provided");
 
@@ -389,7 +385,7 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
     }
 
     SObjectBatchResponse testBatch(final SObjectBatch batch) {
-        final SObjectBatchResponse response = template.requestBody(batchuri, batch, SObjectBatchResponse.class);
+        final SObjectBatchResponse response = template.requestBody(batchUri(), batch, SObjectBatchResponse.class);
 
         assertNotNull(response, "Response should be provided");
 
@@ -401,5 +397,9 @@ public class CompositeApiBatchIntegrationTest extends AbstractSalesforceTestBase
     @Parameters(name = "format = {0}, version = {1}")
     public static Iterable<Object[]> formats() {
         return VERSIONS.stream().map(v -> new Object[] { "JSON", v }).collect(Collectors.toList());
+    }
+
+    private String batchUri() {
+        return "salesforce:composite-batch?format=" + format;
     }
 }
