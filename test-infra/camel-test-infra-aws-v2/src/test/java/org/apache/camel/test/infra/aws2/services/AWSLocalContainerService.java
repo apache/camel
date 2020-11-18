@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.regions.Region;
 
-public abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerService<AWSContainer> {
+public abstract class AWSLocalContainerService implements AWSService, ContainerService<AWSContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private AWSContainer container;
 

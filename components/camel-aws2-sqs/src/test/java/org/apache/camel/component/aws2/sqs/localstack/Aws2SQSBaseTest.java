@@ -26,13 +26,12 @@ import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import software.amazon.awssdk.services.sqs.SqsClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2SQSBaseTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSService<SqsClient> service = AWSServiceFactory.createSQSService();
+    public static AWSService service = AWSServiceFactory.createSQSService();
 
     @RegisterExtension
     public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();

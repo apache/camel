@@ -24,13 +24,12 @@ import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import software.amazon.awssdk.services.sqs.SqsClient;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Aws2SNSBaseTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSService<SqsClient> service = AWSServiceFactory.createSNSService();
+    public static AWSService service = AWSServiceFactory.createSNSService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

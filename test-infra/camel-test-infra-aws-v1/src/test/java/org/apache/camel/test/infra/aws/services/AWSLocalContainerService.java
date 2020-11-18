@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 
-abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerService<LocalStackContainer> {
+abstract class AWSLocalContainerService implements AWSService, ContainerService<LocalStackContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private final LocalStackContainer container;
 

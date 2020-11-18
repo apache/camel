@@ -33,12 +33,11 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.services.sqs.SqsClient;
 
 public class SqsConsumerMessageIntegrationTest extends CamelTestSupport {
 
     @RegisterExtension
-    public static AWSService<SqsClient> service = AWSServiceFactory.createSQSService();
+    public static AWSService service = AWSServiceFactory.createSQSService();
 
     @RegisterExtension
     public static SharedNameGenerator sharedNameGenerator = new TestEntityNameGenerator();

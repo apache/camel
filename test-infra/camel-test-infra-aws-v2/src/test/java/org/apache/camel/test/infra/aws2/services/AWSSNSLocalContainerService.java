@@ -17,20 +17,9 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.sqs.SqsClient;
+public class AWSSNSLocalContainerService extends AWSLocalContainerService {
 
-public class AWSSNSLocalContainerService extends AWSLocalContainerService<SqsClient> {
-
-    @Override
-    public SqsClient getClient() {
-        Region region = Region.US_EAST_1;
-
-        return SqsClient.builder()
-                .region(region)
-                .credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER)
-                .endpointOverride(getServiceEndpoint())
-                .build();
+    public AWSSNSLocalContainerService() {
+        super(Service.SNS);
     }
 }
