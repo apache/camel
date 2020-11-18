@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test validates that header and footer records are successfully marshalled / unmarshalled in conjunction with the
@@ -107,7 +106,7 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
         expectedHeader.setRecordDate(calendar.getTime());
 
         assertEquals(receivedHeader.getRecordType(), expectedHeader.getRecordType());
-        assertTrue(receivedHeader.getRecordDate().equals(expectedHeader.getRecordDate()));
+        assertEquals(expectedHeader.getRecordDate(), receivedHeader.getRecordDate());
     }
 
     /**

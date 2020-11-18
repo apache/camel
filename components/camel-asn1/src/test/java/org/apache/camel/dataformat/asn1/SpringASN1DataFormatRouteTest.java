@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SpringASN1DataFormatRouteTest extends CamelSpringTestSupport {
@@ -43,7 +44,7 @@ public class SpringASN1DataFormatRouteTest extends CamelSpringTestSupport {
 
         List<Exchange> exchanges = getMockEndpoint(mockEnpointName).getExchanges();
 
-        assertTrue(exchanges.size() == 1);
+        assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
         }
