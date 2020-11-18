@@ -55,9 +55,6 @@ public class STS2Component extends DefaultComponent {
         STS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new STS2Configuration();
         STS2Endpoint endpoint = new STS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getStsClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon STS client or accessKey and secretKey must be specified");
@@ -75,20 +72,5 @@ public class STS2Component extends DefaultComponent {
      */
     public void setConfiguration(STS2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(STS2Configuration configuration, STS2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getStsClient())) {
-            LOG.debug("Looking for an StsClient instance in the registry");
-            Set<StsClient> clients = getCamelContext().getRegistry().findByType(StsClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one StsClient instance in the registry");
-                configuration.setStsClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No StsClient instance in the registry");
-            }
-        } else {
-            LOG.debug("StsClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }
