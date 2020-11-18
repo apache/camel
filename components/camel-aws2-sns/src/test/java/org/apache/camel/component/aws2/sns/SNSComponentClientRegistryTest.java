@@ -47,19 +47,7 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
-
-        AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
-        context.getRegistry().bind("awsSNSClient", awsSNSClient);
-        Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
-        Sns2Endpoint endpoint = (Sns2Endpoint) component
-                .createEndpoint("aws2-sns://MyTopic?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(awsSNSClient, endpoint.getConfiguration().getAmazonSNSClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
         context.getRegistry().bind("awsSNSClient", awsSNSClient);
