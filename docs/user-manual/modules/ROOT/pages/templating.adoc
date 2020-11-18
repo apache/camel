@@ -22,7 +22,7 @@ distribution you could use
 
 or the following external Camel components
 
-* http://scalate.fusesource.org/camel.html[Scalate]
+* https://scalate.github.io/scalate/camel.html[Scalate]
 
 [[Templating-Example]]
 == Example
