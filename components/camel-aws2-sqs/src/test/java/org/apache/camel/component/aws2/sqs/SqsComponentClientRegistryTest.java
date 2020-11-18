@@ -45,21 +45,9 @@ public class SqsComponentClientRegistryTest extends CamelTestSupport {
             Sqs2Endpoint endpoint = (Sqs2Endpoint) component.createEndpoint("aws2-sqs://MyQueue");
         });
     }
-
+    
     @Test
-    public void createEndpointWithAutoDiscoveryClientFalse() throws Exception {
-
-        AmazonSQSClientMock awsSQSClient = new AmazonSQSClientMock();
-        context.getRegistry().bind("awsSQSClient", awsSQSClient);
-        Sqs2Component component = context.getComponent("aws2-sqs", Sqs2Component.class);
-        Sqs2Endpoint endpoint = (Sqs2Endpoint) component
-                .createEndpoint("aws2-sqs://MyQueue?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(awsSQSClient, endpoint.getConfiguration().getAmazonSQSClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoveryClientTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         AmazonSQSClientMock awsSQSClient = new AmazonSQSClientMock();
         context.getRegistry().bind("awsSQSClient", awsSQSClient);
