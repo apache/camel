@@ -254,4 +254,7 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 The camel-aws2-translate has now support for autowiring the translateClient option with TranslateClient instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
+=== Camel-AWS2-Athena Autowire support
 
+The camel-aws2-athena has now support for autowiring the amazonAthenaClient option with AthenaClient instance coming from the registry.
+In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
