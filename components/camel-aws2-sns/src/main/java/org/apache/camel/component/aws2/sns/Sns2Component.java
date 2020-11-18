@@ -75,9 +75,6 @@ public class Sns2Component extends DefaultComponent {
             LOG.debug("Created the endpoint with topic {}", configuration.getTopicName());
         }
 
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getAmazonSNSClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
@@ -133,21 +130,6 @@ public class Sns2Component extends DefaultComponent {
      */
     public void setConfiguration(Sns2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(Sns2Configuration configuration, Sns2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonSNSClient())) {
-            LOG.debug("Looking for an SnsClient instance in the registry");
-            Set<SnsClient> clients = getCamelContext().getRegistry().findByType(SnsClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one SnsClient instance in the registry");
-                configuration.setAmazonSNSClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No SnsClient instance in the registry");
-            }
-        } else {
-            LOG.debug("SnsClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 
 }
