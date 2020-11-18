@@ -38,12 +38,12 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.pacesys</groupId>
+            <groupId>com.github.openstack4j.core</groupId>
             <artifactId>openstack4j-core</artifactId>
             <version>${openstack4j-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.pacesys.openstack4j.connectors</groupId>
+            <groupId>com.github.openstack4j.core.connectors</groupId>
             <artifactId>openstack4j-okhttp</artifactId>
             <version>${openstack4j-version}</version>
         </dependency>
