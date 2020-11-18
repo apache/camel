@@ -32,6 +32,7 @@ public class STS2Configuration implements Cloneable {
     @Metadata(required = true)
     private String label;
     @UriParam
+    @Metadata(autowired = true)
     private StsClient stsClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -52,8 +53,6 @@ public class STS2Configuration implements Cloneable {
     private boolean pojoRequest;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
 
     public StsClient getStsClient() {
         return stsClient;
@@ -164,18 +163,6 @@ public class STS2Configuration implements Cloneable {
      */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
-    }
-
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
-    }
-
-    /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
-     * automatically otherwise it will skip that checking.
-     */
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************
