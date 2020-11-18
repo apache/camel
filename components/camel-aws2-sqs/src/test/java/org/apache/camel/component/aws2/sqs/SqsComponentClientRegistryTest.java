@@ -20,7 +20,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -45,7 +44,7 @@ public class SqsComponentClientRegistryTest extends CamelTestSupport {
             Sqs2Endpoint endpoint = (Sqs2Endpoint) component.createEndpoint("aws2-sqs://MyQueue");
         });
     }
-    
+
     @Test
     public void createEndpointWithAutowire() throws Exception {
 
