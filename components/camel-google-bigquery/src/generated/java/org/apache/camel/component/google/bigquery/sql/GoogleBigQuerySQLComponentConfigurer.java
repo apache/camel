@@ -34,6 +34,11 @@ public class GoogleBigQuerySQLComponentConfigurer extends PropertyConfigurerSupp
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"connectionFactory"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
