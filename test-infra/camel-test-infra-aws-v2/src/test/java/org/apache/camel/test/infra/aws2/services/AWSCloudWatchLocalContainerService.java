@@ -17,18 +17,8 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.core.SdkSystemSetting;
-
-public class AWSKinesisLocalContainerService extends AWSLocalContainerService {
-    private static final Logger LOG = LoggerFactory.getLogger(AWSKinesisLocalContainerService.class);
-
-    static {
-        System.setProperty(SdkSystemSetting.CBOR_ENABLED.property(), "false");
-    }
-
-    public AWSKinesisLocalContainerService() {
-        super(Service.KINESIS);
+public class AWSCloudWatchLocalContainerService extends AWSLocalContainerService {
+    public AWSCloudWatchLocalContainerService() {
+        super(Service.CLOUD_WATCH);
     }
 }

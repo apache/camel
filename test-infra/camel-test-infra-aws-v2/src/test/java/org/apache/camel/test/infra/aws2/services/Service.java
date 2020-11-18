@@ -21,7 +21,8 @@ public enum Service {
     KINESIS("kinesis"),
     SQS("sqs"),
     S3("s3"),
-    SNS("sns");
+    SNS("sns"),
+    CLOUD_WATCH("cloudwatch");
 
     private final String serviceName;
 
