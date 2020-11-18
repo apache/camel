@@ -249,4 +249,9 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 The camel-aws2-sts has now support for autowiring the stsClient option with StsClient instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
+=== Camel-AWS2-Translate Autowire support
+
+The camel-aws2-translate has now support for autowiring the translateClient option with TranslateClient instance coming from the registry.
+In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
+
 
