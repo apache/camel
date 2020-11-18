@@ -84,7 +84,7 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.datasonnet</groupId>
+            <groupId>com.ms3-inc</groupId>
             <artifactId>datasonnet-mapper</artifactId>
             <version>${datasonnet-mapper-version}</version>
         </dependency>
