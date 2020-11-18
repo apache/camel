@@ -18,13 +18,9 @@
 package org.apache.camel.test.infra.aws2.services;
 
 import org.apache.camel.test.infra.aws.common.services.AWSService;
-import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkSystemSetting;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.sqs.SqsClient;
 
 public final class AWSServiceFactory {
     private static final Logger LOG = LoggerFactory.getLogger(AWSServiceFactory.class);
@@ -37,7 +33,7 @@ public final class AWSServiceFactory {
         return awsInstanceType == null ? "default" : awsInstanceType;
     }
 
-    public static AWSService<KinesisClient> createKinesisService() {
+    public static AWSService createKinesisService() {
         String awsInstanceType = System.getProperty("aws-service.kinesis.instance.type");
         LOG.info("Creating a {} AWS kinesis instance", getInstanceTypeName(awsInstanceType));
 
@@ -49,7 +45,7 @@ public final class AWSServiceFactory {
         }
 
         if (awsInstanceType.equals("remote")) {
-            return new AWSRemoteService<>(AWSSDKClientUtils::newKinesisClient);
+            return new AWSRemoteService();
         }
 
         LOG.error("Invalid AWS instance type: {}. Must be either 'remote' or 'local-aws-container'",
@@ -57,7 +53,7 @@ public final class AWSServiceFactory {
         throw new UnsupportedOperationException("Invalid AWS instance type");
     }
 
-    public static AWSService<SqsClient> createSQSService() {
+    public static AWSService createSQSService() {
         String awsInstanceType = System.getProperty("aws-service.instance.type");
         LOG.info("Creating a {} AWS SQS instance", getInstanceTypeName(awsInstanceType));
 
@@ -66,7 +62,7 @@ public final class AWSServiceFactory {
         }
 
         if (awsInstanceType.equals("remote")) {
-            return new AWSRemoteService<>(AWSSDKClientUtils::newSQSClient);
+            return new AWSRemoteService();
         }
 
         LOG.error("Invalid AWS instance type: {}. Must be either 'remote' or 'local-aws-container'",
@@ -74,7 +70,7 @@ public final class AWSServiceFactory {
         throw new UnsupportedOperationException("Invalid AWS instance type");
     }
 
-    public static AWSService<S3Client> createS3Service() {
+    public static AWSService createS3Service() {
         String awsInstanceType = System.getProperty("aws-service.instance.type");
         LOG.info("Creating a {} AWS S3 instance", awsInstanceType);
 
@@ -83,7 +79,7 @@ public final class AWSServiceFactory {
         }
 
         if (awsInstanceType.equals("remote")) {
-            return new AWSRemoteService<>(AWSSDKClientUtils::newS3Client);
+            return new AWSRemoteService();
         }
 
         LOG.error("Invalid AWS instance type: {}. Must be either 'remote' or 'local-aws-container'",
@@ -91,7 +87,7 @@ public final class AWSServiceFactory {
         throw new UnsupportedOperationException("Invalid AWS instance type");
     }
 
-    public static AWSService<SqsClient> createSNSService() {
+    public static AWSService createSNSService() {
         String awsInstanceType = System.getProperty("aws-service.instance.type");
         LOG.info("Creating a {} AWS SNS instance", awsInstanceType);
 
@@ -100,7 +96,7 @@ public final class AWSServiceFactory {
         }
 
         if (awsInstanceType.equals("remote")) {
-            return new AWSRemoteService<>(AWSSDKClientUtils::newSQSClient);
+            return new AWSRemoteService();
         }
 
         LOG.error("Invalid AWS instance type: {}. Must be either 'remote' or 'local-aws-container'",

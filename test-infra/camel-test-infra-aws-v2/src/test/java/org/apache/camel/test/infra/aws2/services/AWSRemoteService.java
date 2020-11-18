@@ -18,7 +18,6 @@
 package org.apache.camel.test.infra.aws2.services;
 
 import java.util.Properties;
-import java.util.function.Supplier;
 
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
@@ -26,17 +25,7 @@ import org.apache.camel.test.infra.aws2.common.SystemPropertiesAWSCredentialsPro
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.regions.Region;
 
-public class AWSRemoteService<T> implements AWSService<T> {
-    private Supplier<T> remoteClientSupplier;
-
-    public AWSRemoteService(Supplier<T> remoteClientSupplier) {
-        this.remoteClientSupplier = remoteClientSupplier;
-    }
-
-    @Override
-    public T getClient() {
-        return remoteClientSupplier.get();
-    }
+public class AWSRemoteService implements AWSService {
 
     @Override
     public Properties getConnectionProperties() {

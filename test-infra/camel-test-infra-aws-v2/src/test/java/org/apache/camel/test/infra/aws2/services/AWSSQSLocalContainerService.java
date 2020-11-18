@@ -17,27 +17,9 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.sqs.SqsClient;
-
-public class AWSSQSLocalContainerService extends AWSLocalContainerService<SqsClient> {
-    private static final Logger LOG = LoggerFactory.getLogger(AWSSQSLocalContainerService.class);
+public class AWSSQSLocalContainerService extends AWSLocalContainerService {
 
     public AWSSQSLocalContainerService() {
         super("localstack/localstack:0.12.2", Service.SQS);
-    }
-
-    @Override
-    public SqsClient getClient() {
-        Region region = Region.US_EAST_1;
-
-        return SqsClient.builder()
-                .region(region)
-                .credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER)
-                .endpointOverride(getServiceEndpoint())
-                .build();
     }
 }
