@@ -47,21 +47,6 @@ public interface Aws2StsComponentBuilderFactory {
      */
     interface Aws2StsComponentBuilder extends ComponentBuilder<STS2Component> {
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2StsComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Component configuration.
          * 
          * The option is a:
@@ -264,7 +249,6 @@ public interface Aws2StsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "autoDiscoverClient": getOrCreateConfiguration((STS2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((STS2Component) component).setConfiguration((org.apache.camel.component.aws2.sts.STS2Configuration) value); return true;
             case "lazyStartProducer": ((STS2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((STS2Component) component).setOperation((org.apache.camel.component.aws2.sts.STS2Operations) value); return true;
