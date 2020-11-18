@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.sqs;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import software.amazon.awssdk.core.Protocol;
@@ -28,6 +29,7 @@ public class Sqs2Configuration implements Cloneable {
     // common properties
     private String queueName;
     @UriParam
+    @Metadata(autowired = true)
     private SqsClient amazonSQSClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -49,8 +51,6 @@ public class Sqs2Configuration implements Cloneable {
     private boolean autoCreateQueue = true;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
 
     // consumer properties
     @UriParam(label = "consumer", defaultValue = "true")
@@ -557,18 +557,6 @@ public class Sqs2Configuration implements Cloneable {
      */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
-    }
-
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
-    }
-
-    /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
-     * automatically otherwise it will skip that checking.
-     */
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     public boolean isUseIAMCredentials() {

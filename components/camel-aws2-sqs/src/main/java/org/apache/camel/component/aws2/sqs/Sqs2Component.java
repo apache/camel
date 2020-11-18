@@ -71,9 +71,6 @@ public class Sqs2Component extends DefaultComponent {
         }
         Sqs2Endpoint sqsEndpoint = new Sqs2Endpoint(uri, this, configuration);
         setProperties(sqsEndpoint, parameters);
-        if (sqsEndpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, sqsEndpoint);
-        }
         if (configuration.getAmazonSQSClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
@@ -97,20 +94,5 @@ public class Sqs2Component extends DefaultComponent {
      */
     public void setConfiguration(Sqs2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(Sqs2Configuration configuration, Sqs2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonSQSClient())) {
-            LOG.debug("Looking for an SqsClient instance in the registry");
-            Set<SqsClient> clients = getCamelContext().getRegistry().findByType(SqsClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one SqsClient instance in the registry");
-                configuration.setAmazonSQSClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No SqsClient instance in the registry");
-            }
-        } else {
-            LOG.debug("SqsClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }
