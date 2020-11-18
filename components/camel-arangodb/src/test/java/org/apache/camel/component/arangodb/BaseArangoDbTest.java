@@ -20,25 +20,27 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.infra.arangodb.services.ArangoDBService;
+import org.apache.camel.test.infra.arangodb.services.ArangoDBServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class BaseArangoDbTest extends CamelTestSupport {
+    @RegisterExtension
+    public static ArangoDBService service = ArangoDBServiceFactory.createService();
 
     protected static final String DATABASE_NAME = "dbTest";
     protected static final String COLLECTION_NAME = "camelTest";
     protected static final String GRAPH_NAME = "graphTest";
     protected static final String VERTEX_COLLECTION_NAME = "vertexTest";
     protected static final String EDGE_COLLECTION_NAME = "edgeTest";
-    protected static ArangoDbContainer container;
     protected static ArangoDB arangoDb;
     protected static ArangoDatabase arangoDatabase;
 
     @BeforeAll
     public static void doBeforeAll() {
-        container = new ArangoDbContainer();
-        container.start();
         arangoDb = new ArangoDB.Builder().build();
         arangoDb.createDatabase(DATABASE_NAME);
         arangoDatabase = arangoDb.db(DATABASE_NAME);
@@ -47,9 +49,6 @@ public class BaseArangoDbTest extends CamelTestSupport {
     @AfterAll
     public static void doAfterAll() {
         arangoDb.shutdown();
-        if (container != null) {
-            container.stop();
-        }
     }
 
     @Override

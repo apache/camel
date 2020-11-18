@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.arangodb;
+package org.apache.camel.test.infra.arangodb.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,21 +23,30 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ArangoDbContainer extends GenericContainer {
+    public static final Integer PORT_DEFAULT = 8529;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ArangoDbContainer.class);
 
     private static final String CONTAINER_NAME = "arango";
     private static final String ARANGO_IMAGE = "arangodb:latest";
     private static final String ARANGO_NO_AUTH = "ARANGO_NO_AUTH";
-    private static final Integer PORT_DEFAULT = 8529;
 
     public ArangoDbContainer() {
-        super(ARANGO_IMAGE);
+        this(ARANGO_IMAGE);
+    }
+
+    public ArangoDbContainer(String containerName) {
+        super(containerName);
         setWaitStrategy(Wait.forListeningPort());
         addFixedExposedPort(PORT_DEFAULT, PORT_DEFAULT);
         withNetworkAliases(CONTAINER_NAME);
         withEnv(ARANGO_NO_AUTH, "1");
         withLogConsumer(new Slf4jLogConsumer(LOGGER));
         waitingFor(Wait.forLogMessage(".*is ready for business. Have fun!.*", 1));
+    }
+
+    public int getServicePort() {
+        return getMappedPort(PORT_DEFAULT);
     }
 
 }
