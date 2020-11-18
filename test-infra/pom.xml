@@ -52,6 +52,7 @@
         <module>camel-test-infra-artemis</module>
         <module>camel-test-infra-dispatch-router</module>
         <module>camel-test-infra-hdfs</module>
+        <module>camel-test-infra-jdbc</module>
 
     </modules>
 </project>
