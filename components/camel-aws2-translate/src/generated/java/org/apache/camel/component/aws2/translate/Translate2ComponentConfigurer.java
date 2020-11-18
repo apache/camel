@@ -30,8 +30,6 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": getOrCreateConfiguration(target).setAutodetectSourceLanguage(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
@@ -64,12 +62,15 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"translateClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": return boolean.class;
         case "autowiredenabled":
@@ -107,8 +108,6 @@ public class Translate2ComponentConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autodetectsourcelanguage":
         case "autodetectSourceLanguage": return getOrCreateConfiguration(target).isAutodetectSourceLanguage();
         case "autowiredenabled":
