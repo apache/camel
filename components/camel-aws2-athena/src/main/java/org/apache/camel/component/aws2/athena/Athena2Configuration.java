@@ -122,6 +122,7 @@ public class Athena2Configuration implements Cloneable {
     private boolean resetWaitTimeoutOnRetry = true;
 
     @UriParam
+    @Metadata(autowired = true)
     private AthenaClient amazonAthenaClient;
     @UriParam(label = "producer", secret = true)
     private String accessKey;
@@ -135,10 +136,6 @@ public class Athena2Configuration implements Cloneable {
     private Integer proxyPort;
     @UriParam
     private String region;
-    @UriParam(label = "common", defaultValue = "true",
-              description = "Setting the autoDiscoverClient mechanism, if true, the component will "
-                            + " look for a client instance in the registry automatically otherwise it will skip that checking")
-    private boolean autoDiscoverClient = true;
 
     public String getAccessKey() {
         return accessKey;
@@ -442,18 +439,6 @@ public class Athena2Configuration implements Cloneable {
      */
     public void setIncludeTrace(boolean includeTrace) {
         this.includeTrace = includeTrace;
-    }
-
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
-    }
-
-    /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
-     * automatically otherwise it will skip that checking.
-     */
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************
