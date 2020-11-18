@@ -34,8 +34,6 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "amazonSNSClient": getOrCreateConfiguration(target).setAmazonSNSClient(property(camelContext, software.amazon.awssdk.services.sns.SnsClient.class, value)); return true;
         case "autocreatetopic":
         case "autoCreateTopic": getOrCreateConfiguration(target).setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.sns.Sns2Configuration.class, value)); return true;
@@ -71,6 +69,11 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonSNSClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
@@ -79,8 +82,6 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "amazonSNSClient": return software.amazon.awssdk.services.sns.SnsClient.class;
         case "autocreatetopic":
         case "autoCreateTopic": return boolean.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.aws2.sns.Sns2Configuration.class;
@@ -125,8 +126,6 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "amazonSNSClient": return getOrCreateConfiguration(target).getAmazonSNSClient();
         case "autocreatetopic":
         case "autoCreateTopic": return getOrCreateConfiguration(target).isAutoCreateTopic();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
