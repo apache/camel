@@ -27,8 +27,6 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": target.getConfiguration().setAmazonSNSClient(property(camelContext, software.amazon.awssdk.services.sns.SnsClient.class, value)); return true;
         case "autocreatetopic":
         case "autoCreateTopic": target.getConfiguration().setAutoCreateTopic(property(camelContext, boolean.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "kmsmasterkeyid":
@@ -64,6 +62,11 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonSNSClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
@@ -72,8 +75,6 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": return software.amazon.awssdk.services.sns.SnsClient.class;
         case "autocreatetopic":
         case "autoCreateTopic": return boolean.class;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return boolean.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "kmsmasterkeyid":
@@ -118,8 +119,6 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "amazonSNSClient": return target.getConfiguration().getAmazonSNSClient();
         case "autocreatetopic":
         case "autoCreateTopic": return target.getConfiguration().isAutoCreateTopic();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
         case "headerfilterstrategy":
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "kmsmasterkeyid":

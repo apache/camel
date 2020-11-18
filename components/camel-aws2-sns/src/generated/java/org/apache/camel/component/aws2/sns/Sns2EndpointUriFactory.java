@@ -20,9 +20,8 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(21);
         props.add("useIAMCredentials");
-        props.add("autoDiscoverClient");
         props.add("serverSideEncryptionEnabled");
         props.add("autoCreateTopic");
         props.add("proxyProtocol");
