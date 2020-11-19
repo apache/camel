@@ -2258,7 +2258,8 @@ public interface AWS2S3EndpointBuilderFactory {
         deleteBucket,
         listBuckets,
         getObject,
-        getObjectRange;
+        getObjectRange,
+        createDownloadLink;
     }
 
     public interface AWS2S3Builders {
