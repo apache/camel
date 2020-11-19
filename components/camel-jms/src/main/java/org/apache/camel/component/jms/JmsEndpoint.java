@@ -197,6 +197,9 @@ public class JmsEndpoint extends DefaultEndpoint
 
     public void configureListenerContainer(AbstractMessageListenerContainer listenerContainer, JmsConsumer consumer) {
         if (destinationName != null) {
+            if (getConfiguration().getConsumerPriority() != 0) {
+                destinationName += "?consumer-priority=" + getConfiguration().getConsumerPriority();
+            }
             listenerContainer.setDestinationName(destinationName);
             LOG.debug("Using destinationName: {} on listenerContainer: {}", destinationName, listenerContainer);
         } else if (destination != null) {
