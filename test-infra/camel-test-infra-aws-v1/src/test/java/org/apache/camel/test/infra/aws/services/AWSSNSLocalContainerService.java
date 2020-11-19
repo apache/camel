@@ -30,11 +30,4 @@ public class AWSSNSLocalContainerService extends AWSLocalContainerService {
     public String getServiceEndpoint() {
         return super.getServiceEndpoint(LocalStackContainer.Service.SNS);
     }
-
-    @Override
-    public String getAmazonHost() {
-        final int snsPort = 4575;
-
-        return super.getAmazonHost(snsPort);
-    }
 }

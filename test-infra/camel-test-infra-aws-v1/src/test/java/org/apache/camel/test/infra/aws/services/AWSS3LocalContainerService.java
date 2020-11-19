@@ -29,11 +29,4 @@ public class AWSS3LocalContainerService extends AWSLocalContainerService {
     public String getServiceEndpoint() {
         return super.getServiceEndpoint(LocalStackContainer.Service.S3);
     }
-
-    @Override
-    public String getAmazonHost() {
-        final int s3Port = 4572;
-
-        return getContainer().getContainerIpAddress() + ":" + getContainer().getMappedPort(s3Port);
-    }
 }
