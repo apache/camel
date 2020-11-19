@@ -24,5 +24,6 @@ public enum AWS2S3Operations {
     deleteBucket,
     listBuckets,
     getObject,
-    getObjectRange
+    getObjectRange,
+    createDownloadLink
 }
