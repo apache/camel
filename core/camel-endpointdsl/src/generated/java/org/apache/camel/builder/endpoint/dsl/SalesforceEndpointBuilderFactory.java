@@ -96,7 +96,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: 34.0
+         * Default: 50.0
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder apiVersion(String apiVersion) {
@@ -1015,7 +1015,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: 34.0
+         * Default: 50.0
          * Group: common
          */
         default SalesforceEndpointProducerBuilder apiVersion(String apiVersion) {
@@ -1859,7 +1859,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: 34.0
+         * Default: 50.0
          * Group: common
          */
         default SalesforceEndpointBuilder apiVersion(String apiVersion) {
