@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
 
@@ -58,7 +58,7 @@ public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
         this.client.messages.add(message);
 
         assertMockEndpointsSatisfied(); // Wait for message to arrive.
-        assertTrue(this.client.changeMessageVisibilityRequests.size() == 0, "Expected no changeMessageVisibility requests.");
+        assertEquals(0, this.client.changeMessageVisibilityRequests.size(), "Expected no changeMessageVisibility requests.");
     }
 
     @Override

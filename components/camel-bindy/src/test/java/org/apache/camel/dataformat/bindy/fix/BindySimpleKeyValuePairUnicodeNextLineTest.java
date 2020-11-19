@@ -28,7 +28,7 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -55,9 +55,9 @@ public class BindySimpleKeyValuePairUnicodeNextLineTest {
 
         UnicodeFixOrder unicodeFixOrder = result.getReceivedExchanges().get(0).getIn().getBody(UnicodeFixOrder.class);
 
-        assertTrue(unicodeFixOrder.getId().equals("1"));
-        assertTrue(unicodeFixOrder.getProduct().equals("butter"));
-        assertTrue(unicodeFixOrder.getQuantity().equals("1"));
+        assertEquals("1", unicodeFixOrder.getId());
+        assertEquals("butter", unicodeFixOrder.getProduct());
+        assertEquals("1", unicodeFixOrder.getQuantity());
     }
 
     public static class ContextConfig extends RouteBuilder {
