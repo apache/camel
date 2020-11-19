@@ -16,39 +16,28 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * DTO for Salesforce SOSL Search result record. Starting with v37, this is wrapped by
- * {@link org.apache.camel.component.salesforce.api.dto.SearchResult2}
+ * DTO for Salesforce SOSL Search result record for v37 and later
  */
-@XStreamAlias("SearchResult")
-//CHECKSTYLE:OFF
-public final class SearchResult extends AbstractDTOBase {
+@XStreamAlias("SearchResultWithMetadata")
+public final class SearchResult2 extends AbstractDTOBase {
 
-    // WARNING: these fields have case sensitive names,
-    // the field name MUST match the field name used by Salesforce
-    // DO NOT change these field names to camel case!!!
-    private Attributes attributes;
-    private String Id;
+    @XStreamImplicit(itemFieldName = "searchRecords")
+    private List<SearchResult> searchRecords;
 
-    public Attributes getAttributes() {
-        return attributes;
+    @JsonProperty("searchRecords")
+    public List<SearchResult> getSearchRecords() {
+        return searchRecords;
     }
 
-    public void setAttributes(Attributes attributes) {
-        this.attributes = attributes;
-    }
-
-    @JsonProperty("Id")
-    public String getId() {
-        return Id;
-    }
-
-    @JsonProperty("Id")
-    public void setId(String id) {
-        this.Id = id;
+    @JsonProperty("searchRecords")
+    public void setSearchRecords(List<SearchResult> searchRecords) {
+        this.searchRecords = searchRecords;
     }
 }
-//CHECKSTYLE:ON
