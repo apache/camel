@@ -29,11 +29,4 @@ public class AWSSQSLocalContainerService extends AWSLocalContainerService {
     public String getServiceEndpoint() {
         return super.getServiceEndpoint(LocalStackContainer.Service.SQS);
     }
-
-    @Override
-    public String getAmazonHost() {
-        final int sqsPort = 4576;
-
-        return super.getAmazonHost(sqsPort);
-    }
 }

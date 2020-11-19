@@ -29,11 +29,4 @@ public class AWSKinesisLocalContainerService extends AWSLocalContainerService {
     public String getServiceEndpoint() {
         return super.getServiceEndpoint(LocalStackContainer.Service.KINESIS);
     }
-
-    @Override
-    public String getAmazonHost() {
-        final int kinesisPort = 4568;
-
-        return getContainer().getContainerIpAddress() + ":" + getContainer().getMappedPort(kinesisPort);
-    }
 }
