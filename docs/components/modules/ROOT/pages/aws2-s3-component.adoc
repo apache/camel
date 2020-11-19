@@ -342,6 +342,7 @@ Camel-AWS2-S3 component provides the following operation on the producer side:
 - listObjects
 - getObject (this will return an S3Object instance)
 - getObjectRange (this will return an S3Object instance)
+- createDownloadLink
 
 If you don't specify an operation explicitly the producer will do:
 - a single file upload 
@@ -524,6 +525,23 @@ This operation will return an S3Object instance related to the camelKey object i
 --------------------------------------------------------------------------------
 
 This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket, containing a the bytes from 0 to 9.
+
+- CreateDownloadLink: this operation will return a download link through S3 Presigner
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
+      }
+  })
+  .to("aws2-s3://mycamelbucket?accessKey=xxx&secretKey=yyy&region=region&operation=createDownloadLink")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return a download link url for the file camel-key in the bucket mycamelbucket and region region
 
 == Bucket Autocreation
 
