@@ -23,7 +23,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
@@ -60,7 +60,7 @@ public class DisruptorComponentReferenceEndpointTest extends CamelTestSupport {
         context.removeRoute("foo2");
 
         // and there is no longer disruptors for the foo key
-        assertTrue(disruptor.getDisruptors().get(fooKey) == null);
+        assertNull(disruptor.getDisruptors().get(fooKey));
 
         // there should still be a bar
         assertEquals(1, numberOfReferences(disruptor));
