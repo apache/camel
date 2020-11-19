@@ -57,14 +57,16 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
 
         exchange.getIn().setBody(messages);
 
-        operations.sentEvents(exchange, doneSync -> {});
+        operations.sentEvents(exchange, doneSync -> {
+        });
 
         final Exchange exchange2 = new DefaultExchange(context);
 
         exchange2.getIn().setHeader(VertxKafkaConstants.MESSAGE_KEY, "6");
         exchange2.getIn().setBody("test message 6");
 
-        operations.sentEvents(exchange2, doneSync -> {});
+        operations.sentEvents(exchange2, doneSync -> {
+        });
 
         Awaitility
                 .await()

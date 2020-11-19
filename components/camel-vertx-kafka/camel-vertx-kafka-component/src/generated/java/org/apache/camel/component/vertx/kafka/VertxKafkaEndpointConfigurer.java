@@ -28,8 +28,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoCommitIntervalMs": target.getConfiguration().setAutoCommitIntervalMs(property(camelContext, int.class, value)); return true;
         case "autooffsetreset":
         case "autoOffsetReset": target.getConfiguration().setAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batchsize":
         case "batchSize": target.getConfiguration().setBatchSize(property(camelContext, int.class, value)); return true;
         case "bootstrapservers":
@@ -220,8 +218,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoCommitIntervalMs": return int.class;
         case "autooffsetreset":
         case "autoOffsetReset": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
         case "batchsize":
         case "batchSize": return int.class;
         case "bootstrapservers":
@@ -413,8 +409,6 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoCommitIntervalMs": return target.getConfiguration().getAutoCommitIntervalMs();
         case "autooffsetreset":
         case "autoOffsetReset": return target.getConfiguration().getAutoOffsetReset();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "batchsize":
         case "batchSize": return target.getConfiguration().getBatchSize();
         case "bootstrapservers":

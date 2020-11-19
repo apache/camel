@@ -1077,18 +1077,21 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default VertxKafkaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default VertxKafkaComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -1654,7 +1657,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "transactionalId": getOrCreateConfiguration((VertxKafkaComponent) component).setTransactionalId((java.lang.String) value); return true;
             case "transactionTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setTransactionTimeoutMs((int) value); return true;
             case "valueSerializer": getOrCreateConfiguration((VertxKafkaComponent) component).setValueSerializer((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((VertxKafkaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((VertxKafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "saslClientCallbackHandlerClass": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslClientCallbackHandlerClass((java.lang.String) value); return true;
             case "saslJaasConfig": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslJaasConfig((java.lang.String) value); return true;
             case "saslKerberosKinitCmd": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslKerberosKinitCmd((java.lang.String) value); return true;
