@@ -27,6 +27,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
@@ -44,7 +45,7 @@ public class ASN1DataFormatWithStreamTest extends CamelTestSupport {
 
         List<Exchange> exchanges = getMockEndpoint(mockEnpointName).getExchanges();
 
-        assertTrue(exchanges.size() == 1);
+        assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
             assertTrue(exchange.getIn().getBody() instanceof byte[]);
             assertTrue(Arrays.equals(FileUtils.readFileToByteArray(testFile), exchange.getIn().getBody(byte[].class)));

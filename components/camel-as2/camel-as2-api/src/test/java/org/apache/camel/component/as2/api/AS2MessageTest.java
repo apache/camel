@@ -320,7 +320,7 @@ public class AS2MessageTest {
         assertTrue(entity instanceof MultipartSignedEntity, "Unexpected request entity type");
         MultipartSignedEntity signedEntity = (MultipartSignedEntity) entity;
         assertTrue(signedEntity.isMainBody(), "Entity not set as main body of request");
-        assertTrue(signedEntity.getPartCount() == 2, "Request contains invalid number of mime parts");
+        assertEquals(2, signedEntity.getPartCount(), "Request contains invalid number of mime parts");
 
         // Validated first mime part.
         assertTrue(signedEntity.getPart(0) instanceof ApplicationEDIFACTEntity, "First mime part incorrect type ");
@@ -545,7 +545,7 @@ public class AS2MessageTest {
         assertTrue(multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED),
                 "Unexpected content type for enveloped mime part");
         assertFalse(multipartSignedEntity.isMainBody(), "Enveloped mime type set as main body of request");
-        assertTrue(multipartSignedEntity.getPartCount() == 2, "Request contains invalid number of mime parts");
+        assertEquals(2, multipartSignedEntity.getPartCount(), "Request contains invalid number of mime parts");
 
         // Validated first mime part.
         assertTrue(multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity, "First mime part incorrect type ");
@@ -810,7 +810,7 @@ public class AS2MessageTest {
         assertTrue(multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED),
                 "Unexpected content type for compressed entity");
         assertFalse(multipartSignedEntity.isMainBody(), "Multipart signed entity set as main body of request");
-        assertTrue(multipartSignedEntity.getPartCount() == 2, "Multipart signed entity contains invalid number of mime parts");
+        assertEquals(2, multipartSignedEntity.getPartCount(), "Multipart signed entity contains invalid number of mime parts");
 
         // Validated first mime part.
         assertTrue(multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity, "First mime part incorrect type ");
@@ -949,7 +949,7 @@ public class AS2MessageTest {
         assertTrue(multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED),
                 "Unexpected content type for compressed entity");
         assertFalse(multipartSignedEntity.isMainBody(), "Multipart signed entity set as main body of request");
-        assertTrue(multipartSignedEntity.getPartCount() == 2, "Multipart signed entity contains invalid number of mime parts");
+        assertEquals(2, multipartSignedEntity.getPartCount(), "Multipart signed entity contains invalid number of mime parts");
 
         // Validated first mime part.
         assertTrue(multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity, "First mime part incorrect type ");
