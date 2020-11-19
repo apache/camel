@@ -22,6 +22,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @UriParams
 public class AWS2S3Configuration implements Cloneable {
@@ -30,6 +31,9 @@ public class AWS2S3Configuration implements Cloneable {
     @UriParam
     @Metadata(autowired = true)
     private S3Client amazonS3Client;
+    @UriParam
+    @Metadata(autowired = true)
+    private S3Presigner amazonS3Presigner;
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
@@ -545,6 +549,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
+    }
+
+    public S3Presigner getAmazonS3Presigner() {
+        return amazonS3Presigner;
+    }
+
+    /**
+     * An S3 Presigner for Request, used mainly in createDownloadLink operation
+     */
+    public void setAmazonS3Presigner(S3Presigner amazonS3Presigner) {
+        this.amazonS3Presigner = amazonS3Presigner;
     }
 
     public AWS2S3Configuration copy() {

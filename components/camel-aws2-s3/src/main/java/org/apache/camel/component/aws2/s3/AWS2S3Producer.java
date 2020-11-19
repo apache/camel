@@ -518,13 +518,18 @@ public class AWS2S3Producer extends DefaultProducer {
         if (expirationMillis != null) {
             milliSeconds += expirationMillis;
         } else {
-            milliSeconds += 1000 * 60 * 60; // Default: Add 1 hour.
+            milliSeconds += 1000 * 60 * 60;
         }
+        S3Presigner presigner;
 
-        S3Presigner presigner = S3Presigner.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(getConfiguration().getAccessKey(), getConfiguration().getSecretKey())))
-                .region(Region.of(getConfiguration().getRegion())).build();
+        if (ObjectHelper.isNotEmpty(getConfiguration().getAmazonS3Presigner())) {
+            presigner = getConfiguration().getAmazonS3Presigner();
+        } else {
+            presigner = S3Presigner.builder()
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create(getConfiguration().getAccessKey(), getConfiguration().getSecretKey())))
+                    .region(Region.of(getConfiguration().getRegion())).build();
+        }
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)

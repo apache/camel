@@ -47,7 +47,7 @@ from("aws2-s3://helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&pref
 
 
 // component options: START
-The AWS 2 S3 Storage Service component supports 41 options, which are listed below.
+The AWS 2 S3 Storage Service component supports 42 options, which are listed below.
 
 
 
@@ -55,6 +55,7 @@ The AWS 2 S3 Storage Service component supports 41 options, which are listed bel
 |===
 | Name | Description | Default | Type
 | *amazonS3Client* (common) | *Autowired* Reference to a com.amazonaws.services.s3.AmazonS3 in the registry. |  | S3Client
+| *amazonS3Presigner* (common) | *Autowired* An S3 Presigner for Request, used mainly in createDownloadLink operation |  | S3Presigner
 | *autoCreateBucket* (common) | Setting the autocreation of the S3 bucket bucketName. This will apply also in case of moveAfterRead option enabled and it will create the destinationBucket if it doesn't exist already. | true | boolean
 | *configuration* (common) | The component configuration |  | AWS2S3Configuration
 | *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
@@ -127,13 +128,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (60 parameters):
+=== Query Parameters (61 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *amazonS3Client* (common) | *Autowired* Reference to a com.amazonaws.services.s3.AmazonS3 in the registry. |  | S3Client
+| *amazonS3Presigner* (common) | *Autowired* An S3 Presigner for Request, used mainly in createDownloadLink operation |  | S3Presigner
 | *autoCreateBucket* (common) | Setting the autocreation of the S3 bucket bucketName. This will apply also in case of moveAfterRead option enabled and it will create the destinationBucket if it doesn't exist already. | true | boolean
 | *overrideEndpoint* (common) | Set the need for overidding the endpoint. This option needs to be used in combination with uriEndpointOverride option | false | boolean
 | *pojoRequest* (common) | If we want to use a POJO request as body or not | false | boolean
