@@ -80,7 +80,7 @@ public class CxfHeaderHelperTest {
         Map<String, List<String>> cxfHeaders
                 = CastUtils.cast((Map<?, ?>) cxfMessage.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
         assertNotNull(cxfHeaders);
-        assertTrue(cxfHeaders.size() == 7);
+        assertEquals(7, cxfHeaders.size());
 
         verifyHeader(cxfHeaders, "soapaction", "urn:hello:world");
         verifyHeader(cxfHeaders, "SoapAction", "urn:hello:world");

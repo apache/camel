@@ -36,8 +36,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CXFMultiPartTest extends CamelTestSupport {
     public static final QName SERVICE_NAME = new QName(
@@ -86,10 +86,10 @@ public class CXFMultiPartTest extends CamelTestSupport {
                                               + "/CXFMultiPartTest/CamelContext/RouterPort",
                 "in0", "in1");
         assertNotNull(reply, "No response received from service");
-        assertTrue(reply.equals("in0 in1"));
+        assertEquals("in0 in1", reply);
 
         assertNotNull(reply, "No response received from service");
-        assertTrue(reply.equals("in0 in1"));
+        assertEquals("in0 in1", reply);
 
     }
 

@@ -316,7 +316,7 @@ public class DefaultCxfBindingTest {
 
         Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>) cxfMessage.get(Message.PROTOCOL_HEADERS));
         assertNotNull(headers);
-        assertTrue(headers.size() == 2);
+        assertEquals(2, headers.size());
 
         verifyHeader(headers, "soapaction", "urn:hello:world");
         verifyHeader(headers, "SoapAction", "urn:hello:world");

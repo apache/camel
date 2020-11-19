@@ -89,7 +89,7 @@ public class CxfMessageHelperTest {
 
         // verify there is no duplicate
         assertNotNull(headers, "The headers must be present");
-        assertTrue(headers.size() == 1, "There must be one header entry");
+        assertEquals(1, headers.size(), "There must be one header entry");
 
         // verify the soapaction can be retrieved in case-insensitive ways
         verifyHeader(headers, "soapaction", "urn:hello:world");
