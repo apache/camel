@@ -75,6 +75,36 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointConsumerBuilder amazonS3Presigner(
+                Object amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointConsumerBuilder amazonS3Presigner(
+                String amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
          * also in case of moveAfterRead option enabled and it will create the
          * destinationBucket if it doesn't exist already.
@@ -1303,6 +1333,36 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointProducerBuilder amazonS3Presigner(
+                Object amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointProducerBuilder amazonS3Presigner(
+                String amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
          * also in case of moveAfterRead option enabled and it will create the
          * destinationBucket if it doesn't exist already.
@@ -1908,6 +1968,34 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder amazonS3Client(String amazonS3Client) {
             doSetProperty("amazonS3Client", amazonS3Client);
+            return this;
+        }
+        /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointBuilder amazonS3Presigner(Object amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointBuilder amazonS3Presigner(String amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
             return this;
         }
         /**

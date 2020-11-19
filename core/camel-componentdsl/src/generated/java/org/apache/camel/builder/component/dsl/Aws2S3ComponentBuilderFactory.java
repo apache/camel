@@ -64,6 +64,21 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default Aws2S3ComponentBuilder amazonS3Presigner(
+                software.amazon.awssdk.services.s3.presigner.S3Presigner amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
          * also in case of moveAfterRead option enabled and it will create the
          * destinationBucket if it doesn't exist already.
@@ -634,6 +649,7 @@ public interface Aws2S3ComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonS3Client": getOrCreateConfiguration((AWS2S3Component) component).setAmazonS3Client((software.amazon.awssdk.services.s3.S3Client) value); return true;
+            case "amazonS3Presigner": getOrCreateConfiguration((AWS2S3Component) component).setAmazonS3Presigner((software.amazon.awssdk.services.s3.presigner.S3Presigner) value); return true;
             case "autoCreateBucket": getOrCreateConfiguration((AWS2S3Component) component).setAutoCreateBucket((boolean) value); return true;
             case "configuration": ((AWS2S3Component) component).setConfiguration((org.apache.camel.component.aws2.s3.AWS2S3Configuration) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((AWS2S3Component) component).setOverrideEndpoint((boolean) value); return true;

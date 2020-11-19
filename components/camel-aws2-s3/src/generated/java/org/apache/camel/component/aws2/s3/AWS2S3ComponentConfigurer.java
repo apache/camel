@@ -32,6 +32,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazons3client":
         case "amazonS3Client": getOrCreateConfiguration(target).setAmazonS3Client(property(camelContext, software.amazon.awssdk.services.s3.S3Client.class, value)); return true;
+        case "amazons3presigner":
+        case "amazonS3Presigner": getOrCreateConfiguration(target).setAmazonS3Presigner(property(camelContext, software.amazon.awssdk.services.s3.presigner.S3Presigner.class, value)); return true;
         case "autocreatebucket":
         case "autoCreateBucket": getOrCreateConfiguration(target).setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
         case "autoclosebody":
@@ -110,7 +112,7 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"amazonS3Client"};
+        return new String[]{"amazonS3Client","amazonS3Presigner"};
     }
 
     @Override
@@ -120,6 +122,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return java.lang.String.class;
         case "amazons3client":
         case "amazonS3Client": return software.amazon.awssdk.services.s3.S3Client.class;
+        case "amazons3presigner":
+        case "amazonS3Presigner": return software.amazon.awssdk.services.s3.presigner.S3Presigner.class;
         case "autocreatebucket":
         case "autoCreateBucket": return boolean.class;
         case "autoclosebody":
@@ -204,6 +208,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazons3client":
         case "amazonS3Client": return getOrCreateConfiguration(target).getAmazonS3Client();
+        case "amazons3presigner":
+        case "amazonS3Presigner": return getOrCreateConfiguration(target).getAmazonS3Presigner();
         case "autocreatebucket":
         case "autoCreateBucket": return getOrCreateConfiguration(target).isAutoCreateBucket();
         case "autoclosebody":
