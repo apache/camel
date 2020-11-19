@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
@@ -37,8 +37,8 @@ public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
         assertMockEndpointsSatisfied();
-        assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
-        assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
+        assertNull(mock.getExchanges().get(0).getIn().getBody());
+        assertNull(mock.getExchanges().get(1).getIn().getBody());
     }
 
     @BeforeEach

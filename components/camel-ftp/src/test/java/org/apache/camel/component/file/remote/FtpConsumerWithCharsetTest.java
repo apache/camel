@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -73,7 +74,7 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
         byte[] buffer = new byte[100];
 
         int len = fis.read(buffer);
-        assertTrue(len != -1, "Should read data: " + len);
+        assertNotEquals(-1, len, "Should read data: " + len);
         byte[] data = new byte[len];
         System.arraycopy(buffer, 0, data, 0, len);
         fis.close();
