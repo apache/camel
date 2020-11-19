@@ -508,7 +508,7 @@ public class AWS2S3Producer extends DefaultProducer {
         }
     }
 
-    private void createDownloadLink(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
+    private void createDownloadLink(S3Client s3Client, Exchange exchange) {
         final String bucketName = determineBucketName(exchange);
         final String key = determineKey(exchange);
 
