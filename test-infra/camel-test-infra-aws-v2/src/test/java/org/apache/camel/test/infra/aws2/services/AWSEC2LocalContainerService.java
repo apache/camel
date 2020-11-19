@@ -17,25 +17,8 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-public enum Service {
-    CLOUD_WATCH("cloudwatch"),
-    EC2("ec2"),
-    KINESIS("kinesis"),
-    S3("s3"),
-    SQS("sqs"),
-    SNS("sns");
-
-    private final String serviceName;
-
-    Service(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public static String serviceName(Service service) {
-        return service.serviceName;
+public class AWSEC2LocalContainerService extends AWSLocalContainerService {
+    public AWSEC2LocalContainerService() {
+        super(Service.EC2);
     }
 }

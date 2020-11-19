@@ -30,6 +30,7 @@ import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.core.SdkClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.sns.SnsClient;
@@ -139,4 +140,9 @@ public final class AWSSDKClientUtils {
     public static CloudWatchClient newCloudWatchClient() {
         return newClient("Cloud Watch", CloudWatchClient::builder, CloudWatchClient.class);
     }
+
+    public static Ec2Client newEC2Client() {
+        return newClient("EC2", Ec2Client::builder, Ec2Client.class);
+    }
+
 }
