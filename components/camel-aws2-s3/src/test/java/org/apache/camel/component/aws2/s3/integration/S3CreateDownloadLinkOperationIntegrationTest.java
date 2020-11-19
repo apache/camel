@@ -29,7 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -44,7 +43,7 @@ public class S3CreateDownloadLinkOperationIntegrationTest extends CamelTestSuppo
     S3Client client
             = S3Client.builder().credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
                     .region(Region.EU_WEST_1).build();
-    
+
     @EndpointInject
     private ProducerTemplate template;
 
