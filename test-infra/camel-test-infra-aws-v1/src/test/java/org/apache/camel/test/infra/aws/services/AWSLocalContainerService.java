@@ -36,8 +36,6 @@ abstract class AWSLocalContainerService implements AWSService, ContainerService<
         this.container = new LocalStackContainer().withServices(services);
     }
 
-    protected abstract String getAmazonHost();
-
     protected abstract String getServiceEndpoint();
 
     @Override
@@ -99,7 +97,13 @@ abstract class AWSLocalContainerService implements AWSService, ContainerService<
     }
 
     protected String getAmazonHost(int port) {
-        return container.getContainerIpAddress() + ":" + container.getMappedPort(port);
+        return String.format("%s:%d", container.getContainerIpAddress(), container.getMappedPort(port));
+    }
+
+    public String getAmazonHost() {
+        final int edgePort = 4566;
+
+        return getAmazonHost(edgePort);
     }
 
     protected String getServiceEndpoint(LocalStackContainer.Service service) {
