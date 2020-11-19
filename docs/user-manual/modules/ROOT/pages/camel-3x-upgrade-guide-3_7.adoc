@@ -258,3 +258,8 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 
 The camel-aws2-athena has now support for autowiring the amazonAthenaClient option with AthenaClient instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
+
+=== camel-salesforce
+
+The default API version for camel-salesforce has been updated to 50.0. Older versions are still supported and can be set via the `apiVersion`
+component option.
