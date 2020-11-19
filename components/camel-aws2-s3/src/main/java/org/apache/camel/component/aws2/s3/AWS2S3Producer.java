@@ -545,8 +545,10 @@ public class AWS2S3Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(presignedGetObjectRequest.url().toString());
-
-        presigner.close();
+        
+        if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
+            presigner.close();
+        }
     }
 
     private AWS2S3Operations determineOperation(Exchange exchange) {
