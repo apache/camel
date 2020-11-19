@@ -37,6 +37,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BodyTypesTest extends PubsubTestSupport {
@@ -100,7 +101,7 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         assertTrue(sentExchange.getIn().getBody() instanceof byte[], "Sent body type is byte[]");
 
-        assertTrue(sentExchange.getIn().getBody() == body, "Sent body type is the one sent");
+        assertSame(body, sentExchange.getIn().getBody(), "Sent body type is the one sent");
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -149,7 +150,7 @@ public class BodyTypesTest extends PubsubTestSupport {
 
         Object bodyReceived = deserialize((byte[]) receivedExchange.getIn().getBody());
 
-        assertTrue(((Map) bodyReceived).get("KEY").equals("VALUE1212"), "Received body is a Map");
+        assertEquals("VALUE1212", ((Map) bodyReceived).get("KEY"), "Received body is a Map");
 
     }
 

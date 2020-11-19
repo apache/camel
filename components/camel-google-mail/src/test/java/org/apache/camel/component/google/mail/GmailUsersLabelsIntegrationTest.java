@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test class for {@link com.google.api.services.gmail.Gmail$Users$Labels} APIs.
@@ -65,7 +65,7 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
 
         // using String message body for single parameter "userId"
         labels = requestBody("direct://LIST", CURRENT_USERID);
-        assertTrue(getTestLabel(labels) != null);
+        assertNotNull(getTestLabel(labels));
 
         Map<String, Object> headers = new HashMap<>();
         // parameter type is String
@@ -77,7 +77,7 @@ public class GmailUsersLabelsIntegrationTest extends AbstractGoogleMailTestSuppo
 
         // using String message body for single parameter "userId"
         labels = requestBody("direct://LIST", CURRENT_USERID);
-        assertTrue(getTestLabel(labels) == null);
+        assertNull(getTestLabel(labels));
     }
 
     private Label getTestLabel(com.google.api.services.gmail.model.ListLabelsResponse labels) {
