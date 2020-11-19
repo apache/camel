@@ -668,7 +668,7 @@ The Salesforce component supports 72 options, which are listed below.
 | *apexMethod* (common) | APEX method name |  | String
 | *apexQueryParams* (common) | Query params for APEX method |  | Map
 | *apexUrl* (common) | APEX method URL |  | String
-| *apiVersion* (common) | Salesforce API version. | 34.0 | String
+| *apiVersion* (common) | Salesforce API version. | 50.0 | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
@@ -778,7 +778,7 @@ with the following path and query parameters:
 | *apexMethod* (common) | APEX method name |  | String
 | *apexQueryParams* (common) | Query params for APEX method |  | Map
 | *apexUrl* (common) | APEX method URL |  | String
-| *apiVersion* (common) | Salesforce API version. | 34.0 | String
+| *apiVersion* (common) | Salesforce API version. | 50.0 | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType

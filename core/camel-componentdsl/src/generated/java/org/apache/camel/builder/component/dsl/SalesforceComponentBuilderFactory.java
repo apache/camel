@@ -89,7 +89,7 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: 34.0
+         * Default: 50.0
          * Group: common
          */
         default SalesforceComponentBuilder apiVersion(
