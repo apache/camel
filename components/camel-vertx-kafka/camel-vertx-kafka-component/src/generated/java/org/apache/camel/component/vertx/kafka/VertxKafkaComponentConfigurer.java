@@ -35,8 +35,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "autoCommitIntervalMs": getOrCreateConfiguration(target).setAutoCommitIntervalMs(property(camelContext, int.class, value)); return true;
         case "autooffsetreset":
         case "autoOffsetReset": getOrCreateConfiguration(target).setAutoOffsetReset(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "batchsize":
         case "batchSize": getOrCreateConfiguration(target).setBatchSize(property(camelContext, int.class, value)); return true;
         case "bootstrapservers":
@@ -223,8 +223,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "autoCommitIntervalMs": return int.class;
         case "autooffsetreset":
         case "autoOffsetReset": return java.lang.String.class;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
         case "batchsize":
         case "batchSize": return int.class;
         case "bootstrapservers":
@@ -412,8 +412,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "autoCommitIntervalMs": return getOrCreateConfiguration(target).getAutoCommitIntervalMs();
         case "autooffsetreset":
         case "autoOffsetReset": return getOrCreateConfiguration(target).getAutoOffsetReset();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "batchsize":
         case "batchSize": return getOrCreateConfiguration(target).getBatchSize();
         case "bootstrapservers":
