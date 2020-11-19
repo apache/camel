@@ -34,7 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test that verifies multi part SOAP message functionality
@@ -101,7 +100,7 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
 
         client.getPersonMultiPartOperation("foo", 0, name, ssn);
         assertEquals("New Person Name", name.value);
-        assertTrue(123456789 == ssn.value);
+        assertEquals(123456789, (int) ssn.value);
 
     }
 

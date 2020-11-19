@@ -69,6 +69,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -158,7 +159,7 @@ public class CxfMessageHeadersRelayTest {
         InHeader me = new InHeader();
         me.setRequestType("CXF user");
         InHeaderResponse response = proxy.inHeader(me, Constants.IN_HEADER_DATA);
-        assertTrue(response.getResponseType().equals("pass"), "Expected in band header to propagate but it didn't");
+        assertEquals("pass", response.getResponseType(), "Expected in band header to propagate but it didn't");
     }
 
     @Test
@@ -176,7 +177,7 @@ public class CxfMessageHeadersRelayTest {
         Holder<OutHeaderResponse> result = new Holder<>(new OutHeaderResponse());
         Holder<SOAPHeaderData> header = new Holder<>(new SOAPHeaderData());
         proxy.outHeader(me, result, header);
-        assertTrue(result.value.getResponseType().equals("pass"), "Expected in band header to propagate but it didn't");
+        assertEquals("pass", result.value.getResponseType(), "Expected in band header to propagate but it didn't");
         assertTrue(Constants.equals(Constants.OUT_HEADER_DATA, header.value),
                 "Expected in band response header to propagate but it either didn't "
                                                                               + " or its contents do not match");
@@ -195,7 +196,7 @@ public class CxfMessageHeadersRelayTest {
         me.setRequestType("CXF user");
         Holder<SOAPHeaderData> header = new Holder<>(Constants.IN_OUT_REQUEST_HEADER_DATA);
         InoutHeaderResponse result = proxy.inoutHeader(me, header);
-        assertTrue(result.getResponseType().equals("pass"), "Expected in band header to propagate but it didn't");
+        assertEquals("pass", result.getResponseType(), "Expected in band header to propagate but it didn't");
         assertTrue(Constants.equals(Constants.IN_OUT_RESPONSE_HEADER_DATA, header.value),
                 "Expected in band response header to propagate but it either didn't "
                                                                                           + " or its contents do not match");
@@ -216,8 +217,7 @@ public class CxfMessageHeadersRelayTest {
         me.setLastName("Doh");
 
         Me response = proxy.inOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out of band header to propagate but it didn't");
+        assertEquals("pass", response.getFirstName(), "Expected the out of band header to propagate but it didn't");
     }
 
     @Test
@@ -234,8 +234,7 @@ public class CxfMessageHeadersRelayTest {
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.inoutOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out of band header to propagate but it didn't");
+        assertEquals("pass", response.getFirstName(), "Expected the out of band header to propagate but it didn't");
         validateReturnedOutOfBandHeader(proxy);
     }
 
@@ -253,8 +252,7 @@ public class CxfMessageHeadersRelayTest {
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.inoutOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out of band header to propagate but it didn't");
+        assertEquals("pass", response.getFirstName(), "Expected the out of band header to propagate but it didn't");
 
         InvocationHandler handler = Proxy.getInvocationHandler(proxy);
         BindingProvider bp = null;
@@ -280,8 +278,7 @@ public class CxfMessageHeadersRelayTest {
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.outOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out of band header to propagate but it didn't");
+        assertEquals("pass", response.getFirstName(), "Expected the out of band header to propagate but it didn't");
         validateReturnedOutOfBandHeader(proxy);
     }
 
@@ -301,8 +298,7 @@ public class CxfMessageHeadersRelayTest {
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.inOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the in out of band header *not* to propagate but it did");
+        assertEquals("pass", response.getFirstName(), "Expected the in out of band header *not* to propagate but it did");
 
     }
 
@@ -321,8 +317,7 @@ public class CxfMessageHeadersRelayTest {
         me.setLastName("Doh");
         Thread.sleep(5000);
         Me response = proxy.outOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the out out of band header *not* to propagate but it did");
+        assertEquals("pass", response.getFirstName(), "Expected the out out of band header *not* to propagate but it did");
         validateReturnedOutOfBandHeader(proxy, false);
     }
 
@@ -340,8 +335,7 @@ public class CxfMessageHeadersRelayTest {
         me.setFirstName("john");
         me.setLastName("Doh");
         Me response = proxy.inoutOutOfBandHeader(me);
-        assertTrue(response.getFirstName().equals("pass"),
-                "Expected the in out of band header to *not* propagate but it did");
+        assertEquals("pass", response.getFirstName(), "Expected the in out of band header to *not* propagate but it did");
         validateReturnedOutOfBandHeader(proxy, false);
     }
 
@@ -362,7 +356,7 @@ public class CxfMessageHeadersRelayTest {
         } catch (Exception e) {
             // do nothing
         }
-        assertTrue(response.getResponseType().equals("pass"), "Expected in in band header *not* to propagate but it did");
+        assertEquals("pass", response.getResponseType(), "Expected in in band header *not* to propagate but it did");
     }
 
     @Test
@@ -385,9 +379,9 @@ public class CxfMessageHeadersRelayTest {
         } catch (Exception e) {
             // do nothing
         }
-        assertTrue(result.value.getResponseType().equals("pass"),
+        assertEquals("pass", result.value.getResponseType(),
                 "Ultimate remote HeaderTester.outHeader() destination was not reached");
-        assertTrue(header.value == null, "Expected in band response header *not* to propagate but it did");
+        assertNull(header.value, "Expected in band response header *not* to propagate but it did");
     }
 
     @Test
@@ -408,8 +402,8 @@ public class CxfMessageHeadersRelayTest {
         } catch (Exception e) {
             // do nothing
         }
-        assertTrue(result.getResponseType().equals("pass"), "Expected in band out header *not* to propagate but it did");
-        assertTrue(header.value == null, "Expected in band response header *not* to propagate but did");
+        assertEquals("pass", result.getResponseType(), "Expected in band out header *not* to propagate but it did");
+        assertNull(header.value, "Expected in band response header *not* to propagate but did");
     }
 
     @Test
@@ -613,8 +607,7 @@ public class CxfMessageHeadersRelayTest {
             fail("Should have got List of out-of-band headers");
         }
 
-        assertTrue(oobHdr.size() == 1,
-                "HeaderHolder list expected to conain 1 object received " + oobHdr.size());
+        assertEquals(1, oobHdr.size(), "HeaderHolder list expected to conain 1 object received " + oobHdr.size());
 
         for (Header hdr1 : oobHdr) {
             if (hdr1.getObject() instanceof Node) {
@@ -630,13 +623,13 @@ public class CxfMessageHeadersRelayTest {
         }
 
         assertNotNull(hdrToTest, "out-of-band header should not be null");
-        assertTrue("testOobReturnHeaderName".equals(hdrToTest.getName()),
+        assertEquals("testOobReturnHeaderName", hdrToTest.getName(),
                 "Expected out-of-band Header name testOobReturnHeaderName recevied :"
-                                                                          + hdrToTest.getName());
-        assertTrue("testOobReturnHeaderValue".equals(hdrToTest.getValue()),
+                                                                     + hdrToTest.getName());
+        assertEquals("testOobReturnHeaderValue", hdrToTest.getValue(),
                 "Expected out-of-band Header value testOobReturnHeaderValue recevied :"
-                                                                            + hdrToTest.getValue());
-        assertTrue("testReturnHdrAttribute".equals(hdrToTest.getHdrAttribute()),
+                                                                       + hdrToTest.getValue());
+        assertEquals("testReturnHdrAttribute", hdrToTest.getHdrAttribute(),
                 "Expected out-of-band Header attribute testReturnHdrAttribute recevied :" + hdrToTest.getHdrAttribute());
     }
 
@@ -671,7 +664,7 @@ public class CxfMessageHeadersRelayTest {
             fail("Should have got List of out-of-band headers");
         }
 
-        assertTrue(oobHdr.size() == 2, "HeaderHolder list expected to conain 2 object received " + oobHdr.size());
+        assertEquals(2, oobHdr.size(), "HeaderHolder list expected to conain 2 object received " + oobHdr.size());
 
         for (Header hdr1 : oobHdr) {
             if (hdr1.getObject() instanceof Node) {
@@ -687,27 +680,25 @@ public class CxfMessageHeadersRelayTest {
         }
 
         assertTrue(hdrToTest.size() > 0, "out-of-band header should not be null");
-        assertTrue("testOobReturnHeaderName".equals(hdrToTest.get(0).getName()),
+        assertEquals("testOobReturnHeaderName", hdrToTest.get(0).getName(),
                 "Expected out-of-band Header name testOobReturnHeaderName recevied :"
-                                                                                 + hdrToTest.get(0).getName());
-        assertTrue("testOobReturnHeaderValue".equals(hdrToTest.get(0).getValue()),
+                                                                            + hdrToTest.get(0).getName());
+        assertEquals("testOobReturnHeaderValue", hdrToTest.get(0).getValue(),
                 "Expected out-of-band Header value testOobReturnHeaderValue recevied :"
-                                                                                   + hdrToTest.get(0).getValue());
-        assertTrue("testReturnHdrAttribute"
-                .equals(hdrToTest.get(0).getHdrAttribute()),
+                                                                              + hdrToTest.get(0).getValue());
+        assertEquals("testReturnHdrAttribute", hdrToTest.get(0).getHdrAttribute(),
                 "Expected out-of-band Header attribute testReturnHdrAttribute recevied :"
-                                                             + hdrToTest.get(0).getHdrAttribute());
+                                                                                   + hdrToTest.get(0).getHdrAttribute());
 
-        assertTrue("New_testOobHeader".equals(hdrToTest.get(1).getName()),
+        assertEquals("New_testOobHeader", hdrToTest.get(1).getName(),
                 "Expected out-of-band Header name New_testOobHeader recevied :"
-                                                                           + hdrToTest.get(1).getName());
-        assertTrue("New_testOobHeaderValue".equals(hdrToTest.get(1).getValue()),
+                                                                      + hdrToTest.get(1).getName());
+        assertEquals("New_testOobHeaderValue", hdrToTest.get(1).getValue(),
                 "Expected out-of-band Header value New_testOobHeaderValue recevied :"
-                                                                                 + hdrToTest.get(1).getValue());
-        assertTrue("testHdrAttribute"
-                .equals(hdrToTest.get(1).getHdrAttribute()),
+                                                                            + hdrToTest.get(1).getValue());
+        assertEquals("testHdrAttribute", hdrToTest.get(1).getHdrAttribute(),
                 "Expected out-of-band Header attribute testHdrAttribute recevied :"
-                                                             + hdrToTest.get(1).getHdrAttribute());
+                                                                             + hdrToTest.get(1).getHdrAttribute());
     }
 
     public static class InsertRequestOutHeaderProcessor implements Processor {
