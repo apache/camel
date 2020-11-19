@@ -76,4 +76,8 @@ public final class AWSServiceFactory {
     public static AWSService createCloudWatchService() {
         return createService("AWS Cloud Watch", AWSCloudWatchLocalContainerService::new);
     }
+
+    public static AWSService createEC2Service() {
+        return createService("AWS EC2", AWSEC2LocalContainerService::new);
+    }
 }
