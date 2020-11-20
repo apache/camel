@@ -221,17 +221,18 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default Aws2S3ComponentBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Aws2S3ComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -661,7 +662,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "region": getOrCreateConfiguration((AWS2S3Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((AWS2S3Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((AWS2S3Component) component).setUriEndpointOverride((java.lang.String) value); return true;
-            case "useIAMCredentials": getOrCreateConfiguration((AWS2S3Component) component).setUseIAMCredentials((boolean) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((AWS2S3Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "customerAlgorithm": getOrCreateConfiguration((AWS2S3Component) component).setCustomerAlgorithm((java.lang.String) value); return true;
             case "customerKeyId": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyId((java.lang.String) value); return true;
             case "customerKeyMD5": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyMD5((java.lang.String) value); return true;

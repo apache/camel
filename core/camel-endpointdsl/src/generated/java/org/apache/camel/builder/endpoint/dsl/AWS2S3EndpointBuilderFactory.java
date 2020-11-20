@@ -315,31 +315,33 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointConsumerBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointConsumerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointConsumerBuilder useIAMCredentials(
-                String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointConsumerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -1573,31 +1575,33 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointProducerBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointProducerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointProducerBuilder useIAMCredentials(
-                String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointProducerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -2204,30 +2208,33 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointBuilder useIAMCredentials(String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**

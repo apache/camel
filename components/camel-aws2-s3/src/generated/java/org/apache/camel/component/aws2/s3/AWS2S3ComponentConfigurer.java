@@ -104,8 +104,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useAwsKMS": getOrCreateConfiguration(target).setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
         case "usecustomerkey":
         case "useCustomerKey": getOrCreateConfiguration(target).setUseCustomerKey(property(camelContext, boolean.class, value)); return true;
-        case "useiamcredentials":
-        case "useIAMCredentials": getOrCreateConfiguration(target).setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -194,8 +194,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useAwsKMS": return boolean.class;
         case "usecustomerkey":
         case "useCustomerKey": return boolean.class;
-        case "useiamcredentials":
-        case "useIAMCredentials": return boolean.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         default: return null;
         }
     }
@@ -280,8 +280,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useAwsKMS": return getOrCreateConfiguration(target).isUseAwsKMS();
         case "usecustomerkey":
         case "useCustomerKey": return getOrCreateConfiguration(target).isUseCustomerKey();
-        case "useiamcredentials":
-        case "useIAMCredentials": return getOrCreateConfiguration(target).isUseIAMCredentials();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         default: return null;
         }
     }
