@@ -80,4 +80,8 @@ public final class AWSServiceFactory {
     public static AWSService createEC2Service() {
         return createService("AWS EC2", AWSEC2LocalContainerService::new);
     }
+
+    public static AWSService createEventBridgeService() {
+        return createService("AWS EventBridge", AWSEventBridgeLocalContainerService::new);
+    }
 }
