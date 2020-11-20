@@ -92,4 +92,8 @@ public final class AWSServiceFactory {
     public static AWSService createKMSService() {
         return createService("AWS KMS", AWSKMSLocalContainerService::new);
     }
+
+    public static AWSService createLambdaService() {
+        return createService("AWS Lambda", AWSLambdaLocalContainerService::new);
+    }
 }
