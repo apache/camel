@@ -62,8 +62,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "subscribeSNStoSQS": getOrCreateConfiguration(target).setSubscribeSNStoSQS(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
-        case "useiamcredentials":
-        case "useIAMCredentials": getOrCreateConfiguration(target).setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -110,8 +110,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "subscribeSNStoSQS": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
-        case "useiamcredentials":
-        case "useIAMCredentials": return boolean.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         default: return null;
         }
     }
@@ -154,8 +154,8 @@ public class Sns2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "subscribeSNStoSQS": return getOrCreateConfiguration(target).isSubscribeSNStoSQS();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
-        case "useiamcredentials":
-        case "useIAMCredentials": return getOrCreateConfiguration(target).isUseIAMCredentials();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         default: return null;
         }
     }

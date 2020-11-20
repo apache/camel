@@ -55,8 +55,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
-        case "useiamcredentials":
-        case "useIAMCredentials": target.getConfiguration().setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -103,8 +103,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "synchronous": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
-        case "useiamcredentials":
-        case "useIAMCredentials": return boolean.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         default: return null;
         }
     }
@@ -147,8 +147,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "synchronous": return target.isSynchronous();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
-        case "useiamcredentials":
-        case "useIAMCredentials": return target.getConfiguration().isUseIAMCredentials();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         default: return null;
         }
     }
