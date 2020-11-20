@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpConverterTest extends BaseJettyTest {
 
@@ -80,7 +79,7 @@ public class HttpConverterTest extends BaseJettyTest {
                         assertNotNull(sis);
                         // The ServletInputStream should be cached and you can't
                         // read message here
-                        assertTrue(sis.available() == 0);
+                        assertEquals(0, sis.available());
                         String s = msg.getBody(String.class);
 
                         assertEquals("Hello World", s);

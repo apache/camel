@@ -37,7 +37,6 @@ import org.openstack4j.model.network.NetworkType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -117,7 +116,7 @@ public class NetworkProducerTest extends NeutronProducerTestSupport {
         producer.process(exchange);
 
         final List<Network> result = msg.getBody(List.class);
-        assertTrue(result.size() == 2);
+        assertEquals(2, result.size());
         assertEquals(testOSnetwork, result.get(0));
     }
 
