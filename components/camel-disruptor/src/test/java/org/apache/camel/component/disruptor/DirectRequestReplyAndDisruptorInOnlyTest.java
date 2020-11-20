@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.disruptor;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public class DirectRequestReplyAndDisruptorInOnlyTest extends CamelTestSupport {
                 // send the message as InOnly to DISRUPTOR as we want to continue routing
                 // (as we don't want to do request/reply over DISRUPTOR)
                 // In EIP patterns the WireTap pattern is what this would be
-                from("direct:start").transform(constant("Bye World")).inOnly("disruptor:log");
+                from("direct:start").transform(constant("Bye World")).to(ExchangePattern.InOnly, "disruptor:log");
 
                 from("disruptor:log").delay(1000).transform(body().prepend("Logging: "))
                         .to("log:log", "mock:log");
