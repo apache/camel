@@ -130,10 +130,10 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useAwsKMS": target.getConfiguration().setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
         case "usecustomerkey":
         case "useCustomerKey": target.getConfiguration().setUseCustomerKey(property(camelContext, boolean.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "useiamcredentials":
-        case "useIAMCredentials": target.getConfiguration().setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -255,10 +255,10 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useAwsKMS": return boolean.class;
         case "usecustomerkey":
         case "useCustomerKey": return boolean.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
-        case "useiamcredentials":
-        case "useIAMCredentials": return boolean.class;
         default: return null;
         }
     }
@@ -376,10 +376,10 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useAwsKMS": return target.getConfiguration().isUseAwsKMS();
         case "usecustomerkey":
         case "useCustomerKey": return target.getConfiguration().isUseCustomerKey();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
-        case "useiamcredentials":
-        case "useIAMCredentials": return target.getConfiguration().isUseIAMCredentials();
         default: return null;
         }
     }
