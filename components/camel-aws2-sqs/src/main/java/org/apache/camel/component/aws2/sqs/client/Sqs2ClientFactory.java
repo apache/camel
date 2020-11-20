@@ -35,7 +35,7 @@ public final class Sqs2ClientFactory {
      * @return               SqsClient
      */
     public static Sqs2InternalClient getSqsClient(Sqs2Configuration configuration) {
-        return configuration.isUseIAMCredentials()
+        return configuration.isUseDefaultCredentialsProvider()
                 ? new Sqs2ClientIAMOptimized(configuration) : new Sqs2ClientStandardImpl(configuration);
     }
 }

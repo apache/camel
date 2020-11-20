@@ -113,7 +113,7 @@ public class Sqs2Configuration implements Cloneable {
     private String protocol = "https";
 
     @UriParam(defaultValue = "false")
-    private boolean useIAMCredentials;
+    private boolean useDefaultCredentialsProvider;
 
     /**
      * Whether or not the queue is a FIFO queue
@@ -559,16 +559,16 @@ public class Sqs2Configuration implements Cloneable {
         this.trustAllCertificates = trustAllCertificates;
     }
 
-    public boolean isUseIAMCredentials() {
-        return useIAMCredentials;
+    public boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
 
     /**
      * Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static
      * credentials to be passed in.
      */
-    public void setUseIAMCredentials(boolean useIAMCredentials) {
-        this.useIAMCredentials = useIAMCredentials;
+    public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
     // *************************************************
