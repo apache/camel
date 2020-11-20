@@ -373,8 +373,9 @@ public interface Sns2EndpointBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default Sns2EndpointBuilder useIAMCredentials(boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Sns2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -386,8 +387,9 @@ public interface Sns2EndpointBuilderFactory {
          * Default: false
          * Group: producer
          */
-        default Sns2EndpointBuilder useIAMCredentials(String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Sns2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**

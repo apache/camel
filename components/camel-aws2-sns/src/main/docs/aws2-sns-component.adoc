@@ -68,7 +68,7 @@ The AWS 2 Simple Notification System (SNS) component supports 20 options, which 
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *useIAMCredentials* (producer) | Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static credentials to be passed in. | false | boolean
+| *useDefaultCredentialsProvider* (producer) | Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static credentials to be passed in. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
@@ -120,7 +120,7 @@ with the following path and query parameters:
 | *subject* (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
 | *subscribeSNStoSQS* (producer) | Define if the subscription between SNS Topic and SQS must be done or not | false | boolean
 | *trustAllCertificates* (producer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *useIAMCredentials* (producer) | Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static credentials to be passed in. | false | boolean
+| *useDefaultCredentialsProvider* (producer) | Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static credentials to be passed in. | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
