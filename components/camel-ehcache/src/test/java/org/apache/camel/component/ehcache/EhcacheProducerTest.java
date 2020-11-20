@@ -119,16 +119,12 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderValuesReceivedInAnyOrder(EhcacheConstants.OLD_VALUE, null, val1);
 
         fluentTemplate()
-                .clearHeaders()
-                .clearBody()
                 .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT_IF_ABSENT)
                 .withHeader(EhcacheConstants.KEY, key)
                 .withBody(val1)
                 .to("direct://start")
                 .send();
         fluentTemplate()
-                .clearHeaders()
-                .clearBody()
                 .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT_IF_ABSENT)
                 .withHeader(EhcacheConstants.KEY, key)
                 .withBody(val2)
@@ -240,8 +236,6 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         mock.expectedHeaderValuesReceivedInAnyOrder(EhcacheConstants.ACTION_SUCCEEDED, false, true);
 
         fluentTemplate()
-                .clearHeaders()
-                .clearBody()
                 .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE)
                 .withHeader(EhcacheConstants.KEY, key)
                 .withHeader(EhcacheConstants.OLD_VALUE, val2)
@@ -251,8 +245,6 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         assertTrue(cache.containsKey(key));
 
         fluentTemplate()
-                .clearHeaders()
-                .clearBody()
                 .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REMOVE)
                 .withHeader(EhcacheConstants.KEY, key)
                 .withHeader(EhcacheConstants.OLD_VALUE, val1)
@@ -310,8 +302,6 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         assertEquals(val1, cache.get(key));
 
         fluentTemplate()
-                .clearHeaders()
-                .clearBody()
                 .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REPLACE)
                 .withHeader(EhcacheConstants.KEY, key)
                 .withBody(val2)
@@ -321,8 +311,6 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         assertEquals(val2, cache.get(key));
 
         fluentTemplate()
-                .clearHeaders()
-                .clearBody()
                 .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REPLACE)
                 .withHeader(EhcacheConstants.KEY, key)
                 .withHeader(EhcacheConstants.OLD_VALUE, val1)
@@ -333,8 +321,6 @@ public class EhcacheProducerTest extends EhcacheTestSupport {
         assertEquals(val2, cache.get(key));
 
         fluentTemplate()
-                .clearHeaders()
-                .clearBody()
                 .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_REPLACE)
                 .withHeader(EhcacheConstants.KEY, key)
                 .withHeader(EhcacheConstants.OLD_VALUE, val2)
