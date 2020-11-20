@@ -25,7 +25,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RobotFrameworkComponentTest extends CamelTestSupport {
 
@@ -42,11 +42,11 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertTrue(ObjectHelper.cast(Integer.class,
-                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
+        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
+                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
         Exchange exchangeString = mockString.getExchanges().get(0);
-        assertTrue(ObjectHelper.cast(Integer.class,
-                exchangeString.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
+        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
+                exchangeString.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
     }
 
     @Test
@@ -62,11 +62,11 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertTrue(ObjectHelper.cast(Integer.class,
-                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
+        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
+                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
         Exchange exchangeNumeric = mockNumeric.getExchanges().get(0);
-        assertTrue(ObjectHelper.cast(Integer.class,
-                exchangeNumeric.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
+        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
+                exchangeNumeric.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
     }
 
     @Test
@@ -79,8 +79,8 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertTrue(ObjectHelper.cast(Integer.class,
-                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
+        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
+                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
     }
 
     @Test
@@ -93,8 +93,8 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertTrue(ObjectHelper.cast(Integer.class,
-                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
+        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
+                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
     }
 
     @Test
@@ -107,8 +107,8 @@ public class RobotFrameworkComponentTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertTrue(ObjectHelper.cast(Integer.class,
-                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
+        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
+                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
     }
 
     @Override

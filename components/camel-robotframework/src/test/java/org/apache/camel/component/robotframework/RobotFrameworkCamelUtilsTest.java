@@ -29,7 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
 
@@ -126,8 +125,8 @@ public class RobotFrameworkCamelUtilsTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertTrue(ObjectHelper.cast(Integer.class,
-                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)) == 0);
+        assertEquals(0, (int) ObjectHelper.cast(Integer.class,
+                exchange.getIn().getHeader(RobotFrameworkCamelConstants.CAMEL_ROBOT_RETURN_CODE)));
     }
 
     @Override
