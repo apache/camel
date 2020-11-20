@@ -84,4 +84,8 @@ public final class AWSServiceFactory {
     public static AWSService createEventBridgeService() {
         return createService("AWS EventBridge", AWSEventBridgeLocalContainerService::new);
     }
+
+    public static AWSService createIAMService() {
+        return createService("AWS IAM", AWSIAMLocalContainerService::new);
+    }
 }
