@@ -22,7 +22,7 @@ import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends AbstractTransactionTest {
 
@@ -52,7 +52,7 @@ public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends 
 
         notify.matchesWaitTime();
 
-        assertTrue(getConditionalExceptionProcessor().getCount() == 1,
+        assertEquals(1, getConditionalExceptionProcessor().getCount(),
                 "Expected only 1 calls to process() (1 failure) but encountered "
                                                                        + getConditionalExceptionProcessor().getCount() + ".");
     }

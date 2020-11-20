@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the sendEmptyMessageWhenIdle property is set
@@ -39,8 +39,8 @@ public class SqsConsumerIdleMessageTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
         assertMockEndpointsSatisfied();
-        assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
-        assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
+        assertNull(mock.getExchanges().get(0).getIn().getBody());
+        assertNull(mock.getExchanges().get(1).getIn().getBody());
     }
 
     @Override
