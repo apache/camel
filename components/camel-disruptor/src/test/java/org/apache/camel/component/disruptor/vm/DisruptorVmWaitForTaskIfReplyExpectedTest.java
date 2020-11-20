@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DisruptorVmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSupport {
 
@@ -47,9 +46,11 @@ public class DisruptorVmWaitForTaskIfReplyExpectedTest extends AbstractVmTestSup
                 exchange.setPattern(ExchangePattern.InOnly);
             }
         });
-        // we do not expecy a reply and thus do no wait so we just get our own input back
+        // we do not expect a reply and thus do no wait so we just get our own input back
         assertEquals("Hello World", out.getIn().getBody());
-        assertNull(out.getOut().getBody());
+
+        // Should return the in message as no reply is expected
+        assertEquals("Hello World", out.getMessage().getBody());
 
         assertMockEndpointsSatisfied();
     }

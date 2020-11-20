@@ -50,7 +50,9 @@ public class DisruptorWaitForTaskNeverTest extends CamelTestSupport {
         });
         // we do not wait for the response so we just get our own input back
         assertEquals("Hello World", out.getIn().getBody());
-        assertEquals(null, out.getOut().getBody());
+
+        // Should return the in message as no reply is expected
+        assertEquals("Hello World", out.getMessage().getBody());
 
         assertMockEndpointsSatisfied();
     }
