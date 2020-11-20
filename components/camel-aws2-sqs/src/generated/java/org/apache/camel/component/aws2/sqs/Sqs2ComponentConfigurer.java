@@ -97,8 +97,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
-        case "useiamcredentials":
-        case "useIAMCredentials": getOrCreateConfiguration(target).setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": getOrCreateConfiguration(target).setVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "waittimeseconds":
@@ -184,8 +184,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": return boolean.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
-        case "useiamcredentials":
-        case "useIAMCredentials": return boolean.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         case "visibilitytimeout":
         case "visibilityTimeout": return java.lang.Integer.class;
         case "waittimeseconds":
@@ -267,8 +267,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
-        case "useiamcredentials":
-        case "useIAMCredentials": return getOrCreateConfiguration(target).isUseIAMCredentials();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "visibilitytimeout":
         case "visibilityTimeout": return getOrCreateConfiguration(target).getVisibilityTimeout();
         case "waittimeseconds":

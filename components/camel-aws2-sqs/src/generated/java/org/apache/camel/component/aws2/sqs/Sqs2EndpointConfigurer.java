@@ -123,10 +123,10 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "useiamcredentials":
-        case "useIAMCredentials": target.getConfiguration().setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": target.getConfiguration().setVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "waittimeseconds":
@@ -245,10 +245,10 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "trustallcertificates":
         case "trustAllCertificates": return boolean.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
-        case "useiamcredentials":
-        case "useIAMCredentials": return boolean.class;
         case "visibilitytimeout":
         case "visibilityTimeout": return java.lang.Integer.class;
         case "waittimeseconds":
@@ -363,10 +363,10 @@ public class Sqs2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": return target.getTimeUnit();
         case "trustallcertificates":
         case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
-        case "useiamcredentials":
-        case "useIAMCredentials": return target.getConfiguration().isUseIAMCredentials();
         case "visibilitytimeout":
         case "visibilityTimeout": return target.getConfiguration().getVisibilityTimeout();
         case "waittimeseconds":
