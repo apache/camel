@@ -32,6 +32,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.iam.IamClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.sns.SnsClient;
@@ -149,4 +150,9 @@ public final class AWSSDKClientUtils {
     public static EventBridgeClient newEventBridgeClient() {
         return newClient("EventBridge", EventBridgeClient::builder, EventBridgeClient.class);
     }
+
+    public static IamClient newIAMClient() {
+        return newClient("EventBridge", IamClient::builder, IamClient.class);
+    }
+
 }

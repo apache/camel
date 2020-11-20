@@ -16,61 +16,25 @@
  */
 package org.apache.camel.component.aws2.iam.localstack;
 
-import java.net.URI;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.iam.IAM2Component;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.junit5.Wait;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.containers.GenericContainer;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.iam.IamClient;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class Aws2IAMBaseTest extends ContainerAwareTestSupport {
-
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.12.2";
-    public static final String CONTAINER_NAME = "iam";
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return localstackContainer();
-    }
-
-    public static GenericContainer localstackContainer() {
-        return new GenericContainer(CONTAINER_IMAGE)
-                .withNetworkAliases(CONTAINER_NAME)
-                .withEnv("SERVICES", "iam")
-                .withExposedPorts(4566)
-                .waitingFor(Wait.forListeningPort())
-                .waitingFor(Wait.forLogMessageContaining("Ready.", 1));
-    }
-
-    public String getS3Url() {
-        return String.format(
-                "%s:%d",
-                getContainerHost(CONTAINER_NAME),
-                getContainerPort(CONTAINER_NAME, 4566));
-    }
-
-    public IamClient getIamClient() {
-        IamClient s3Client = IamClient
-                .builder()
-                .endpointOverride(URI.create("http://" + getS3Url()))
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
-                .region(Region.EU_WEST_1)
-                .build();
-        return s3Client;
-    }
+public class Aws2IAMBaseTest extends CamelTestSupport {
+    @RegisterExtension
+    public static AWSService service = AWSServiceFactory.createIAMService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         IAM2Component iam = context.getComponent("aws2-iam", IAM2Component.class);
-        iam.getConfiguration().setIamClient(getIamClient());
+        iam.getConfiguration().setIamClient(AWSSDKClientUtils.newIAMClient());
         return context;
     }
 }
