@@ -75,7 +75,6 @@ public class CamelServerItem {
 
         };
 
-
         this.item.setAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
         this.item.setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
 

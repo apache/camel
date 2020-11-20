@@ -97,7 +97,7 @@ public class AWS2S3Configuration implements Cloneable {
     @UriParam(label = "common,advanced")
     private String customerAlgorithm;
     @UriParam(defaultValue = "false")
-    private boolean useIAMCredentials;
+    private boolean useDefaultCredentialsProvider;
     @UriParam(label = "producer")
     private String keyName;
     @UriParam(defaultValue = "false")
@@ -472,15 +472,15 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to
+     * Set whether the S3 client should expect to load credentials through a default credentials provider or to expect static credentials to
      * be passed in.
      */
-    public void setUseIAMCredentials(Boolean useIAMCredentials) {
-        this.useIAMCredentials = useIAMCredentials;
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseIAMCredentials() {
-        return useIAMCredentials;
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
 
     public boolean isAutoCreateBucket() {
