@@ -30,6 +30,7 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class SpringScheduledRoutePolicyTest {
@@ -50,7 +51,7 @@ public abstract class SpringScheduledRoutePolicyTest {
         context.getRouteController().stopRoute("testRoute", 1000, TimeUnit.MILLISECONDS);
 
         Thread.sleep(4000);
-        assertTrue(context.getRouteController().getRouteStatus("testRoute") == ServiceStatus.Started);
+        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("testRoute"));
         context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
 
         context.stop();
@@ -63,7 +64,7 @@ public abstract class SpringScheduledRoutePolicyTest {
         CamelContext context = startRouteWithPolicy("stopPolicy");
 
         Thread.sleep(4000);
-        assertTrue(context.getRouteController().getRouteStatus("testRoute") == ServiceStatus.Stopped);
+        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("testRoute"));
         try {
             context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
         } catch (CamelExecutionException e) {
