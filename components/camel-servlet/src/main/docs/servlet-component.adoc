@@ -204,6 +204,37 @@ But it is *strongly advised* to use unique `servlet-name` for each Camel
 application to avoid this duplication clash, as well any unforeseen
 side-effects.
 
+== Servlet >= 3.0 and AsyncContext
+
+To enable Camel to benefit from Servlet asynchronous support you must:
+
+. Enable `async` boolean init parameter by setting it to `true`
+. Without more configuration it will reuse servlet thread pool to handle the processing but you can set `executorRef` to an executor service reference to let another pool handle the processing of the exchange.
+It will use camel context registry by default and potentially fallback on an executor policy or default executor service if no bean matches this name.
+
+Note that to force camel to get back pre-3.7.0 behavior which was to wait in another container background thread, you can set `forceAwait` boolean init parameter to `true`.
+
+Sample async configuration:
+
+[source,xml]
+-----------------------------------------------------------------------------------------------
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <display-name>Camel Http Transport Servlet</display-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+    <init-param>
+      <param-name>async</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>executorRef</param-name>
+      <param-value>my-threads</param-value>
+    </init-param>
+  </servlet>
+-----------------------------------------------------------------------------------------------
+
+
+
 == Sample
 
 Use xref:servlet-component.adoc[Servlet] in Spring web applications for simplicity's sake.
