@@ -35,7 +35,7 @@ public final class Sns2ClientFactory {
      * @return               SNSClient
      */
     public static Sns2InternalClient getSnsClient(Sns2Configuration configuration) {
-        return configuration.isUseIAMCredentials()
+        return configuration.isUseDefaultCredentialsProvider()
                 ? new Sns2ClientIAMOptimized(configuration) : new Sns2ClientStandardImpl(configuration);
     }
 }

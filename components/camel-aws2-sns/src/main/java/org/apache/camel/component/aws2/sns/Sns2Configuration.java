@@ -66,7 +66,7 @@ public class Sns2Configuration implements Cloneable {
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false")
-    private boolean useIAMCredentials;
+    private boolean useDefaultCredentialsProvider;
 
     public String getSubject() {
         return subject;
@@ -267,16 +267,16 @@ public class Sns2Configuration implements Cloneable {
         this.trustAllCertificates = trustAllCertificates;
     }
 
-    public boolean isUseIAMCredentials() {
-        return useIAMCredentials;
+    public boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
 
     /**
      * Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static
      * credentials to be passed in.
      */
-    public void setUseIAMCredentials(boolean useIAMCredentials) {
-        this.useIAMCredentials = useIAMCredentials;
+    public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
     // *************************************************
