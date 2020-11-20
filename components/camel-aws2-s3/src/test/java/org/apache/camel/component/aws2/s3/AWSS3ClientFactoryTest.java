@@ -36,7 +36,7 @@ public class AWSS3ClientFactoryTest {
     @Test
     public void getStandardS3Client() {
         AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
-        s3Configuration.setUseIAMCredentials(false);
+        s3Configuration.setUseDefaultCredentialsProvider(false);
         AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
         assertTrue(awss3Client instanceof AWS2S3ClientStandardImpl);
     }
@@ -44,7 +44,7 @@ public class AWSS3ClientFactoryTest {
     @Test
     public void getIAMOptimizedS3Client() {
         AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
-        s3Configuration.setUseIAMCredentials(true);
+        s3Configuration.setUseDefaultCredentialsProvider(true);
         AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
         assertTrue(awss3Client instanceof AWS2S3ClientIAMOptimizedImpl);
     }
