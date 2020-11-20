@@ -241,9 +241,9 @@ public interface Sqs2EndpointBuilderFactory {
          * Default: false
          * Group: common
          */
-        default Sqs2EndpointConsumerBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -255,9 +255,9 @@ public interface Sqs2EndpointBuilderFactory {
          * Default: false
          * Group: common
          */
-        default Sqs2EndpointConsumerBuilder useIAMCredentials(
-                String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -1572,9 +1572,9 @@ public interface Sqs2EndpointBuilderFactory {
          * Default: false
          * Group: common
          */
-        default Sqs2EndpointProducerBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -1586,9 +1586,9 @@ public interface Sqs2EndpointBuilderFactory {
          * Default: false
          * Group: common
          */
-        default Sqs2EndpointProducerBuilder useIAMCredentials(
-                String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -2191,8 +2191,9 @@ public interface Sqs2EndpointBuilderFactory {
          * Default: false
          * Group: common
          */
-        default Sqs2EndpointBuilder useIAMCredentials(boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -2204,8 +2205,9 @@ public interface Sqs2EndpointBuilderFactory {
          * Default: false
          * Group: common
          */
-        default Sqs2EndpointBuilder useIAMCredentials(String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
