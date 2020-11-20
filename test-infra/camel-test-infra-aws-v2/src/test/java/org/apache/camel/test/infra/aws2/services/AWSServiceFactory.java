@@ -88,4 +88,8 @@ public final class AWSServiceFactory {
     public static AWSService createIAMService() {
         return createService("AWS IAM", AWSIAMLocalContainerService::new);
     }
+
+    public static AWSService createKMSService() {
+        return createService("AWS KMS", AWSKMSLocalContainerService::new);
+    }
 }
