@@ -55,7 +55,7 @@ public class CamelServerItem {
         this.itemId = itemId;
         this.baseNode = baseNode;
 
-        final NodeId nodeId = new NodeId(namespaceIndex, "" + itemId);
+        final NodeId nodeId = new NodeId(namespaceIndex, itemId);
         final QualifiedName qname = new QualifiedName(namespaceIndex, itemId);
         final LocalizedText displayName = LocalizedText.english(itemId);
 
