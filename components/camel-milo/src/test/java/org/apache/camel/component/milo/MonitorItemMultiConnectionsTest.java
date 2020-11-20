@@ -36,17 +36,17 @@ public class MonitorItemMultiConnectionsTest extends AbstractMiloServerTest {
 
     private static final String MILO_CLIENT_ITEM_C1_1 = "milo-client:opc.tcp://foo:bar@localhost:@@port@@?node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "items-myitem1")
+                                                                "myitem1")
                                                         + "&overrideHost=true";
 
     private static final String MILO_CLIENT_ITEM_C2_1 = "milo-client:opc.tcp://foo:bar2@localhost:@@port@@?node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "items-myitem1")
+                                                                "myitem1")
                                                         + "&overrideHost=true";
 
     private static final String MILO_CLIENT_ITEM_C3_1 = "milo-client:opc.tcp://foo2:bar@localhost:@@port@@?node="
                                                         + NodeIds.nodeValue(MiloServerComponent.DEFAULT_NAMESPACE_URI,
-                                                                "items-myitem1")
+                                                                "myitem1")
                                                         + "&overrideHost=true";
 
     private static final String MOCK_TEST_1 = "mock:test1";
