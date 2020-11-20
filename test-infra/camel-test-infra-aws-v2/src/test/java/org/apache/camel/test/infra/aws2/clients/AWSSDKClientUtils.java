@@ -34,6 +34,7 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.iam.IamClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
+import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -155,4 +156,7 @@ public final class AWSSDKClientUtils {
         return newClient("EventBridge", IamClient::builder, IamClient.class);
     }
 
+    public static KmsClient newKMSClient() {
+        return newClient("KMS", KmsClient::builder, KmsClient.class);
+    }
 }
