@@ -243,6 +243,10 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 The camel-aws2-sns has now support for autowiring the amazonSNSClient option with SnsClient instance coming from the registry.
 In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been now removed.
 
+=== Camel-AWS2-SNS UseIamCredentials
+
+The option useIamCredentials has been renamed to useDefaultCredentialsProvider, since we changed to a DefaultCredentialsProvider approach.
+
 === Camel-AWS2-SQS Autowire support
 
 The camel-aws2-sqs has now support for autowiring the amazonSQSClient option with SqsClient instance coming from the registry.
