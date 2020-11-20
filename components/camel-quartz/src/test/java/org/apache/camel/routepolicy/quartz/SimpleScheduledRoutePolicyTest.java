@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -68,7 +69,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
 
         Thread.sleep(5000);
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
+        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
         context.getComponent("quartz", QuartzComponent.class).stop();
@@ -98,7 +99,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
 
         Thread.sleep(4000);
 
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
+        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
 
         boolean consumerStopped = false;
         try {
