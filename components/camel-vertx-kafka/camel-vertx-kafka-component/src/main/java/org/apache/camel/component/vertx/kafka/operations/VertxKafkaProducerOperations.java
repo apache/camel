@@ -3,6 +3,7 @@ package org.apache.camel.component.vertx.kafka.operations;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import io.vertx.kafka.client.producer.KafkaProducer;
 import io.vertx.kafka.client.producer.KafkaProducerRecord;
@@ -35,12 +36,20 @@ public class VertxKafkaProducerOperations {
         configurationOptionsProxy = new VertxKafkaConfigurationOptionsProxy(configuration);
     }
 
-    public boolean sentEvents(final Exchange exchange, final AsyncCallback callback) {
+    public boolean sendEvents(final Exchange exchange, final AsyncCallback callback) {
+        ObjectHelper.notNull(exchange, "exchange cannot be null");
+        ObjectHelper.notNull(callback, "callback cannot be null");
+
+        return sendEvents(exchange, unused -> LOG.debug("Processed one event..."), callback);
+    }
+
+    public boolean sendEvents(
+            final Exchange exchange, final Consumer<List<RecordMetadata>> resultCallback, final AsyncCallback callback) {
         ObjectHelper.notNull(exchange, "exchange cannot be null");
         ObjectHelper.notNull(callback, "callback cannot be null");
 
         sendAsyncEvents(exchange)
-                .subscribe(unused -> LOG.debug("Processed one event..."), error -> {
+                .subscribe(resultCallback, error -> {
                     // error but we continue
                     LOG.debug("Error processing async exchange with error:" + error.getMessage());
                     exchange.setException(error);
@@ -54,10 +63,10 @@ public class VertxKafkaProducerOperations {
         return false;
     }
 
-    private Mono<Void> sendAsyncEvents(final Exchange exchange) {
+    private Mono<List<RecordMetadata>> sendAsyncEvents(final Exchange exchange) {
         return Flux.fromIterable(createKafkaProducerRecords(exchange))
                 .flatMap(this::sendDataToKafka)
-                .then()
+                .collectList()
                 .doOnError(error -> LOG.error(error.getMessage()));
     }
 
