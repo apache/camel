@@ -22,6 +22,7 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -88,7 +89,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(context.hasEndpoint("mock:bar") == null, "Should have removed mock:bar endpoint");
+        assertNull(context.hasEndpoint("mock:bar"), "Should have removed mock:bar endpoint");
     }
 
     @Test
