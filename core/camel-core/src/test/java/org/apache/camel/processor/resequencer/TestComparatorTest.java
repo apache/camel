@@ -20,6 +20,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -67,7 +68,7 @@ public class TestComparatorTest {
         assertTrue(c.compare(e2, e1) > 0);
         assertTrue(c.compare(e1, e3) < 0);
         assertTrue(c.compare(e3, e1) > 0);
-        assertTrue(c.compare(e3, e3) == 0);
+        assertEquals(0, c.compare(e3, e3));
     }
 
 }

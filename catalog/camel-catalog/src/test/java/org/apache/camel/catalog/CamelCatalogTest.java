@@ -689,7 +689,7 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("foo:bar?me=you");
         assertTrue(result.isSuccess());
         assertTrue(result.hasWarnings());
-        assertTrue(result.getUnknownComponent().equals("foo"));
+        assertEquals("foo", result.getUnknownComponent());
         assertEquals(0, result.getNumberOfErrors());
         assertEquals(1, result.getNumberOfWarnings());
 
@@ -804,7 +804,7 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("{{getFtpUrl}}?recursive=true");
         assertTrue(result.isSuccess());
         assertTrue(result.hasWarnings());
-        assertTrue(result.getIncapable() != null);
+        assertNotNull(result.getIncapable());
     }
 
     @Test

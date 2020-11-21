@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitterWithXqureyTest extends ContextTestSupport {
     private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
@@ -53,7 +53,7 @@ public class SplitterWithXqureyTest extends ContextTestSupport {
         for (Exchange exchange : result.getExchanges()) {
             String message = exchange.getIn().getBody(String.class);
             log.debug("The message is " + message);
-            assertTrue(message.indexOf("<other") == 0, "The splitted message should start with <other");
+            assertEquals(0, message.indexOf("<other"), "The splitted message should start with <other");
         }
 
     }

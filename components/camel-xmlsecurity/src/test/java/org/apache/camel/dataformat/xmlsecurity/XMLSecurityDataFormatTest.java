@@ -38,6 +38,8 @@ import org.apache.xml.security.encryption.XMLCipher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -138,7 +140,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         final Charset passCodeCharset = StandardCharsets.UTF_8;
         final String passCode = new String(bits192, passCodeCharset);
         byte[] bytes = passCode.getBytes(passCodeCharset);
-        assertTrue(bits192.length != bytes.length);
+        assertNotEquals(bits192.length, bytes.length);
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -231,7 +233,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         });
         Document doc = xmlsecTestHelper.testEncryption(TestHelper.XML_FRAGMENT, context);
         NodeList nodeList = doc.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "RSAKeyValue");
-        assertTrue(nodeList.getLength() == 0);
+        assertEquals(0, nodeList.getLength());
     }
 
     /*
