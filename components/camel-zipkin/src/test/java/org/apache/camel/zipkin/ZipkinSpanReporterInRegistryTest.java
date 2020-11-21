@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import zipkin2.reporter.Reporter;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class ZipkinSpanReporterInRegistryTest extends CamelTestSupport {
 
@@ -50,7 +50,7 @@ public class ZipkinSpanReporterInRegistryTest extends CamelTestSupport {
     @Test
     public void testZipkinConfiguration() throws Exception {
         assertNotNull(zipkin.getSpanReporter());
-        assertTrue(zipkin.getSpanReporter() == Reporter.NOOP);
+        assertSame(Reporter.NOOP, zipkin.getSpanReporter());
     }
 
 }

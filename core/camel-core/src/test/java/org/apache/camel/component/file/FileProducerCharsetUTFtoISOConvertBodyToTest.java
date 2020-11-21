@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -79,7 +80,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
         byte[] buffer = new byte[100];
 
         int len = fis.read(buffer);
-        assertTrue(len != -1, "Should read data: " + len);
+        assertNotEquals(-1, len, "Should read data: " + len);
         byte[] data = new byte[len];
         System.arraycopy(buffer, 0, data, 0, len);
         fis.close();

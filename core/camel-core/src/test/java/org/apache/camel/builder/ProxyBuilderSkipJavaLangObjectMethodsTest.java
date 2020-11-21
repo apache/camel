@@ -38,7 +38,7 @@ public class ProxyBuilderSkipJavaLangObjectMethodsTest extends ContextTestSuppor
         // these methods should not be proxied as they are from java.lang.Object
         assertNotEquals(0, foo.hashCode());
         assertNotNull(foo.toString());
-        assertFalse(foo.equals(null));
+        assertNotEquals(null, foo);
 
         assertMockEndpointsSatisfied();
     }

@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CustomSedaTest extends ContextTestSupport {
 
@@ -37,8 +37,8 @@ public class CustomSedaTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(context.hasComponent("seda") != null);
-        assertTrue(context.hasComponent("seda2") != null);
+        assertNotNull(context.hasComponent("seda"));
+        assertNotNull(context.hasComponent("seda2"));
     }
 
     @Override
