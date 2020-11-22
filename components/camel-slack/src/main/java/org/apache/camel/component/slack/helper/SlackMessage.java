@@ -84,7 +84,7 @@ public class SlackMessage {
         this.attachments = attachments;
     }
 
-    public class Attachment {
+    public static class Attachment {
 
         private String fallback;
         private String color;
@@ -222,7 +222,7 @@ public class SlackMessage {
             this.fields = fields;
         }
 
-        public class Field {
+        public static class Field {
 
             private String title;
             private String value;
