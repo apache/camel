@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseService {
 
     protected static final byte NEW = 0;
-    protected static final byte BUILDED = 1;
+    protected static final byte BUILT = 1;
     protected static final byte INITIALIZING = 2;
     protected static final byte INITIALIZED = 3;
     protected static final byte STARTING = 4;
@@ -64,7 +64,7 @@ public abstract class BaseService {
                     } catch (Exception e) {
                         doFail(e);
                     }
-                    status = BUILDED;
+                    status = BUILT;
                     LOG.trace("Built service: {}", this);
                 }
             }
@@ -73,9 +73,9 @@ public abstract class BaseService {
 
     public void init() {
         // allow to initialize again if stopped or failed
-        if (status <= BUILDED || status >= STOPPED) {
+        if (status <= BUILT || status >= STOPPED) {
             synchronized (lock) {
-                if (status <= BUILDED || status >= STOPPED) {
+                if (status <= BUILT || status >= STOPPED) {
                     build();
                     LOG.trace("Initializing service: {}", this);
                     try (AutoCloseable ignored = doLifecycleChange()) {
@@ -273,7 +273,7 @@ public abstract class BaseService {
     }
 
     public boolean isBuild() {
-        return status == BUILDED;
+        return status == BUILT;
     }
 
     public boolean isInit() {
