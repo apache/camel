@@ -45,7 +45,7 @@ public abstract class BaseService {
     protected static final byte SUSPENDED = 7;
     protected static final byte STOPPING = 8;
     protected static final byte STOPPED = 9;
-    protected static final byte SHUTTINGDOWN = 10;
+    protected static final byte SHUTTING_DOWN = 10;
     protected static final byte SHUTDOWN = 11;
     protected static final byte FAILED = 12;
 
@@ -142,7 +142,7 @@ public abstract class BaseService {
                 LOG.trace("Service: {} failed and regarded as already stopped", this);
                 return;
             }
-            if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
+            if (status == STOPPED || status == SHUTTING_DOWN || status == SHUTDOWN) {
                 LOG.trace("Service: {} already stopped", this);
                 return;
             }
@@ -229,7 +229,7 @@ public abstract class BaseService {
                 LOG.trace("Service: {} already shutdown", this);
                 return;
             }
-            if (status == SHUTTINGDOWN) {
+            if (status == SHUTTING_DOWN) {
                 LOG.trace("Service: {} already shutting down", this);
                 return;
             }
