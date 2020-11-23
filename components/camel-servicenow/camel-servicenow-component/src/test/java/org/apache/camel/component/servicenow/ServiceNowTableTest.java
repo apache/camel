@@ -17,9 +17,11 @@
 package org.apache.camel.component.servicenow;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servicenow.model.Incident;
@@ -29,8 +31,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ServiceNowTableTest extends ServiceNowTestSupport {
 
@@ -312,22 +314,19 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         {
             LOGGER.info("Find the record {}, should fail", sysId);
 
-            try {
-                template().sendBodyAndHeaders(
-                        "direct:servicenow",
-                        null,
-                        kvBuilder()
-                                .put(ServiceNowConstants.RESOURCE, "table")
-                                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                                .put(ServiceNowParams.PARAM_SYS_ID, sysId)
-                                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
-                                .build());
+            Map<String, Object> build = kvBuilder()
+                    .put(ServiceNowConstants.RESOURCE, "table")
+                    .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+                    .put(ServiceNowParams.PARAM_SYS_ID, sysId)
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                    .build();
 
-                fail("Record " + number + " should have been deleted");
-            } catch (CamelExecutionException e) {
-                assertTrue(e.getCause() instanceof ServiceNowException);
-                // we are good
-            }
+            ProducerTemplate producerTemplate = template();
+
+            Exception ex = assertThrows(CamelExecutionException.class,
+                    () -> producerTemplate.sendBodyAndHeaders("direct:servicenow", null, build));
+
+            assertTrue(ex.getCause() instanceof ServiceNowException);
         }
     }
 

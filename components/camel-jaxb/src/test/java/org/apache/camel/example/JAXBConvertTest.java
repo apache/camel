@@ -22,12 +22,13 @@ import java.io.InputStream;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JAXBConvertTest extends ExchangeTestSupport {
 
@@ -76,23 +77,19 @@ public class JAXBConvertTest extends ExchangeTestSupport {
         String data = "<errorOrder name='foo' amount='123.45' price='2.22'/>";
         InputStream is = new ByteArrayInputStream(data.getBytes());
 
-        try {
-            context.getTypeConverter().convertTo(PurchaseOrder.class, exchange, is);
-            fail("Should have thrown exception");
-        } catch (TypeConversionException e) {
-            // expected
-        }
+        TypeConverter converter = context.getTypeConverter();
+
+        Exception ex = Assertions.assertThrows(TypeConversionException.class,
+                () -> converter.convertTo(PurchaseOrder.class, exchange, is));
         assertEquals(-1, is.read());
     }
 
     @Test
-    public void testNoConversionForStreamCache() throws Exception {
+    public void testNoConversionForStreamCache() {
         PurchaseOrder order = new PurchaseOrder();
-        try {
-            context.getTypeConverter().mandatoryConvertTo(StreamCache.class, exchange, order);
-            fail("We should not use the JAXB FallbackTypeConverter for stream caching");
-        } catch (NoTypeConversionAvailableException e) {
-            //this is OK
-        }
+
+        TypeConverter converter = context.getTypeConverter();
+        Exception ex = Assertions.assertThrows(NoTypeConversionAvailableException.class,
+                () -> converter.mandatoryConvertTo(StreamCache.class, exchange, order));
     }
 }
