@@ -184,7 +184,7 @@
         <google-maps-services-version>0.10.1</google-maps-services-version>
         <flatpack-version>4.0.4</flatpack-version>
         <flink-version>1.11.2</flink-version>
-        <fop-version>2.3</fop-version>
+        <fop-version>2.5</fop-version>
         <ftpserver-version>1.1.1</ftpserver-version>
         <freemarker-version>2.3.30</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
