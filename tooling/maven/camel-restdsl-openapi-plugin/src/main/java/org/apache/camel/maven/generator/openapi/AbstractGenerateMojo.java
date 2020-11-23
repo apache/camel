@@ -379,9 +379,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             return null;
         }
     }
-    
+
     private Map<String, String> parse(String urlEncodedAuthStr) {
-    	Map<String, String> auths = new HashMap<String, String>();
+        Map<String, String> auths = new HashMap<String, String>();
         if (isNotEmpty(urlEncodedAuthStr)) {
             String[] parts = urlEncodedAuthStr.split(",");
             for (String part : parts) {
@@ -390,7 +390,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
                     try {
                         auths.put(URLDecoder.decode(kvPair[0], "UTF-8"), URLDecoder.decode(kvPair[1], "UTF-8"));
                     } catch (UnsupportedEncodingException e) {
-                    	getLog().warn(e.getMessage());
+                        getLog().warn(e.getMessage());
                     }
                 }
             }
