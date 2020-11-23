@@ -36,23 +36,23 @@ public class VertxKafkaProducerOperations {
         configurationOptionsProxy = new VertxKafkaConfigurationOptionsProxy(configuration);
     }
 
-    public boolean sendEvents(final Exchange exchange, final AsyncCallback callback) {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+    public boolean sendEvents(final Message inMessage, final AsyncCallback callback) {
+        ObjectHelper.notNull(inMessage, "exchange cannot be null");
         ObjectHelper.notNull(callback, "callback cannot be null");
 
-        return sendEvents(exchange, unused -> LOG.debug("Processed one event..."), callback);
+        return sendEvents(inMessage, unused -> LOG.debug("Processed one event..."), callback);
     }
 
     public boolean sendEvents(
-            final Exchange exchange, final Consumer<List<RecordMetadata>> resultCallback, final AsyncCallback callback) {
-        ObjectHelper.notNull(exchange, "exchange cannot be null");
+            final Message inMessage, final Consumer<List<RecordMetadata>> resultCallback, final AsyncCallback callback) {
+        ObjectHelper.notNull(inMessage, "inMessage cannot be null");
         ObjectHelper.notNull(callback, "callback cannot be null");
 
-        sendAsyncEvents(exchange)
+        sendAsyncEvents(inMessage)
                 .subscribe(resultCallback, error -> {
                     // error but we continue
                     LOG.debug("Error processing async exchange with error:" + error.getMessage());
-                    exchange.setException(error);
+                    inMessage.getExchange().setException(error);
                     callback.done(false);
                 }, () -> {
                     // we are done from everything, so mark it as sync done
@@ -63,8 +63,8 @@ public class VertxKafkaProducerOperations {
         return false;
     }
 
-    private Mono<List<RecordMetadata>> sendAsyncEvents(final Exchange exchange) {
-        return Flux.fromIterable(createKafkaProducerRecords(exchange))
+    private Mono<List<RecordMetadata>> sendAsyncEvents(final Message inMessage) {
+        return Flux.fromIterable(createKafkaProducerRecords(inMessage))
                 .flatMap(this::sendDataToKafka)
                 .collectList()
                 .doOnError(error -> LOG.error(error.getMessage()));
@@ -81,55 +81,83 @@ public class VertxKafkaProducerOperations {
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable<KafkaProducerRecord<Object, Object>> createKafkaProducerRecords(final Exchange exchange) {
-        final String overrideTopic = configurationOptionsProxy.getOverrideTopic(exchange);
-        final String topic = ObjectHelper.isEmpty(overrideTopic) ? configurationOptionsProxy.getTopic(exchange) : overrideTopic;
-
+    private Iterable<KafkaProducerRecord<Object, Object>> createKafkaProducerRecords(final Message inMessage) {
         // check if our exchange is list or contain some values
-        if (exchange.getIn().getBody() instanceof Iterable) {
-            return createProducerRecordFromIterable((Iterable<Object>) exchange.getIn().getBody(), topic, exchange);
+        if (inMessage.getBody() instanceof Iterable) {
+            return createProducerRecordFromIterable((Iterable<Object>) inMessage.getBody(), inMessage);
         }
 
         // we have only a single event here
-        return Collections.singletonList(createProducerRecordFromExchange(exchange, topic));
+        return Collections.singletonList(createProducerRecordFromMessage(inMessage, null));
     }
 
     private Iterable<KafkaProducerRecord<Object, Object>> createProducerRecordFromIterable(
-            final Iterable<Object> inputData, final String topic, final Exchange exchange) {
+            final Iterable<Object> inputData, final Message message) {
         final List<KafkaProducerRecord<Object, Object>> finalRecords = new LinkedList<>();
+
+        final String parentTopic = getTopic(message, null);
 
         inputData.forEach(data -> {
             if (data instanceof Exchange) {
-                finalRecords.add(createProducerRecordFromExchange((Exchange) data, topic));
+                finalRecords.add(createProducerRecordFromExchange((Exchange) data, parentTopic));
             } else if (data instanceof Message) {
-                finalRecords.add(createProducerRecordFromMessage((Message) data, topic, exchange));
+                finalRecords.add(createProducerRecordFromMessage((Message) data, parentTopic));
             } else {
-                finalRecords.add(createProducerRecordFromObject(data, topic, exchange));
+                finalRecords.add(createProducerRecordFromObject(data, message, parentTopic));
             }
         });
 
         return finalRecords;
     }
 
-    private KafkaProducerRecord<Object, Object> createProducerRecordFromExchange(final Exchange exchange, final String topic) {
-        return createProducerRecordFromMessage(exchange.getIn(), topic, exchange);
+    private KafkaProducerRecord<Object, Object> createProducerRecordFromExchange(
+            final Exchange exchange, final String parentTopic) {
+        return createProducerRecordFromMessage(exchange.getIn(), parentTopic);
     }
 
     private KafkaProducerRecord<Object, Object> createProducerRecordFromMessage(
-            final Message message, final String topic, final Exchange exchange) {
-        return createProducerRecordFromObject(message.getBody(), topic, exchange);
+            final Message message, final String parentTopic) {
+        return createProducerRecordFromObject(message.getBody(), message, parentTopic);
     }
 
     private KafkaProducerRecord<Object, Object> createProducerRecordFromObject(
-            final Object inputData, final String topic, final Exchange exchange) {
-        final Object messageKey = VertxKafkaTypeConverter.tryConvertToSerializedType(exchange,
-                configurationOptionsProxy.getMessageKey(exchange),
-                configurationOptionsProxy.getKeySerializer(exchange));
+            final Object inputData, final Message message, final String parentTopic) {
 
-        final Object messageValue = VertxKafkaTypeConverter.tryConvertToSerializedType(exchange, inputData,
-                configurationOptionsProxy.getValueSerializer(exchange));
-        final Integer partitionId = configurationOptionsProxy.getPartitionId(exchange);
+        final String topic = getTopic(message, parentTopic);
+        final Object messageKey = getMessageKey(message);
+        final Object messageValue = getMessageValue(message, inputData);
+        final Integer partitionId = getPartitionId(message);
 
         return KafkaProducerRecord.create(topic, messageKey, messageValue, partitionId);
+    }
+
+    private String getTopic(final Message message, final String parentTopic) {
+        // first check if we have override topic,
+        // second check if we have a parent topic
+        // last fallback to the topic from config
+        final String overrideTopic = configurationOptionsProxy.getOverrideTopic(message);
+        final String messageTopic = ObjectHelper.isEmpty(overrideTopic) ? parentTopic : overrideTopic;
+        final String topic = ObjectHelper.isEmpty(messageTopic) ? configurationOptionsProxy.getTopic(message) : messageTopic;
+
+        if (ObjectHelper.isEmpty(topic)) {
+            throw new IllegalArgumentException("Topic cannot be empty, provide a topic in the config or in the headers.");
+        }
+
+        return topic;
+    }
+
+    private Object getMessageKey(final Message message) {
+        return VertxKafkaTypeConverter.tryConvertToSerializedType(message,
+                configurationOptionsProxy.getMessageKey(message),
+                configurationOptionsProxy.getKeySerializer(message));
+    }
+
+    private Integer getPartitionId(final Message message) {
+        return configurationOptionsProxy.getPartitionId(message);
+    }
+
+    private Object getMessageValue(final Message message, final Object inputData) {
+        return VertxKafkaTypeConverter.tryConvertToSerializedType(message, inputData,
+                configurationOptionsProxy.getValueSerializer(message));
     }
 }

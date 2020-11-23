@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.common.utils.Bytes;
 
@@ -22,8 +23,8 @@ public final class VertxKafkaTypeConverter {
     }
 
     public static Object tryConvertToSerializedType(
-            final Exchange exchange, final Object inputValue, final String valueSerializer) {
-        ObjectHelper.notNull(exchange, "exchange");
+            final Message message, final Object inputValue, final String valueSerializer) {
+        ObjectHelper.notNull(message, "message");
 
         if (inputValue == null) {
             return null;
@@ -31,13 +32,13 @@ public final class VertxKafkaTypeConverter {
 
         // Special case for BytesSerializer
         if ("org.apache.kafka.common.serialization.BytesSerializer".equals(valueSerializer)) {
-            final byte[] valueAsByteArr = convertValue(exchange, inputValue, byte[].class);
+            final byte[] valueAsByteArr = convertValue(message.getExchange(), inputValue, byte[].class);
             if (valueAsByteArr != null) {
                 return new Bytes(valueAsByteArr);
             }
         }
 
-        final Object convertedValue = convertValue(exchange, inputValue, typeToClass.get(valueSerializer));
+        final Object convertedValue = convertValue(message.getExchange(), inputValue, typeToClass.get(valueSerializer));
 
         if (ObjectHelper.isNotEmpty(convertedValue)) {
             return convertedValue;
