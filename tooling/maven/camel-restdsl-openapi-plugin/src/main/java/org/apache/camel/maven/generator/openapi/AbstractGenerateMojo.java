@@ -21,26 +21,29 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
-import io.swagger.v3.parser.core.models.AuthorizationValue;
 import org.apache.camel.generator.openapi.DestinationGenerator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -52,7 +55,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.openapitools.codegen.auth.AuthParser;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 import org.yaml.snakeyaml.Yaml;
 
@@ -304,9 +306,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
             URLConnection conn = inputSpecRemoteUrl.openConnection();
             if (isNotEmpty(auth)) {
-                List<AuthorizationValue> authList = AuthParser.parse(auth);
-                for (AuthorizationValue a : authList) {
-                    conn.setRequestProperty(a.getKeyName(), a.getValue());
+                Map<String, String> authList = parse(auth);
+                for (Entry<String, String> a : authList.entrySet()) {
+                    conn.setRequestProperty(a.getKey(), a.getValue());
                 }
             }
             try (ReadableByteChannel readableByteChannel = Channels.newChannel(conn.getInputStream())) {
@@ -377,4 +379,23 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             return null;
         }
     }
+    
+    private Map<String, String> parse(String urlEncodedAuthStr) {
+    	Map<String, String> auths = new HashMap<String, String>();
+        if (isNotEmpty(urlEncodedAuthStr)) {
+            String[] parts = urlEncodedAuthStr.split(",");
+            for (String part : parts) {
+                String[] kvPair = part.split(":");
+                if (kvPair.length == 2) {
+                    try {
+                        auths.put(URLDecoder.decode(kvPair[0], "UTF-8"), URLDecoder.decode(kvPair[1], "UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                    	getLog().warn(e.getMessage());
+                    }
+                }
+            }
+        }
+        return auths;
+    }
+
 }
