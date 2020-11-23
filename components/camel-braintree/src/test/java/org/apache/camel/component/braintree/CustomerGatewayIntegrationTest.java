@@ -40,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
@@ -118,30 +118,27 @@ public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport
 
     @Test
     public void testUpdateUnknownCustomer() throws Exception {
-        try {
-            String id = "unknown-" + UUID.randomUUID().toString();
+        String id = "unknown-" + UUID.randomUUID().toString();
 
-            HashMap<String, Object> headers = new HashMap<>();
-            headers.put("CamelBraintree.id", id);
+        HashMap<String, Object> headers = new HashMap<>();
+        headers.put("CamelBraintree.id", id);
 
-            requestBodyAndHeaders("direct://UPDATE_IN_BODY",
-                    new CustomerRequest().firstName(id),
-                    headers);
+        CustomerRequest customerRequest = new CustomerRequest().firstName(id);
 
-            fail("Should have thrown NotFoundException");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(NotFoundException.class, e.getCause().getCause());
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> requestBodyAndHeaders("direct://UPDATE_IN_BODY", customerRequest, headers));
+
+        assertIsInstanceOf(NotFoundException.class, ex.getCause().getCause());
     }
 
     @Test
     public void testSearchUnknownCustomer() throws Exception {
-        try {
-            requestBody("direct://FIND_IN_BODY", "unknown-" + UUID.randomUUID().toString());
-            fail("Should have thrown NotFoundException");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(NotFoundException.class, e.getCause().getCause());
-        }
+        String uuid = "unknown-" + UUID.randomUUID().toString();
+
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> requestBody("direct://FIND_IN_BODY", uuid));
+
+        assertIsInstanceOf(NotFoundException.class, ex.getCause().getCause());
     }
 
     @Test

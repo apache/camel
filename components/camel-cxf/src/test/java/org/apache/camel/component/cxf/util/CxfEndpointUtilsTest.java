@@ -31,8 +31,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfEndpointUtilsTest {
     // set up the port name and service name
@@ -104,21 +104,17 @@ public class CxfEndpointUtilsTest {
     @Test
     public void testCheckServiceClassConsumer() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
-        try {
-            Consumer cxfConsumer = endpoint.createConsumer(new Processor() {
 
-                @Override
-                public void process(Exchange exchange) throws Exception {
-                    // noop
-                }
+        Consumer cxfConsumer = endpoint.createConsumer(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                // noop
+            }
+        });
 
-            });
-            cxfConsumer.start();
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException exception) {
-            assertNotNull(exception, "Should get a CamelException here");
-            assertTrue(exception.getMessage().startsWith("serviceClass must be specified"));
-        }
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> cxfConsumer.start());
+        assertNotNull(ex, "Should get a CamelException here");
+        assertTrue(ex.getMessage().startsWith("serviceClass must be specified"));
     }
 
 }
