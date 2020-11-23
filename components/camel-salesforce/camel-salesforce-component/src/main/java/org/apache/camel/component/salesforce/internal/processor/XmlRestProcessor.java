@@ -35,6 +35,7 @@ import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
@@ -122,7 +123,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
 
             case UPSERT_SOBJECT:
                 // handle known response type
-                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+                exchange.setProperty(RESPONSE_CLASS, UpsertSObjectResult.class);
                 break;
 
             case QUERY:
