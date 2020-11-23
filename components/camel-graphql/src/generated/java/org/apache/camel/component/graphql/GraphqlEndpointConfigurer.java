@@ -23,6 +23,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "jwtauthorizationtype":
+        case "jwtAuthorizationType": target.setJwtAuthorizationType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operationname":
@@ -45,6 +47,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return java.lang.String.class;
+        case "jwtauthorizationtype":
+        case "jwtAuthorizationType": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "operationname":
@@ -68,6 +72,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
+        case "jwtauthorizationtype":
+        case "jwtAuthorizationType": return target.getJwtAuthorizationType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operationname":
