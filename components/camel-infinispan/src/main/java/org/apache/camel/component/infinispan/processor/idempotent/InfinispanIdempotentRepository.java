@@ -132,8 +132,8 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
             if (InfinispanUtil.isRemote(cacheContainer)) {
                 RemoteCacheManager manager = InfinispanUtil.asRemote(cacheContainer);
                 cache = cacheName != null
-                        ? manager.getCache(cacheName, true)
-                        : manager.getCache(true);
+                        ? manager.getCache(cacheName)
+                        : manager.getCache();
             } else {
                 cache = cacheName != null
                         ? cacheContainer.getCache(cacheName)
