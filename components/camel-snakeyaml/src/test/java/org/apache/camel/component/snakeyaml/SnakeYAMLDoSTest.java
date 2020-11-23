@@ -31,7 +31,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SnakeYAMLDoSTest extends CamelTestSupport {
 
@@ -62,13 +62,13 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("data-dos.yaml");
 
         ProducerTemplate template = context.createProducerTemplate();
-        try {
-            template.requestBody("direct:back", is, String.class);
-            fail("Failure expected on an alias expansion attack");
-        } catch (CamelExecutionException ex) {
-            Throwable cause = ex.getCause();
-            assertEquals("Number of aliases for non-scalar nodes exceeds the specified max=50", cause.getMessage());
-        }
+
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:back", is, String.class),
+                "Failure expected on an alias expansion attack");
+
+        Throwable cause = ex.getCause();
+        assertEquals("Number of aliases for non-scalar nodes exceeds the specified max=50", cause.getMessage());
 
         mock.assertIsSatisfied();
     }
@@ -81,13 +81,15 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
 
         ProducerTemplate template = context.createProducerTemplate();
-        try {
-            template.requestBody("direct:back2", createDump(30), String.class);
-            fail("Failure expected on an alias expansion attack");
-        } catch (CamelExecutionException ex) {
-            Throwable cause = ex.getCause();
-            assertEquals("Recursive key for mapping is detected but it is not configured to be allowed.", cause.getMessage());
-        }
+        String dump = createDump(30);
+
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:back2", dump, String.class),
+                "Failure expected on an alias expansion attack");
+
+        Throwable cause = ex.getCause();
+        assertEquals("Recursive key for mapping is detected but it is not configured to be allowed.",
+                cause.getMessage());
 
         mock.assertIsSatisfied();
     }
