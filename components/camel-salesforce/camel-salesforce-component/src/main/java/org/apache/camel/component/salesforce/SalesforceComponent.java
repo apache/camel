@@ -32,6 +32,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
+import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
@@ -228,7 +229,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private boolean httpProxyUseDigestAuth;
 
     @Metadata(description = "In what packages are the generated DTO classes. Typically the classes would be generated"
-                            + " using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short "
+                            + " using camel-salesforce-maven-plugin. This must be set if using the XML format. Also,"
+                            + " set it if using the generated DTOs to gain the benefit of using short "
                             + " SObject names in parameters/header values. Multiple packages can be separated by comma.",
               javaType = "java.lang.String", label = "common")
     private String packages;
@@ -321,6 +323,16 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         return result;
     }
 
+    private void setXStreamPackageWhiteList() {
+        if (packages != null) {
+            String[] packagesArray = getPackagesAsArray();
+            for (int i = 0; i < packagesArray.length; i++) {
+                packagesArray[i] = packagesArray[i] + ".*";
+            }
+            XStreamUtils.packageWhiteList = String.join(",", packagesArray);
+        }
+    }
+
     public SalesforceHttpClient getHttpClient() {
         return httpClient;
     }
@@ -388,6 +400,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             // parse the packages to create SObject name to class map
             classMap = parsePackages();
             LOG.info("Found {} generated classes in packages: {}", classMap.size(), packages);
+            setXStreamPackageWhiteList();
         } else {
             // use an empty map to avoid NPEs later
             LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
