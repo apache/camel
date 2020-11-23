@@ -31,8 +31,8 @@ import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -213,17 +213,14 @@ public class FtpProducerMoveExistingTest extends FtpServerTestSupport {
                 getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false",
                 "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
-        try {
-            template.sendBodyAndHeader(
-                    getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false",
-                    "Bye World", Exchange.FILE_NAME,
-                    "hello.txt");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause
-                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
-        }
+
+        String uri = getFtpUrl() + "&moveExisting=${file:parent}/renamed-${file:onlyname}&eagerDeleteTargetFile=false";
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));
+
+        GenericFileOperationFailedException cause
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
 
         // we could not write the new file so the previous context should be
         // there

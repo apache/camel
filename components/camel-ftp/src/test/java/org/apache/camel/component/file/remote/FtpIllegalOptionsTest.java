@@ -16,35 +16,25 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FtpIllegalOptionsTest extends CamelTestSupport {
 
     @Test
-    public void testIllegalOptions() throws Exception {
-        try {
-            context.getEndpoint("ftp://target?move=../done/${file:name}&delete=true").createConsumer(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                }
-            });
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            // ok
-        }
+    public void testIllegalOptionsFileEndpoint() throws Exception {
+        Endpoint fileEndpoint = context.getEndpoint("file://target?move=../done/${file:name}&delete=true");
+        assertThrows(IllegalArgumentException.class, () -> fileEndpoint.createConsumer(exchange -> {
+        }));
+    }
 
-        try {
-            context.getEndpoint("file://target?move=../done/${file:name}&delete=true").createConsumer(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                }
-            });
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            // ok
-        }
+    @Test
+    public void testIllegalOptionsFtpEndpoint() throws Exception {
+        Endpoint ftpEndpoint = context.getEndpoint("ftp://target?move=../done/${file:name}&delete=true");
+        assertThrows(IllegalArgumentException.class, () -> ftpEndpoint.createConsumer(exchange -> {
+        }));
     }
 }
