@@ -52,6 +52,13 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
         </dependency>
+
+        <!-- azure sdk -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-blob</artifactId>
+            <version>${azure-storage-blob-java-sdk12-version}</version>
+        </dependency>
     </dependencies>
 
     <build>

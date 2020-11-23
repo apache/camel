@@ -26,10 +26,6 @@ public abstract class AzureStorageService implements AzureService, ContainerServ
     private static final Logger LOG = LoggerFactory.getLogger(AzureStorageService.class);
     private final AzuriteContainer container = new AzuriteContainer();
 
-    public AzureStorageService() {
-        container.start();
-    }
-
     public AzuriteContainer getContainer() {
         return container;
     }
@@ -42,6 +38,8 @@ public abstract class AzureStorageService implements AzureService, ContainerServ
 
     @Override
     public void initialize() {
+        container.start();
+
         LOG.info("Azurite local blob service running at address {}:{}", container.getHost(),
                 container.getMappedPort(AzureServices.BLOB_SERVICE));
         LOG.info("Azurite local queue service running at address {}:{}", container.getHost(),
