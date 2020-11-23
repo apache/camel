@@ -47,6 +47,18 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
         this.account_ref__c = account_ref__c;
     }
 
+     @XStreamAlias("account_ref__r")
+    private Account account_ref__r;
+
+    @JsonProperty("account_ref__r")
+    public Account getaccount_ref__r() {
+        return this.account_ref__r;
+    }
+
+    @JsonProperty("account_ref__r")
+    public void setaccount_ref__r(Account account_ref__r) {
+        this.account_ref__r = account_ref__r;
+    }
     private String ProductId__c;
 
     @JsonProperty("ProductId__c")
@@ -71,7 +83,7 @@ public class With_Reference__c extends AbstractDescribedSObjectBase {
         this.External__c = External__c;
     }
 
-  
+ 
     @Override
     public final SObjectDescription description() {
         return DESCRIPTION;
