@@ -215,6 +215,20 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * HTTP request buffer size. May need to be increased for large SOQL
+         * queries.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: common
+         */
+        default SalesforceComponentBuilder httpRequestBufferSize(
+                java.lang.Integer httpRequestBufferSize) {
+            doSetProperty("httpRequestBufferSize", httpRequestBufferSize);
+            return this;
+        }
+        /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
@@ -1047,6 +1061,7 @@ public interface SalesforceComponentBuilderFactory {
             case "httpClientConnectionTimeout": ((SalesforceComponent) component).setHttpClientConnectionTimeout((long) value); return true;
             case "httpClientIdleTimeout": ((SalesforceComponent) component).setHttpClientIdleTimeout((long) value); return true;
             case "httpMaxContentLength": ((SalesforceComponent) component).setHttpMaxContentLength((java.lang.Integer) value); return true;
+            case "httpRequestBufferSize": ((SalesforceComponent) component).setHttpRequestBufferSize((java.lang.Integer) value); return true;
             case "includeDetails": getOrCreateConfiguration((SalesforceComponent) component).setIncludeDetails((java.lang.Boolean) value); return true;
             case "initialReplayIdMap": getOrCreateConfiguration((SalesforceComponent) component).setInitialReplayIdMap((java.util.Map) value); return true;
             case "instanceId": getOrCreateConfiguration((SalesforceComponent) component).setInstanceId((java.lang.String) value); return true;
