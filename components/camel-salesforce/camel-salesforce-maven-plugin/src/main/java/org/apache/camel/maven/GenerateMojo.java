@@ -176,12 +176,8 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             return result;
         }
 
-        public boolean hasExternalIds(final String name) {
-            return descriptions.hasExternalIds(name);
-        }
-
-        public boolean atLeastOneHasExternalIds(final List<String> names) {
-            return names.stream().anyMatch(n -> descriptions.hasExternalIds(n));
+        public boolean hasDescription(final String name) {
+            return descriptions.hasDescription(name);
         }
 
         public boolean hasMultiSelectPicklists(final SObjectDescription desc) {

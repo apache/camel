@@ -131,7 +131,7 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
     }
 
 #if ( $field.type == "reference" && $utility.notNull($field.relationshipName)
-    && $utility.atLeastOneHasExternalIds($field.getReferenceTo()) ) ## IS LOOKUP $hasDescription
+    && $utility.hasDescription($field.getReferenceTo().get(0)) ) ## IS LOOKUP $hasDescription
 #if ( $field.getReferenceTo().size() > 1)
 #set ( $propertyType = "AbstractDescribedSObjectBase")
 #set ( $needed = true )
