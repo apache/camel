@@ -16,41 +16,41 @@
  */
 package org.apache.camel.component.kubernetes.cluster.utils;
 
-import io.fabric8.kubernetes.api.model.ConfigMap;
-import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
+import io.fabric8.kubernetes.api.model.coordination.v1.Lease;
+import io.fabric8.kubernetes.api.model.coordination.v1.LeaseBuilder;
 
 /**
- * Central lock for testing leader election based on ConfigMap.
+ * Central lock for testing leader election based on Lease.
  */
-public class ConfigMapLockSimulator extends ResourceLockSimulator<ConfigMap> {
+public class LeaseLockSimulator extends ResourceLockSimulator<Lease> {
 
-    public ConfigMapLockSimulator(String resourceName) {
+    public LeaseLockSimulator(String resourceName) {
         super(resourceName);
     }
 
     @Override
-    protected ConfigMap withNewResourceVersion(ConfigMap resource, String newResourceVersion) {
-        return new ConfigMapBuilder(resource).editOrNewMetadata().withResourceVersion(newResourceVersion)
+    protected Lease withNewResourceVersion(Lease resource, String newResourceVersion) {
+        return new LeaseBuilder(resource).editOrNewMetadata().withResourceVersion(newResourceVersion)
                 .endMetadata().build();
     }
 
     @Override
-    protected ConfigMap copyOf(ConfigMap resource) {
-        return new ConfigMapBuilder(resource).build();
+    protected Lease copyOf(Lease resource) {
+        return new LeaseBuilder(resource).build();
     }
 
     @Override
     public String getResourcePath() {
-        return "configmaps";
+        return "leases";
     }
 
     @Override
     public String getAPIPath() {
-        return "/api/v1";
+        return "/apis/coordination.k8s.io/v1";
     }
 
     @Override
-    public Class<ConfigMap> getResourceClass() {
-        return ConfigMap.class;
+    public Class<Lease> getResourceClass() {
+        return Lease.class;
     }
 }

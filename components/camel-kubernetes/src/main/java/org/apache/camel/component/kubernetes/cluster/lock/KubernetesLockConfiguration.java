@@ -20,18 +20,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
+import org.apache.camel.component.kubernetes.cluster.LeaseResourceType;
 
 /**
  * Configuration for Kubernetes Lock.
  */
 public class KubernetesLockConfiguration implements Cloneable {
 
-    public static final String DEFAULT_CONFIGMAP_NAME = "leaders";
+    public static final LeaseResourceType DEFAULT_LEASE_RESOURCE_TYPE = LeaseResourceType.Lease;
+    public static final String DEFAULT_RESOURCE_NAME = "leaders";
 
     public static final double DEFAULT_JITTER_FACTOR = 1.2;
-    public static final long DEFAULT_LEASE_DURATION_MILLIS = 30000;
-    public static final long DEFAULT_RENEW_DEADLINE_MILLIS = 20000;
-    public static final long DEFAULT_RETRY_PERIOD_MILLIS = 5000;
+    public static final long DEFAULT_LEASE_DURATION_MILLIS = 15000;
+    public static final long DEFAULT_RENEW_DEADLINE_MILLIS = 10000;
+    public static final long DEFAULT_RETRY_PERIOD_MILLIS = 2000;
+
+    /**
+     * Kubernetes resource type used to hold the leases.
+     */
+    private LeaseResourceType leaseResourceType = DEFAULT_LEASE_RESOURCE_TYPE;
 
     /**
      * Kubernetes namespace containing the pods and the ConfigMap used for locking.
@@ -39,9 +46,9 @@ public class KubernetesLockConfiguration implements Cloneable {
     private String kubernetesResourcesNamespace;
 
     /**
-     * Name of the ConfigMap used for locking.
+     * Name of the resource used for locking (or prefix, in case multiple ones are used).
      */
-    private String configMapName = DEFAULT_CONFIGMAP_NAME;
+    private String kubernetesResourceName = DEFAULT_RESOURCE_NAME;
 
     /**
      * Name of the lock group (or namespace according to the Camel cluster convention) within the chosen ConfigMap.
@@ -82,6 +89,14 @@ public class KubernetesLockConfiguration implements Cloneable {
     public KubernetesLockConfiguration() {
     }
 
+    public LeaseResourceType getLeaseResourceType() {
+        return leaseResourceType;
+    }
+
+    public void setLeaseResourceType(LeaseResourceType leaseResourceType) {
+        this.leaseResourceType = leaseResourceType;
+    }
+
     public String getKubernetesResourcesNamespaceOrDefault(KubernetesClient kubernetesClient) {
         if (kubernetesResourcesNamespace != null) {
             return kubernetesResourcesNamespace;
@@ -97,12 +112,30 @@ public class KubernetesLockConfiguration implements Cloneable {
         this.kubernetesResourcesNamespace = kubernetesResourcesNamespace;
     }
 
+    /**
+     * @return     the resource name
+     * @deprecated Use {@link #getKubernetesResourceName()}
+     */
+    @Deprecated
     public String getConfigMapName() {
-        return configMapName;
+        return kubernetesResourceName;
     }
 
-    public void setConfigMapName(String configMapName) {
-        this.configMapName = configMapName;
+    /**
+     * @param      kubernetesResourceName the resource name
+     * @deprecated                        Use {@link #setKubernetesResourceName(String)}
+     */
+    @Deprecated
+    public void setConfigMapName(String kubernetesResourceName) {
+        this.kubernetesResourceName = kubernetesResourceName;
+    }
+
+    public String getKubernetesResourceName() {
+        return kubernetesResourceName;
+    }
+
+    public void setKubernetesResourceName(String kubernetesResourceName) {
+        this.kubernetesResourceName = kubernetesResourceName;
     }
 
     public String getGroupName() {
@@ -141,12 +174,20 @@ public class KubernetesLockConfiguration implements Cloneable {
         this.jitterFactor = jitterFactor;
     }
 
+    public int getLeaseDurationSeconds() {
+        return (int) (getLeaseDurationMillis() / 1000);
+    }
+
     public long getLeaseDurationMillis() {
         return leaseDurationMillis;
     }
 
     public void setLeaseDurationMillis(long leaseDurationMillis) {
         this.leaseDurationMillis = leaseDurationMillis;
+    }
+
+    public int getRenewDeadlineSeconds() {
+        return (int) (getRenewDeadlineMillis() / 1000);
     }
 
     public long getRenewDeadlineMillis() {
@@ -178,7 +219,7 @@ public class KubernetesLockConfiguration implements Cloneable {
     public String toString() {
         final StringBuilder sb = new StringBuilder("KubernetesLockConfiguration{");
         sb.append("kubernetesResourcesNamespace='").append(kubernetesResourcesNamespace).append('\'');
-        sb.append(", configMapName='").append(configMapName).append('\'');
+        sb.append(", kubernetesResourceName='").append(kubernetesResourceName).append('\'');
         sb.append(", groupName='").append(groupName).append('\'');
         sb.append(", podName='").append(podName).append('\'');
         sb.append(", clusterLabels=").append(clusterLabels);

@@ -34,14 +34,17 @@ public class LeaderInfo {
 
     private Set<String> members;
 
+    private Integer leaseDurationSeconds;
+
     public LeaderInfo() {
     }
 
-    public LeaderInfo(String groupName, String leader, Date timestamp, Set<String> members) {
+    public LeaderInfo(String groupName, String leader, Date timestamp, Set<String> members, Integer leaseDurationSeconds) {
         this.groupName = groupName;
         this.leader = leader;
         this.localTimestamp = timestamp;
         this.members = members;
+        this.leaseDurationSeconds = leaseDurationSeconds;
     }
 
     public boolean hasEmptyLeader() {
@@ -89,6 +92,14 @@ public class LeaderInfo {
         this.members = members;
     }
 
+    public Integer getLeaseDurationSeconds() {
+        return leaseDurationSeconds;
+    }
+
+    public void setLeaseDurationSeconds(Integer leaseDurationSeconds) {
+        this.leaseDurationSeconds = leaseDurationSeconds;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("LeaderInfo{");
@@ -96,6 +107,7 @@ public class LeaderInfo {
         sb.append(", leader='").append(leader).append('\'');
         sb.append(", localTimestamp=").append(localTimestamp);
         sb.append(", members=").append(members);
+        sb.append(", leaseDurationSeconds=").append(leaseDurationSeconds);
         sb.append('}');
         return sb.toString();
     }
