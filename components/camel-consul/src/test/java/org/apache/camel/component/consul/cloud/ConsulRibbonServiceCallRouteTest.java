@@ -91,7 +91,7 @@ public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").serviceCall().name(SERVICE_NAME).component("http").consulServiceDiscovery()
-                        .url(consulUrl()).endParent()
+                        .url(service.getConsulUrl()).endParent()
                         .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
 

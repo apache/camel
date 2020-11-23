@@ -22,24 +22,46 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.orbitz.consul.AgentClient;
+import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
 import com.orbitz.consul.model.health.ServiceHealth;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulHealthActions;
+import org.apache.camel.test.infra.consul.services.ConsulService;
+import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConsulHealthTest extends ConsulTestSupport {
+public class ConsulHealthTest extends CamelTestSupport {
+    /*
+     NOTE: this one is not registered as extension because it requires a different lifecycle. It
+     needs to be started much earlier than usual, so in this test we take care of handling it.
+     */
+    private ConsulService consulService = ConsulServiceFactory.createService();
+
     private AgentClient client;
     private List<Registration> registrations;
     private String service;
 
-    // *************************************************************************
-    // Setup / tear down
-    // *************************************************************************
+    public ConsulHealthTest() {
+        consulService.initialize();
+    }
+
+    @BindToRegistry("consul")
+    public ConsulComponent getConsulComponent() {
+        ConsulComponent component = new ConsulComponent();
+        component.getConfiguration().setUrl(consulService.getConsulUrl());
+        return component;
+    }
+
+    protected Consul getConsul() {
+        return Consul.builder().withUrl(consulService.getConsulUrl()).build();
+    }
 
     @Override
     public void doPreSetup() throws Exception {

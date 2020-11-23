@@ -21,30 +21,27 @@ import java.util.List;
 import java.util.UUID;
 
 import com.orbitz.consul.Consul;
-import com.orbitz.consul.KeyValueClient;
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.junit5.Wait;
-import org.testcontainers.containers.GenericContainer;
+import org.apache.camel.test.infra.consul.services.ConsulService;
+import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class ConsulTestSupport extends ContainerAwareTestSupport {
-    public static final String CONTAINER_IMAGE = "consul:1.8.3";
-    public static final String CONTAINER_NAME = "consul";
+public class ConsulTestSupport extends CamelTestSupport {
+    @RegisterExtension
+    public static ConsulService service = ConsulServiceFactory.createService();
+
     public static final String KV_PREFIX = "/camel";
 
     @BindToRegistry("consul")
     public ConsulComponent getConsulComponent() {
         ConsulComponent component = new ConsulComponent();
-        component.getConfiguration().setUrl(consulUrl());
+        component.getConfiguration().setUrl(service.getConsulUrl());
         return component;
     }
 
     protected Consul getConsul() {
-        return Consul.builder().withUrl(consulUrl()).build();
-    }
-
-    protected KeyValueClient getKeyValueClient() {
-        return getConsul().keyValueClient();
+        return Consul.builder().withUrl(service.getConsulUrl()).build();
     }
 
     protected String generateRandomString() {
@@ -64,22 +61,5 @@ public class ConsulTestSupport extends ContainerAwareTestSupport {
 
     protected String generateKey() {
         return KV_PREFIX + "/" + getCurrentTestName() + "/" + generateRandomString();
-    }
-
-    protected String consulUrl() {
-        return String.format("http://%s:%d", getContainerHost(CONTAINER_NAME),
-                getContainerPort(CONTAINER_NAME, Consul.DEFAULT_HTTP_PORT));
-    }
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return consulContainer();
-    }
-
-    public static GenericContainer consulContainer() {
-        return new GenericContainer(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME)
-                .withExposedPorts(Consul.DEFAULT_HTTP_PORT)
-                .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
-                .withCommand("agent", "-dev", "-server", "-bootstrap", "-client", "0.0.0.0", "-log-level", "trace");
     }
 }
