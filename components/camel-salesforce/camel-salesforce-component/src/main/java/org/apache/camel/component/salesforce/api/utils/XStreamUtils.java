@@ -36,14 +36,19 @@ import org.apache.camel.component.salesforce.internal.dto.RestChoices;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
 
 public final class XStreamUtils {
-    private static final String PERMISSIONS_PROPERTY_DEFAULT = "java.lang.*,java.util.*";
+    public static String packageWhiteList = "";
+
+    private static final String PERMISSIONS_PROPERTY_DEFAULT
+            = "org.apache.camel.**";
     private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
 
     private XStreamUtils() {
     }
 
     public static void addDefaultPermissions(final XStream xstream) {
-        addPermissions(xstream, System.getProperty(PERMISSIONS_PROPERTY_KEY, PERMISSIONS_PROPERTY_DEFAULT));
+        addPermissions(xstream, System.getProperty(PERMISSIONS_PROPERTY_KEY,
+                PERMISSIONS_PROPERTY_DEFAULT));
+        addPermissions(xstream, packageWhiteList);
     }
 
     public static void addPermissions(final XStream xstream, final String permissions) {
@@ -95,6 +100,7 @@ public final class XStreamUtils {
         };
 
         final XStream result = new XStream(reflectionProvider, hierarchicalStreamDriver);
+        XStream.setupDefaultSecurity(result);
         result.aliasSystemAttribute(null, "class");
         result.ignoreUnknownElements();
         XStreamUtils.addDefaultPermissions(result);
