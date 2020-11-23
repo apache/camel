@@ -39,6 +39,7 @@ import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.Version;
 import org.apache.camel.component.salesforce.api.dto.Versions;
 import org.apache.camel.component.salesforce.dto.generated.Account;
@@ -378,6 +379,17 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // delete the SObject with Name NEW_LINE_ITEM_ID
         assertNull(template().requestBody("direct:deleteSObjectWithId", newLineItemId));
+    }
+
+    @Test
+    public void testUpsert() throws Exception {
+        Line_Item__c lineItem = new Line_Item__c();
+        final String lineItemId = String.valueOf(TEST_LINE_ITEM_ID.incrementAndGet());
+        lineItem.setName(lineItemId);
+        UpsertSObjectResult result = template().requestBody("direct:upsertSObject", lineItem, UpsertSObjectResult.class);
+        assertNotNull(result);
+        assertTrue(result.getSuccess());
+        assertTrue(result.getCreated());
     }
 
     @Test
