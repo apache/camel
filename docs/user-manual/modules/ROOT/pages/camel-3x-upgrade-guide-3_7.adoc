@@ -273,5 +273,8 @@ In this context, it wasn't having any sense to maintain the autodiscoverClient o
 
 === camel-salesforce
 
-The default API version for camel-salesforce has been updated to 50.0. Older versions are still supported and can be set via the `apiVersion`
-component option.
+The default API version for camel-salesforce has been updated to 50.0. Older versions are still 
+supported and can be set via the `apiVersion` component option. 
+
+The `packages` option must be set if using the XML `format` option. This change is a result of 
+adopting XStream's Security Framework.
