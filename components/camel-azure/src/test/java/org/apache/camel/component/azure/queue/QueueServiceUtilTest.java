@@ -26,7 +26,7 @@ import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerCredentials;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class QueueServiceUtilTest extends CamelTestSupport {
 
@@ -61,12 +61,11 @@ public class QueueServiceUtilTest extends CamelTestSupport {
         QueueServiceEndpoint endpoint = (QueueServiceEndpoint) context
                 .getEndpoint("azure-queue://camelazure/testqueue2?azureQueueClient=#azureQueueClient");
 
-        try {
-            QueueServiceUtil.getConfiguredClient(endpoint.getConfiguration());
-            fail();
-        } catch (IllegalArgumentException ex) {
-            assertEquals("Invalid Client URI", ex.getMessage());
-        }
+        QueueServiceConfiguration configuration = endpoint.getConfiguration();
+        Exception ex = assertThrows(IllegalArgumentException.class,
+                () -> QueueServiceUtil.getConfiguredClient(configuration));
+
+        assertEquals("Invalid Client URI", ex.getMessage());
     }
 
     @Test

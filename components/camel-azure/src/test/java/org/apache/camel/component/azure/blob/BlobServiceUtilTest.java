@@ -21,13 +21,14 @@ import java.net.URI;
 import com.microsoft.azure.storage.blob.CloudAppendBlob;
 import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.azure.common.AzureServiceCommonTestUtil.registerCredentials;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BlobServiceUtilTest extends CamelTestSupport {
 
@@ -61,12 +62,14 @@ public class BlobServiceUtilTest extends CamelTestSupport {
         BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context
                 .getEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true"
                              + "&blobType=appendBlob");
-        try {
-            BlobServiceUtil.getConfiguredClient(endpoint.createExchange(), endpoint.getConfiguration());
-            fail();
-        } catch (IllegalArgumentException ex) {
-            assertEquals("Invalid Client Type", ex.getMessage());
-        }
+
+        Exchange exchange = endpoint.createExchange();
+        BlobServiceConfiguration configuration = endpoint.getConfiguration();
+
+        Exception ex = assertThrows(IllegalArgumentException.class,
+                () -> BlobServiceUtil.getConfiguredClient(exchange, configuration));
+
+        assertEquals("Invalid Client Type", ex.getMessage());
     }
 
     @Test
@@ -78,12 +81,14 @@ public class BlobServiceUtilTest extends CamelTestSupport {
         BlobServiceEndpoint endpoint = (BlobServiceEndpoint) context
                 .getEndpoint("azure-blob://camelazure/container/blob2?azureBlobClient=#azureBlobClient&publicForRead=true"
                              + "&blobType=appendBlob");
-        try {
-            BlobServiceUtil.getConfiguredClient(endpoint.createExchange(), endpoint.getConfiguration());
-            fail();
-        } catch (IllegalArgumentException ex) {
-            assertEquals("Invalid Client URI", ex.getMessage());
-        }
+
+        Exchange exchange = endpoint.createExchange();
+        BlobServiceConfiguration configuration = endpoint.getConfiguration();
+
+        Exception ex = assertThrows(IllegalArgumentException.class,
+                () -> BlobServiceUtil.getConfiguredClient(exchange, configuration));
+
+        assertEquals("Invalid Client URI", ex.getMessage());
     }
 
     @Test

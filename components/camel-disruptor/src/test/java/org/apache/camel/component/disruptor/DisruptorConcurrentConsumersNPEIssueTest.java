@@ -19,11 +19,12 @@ package org.apache.camel.component.disruptor;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.RouteController;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
     @Test
@@ -34,16 +35,14 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
         template.sendBody("disruptor:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
+        RouteController routeController = context.getRouteController();
 
-        try {
-            context.getRouteController().startRoute("first");
-            fail("Should have thrown exception");
-        } catch (FailedToStartRouteException e) {
-            assertEquals(
-                    "Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                         + " disruptor://foo?concurrentConsumers=5",
-                    e.getMessage());
-        }
+        Exception ex = assertThrows(FailedToStartRouteException.class,
+                () -> routeController.startRoute("first"));
+
+        assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not "
+                     + "allowed: disruptor://foo?concurrentConsumers=5",
+                ex.getMessage());
     }
 
     @Test
@@ -58,15 +57,14 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
         // this should be okay
         context.getRouteController().startRoute("third");
 
-        try {
-            context.getRouteController().startRoute("first");
-            fail("Should have thrown exception");
-        } catch (FailedToStartRouteException e) {
-            assertEquals(
-                    "Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                         + " disruptor://foo?concurrentConsumers=5",
-                    e.getMessage());
-        }
+        RouteController routeController = context.getRouteController();
+
+        Exception ex = assertThrows(FailedToStartRouteException.class,
+                () -> routeController.startRoute("first"));
+
+        assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
+                     + " disruptor://foo?concurrentConsumers=5",
+                ex.getMessage());
     }
 
     @Override
