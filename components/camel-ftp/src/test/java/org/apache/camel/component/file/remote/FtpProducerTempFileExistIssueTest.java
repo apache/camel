@@ -19,14 +19,15 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
@@ -36,12 +37,12 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
     @Test
     public void testIllegalConfiguration() throws Exception {
-        try {
-            context.getEndpoint(getFtpUrl() + "&fileExist=Append&tempPrefix=foo").createProducer();
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("You cannot set both fileExist=Append and tempPrefix/tempFileName options", e.getMessage());
-        }
+        String uri = getFtpUrl() + "&fileExist=Append&tempPrefix=foo";
+        Endpoint endpoint = context.getEndpoint(uri);
+
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> endpoint.createProducer());
+        assertEquals("You cannot set both fileExist=Append and tempPrefix/tempFileName options",
+                ex.getMessage());
     }
 
     @Test
@@ -113,15 +114,13 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        try {
-            template.sendBodyAndHeader(getFtpUrl() + "&tempPrefix=foo&fileExist=Fail", "Bye World", Exchange.FILE_NAME,
-                    "hello.txt");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause
-                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("File already exist"));
-        }
+        String uri = getFtpUrl() + "&tempPrefix=foo&fileExist=Fail";
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));
+
+        GenericFileOperationFailedException cause
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        assertTrue(cause.getMessage().startsWith("File already exist"));
 
         Thread.sleep(500);
 

@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
 
@@ -83,25 +83,25 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
 
     @Test
     public void testProducerInvalidDoneFileName() throws Exception {
-        try {
-            template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:parent}/foo", "Hello World", Exchange.FILE_NAME,
-                    "hello.txt");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, e.getCause());
-            assertTrue(cause.getMessage().endsWith("Cannot resolve reminder: ${file:parent}/foo"), cause.getMessage());
-        }
+        String uri = getFtpUrl() + "&doneFileName=${file:parent}/foo";
+
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
+
+        ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class,
+                ex.getCause());
+
+        assertTrue(cause.getMessage().endsWith("Cannot resolve reminder: ${file:parent}/foo"), cause.getMessage());
     }
 
     @Test
     public void testProducerEmptyDoneFileName() throws Exception {
-        try {
-            template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=", "Hello World", Exchange.FILE_NAME, "hello.txt");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("doneFileName must be specified and not empty"), cause.getMessage());
-        }
+        String uri = getFtpUrl() + "&doneFileName=";
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt"));
+
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(cause.getMessage().startsWith("doneFileName must be specified and not empty"), cause.getMessage());
     }
 
 }
