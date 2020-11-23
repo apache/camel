@@ -502,7 +502,7 @@
         <sip-api-version>1.1</sip-api-version>
         <slf4j-api-version>1.7.30</slf4j-api-version>
         <slf4j-version>1.7.30</slf4j-version>
-        <smack-version>4.3.4</smack-version>
+        <smack-version>4.3.5</smack-version>
         <smallrye-config-version>1.7.0</smallrye-config-version>
         <smallrye-metrics-version>2.4.1</smallrye-metrics-version>
         <smallrye-health-version>2.2.1</smallrye-health-version>
