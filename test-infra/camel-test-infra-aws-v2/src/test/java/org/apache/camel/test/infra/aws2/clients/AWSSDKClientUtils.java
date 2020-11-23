@@ -39,6 +39,7 @@ import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sts.StsClient;
 
 public final class AWSSDKClientUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AWSSDKClientUtils.class);
@@ -163,5 +164,9 @@ public final class AWSSDKClientUtils {
 
     public static LambdaClient newLambdaClient() {
         return newClient("Lambda", LambdaClient::builder, LambdaClient.class);
+    }
+
+    public static StsClient newSTSClient() {
+        return newClient("STS", StsClient::builder, StsClient.class);
     }
 }
