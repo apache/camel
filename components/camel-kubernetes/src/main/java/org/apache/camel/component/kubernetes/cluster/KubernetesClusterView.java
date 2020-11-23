@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cluster.CamelClusterMember;
+import org.apache.camel.cluster.CamelPreemptiveClusterView;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.cluster.lock.KubernetesClusterEvent;
@@ -40,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
  * The cluster view on a specific Camel cluster namespace (not to be confused with Kubernetes namespaces). Namespaces
  * are represented as keys in a Kubernetes ConfigMap (values are the current leader pods).
  */
-public class KubernetesClusterView extends AbstractCamelClusterView {
+public class KubernetesClusterView extends AbstractCamelClusterView implements CamelPreemptiveClusterView {
 
     private CamelContext camelContext;
 
@@ -60,6 +61,8 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
 
     private KubernetesLeadershipController controller;
 
+    private boolean disabled;
+
     public KubernetesClusterView(CamelContext camelContext, KubernetesClusterService cluster,
                                  KubernetesConfiguration configuration,
                                  KubernetesLockConfiguration lockConfiguration) {
@@ -69,6 +72,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
         this.lockConfiguration = ObjectHelper.notNull(lockConfiguration, "lockConfiguration");
         this.localMember = new KubernetesClusterMember(lockConfiguration.getPodName());
         this.memberCache = new HashMap<>();
+        this.disabled = false;
     }
 
     @Override
@@ -84,6 +88,17 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
     @Override
     public List<CamelClusterMember> getMembers() {
         return currentMembers;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+        if (this.controller != null) {
+            this.controller.setDisabled(disabled);
+        }
     }
 
     @Override
@@ -121,6 +136,7 @@ public class KubernetesClusterView extends AbstractCamelClusterView {
                 }
             });
 
+            this.controller.setDisabled(disabled);
             controller.start();
         }
     }

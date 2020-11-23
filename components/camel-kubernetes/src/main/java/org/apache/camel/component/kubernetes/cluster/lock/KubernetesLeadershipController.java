@@ -26,7 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.apache.camel.CamelContext;
@@ -45,16 +45,18 @@ public class KubernetesLeadershipController implements Service {
     private enum State {
         NOT_LEADER,
         BECOMING_LEADER,
-        LEADER
+        LEADER,
+        LOSING_LEADERSHIP,
+        LEADERSHIP_LOST
     }
 
-    private CamelContext camelContext;
+    private final CamelContext camelContext;
 
-    private KubernetesClient kubernetesClient;
+    private final KubernetesClient kubernetesClient;
 
-    private KubernetesLockConfiguration lockConfiguration;
+    private final KubernetesLockConfiguration lockConfiguration;
 
-    private KubernetesClusterEventHandler eventHandler;
+    private final KubernetesClusterEventHandler eventHandler;
 
     private State currentState = State.NOT_LEADER;
 
@@ -62,9 +64,13 @@ public class KubernetesLeadershipController implements Service {
 
     private TimedLeaderNotifier leaderNotifier;
 
+    private final KubernetesLeaseResourceManager<HasMetadata> leaseManager;
+
     private volatile LeaderInfo latestLeaderInfo;
-    private volatile ConfigMap latestConfigMap;
+    private volatile HasMetadata latestLeaseResource;
     private volatile Set<String> latestMembers;
+
+    private boolean disabled;
 
     public KubernetesLeadershipController(CamelContext camelContext, KubernetesClient kubernetesClient,
                                           KubernetesLockConfiguration lockConfiguration,
@@ -73,6 +79,8 @@ public class KubernetesLeadershipController implements Service {
         this.kubernetesClient = kubernetesClient;
         this.lockConfiguration = lockConfiguration;
         this.eventHandler = eventHandler;
+        this.disabled = false;
+        this.leaseManager = KubernetesLeaseResourceManager.create(lockConfiguration.getLeaseResourceType());
     }
 
     @Override
@@ -102,6 +110,18 @@ public class KubernetesLeadershipController implements Service {
         leaderNotifier = null;
     }
 
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        boolean oldState = this.disabled;
+        this.disabled = disabled;
+        if (oldState != disabled && serializedExecutor != null) {
+            serializedExecutor.execute(this::refreshStatus);
+        }
+    }
+
     private void refreshStatus() {
         switch (currentState) {
             case NOT_LEADER:
@@ -112,6 +132,12 @@ public class KubernetesLeadershipController implements Service {
                 break;
             case LEADER:
                 refreshStatusLeader();
+                break;
+            case LOSING_LEADERSHIP:
+                refreshStatusLosingLeadership();
+                break;
+            case LEADERSHIP_LOST:
+                refreshStatusLeadershipLost();
                 break;
             default:
                 throw new RuntimeException("Unsupported state " + currentState);
@@ -132,7 +158,8 @@ public class KubernetesLeadershipController implements Service {
 
         if (this.latestLeaderInfo.hasEmptyLeader()) {
             // There is no previous leader
-            LOG.info("{} The cluster has no leaders. Trying to acquire the leadership...", logPrefix());
+            LOG.info("{} The cluster has no leaders for group {}. Trying to acquire the leadership...", logPrefix(),
+                    this.lockConfiguration.getGroupName());
             boolean acquired = tryAcquireLeadership();
             if (acquired) {
                 LOG.info("{} Leadership acquired by current pod with immediate effect", logPrefix());
@@ -191,7 +218,55 @@ public class KubernetesLeadershipController implements Service {
         this.serializedExecutor.execute(this::refreshStatus);
     }
 
+    /**
+     * This pod is going to manually lose the leadership. It should shutdown activities and wait a lease amount of time
+     * before giving up the lease.
+     */
+    private void refreshStatusLosingLeadership() {
+        // Wait always the same amount of time before giving up the leadership
+        long delay = this.lockConfiguration.getLeaseDurationMillis();
+        LOG.info("{} Current pod owns the leadership, but it will be lost in {} seconds...", logPrefix(),
+                new BigDecimal(delay).divide(BigDecimal.valueOf(1000), 2, BigDecimal.ROUND_HALF_UP));
+
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            LOG.warn("Thread interrupted", e);
+        }
+
+        LOG.info("{} Current pod is losing leadership now...", logPrefix());
+        this.currentState = State.LEADERSHIP_LOST;
+        this.serializedExecutor.execute(this::refreshStatus);
+    }
+
+    /**
+     * Functions are stopped, now lost leadership should be communicated by freeing up the lease.
+     */
+    private void refreshStatusLeadershipLost() {
+        boolean pulled = lookupNewLeaderInfo();
+        if (!pulled) {
+            rescheduleAfterDelay();
+            return;
+        }
+
+        if (!this.yieldLeadership()) {
+            rescheduleAfterDelay();
+            return;
+        }
+
+        LOG.info("{} Current pod has lost leadership", logPrefix());
+        this.currentState = State.NOT_LEADER;
+        this.serializedExecutor.execute(this::refreshStatus);
+    }
+
     private void refreshStatusLeader() {
+        if (this.disabled) {
+            LOG.debug("{} Leadership disabled, pod is going to lose leadership", logPrefix());
+            this.currentState = State.LOSING_LEADERSHIP;
+            this.serializedExecutor.execute(this::refreshStatus);
+            return;
+        }
+
         LOG.debug("{} Pod should be the leader, pulling new data from the cluster", logPrefix());
         long timeBeforePulling = System.currentTimeMillis();
         boolean pulled = lookupNewLeaderInfo();
@@ -202,9 +277,15 @@ public class KubernetesLeadershipController implements Service {
 
         if (this.latestLeaderInfo.isValidLeader(this.lockConfiguration.getPodName())) {
             LOG.debug("{} Current Pod is still the leader", logPrefix());
+
             this.leaderNotifier.refreshLeadership(Optional.of(this.lockConfiguration.getPodName()), timeBeforePulling,
                     this.lockConfiguration.getRenewDeadlineMillis(),
                     this.latestLeaderInfo.getMembers());
+
+            HasMetadata newLease = this.leaseManager.refreshLeaseRenewTime(kubernetesClient, this.latestLeaseResource,
+                    this.lockConfiguration.getRenewDeadlineSeconds());
+            updateLatestLeaderInfo(newLease, this.latestMembers);
+
             rescheduleAfterDelay();
             return;
         } else {
@@ -228,13 +309,17 @@ public class KubernetesLeadershipController implements Service {
     private boolean lookupNewLeaderInfo() {
         LOG.debug("{} Looking up leadership information...", logPrefix());
 
-        ConfigMap configMap;
+        HasMetadata leaseResource;
         try {
-            configMap = pullConfigMap();
+            leaseResource = leaseManager.fetchLeaseResource(kubernetesClient,
+                    this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient),
+                    this.lockConfiguration.getKubernetesResourceName(),
+                    this.lockConfiguration.getGroupName());
         } catch (Throwable e) {
-            LOG.warn(logPrefix() + " Unable to retrieve the current ConfigMap " + this.lockConfiguration.getConfigMapName()
-                     + " from Kubernetes");
-            LOG.debug(logPrefix() + " Exception thrown during ConfigMap lookup", e);
+            LOG.warn(logPrefix() + " Unable to retrieve the current lease resource "
+                     + this.lockConfiguration.getKubernetesResourceName()
+                     + " for group " + this.lockConfiguration.getGroupName() + " from Kubernetes");
+            LOG.debug(logPrefix() + " Exception thrown during lease resource lookup", e);
             return false;
         }
 
@@ -247,14 +332,62 @@ public class KubernetesLeadershipController implements Service {
             return false;
         }
 
-        updateLatestLeaderInfo(configMap, members);
+        updateLatestLeaderInfo(leaseResource, members);
         return true;
     }
 
+    private boolean yieldLeadership() {
+        LOG.debug("{} Trying to yield the leadership...", logPrefix());
+
+        HasMetadata leaseResource = this.latestLeaseResource;
+        Set<String> members = this.latestMembers;
+        LeaderInfo latestLeaderInfo = this.latestLeaderInfo;
+
+        if (latestLeaderInfo == null || members == null) {
+            LOG.warn(logPrefix() + " Unexpected condition. Latest leader info or list of members is empty.");
+            return false;
+        } else if (!members.contains(this.lockConfiguration.getPodName())) {
+            LOG.warn(logPrefix() + " The list of cluster members " + latestLeaderInfo.getMembers()
+                     + " does not contain the current Pod. Cannot yield the leadership.");
+            return false;
+        }
+
+        if (leaseResource == null) {
+            // Already yielded
+            return true;
+        }
+
+        LOG.debug("{} Lock lease resource already present in the Kubernetes namespace. Checking...", logPrefix());
+        LeaderInfo leaderInfo = leaseManager.decodeLeaderInfo(leaseResource, members, this.lockConfiguration.getGroupName());
+        if (!leaderInfo.isValidLeader(this.lockConfiguration.getPodName())) {
+            // Already yielded
+            return true;
+        }
+
+        try {
+            HasMetadata updatedLeaseResource = leaseManager.optimisticDeleteLeaderInfo(kubernetesClient, leaseResource,
+                    this.lockConfiguration.getGroupName());
+
+            LOG.debug("{} Lease resource {} for group {} successfully updated", logPrefix(),
+                    this.lockConfiguration.getKubernetesResourceName(), this.lockConfiguration.getGroupName());
+            updateLatestLeaderInfo(updatedLeaseResource, members);
+            return true;
+        } catch (Exception ex) {
+            LOG.warn(logPrefix() + " Unable to update the lock on the lease resource to remove leadership information");
+            LOG.debug(logPrefix() + " Error received during resource lock replace", ex);
+            return false;
+        }
+    }
+
     private boolean tryAcquireLeadership() {
+        if (this.disabled) {
+            LOG.debug("{} Won't try to acquire the leadership because it's disabled...", logPrefix());
+            return false;
+        }
+
         LOG.debug("{} Trying to acquire the leadership...", logPrefix());
 
-        ConfigMap configMap = this.latestConfigMap;
+        HasMetadata leaseResource = this.latestLeaseResource;
         Set<String> members = this.latestMembers;
         LeaderInfo latestLeaderInfo = this.latestLeaderInfo;
 
@@ -267,53 +400,53 @@ public class KubernetesLeadershipController implements Service {
             return false;
         }
 
-        // Info we would set set in the configmap to become leaders
+        // Info we would set set in the lease resource to become leaders
         LeaderInfo newLeaderInfo = new LeaderInfo(
-                this.lockConfiguration.getGroupName(), this.lockConfiguration.getPodName(), new Date(), members);
+                this.lockConfiguration.getGroupName(), this.lockConfiguration.getPodName(), new Date(), members,
+                this.lockConfiguration.getLeaseDurationSeconds());
 
-        if (configMap == null) {
-            // No ConfigMap created so far
-            LOG.debug("{} Lock configmap is not present in the Kubernetes namespace. A new ConfigMap will be created",
+        if (leaseResource == null) {
+            // No leaseResource created so far
+            LOG.debug("{} Lock lease resource is not present in the Kubernetes namespace. A new lease resource will be created",
                     logPrefix());
-            ConfigMap newConfigMap
-                    = ConfigMapLockUtils.createNewConfigMap(this.lockConfiguration.getConfigMapName(), newLeaderInfo);
 
             try {
-                kubernetesClient.configMaps()
-                        .inNamespace(this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient))
-                        .create(newConfigMap);
+                HasMetadata newLeaseResource = leaseManager.createNewLeaseResource(kubernetesClient,
+                        this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient),
+                        this.lockConfiguration.getKubernetesResourceName(),
+                        newLeaderInfo);
 
-                LOG.debug("{} ConfigMap {} successfully created", logPrefix(), this.lockConfiguration.getConfigMapName());
-                updateLatestLeaderInfo(newConfigMap, members);
+                LOG.debug("{} Lease resource {} successfully created for group {}", logPrefix(),
+                        this.lockConfiguration.getKubernetesResourceName(), newLeaderInfo.getGroupName());
+                updateLatestLeaderInfo(newLeaseResource, members);
                 return true;
             } catch (Exception ex) {
                 // Suppress exception
                 LOG.warn(logPrefix()
-                         + " Unable to create the ConfigMap, it may have been created by other cluster members concurrently. If the problem persists, check if the service account has "
+                         + " Unable to create the lease resource, it may have been created by other cluster members concurrently. If the problem persists, check if the service account has "
                          + "the right " + "permissions to create it");
-                LOG.debug(logPrefix() + " Exception while trying to create the ConfigMap", ex);
+                LOG.debug(logPrefix() + " Exception while trying to create the lease resource", ex);
                 return false;
             }
         } else {
-            LOG.debug("{} Lock configmap already present in the Kubernetes namespace. Checking...", logPrefix());
-            LeaderInfo leaderInfo = ConfigMapLockUtils.getLeaderInfo(configMap, members, this.lockConfiguration.getGroupName());
+            LOG.debug("{} Lock lease resource already present in the Kubernetes namespace. Checking...", logPrefix());
+            LeaderInfo leaderInfo
+                    = leaseManager.decodeLeaderInfo(leaseResource, members, this.lockConfiguration.getGroupName());
 
             boolean canAcquire = !leaderInfo.hasValidLeader();
             if (canAcquire) {
                 // Try to be the new leader
                 try {
-                    ConfigMap updatedConfigMap = ConfigMapLockUtils.getConfigMapWithNewLeader(configMap, newLeaderInfo);
-                    kubernetesClient.configMaps()
-                            .inNamespace(this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient))
-                            .withName(this.lockConfiguration.getConfigMapName())
-                            .lockResourceVersion(configMap.getMetadata().getResourceVersion()).replace(updatedConfigMap);
+                    HasMetadata updatedLeaseResource
+                            = leaseManager.optimisticAcquireLeadership(kubernetesClient, leaseResource, newLeaderInfo);
 
-                    LOG.debug("{} ConfigMap {} successfully updated", logPrefix(), this.lockConfiguration.getConfigMapName());
-                    updateLatestLeaderInfo(updatedConfigMap, members);
+                    LOG.debug("{} Lease resource {} successfully updated for group {}", logPrefix(),
+                            this.lockConfiguration.getKubernetesResourceName(), newLeaderInfo.getGroupName());
+                    updateLatestLeaderInfo(updatedLeaseResource, members);
                     return true;
                 } catch (Exception ex) {
-                    LOG.warn(logPrefix() + " Unable to update the lock ConfigMap to set leadership information");
-                    LOG.debug(logPrefix() + " Error received during configmap lock replace", ex);
+                    LOG.warn(logPrefix() + " Unable to update the lock lease resource to set leadership information");
+                    LOG.debug(logPrefix() + " Error received during lease resource lock replace", ex);
                     return false;
                 }
             } else {
@@ -325,18 +458,12 @@ public class KubernetesLeadershipController implements Service {
         }
     }
 
-    private void updateLatestLeaderInfo(ConfigMap configMap, Set<String> members) {
+    private void updateLatestLeaderInfo(HasMetadata leaseResource, Set<String> members) {
         LOG.debug("{} Updating internal status about the current leader", logPrefix());
-        this.latestConfigMap = configMap;
+        this.latestLeaseResource = leaseResource;
         this.latestMembers = members;
-        this.latestLeaderInfo = ConfigMapLockUtils.getLeaderInfo(configMap, members, this.lockConfiguration.getGroupName());
+        this.latestLeaderInfo = leaseManager.decodeLeaderInfo(leaseResource, members, this.lockConfiguration.getGroupName());
         LOG.debug("{} Current leader info: {}", logPrefix(), this.latestLeaderInfo);
-    }
-
-    private ConfigMap pullConfigMap() {
-        return kubernetesClient.configMaps()
-                .inNamespace(this.lockConfiguration.getKubernetesResourcesNamespaceOrDefault(kubernetesClient))
-                .withName(this.lockConfiguration.getConfigMapName()).get();
     }
 
     private Set<String> pullClusterMembers() {
