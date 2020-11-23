@@ -159,6 +159,19 @@ public interface GraphqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * The JWT Authorization type. Default is Bearer.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: Bearer
+         * Group: security
+         */
+        default GraphqlEndpointBuilder jwtAuthorizationType(
+                String jwtAuthorizationType) {
+            doSetProperty("jwtAuthorizationType", jwtAuthorizationType);
+            return this;
+        }
+        /**
          * The password for Basic authentication.
          * 
          * The option is a: <code>java.lang.String</code> type.

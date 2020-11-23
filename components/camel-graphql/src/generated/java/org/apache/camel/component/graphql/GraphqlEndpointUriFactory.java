@@ -20,11 +20,12 @@ public class GraphqlEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(11);
+        Set<String> props = new HashSet<>(12);
         props.add("lazyStartProducer");
         props.add("queryFile");
         props.add("variables");
         props.add("password");
+        props.add("jwtAuthorizationType");
         props.add("httpUri");
         props.add("synchronous");
         props.add("query");
