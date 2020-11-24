@@ -32,5 +32,5 @@ public interface ConfigurerResolver {
      * @param  context the camel context
      * @return         the resolved configurer, or <tt>null</tt> if no configurer could be found
      */
-    GeneratedPropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context);
+    PropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context);
 }

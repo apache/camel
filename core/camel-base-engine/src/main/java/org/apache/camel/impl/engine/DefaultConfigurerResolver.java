@@ -23,7 +23,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +46,13 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
     }
 
     @Override
-    public GeneratedPropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context) {
+    public PropertyConfigurer resolvePropertyConfigurer(String name, CamelContext context) {
         if (ObjectHelper.isEmpty(name)) {
             return null;
         }
 
         // lookup in registry first
-        GeneratedPropertyConfigurer configurer
-                = context.getRegistry().lookupByNameAndType(name, GeneratedPropertyConfigurer.class);
+        PropertyConfigurer configurer = context.getRegistry().lookupByNameAndType(name, PropertyConfigurer.class);
         if (configurer != null) {
             return configurer;
         }
@@ -89,11 +88,11 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         }
 
         // create the component
-        if (GeneratedPropertyConfigurer.class.isAssignableFrom(type)) {
-            return (GeneratedPropertyConfigurer) context.getInjector().newInstance(type, false);
+        if (PropertyConfigurer.class.isAssignableFrom(type)) {
+            return (PropertyConfigurer) context.getInjector().newInstance(type, false);
         } else {
             throw new IllegalArgumentException(
-                    "Type is not a GeneratedPropertyConfigurer implementation. Found: " + type.getName());
+                    "Type is not a PropertyConfigurer implementation. Found: " + type.getName());
         }
     }
 
