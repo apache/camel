@@ -34,6 +34,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.utils.UrlUtils;
 import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 
@@ -48,8 +49,8 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * reference ID that maps to the subrequest’s response. You can then refer to the ID in the url or body fields of later
  * subrequests by using a JavaScript-like reference notation. Most requests that are supported in the Composite batch
  * API the helper builder methods are provided. For batch requests that do not have their corresponding helper builder
- * method, use {@link #addGeneric(Method, String)} or {@link #addGeneric(Method, String, Object)} methods. To build the
- * batch use: <blockquote>
+ * method, use {@link #addGeneric(Method, String, String)} or {@link #addGeneric(Method, String, Object, String)}
+ * methods. To build the batch use: <blockquote>
  *
  * <pre>
  * {@code
@@ -367,7 +368,7 @@ public final class SObjectComposite implements Serializable {
     String rowBaseUrl(final String type, final String fieldName, final String fieldValue) {
         try {
             return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/" + notEmpty(fieldName, "fieldName") + "/"
-                   + URLEncoder.encode(notEmpty(fieldValue, "fieldValue"), StandardCharsets.UTF_8.name());
+                   + UrlUtils.encodePath(notEmpty(fieldValue, "fieldValue"));
         } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }

@@ -34,6 +34,7 @@ import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeR
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectCompositeResult;
 import org.apache.camel.component.salesforce.api.utils.Version;
 import org.apache.camel.component.salesforce.dto.generated.Account;
+import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.test.junit5.params.Parameter;
 import org.apache.camel.test.junit5.params.Parameterized;
 import org.apache.camel.test.junit5.params.Parameters;
@@ -124,13 +125,13 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
 
     @Test
     public void shouldSupportObjectCreation() {
-        final SObjectComposite compoiste = new SObjectComposite(version, true);
+        final SObjectComposite composite = new SObjectComposite(version, true);
 
         final Account newAccount = new Account();
         newAccount.setName("Account created from Composite batch API");
-        compoiste.addCreate(newAccount, "CreateAccountReferenceId");
+        composite.addCreate(newAccount, "CreateAccountReferenceId");
 
-        final SObjectCompositeResponse response = testComposite(compoiste);
+        final SObjectCompositeResponse response = testComposite(composite);
 
         assertResponseContains(response, "id");
     }
@@ -163,6 +164,16 @@ public class CompositeApiIntegrationTest extends AbstractSalesforceTestBase {
         updates.setAccountNumber("AC12345");
         composite.addUpdate("Account", accountId, updates, "UpdateAccountReferenceId");
 
+        testComposite(composite);
+    }
+
+    @Test
+    public void shouldSupportObjectUpserts() {
+        final SObjectComposite composite = new SObjectComposite(version, true);
+
+        final Line_Item__c li = new Line_Item__c();
+        composite.addUpsertByExternalId("Line_Item__c", "Name", "AC12345", li,
+                "UpsertLineItemReferenceId");
         testComposite(composite);
     }
 
