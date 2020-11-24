@@ -658,7 +658,7 @@ for details on how to generate the DTO.
 
 
 // component options: START
-The Salesforce component supports 72 options, which are listed below.
+The Salesforce component supports 73 options, which are listed below.
 
 
 
@@ -678,6 +678,7 @@ The Salesforce component supports 72 options, which are listed below.
 | *httpClientConnectionTimeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
 | *httpClientIdleTimeout* (common) | Timeout used by the HttpClient when waiting for response from the Salesforce server. | 10000 | long
 | *httpMaxContentLength* (common) | Max content length of an HTTP response. |  | Integer
+| *httpRequestBufferSize* (common) | HTTP request buffer size. May need to be increased for large SOQL queries. | 8192 | Integer
 | *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
 | *initialReplayIdMap* (common) | Replay IDs to start from per channel name. |  | Map
 | *instanceId* (common) | Salesforce1 Analytics report execution instance ID |  | String

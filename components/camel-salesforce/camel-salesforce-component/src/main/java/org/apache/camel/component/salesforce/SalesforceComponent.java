@@ -82,9 +82,12 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     public static final String HTTP_CONNECTION_TIMEOUT = "httpConnectionTimeout";
     public static final String HTTP_IDLE_TIMEOUT = "httpIdleTimeout";
     public static final String HTTP_MAX_CONTENT_LENGTH = "httpMaxContentLength";
+    public static final String HTTP_REQUEST_BUFFER_SIZE = "httpRequestBufferSize";
 
     static final int CONNECTION_TIMEOUT = 60000;
     static final int IDLE_TIMEOUT = 10000;
+    static final int REQUEST_BUFFER_SIZE = 8192;
+
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
@@ -167,6 +170,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     @Metadata(description = "Max content length of an HTTP response.", label = "common")
     private Integer httpMaxContentLength;
+
+    @Metadata(description = "HTTP request buffer size. May need to be increased for large SOQL" +
+                            " queries.",
+              label = "common", defaultValue = "" + REQUEST_BUFFER_SIZE)
+    private Integer httpRequestBufferSize;
 
     @Metadata(description = "Used to set any properties that can be configured on the underlying HTTP client. Have a"
                             + " look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options.",
@@ -251,7 +259,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public SalesforceComponent(CamelContext context) {
         super(context);
-
         registerExtension(SalesforceComponentVerifierExtension::new);
         registerExtension(SalesforceMetaDataExtension::new);
     }
@@ -605,6 +612,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         this.httpMaxContentLength = httpMaxContentLength;
     }
 
+    public Integer getHttpRequestBufferSize() {
+        return httpRequestBufferSize;
+    }
+
+    public void setHttpRequestBufferSize(Integer httpRequestBufferSize) {
+        this.httpRequestBufferSize = httpRequestBufferSize;
+    }
+
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
@@ -797,6 +812,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final Long httpIdleTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_IDLE_TIMEOUT));
         final Integer maxContentLength
                 = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_MAX_CONTENT_LENGTH));
+        Integer requestBufferSize
+                = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_REQUEST_BUFFER_SIZE));
+        if (requestBufferSize == null) {
+            requestBufferSize = REQUEST_BUFFER_SIZE;
+        }
 
         final String httpProxyHost = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_HOST));
         final Integer httpProxyPort = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_PROXY_PORT));
@@ -825,6 +845,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         if (maxContentLength != null) {
             httpClient.setMaxContentLength(maxContentLength);
         }
+        httpClient.setRequestBufferSize(requestBufferSize);
 
         // set HTTP proxy settings
         if (httpProxyHost != null && httpProxyPort != null) {
@@ -857,7 +878,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             }
             httpClient.getAuthenticationStore().addAuthentication(authentication);
         }
-
         return httpClient;
     }
 
@@ -875,6 +895,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_REALM, salesforce::getHttpProxyRealm);
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_AUTH_URI, salesforce::getHttpProxyAuthUri);
         putValueIfGivenTo(httpClientProperties, HTTP_MAX_CONTENT_LENGTH, salesforce::getHttpMaxContentLength);
+        putValueIfGivenTo(httpClientProperties, HTTP_REQUEST_BUFFER_SIZE, salesforce::getHttpRequestBufferSize);
 
         if (ObjectHelper.isNotEmpty(salesforce.getHttpProxyHost())) {
             // let's not put `false` values in client properties if no proxy is
