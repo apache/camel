@@ -18,7 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ public class ConfigurerResolverTest extends ContextTestSupport {
 
     @Test
     public void testConfigurerResolver() throws Exception {
-        GeneratedPropertyConfigurer resolver = context.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+        PropertyConfigurer resolver = context.adapt(ExtendedCamelContext.class).getConfigurerResolver()
                 .resolvePropertyConfigurer(context.getClass().getName(), context);
         Assertions.assertNotNull(resolver);
 
