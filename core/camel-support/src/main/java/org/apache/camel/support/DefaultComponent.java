@@ -127,10 +127,13 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
         // This special property is only to identify endpoints in a unique manner
         parameters.remove("hash");
-        // parameters using raw syntax: RAW(value)
-        // should have the token removed, so its only the value we have in parameters, as we are about to create
-        // an endpoint and want to have the parameter values without the RAW tokens
-        URISupport.resolveRawParameterValues(parameters);
+
+        if (resolveRawParameterValues()) {
+            // parameters using raw syntax: RAW(value)
+            // should have the token removed, so its only the value we have in parameters, as we are about to create
+            // an endpoint and want to have the parameter values without the RAW tokens
+            URISupport.resolveRawParameterValues(parameters);
+        }
 
         // use encoded or raw uri?
         uri = useRawUri() ? uri : encodedUri;
@@ -325,6 +328,19 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                     uri, "Invalid uri syntax: Trailing & marker found. "
                          + "Check the uri and remove the trailing & marker.");
         }
+    }
+
+    /**
+     * Configure if the parameters using the RAW token syntax need to be resolved before being consumed by
+     * {@link #createEndpoint(String, Map)}.
+     * <p/>
+     * As the parameters are used to create an endpoint, by default they should have the token removed so its only the
+     * value we have in parameters however there are some cases where the endpoint may act as a proxy for another
+     * endpoint and you need to preserve the values as they are.
+     */
+    protected boolean resolveRawParameterValues() {
+        // should resolve raw parameters by default
+        return true;
     }
 
     @Override
