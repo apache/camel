@@ -196,5 +196,14 @@ public class ConsulComponentConfigurer extends PropertyConfigurerSupport impleme
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "nodemeta":
+        case "nodeMeta": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

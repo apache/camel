@@ -124,5 +124,15 @@ public class SesComponentConfigurer extends PropertyConfigurerSupport implements
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "replytoaddresses":
+        case "replyToAddresses": return java.lang.String.class;
+        case "to": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

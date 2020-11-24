@@ -231,5 +231,15 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "properties": return java.lang.Object.class;
+        case "serviceclass":
+        case "serviceClass": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

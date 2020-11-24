@@ -198,5 +198,14 @@ public class JMXEndpointConfigurer extends PropertyConfigurerSupport implements 
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "objectproperties":
+        case "objectProperties": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

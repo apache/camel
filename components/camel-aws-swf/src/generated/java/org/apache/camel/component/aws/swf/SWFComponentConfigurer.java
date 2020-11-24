@@ -214,5 +214,18 @@ public class SWFComponentConfigurer extends PropertyConfigurerSupport implements
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "clientconfigurationparameters":
+        case "clientConfigurationParameters": return java.lang.Object.class;
+        case "swclientparameters":
+        case "sWClientParameters": return java.lang.Object.class;
+        case "startworkflowoptionsparameters":
+        case "startWorkflowOptionsParameters": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

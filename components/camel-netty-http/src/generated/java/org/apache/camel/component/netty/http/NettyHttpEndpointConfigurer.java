@@ -177,5 +177,14 @@ public class NettyHttpEndpointConfigurer extends NettyEndpointConfigurer impleme
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "securityoptions":
+        case "securityOptions": return java.lang.Object.class;
+        default: return super.getCollectionValueType(target, name, ignoreCase);
+        }
+    }
 }
 

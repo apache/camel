@@ -169,5 +169,14 @@ public class BlobServiceComponentConfigurer extends PropertyConfigurerSupport im
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "blobmetadata":
+        case "blobMetadata": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

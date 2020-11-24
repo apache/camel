@@ -363,5 +363,14 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

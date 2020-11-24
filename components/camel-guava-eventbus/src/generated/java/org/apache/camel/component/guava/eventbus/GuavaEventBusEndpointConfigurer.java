@@ -78,5 +78,16 @@ public class GuavaEventBusEndpointConfigurer extends PropertyConfigurerSupport i
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "eventclass":
+        case "eventClass": return java.lang.Object.class;
+        case "listenerinterface":
+        case "listenerInterface": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

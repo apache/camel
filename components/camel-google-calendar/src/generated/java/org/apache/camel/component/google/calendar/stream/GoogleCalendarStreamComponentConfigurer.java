@@ -127,5 +127,13 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

@@ -57,5 +57,14 @@ public class XsltSaxonComponentConfigurer extends XsltComponentConfigurer implem
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "saxonconfigurationproperties":
+        case "saxonConfigurationProperties": return java.lang.Object.class;
+        default: return super.getCollectionValueType(target, name, ignoreCase);
+        }
+    }
 }
 

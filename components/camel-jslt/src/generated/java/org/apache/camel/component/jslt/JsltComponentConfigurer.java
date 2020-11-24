@@ -66,5 +66,13 @@ public class JsltComponentConfigurer extends PropertyConfigurerSupport implement
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "functions": return com.schibsted.spt.data.jslt.Function.class;
+        default: return null;
+        }
+    }
 }
 

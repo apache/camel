@@ -276,5 +276,17 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "models": return java.lang.Class.class;
+        case "requestmodels":
+        case "requestModels": return java.lang.Class.class;
+        case "responsemodels":
+        case "responseModels": return java.lang.Class.class;
+        default: return null;
+        }
+    }
 }
 

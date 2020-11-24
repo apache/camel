@@ -114,5 +114,16 @@ public class CordaEndpointConfigurer extends PropertyConfigurerSupport implement
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "contractstateclass":
+        case "contractStateClass": return net.corda.core.contracts.ContractState.class;
+        case "flowlogicclass":
+        case "flowLogicClass": return net.corda.core.flows.FlowLogic.class;
+        default: return null;
+        }
+    }
 }
 

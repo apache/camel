@@ -231,5 +231,15 @@ public class Web3jEndpointConfigurer extends PropertyConfigurerSupport implement
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "addresses": return java.lang.String.class;
+        case "privatefor":
+        case "privateFor": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

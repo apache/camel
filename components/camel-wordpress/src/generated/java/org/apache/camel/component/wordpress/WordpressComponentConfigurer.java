@@ -97,5 +97,13 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "criteria": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

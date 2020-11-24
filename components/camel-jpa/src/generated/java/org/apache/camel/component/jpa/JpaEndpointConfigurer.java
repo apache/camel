@@ -285,5 +285,23 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deletehandler":
+        case "deleteHandler": return java.lang.Object.class;
+        case "entitymanagerproperties":
+        case "entityManagerProperties": return java.lang.Object.class;
+        case "parameters": return java.lang.Object.class;
+        case "predeletehandler":
+        case "preDeleteHandler": return java.lang.Object.class;
+        case "resultclass":
+        case "resultClass": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

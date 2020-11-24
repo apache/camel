@@ -217,5 +217,18 @@ public class XmlSignerComponentConfigurer extends PropertyConfigurerSupport impl
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cryptocontextproperties":
+        case "cryptoContextProperties": return java.lang.Object.class;
+        case "transformmethods":
+        case "transformMethods": return javax.xml.crypto.AlgorithmMethod.class;
+        case "xpathstoidattributes":
+        case "xpathsToIdAttributes": return javax.xml.crypto.dsig.spec.XPathFilterParameterSpec.class;
+        default: return null;
+        }
+    }
 }
 

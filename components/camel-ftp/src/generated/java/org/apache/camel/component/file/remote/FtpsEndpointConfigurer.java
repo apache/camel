@@ -84,5 +84,16 @@ public class FtpsEndpointConfigurer extends FtpEndpointConfigurer implements Gen
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "ftpclientkeystoreparameters":
+        case "ftpClientKeyStoreParameters": return java.lang.Object.class;
+        case "ftpclienttruststoreparameters":
+        case "ftpClientTrustStoreParameters": return java.lang.Object.class;
+        default: return super.getCollectionValueType(target, name, ignoreCase);
+        }
+    }
 }
 
