@@ -51,7 +51,7 @@ public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSuppor
         ConsulServiceRegistry registry = new ConsulServiceRegistry();
         registry.setId(context.getUuidGenerator().generateUuid());
         registry.setCamelContext(context());
-        registry.setUrl(consulUrl());
+        registry.setUrl(service.getConsulUrl());
         registry.setServiceHost(SERVICE_HOST);
         registry.setOverrideServiceHost(true);
 
