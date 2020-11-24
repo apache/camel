@@ -65,7 +65,6 @@
     <atmosphere-version-range>[2.6,3.0)</atmosphere-version-range>
     <atomix-catalyst-version>1.2.1</atomix-catalyst-version>
     <atomix-version>1.0.8</atomix-version>
-    <avalon-version>4.3.1</avalon-version>
     <avro-ipc-jetty-version>1.9.1</avro-ipc-jetty-version>
     <avro-ipc-netty-version>1.9.1</avro-ipc-netty-version>
     <avro-version>1.9.1</avro-version>
