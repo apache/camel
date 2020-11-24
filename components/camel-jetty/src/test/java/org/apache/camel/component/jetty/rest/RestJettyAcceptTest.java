@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestJettyAcceptTest extends BaseJettyTest {
 
@@ -50,18 +50,18 @@ public class RestJettyAcceptTest extends BaseJettyTest {
 
     @Test
     public void testJettyProducerAcceptInvalid() throws Exception {
-        try {
-            fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json").withHeader("Accept", "application/xml")
-                    .withHeader(Exchange.HTTP_METHOD, "post")
-                    .withBody("{ \"name\": \"Donald Duck\" }").to("http://localhost:" + getPort() + "/users/123/update")
-                    .request(String.class);
+        fluentTemplate = fluentTemplate.withHeader(Exchange.CONTENT_TYPE, "application/json")
+                .withHeader("Accept", "application/xml")
+                .withHeader(Exchange.HTTP_METHOD, "post")
+                .withBody("{ \"name\": \"Donald Duck\" }")
+                .to("http://localhost:" + getPort() + "/users/123/update");
 
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(406, cause.getStatusCode());
-            assertEquals("", cause.getResponseBody());
-        }
+        Exception ex = assertThrows(CamelExecutionException.class, () -> fluentTemplate.request(String.class));
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(406, cause.getStatusCode());
+        assertEquals("", cause.getResponseBody());
+
     }
 
     @Override
