@@ -72,7 +72,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
     @Override
     public void stop() {
         synchronized (lock) {
-            if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
+            if (status == STOPPED || status == SHUTTING_DOWN || status == SHUTDOWN) {
                 LOG.trace("Service: {} already stopped", this);
                 return;
             }
@@ -102,7 +102,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 LOG.trace("Service: {} already shut down", this);
                 return;
             }
-            if (status == SHUTTINGDOWN) {
+            if (status == SHUTTING_DOWN) {
                 LOG.trace("Service: {} already shutting down", this);
                 return;
             }
