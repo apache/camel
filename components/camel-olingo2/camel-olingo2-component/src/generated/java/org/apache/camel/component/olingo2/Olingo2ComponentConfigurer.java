@@ -177,5 +177,14 @@ public class Olingo2ComponentConfigurer extends PropertyConfigurerSupport implem
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "httpheaders":
+        case "httpHeaders": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

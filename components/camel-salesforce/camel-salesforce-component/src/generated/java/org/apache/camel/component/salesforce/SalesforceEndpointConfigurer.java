@@ -294,5 +294,16 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apexqueryparams":
+        case "apexQueryParams": return java.lang.Object.class;
+        case "initialreplayidmap":
+        case "initialReplayIdMap": return java.lang.Long.class;
+        default: return null;
+        }
+    }
 }
 

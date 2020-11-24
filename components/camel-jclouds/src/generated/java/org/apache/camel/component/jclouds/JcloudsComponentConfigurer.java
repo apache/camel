@@ -69,5 +69,16 @@ public class JcloudsComponentConfigurer extends PropertyConfigurerSupport implem
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "blobstores":
+        case "blobStores": return org.jclouds.blobstore.BlobStore.class;
+        case "computeservices":
+        case "computeServices": return org.jclouds.compute.ComputeService.class;
+        default: return null;
+        }
+    }
 }
 

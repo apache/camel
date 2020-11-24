@@ -144,5 +144,14 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cryptocontextproperties":
+        case "cryptoContextProperties": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

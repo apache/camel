@@ -210,5 +210,17 @@ public class CxfRsEndpointConfigurer extends PropertyConfigurerSupport implement
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "features": return org.apache.cxf.feature.Feature.class;
+        case "resourceclasses":
+        case "resourceClasses": return java.lang.Class.class;
+        case "schemalocations":
+        case "schemaLocations": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

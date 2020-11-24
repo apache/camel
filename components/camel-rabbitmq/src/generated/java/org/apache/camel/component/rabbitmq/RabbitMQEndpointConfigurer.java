@@ -393,5 +393,19 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalheaders":
+        case "additionalHeaders": return java.lang.Object.class;
+        case "additionalproperties":
+        case "additionalProperties": return java.lang.Object.class;
+        case "args": return java.lang.Object.class;
+        case "clientproperties":
+        case "clientProperties": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

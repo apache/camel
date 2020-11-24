@@ -189,5 +189,15 @@ public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "entities": return java.lang.String.class;
+        case "parameters": return java.lang.Object.class;
+        case "statuses": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

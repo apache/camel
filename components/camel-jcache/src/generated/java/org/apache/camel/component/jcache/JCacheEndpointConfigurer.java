@@ -171,5 +171,20 @@ public class JCacheEndpointConfigurer extends PropertyConfigurerSupport implemen
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cacheloaderfactory":
+        case "cacheLoaderFactory": return javax.cache.integration.CacheLoader.class;
+        case "cachewriterfactory":
+        case "cacheWriterFactory": return javax.cache.integration.CacheWriter.class;
+        case "eventfilters":
+        case "eventFilters": return javax.cache.event.CacheEntryEventFilter.class;
+        case "expirypolicyfactory":
+        case "expiryPolicyFactory": return javax.cache.expiry.ExpiryPolicy.class;
+        default: return null;
+        }
+    }
 }
 

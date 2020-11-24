@@ -300,5 +300,14 @@ public class SipEndpointConfigurer extends PropertyConfigurerSupport implements 
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "viaheaders":
+        case "viaHeaders": return javax.sip.header.ViaHeader.class;
+        default: return null;
+        }
+    }
 }
 

@@ -187,5 +187,14 @@ public class BoxComponentConfigurer extends PropertyConfigurerSupport implements
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "httpparams":
+        case "httpParams": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

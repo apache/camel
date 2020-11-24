@@ -460,5 +460,24 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apexqueryparams":
+        case "apexQueryParams": return java.lang.Object.class;
+        case "httpclientproperties":
+        case "httpClientProperties": return java.lang.Object.class;
+        case "httpproxyexcludedaddresses":
+        case "httpProxyExcludedAddresses": return java.lang.String.class;
+        case "httpproxyincludedaddresses":
+        case "httpProxyIncludedAddresses": return java.lang.String.class;
+        case "initialreplayidmap":
+        case "initialReplayIdMap": return java.lang.Long.class;
+        case "longpollingtransportproperties":
+        case "longPollingTransportProperties": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

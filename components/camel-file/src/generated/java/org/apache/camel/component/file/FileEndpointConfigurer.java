@@ -534,5 +534,20 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "exclusivereadlockstrategy":
+        case "exclusiveReadLockStrategy": return java.io.File.class;
+        case "filter": return java.io.File.class;
+        case "processstrategy":
+        case "processStrategy": return java.io.File.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
+        case "sorter": return org.apache.camel.component.file.GenericFile.class;
+        default: return null;
+        }
+    }
 }
 

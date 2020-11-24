@@ -147,5 +147,16 @@ public class AtomixMessagingEndpointConfigurer extends PropertyConfigurerSupport
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "resourceconfigs":
+        case "resourceConfigs": return java.util.Properties.class;
+        case "resourceoptions":
+        case "resourceOptions": return java.util.Properties.class;
+        default: return null;
+        }
+    }
 }
 

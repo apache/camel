@@ -222,5 +222,16 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "filterinitparameters":
+        case "filterInitParameters": return java.lang.String.class;
+        case "filters": return javax.servlet.Filter.class;
+        case "handlers": return org.eclipse.jetty.server.Handler.class;
+        default: return null;
+        }
+    }
 }
 
