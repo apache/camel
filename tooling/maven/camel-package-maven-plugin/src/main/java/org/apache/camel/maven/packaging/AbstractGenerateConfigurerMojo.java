@@ -102,10 +102,6 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
             setGetterMethod(getter);
         }
 
-        public void setNestedType(String nestedType) {
-            // store in extra
-            setExtra(nestedType);
-        }
     }
 
     public AbstractGenerateConfigurerMojo() {

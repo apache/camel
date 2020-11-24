@@ -47,7 +47,7 @@ public abstract class BaseOptionModel {
     protected String configurationClass;
     protected String configurationField;
     protected String description;
-    protected String extra;  // optional and currently only used by configurer
+    protected String nestedType;  // optional and currently only used by configurer
 
     // todo: move this as a helper method
     protected boolean newGroup; // special for documentation rendering
@@ -260,12 +260,12 @@ public abstract class BaseOptionModel {
         this.newGroup = newGroup;
     }
 
-    public String getExtra() {
-        return extra;
+    public String getNestedType() {
+        return nestedType;
     }
 
-    public void setExtra(String extra) {
-        this.extra = extra;
+    public void setNestedType(String nestedType) {
+        this.nestedType = nestedType;
     }
 
     public String getShortGroup() {

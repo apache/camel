@@ -222,7 +222,7 @@ public final class PropertyConfigurerGenerator {
 
             // nested type was stored in extra as we use BaseOptionModel to hold the option data
             boolean hasNestedTypes
-                    = options.stream().map(BaseOptionModel::getExtra).anyMatch(s -> s != null && !s.trim().isEmpty());
+                    = options.stream().map(BaseOptionModel::getNestedType).anyMatch(s -> s != null && !s.trim().isEmpty());
             if (hasNestedTypes) {
                 w.write("\n");
                 w.write("    @Override\n");
@@ -230,7 +230,7 @@ public final class PropertyConfigurerGenerator {
                 if (!options.isEmpty()) {
                     w.write("        switch (ignoreCase ? name.toLowerCase() : name) {\n");
                     for (BaseOptionModel option : options) {
-                        String nestedType = option.getExtra();
+                        String nestedType = option.getNestedType();
                         if (nestedType != null && !nestedType.isEmpty()) {
                             nestedType = nestedType.replace('$', '.');
                             if (!option.getName().toLowerCase().equals(option.getName())) {
