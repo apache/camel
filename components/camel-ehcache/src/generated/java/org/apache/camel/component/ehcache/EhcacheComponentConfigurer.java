@@ -130,5 +130,13 @@ public class EhcacheComponentConfigurer extends PropertyConfigurerSupport implem
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configurations": return org.ehcache.config.CacheConfiguration.class;
+        default: return null;
+        }
+    }
 }
 

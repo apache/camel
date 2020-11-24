@@ -190,5 +190,13 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "filters": return org.apache.mina.core.filterchain.IoFilter.class;
+        default: return null;
+        }
+    }
 }
 

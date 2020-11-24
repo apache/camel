@@ -615,5 +615,24 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "exclusivereadlockstrategy":
+        case "exclusiveReadLockStrategy": return org.apache.commons.net.ftp.FTPFile.class;
+        case "filter": return org.apache.commons.net.ftp.FTPFile.class;
+        case "ftpclientconfigparameters":
+        case "ftpClientConfigParameters": return java.lang.Object.class;
+        case "ftpclientparameters":
+        case "ftpClientParameters": return java.lang.Object.class;
+        case "processstrategy":
+        case "processStrategy": return org.apache.commons.net.ftp.FTPFile.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
+        case "sorter": return org.apache.camel.component.file.GenericFile.class;
+        default: return null;
+        }
+    }
 }
 

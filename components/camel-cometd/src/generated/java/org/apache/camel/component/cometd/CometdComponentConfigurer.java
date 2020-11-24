@@ -96,5 +96,13 @@ public class CometdComponentConfigurer extends PropertyConfigurerSupport impleme
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "extensions": return org.cometd.bayeux.server.BayeuxServer.Extension.class;
+        default: return null;
+        }
+    }
 }
 

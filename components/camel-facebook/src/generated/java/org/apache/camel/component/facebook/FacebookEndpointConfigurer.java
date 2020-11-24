@@ -603,5 +603,22 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "domainnames":
+        case "domainNames": return java.lang.String.class;
+        case "ids": return java.lang.String.class;
+        case "queries": return java.lang.String.class;
+        case "readingoptions":
+        case "readingOptions": return java.lang.Object.class;
+        case "touserids":
+        case "toUserIds": return java.lang.String.class;
+        case "userids":
+        case "userIds": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

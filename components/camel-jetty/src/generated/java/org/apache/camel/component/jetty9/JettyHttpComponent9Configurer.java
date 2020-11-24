@@ -228,5 +228,20 @@ public class JettyHttpComponent9Configurer extends PropertyConfigurerSupport imp
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "socketconnectorproperties":
+        case "socketConnectorProperties": return java.lang.Object.class;
+        case "socketconnectors":
+        case "socketConnectors": return org.eclipse.jetty.server.Connector.class;
+        case "sslsocketconnectorproperties":
+        case "sslSocketConnectorProperties": return java.lang.Object.class;
+        case "sslsocketconnectors":
+        case "sslSocketConnectors": return org.eclipse.jetty.server.Connector.class;
+        default: return null;
+        }
+    }
 }
 

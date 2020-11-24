@@ -210,5 +210,13 @@ public class UndertowEndpointConfigurer extends PropertyConfigurerSupport implem
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "options": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

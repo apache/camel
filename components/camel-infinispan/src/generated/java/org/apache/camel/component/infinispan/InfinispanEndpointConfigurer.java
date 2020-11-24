@@ -191,5 +191,14 @@ public class InfinispanEndpointConfigurer extends PropertyConfigurerSupport impl
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configurationproperties":
+        case "configurationProperties": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

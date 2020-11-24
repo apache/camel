@@ -150,5 +150,14 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "securitypolicies":
+        case "securityPolicies": return org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class;
+        default: return null;
+        }
+    }
 }
 

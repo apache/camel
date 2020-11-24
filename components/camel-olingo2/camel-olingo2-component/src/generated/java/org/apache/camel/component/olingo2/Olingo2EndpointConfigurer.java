@@ -282,5 +282,16 @@ public class Olingo2EndpointConfigurer extends PropertyConfigurerSupport impleme
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "httpheaders":
+        case "httpHeaders": return java.lang.String.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

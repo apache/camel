@@ -436,5 +436,15 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "decoders": return io.netty.channel.ChannelHandler.class;
+        case "encoders": return io.netty.channel.ChannelHandler.class;
+        case "options": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

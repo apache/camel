@@ -117,5 +117,16 @@ public class AhcEndpointConfigurer extends PropertyConfigurerSupport implements 
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "clientconfigoptions":
+        case "clientConfigOptions": return java.lang.Object.class;
+        case "clientconfigrealmoptions":
+        case "clientConfigRealmOptions": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

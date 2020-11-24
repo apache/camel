@@ -216,5 +216,21 @@ public class XQueryEndpointConfigurer extends PropertyConfigurerSupport implemen
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configurationproperties":
+        case "configurationProperties": return java.lang.Object.class;
+        case "namespaceprefixes":
+        case "namespacePrefixes": return java.lang.String.class;
+        case "parameters": return java.lang.Object.class;
+        case "resulttype":
+        case "resultType": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
+        default: return null;
+        }
+    }
 }
 

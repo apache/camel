@@ -613,5 +613,16 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.lang.Object.class;
+        case "offsetrepository":
+        case "offsetRepository": return java.lang.String.class;
+        default: return null;
+        }
+    }
 }
 

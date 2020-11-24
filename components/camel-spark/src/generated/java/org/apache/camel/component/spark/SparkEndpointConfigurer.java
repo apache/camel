@@ -72,5 +72,14 @@ public class SparkEndpointConfigurer extends PropertyConfigurerSupport implement
         default: return null;
         }
     }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "dataframe":
+        case "dataFrame": return org.apache.spark.sql.Row.class;
+        default: return null;
+        }
+    }
 }
 
