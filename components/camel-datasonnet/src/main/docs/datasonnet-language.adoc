@@ -30,7 +30,7 @@ from("queue:foo")
     .to("queue:bar")
 ------------------------------------------------------------------------------------------------
 
-And the Spring DSL:
+And the XML DSL:
 
 [source,xml]
 -----------------------------------------------------------------------------
@@ -55,7 +55,7 @@ from("queue:foo")
     .to("queue:bar")
 ------------------------------------------------------------------------------------------------
 
-And the Spring DSL:
+And the XML DSL:
 
 [source,xml]
 -----------------------------------------------------------------------------
@@ -85,7 +85,7 @@ In Java DSL:
 datasonnet("body.foo", String.class)
 ----
 
-In Spring DSL you use the *resultType* attribute to provide a fully
+In XML DSL you use the *resultType* attribute to provide a fully
 qualified classname:
 
 [source,xml]
@@ -149,7 +149,7 @@ from("direct:in")
     .to("mock:camel");
 ------------------------------------------------------------------------------------------------
 
-And the Spring DSL:
+And the XML DSL:
 
 [source,xml]
 -----------------------------------------------------------------------------
