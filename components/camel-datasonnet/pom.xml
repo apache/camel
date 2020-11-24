@@ -122,13 +122,4 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>ms3-nexus</id>
-            <name>maven-releases</name>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-            <url>https://maven.ms3-inc.com/repository/maven-releases/</url>
-        </repository>
-    </repositories>
 </project>
