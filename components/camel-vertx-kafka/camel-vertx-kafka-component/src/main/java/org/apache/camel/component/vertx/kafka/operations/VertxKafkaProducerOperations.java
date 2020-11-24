@@ -12,6 +12,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.vertx.kafka.VertxKafkaConfigurationOptionsProxy;
+import org.apache.camel.component.vertx.kafka.VertxKafkaConstants;
 import org.apache.camel.component.vertx.kafka.VertxKafkaTypeConverter;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
 import org.apache.camel.util.ObjectHelper;
@@ -132,18 +133,26 @@ public class VertxKafkaProducerOperations {
     }
 
     private String getTopic(final Message message, final String parentTopic) {
-        // first check if we have override topic,
-        // second check if we have a parent topic
-        // last fallback to the topic from config
-        final String overrideTopic = configurationOptionsProxy.getOverrideTopic(message);
-        final String messageTopic = ObjectHelper.isEmpty(overrideTopic) ? parentTopic : overrideTopic;
-        final String topic = ObjectHelper.isEmpty(messageTopic) ? configurationOptionsProxy.getTopic(message) : messageTopic;
+        final String innerOverrideTopic = configurationOptionsProxy.getOverrideTopic(message);
+        final String innerMessageTopic = message.getHeader(VertxKafkaConstants.TOPIC, String.class);
+
+        final String topic = getTopic(message, innerOverrideTopic, innerMessageTopic, parentTopic);
 
         if (ObjectHelper.isEmpty(topic)) {
             throw new IllegalArgumentException("Topic cannot be empty, provide a topic in the config or in the headers.");
         }
 
         return topic;
+    }
+
+    private String getTopic(final Message message, final String innerOverrideTopic, final String innerTopic, final String parentTopic) {
+        // first check if we have override topic on inner message otherwise fall to innerTopic
+        // second check if we have a innerTopic on inner message otherwise fall to parentTopic (from the main exchange)
+        // third check if we have a parent topic (set in the headers of TOPIC) in the main exchange otherwise fall to config
+        final String firstCheckStep = ObjectHelper.isEmpty(innerOverrideTopic) ? innerTopic : innerOverrideTopic;
+        final String secondCheckStep = ObjectHelper.isEmpty(firstCheckStep) ? parentTopic : firstCheckStep;
+
+        return ObjectHelper.isEmpty(secondCheckStep) ? configurationOptionsProxy.getTopic(message) : secondCheckStep;
     }
 
     private Object getMessageKey(final Message message) {

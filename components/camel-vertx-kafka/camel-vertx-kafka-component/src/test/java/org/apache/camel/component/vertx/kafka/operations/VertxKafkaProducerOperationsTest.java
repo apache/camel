@@ -314,6 +314,39 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
     }
 
     @Test
+    void testSendsEventWithListOfExchangesWithTopicHeaderOnEveryExchange() {
+        configuration.setTopic("someTopic");
+
+        final Message message = createMessage();
+
+        // we set the initial topic
+        message.setHeader(VertxKafkaConstants.OVERRIDE_TOPIC, "anotherTopic");
+        message.setHeader(VertxKafkaConstants.MESSAGE_KEY, "someKey");
+
+        // we add our exchanges in order to aggregate
+        final List<Exchange> nestedExchanges
+                = createListOfExchanges(Arrays.asList("topic1", "topic2", "topic3"),
+                VertxKafkaConstants.TOPIC);
+
+        // aggregate
+        final Exchange finalAggregatedExchange = aggregateExchanges(nestedExchanges, new GroupedExchangeAggregationStrategy());
+
+        message.setBody(finalAggregatedExchange.getIn().getBody());
+        message.setHeaders(finalAggregatedExchange.getIn().getHeaders());
+
+        sendEvent(message);
+
+        assertProducedMessages(records -> {
+            assertEquals(3, records.size());
+
+            // assert topics
+            assertEquals("topic1", records.get(0).topic());
+            assertEquals("topic2", records.get(1).topic());
+            assertEquals("topic3", records.get(2).topic());
+        });
+    }
+
+    @Test
     void testSendsEventWithListOfExchangesWithTopicOnConfig() {
         configuration.setTopic("someTopic");
 
