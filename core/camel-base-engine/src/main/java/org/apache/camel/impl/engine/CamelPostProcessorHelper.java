@@ -42,8 +42,8 @@ import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.spi.BeanProxyFactory;
-import org.apache.camel.spi.GeneratedPropertyConfigurer;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -383,7 +383,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
         // lookup configurer if there is any
         // use FQN class name first, then simple name, and root key last
-        GeneratedPropertyConfigurer configurer = null;
+        PropertyConfigurer configurer = null;
         String[] names = new String[] {
                 type.getName() + "-configurer", type.getSimpleName() + "-configurer", rootKey + "-configurer" };
         for (String n : names) {
