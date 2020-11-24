@@ -53,5 +53,6 @@
         <module>camel-test-infra-hdfs</module>
         <module>camel-test-infra-jdbc</module>
         <module>camel-test-infra-arangodb</module>
+        <module>camel-test-infra-consul</module>
     </modules>
 </project>

@@ -81,7 +81,7 @@ public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
     @Test
     public void testServiceDiscovery() throws Exception {
         ConsulConfiguration configuration = new ConsulConfiguration();
-        configuration.setUrl(consulUrl());
+        configuration.setUrl(service.getConsulUrl());
 
         ServiceDiscovery discovery = new ConsulServiceDiscovery(configuration);
 

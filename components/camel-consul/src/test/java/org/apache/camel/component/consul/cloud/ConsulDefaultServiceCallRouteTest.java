@@ -91,7 +91,7 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").serviceCall().name(SERVICE_NAME).component("http").defaultLoadBalancer()
-                        .consulServiceDiscovery().url(consulUrl()).endParent()
+                        .consulServiceDiscovery().url(service.getConsulUrl()).endParent()
                         .to("log:org.apache.camel.component.consul.cloud?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
 
