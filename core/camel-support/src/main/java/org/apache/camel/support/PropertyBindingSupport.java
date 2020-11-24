@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -331,8 +332,10 @@ public final class PropertyBindingSupport {
         if (method != null) {
             Class<?> parameterType = method.getParameterTypes()[0];
             Object obj = null;
-            // special for map/list/array
-            if (Map.class.isAssignableFrom(parameterType)) {
+            // special for properties/map/list/array
+            if (Properties.class.isAssignableFrom(parameterType)) {
+                obj = new Properties();
+            } else if (Map.class.isAssignableFrom(parameterType)) {
                 obj = new LinkedHashMap<>();
             } else if (Collection.class.isAssignableFrom(parameterType)) {
                 obj = new ArrayList<>();
@@ -368,8 +371,10 @@ public final class PropertyBindingSupport {
         }
         if (parameterType != null) {
             Object obj = null;
-            // special for map/list/array
-            if (Map.class.isAssignableFrom(parameterType)) {
+            // special for properties/map/list/array
+            if (Properties.class.isAssignableFrom(parameterType)) {
+                obj = new Properties();
+            } else if (Map.class.isAssignableFrom(parameterType)) {
                 obj = new LinkedHashMap<>();
             } else if (Collection.class.isAssignableFrom(parameterType)) {
                 obj = new ArrayList<>();
@@ -483,7 +488,9 @@ public final class PropertyBindingSupport {
             if (getter != null) {
                 // what type does it have
                 Class<?> returnType = getter.getReturnType();
-                if (Map.class.isAssignableFrom(returnType)) {
+                if (Properties.class.isAssignableFrom(returnType)) {
+                    obj = new Properties();
+                } else if (Map.class.isAssignableFrom(returnType)) {
                     obj = new LinkedHashMap<>();
                 } else if (Collection.class.isAssignableFrom(returnType)) {
                     obj = new ArrayList<>();
@@ -514,6 +521,7 @@ public final class PropertyBindingSupport {
         }
 
         if (obj instanceof Map) {
+            // this supports both Map and Properties
             Map map = (Map) obj;
             map.put(lookupKey, value);
             return true;
@@ -593,7 +601,9 @@ public final class PropertyBindingSupport {
             if (returnType == null) {
                 return false;
             }
-            if (Map.class.isAssignableFrom(returnType)) {
+            if (Properties.class.isAssignableFrom(returnType)) {
+                obj = new Properties();
+            } else if (Map.class.isAssignableFrom(returnType)) {
                 obj = new LinkedHashMap<>();
             } else if (Collection.class.isAssignableFrom(returnType)) {
                 obj = new ArrayList<>();
@@ -619,6 +629,7 @@ public final class PropertyBindingSupport {
         }
 
         if (obj instanceof Map) {
+            // this supports both Map and Properties
             Map map = (Map) obj;
             map.put(lookupKey, value);
             return true;
