@@ -36,11 +36,14 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubService;
+import org.apache.camel.test.infra.google.pubsub.services.GooglePubSubServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class PubsubTestSupport extends ContainerAwareTestSupport {
+public class PubsubTestSupport extends CamelTestSupport {
+    @RegisterExtension
+    public static GooglePubSubService service = GooglePubSubServiceFactory.createService();
 
     public static final String PROJECT_ID;
 
@@ -48,13 +51,6 @@ public class PubsubTestSupport extends ContainerAwareTestSupport {
         Properties testProperties = loadProperties();
         PROJECT_ID = testProperties.getProperty("project.id");
     }
-
-    protected GenericContainer<?> container = new GenericContainer<>("google/cloud-sdk:latest")
-            .withExposedPorts(8383)
-            .withCommand("/bin/sh", "-c",
-                    String.format("gcloud beta emulators pubsub start --project %s --host-port=0.0.0.0:%d",
-                            PROJECT_ID, 8383))
-            .waitingFor(new LogMessageWaitStrategy().withRegEx("(?s).*started.*$"));
 
     private static Properties loadProperties() {
         Properties testProperties = new Properties();
@@ -69,15 +65,10 @@ public class PubsubTestSupport extends ContainerAwareTestSupport {
         return testProperties;
     }
 
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return super.createContainer();
-    }
-
     protected void addPubsubComponent(CamelContext context) {
 
         GooglePubsubComponent component = new GooglePubsubComponent();
-        component.setEndpoint(container.getContainerIpAddress() + ":" + container.getFirstMappedPort());
+        component.setEndpoint(service.getServiceAddress());
 
         context.addComponent("google-pubsub", component);
         context.getPropertiesComponent().setLocation("ref:prop");
@@ -90,7 +81,6 @@ public class PubsubTestSupport extends ContainerAwareTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        container.start();
         createTopicSubscription();
         CamelContext context = super.createCamelContext();
         addPubsubComponent(context);
@@ -140,9 +130,8 @@ public class PubsubTestSupport extends ContainerAwareTestSupport {
     }
 
     private FixedTransportChannelProvider createChannelProvider() {
-        Integer port = container.getFirstMappedPort();
         ManagedChannel channel = ManagedChannelBuilder
-                .forTarget(String.format("%s:%s", "localhost", port))
+                .forTarget(String.format(service.getServiceAddress()))
                 .usePlaintext()
                 .build();
 
