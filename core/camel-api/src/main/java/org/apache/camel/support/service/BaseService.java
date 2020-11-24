@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseService {
 
     protected static final byte NEW = 0;
-    protected static final byte BUILDED = 1;
+    protected static final byte BUILT = 1;
     protected static final byte INITIALIZING = 2;
     protected static final byte INITIALIZED = 3;
     protected static final byte STARTING = 4;
@@ -45,7 +45,7 @@ public abstract class BaseService {
     protected static final byte SUSPENDED = 7;
     protected static final byte STOPPING = 8;
     protected static final byte STOPPED = 9;
-    protected static final byte SHUTTINGDOWN = 10;
+    protected static final byte SHUTTING_DOWN = 10;
     protected static final byte SHUTDOWN = 11;
     protected static final byte FAILED = 12;
 
@@ -64,7 +64,7 @@ public abstract class BaseService {
                     } catch (Exception e) {
                         doFail(e);
                     }
-                    status = BUILDED;
+                    status = BUILT;
                     LOG.trace("Built service: {}", this);
                 }
             }
@@ -73,9 +73,9 @@ public abstract class BaseService {
 
     public void init() {
         // allow to initialize again if stopped or failed
-        if (status <= BUILDED || status >= STOPPED) {
+        if (status <= BUILT || status >= STOPPED) {
             synchronized (lock) {
-                if (status <= BUILDED || status >= STOPPED) {
+                if (status <= BUILT || status >= STOPPED) {
                     build();
                     LOG.trace("Initializing service: {}", this);
                     try (AutoCloseable ignored = doLifecycleChange()) {
@@ -142,7 +142,7 @@ public abstract class BaseService {
                 LOG.trace("Service: {} failed and regarded as already stopped", this);
                 return;
             }
-            if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
+            if (status == STOPPED || status == SHUTTING_DOWN || status == SHUTDOWN) {
                 LOG.trace("Service: {} already stopped", this);
                 return;
             }
@@ -229,7 +229,7 @@ public abstract class BaseService {
                 LOG.trace("Service: {} already shutdown", this);
                 return;
             }
-            if (status == SHUTTINGDOWN) {
+            if (status == SHUTTING_DOWN) {
                 LOG.trace("Service: {} already shutting down", this);
                 return;
             }
@@ -273,7 +273,7 @@ public abstract class BaseService {
     }
 
     public boolean isBuild() {
-        return status == BUILDED;
+        return status == BUILT;
     }
 
     public boolean isInit() {
