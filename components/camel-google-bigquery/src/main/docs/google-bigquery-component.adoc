@@ -43,19 +43,12 @@ for this component:
 Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
 For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
 
-Google security credentials can be set explicitly via one of the two options:
+Google security credentials can be set explicitly by providing the path to the GCP credentials file location.
 
-* Service Account Email and Service Account Key (PEM format)
-* GCP credentials file location
-
-If both are set, the Service Account Email/Key will take precedence.
-
-Or implicitly, where the connection factory falls back on
+Or they are set implicitly, where the connection factory falls back on
 https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
 
 *OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
-
-Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
 
 == URI Format
 
