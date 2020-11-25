@@ -19,6 +19,7 @@ package org.apache.camel.language.datasonnet;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.TimeZone;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -129,6 +130,7 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
         theGizmo.setManufacturer(manufacturer);
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
         theGizmo.setDate(df.parse("2020-01-06"));
 
         String payload = loadResourceAsString("javaTest.json");

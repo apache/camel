@@ -17,6 +17,7 @@
 package org.apache.camel.language.datasonnet
 
 import com.datasonnet.document.{DefaultDocument, Document, MediaTypes}
+import com.datasonnet.header.Header
 import com.datasonnet.spi.{DataFormatService, Library, PluginException}
 import org.apache.camel.Exchange
 import sjsonnet.Std.builtin
@@ -29,7 +30,7 @@ object CML extends Library {
 
   override def libsonnets(): Set[String] = Set.empty
 
-  override def functions(dataformats: DataFormatService): Map[String, Val.Func] = Map(
+  override def functions(dataformats: DataFormatService, header: Header): Map[String, Val.Func] = Map(
     // See: org.apache.camel.language.xpath.XPathBuilder.createPropertiesFunction
     builtin("properties", "key")((_, _, key: Val) => {
       key match {
@@ -62,13 +63,13 @@ object CML extends Library {
       case _ => new DefaultDocument(obj, MediaTypes.APPLICATION_JAVA)
     }
 
-    try Materializer.reverse(dataformats.thatAccepts(doc)
+    try Materializer.reverse(dataformats.thatCanRead(doc)
       .orElseThrow(() => new IllegalArgumentException("todo"))
-      .read(doc, dataformats))
+      .read(doc))
     catch {
       case e: PluginException => throw new IllegalStateException(e)
     }
   }
 
-  override def modules(dataformats: DataFormatService): Map[String, Val.Obj] = Map.empty
+  override def modules(dataformats: DataFormatService, header: Header): Map[String, Val.Obj] = Map.empty
 }
