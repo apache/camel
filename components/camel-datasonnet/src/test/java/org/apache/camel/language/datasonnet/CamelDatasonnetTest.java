@@ -21,11 +21,12 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.TimeZone;
 
+import com.datasonnet.document.Document;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -76,8 +77,6 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
                 "direct:namedImports");
     }
 
-    // TODO: 9/8/20 need to pass result type param to language
-    @Disabled
     @Test
     public void testExpressionLanguage() throws Exception {
         runCamelTest("World",
@@ -147,7 +146,14 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
         template.sendBody(uri, payload);
         mock = getMockEndpoint("mock:direct:end");
         Exchange exchange = mock.assertExchangeReceived(mock.getReceivedCounter() - 1);
-        String response = exchange.getIn().getBody().toString();
+        Object body = exchange.getMessage().getBody();
+        String response;
+        if (body instanceof Document) {
+            response = ExchangeHelper.convertToMandatoryType(exchange, String.class, ((Document<?>) body).getContent());
+        } else {
+            response = exchange.getMessage().getBody(String.class);
+
+        }
         JSONAssert.assertEquals(expectedJson, response, true);
     }
 
