@@ -49,6 +49,7 @@ import org.asynchttpclient.Request;
 import org.asynchttpclient.RequestBuilder;
 import org.asynchttpclient.request.body.generator.BodyGenerator;
 import org.asynchttpclient.request.body.generator.FileBodyGenerator;
+import org.asynchttpclient.request.body.generator.ByteArrayBodyGenerator;
 import org.asynchttpclient.request.body.generator.InputStreamBodyGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,7 +170,7 @@ public class DefaultAhcBinding implements AhcBinding {
                         ByteArrayOutputStream bos = new ByteArrayOutputStream(endpoint.getBufferSize());
                         AhcHelper.writeObjectToStream(bos, obj);
                         byte[] bytes = bos.toByteArray();
-                        body = new InputStreamBodyGenerator(new ByteArrayInputStream(bytes));
+                        body = new ByteArrayBodyGenerator(bytes);
                         IOHelper.close(bos);
                     } else if (data instanceof File || data instanceof GenericFile) {
                         // file based (could potentially also be a FTP file etc)
@@ -183,9 +184,9 @@ public class DefaultAhcBinding implements AhcBinding {
                         // do not fallback to use the default charset as it can influence the request
                         // (for example application/x-www-form-urlencoded forms being sent)
                         if (charset != null) {
-                            body = new InputStreamBodyGenerator(new ByteArrayInputStream(((String) data).getBytes(charset)));
+                            body = new ByteArrayBodyGenerator(((String) data).getBytes(charset));
                         } else {
-                            body = new InputStreamBodyGenerator(new ByteArrayInputStream(((String) data).getBytes()));
+                            body = new ByteArrayBodyGenerator(((String) data).getBytes());
                         }
                     }
                     // fallback as input stream
