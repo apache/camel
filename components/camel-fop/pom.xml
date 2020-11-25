@@ -43,8 +43,12 @@
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop</artifactId>
             <version>${fop-version}</version>
-            <!-- See https://issues.apache.org/jira/browse/FOP-2151 -->
             <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+
                 <!-- exclude the dependency of xalan to fix CAMEL-7737 -->
                 <exclusion>
                     <groupId>xalan</groupId>
