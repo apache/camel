@@ -71,6 +71,14 @@ public class BinaryExpression extends BaseSimpleNode {
         return operator;
     }
 
+    public SimpleNode getLeft() {
+        return left;
+    }
+
+    public SimpleNode getRight() {
+        return right;
+    }
+
     @Override
     public Expression createExpression(CamelContext camelContext, String expression) {
         org.apache.camel.util.ObjectHelper.notNull(left, "left node", this);
@@ -261,6 +269,63 @@ public class BinaryExpression extends BaseSimpleNode {
                 return left + " " + token.getText() + " " + right;
             }
         };
+    }
+
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        org.apache.camel.util.ObjectHelper.notNull(left, "left node", this);
+        org.apache.camel.util.ObjectHelper.notNull(right, "right node", this);
+
+        final String leftExp = left.createCode(expression);
+        final String rightExp = right.createCode(expression);
+
+        if (operator == BinaryOperatorType.EQ) {
+            return "isEqualTo(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.EQ_IGNORE) {
+            return "isEqualToIgnoreCase(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.GT) {
+            return "isGreaterThan(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.GTE) {
+            return "isGreaterThanOrEqualTo(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.LT) {
+            return "isLessThan(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.LTE) {
+            return "isLessThanOrEqualTo(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.NOT_EQ) {
+            return "isNotEqualTo(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.NOT_EQ_IGNORE) {
+            return "!isEqualToIgnoreCase(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.CONTAINS) {
+            return "contains(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.CONTAINS_IGNORECASE) {
+            return "containsIgnoreCase(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.NOT_CONTAINS) {
+            return "!contains(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.NOT_CONTAINS_IGNORECASE) {
+            return "!containsIgnoreCase(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.IS) {
+            return "is(exchange, " + leftExp + ", " + rightExp + ".class" + ")";
+        } else if (operator == BinaryOperatorType.NOT_IS) {
+            return "!is(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.REGEX) {
+            return "regexp(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.NOT_REGEX) {
+            return "!regexp(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.IN) {
+            return "in(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.NOT_IN) {
+            return "!in(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.RANGE) {
+            return "range(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.NOT_RANGE) {
+            return "!range(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.STARTS_WITH) {
+            return "startsWith(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.ENDS_WITH) {
+            return "endsWith(exchange, " + leftExp + ", " + rightExp + ")";
+        }
+
+        throw new SimpleParserException("Unknown binary operator " + operator, token.getIndex());
     }
 
 }

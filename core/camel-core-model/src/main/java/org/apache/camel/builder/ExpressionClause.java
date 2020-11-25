@@ -474,6 +474,20 @@ public class ExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
+     * Returns a compiled simple expression value builder
+     */
+    public T csimple(String value) {
+        return delegate.csimple(value);
+    }
+
+    /**
+     * Returns a compile simple expression value builder
+     */
+    public T csimple(String value, Class<?> resultType) {
+        return delegate.csimple(value, resultType);
+    }
+
+    /**
      * Evaluates a <a href="http://camel.apache.org/simple.html">Simple expression</a>
      *
      * @param  text the expression to be evaluated

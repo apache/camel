@@ -2327,6 +2327,15 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
+    protected CSimpleExpression doParseCSimpleExpression() throws IOException, XmlPullParserException {
+        return doParse(new CSimpleExpression(), (def, key, val) -> {
+            if ("resultType".equals(key)) {
+                def.setResultTypeName(val);
+                return true;
+            }
+            return expressionDefinitionAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected ConstantExpression doParseConstantExpression() throws IOException, XmlPullParserException {
         return doParse(new ConstantExpression(),
             expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
@@ -2973,6 +2982,7 @@ public class ModelParser extends BaseParser {
     protected ExpressionDefinition doParseExpressionDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
             case "expressionDefinition": return doParseExpressionDefinition();
+            case "csimple": return doParseCSimpleExpression();
             case "constant": return doParseConstantExpression();
             case "exchangeProperty": return doParseExchangePropertyExpression();
             case "groovy": return doParseGroovyExpression();

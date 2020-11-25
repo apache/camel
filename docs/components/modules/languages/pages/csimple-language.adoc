@@ -1,0 +1,55 @@
+[[csimple-language]]
+= CSimple Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/csimple-language.adoc
+:docTitle: CSimple
+:artifactId: camel-core-languages
+:description: Evaluate a compile simple expression language.
+:since: 3.7
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/csimple.adoc[opts=optional]
+
+*Since Camel {since}*
+
+The CSimple language is *compiled* xref:simple-language.adoc[Simple] language.
+
+
+== Different between CSimple and Simple
+
+The simple language is a dynamic expression language which is runtime parsed into a set of Camel `Expression`'s or `Predicate`'s.
+
+The csimple language is parsed into regular Java source code and compiled together with all the other source code, or it
+can be compiled once during bootstrap via the `camel-csimple-joor` module.
+
+The simple langauge is generally very lightweight and fast, however for some use-cases with dynamic method calls via OGNL paths,
+then the simple language does runtime introspection and reflection calls. This has an overhead on performance, and one of the reasons
+why csimple was created. However csimple requires to be typesafe and method calls via OGNL paths requires to know the type during parsing.
+This means for csimple languages expressions you would need to provide the class type where as simple could introspect this at runtime.
+
+In other words the simple language is using _duck typing_ (if it looks like a duck, and quacks like a duck, then it is a duck)
+and csimple is using Java type (typesafety). If there is a type error then simple will report this at runtime, and csimple you will see a Java compiler error.
+
+
+== CSimple Language options
+
+// language options: START
+The CSimple language supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| resultType |  | String | Sets the class name of the result type (type from output)
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+
+== More documentation
+
+See the xref:simple-language.adoc[Simple] language as csimple has the same set of functions as simple language.
+
+== Example
+
+See `camel-example-csimple` and `camel-example-csimple-joor` examples at https://github.com/apache/camel-examples[Camel Examples]
+
