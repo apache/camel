@@ -297,10 +297,16 @@ public final class PropertyBindingSupport {
                     // so we can use that to lookup as configurer
                     Class<?> collectionType = (Class<?>) ((PropertyConfigurerGetter) configurer)
                             .getCollectionValueType(newTarget, undashKey(key), ignoreCase);
-                    if (collectionType != null) {
-                        configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, collectionType);
-                    } else {
-                        configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, prop.getClass());
+
+                    if (collectionType == null) {
+                        collectionType = prop.getClass();
+                    }
+
+                    configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, collectionType);
+                    if (configurer == null) {
+                        if (Map.class.isAssignableFrom(collectionType)) {
+                            configurer = MapConfigurer.INSTANCE;
+                        }
                     }
                 }
                 // prepare for next iterator
@@ -445,6 +451,12 @@ public final class PropertyBindingSupport {
                 // regular key
                 if (configurer != null) {
                     bound = setSimplePropertyViaConfigurer(camelContext, target, key, value, ignoreCase, configurer);
+                }
+                // if the target value is a map type, then we can skip reflection
+                // and set the entry
+                if (!bound && Map.class.isAssignableFrom(target.getClass())) {
+                    ((Map) target).put(key, value);
+                    bound = true;
                 }
                 if (!bound && reflection) {
                     // fallback to reflection based
@@ -857,7 +869,9 @@ public final class PropertyBindingSupport {
 
         if (answer == null) {
             if (lookupKey != null) {
-                if (Map.class.isAssignableFrom(type)) {
+                if (Properties.class.isAssignableFrom(type)) {
+                    answer = new Properties();
+                } else if (Map.class.isAssignableFrom(type)) {
                     answer = new LinkedHashMap<>();
                 } else if (Collection.class.isAssignableFrom(type)) {
                     answer = new ArrayList<>();
@@ -986,7 +1000,9 @@ public final class PropertyBindingSupport {
 
         if (answer == null) {
             if (lookupKey != null) {
-                if (Map.class.isAssignableFrom(type)) {
+                if (Properties.class.isAssignableFrom(type)) {
+                    answer = new Properties();
+                } else if (Map.class.isAssignableFrom(type)) {
                     answer = new LinkedHashMap<>();
                 } else if (Collection.class.isAssignableFrom(type)) {
                     answer = new ArrayList<>();
@@ -1920,6 +1936,18 @@ public final class PropertyBindingSupport {
             }
             // 3) sort by name
             return o1.compareTo(o2);
+        }
+    }
+
+    private static final class MapConfigurer implements PropertyConfigurer {
+        public static final PropertyConfigurer INSTANCE = new MapConfigurer();
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean configure(
+                CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+            ((Map) target).put(name, value);
+            return true;
         }
     }
 
