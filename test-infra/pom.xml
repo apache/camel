@@ -54,5 +54,6 @@
         <module>camel-test-infra-jdbc</module>
         <module>camel-test-infra-arangodb</module>
         <module>camel-test-infra-consul</module>
+        <module>camel-test-infra-google-pubsub</module>
     </modules>
 </project>
