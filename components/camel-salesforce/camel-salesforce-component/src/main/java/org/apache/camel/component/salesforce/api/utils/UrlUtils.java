@@ -20,7 +20,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-public class UrlUtils {
+public final class UrlUtils {
+
+    private UrlUtils() {
+    }
 
     // Encode the URL up to the point of the query. Do not pass the query portion into this method.
     public static String encodePath(String path) throws UnsupportedEncodingException {
