@@ -2743,8 +2743,7 @@ public abstract class AbstractCamelContext extends BaseService
             bootstraps.clear();
 
             if (isLightweight()) {
-                LOG.info("Lightweight enabled. Clearing bootstrap services and route model to free up memory."
-                         + " Danger this impacts the CamelContext not being able to add new routes and anything related to camel-core-model.");
+                LOG.info("Lightweight mode enabled. Performing optimizations and memory reduction.");
                 ReifierStrategy.clearReifiers();
                 adapt(ExtendedCamelContext.class).disposeModel();
             }
