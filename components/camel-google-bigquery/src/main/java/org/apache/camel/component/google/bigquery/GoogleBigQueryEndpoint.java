@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.google.bigquery;
 
-import com.google.api.services.bigquery.Bigquery;
+import com.google.cloud.bigquery.BigQuery;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -53,7 +53,7 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        Bigquery bigquery = getConfiguration().getConnectionFactory().getDefaultClient();
+        BigQuery bigquery = getConfiguration().getConnectionFactory().getDefaultClient();
         GoogleBigQueryProducer producer = new GoogleBigQueryProducer(bigquery, this, configuration);
         return producer;
     }
