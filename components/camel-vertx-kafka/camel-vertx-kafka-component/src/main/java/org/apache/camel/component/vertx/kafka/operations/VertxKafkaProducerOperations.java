@@ -145,7 +145,8 @@ public class VertxKafkaProducerOperations {
         return topic;
     }
 
-    private String getTopic(final Message message, final String innerOverrideTopic, final String innerTopic, final String parentTopic) {
+    private String getTopic(
+            final Message message, final String innerOverrideTopic, final String innerTopic, final String parentTopic) {
         // first check if we have override topic on inner message otherwise fall to innerTopic
         // second check if we have a innerTopic on inner message otherwise fall to parentTopic (from the main exchange)
         // third check if we have a parent topic (set in the headers of TOPIC) in the main exchange otherwise fall to config

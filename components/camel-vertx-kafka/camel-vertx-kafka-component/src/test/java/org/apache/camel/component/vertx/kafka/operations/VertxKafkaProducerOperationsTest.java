@@ -326,7 +326,7 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
         // we add our exchanges in order to aggregate
         final List<Exchange> nestedExchanges
                 = createListOfExchanges(Arrays.asList("topic1", "topic2", "topic3"),
-                VertxKafkaConstants.TOPIC);
+                        VertxKafkaConstants.TOPIC);
 
         // aggregate
         final Exchange finalAggregatedExchange = aggregateExchanges(nestedExchanges, new GroupedExchangeAggregationStrategy());
