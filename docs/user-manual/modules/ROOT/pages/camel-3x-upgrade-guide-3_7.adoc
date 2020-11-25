@@ -282,3 +282,11 @@ adopting XStream's Security Framework.
 CAMEL-15890 fixed a bug in which values for External Ids that contained spaces would have spaces converted to "+". This has been fixed. 
 However, any such values that now have the plus sign in salesforce will no longer match as Camel will now preserve the space. Therefore
 you may need to have a transformation that explicility covnerts spaces to "+" if you need to preserve the old behavior.
+
+=== camel-google-bigquery
+
+The camel-google-bigquery component was updated to use the latest version of `google-cloud-bigquery`. Some features of `GoogleBigQueryConnectionFactory` are no longer supported.
+
+It is no longer possible to provide a the service account private key as a String parameter to `GoogleBigQueryConnectionFactory`. Instead, you should use `setCredentialsFileLocation` to 
+discover the private key from your credentials file. Or use the fallback mechanism for discovering credentials by setting the `GOOGLE_APPLICATION_CREDENTIALS` environment variable. Refer to the 
+component documentation for more information. 
