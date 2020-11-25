@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -64,6 +65,39 @@ public class PropertyBindingSupportPropertiesTest extends ContextTestSupport {
         assertEquals("company2", bar.getWorks().getProperty("burger"));
     }
 
+    @Test
+    public void testPropertiesMap() {
+        BarWithMap bar = new BarWithMap();
+
+        PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withReflection(true)
+                .withTarget(bar)
+                .withProperty("works[acme].name", "company1")
+                .withProperty("works[burger].name", "company2")
+                .bind();
+
+        assertEquals("company1", bar.getWorks().get("acme").getProperty("name"));
+        assertEquals("company2", bar.getWorks().get("burger").getProperty("name"));
+    }
+
+    @Test
+    public void testPropertiesMapWithConfigurer() {
+        BarWithMap bar = new BarWithMap();
+
+        PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withReflection(false)
+                .withConfigurer(new BarWithMapConfigurer())
+                .withTarget(bar)
+                .withProperty("works[acme].name", "company1")
+                .withProperty("works[burger].name", "company2")
+                .bind();
+
+        assertEquals("company1", bar.getWorks().get("acme").getProperty("name"));
+        assertEquals("company2", bar.getWorks().get("burger").getProperty("name"));
+    }
+
     public static class Bar {
         private Properties works;
 
@@ -72,6 +106,18 @@ public class PropertyBindingSupportPropertiesTest extends ContextTestSupport {
         }
 
         public void setWorks(Properties works) {
+            this.works = works;
+        }
+    }
+
+    public static class BarWithMap {
+        private Map<String, Properties> works;
+
+        public Map<String, Properties> getWorks() {
+            return works;
+        }
+
+        public void setWorks(Map<String, Properties> works) {
             this.works = works;
         }
     }
@@ -112,6 +158,55 @@ public class PropertyBindingSupportPropertiesTest extends ContextTestSupport {
                     return bar.getWorks();
                 }
             }
+            return null;
+        }
+    }
+
+    private static class BarWithMapConfigurer implements PropertyConfigurer, PropertyConfigurerGetter {
+        @Override
+        public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+            if (ignoreCase) {
+                name = name.toLowerCase(Locale.ENGLISH);
+            }
+            if (target instanceof PropertyBindingSupportPropertiesTest.BarWithMap) {
+                PropertyBindingSupportPropertiesTest.BarWithMap bar = (PropertyBindingSupportPropertiesTest.BarWithMap) target;
+                if ("works".equals(name)) {
+                    bar.setWorks((Map) value);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public Class<?> getOptionType(String name, boolean ignoreCase) {
+            if ("works".equals(name)) {
+                return Map.class;
+            }
+
+            return null;
+        }
+
+        @Override
+        public Object getOptionValue(Object target, String name, boolean ignoreCase) {
+            if (ignoreCase) {
+                name = name.toLowerCase(Locale.ENGLISH);
+            }
+            if (target instanceof PropertyBindingSupportPropertiesTest.BarWithMap) {
+                PropertyBindingSupportPropertiesTest.BarWithMap bar = (PropertyBindingSupportPropertiesTest.BarWithMap) target;
+                if ("works".equals(name)) {
+                    return bar.getWorks();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+            if ("works".equals(name)) {
+                return Properties.class;
+            }
+
             return null;
         }
     }
