@@ -1104,7 +1104,7 @@ public final class ObjectHelper {
         }
 
         // remove leading dots
-        if (name.startsWith(",")) {
+        if (name.startsWith(".")) {
             name = name.substring(1);
         }
 

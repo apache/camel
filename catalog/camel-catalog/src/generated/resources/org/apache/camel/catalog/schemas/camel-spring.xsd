@@ -229,6 +229,14 @@ Encrypt and decrypt messages using Java Cryptography Extension (JCE).
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="csimple" type="tns:cSimpleExpression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Evaluate a compile simple expression language.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="csv" type="tns:csvDataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -3175,6 +3183,7 @@ external sources to control this aggregator.
   <xs:complexType name="expressionSubElementDefinition">
     <xs:choice>
       <xs:element ref="tns:expressionDefinition"/>
+      <xs:element ref="tns:csimple"/>
       <xs:element ref="tns:constant"/>
       <xs:element ref="tns:exchangeProperty"/>
       <xs:element ref="tns:groovy"/>
@@ -3405,6 +3414,7 @@ implementation. Default value: Singleton
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
@@ -4373,6 +4383,7 @@ data formats marshalling to JSON etc. Default value: false
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -4424,6 +4435,7 @@ pool. Is by default true. Default value: true
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -4487,6 +4499,7 @@ producers.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -4591,6 +4604,7 @@ endpoint. Default value: false
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
@@ -4803,6 +4817,7 @@ Global option value.
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
@@ -5459,6 +5474,7 @@ To refer to a custom logger instance to lookup from the registry.
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
@@ -9024,6 +9040,7 @@ Sets a reference to use for lookup the policy in the registry.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -9154,6 +9171,7 @@ Reference to the Processor to lookup in the registry to use.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -9432,6 +9450,7 @@ Name of property to remove.
           </xs:choice>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
@@ -9932,6 +9951,7 @@ Parameter description.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -10122,6 +10142,7 @@ use.
   <xs:complexType name="sagaOptionDefinition">
     <xs:choice>
       <xs:element ref="tns:expressionDefinition"/>
+      <xs:element ref="tns:csimple"/>
       <xs:element ref="tns:constant"/>
       <xs:element ref="tns:exchangeProperty"/>
       <xs:element ref="tns:groovy"/>
@@ -10181,6 +10202,7 @@ Default value: SECONDS
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -10209,6 +10231,7 @@ Default value: SECONDS
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -10253,6 +10276,7 @@ forward.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -10290,6 +10314,7 @@ will be used.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -10327,6 +10352,7 @@ constant name will be used.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -10363,6 +10389,7 @@ Sets a reference to lookup for the comparator to use for sorting.
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
@@ -10836,6 +10863,7 @@ rejection handler. Is by default true. Default value: true
         <xs:sequence>
           <xs:choice>
             <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
@@ -11099,6 +11127,7 @@ Sets a reference to use for lookup the policy in the registry.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -11255,6 +11284,7 @@ Sets a reference to use for lookup the policy in the registry.
       <xs:extension base="tns:processorDefinition">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
@@ -11989,6 +12019,7 @@ Set the base path to store in ZK.
         <xs:sequence>
           <xs:choice minOccurs="0">
             <xs:element ref="tns:expressionDefinition"/>
+            <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
@@ -12189,6 +12220,20 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:zipfile"/>
       </xs:choice>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="cSimpleExpression">
+    <xs:simpleContent>
+      <xs:extension base="tns:expression">
+        <xs:attribute name="resultType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the class name of the result type (type from output).
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 
   <xs:complexType name="constantExpression">
@@ -13646,6 +13691,7 @@ password, application or accessCode.
       <xs:extension base="tns:validator">
         <xs:choice>
           <xs:element ref="tns:expressionDefinition"/>
+          <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>

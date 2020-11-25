@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.helper.CamelJavaTreeParserHelper;
+import org.apache.camel.parser.model.CamelCSimpleExpressionDetails;
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
@@ -294,10 +295,9 @@ public final class RouteBuilderParser {
     public static void parseRouteBuilderSimpleExpressions(
             JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
             List<CamelSimpleExpressionDetails> simpleExpressions) {
-
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
         if (method != null) {
-            List<ParserResult> expressions = CamelJavaParserHelper.parseCamelSimpleExpressions(method);
+            List<ParserResult> expressions = CamelJavaParserHelper.parseCamelLanguageExpressions(method, "simple");
             for (ParserResult result : expressions) {
                 if (result.isParsed()) {
                     String fileName = fullyQualifiedFileName;
@@ -330,6 +330,57 @@ public final class RouteBuilderParser {
                     detail.setExpression(expression);
 
                     simpleExpressions.add(detail);
+                }
+            }
+        }
+    }
+
+    /**
+     * Parses the java source class to discover Camel compiled simple expressions.
+     *
+     * @param clazz                  the java source class
+     * @param baseDir                the base of the source code
+     * @param fullyQualifiedFileName the fully qualified source code file name
+     * @param csimpleExpressions     list to add discovered and parsed simple expressions
+     */
+    public static void parseRouteBuilderCSimpleExpressions(
+            JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+            List<CamelCSimpleExpressionDetails> csimpleExpressions) {
+        MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
+        if (method != null) {
+            List<ParserResult> expressions = CamelJavaParserHelper.parseCamelLanguageExpressions(method, "csimple");
+            for (ParserResult result : expressions) {
+                if (result.isParsed()) {
+                    String fileName = fullyQualifiedFileName;
+                    if (fileName.startsWith(baseDir)) {
+                        fileName = fileName.substring(baseDir.length() + 1);
+                    }
+
+                    CamelCSimpleExpressionDetails detail = new CamelCSimpleExpressionDetails();
+                    detail.setFileName(fileName);
+                    detail.setClassName(clazz.getQualifiedName());
+                    detail.setMethodName("configure");
+                    int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
+                    if (line > -1) {
+                        detail.setLineNumber("" + line);
+                    }
+                    int endLine = findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
+                    if (endLine > -1) {
+                        detail.setLineNumberEnd("" + endLine);
+                    }
+                    detail.setAbsolutePosition(result.getPosition());
+                    int linePos = findLinePosition(clazz.toUnformattedString(), result.getPosition());
+                    if (linePos > -1) {
+                        detail.setLinePosition(linePos);
+                    }
+                    detail.setCsimple(result.getElement());
+
+                    boolean predicate = result.getPredicate() != null ? result.getPredicate() : false;
+                    boolean expression = !predicate;
+                    detail.setPredicate(predicate);
+                    detail.setExpression(expression);
+
+                    csimpleExpressions.add(detail);
                 }
             }
         }

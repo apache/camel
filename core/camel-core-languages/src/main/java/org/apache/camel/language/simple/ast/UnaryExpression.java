@@ -62,6 +62,10 @@ public class UnaryExpression extends BaseSimpleNode {
         return operator;
     }
 
+    public SimpleNode getLeft() {
+        return left;
+    }
+
     @Override
     public Expression createExpression(CamelContext camelContext, String expression) {
         ObjectHelper.notNull(left, "left node", this);
@@ -141,4 +145,18 @@ public class UnaryExpression extends BaseSimpleNode {
         };
     }
 
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        ObjectHelper.notNull(left, "left node", this);
+
+        final String number = left.createCode(expression);
+
+        if (operator == UnaryOperatorType.INC) {
+            return "increment(exchange, " + number + ")";
+        } else if (operator == UnaryOperatorType.DEC) {
+            return "decrement(exchange, " + number + ")";
+        }
+
+        throw new SimpleParserException("Unknown unary operator " + operator, token.getIndex());
+    }
 }

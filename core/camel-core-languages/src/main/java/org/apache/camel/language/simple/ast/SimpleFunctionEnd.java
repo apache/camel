@@ -18,6 +18,7 @@ package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 
 /**
@@ -34,4 +35,8 @@ public class SimpleFunctionEnd extends BaseSimpleNode implements BlockEnd {
         return null;
     }
 
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        return null;
+    }
 }

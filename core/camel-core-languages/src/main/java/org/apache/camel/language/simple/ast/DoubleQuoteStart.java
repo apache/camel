@@ -18,6 +18,7 @@ package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.builder.ExpressionBuilder;
 
@@ -58,4 +59,17 @@ public class DoubleQuoteStart extends BaseSimpleNode implements BlockStart {
         return true;
     }
 
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        String answer = null;
+        if (block != null) {
+            answer = block.createCode(expression);
+        }
+        if (answer == null) {
+            answer = "\"\"";
+        } else {
+            answer = "\"" + answer + "\"";
+        }
+        return answer;
+    }
 }

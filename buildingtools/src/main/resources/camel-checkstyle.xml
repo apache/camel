@@ -278,8 +278,8 @@ lengths, if/try depths, etc...
         <module name="JUnitTestCase"/>
         -->
         <module name="ReturnCount">
-            <property name="max" value="21"/>
-            <property name="maxForVoid" value="25"/>
+            <property name="max" value="30"/>
+            <property name="maxForVoid" value="30"/>
         </module>
 
         <!-- Um.. we tend to use these alot.. perhaps enable this check later.

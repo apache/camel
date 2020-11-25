@@ -17,6 +17,7 @@
 package org.apache.camel.language.simple.ast;
 
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -263,7 +264,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.refExpression(remainder);
         }
 
-        // const: prefix
+        // type: prefix
         remainder = ifStartsWithReturnRemainder("type:", function);
         if (remainder != null) {
             Expression exp = SimpleExpressionBuilder.typeExpression(remainder);
@@ -549,6 +550,561 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
         }
         return null;
+    }
+
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        String function = getText();
+
+        // return the function directly if we can create function without analyzing the prefix
+        String answer = createCodeDirectly(function);
+        if (answer != null) {
+            return answer;
+        }
+
+        // body and headers first
+        answer = createCodeBodyOrHeader(function);
+        if (answer != null) {
+            return answer;
+        }
+
+        // camelContext OGNL
+        String remainder = ifStartsWithReturnRemainder("camelContext", function);
+        if (remainder != null) {
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
+            }
+            return "camelContext" + ognlCodeMethods(remainder);
+        }
+
+        // ExceptionAs OGNL
+        remainder = ifStartsWithReturnRemainder("exceptionAs(", function);
+        if (remainder != null) {
+            String type = StringHelper.before(remainder, ")");
+            remainder = StringHelper.after(remainder, ")");
+            type = StringHelper.removeQuotes(type);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.trim();
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (type.isEmpty() || invalid) {
+                throw new SimpleParserException("Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
+            }
+            return "exceptionAs(exchange, " + type + ")" + ognlCodeMethods(remainder);
+        }
+        // Exception OGNL
+        remainder = ifStartsWithReturnRemainder("exception", function);
+        if (remainder != null) {
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${exception.OGNL} was: " + function, token.getIndex());
+            }
+            return "exception(exchange)" + ognlCodeMethods(remainder);
+        }
+
+        // exchangePropertyAs
+        remainder = ifStartsWithReturnRemainder("exchangePropertyAs(", function);
+        if (remainder != null) {
+            String keyAndType = StringHelper.before(remainder, ")");
+            if (keyAndType == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAs(key, type)} was: " + function, token.getIndex());
+            }
+
+            String key = StringHelper.before(keyAndType, ",");
+            String type = StringHelper.after(keyAndType, ",");
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAs(key, type)} was: " + function, token.getIndex());
+            }
+            key = StringHelper.removeQuotes(key);
+            key = key.trim();
+            type = StringHelper.removeQuotes(type);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.trim();
+            return "exchangePropertyAs(exchange, '" + key + "', " + type + ")" + ognlCodeMethods(remainder);
+        }
+
+        // exchange property
+        remainder = ifStartsWithReturnRemainder("exchangeProperty", function);
+        if (remainder != null) {
+            // remove leading character (dot or ?)
+            if (remainder.startsWith(".") || remainder.startsWith("?")) {
+                remainder = remainder.substring(1);
+            }
+            // remove starting and ending brackets
+            if (remainder.startsWith("[") && remainder.endsWith("]")) {
+                remainder = remainder.substring(1, remainder.length() - 1);
+            }
+
+            // validate syntax
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                // must use exchangePropertyAs as we need to be typed
+                throw new SimpleParserException("Valid syntax: ${exchangePropertyAs.OGNL} was: " + function, token.getIndex());
+            }
+
+            if (OgnlHelper.isValidOgnlExpression(remainder)) {
+                // must use exchangePropertyAs as we need to be typed
+                throw new SimpleParserException("Valid syntax: ${exchangePropertyAs.OGNL} was: " + function, token.getIndex());
+            } else {
+                // regular property
+                return "exchangeProperty(exchange, '" + remainder + "')";
+            }
+        }
+
+        // system property
+        remainder = ifStartsWithReturnRemainder("sys.", function);
+        if (remainder != null) {
+            return "sys('" + remainder + "')";
+        }
+        remainder = ifStartsWithReturnRemainder("sysenv.", function);
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("sysenv:", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("env.", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("env:", function);
+        }
+        if (remainder != null) {
+            return "sysenv('" + remainder + "')";
+        }
+
+        // exchange OGNL
+        remainder = ifStartsWithReturnRemainder("exchange", function);
+        if (remainder != null) {
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${exchange.OGNL} was: " + function, token.getIndex());
+            }
+            return "exchange" + ognlCodeMethods(remainder);
+        }
+
+        // file: prefix
+        remainder = ifStartsWithReturnRemainder("file:", function);
+        if (remainder != null) {
+            return createCodeFileExpression(remainder);
+        }
+
+        // date: prefix
+        remainder = ifStartsWithReturnRemainder("date:", function);
+        if (remainder != null) {
+            String[] parts = remainder.split(":", 2);
+            if (parts.length == 1) {
+                return "date(exchange, '" + parts[0] + "')";
+            } else if (parts.length == 2) {
+                return "date(exchange, '" + parts[0] + "', null, '" + parts[1] + "')";
+            }
+        }
+
+        // date-with-timezone: prefix
+        remainder = ifStartsWithReturnRemainder("date-with-timezone:", function);
+        if (remainder != null) {
+            String[] parts = remainder.split(":", 3);
+            if (parts.length < 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
+            }
+            return "date(exchange, '" + parts[0] + "', '" + parts[1] + "', '" + parts[2] + "')";
+        }
+
+        // bean: prefix
+        remainder = ifStartsWithReturnRemainder("bean:", function);
+        if (remainder != null) {
+            String ref = remainder;
+            Object method = null;
+            Object scope = null;
+
+            // we support different syntax for bean function
+            if (remainder.contains("?method=") || remainder.contains("?scope=")) {
+                ref = StringHelper.before(remainder, "?");
+                String query = StringHelper.after(remainder, "?");
+                try {
+                    Map<String, Object> map = URISupport.parseQuery(query);
+                    method = map.get("method");
+                    scope = map.get("scope");
+                } catch (URISyntaxException e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            } else {
+                //first check case :: because of my.own.Bean::method
+                int doubleColonIndex = remainder.indexOf("::");
+                //need to check that not inside params
+                int beginOfParameterDeclaration = remainder.indexOf('(');
+                if (doubleColonIndex > 0 && (!remainder.contains("(") || doubleColonIndex < beginOfParameterDeclaration)) {
+                    ref = remainder.substring(0, doubleColonIndex);
+                    method = remainder.substring(doubleColonIndex + 2);
+                } else {
+                    int idx = remainder.indexOf('.');
+                    if (idx > 0) {
+                        ref = remainder.substring(0, idx);
+                        method = remainder.substring(idx + 1);
+                    }
+                }
+            }
+            ref = ref.trim();
+            if (method != null && scope != null) {
+                return "bean(exchange, '" + ref + "', '" + method.toString() + "', '" + scope.toString() + "')";
+            } else if (method != null) {
+                return "bean(exchange, '" + ref + "', '" + method.toString() + "', null)";
+            } else {
+                return "bean(exchange, '" + ref + "', null, null)";
+            }
+        }
+
+        // properties: prefix
+        remainder = ifStartsWithReturnRemainder("properties:", function);
+        if (remainder != null) {
+            String[] parts = remainder.split(":", 2);
+            if (parts.length > 2) {
+                throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
+            }
+            String defaultValue = null;
+            if (parts.length >= 2) {
+                defaultValue = parts[1];
+            }
+            String key = parts[0];
+            key = key.trim();
+            if (defaultValue != null) {
+                return "properties(exchange, '" + key + "', '" + defaultValue.trim() + "')";
+            } else {
+                return "properties(exchange, '" + key + "')";
+            }
+        }
+
+        // ref: prefix
+        remainder = ifStartsWithReturnRemainder("ref:", function);
+        if (remainder != null) {
+            return "ref(exchange, '" + remainder + "')";
+        }
+
+        // type: prefix
+        remainder = ifStartsWithReturnRemainder("type:", function);
+        if (remainder != null) {
+            return remainder;
+        }
+
+        // miscellaneous functions
+        String misc = createCodeExpressionMisc(function);
+        if (misc != null) {
+            return misc;
+        }
+
+        throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+    }
+
+    public String createCodeDirectly(String expression) throws SimpleParserException {
+        if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
+            return "body";
+        } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
+            return "bodyOneLine(exchange)";
+        } else if (ObjectHelper.equal(expression, "id")) {
+            return "message.getId()";
+        } else if (ObjectHelper.equal(expression, "exchangeId")) {
+            return "exchange.getId()";
+        } else if (ObjectHelper.equal(expression, "exchange")) {
+            return "exchange";
+        } else if (ObjectHelper.equal(expression, "exception")) {
+            return "exception(exchange)";
+        } else if (ObjectHelper.equal(expression, "exception.message")) {
+            return "exceptionMessage(exchange)";
+        } else if (ObjectHelper.equal(expression, "exception.stacktrace")) {
+            return "exceptionStacktrace(exchange)";
+        } else if (ObjectHelper.equal(expression, "threadName")) {
+            return "threadName()";
+        } else if (ObjectHelper.equal(expression, "hostname")) {
+            return "hostName()";
+        } else if (ObjectHelper.equal(expression, "camelId")) {
+            return "camelContext.getName()";
+        } else if (ObjectHelper.equal(expression, "routeId")) {
+            return "routeId(exchange)";
+        } else if (ObjectHelper.equal(expression, "stepId")) {
+            return "stepId(exchange)";
+        } else if (ObjectHelper.equal(expression, "null")) {
+            return "null";
+        }
+
+        return null;
+    }
+
+    private String createCodeBodyOrHeader(String function) {
+        // bodyAs
+        String remainder = ifStartsWithReturnRemainder("bodyAs(", function);
+        if (remainder != null) {
+            String type = StringHelper.before(remainder, ")");
+            if (type == null) {
+                throw new SimpleParserException("Valid syntax: ${bodyAs(type)} was: " + function, token.getIndex());
+            }
+            type = StringHelper.removeQuotes(type);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.trim();
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException("Valid syntax: ${bodyAs(type).OGNL} was: " + function, token.getIndex());
+                }
+                return "bodyAs(message, " + type + ")" + ognlCodeMethods(remainder);
+            } else {
+                return "bodyAs(message, " + type + ")";
+            }
+        }
+
+        // mandatoryBodyAs
+        remainder = ifStartsWithReturnRemainder("mandatoryBodyAs(", function);
+        if (remainder != null) {
+            String type = StringHelper.before(remainder, ")");
+            if (type == null) {
+                throw new SimpleParserException("Valid syntax: ${mandatoryBodyAs(type)} was: " + function, token.getIndex());
+            }
+            type = StringHelper.removeQuotes(type);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.trim();
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${mandatoryBodyAs(type).OGNL} was: " + function, token.getIndex());
+                }
+                return "mandatoryBodyAs(message, " + type + ")" + ognlCodeMethods(remainder);
+            } else {
+                return "mandatoryBodyAs(message, " + type + ")";
+            }
+        }
+
+        // body OGNL
+        remainder = ifStartsWithReturnRemainder("body", function);
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("in.body", function);
+        }
+        if (remainder != null) {
+            // OGNL must start with a . ? or [
+            boolean ognlStart = remainder.startsWith(".") || remainder.startsWith("?") || remainder.startsWith("[");
+            boolean invalid = !ognlStart || OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${body.OGNL} was: " + function, token.getIndex());
+            }
+            return "body" + ognlCodeMethods(remainder);
+        }
+
+        // headerAs
+        remainder = ifStartsWithReturnRemainder("headerAs(", function);
+        if (remainder != null) {
+            String keyAndType = StringHelper.before(remainder, ")");
+            if (keyAndType == null) {
+                throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
+            }
+
+            String key = StringHelper.before(keyAndType, ",");
+            String type = StringHelper.after(keyAndType, ",");
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isNotEmpty(remainder)) {
+                throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
+            }
+            key = StringHelper.removeQuotes(key);
+            key = key.trim();
+            type = StringHelper.removeQuotes(type);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.trim();
+            return "headerAs(message, '" + key + "', " + type + ")" + ognlCodeMethods(remainder);
+        }
+
+        // headers function
+        if ("in.headers".equals(function) || "headers".equals(function)) {
+            return "message.getHeaders()";
+        }
+
+        // in header function
+        remainder = ifStartsWithReturnRemainder("in.headers", function);
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("in.header", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("headers", function);
+        }
+        if (remainder == null) {
+            remainder = ifStartsWithReturnRemainder("header", function);
+        }
+        if (remainder != null) {
+            // remove leading character (dot, colon or ?)
+            if (remainder.startsWith(".") || remainder.startsWith(":") || remainder.startsWith("?")) {
+                remainder = remainder.substring(1);
+            }
+            // remove starting and ending brackets
+            if (remainder.startsWith("[") && remainder.endsWith("]")) {
+                remainder = remainder.substring(1, remainder.length() - 1);
+            }
+            // remove quotes from key
+            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
+            key = key.trim();
+
+            // validate syntax
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(key);
+            if (invalid) {
+                throw new SimpleParserException("Valid syntax: ${header.name[key]} was: " + function, token.getIndex());
+            }
+
+            if (OgnlHelper.isValidOgnlExpression(key)) {
+                // ognl based header must be typed
+                throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
+            } else {
+                // regular header
+                return "header(message, '" + key + "')";
+            }
+        }
+
+        return null;
+    }
+
+    private String createCodeFileExpression(String remainder) {
+        if (ObjectHelper.equal(remainder, "name")) {
+            return "fileName(message)";
+        } else if (ObjectHelper.equal(remainder, "name.noext")) {
+            return "fileNameNoExt(message)";
+        } else if (ObjectHelper.equal(remainder, "name.noext.single")) {
+            return "fileNameNoExtSingle(message)";
+        } else if (ObjectHelper.equal(remainder, "name.ext") || ObjectHelper.equal(remainder, "ext")) {
+            return "fileNameExt(message)";
+        } else if (ObjectHelper.equal(remainder, "name.ext.single")) {
+            return "fileNameExtSingle(message)";
+        } else if (ObjectHelper.equal(remainder, "onlyname")) {
+            return "fileOnlyName(message)";
+        } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
+            return "fileOnlyNameNoExt(message)";
+        } else if (ObjectHelper.equal(remainder, "onlyname.noext.single")) {
+            return "fileOnlyNameNoExtSingle(message)";
+        } else if (ObjectHelper.equal(remainder, "parent")) {
+            return "fileParent(message)";
+        } else if (ObjectHelper.equal(remainder, "path")) {
+            return "filePath(message)";
+        } else if (ObjectHelper.equal(remainder, "absolute")) {
+            return "fileAbsolute(message)";
+        } else if (ObjectHelper.equal(remainder, "absolute.path")) {
+            return "fileAbsolutePath(message)";
+        } else if (ObjectHelper.equal(remainder, "length") || ObjectHelper.equal(remainder, "size")) {
+            return "fileSize(message)";
+        } else if (ObjectHelper.equal(remainder, "modified")) {
+            return "fileModified(message)";
+        }
+        throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+    }
+
+    private String createCodeExpressionMisc(String function) {
+        String remainder;
+
+        // random function
+        remainder = ifStartsWithReturnRemainder("random(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String before = StringHelper.before(remainder, ",");
+                before = before.trim();
+                String after = StringHelper.after(remainder, ",");
+                after = after.trim();
+                if (after.endsWith(")")) {
+                    after = after.substring(0, after.length() - 1);
+                }
+                return "random(exchange, " + before + ", " + after + ")";
+            } else {
+                return "random(exchange, 0, " + values.trim() + ")";
+            }
+        }
+
+        // skip function
+        remainder = ifStartsWithReturnRemainder("skip(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
+            }
+            return "skip(exchange, " + values.trim() + ")";
+        }
+
+        // collate function
+        remainder = ifStartsWithReturnRemainder("collate(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
+            }
+            return "collate(exchange, " + values.trim() + ")";
+        }
+
+        // messageHistory function
+        remainder = ifStartsWithReturnRemainder("messageHistory", function);
+        if (remainder != null) {
+            boolean detailed;
+            String values = StringHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                detailed = true;
+            } else {
+                detailed = Boolean.parseBoolean(values);
+            }
+            return "messageHistory(exchange, " + (detailed ? "true" : "false") + ")";
+        } else if (ObjectHelper.equal(function, "messageHistory")) {
+            return "messageHistory(exchange, true)";
+        }
+
+        return null;
+    }
+
+    private static String ognlCodeMethods(String remainder) {
+        StringBuilder sb = new StringBuilder();
+
+        if (remainder != null) {
+            List<String> methods = OgnlHelper.splitOgnl(remainder);
+            for (int i = 0; i < methods.size(); i++) {
+                String m = methods.get(i);
+                if (m.startsWith("(")) {
+                    // its parameters for the function so add as-is and continue
+                    sb.append(m);
+                    continue;
+                }
+                if (m.startsWith(".")) {
+                    m = m.substring(1);
+                }
+                sb.append(".");
+
+                // shorthand getter syntax: .name -> .getName()
+                char ch = m.charAt(m.length() - 1);
+                if (Character.isAlphabetic(ch)) {
+                    if (!m.startsWith("get")) {
+                        sb.append("get");
+                        sb.append(Character.toUpperCase(m.charAt(0)));
+                        sb.append(m.substring(1));
+                    } else {
+                        sb.append(m);
+                    }
+                    sb.append("()");
+                } else {
+                    sb.append(m);
+                }
+            }
+        }
+
+        if (sb.length() > 0) {
+            return sb.toString();
+        } else {
+            return remainder;
+        }
     }
 
 }

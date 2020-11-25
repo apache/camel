@@ -22,6 +22,7 @@ import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
+import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.GroovyExpression;
@@ -527,6 +528,29 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
      */
     public T spel(String text) {
         return expression(new SpELExpression(text));
+    }
+
+    /**
+     * Evaluates a compiled simple expression
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T csimple(String text) {
+        return expression(new CSimpleExpression(text));
+    }
+
+    /**
+     * Evaluates a compiled simple expression
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the return type expected by the expression
+     * @return            the builder to continue processing the DSL
+     */
+    public T csimple(String text, Class<?> resultType) {
+        CSimpleExpression exp = new CSimpleExpression(text);
+        exp.setResultType(resultType);
+        return expression(exp);
     }
 
     /**

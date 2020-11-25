@@ -1,0 +1,43 @@
+= Camel Compile Simple Maven Plugin
+
+The Camel Compile Simple Maven Plugin supports the following goals
+
+ - camel-report:generate - To generate source code for csimple language
+
+== camel:generate
+
+To source code generate csimple languages discovered from the source code in the project
+
+----
+mvn camel-csimple:generate
+----
+
+You should
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-csimple-maven-plugin</artifactId>
+  <executions>
+    <execution>
+      <phase>process-classes</phase>
+      <goals>
+        <goal>generate</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+The phase determines when the plugin runs. In the sample above the phase is `process-classes` which runs after
+the compilation of the main source code.
+
+=== Options
+
+The maven plugin *generate* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+|===
+
