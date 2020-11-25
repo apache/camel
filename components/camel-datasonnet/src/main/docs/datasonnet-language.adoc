@@ -145,7 +145,7 @@ Here's an example showing some of these functions in use:
 [source,java]
 ------------------------------------------------------------------------------------------------
 from("direct:in")
-    .setBody(datasonnet("cml.properties('foo')", String.class))
+    .setBody(datasonnet("'hello, ' + cml.properties('toGreet')", String.class))
     .to("mock:camel");
 ------------------------------------------------------------------------------------------------
 
@@ -156,7 +156,7 @@ And the XML DSL:
 <route>
     <from uri="direct:in"/>
     <setBody>
-        <datasonnet resultTypeName="java.lang.String">cml.properties('foo')</datasonnet>
+        <datasonnet resultTypeName="java.lang.String">'hello, ' + cml.properties('toGreet')</datasonnet>
     </setBody>
     <to uri="mock:camel"/>
 </route>
