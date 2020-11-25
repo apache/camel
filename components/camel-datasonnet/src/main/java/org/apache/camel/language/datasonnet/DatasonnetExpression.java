@@ -36,8 +36,6 @@ import com.datasonnet.document.DefaultDocument;
 import com.datasonnet.document.Document;
 import com.datasonnet.document.MediaType;
 import com.datasonnet.document.MediaTypes;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ScanResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExpressionException;
@@ -51,18 +49,6 @@ import org.slf4j.LoggerFactory;
 
 public class DatasonnetExpression extends ExpressionAdapter implements ExpressionResultTypeAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetExpression.class);
-    private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
-
-    static {
-        LOGGER.debug("One time classpath search...");
-        try (ScanResult scanResult = new ClassGraph().whitelistPaths("/").scan()) {
-            scanResult.getResourcesWithExtension("libsonnet")
-                    .forEachByteArray((resource, bytes) -> {
-                        LOGGER.debug("Loading DataSonnet library: " + resource.getPath());
-                        CLASSPATH_IMPORTS.put(resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
-                    });
-        }
-    }
 
     private String expression;
     private Expression metaExpression;
@@ -134,7 +120,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         DatasonnetLanguage language = (DatasonnetLanguage) exchange.getContext().resolveLanguage("datasonnet");
         Mapper mapper = language.computeIfMiss(expression, () -> new MapperBuilder(expression)
                 .withInputNames(inputs.keySet())
-                .withImports(resolveImports())
+                .withImports(resolveImports(language))
                 .withLibrary(CML$.MODULE$)
                 .withDefaultOutput(MediaTypes.APPLICATION_JAVA)
                 .build());
@@ -160,9 +146,9 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         }
     }
 
-    private Map<String, String> resolveImports() {
+    private Map<String, String> resolveImports(DatasonnetLanguage language) {
         if (libraryPaths == null) {
-            return CLASSPATH_IMPORTS;
+            return language.getClasspathImports();
         }
 
         Map<String, String> answer = new HashMap<>();

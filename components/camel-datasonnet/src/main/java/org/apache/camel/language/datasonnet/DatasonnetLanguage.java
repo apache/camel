@@ -16,13 +16,17 @@
  */
 package org.apache.camel.language.datasonnet;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.datasonnet.Mapper;
 import com.datasonnet.document.MediaType;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -31,9 +35,26 @@ import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Language("datasonnet")
 public class DatasonnetLanguage extends LanguageSupport implements PropertyConfigurer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetLanguage.class);
+
+    private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
+
+    static {
+        LOGGER.debug("One time classpath search...");
+        try (ScanResult scanResult = new ClassGraph().whitelistPaths("/").scan()) {
+            scanResult.getResourcesWithExtension("libsonnet")
+                    .forEachByteArray((resource, bytes) -> {
+                        LOGGER.debug("Loading DataSonnet library: " + resource.getPath());
+                        CLASSPATH_IMPORTS.put(resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
+                    });
+        }
+    }
+
     // Cache used to stores the Mappers
     // See: {@link GroovyLanguage}
     private final Map<String, Mapper> mapperCache = LRUCacheFactory.newLRUSoftCache(16, 1000, true);
@@ -79,6 +100,10 @@ public class DatasonnetLanguage extends LanguageSupport implements PropertyConfi
 
     Mapper computeIfMiss(String script, Supplier<Mapper> mapperSupplier) {
         return mapperCache.computeIfAbsent(script, k -> mapperSupplier.get());
+    }
+
+    public Map<String, String> getClasspathImports() {
+        return CLASSPATH_IMPORTS;
     }
 
     @Override
