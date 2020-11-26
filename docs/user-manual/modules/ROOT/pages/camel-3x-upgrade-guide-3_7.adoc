@@ -52,7 +52,7 @@ The interface `org.apache.camel.spi.LifecycleStrategy` has two methods removed r
 Camel 3.7 has optimized its type converter system, which can impact 3rd party components which has type converters.
 Previously the type converter system would attempt to find a type converter that would be capable of
 converting between two given types (also by walking up the parent classes and super interfaces).
-But this leads to slower performance, and Camel now relies on there being covnerter methods with the exact combo
+But this leads to slower performance, and Camel now relies on there being converter methods with the exact combo
 of converting from/to types.
 
 ==== Converting to milli seconds from text
@@ -281,7 +281,7 @@ adopting XStream's Security Framework.
 
 CAMEL-15890 fixed a bug in which values for External Ids that contained spaces would have spaces converted to "+". This has been fixed. 
 However, any such values that now have the plus sign in salesforce will no longer match as Camel will now preserve the space. Therefore
-you may need to have a transformation that explicility covnerts spaces to "+" if you need to preserve the old behavior.
+you may need to have a transformation that explicitly converts spaces to "+" if you need to preserve the old behavior.
 
 === camel-google-bigquery
 
