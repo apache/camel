@@ -69,10 +69,11 @@ public class SingleQuoteStart extends BaseSimpleNode implements BlockStart {
         if (block != null) {
             answer = block.createCode(expression);
         }
+        // use double quote as this become used as string literals in the generated code
         if (answer == null) {
-            answer = "''";
+            answer = "\"\"";
         } else {
-            answer = "'" + answer + "'";
+            answer = "\"" + answer + "\"";
         }
         return answer;
     }

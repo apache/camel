@@ -104,7 +104,9 @@ public class CSimpleCodeGenerator {
 
         sb.append("    @Override\n");
         sb.append("    public String getText() {\n");
-        sb.append("        return \"").append(text).append("\";\n");
+        // we need to escape all " so its a single literal string
+        String escaped = StringHelper.replaceAll(text, "\"", "\\\"");
+        sb.append("        return \"").append(escaped).append("\";\n");
         sb.append("    }\n");
         sb.append("\n");
 
@@ -132,9 +134,7 @@ public class CSimpleCodeGenerator {
             }
         }
 
-        // single quotes instead of double quotes, as its very annoying for string in strings
-        String quoted = script.replace('\'', '"');
-        sb.append(quoted);
+        sb.append(script);
         if (!script.endsWith("}") && !script.endsWith(";")) {
             sb.append(";");
         }

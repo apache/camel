@@ -627,7 +627,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 type = type + ".class";
             }
             type = type.trim();
-            return "exchangePropertyAs(exchange, '" + key + "', " + type + ")" + ognlCodeMethods(remainder);
+            return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder);
         }
 
         // exchange property
@@ -654,14 +654,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${exchangePropertyAs.OGNL} was: " + function, token.getIndex());
             } else {
                 // regular property
-                return "exchangeProperty(exchange, '" + remainder + "')";
+                return "exchangeProperty(exchange, \"" + remainder + "\")";
             }
         }
 
         // system property
         remainder = ifStartsWithReturnRemainder("sys.", function);
         if (remainder != null) {
-            return "sys('" + remainder + "')";
+            return "sys(\"" + remainder + "\")";
         }
         remainder = ifStartsWithReturnRemainder("sysenv.", function);
         if (remainder == null) {
@@ -674,7 +674,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             remainder = ifStartsWithReturnRemainder("env:", function);
         }
         if (remainder != null) {
-            return "sysenv('" + remainder + "')";
+            return "sysenv(\"" + remainder + "\")";
         }
 
         // exchange OGNL
@@ -698,9 +698,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String[] parts = remainder.split(":", 2);
             if (parts.length == 1) {
-                return "date(exchange, '" + parts[0] + "')";
+                return "date(exchange, \"" + parts[0] + "\")";
             } else if (parts.length == 2) {
-                return "date(exchange, '" + parts[0] + "', null, '" + parts[1] + "')";
+                return "date(exchange, \"" + parts[0] + "\", null, \"" + parts[1] + "\")";
             }
         }
 
@@ -712,7 +712,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException(
                         "Valid syntax: ${date-with-timezone:command:timezone:pattern} was: " + function, token.getIndex());
             }
-            return "date(exchange, '" + parts[0] + "', '" + parts[1] + "', '" + parts[2] + "')";
+            return "date(exchange, \"" + parts[0] + "\", \"" + parts[1] + "\", \"" + parts[2] + "\")";
         }
 
         // bean: prefix
@@ -751,11 +751,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             ref = ref.trim();
             if (method != null && scope != null) {
-                return "bean(exchange, '" + ref + "', '" + method.toString() + "', '" + scope.toString() + "')";
+                return "bean(exchange, \"" + ref + "\", \"" + method.toString() + "\", \"" + scope.toString() + "\")";
             } else if (method != null) {
-                return "bean(exchange, '" + ref + "', '" + method.toString() + "', null)";
+                return "bean(exchange, \"" + ref + "\", \"" + method.toString() + "\", null)";
             } else {
-                return "bean(exchange, '" + ref + "', null, null)";
+                return "bean(exchange, \"" + ref + "\", null, null)";
             }
         }
 
@@ -773,22 +773,32 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String key = parts[0];
             key = key.trim();
             if (defaultValue != null) {
-                return "properties(exchange, '" + key + "', '" + defaultValue.trim() + "')";
+                return "properties(exchange, \"" + key + "\", \"" + defaultValue.trim() + "\")";
             } else {
-                return "properties(exchange, '" + key + "')";
+                return "properties(exchange, \"" + key + "\")";
             }
         }
 
         // ref: prefix
         remainder = ifStartsWithReturnRemainder("ref:", function);
         if (remainder != null) {
-            return "ref(exchange, '" + remainder + "')";
+            return "ref(exchange, \"" + remainder + "\")";
         }
 
         // type: prefix
         remainder = ifStartsWithReturnRemainder("type:", function);
         if (remainder != null) {
-            return remainder;
+            int pos = remainder.lastIndexOf('.');
+            String type = pos != -1 ? remainder.substring(0, pos) : remainder;
+            String field = pos != -1 ? remainder.substring(pos + 1) : null;
+            if (!type.endsWith(".class")) {
+                type += ".class";
+            }
+            if (field != null) {
+                return "type(exchange, " + type + ", \"" + field + "\")";
+            } else {
+                return "type(exchange, " + type + ")";
+            }
         }
 
         // miscellaneous functions
@@ -797,7 +807,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return misc;
         }
 
-        throw new SimpleParserException("Unknown file language syntax: " + remainder, token.getIndex());
+        throw new SimpleParserException("Unknown function: " + function, token.getIndex());
     }
 
     public String createCodeDirectly(String expression) throws SimpleParserException {
@@ -920,7 +930,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 type = type + ".class";
             }
             type = type.trim();
-            return "headerAs(message, '" + key + "', " + type + ")" + ognlCodeMethods(remainder);
+            return "headerAs(message, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder);
         }
 
         // headers function
@@ -963,7 +973,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
             } else {
                 // regular header
-                return "header(message, '" + key + "')";
+                return "header(message, \"" + key + "\")";
             }
         }
 
