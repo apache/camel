@@ -14,6 +14,13 @@ include::{cq-version}@camel-quarkus:ROOT:partial$reference/components/twitter-di
 
 The Twitter Direct Message Component consumes/produces a user's direct messages.
 
+[NOTE]
+====
+*Consumer interval of time*
+
+When using the Direct Message consumer, it will consider only the last 30 days direct messages
+====
+
 == Component Options
 
 // component options: START
