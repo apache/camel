@@ -165,10 +165,10 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "securityProtocol": getOrCreateConfiguration(target).setSecurityProtocol(property(camelContext, java.lang.String.class, value)); return true;
         case "securityproviders":
         case "securityProviders": getOrCreateConfiguration(target).setSecurityProviders(property(camelContext, java.lang.String.class, value)); return true;
-        case "seekto":
-        case "seekTo": getOrCreateConfiguration(target).setSeekTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "seektoexactoffset":
-        case "seekToExactOffset": getOrCreateConfiguration(target).setSeekToExactOffset(property(camelContext, java.lang.Long.class, value)); return true;
+        case "seektooffset":
+        case "seekToOffset": getOrCreateConfiguration(target).setSeekToOffset(property(camelContext, java.lang.Long.class, value)); return true;
+        case "seektoposition":
+        case "seekToPosition": getOrCreateConfiguration(target).setSeekToPosition(property(camelContext, java.lang.String.class, value)); return true;
         case "sendbufferbytes":
         case "sendBufferBytes": getOrCreateConfiguration(target).setSendBufferBytes(property(camelContext, int.class, value)); return true;
         case "sessiontimeoutms":
@@ -357,10 +357,10 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "securityProtocol": return java.lang.String.class;
         case "securityproviders":
         case "securityProviders": return java.lang.String.class;
-        case "seekto":
-        case "seekTo": return java.lang.String.class;
-        case "seektoexactoffset":
-        case "seekToExactOffset": return java.lang.Long.class;
+        case "seektooffset":
+        case "seekToOffset": return java.lang.Long.class;
+        case "seektoposition":
+        case "seekToPosition": return java.lang.String.class;
         case "sendbufferbytes":
         case "sendBufferBytes": return int.class;
         case "sessiontimeoutms":
@@ -550,10 +550,10 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "securityProtocol": return getOrCreateConfiguration(target).getSecurityProtocol();
         case "securityproviders":
         case "securityProviders": return getOrCreateConfiguration(target).getSecurityProviders();
-        case "seekto":
-        case "seekTo": return getOrCreateConfiguration(target).getSeekTo();
-        case "seektoexactoffset":
-        case "seekToExactOffset": return getOrCreateConfiguration(target).getSeekToExactOffset();
+        case "seektooffset":
+        case "seekToOffset": return getOrCreateConfiguration(target).getSeekToOffset();
+        case "seektoposition":
+        case "seekToPosition": return getOrCreateConfiguration(target).getSeekToPosition();
         case "sendbufferbytes":
         case "sendBufferBytes": return getOrCreateConfiguration(target).getSendBufferBytes();
         case "sessiontimeoutms":

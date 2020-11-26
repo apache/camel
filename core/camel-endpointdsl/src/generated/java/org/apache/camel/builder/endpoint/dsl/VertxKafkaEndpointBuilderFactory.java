@@ -1083,18 +1083,6 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set if KafkaConsumer will read from beginning or end on startup:
-         * beginning : read from beginning end : read from end.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default VertxKafkaEndpointConsumerBuilder seekTo(String seekTo) {
-            doSetProperty("seekTo", seekTo);
-            return this;
-        }
-        /**
          * If you wish to seek the offset a particular offset, you can set it
          * here. This config will take precedence over seekTo config.
          * 
@@ -1102,9 +1090,8 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * Group: consumer
          */
-        default VertxKafkaEndpointConsumerBuilder seekToExactOffset(
-                Long seekToExactOffset) {
-            doSetProperty("seekToExactOffset", seekToExactOffset);
+        default VertxKafkaEndpointConsumerBuilder seekToOffset(Long seekToOffset) {
+            doSetProperty("seekToOffset", seekToOffset);
             return this;
         }
         /**
@@ -1115,9 +1102,22 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * Group: consumer
          */
-        default VertxKafkaEndpointConsumerBuilder seekToExactOffset(
-                String seekToExactOffset) {
-            doSetProperty("seekToExactOffset", seekToExactOffset);
+        default VertxKafkaEndpointConsumerBuilder seekToOffset(
+                String seekToOffset) {
+            doSetProperty("seekToOffset", seekToOffset);
+            return this;
+        }
+        /**
+         * Set if KafkaConsumer will read from beginning or end on startup:
+         * beginning : read from beginning end : read from end.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default VertxKafkaEndpointConsumerBuilder seekToPosition(
+                String seekToPosition) {
+            doSetProperty("seekToPosition", seekToPosition);
             return this;
         }
         /**

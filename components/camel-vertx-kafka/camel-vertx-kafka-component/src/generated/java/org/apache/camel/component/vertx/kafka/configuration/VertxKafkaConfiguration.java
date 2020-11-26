@@ -161,12 +161,12 @@ public class VertxKafkaConfiguration {
     // sasl.login.class
     @UriParam(label = "common,security")
     private String saslLoginClass;
-    // seek.to
-    @UriParam(label = "consumer", enums = "beginning,end")
-    private String seekTo;
-    // seek.to.exact.offset
+    // seek.to.offset
     @UriParam(label = "consumer")
-    private Long seekToExactOffset;
+    private Long seekToOffset;
+    // seek.to.position
+    @UriParam(label = "consumer", enums = "beginning,end")
+    private String seekToPosition;
     // group.id
     @UriParam(label = "consumer")
     private String groupId;
@@ -968,27 +968,27 @@ public class VertxKafkaConfiguration {
     }
 
     /**
-     * Set if KafkaConsumer will read from beginning or end on startup:
-     * beginning : read from beginning end : read from end.
-     */
-    public void setSeekTo(String seekTo) {
-        this.seekTo = seekTo;
-    }
-
-    public String getSeekTo() {
-        return seekTo;
-    }
-
-    /**
      * If you wish to seek the offset a particular offset, you can set it here.
      * This config will take precedence over seekTo config
      */
-    public void setSeekToExactOffset(Long seekToExactOffset) {
-        this.seekToExactOffset = seekToExactOffset;
+    public void setSeekToOffset(Long seekToOffset) {
+        this.seekToOffset = seekToOffset;
     }
 
-    public Long getSeekToExactOffset() {
-        return seekToExactOffset;
+    public Long getSeekToOffset() {
+        return seekToOffset;
+    }
+
+    /**
+     * Set if KafkaConsumer will read from beginning or end on startup:
+     * beginning : read from beginning end : read from end.
+     */
+    public void setSeekToPosition(String seekToPosition) {
+        this.seekToPosition = seekToPosition;
+    }
+
+    public String getSeekToPosition() {
+        return seekToPosition;
     }
 
     /**
@@ -1701,8 +1701,8 @@ public class VertxKafkaConfiguration {
         addPropertyIfNotNull(props, "sasl.client.callback.handler.class", saslClientCallbackHandlerClass);
         addPropertyIfNotNull(props, "sasl.login.callback.handler.class", saslLoginCallbackHandlerClass);
         addPropertyIfNotNull(props, "sasl.login.class", saslLoginClass);
-        addPropertyIfNotNull(props, "seek.to", seekTo);
-        addPropertyIfNotNull(props, "seek.to.exact.offset", seekToExactOffset);
+        addPropertyIfNotNull(props, "seek.to.offset", seekToOffset);
+        addPropertyIfNotNull(props, "seek.to.position", seekToPosition);
         addPropertyIfNotNull(props, "group.id", groupId);
         addPropertyIfNotNull(props, "group.instance.id", groupInstanceId);
         addPropertyIfNotNull(props, "session.timeout.ms", sessionTimeoutMs);

@@ -692,18 +692,6 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Set if KafkaConsumer will read from beginning or end on startup:
-         * beginning : read from beginning end : read from end.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: consumer
-         */
-        default VertxKafkaComponentBuilder seekTo(java.lang.String seekTo) {
-            doSetProperty("seekTo", seekTo);
-            return this;
-        }
-        /**
          * If you wish to seek the offset a particular offset, you can set it
          * here. This config will take precedence over seekTo config.
          * 
@@ -711,9 +699,22 @@ public interface VertxKafkaComponentBuilderFactory {
          * 
          * Group: consumer
          */
-        default VertxKafkaComponentBuilder seekToExactOffset(
-                java.lang.Long seekToExactOffset) {
-            doSetProperty("seekToExactOffset", seekToExactOffset);
+        default VertxKafkaComponentBuilder seekToOffset(
+                java.lang.Long seekToOffset) {
+            doSetProperty("seekToOffset", seekToOffset);
+            return this;
+        }
+        /**
+         * Set if KafkaConsumer will read from beginning or end on startup:
+         * beginning : read from beginning end : read from end.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default VertxKafkaComponentBuilder seekToPosition(
+                java.lang.String seekToPosition) {
+            doSetProperty("seekToPosition", seekToPosition);
             return this;
         }
         /**
@@ -1663,8 +1664,8 @@ public interface VertxKafkaComponentBuilderFactory {
             case "maxPollIntervalMs": getOrCreateConfiguration((VertxKafkaComponent) component).setMaxPollIntervalMs((int) value); return true;
             case "maxPollRecords": getOrCreateConfiguration((VertxKafkaComponent) component).setMaxPollRecords((int) value); return true;
             case "partitionAssignmentStrategy": getOrCreateConfiguration((VertxKafkaComponent) component).setPartitionAssignmentStrategy((java.lang.String) value); return true;
-            case "seekTo": getOrCreateConfiguration((VertxKafkaComponent) component).setSeekTo((java.lang.String) value); return true;
-            case "seekToExactOffset": getOrCreateConfiguration((VertxKafkaComponent) component).setSeekToExactOffset((java.lang.Long) value); return true;
+            case "seekToOffset": getOrCreateConfiguration((VertxKafkaComponent) component).setSeekToOffset((java.lang.Long) value); return true;
+            case "seekToPosition": getOrCreateConfiguration((VertxKafkaComponent) component).setSeekToPosition((java.lang.String) value); return true;
             case "sessionTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSessionTimeoutMs((int) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((VertxKafkaComponent) component).setValueDeserializer((java.lang.String) value); return true;
             case "acks": getOrCreateConfiguration((VertxKafkaComponent) component).setAcks((java.lang.String) value); return true;

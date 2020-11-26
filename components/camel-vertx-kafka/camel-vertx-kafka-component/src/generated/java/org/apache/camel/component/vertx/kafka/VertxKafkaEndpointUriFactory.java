@@ -100,12 +100,13 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("maxRequestSize");
         props.add("maxInFlightRequestsPerConnection");
         props.add("partitionId");
+        props.add("seekToOffset");
         props.add("exchangePattern");
         props.add("valueSerializer");
         props.add("sslEngineFactoryClass");
         props.add("sslTrustmanagerAlgorithm");
+        props.add("seekToPosition");
         props.add("autoOffsetReset");
-        props.add("seekTo");
         props.add("bufferMemory");
         props.add("requestTimeoutMs");
         props.add("saslKerberosMinTimeBeforeRelogin");
@@ -113,7 +114,6 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("clientRack");
         props.add("transactionTimeoutMs");
         props.add("fetchMaxBytes");
-        props.add("seekToExactOffset");
         props.add("batchSize");
         props.add("sslSecureRandomImplementation");
         props.add("checkCrcs");
