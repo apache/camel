@@ -131,12 +131,18 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
             // creates a new topic, or returns the URL of an existing one
             CreateTopicRequest.Builder builder = CreateTopicRequest.builder().name(configuration.getTopicName());
 
+            Map<String, String> attributes = new HashMap<>();
+
             if (configuration.isServerSideEncryptionEnabled()) {
                 if (ObjectHelper.isNotEmpty(configuration.getKmsMasterKeyId())) {
-                    Map<String, String> attributes = new HashMap<>();
                     attributes.put("KmsMasterKeyId", configuration.getKmsMasterKeyId());
                     builder.attributes(attributes);
                 }
+            }
+
+            if (configuration.isFifoTopic()) {
+                attributes.put("FifoTopic", "true");
+                builder.attributes(attributes);
             }
 
             LOG.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), builder);

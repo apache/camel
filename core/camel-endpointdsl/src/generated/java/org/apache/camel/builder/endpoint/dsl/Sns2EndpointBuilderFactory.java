@@ -166,6 +166,72 @@ public interface Sns2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Only for FIFO Topic. Strategy for setting the messageDeduplicationId
+         * on the message. Can be one of the following options: useExchangeId,
+         * useContentBasedDeduplication. For the useContentBasedDeduplication
+         * option, no messageDeduplicationId will be set on the message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.sns.MessageDeduplicationIdStrategy</code> type.
+         * 
+         * Default: useExchangeId
+         * Group: producer
+         */
+        default Sns2EndpointBuilder messageDeduplicationIdStrategy(
+                Object messageDeduplicationIdStrategy) {
+            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageDeduplicationId
+         * on the message. Can be one of the following options: useExchangeId,
+         * useContentBasedDeduplication. For the useContentBasedDeduplication
+         * option, no messageDeduplicationId will be set on the message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.aws2.sns.MessageDeduplicationIdStrategy</code> type.
+         * 
+         * Default: useExchangeId
+         * Group: producer
+         */
+        default Sns2EndpointBuilder messageDeduplicationIdStrategy(
+                String messageDeduplicationIdStrategy) {
+            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageGroupId on the
+         * message. Can be one of the following options: useConstant,
+         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
+         * value of property CamelAwsMessageGroupId will be used.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.sns.MessageGroupIdStrategy</code> type.
+         * 
+         * Group: producer
+         */
+        default Sns2EndpointBuilder messageGroupIdStrategy(
+                Object messageGroupIdStrategy) {
+            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageGroupId on the
+         * message. Can be one of the following options: useConstant,
+         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
+         * value of property CamelAwsMessageGroupId will be used.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.aws2.sns.MessageGroupIdStrategy</code> type.
+         * 
+         * Group: producer
+         */
+        default Sns2EndpointBuilder messageGroupIdStrategy(
+                String messageGroupIdStrategy) {
+            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
+            return this;
+        }
+        /**
          * The message structure to use such as json.
          * 
          * The option is a: <code>java.lang.String</code> type.
