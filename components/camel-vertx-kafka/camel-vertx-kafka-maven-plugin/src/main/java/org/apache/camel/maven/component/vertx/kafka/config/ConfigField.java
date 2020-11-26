@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.component.vertx.kafka.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -36,6 +37,7 @@ public class ConfigField {
     private static final String INTERNAL_PREFIX = "internal.";
 
     private final Set<String> labels;
+    private final Set<String> enums;
     private final String name;
     private final String documentation;
     private final Object defaultValue;
@@ -63,6 +65,7 @@ public class ConfigField {
         this.isUriPathOption = false;
         this.isInternal = false;
         this.labels = Collections.emptySet();
+        this.enums = Collections.emptySet();
     }
 
     private ConfigField(String name, String documentation, Object defaultValue, String variableName,
@@ -81,6 +84,7 @@ public class ConfigField {
         this.isUriPathOption = isUriPathOption;
         this.isInternal = isInternal;
         this.labels = labels;
+        this.enums = Collections.emptySet();
 
         if (isSecurityType()) {
             labels.add("security");
@@ -201,8 +205,12 @@ public class ConfigField {
         return getName().startsWith(INTERNAL_PREFIX) || isInternal;
     }
 
-    public List<String> getValidStrings() {
-        return getValidStringFromValidator(validator);
+    public List<String> getValidEnumsStrings() {
+        if (enums.isEmpty()) {
+            return getValidStringFromValidator(validator);
+        }
+
+        return new ArrayList<>(enums);
     }
 
     public boolean isSecurityType() {

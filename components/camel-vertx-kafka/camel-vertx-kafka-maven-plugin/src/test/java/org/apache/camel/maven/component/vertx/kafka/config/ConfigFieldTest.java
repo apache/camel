@@ -57,7 +57,7 @@ class ConfigFieldTest {
         assertFalse(connectorConfigField.isDeprecated());
         assertTrue(connectorConfigField.isRequired());
         assertFalse(connectorConfigField.isTimeField());
-        assertTrue(connectorConfigField.getValidStrings().isEmpty());
+        assertTrue(connectorConfigField.getValidEnumsStrings().isEmpty());
         assertFalse(connectorConfigField.isSecurityType());
 
         final ConfigDef.ConfigKey configKeyBool = new ConfigDef.ConfigKey(
@@ -233,7 +233,7 @@ class ConfigFieldTest {
                 .isRequired()
                 .build();
 
-        assertEquals(Arrays.asList("test_valid_string_1", "test_valid_string_2"), connectorConfigField.getValidStrings());
+        assertEquals(Arrays.asList("test_valid_string_1", "test_valid_string_2"), connectorConfigField.getValidEnumsStrings());
 
         final ConfigDef.ConfigKey configKeyList = new ConfigDef.ConfigKey(
                 "field.test", ConfigDef.Type.LIST, "test_valid_string_2",
@@ -247,7 +247,8 @@ class ConfigFieldTest {
                 .isRequired()
                 .build();
 
-        assertEquals(Arrays.asList("test_valid_string_1", "test_valid_string_2"), connectorConfigFieldList.getValidStrings());
+        assertEquals(Arrays.asList("test_valid_string_1", "test_valid_string_2"),
+                connectorConfigFieldList.getValidEnumsStrings());
     }
 
     @Test

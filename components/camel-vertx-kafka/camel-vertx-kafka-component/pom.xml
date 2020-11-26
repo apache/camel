@@ -123,7 +123,7 @@
                         <partition.id>
                             <name>partition.id</name>
                             <type>INT</type>
-                            <documentation>The partition to which the record will be sent (or null if no partition was specified). Header {@link VertxKafkaConstants#PARTITION_ID} If configured,
+                            <documentation>The partition to which the record will be sent (or null if no partition was specified) or read from a particular partition if set. Header {@link VertxKafkaConstants#PARTITION_ID} If configured,
                                 it will take precedence over this config</documentation>
                         </partition.id>
                         <topic>
@@ -136,6 +136,22 @@
                             </documentation>
                         </topic>
                     </additionalCommonConfigs>
+                    <additionalConsumerConfigs>
+                        <seek.to>
+                            <name>seek.to</name>
+                            <type>STRING</type>
+                            <enums>
+                                <param>beginning</param>
+                                <param>end</param>
+                            </enums>
+                            <documentation>Set if KafkaConsumer will read from beginning or end on startup: beginning : read from beginning end : read from end.</documentation>
+                        </seek.to>
+                        <seek.to.exact.offset>
+                            <name>seek.to.exact.offset</name>
+                            <type>LONG</type>
+                            <documentation>If you wish to seek the offset a particular offset, you can set it here. This config will take precedence over seekTo config</documentation>
+                        </seek.to.exact.offset>
+                    </additionalConsumerConfigs>
                     <overriddenDefaultValues>
                         <key.serializer>org.apache.kafka.common.serialization.StringSerializer</key.serializer>
                         <value.serializer>org.apache.kafka.common.serialization.StringSerializer</value.serializer>

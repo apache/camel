@@ -256,8 +256,9 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The partition to which the record will be sent (or null if no
-         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
-         * configured, it will take precedence over this config.
+         * partition was specified) or read from a particular partition if set.
+         * Header VertxKafkaConstants#PARTITION_ID If configured, it will take
+         * precedence over this config.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -270,8 +271,9 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The partition to which the record will be sent (or null if no
-         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
-         * configured, it will take precedence over this config.
+         * partition was specified) or read from a particular partition if set.
+         * Header VertxKafkaConstants#PARTITION_ID If configured, it will take
+         * precedence over this config.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1078,6 +1080,44 @@ public interface VertxKafkaEndpointBuilderFactory {
         default VertxKafkaEndpointConsumerBuilder partitionAssignmentStrategy(
                 String partitionAssignmentStrategy) {
             doSetProperty("partitionAssignmentStrategy", partitionAssignmentStrategy);
+            return this;
+        }
+        /**
+         * Set if KafkaConsumer will read from beginning or end on startup:
+         * beginning : read from beginning end : read from end.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default VertxKafkaEndpointConsumerBuilder seekTo(String seekTo) {
+            doSetProperty("seekTo", seekTo);
+            return this;
+        }
+        /**
+         * If you wish to seek the offset a particular offset, you can set it
+         * here. This config will take precedence over seekTo config.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: consumer
+         */
+        default VertxKafkaEndpointConsumerBuilder seekToExactOffset(
+                Long seekToExactOffset) {
+            doSetProperty("seekToExactOffset", seekToExactOffset);
+            return this;
+        }
+        /**
+         * If you wish to seek the offset a particular offset, you can set it
+         * here. This config will take precedence over seekTo config.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: consumer
+         */
+        default VertxKafkaEndpointConsumerBuilder seekToExactOffset(
+                String seekToExactOffset) {
+            doSetProperty("seekToExactOffset", seekToExactOffset);
             return this;
         }
         /**
@@ -2046,8 +2086,9 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The partition to which the record will be sent (or null if no
-         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
-         * configured, it will take precedence over this config.
+         * partition was specified) or read from a particular partition if set.
+         * Header VertxKafkaConstants#PARTITION_ID If configured, it will take
+         * precedence over this config.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -2060,8 +2101,9 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The partition to which the record will be sent (or null if no
-         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
-         * configured, it will take precedence over this config.
+         * partition was specified) or read from a particular partition if set.
+         * Header VertxKafkaConstants#PARTITION_ID If configured, it will take
+         * precedence over this config.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -3714,8 +3756,9 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The partition to which the record will be sent (or null if no
-         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
-         * configured, it will take precedence over this config.
+         * partition was specified) or read from a particular partition if set.
+         * Header VertxKafkaConstants#PARTITION_ID If configured, it will take
+         * precedence over this config.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -3727,8 +3770,9 @@ public interface VertxKafkaEndpointBuilderFactory {
         }
         /**
          * The partition to which the record will be sent (or null if no
-         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
-         * configured, it will take precedence over this config.
+         * partition was specified) or read from a particular partition if set.
+         * Header VertxKafkaConstants#PARTITION_ID If configured, it will take
+         * precedence over this config.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.

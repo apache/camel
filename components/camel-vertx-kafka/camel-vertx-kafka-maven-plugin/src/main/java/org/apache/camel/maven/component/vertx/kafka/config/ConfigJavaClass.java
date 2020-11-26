@@ -166,8 +166,8 @@ public final class ConfigJavaClass {
             }
         }
 
-        if (ObjectHelper.isNotEmpty(fieldConfig.getValidStrings())) {
-            annotation.setLiteralValue("enums", "\"" + String.join(",", fieldConfig.getValidStrings())
+        if (ObjectHelper.isNotEmpty(fieldConfig.getValidEnumsStrings())) {
+            annotation.setLiteralValue("enums", "\"" + String.join(",", fieldConfig.getValidEnumsStrings())
                                                 + "\"");
         }
 

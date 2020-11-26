@@ -222,8 +222,9 @@ public interface VertxKafkaComponentBuilderFactory {
         }
         /**
          * The partition to which the record will be sent (or null if no
-         * partition was specified). Header VertxKafkaConstants#PARTITION_ID If
-         * configured, it will take precedence over this config.
+         * partition was specified) or read from a particular partition if set.
+         * Header VertxKafkaConstants#PARTITION_ID If configured, it will take
+         * precedence over this config.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
@@ -688,6 +689,31 @@ public interface VertxKafkaComponentBuilderFactory {
         default VertxKafkaComponentBuilder partitionAssignmentStrategy(
                 java.lang.String partitionAssignmentStrategy) {
             doSetProperty("partitionAssignmentStrategy", partitionAssignmentStrategy);
+            return this;
+        }
+        /**
+         * Set if KafkaConsumer will read from beginning or end on startup:
+         * beginning : read from beginning end : read from end.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default VertxKafkaComponentBuilder seekTo(java.lang.String seekTo) {
+            doSetProperty("seekTo", seekTo);
+            return this;
+        }
+        /**
+         * If you wish to seek the offset a particular offset, you can set it
+         * here. This config will take precedence over seekTo config.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: consumer
+         */
+        default VertxKafkaComponentBuilder seekToExactOffset(
+                java.lang.Long seekToExactOffset) {
+            doSetProperty("seekToExactOffset", seekToExactOffset);
             return this;
         }
         /**
@@ -1637,6 +1663,8 @@ public interface VertxKafkaComponentBuilderFactory {
             case "maxPollIntervalMs": getOrCreateConfiguration((VertxKafkaComponent) component).setMaxPollIntervalMs((int) value); return true;
             case "maxPollRecords": getOrCreateConfiguration((VertxKafkaComponent) component).setMaxPollRecords((int) value); return true;
             case "partitionAssignmentStrategy": getOrCreateConfiguration((VertxKafkaComponent) component).setPartitionAssignmentStrategy((java.lang.String) value); return true;
+            case "seekTo": getOrCreateConfiguration((VertxKafkaComponent) component).setSeekTo((java.lang.String) value); return true;
+            case "seekToExactOffset": getOrCreateConfiguration((VertxKafkaComponent) component).setSeekToExactOffset((java.lang.Long) value); return true;
             case "sessionTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setSessionTimeoutMs((int) value); return true;
             case "valueDeserializer": getOrCreateConfiguration((VertxKafkaComponent) component).setValueDeserializer((java.lang.String) value); return true;
             case "acks": getOrCreateConfiguration((VertxKafkaComponent) component).setAcks((java.lang.String) value); return true;
