@@ -119,9 +119,17 @@ public class CSimpleCodeGenerator {
         if (predicate) {
             CSimplePredicateParser parser = new CSimplePredicateParser();
             script = parser.parsePredicate(script);
+            if (script.trim().isEmpty()) {
+                // a predicate that is whitespace is regarded as false
+                script = "false";
+            }
         } else {
             CSimpleExpressionParser parser = new CSimpleExpressionParser();
             script = parser.parseExpression(script);
+            if (script.trim().isEmpty()) {
+                // an expression can be whitespace but then we need to wrap this in quotes
+                script = "\"" + script + "\"";
+            }
         }
 
         // single quotes instead of double quotes, as its very annoying for string in strings

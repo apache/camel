@@ -54,6 +54,9 @@ public abstract class CSimpleSupport implements CSimpleExpression, CSimpleMethod
         } catch (Exception e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
+        if (out instanceof String && ((String) out).trim().isEmpty()) {
+            return false;
+        }
         return camelContext.getTypeConverter().convertTo(boolean.class, exchange, out);
     }
 

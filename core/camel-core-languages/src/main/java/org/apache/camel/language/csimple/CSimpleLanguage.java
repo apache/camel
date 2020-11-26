@@ -64,20 +64,34 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
         this.configResource = configResource;
     }
 
-    public Set<String> getImports() {
-        return imports;
+    /**
+     * Adds an import line
+     *
+     * @param imports import such as com.foo.MyClass
+     */
+    public void addImport(String imports) {
+        if (!imports.startsWith("import ")) {
+            imports = "import " + imports;
+        }
+        if (compiler != null) {
+            compiler.addImport(imports);
+        } else {
+            this.imports.add(imports);
+        }
     }
 
-    public void setImports(Set<String> imports) {
-        this.imports = imports;
-    }
-
-    public Map<String, String> getAliases() {
-        return aliases;
-    }
-
-    public void setAliases(Map<String, String> aliases) {
-        this.aliases = aliases;
+    /**
+     * Adds an alias
+     *
+     * @param key   the key
+     * @param value the value
+     */
+    public void addAliases(String key, String value) {
+        if (compiler != null) {
+            compiler.addAliases(key, value);
+        } else {
+            this.aliases.put(key, value);
+        }
     }
 
     @Override
@@ -204,6 +218,9 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public Predicate createPredicate(String expression) {
+        if (expression == null) {
+            throw new IllegalArgumentException("expression must be specified");
+        }
         // text should be single line and trimmed as it can be multi lined
         String text = expression.replaceAll("\n", "");
         text = text.trim();
@@ -224,6 +241,9 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public Expression createExpression(String expression) {
+        if (expression == null) {
+            throw new IllegalArgumentException("expression must be specified");
+        }
         // text should be single line and trimmed as it can be multi lined
         String text = expression.replaceAll("\n", "");
         text = text.trim();
