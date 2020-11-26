@@ -57,7 +57,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
 
     protected abstract Trigger createTrigger(Action action, Route route) throws Exception;
 
-    protected void onJobExecute(Action action, Route route) throws Exception {
+    public void onJobExecute(Action action, Route route) throws Exception {
         LOG.debug("Scheduled Event notification received. Performing action: {} on route: {}", action, route.getId());
 
         ServiceStatus routeStatus = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
