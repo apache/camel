@@ -29,7 +29,6 @@ import java.util.TimeZone;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
@@ -47,6 +46,7 @@ import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.apache.camel.util.InetAddressUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.getJavaMajorVersion;
@@ -78,12 +78,12 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertFalse(predicate.matches(exchange));
 
         Expression expression = context.resolveLanguage("csimple").createExpression("${body}");
-        assertEquals("<hello id=\"m123\">world!</hello>", expression.evaluate(exchange, String.class));
+        assertEquals("<hello id='m123'>world!</hello>", expression.evaluate(exchange, String.class));
 
         expression = context.resolveLanguage("csimple").createExpression("${body}");
-        assertEquals("<hello id=\"m123\">world!</hello>", expression.evaluate(exchange, String.class));
+        assertEquals("<hello id='m123'>world!</hello>", expression.evaluate(exchange, String.class));
         expression = context.resolveLanguage("csimple").createExpression("${body}");
-        assertEquals("<hello id=\"m123\">world!</hello>", expression.evaluate(exchange, String.class));
+        assertEquals("<hello id='m123'>world!</hello>", expression.evaluate(exchange, String.class));
 
         predicate = context.resolveLanguage("csimple").createPredicate("${header.bar} == 123");
         assertEquals(Boolean.TRUE, predicate.matches(exchange));
@@ -226,8 +226,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     public void testSimpleExpressions() throws Exception {
         assertExpression("${exchangeId}", exchange.getExchangeId());
         assertExpression("${id}", exchange.getIn().getMessageId());
-        assertExpression("${body}", "<hello id=\"m123\">world!</hello>");
-        assertExpression("${in.body}", "<hello id=\"m123\">world!</hello>");
+        assertExpression("${body}", "<hello id='m123'>world!</hello>");
+        assertExpression("${in.body}", "<hello id='m123'>world!</hello>");
         assertExpression("${in.header.foo}", "abc");
         assertExpression("${in.headers.foo}", "abc");
         assertExpression("${header.foo}", "abc");
@@ -546,9 +546,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         try {
             assertExpression("${exchangeProperty.foobar[bar}", null);
             fail("Should have thrown an exception");
-        } catch (ExpressionIllegalSyntaxException e) {
+        } catch (Exception e) {
             assertTrue(e.getMessage()
-                    .startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
+                    .startsWith("Valid syntax: ${exchangePropertyAs.OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -737,8 +737,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testBodyAs() throws Exception {
-        assertExpression("${bodyAs(String)}", "<hello id=\"m123\">world!</hello>");
-        assertExpression("${bodyAs(\"String\")}", "<hello id=\"m123\">world!</hello>");
+        assertExpression("${bodyAs(String)}", "<hello id='m123'>world!</hello>");
+        assertExpression("${bodyAs(\"String\")}", "<hello id='m123'>world!</hello>");
 
         exchange.getIn().setBody(null);
         assertExpression("${bodyAs(\"String\")}", null);
@@ -751,8 +751,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         try {
             assertExpression("${bodyAs(XXX)}", 456);
             fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        } catch (JoorCSimpleCompilationException e) {
+            // expected
         }
     }
 
@@ -1665,9 +1665,6 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     public void testEscape() throws Exception {
         exchange.getIn().setBody("Something");
 
-        // slash foo
-        assertExpression("\\foo", "\\foo");
-
         assertExpression("\\n${body}", "\nSomething");
         assertExpression("\\t${body}", "\tSomething");
         assertExpression("\\r${body}", "\rSomething");
@@ -1861,8 +1858,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         try {
             assertExpression("${random(10,21,30)}", null);
             fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random(10,21,30)", e.getCause().getMessage());
+        } catch (JoorCSimpleCompilationException e) {
+            // expected
         }
         try {
             assertExpression("${random()}", null);
@@ -1886,7 +1883,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         assertEquals(2, data.size());
 
-        Expression expression = context.resolveLanguage("csimple").createExpression("${body.remove(\"A\")}");
+        Expression expression = context.resolveLanguage("csimple").createExpression("${bodyAs(List).remove(\"A\")}");
         expression.evaluate(exchange, Object.class);
 
         assertEquals(1, data.size());
@@ -1902,7 +1899,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         assertEquals(2, data.size());
 
-        Expression expression = context.resolveLanguage("csimple").createExpression("${body.remove(0)}");
+        Expression expression = context.resolveLanguage("csimple").createExpression("${bodyAs(List).remove(0)}");
         expression.evaluate(exchange, Object.class);
 
         assertEquals(1, data.size());

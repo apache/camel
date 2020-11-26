@@ -222,6 +222,10 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 if (node instanceof LiteralNode) {
                     exp = StringHelper.removeLeadingAndEndingQuotes(exp);
                     sb.append("\"");
+                    // \n \t \r should be escaped
+                    exp = exp.replaceAll("\n", "\\\\n");
+                    exp = exp.replaceAll("\t", "\\\\t");
+                    exp = exp.replaceAll("\r", "\\\\r");
                     sb.append(exp);
                     sb.append("\"");
                 } else {

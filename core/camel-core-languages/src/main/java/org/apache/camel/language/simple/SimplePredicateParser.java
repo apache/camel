@@ -51,6 +51,7 @@ import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
 import static org.apache.camel.support.ObjectHelper.isNumber;
@@ -168,7 +169,16 @@ public class SimplePredicateParser extends BaseSimpleParser {
         StringBuilder sb = new StringBuilder();
         for (SimpleNode node : nodes) {
             String exp = node.createCode(expression);
-            if (exp != null) {
+            if (node instanceof LiteralNode) {
+                exp = StringHelper.removeLeadingAndEndingQuotes(exp);
+                sb.append("\"");
+                // \n \t \r should be escaped
+                exp = exp.replaceAll("\n", "\\\\n");
+                exp = exp.replaceAll("\t", "\\\\t");
+                exp = exp.replaceAll("\r", "\\\\r");
+                sb.append(exp);
+                sb.append("\"");
+            } else {
                 sb.append(exp);
             }
         }
