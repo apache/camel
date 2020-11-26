@@ -67,6 +67,11 @@ public class Sns2Configuration implements Cloneable {
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
+    @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue")
+    private MessageGroupIdStrategy messageGroupIdStrategy;
+    @UriParam(label = "producer", javaType = "java.lang.String", defaultValue = "useExchangeId",
+              enums = "useExchangeId,useContentBasedDeduplication")
+    private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
 
     public String getSubject() {
         return subject;
@@ -279,6 +284,54 @@ public class Sns2Configuration implements Cloneable {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
+    /**
+     * Only for FIFO Topic. Strategy for setting the messageGroupId on the message. Can be one of the following options:
+     * *useConstant*, *useExchangeId*, *usePropertyValue*. For the *usePropertyValue* option, the value of property
+     * "CamelAwsMessageGroupId" will be used.
+     */
+    public void setMessageGroupIdStrategy(String strategy) {
+        if ("useConstant".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new ConstantMessageGroupIdStrategy();
+        } else if ("useExchangeId".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new ExchangeIdMessageGroupIdStrategy();
+        } else if ("usePropertyValue".equalsIgnoreCase(strategy)) {
+            messageGroupIdStrategy = new PropertyValueMessageGroupIdStrategy();
+        } else {
+            throw new IllegalArgumentException("Unrecognised MessageGroupIdStrategy: " + strategy);
+        }
+    }
+
+    public void setMessageGroupIdStrategy(MessageGroupIdStrategy messageGroupIdStrategy) {
+        this.messageGroupIdStrategy = messageGroupIdStrategy;
+    }
+
+    public MessageGroupIdStrategy getMessageGroupIdStrategy() {
+        return messageGroupIdStrategy;
+    }
+
+    public MessageDeduplicationIdStrategy getMessageDeduplicationIdStrategy() {
+        return messageDeduplicationIdStrategy;
+    }
+
+    /**
+     * Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. Can be one of the following
+     * options: *useExchangeId*, *useContentBasedDeduplication*. For the *useContentBasedDeduplication* option, no
+     * messageDeduplicationId will be set on the message.
+     */
+    public void setMessageDeduplicationIdStrategy(String strategy) {
+        if ("useExchangeId".equalsIgnoreCase(strategy)) {
+            messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
+        } else if ("useContentBasedDeduplication".equalsIgnoreCase(strategy)) {
+            messageDeduplicationIdStrategy = new NullMessageDeduplicationIdStrategy();
+        } else {
+            throw new IllegalArgumentException("Unrecognised MessageDeduplicationIdStrategy: " + strategy);
+        }
+    }
+
+    public void setMessageDeduplicationIdStrategy(MessageDeduplicationIdStrategy messageDeduplicationIdStrategy) {
+        this.messageDeduplicationIdStrategy = messageDeduplicationIdStrategy;
+    }
+
     // *************************************************
     //
     // *************************************************
@@ -289,5 +342,14 @@ public class Sns2Configuration implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    /**
+     * Whether or not the queue is a FIFO topic
+     */
+    boolean isFifoTopic() {
+        // AWS docs suggest this is valid derivation.
+        // FIFO topic names must end with .fifo, and standard topic cannot
+        return topicName.endsWith(".fifo");
     }
 }

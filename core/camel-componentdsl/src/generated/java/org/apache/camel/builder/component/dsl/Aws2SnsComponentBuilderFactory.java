@@ -121,6 +121,37 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
+         * Only for FIFO Topic. Strategy for setting the messageDeduplicationId
+         * on the message. Can be one of the following options: useExchangeId,
+         * useContentBasedDeduplication. For the useContentBasedDeduplication
+         * option, no messageDeduplicationId will be set on the message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: useExchangeId
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder messageDeduplicationIdStrategy(
+                java.lang.String messageDeduplicationIdStrategy) {
+            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageGroupId on the
+         * message. Can be one of the following options: useConstant,
+         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
+         * value of property CamelAwsMessageGroupId will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder messageGroupIdStrategy(
+                java.lang.String messageGroupIdStrategy) {
+            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
+            return this;
+        }
+        /**
          * The message structure to use such as json.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -340,6 +371,8 @@ public interface Aws2SnsComponentBuilderFactory {
             case "configuration": ((Sns2Component) component).setConfiguration((org.apache.camel.component.aws2.sns.Sns2Configuration) value); return true;
             case "kmsMasterKeyId": getOrCreateConfiguration((Sns2Component) component).setKmsMasterKeyId((java.lang.String) value); return true;
             case "lazyStartProducer": ((Sns2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "messageDeduplicationIdStrategy": getOrCreateConfiguration((Sns2Component) component).setMessageDeduplicationIdStrategy((java.lang.String) value); return true;
+            case "messageGroupIdStrategy": getOrCreateConfiguration((Sns2Component) component).setMessageGroupIdStrategy((java.lang.String) value); return true;
             case "messageStructure": getOrCreateConfiguration((Sns2Component) component).setMessageStructure((java.lang.String) value); return true;
             case "policy": getOrCreateConfiguration((Sns2Component) component).setPolicy((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Sns2Component) component).setProxyHost((java.lang.String) value); return true;

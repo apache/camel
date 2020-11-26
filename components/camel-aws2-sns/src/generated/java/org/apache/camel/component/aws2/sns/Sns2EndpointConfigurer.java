@@ -33,6 +33,10 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "kmsMasterKeyId": target.getConfiguration().setKmsMasterKeyId(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": target.getConfiguration().setMessageDeduplicationIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": target.getConfiguration().setMessageGroupIdStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "messagestructure":
         case "messageStructure": target.getConfiguration().setMessageStructure(property(camelContext, java.lang.String.class, value)); return true;
         case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
@@ -81,6 +85,10 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "kmsMasterKeyId": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": return java.lang.String.class;
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": return java.lang.String.class;
         case "messagestructure":
         case "messageStructure": return java.lang.String.class;
         case "policy": return java.lang.String.class;
@@ -125,6 +133,10 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "kmsMasterKeyId": return target.getConfiguration().getKmsMasterKeyId();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": return target.getConfiguration().getMessageDeduplicationIdStrategy();
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": return target.getConfiguration().getMessageGroupIdStrategy();
         case "messagestructure":
         case "messageStructure": return target.getConfiguration().getMessageStructure();
         case "policy": return target.getConfiguration().getPolicy();

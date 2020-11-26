@@ -47,7 +47,7 @@ The topic will be created if they don't already exists. +
 
 
 // component options: START
-The AWS 2 Simple Notification System (SNS) component supports 20 options, which are listed below.
+The AWS 2 Simple Notification System (SNS) component supports 22 options, which are listed below.
 
 
 
@@ -59,6 +59,8 @@ The AWS 2 Simple Notification System (SNS) component supports 20 options, which 
 | *configuration* (producer) | Component configuration |  | Sns2Configuration
 | *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageDeduplicationIdStrategy* (producer) | Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: useExchangeId, useContentBasedDeduplication. For the useContentBasedDeduplication option, no messageDeduplicationId will be set on the message. There are 2 enums and the value can be one of: useExchangeId, useContentBasedDeduplication | useExchangeId | String
+| *messageGroupIdStrategy* (producer) | Only for FIFO Topic. Strategy for setting the messageGroupId on the message. Can be one of the following options: useConstant, useExchangeId, usePropertyValue. For the usePropertyValue option, the value of property CamelAwsMessageGroupId will be used. There are 3 enums and the value can be one of: useConstant, useExchangeId, usePropertyValue |  | String
 | *messageStructure* (producer) | The message structure to use such as json |  | String
 | *policy* (producer) | The policy for this queue |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
@@ -100,7 +102,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (20 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,6 +113,8 @@ with the following path and query parameters:
 | *headerFilterStrategy* (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
 | *kmsMasterKeyId* (producer) | The ID of an AWS-managed customer master key (CMK) for Amazon SNS or a custom CMK. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *messageDeduplicationIdStrategy* (producer) | Only for FIFO Topic. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: useExchangeId, useContentBasedDeduplication. For the useContentBasedDeduplication option, no messageDeduplicationId will be set on the message. There are 2 enums and the value can be one of: useExchangeId, useContentBasedDeduplication | useExchangeId | String
+| *messageGroupIdStrategy* (producer) | Only for FIFO Topic. Strategy for setting the messageGroupId on the message. Can be one of the following options: useConstant, useExchangeId, usePropertyValue. For the usePropertyValue option, the value of property CamelAwsMessageGroupId will be used. There are 3 enums and the value can be one of: useConstant, useExchangeId, usePropertyValue |  | String
 | *messageStructure* (producer) | The message structure to use such as json |  | String
 | *policy* (producer) | The policy for this queue |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String

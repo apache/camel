@@ -61,6 +61,7 @@ public class Sns2Producer extends DefaultProducer {
         request.messageStructure(determineMessageStructure(exchange));
         request.message(exchange.getIn().getBody(String.class));
         request.messageAttributes(this.translateAttributes(exchange.getIn().getHeaders(), exchange));
+        configureFifoAttributes(request, exchange);
 
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
 
@@ -130,6 +131,21 @@ public class Sns2Producer extends DefaultProducer {
             }
         }
         return result;
+    }
+
+    private void configureFifoAttributes(PublishRequest.Builder request, Exchange exchange) {
+        if (getEndpoint().getConfiguration().isFifoTopic()) {
+            // use strategies
+            MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+            String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
+            request.messageGroupId(messageGroupId);
+
+            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
+                    = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+            String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
+            request.messageDeduplicationId(messageDeduplicationId);
+
+        }
     }
 
     protected Sns2Configuration getConfiguration() {
