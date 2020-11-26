@@ -143,6 +143,17 @@ The CSimple language supports 2 options, which are listed below.
 |===
 // language options: END
 
+== Limitations
+
+Currently the csimple language does **not** support the _null safe_ operator (`?`).
+
+For example the following script cannot compile:
+
+[source,text]
+----
+    ${bodyAs(MyUser)?.address?.zip} > 10000
+----
+
 == More documentation
 
 See the xref:simple-language.adoc[Simple] language as csimple has the same set of functions as simple language.

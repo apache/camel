@@ -406,6 +406,25 @@ public final class CSimpleHelper {
         return MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, detailed);
     }
 
+    public static String sys(String name) {
+        return System.getProperty(name);
+    }
+
+    public static String sysenv(String name) {
+        String answer = null;
+        if (name != null) {
+            // lookup OS env with upper case key
+            name = name.toUpperCase();
+            answer = System.getenv(name);
+            // some OS do not support dashes in keys, so replace with underscore
+            if (answer == null) {
+                String noDashKey = name.replace('-', '_');
+                answer = System.getenv(noDashKey);
+            }
+        }
+        return answer;
+    }
+
     private static ExchangeFormatter getOrCreateExchangeFormatter(CamelContext camelContext) {
         if (exchangeFormatter == null) {
             Set<ExchangeFormatter> formatters = camelContext.getRegistry().findByType(ExchangeFormatter.class);

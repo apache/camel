@@ -806,9 +806,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
             return "bodyOneLine(exchange)";
         } else if (ObjectHelper.equal(expression, "id")) {
-            return "message.getId()";
+            return "message.getMessageId()";
         } else if (ObjectHelper.equal(expression, "exchangeId")) {
-            return "exchange.getId()";
+            return "exchange.getExchangeId()";
         } else if (ObjectHelper.equal(expression, "exchange")) {
             return "exchange";
         } else if (ObjectHelper.equal(expression, "exception")) {
@@ -822,7 +822,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         } else if (ObjectHelper.equal(expression, "hostname")) {
             return "hostName()";
         } else if (ObjectHelper.equal(expression, "camelId")) {
-            return "camelContext.getName()";
+            return "context.getName()";
         } else if (ObjectHelper.equal(expression, "routeId")) {
             return "routeId(exchange)";
         } else if (ObjectHelper.equal(expression, "stepId")) {
