@@ -203,17 +203,27 @@ public class SimpleExpressionParser extends BaseSimpleParser {
      */
     protected String doParseCode() {
         StringBuilder sb = new StringBuilder();
+        boolean firstIsLiteral = false;
         for (SimpleNode node : nodes) {
             String exp = node.createCode(expression);
             if (exp != null) {
+                if (sb.length() == 0 && (node instanceof LiteralNode)) {
+                    firstIsLiteral = true;
+                }
                 if (sb.length() > 0) {
+                    // okay we append together and this requires that the first node to be literal
+                    if (!firstIsLiteral) {
+                        // then insert an empty string + to force type into string so the compiler
+                        // can compile with the + function
+                        sb.insert(0, "\"\" + ");
+                    }
                     sb.append(" + ");
                 }
                 if (node instanceof LiteralNode) {
                     exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-                    sb.append("'");
+                    sb.append("\"");
                     sb.append(exp);
-                    sb.append("'");
+                    sb.append("\"");
                 } else {
                     sb.append(exp);
                 }

@@ -26,13 +26,13 @@ public class CSimplePredicateParserTest {
         CSimplePredicateParser parser = new CSimplePredicateParser();
 
         String code = parser.parsePredicate("'bar' != 'foo'");
-        Assertions.assertEquals("isNotEqualTo(exchange, 'bar', 'foo')", code);
+        Assertions.assertEquals("isNotEqualTo(exchange, \"bar\", \"foo\")", code);
 
         code = parser.parsePredicate("${body} == 'foo'");
-        Assertions.assertEquals("isEqualTo(exchange, body, 'foo')", code);
+        Assertions.assertEquals("isEqualTo(exchange, body, \"foo\")", code);
 
         code = parser.parsePredicate("${body} != 'foo'");
-        Assertions.assertEquals("isNotEqualTo(exchange, body, 'foo')", code);
+        Assertions.assertEquals("isNotEqualTo(exchange, body, \"foo\")", code);
 
         code = parser.parsePredicate("${body} == 123");
         Assertions.assertEquals("isEqualTo(exchange, body, 123)", code);
@@ -50,17 +50,17 @@ public class CSimplePredicateParserTest {
         Assertions.assertEquals("isEqualTo(exchange, bodyAs(message, String.class).length(), 4)", code);
 
         code = parser.parsePredicate("${bodyAs(String).substring(3)} == 'DEF'");
-        Assertions.assertEquals("isEqualTo(exchange, bodyAs(message, String.class).substring(3), 'DEF')", code);
+        Assertions.assertEquals("isEqualTo(exchange, bodyAs(message, String.class).substring(3), \"DEF\")", code);
 
         code = parser.parsePredicate("${bodyAs(int)} > ${headerAs('foo', int)}");
-        Assertions.assertEquals("isGreaterThan(exchange, bodyAs(message, int.class), headerAs(message, 'foo', int.class))",
+        Assertions.assertEquals("isGreaterThan(exchange, bodyAs(message, int.class), headerAs(message, \"foo\", int.class))",
                 code);
 
         code = parser.parsePredicate("${camelContext.getName()} == 'myCamel'");
-        Assertions.assertEquals("isEqualTo(exchange, camelContext.getName(), 'myCamel')", code);
+        Assertions.assertEquals("isEqualTo(exchange, camelContext.getName(), \"myCamel\")", code);
 
         code = parser.parsePredicate("${camelContext.name} == 'myCamel'");
-        Assertions.assertEquals("isEqualTo(exchange, camelContext.getName(), 'myCamel')", code);
+        Assertions.assertEquals("isEqualTo(exchange, camelContext.getName(), \"myCamel\")", code);
 
         code = parser.parsePredicate("${camelContext.inflightRepository.size()} > 0");
         Assertions.assertEquals("isGreaterThan(exchange, camelContext.getInflightRepository().size(), 0)", code);
@@ -71,35 +71,36 @@ public class CSimplePredicateParserTest {
         CSimplePredicateParser parser = new CSimplePredicateParser();
 
         String code = parser.parsePredicate("${body.substring(1, ${header.max})} == 'foo'");
-        Assertions.assertEquals("isEqualTo(exchange, body.substring(1, header(message, 'max')), 'foo')", code);
+        Assertions.assertEquals("isEqualTo(exchange, body.substring(1, header(message, \"max\")), \"foo\")", code);
     }
 
     @Test
     public void testParseSysFunctions() throws Exception {
         CSimplePredicateParser parser = new CSimplePredicateParser();
         String code = parser.parsePredicate("${sys.foo} != 'bar'");
-        Assertions.assertEquals("isNotEqualTo(exchange, sys('foo'), 'bar')", code);
+        Assertions.assertEquals("isNotEqualTo(exchange, sys(\"foo\"), \"bar\")", code);
         code = parser.parsePredicate("${env.foo} != 'bar'");
-        Assertions.assertEquals("isNotEqualTo(exchange, sysenv('foo'), 'bar')", code);
+        Assertions.assertEquals("isNotEqualTo(exchange, sysenv(\"foo\"), \"bar\")", code);
         code = parser.parsePredicate("${env:FOO} != 'bar'");
-        Assertions.assertEquals("isNotEqualTo(exchange, sysenv('FOO'), 'bar')", code);
+        Assertions.assertEquals("isNotEqualTo(exchange, sysenv(\"FOO\"), \"bar\")", code);
     }
 
     @Test
     public void testParseExchangeProperty() throws Exception {
         CSimplePredicateParser parser = new CSimplePredicateParser();
         String code = parser.parsePredicate("${exchangeProperty.foo} != 'bar'");
-        Assertions.assertEquals("isNotEqualTo(exchange, exchangeProperty(exchange, 'foo'), 'bar')", code);
+        Assertions.assertEquals("isNotEqualTo(exchange, exchangeProperty(exchange, \"foo\"), \"bar\")", code);
         code = parser.parsePredicate("${exchangeProperty[foo]} != 'bar'");
-        Assertions.assertEquals("isNotEqualTo(exchange, exchangeProperty(exchange, 'foo'), 'bar')", code);
+        Assertions.assertEquals("isNotEqualTo(exchange, exchangeProperty(exchange, \"foo\"), \"bar\")", code);
         code = parser.parsePredicate("${exchangePropertyAs(foo, com.foo.User)} != 'bar'");
-        Assertions.assertEquals("isNotEqualTo(exchange, exchangePropertyAs(exchange, 'foo', com.foo.User.class), 'bar')", code);
+        Assertions.assertEquals("isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class), \"bar\")",
+                code);
         code = parser.parsePredicate("${exchangePropertyAs(foo, com.foo.User).name} != 'bar'");
         Assertions.assertEquals(
-                "isNotEqualTo(exchange, exchangePropertyAs(exchange, 'foo', com.foo.User.class).getName(), 'bar')", code);
+                "isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class).getName(), \"bar\")", code);
         code = parser.parsePredicate("${exchangePropertyAs(foo, com.foo.User).getName()} != 'bar'");
         Assertions.assertEquals(
-                "isNotEqualTo(exchange, exchangePropertyAs(exchange, 'foo', com.foo.User.class).getName(), 'bar')", code);
+                "isNotEqualTo(exchange, exchangePropertyAs(exchange, \"foo\", com.foo.User.class).getName(), \"bar\")", code);
     }
 
 }
