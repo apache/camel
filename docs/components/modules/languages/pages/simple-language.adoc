@@ -30,6 +30,11 @@ choose a more expressive and powerful language such as:
 
 The simple language uses `${body`} placeholders for complex expressions or functions.
 
+[NOTE]
+====
+See also the xref:csimple-language.adoc[CSimple] language which is *compiled*.
+====
+
 [TIP]
 ====
 *Alternative syntax* 
