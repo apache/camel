@@ -45,7 +45,7 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
     public void doPreSetup() throws Exception {
         configuration = new EtcdConfiguration();
         configuration.setCamelContext(context);
-        configuration.setUris(getClientUri());
+        configuration.setUris(service.getServiceAddress());
 
         client = getClient();
         try {

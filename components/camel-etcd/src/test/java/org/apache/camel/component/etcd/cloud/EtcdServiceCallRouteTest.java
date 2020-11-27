@@ -97,7 +97,7 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
                         .serviceCall()
                         .name(SERVICE_NAME)
                         .etcdServiceDiscovery()
-                        .uris(getClientUri())
+                        .uris(service.getServiceAddress())
                         .type("on-demand")
                         .endParent()
                         .to("log:org.apache.camel.component.etcd.processor.service?level=INFO&showAll=true&multiline=true")
