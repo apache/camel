@@ -56,6 +56,10 @@ public final class OgnlHelper {
     }
 
     public static boolean isInvalidValidOgnlExpression(String expression) {
+        if (expression == null) {
+            return false;
+        }
+
         if (expression.indexOf('.') == -1 && expression.indexOf('[') == -1 && expression.indexOf(']') == -1) {
             return false;
         }

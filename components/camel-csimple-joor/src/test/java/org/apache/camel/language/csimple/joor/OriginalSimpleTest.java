@@ -598,8 +598,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         try {
             assertExpression("${date:yyyyMMdd}", "19740420");
             fail("Should thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Command not supported for dateExpression: yyyyMMdd", e.getMessage());
+        } catch (Exception e) {
+            assertEquals("Command not supported for dateExpression: yyyyMMdd", e.getCause().getMessage());
         }
     }
 
@@ -805,14 +805,14 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testOnglOnHeadersWithBracket() throws Exception {
-        assertOnglOnHeadersWithSquareBrackets("order");
-        assertOnglOnHeadersWithSquareBrackets("purchase.order");
-        assertOnglOnHeadersWithSquareBrackets("foo.bar.qux");
-        assertOnglOnHeadersWithSquareBrackets("purchase order");
+    public void testOgnlOnHeadersWithBracket() throws Exception {
+        assertOgnlOnHeadersWithSquareBrackets("order");
+        assertOgnlOnHeadersWithSquareBrackets("purchase.order");
+        assertOgnlOnHeadersWithSquareBrackets("foo.bar.qux");
+        assertOgnlOnHeadersWithSquareBrackets("purchase order");
     }
 
-    private void assertOnglOnHeadersWithSquareBrackets(String key) {
+    private void assertOgnlOnHeadersWithSquareBrackets(String key) {
         exchange.getIn().setHeader(key, new OrderLine(123, "Camel in Action"));
         assertExpression("${headers[" + key + "].name}", "Camel in Action");
         assertExpression("${in.headers[" + key + "].name}", "Camel in Action");
@@ -820,14 +820,14 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testOnglOnExchangePropertiesWithBracket() throws Exception {
-        assertOnglOnExchangePropertiesWithBracket("order");
-        assertOnglOnExchangePropertiesWithBracket("purchase.order");
-        assertOnglOnExchangePropertiesWithBracket("foo.bar.qux");
-        assertOnglOnExchangePropertiesWithBracket("purchase order");
+    public void testOgnlOnExchangePropertiesWithBracket() throws Exception {
+        assertOgnlOnExchangePropertiesWithBracket("order");
+        assertOgnlOnExchangePropertiesWithBracket("purchase.order");
+        assertOgnlOnExchangePropertiesWithBracket("foo.bar.qux");
+        assertOgnlOnExchangePropertiesWithBracket("purchase order");
     }
 
-    public void assertOnglOnExchangePropertiesWithBracket(String key) throws Exception {
+    public void assertOgnlOnExchangePropertiesWithBracket(String key) throws Exception {
         exchange.setProperty(key, new OrderLine(123, "Camel in Action"));
         assertExpression("${exchangeProperty[" + key + "].name}", "Camel in Action");
         assertExpression("${exchangeProperty[\"" + key + "\"].name}", "Camel in Action");
@@ -1548,13 +1548,6 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testCamelContextStartRoute() throws Exception {
-        exchange.getIn().setBody(null);
-
-        assertExpression("${camelContext.getRouteController().startRoute(\"foo\")}", null);
-    }
-
-    @Test
     public void testBodyOgnlReplace() throws Exception {
         exchange.getIn().setBody("Kamel is a cool Kamel");
 
@@ -1703,8 +1696,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testTypeConstantInnerClass() throws Exception {
-        assertExpression("${type:org.apache.camel.language.simple.Constants$MyInnerStuff.FOO}", 123);
-        assertExpression("${type:org.apache.camel.language.simple.Constants.BAR}", 456);
+        assertExpression("${type:org.apache.camel.language.csimple.joor.Constants$MyInnerStuff.FOO}", 123);
+        assertExpression("${type:org.apache.camel.language.csimple.joor.Constants.MyInnerStuff.FOO}", 123);
+        assertExpression("${type:org.apache.camel.language.csimple.joor.Constants.BAR}", 456);
     }
 
     @Test

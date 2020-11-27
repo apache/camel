@@ -999,9 +999,12 @@ public final class ObjectHelper {
         if (value instanceof Boolean) {
             return (Boolean) value;
         } else if (value instanceof String) {
-            if ("true".equalsIgnoreCase((String) value)) {
+            String str = ((String) value).trim();
+            if (str.isEmpty()) {
+                return false;
+            } else if ("true".equalsIgnoreCase(str)) {
                 return true;
-            } else if ("false".equalsIgnoreCase((String) value)) {
+            } else if ("false".equalsIgnoreCase(str)) {
                 return false;
             }
         } else if (value instanceof NodeList) {

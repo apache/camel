@@ -57,13 +57,13 @@ public class CSimplePredicateParserTest {
                 code);
 
         code = parser.parsePredicate("${camelContext.getName()} == 'myCamel'");
-        Assertions.assertEquals("isEqualTo(exchange, camelContext.getName(), \"myCamel\")", code);
+        Assertions.assertEquals("isEqualTo(exchange, context.getName(), \"myCamel\")", code);
 
         code = parser.parsePredicate("${camelContext.name} == 'myCamel'");
-        Assertions.assertEquals("isEqualTo(exchange, camelContext.getName(), \"myCamel\")", code);
+        Assertions.assertEquals("isEqualTo(exchange, context.getName(), \"myCamel\")", code);
 
         code = parser.parsePredicate("${camelContext.inflightRepository.size()} > 0");
-        Assertions.assertEquals("isGreaterThan(exchange, camelContext.getInflightRepository().size(), 0)", code);
+        Assertions.assertEquals("isGreaterThan(exchange, context.getInflightRepository().size(), 0)", code);
     }
 
     @Test
