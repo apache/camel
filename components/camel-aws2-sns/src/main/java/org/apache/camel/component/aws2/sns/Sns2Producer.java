@@ -137,18 +137,18 @@ public class Sns2Producer extends DefaultProducer {
     private void configureFifoAttributes(PublishRequest.Builder request, Exchange exchange) {
         if (getEndpoint().getConfiguration().isFifoTopic()) {
             // use strategies
-        	if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
+            if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
                 MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
                 String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
                 request.messageGroupId(messageGroupId);
-        	}
+            }
 
-        	if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy())) {
+            if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy())) {
                 MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
-                    = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+                        = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
                 String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
                 request.messageDeduplicationId(messageDeduplicationId);
-        	}
+            }
 
         }
     }
