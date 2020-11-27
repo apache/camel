@@ -31,10 +31,10 @@ public class PgReplicationSlotComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        Map<String, Object> slotOptions = PropertiesHelper.extractProperties(parameters, "slotOptions.");
         PgReplicationSlotEndpoint endpoint = new PgReplicationSlotEndpoint(uri, this);
         setProperties(endpoint, parameters);
 
-        Map<String, Object> slotOptions = PropertiesHelper.extractProperties(parameters, "slotOptions.");
         endpoint.setSlotOptions(slotOptions);
 
         return endpoint;
