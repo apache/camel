@@ -55,7 +55,7 @@ The Minio component supports 47 options, which are listed below.
 | *configuration* (common) | The component configuration |  | MinioConfiguration
 | *customHttpClient* (common) | Set custom HTTP client for authenticated access. |  | OkHttpClient
 | *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address. |  | String
-| *minioClient* (common) | Reference to a Minio Client object in the registry. |  | MinioClient
+| *minioClient* (common) | *Autowired* Reference to a Minio Client object in the registry. |  | MinioClient
 | *objectLock* (common) | Set when creating new bucket. | false | boolean
 | *policy* (common) | The policy for this queue to set in the method. |  | String
 | *proxyPort* (common) | TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
@@ -129,7 +129,7 @@ with the following path and query parameters:
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket if bucket name not exist. | true | boolean
 | *customHttpClient* (common) | Set custom HTTP client for authenticated access. |  | OkHttpClient
 | *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address. |  | String
-| *minioClient* (common) | Reference to a Minio Client object in the registry. |  | MinioClient
+| *minioClient* (common) | *Autowired* Reference to a Minio Client object in the registry. |  | MinioClient
 | *objectLock* (common) | Set when creating new bucket. | false | boolean
 | *policy* (common) | The policy for this queue to set in the method. |  | String
 | *proxyPort* (common) | TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
