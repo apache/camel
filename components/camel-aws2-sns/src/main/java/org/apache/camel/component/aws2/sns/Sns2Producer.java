@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,14 +137,18 @@ public class Sns2Producer extends DefaultProducer {
     private void configureFifoAttributes(PublishRequest.Builder request, Exchange exchange) {
         if (getEndpoint().getConfiguration().isFifoTopic()) {
             // use strategies
-            MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
-            String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
-            request.messageGroupId(messageGroupId);
+        	if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
+                MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+                String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
+                request.messageGroupId(messageGroupId);
+        	}
 
-            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
+        	if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy())) {
+                MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
                     = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
-            String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
-            request.messageDeduplicationId(messageDeduplicationId);
+                String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
+                request.messageDeduplicationId(messageDeduplicationId);
+        	}
 
         }
     }
