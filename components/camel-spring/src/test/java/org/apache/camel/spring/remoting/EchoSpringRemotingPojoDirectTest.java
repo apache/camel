@@ -23,8 +23,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EchoSpringRemotingPojoDirectTest extends SpringTestSupport {
 
@@ -40,29 +39,25 @@ public class EchoSpringRemotingPojoDirectTest extends SpringTestSupport {
     }
 
     @Test
-    public void testPojoKabom() throws Exception {
-        try {
-            template.requestBody("direct:start", "Kabom", String.class);
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(MyEchoRuntimeException.class, e.getCause());
-            assertEquals("Damn something went wrong", e.getCause().getMessage());
-        }
+    public void testPojoKabom() {
+
+        Exception ex = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("direct:start", "Kabom", String.class));
+
+        assertIsInstanceOf(MyEchoRuntimeException.class, ex.getCause());
+        assertEquals("Damn something went wrong", ex.getCause().getMessage());
     }
 
     @Test
-    public void testPojoBeanKabom() throws Exception {
-        try {
-            // use the pojo directly to call the injected endpoint and have the
-            // original runtime exception thrown
-            EchoPojoDirect echoPojoDirect = applicationContext.getBean("myPojoDirect", EchoPojoDirect.class);
-            String out = echoPojoDirect.onEcho("Kabom");
-            assertNotNull(out);
-            fail("Should have thrown exception");
-        } catch (RuntimeException e) {
-            assertIsInstanceOf(MyEchoRuntimeException.class, e);
-            assertEquals("Damn something went wrong", e.getMessage());
-        }
+    public void testPojoBeanKabom() {
+        EchoPojoDirect echoPojoDirect = applicationContext.getBean("myPojoDirect", EchoPojoDirect.class);
+
+        // use the pojo directly to call the injected endpoint and have the
+        // original runtime exception thrown
+        Exception ex = assertThrows(MyEchoRuntimeException.class,
+                () -> echoPojoDirect.onEcho("Kabom"));
+
+        assertEquals("Damn something went wrong", ex.getMessage());
     }
 
 }
