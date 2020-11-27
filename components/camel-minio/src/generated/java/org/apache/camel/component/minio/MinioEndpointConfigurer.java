@@ -140,6 +140,11 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"minioClient"};
+    }
+
+    @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
