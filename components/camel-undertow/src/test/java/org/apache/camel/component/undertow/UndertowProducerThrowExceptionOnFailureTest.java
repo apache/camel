@@ -19,6 +19,8 @@ package org.apache.camel.component.undertow;
 import com.fasterxml.jackson.core.JsonParseException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.FluentProducerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestBindingMode;
@@ -26,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTest {
 
@@ -38,30 +40,30 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
     }
 
     @Test
-    public void testFailWithException() throws Exception {
-        try {
-            template().requestBody("undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null, String.class);
-            fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(404, cause.getStatusCode());
-        }
+    public void testFailWithException() {
+        ProducerTemplate template = template();
+        String uri = "undertow:http://localhost:{{port}}/fail?throwExceptionOnFailure=true";
+
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody(uri, null, String.class));
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(404, cause.getStatusCode());
     }
 
     @Test
-    public void testFailWithException2() throws Exception {
-        try {
-            fluentTemplate().to("undertow:http://localhost:{{port2}}/test/fail?throwExceptionOnFailure=true")
-                    .withHeader(Exchange.HTTP_METHOD, "PUT")
-                    .withBody("This is not JSON format")
-                    .request(String.class);
-            fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException httpException = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(400, httpException.getStatusCode());
-            assertEquals("text/plain", httpException.getResponseHeaders().get(Exchange.CONTENT_TYPE));
-            assertEquals("Invalid json data", httpException.getResponseBody());
-        }
+    public void testFailWithException2() {
+        FluentProducerTemplate template = fluentTemplate()
+                .to("undertow:http://localhost:{{port2}}/test/fail?throwExceptionOnFailure=true")
+                .withHeader(Exchange.HTTP_METHOD, "PUT")
+                .withBody("This is not JSON format");
+
+        Exception ex = assertThrows(CamelExecutionException.class, () -> template.request(String.class));
+
+        HttpOperationFailedException httpException = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(400, httpException.getStatusCode());
+        assertEquals("text/plain", httpException.getResponseHeaders().get(Exchange.CONTENT_TYPE));
+        assertEquals("Invalid json data", httpException.getResponseBody());
     }
 
     @Override
