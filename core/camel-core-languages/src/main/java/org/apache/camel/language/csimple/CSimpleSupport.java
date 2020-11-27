@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Base class for source code generateed csimple expressions.
@@ -54,10 +55,7 @@ public abstract class CSimpleSupport implements CSimpleExpression, CSimpleMethod
         } catch (Exception e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
-        if (out instanceof String && ((String) out).trim().isEmpty()) {
-            return false;
-        }
-        return camelContext.getTypeConverter().convertTo(boolean.class, exchange, out);
+        return ObjectHelper.evaluateValuePredicate(out);
     }
 
 }

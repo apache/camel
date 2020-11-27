@@ -575,7 +575,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
             }
-            return "camelContext" + ognlCodeMethods(remainder);
+            return "context" + ognlCodeMethods(remainder);
         }
 
         // ExceptionAs OGNL
@@ -587,6 +587,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (!type.endsWith(".class")) {
                 type = type + ".class";
             }
+            type = type.replace('$', '.');
             type = type.trim();
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (type.isEmpty() || invalid) {
@@ -626,6 +627,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (!type.endsWith(".class")) {
                 type = type + ".class";
             }
+            type = type.replace('$', '.');
             type = type.trim();
             return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder);
         }
@@ -794,6 +796,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (!type.endsWith(".class")) {
                 type += ".class";
             }
+            type = type.replace('$', '.');
             if (field != null) {
                 return "type(exchange, " + type + ", \"" + field + "\")";
             } else {
@@ -856,6 +859,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (!type.endsWith(".class")) {
                 type = type + ".class";
             }
+            type = type.replace('$', '.');
             type = type.trim();
             remainder = StringHelper.after(remainder, ")");
             if (ObjectHelper.isNotEmpty(remainder)) {
@@ -880,6 +884,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (!type.endsWith(".class")) {
                 type = type + ".class";
             }
+            type = type.replace('$', '.');
             type = type.trim();
             remainder = StringHelper.after(remainder, ")");
             if (ObjectHelper.isNotEmpty(remainder)) {
@@ -929,6 +934,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (!type.endsWith(".class")) {
                 type = type + ".class";
             }
+            type = type.replace('$', '.');
             type = type.trim();
             return "headerAs(message, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder);
         }

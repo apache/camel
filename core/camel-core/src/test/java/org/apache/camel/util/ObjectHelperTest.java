@@ -701,8 +701,8 @@ public class ObjectHelperTest {
         assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate("false"));
         assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate("FALSE"));
         assertEquals(true, org.apache.camel.util.ObjectHelper.evaluateValuePredicate("foobar"));
-        assertEquals(true, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(""));
-        assertEquals(true, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(" "));
+        assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(""));
+        assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(" "));
 
         List<String> list = new ArrayList<>();
         assertEquals(false, org.apache.camel.util.ObjectHelper.evaluateValuePredicate(list));
