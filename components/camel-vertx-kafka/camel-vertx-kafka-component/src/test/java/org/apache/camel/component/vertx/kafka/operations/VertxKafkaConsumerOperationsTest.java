@@ -54,6 +54,25 @@ class VertxKafkaConsumerOperationsTest {
     }
 
     @Test
+    void play() throws InterruptedException {
+        configuration.setTopic("test_topic");
+        configuration.setBootstrapServers("localhost:9092");
+        configuration.setGroupId("test-03");
+        configuration.setSeekToOffset(15L);
+
+
+        final VertxKafkaConsumerOperations operations = new VertxKafkaConsumerOperations(KafkaConsumer.create(Vertx.vertx(), configuration.createConsumerConfiguration()), configuration);
+
+        operations.receiveEvents(record -> {
+            System.out.println(record);
+        }, error -> {
+            LOG.error("Error" + error.getLocalizedMessage());
+        });
+
+        Thread.sleep(100000000);
+    }
+
+    @Test
     void testConsumerSubscribeSingleRecords() {
         testConsumerSubscribeRecords(1, "test_single_record_test_topic", 1000);
     }
