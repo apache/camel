@@ -47,7 +47,6 @@ import org.apache.camel.util.InetAddressUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.getJavaMajorVersion;
 import static org.junit.jupiter.api.Assertions.*;
@@ -537,7 +536,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
             assertTrue(e.getMessage()
-                    .startsWith("Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: exchangeProperty.foobar[bar at location 0"));
+                    .startsWith(
+                            "Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -548,7 +548,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             assertTrue(e.getMessage()
-                    .startsWith("Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: exchangeProperty.foobar[bar at location 0"));
+                    .startsWith(
+                            "Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
