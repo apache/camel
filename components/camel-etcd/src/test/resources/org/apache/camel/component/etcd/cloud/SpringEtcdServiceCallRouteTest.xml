@@ -28,7 +28,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <serviceCallConfiguration id="service-0">
       <etcdServiceDiscovery
-          uris="http://{{container:host:etcd}}:{{container:port:2379@etcd}}"
+          uris="{{etcd.service.address}}"
           servicePath="/etcd-services-0/"/>
     </serviceCallConfiguration>
 
@@ -44,7 +44,7 @@
           <simple>${body} == 'service-1'</simple>
           <serviceCall name="http-service">
             <etcdServiceDiscovery
-                uris="http://{{container:host:etcd}}:{{container:port:2379@etcd}}"
+                uris="{{etcd.service.address}}"
                 servicePath="/etcd-services-1/"/>
           </serviceCall>
           <to uri="mock:result-1"/>
@@ -53,7 +53,7 @@
           <simple>${body} == 'service-2'</simple>
           <serviceCall name="http-service">
             <etcdServiceDiscovery
-                uris="http://{{container:host:etcd}}:{{container:port:2379@etcd}}"
+                uris="{{etcd.service.address}}"
                 servicePath="/etcd-services-2/"/>
           </serviceCall>
           <to uri="mock:result-2"/>
