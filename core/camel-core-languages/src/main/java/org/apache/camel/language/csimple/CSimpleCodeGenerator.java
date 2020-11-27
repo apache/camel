@@ -104,8 +104,10 @@ public class CSimpleCodeGenerator {
 
         sb.append("    @Override\n");
         sb.append("    public String getText() {\n");
+        // \ should be escaped
+        String escaped = StringHelper.replaceAll(text, "\\", "\\\\");
         // we need to escape all " so its a single literal string
-        String escaped = StringHelper.replaceAll(text, "\"", "\\\"");
+        escaped = StringHelper.replaceAll(escaped, "\"", "\\\"");
         sb.append("        return \"").append(escaped).append("\";\n");
         sb.append("    }\n");
         sb.append("\n");

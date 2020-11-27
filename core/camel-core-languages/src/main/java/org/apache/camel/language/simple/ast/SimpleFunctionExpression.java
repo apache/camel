@@ -600,7 +600,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
-                throw new SimpleParserException("Valid syntax: ${exception.OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException("Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
             }
             return "exception(exchange)" + ognlCodeMethods(remainder);
         }
@@ -648,12 +648,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
             boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
             if (invalid) {
                 // must use exchangePropertyAs as we need to be typed
-                throw new SimpleParserException("Valid syntax: ${exchangePropertyAs.OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: " + function, token.getIndex());
             }
 
             if (OgnlHelper.isValidOgnlExpression(remainder)) {
                 // must use exchangePropertyAs as we need to be typed
-                throw new SimpleParserException("Valid syntax: ${exchangePropertyAs.OGNL} was: " + function, token.getIndex());
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: " + function, token.getIndex());
             } else {
                 // regular property
                 return "exchangeProperty(exchange, \"" + remainder + "\")";
