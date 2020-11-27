@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hazelcast.replicatedmap;
 
+import java.util.UUID;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.replicatedmap.ReplicatedMap;
 import org.apache.camel.Endpoint;
@@ -23,14 +25,37 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 import org.apache.camel.component.hazelcast.listener.CamelEntryListener;
 
+
 public class HazelcastReplicatedmapConsumer extends HazelcastDefaultConsumer {
+
+    private final ReplicatedMap<Object, Object> cache;
+
+    private UUID listener;
 
     public HazelcastReplicatedmapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor,
                                           String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
-        ReplicatedMap<Object, Object> cache = hazelcastInstance.getReplicatedMap(cacheName);
-        cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
+        cache = hazelcastInstance.getReplicatedMap(cacheName);
     }
 
+    /**
+     * @see org.apache.camel.support.DefaultConsumer#doStart()
+     */
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        listener = cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
+    }
+
+    /**
+     * @see org.apache.camel.support.DefaultConsumer#doStop()
+     */
+    @Override
+    protected void doStop() throws Exception {
+        cache.removeEntryListener(listener);
+
+        super.doStop();
+    }
 }
