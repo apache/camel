@@ -25,7 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 import org.apache.camel.component.hazelcast.listener.CamelMessageListener;
 
-
 /**
  *
  */
