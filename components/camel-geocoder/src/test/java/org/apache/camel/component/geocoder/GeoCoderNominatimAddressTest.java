@@ -28,7 +28,7 @@ public class GeoCoderNominatimAddressTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(GeoCoderConstants.COUNTRY_SHORT, "ES");
-        mock.expectedHeaderReceived(GeoCoderConstants.CITY, "Sevilla");
+        mock.expectedHeaderReceived(GeoCoderConstants.REGION_NAME, "Andalucía");
 
         // the address header overrides the endpoint configuration
         template.sendBody("direct:start", "Test");
