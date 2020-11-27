@@ -537,7 +537,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
             assertTrue(e.getMessage()
-                    .startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
+                    .startsWith("Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -548,7 +548,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             assertTrue(e.getMessage()
-                    .startsWith("Valid syntax: ${exchangePropertyAs.OGNL} was: exchangeProperty.foobar[bar at location 0"));
+                    .startsWith("Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -1639,6 +1639,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     public void testJSonLike() throws Exception {
         exchange.getIn().setBody("Something");
 
+        assertExpression("{\"oneline\": \"${body}\"}", "{\"oneline\": \"Something\"}");
         assertExpression("{\n\"data\": \"${body}\"\n}", "{\n\"data\": \"Something\"\n}");
     }
 

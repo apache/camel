@@ -172,6 +172,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
             if (node instanceof LiteralNode) {
                 exp = StringHelper.removeLeadingAndEndingQuotes(exp);
                 sb.append("\"");
+                // " should be escaped to \"
+                exp = escapeQuotes(exp);
                 // \n \t \r should be escaped
                 exp = exp.replaceAll("\n", "\\\\n");
                 exp = exp.replaceAll("\t", "\\\\t");
@@ -180,6 +182,22 @@ public class SimplePredicateParser extends BaseSimpleParser {
                 sb.append("\"");
             } else {
                 sb.append(exp);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String escapeQuotes(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char prev = i > 0 ? text.charAt(i - 1) : 0;
+            char ch = text.charAt(i);
+
+            if (ch == '"' && (i == 0 || prev != '\\')) {
+                sb.append('\\');
+                sb.append('"');
+            } else {
+                sb.append(ch);
             }
         }
         return sb.toString();
