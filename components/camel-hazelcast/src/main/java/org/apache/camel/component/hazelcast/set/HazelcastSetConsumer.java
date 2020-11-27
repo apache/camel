@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hazelcast.set;
 
+import java.util.UUID;
+
 import com.hazelcast.collection.ISet;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Consumer;
@@ -28,12 +30,33 @@ import org.apache.camel.component.hazelcast.listener.CamelItemListener;
  * Implementation of Hazelcast Set {@link Consumer}.
  */
 public class HazelcastSetConsumer extends HazelcastDefaultConsumer {
+    private final ISet<Object> set;
+
+    private UUID listener;
 
     public HazelcastSetConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
-        ISet<Object> set = hazelcastInstance.getSet(cacheName);
-        set.addItemListener(new CamelItemListener(this, cacheName), true);
+        set = hazelcastInstance.getSet(cacheName);
     }
 
+    /**
+     * @see org.apache.camel.support.DefaultConsumer#doStart()
+     */
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        listener = set.addItemListener(new CamelItemListener(this, cacheName), true);
+    }
+
+    /**
+     * @see org.apache.camel.support.DefaultConsumer#doStop()
+     */
+    @Override
+    protected void doStop() throws Exception {
+        set.removeItemListener(listener);
+
+        super.doStop();
+    }
 }
