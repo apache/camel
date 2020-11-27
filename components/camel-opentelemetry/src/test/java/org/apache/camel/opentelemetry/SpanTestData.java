@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.opentelemetry.trace.Span;
+import io.opentelemetry.api.trace.Span;
 
 public class SpanTestData {
 

@@ -18,15 +18,12 @@ package org.apache.camel.opentelemetry;
 
 import java.util.Set;
 
-import io.grpc.Context;
-import io.opentelemetry.OpenTelemetry;
-import io.opentelemetry.correlationcontext.CorrelationContext;
-import io.opentelemetry.correlationcontext.CorrelationsContextUtils;
-import io.opentelemetry.trace.DefaultTracer;
-import io.opentelemetry.trace.Span;
-import io.opentelemetry.trace.SpanContext;
-import io.opentelemetry.trace.Tracer;
-import io.opentelemetry.trace.TracingContextUtils;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.baggage.Baggage;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.opentelemetry.propagators.OpenTelemetryGetter;
@@ -81,52 +78,51 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         }
 
         if (tracer == null) {
-            tracer = OpenTelemetry.getTracer(instrumentationName);
+            tracer = OpenTelemetry.get().getTracer(instrumentationName);
         }
 
         if (tracer == null) {
             // No tracer is available, so setup NoopTracer
-            tracer = DefaultTracer.getInstance();
+            tracer = Tracer.getDefault();
         }
     }
 
     @Override
     protected SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent) {
-        Span.Builder builder = tracer.spanBuilder(operationName).setSpanKind(mapToSpanKind(kind));
-        CorrelationContext correlationContext = null;
+        Baggage baggage = null;
+        SpanBuilder builder = tracer.spanBuilder(operationName).setSpanKind(mapToSpanKind(kind));
         if (parent != null) {
             OpenTelemetrySpanAdapter oTelSpanWrapper = (OpenTelemetrySpanAdapter) parent;
             Span parentSpan = oTelSpanWrapper.getOpenTelemetrySpan();
-            correlationContext = oTelSpanWrapper.getCorrelationContext();
-            builder = builder.setParent(parentSpan);
+            baggage = oTelSpanWrapper.getBaggage();
+            builder = builder.setParent(Context.current().with(parentSpan));
         }
-        return new OpenTelemetrySpanAdapter(builder.startSpan(), correlationContext);
+        return new OpenTelemetrySpanAdapter(builder.startSpan(), baggage);
     }
 
     @Override
     protected SpanAdapter startExchangeBeginSpan(
             Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent) {
-        Span.Builder builder = tracer.spanBuilder(operationName);
-        CorrelationContext correlationContext = null;
+        SpanBuilder builder = tracer.spanBuilder(operationName);
+        Baggage baggage;
         if (parent != null) {
             OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) parent;
-            builder = builder.setParent(spanFromExchange.getOpenTelemetrySpan());
-            correlationContext = spanFromExchange.getCorrelationContext();
+            builder = builder.setParent(Context.current().with(spanFromExchange.getOpenTelemetrySpan()));
+            baggage = spanFromExchange.getBaggage();
         } else {
             ExtractAdapter adapter = sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding);
-            Context ctx = OpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), adapter,
+            Context ctx = OpenTelemetry.get().getPropagators().getTextMapPropagator().extract(Context.current(), adapter,
                     new OpenTelemetryGetter(adapter));
-            Span span = TracingContextUtils.getSpan(ctx);
-            SpanContext parentFromHeaders = span.getContext();
-            correlationContext = CorrelationsContextUtils.getCorrelationContext(ctx);
-            if (parentFromHeaders != null && parentFromHeaders.isValid()) {
-                builder.setParent(parentFromHeaders).setSpanKind(mapToSpanKind(sd.getReceiverSpanKind()));
+            Span span = Span.fromContext(ctx);
+            baggage = Baggage.fromContext(ctx);
+            if (span != null && span.getSpanContext().isValid()) {
+                builder.setParent(ctx).setSpanKind(mapToSpanKind(sd.getReceiverSpanKind()));
             } else if (!(sd instanceof AbstractInternalSpanDecorator)) {
                 builder.setSpanKind(mapToSpanKind(sd.getReceiverSpanKind()));
             }
         }
 
-        return new OpenTelemetrySpanAdapter(builder.startSpan(), correlationContext);
+        return new OpenTelemetrySpanAdapter(builder.startSpan(), baggage);
     }
 
     @Override
@@ -138,9 +134,9 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
     @Override
     protected void inject(SpanAdapter span, InjectAdapter adapter) {
         OpenTelemetrySpanAdapter spanFromExchange = (OpenTelemetrySpanAdapter) span;
-        Context context = TracingContextUtils.withSpan(spanFromExchange.getOpenTelemetrySpan(), Context.current());
-        context = CorrelationsContextUtils.withCorrelationContext(spanFromExchange.getCorrelationContext(), context);
-        OpenTelemetry.getPropagators().getTextMapPropagator().inject(context, adapter, new OpenTelemetrySetter());
+        Span otelSpan = spanFromExchange.getOpenTelemetrySpan();
+        Context ctx = Context.current().with(otelSpan).with(spanFromExchange.getBaggage());
+        OpenTelemetry.get().getPropagators().getTextMapPropagator().inject(ctx, adapter, new OpenTelemetrySetter());
     }
 
 }
