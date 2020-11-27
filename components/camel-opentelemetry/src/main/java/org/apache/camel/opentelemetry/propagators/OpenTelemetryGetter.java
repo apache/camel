@@ -28,6 +28,11 @@ public class OpenTelemetryGetter implements TextMapPropagator.Getter<ExtractAdap
     }
 
     @Override
+    public Iterable<String> keys(ExtractAdapter extractAdapter) {
+        return adapter.keys();
+    }
+
+    @Override
     public String get(ExtractAdapter adapter, String key) {
         return (String) adapter.get(key);
     }

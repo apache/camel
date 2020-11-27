@@ -18,9 +18,12 @@ package org.apache.camel.tracing;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 public interface ExtractAdapter {
     Iterator<Map.Entry<String, String>> iterator();
 
     Object get(String key);
+
+    Set<String> keys();
 }

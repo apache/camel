@@ -19,49 +19,44 @@ package org.apache.camel.opentelemetry;
 import java.util.EnumMap;
 import java.util.Map;
 
-import io.opentelemetry.OpenTelemetry;
-import io.opentelemetry.common.AttributeValue;
-import io.opentelemetry.common.Attributes;
-import io.opentelemetry.correlationcontext.CorrelationContext;
-import io.opentelemetry.correlationcontext.CorrelationContextManager;
-import io.opentelemetry.correlationcontext.EntryMetadata;
-import io.opentelemetry.trace.attributes.SemanticAttributes;
+import io.opentelemetry.api.baggage.Baggage;
+import io.opentelemetry.api.baggage.BaggageBuilder;
+import io.opentelemetry.api.baggage.EntryMetadata;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributesBuilder;
+import io.opentelemetry.api.trace.attributes.SemanticAttributes;
+import io.opentelemetry.context.Context;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
 
 public class OpenTelemetrySpanAdapter implements SpanAdapter {
-    static final EntryMetadata DEFAULT_ENTRY_METADATA = EntryMetadata.create(EntryMetadata.EntryTtl.UNLIMITED_PROPAGATION);
     private static final String DEFAULT_EVENT_NAME = "log";
     private static EnumMap<Tag, String> tagMap = new EnumMap<>(Tag.class);
 
     static {
         tagMap.put(Tag.COMPONENT, "component");
-        tagMap.put(Tag.DB_TYPE, SemanticAttributes.DB_SYSTEM.key());
-        tagMap.put(Tag.DB_STATEMENT, SemanticAttributes.DB_STATEMENT.key());
-        tagMap.put(Tag.DB_INSTANCE, SemanticAttributes.DB_NAME.key());
-        tagMap.put(Tag.HTTP_METHOD, SemanticAttributes.HTTP_METHOD.key());
-        tagMap.put(Tag.HTTP_STATUS, SemanticAttributes.HTTP_STATUS_CODE.key());
-        tagMap.put(Tag.HTTP_URL, SemanticAttributes.HTTP_URL.key());
+        tagMap.put(Tag.DB_TYPE, SemanticAttributes.DB_SYSTEM.getKey());
+        tagMap.put(Tag.DB_STATEMENT, SemanticAttributes.DB_STATEMENT.getKey());
+        tagMap.put(Tag.DB_INSTANCE, SemanticAttributes.DB_NAME.getKey());
+        tagMap.put(Tag.HTTP_METHOD, SemanticAttributes.HTTP_METHOD.getKey());
+        tagMap.put(Tag.HTTP_STATUS, SemanticAttributes.HTTP_STATUS_CODE.getKey());
+        tagMap.put(Tag.HTTP_URL, SemanticAttributes.HTTP_URL.getKey());
         tagMap.put(Tag.MESSAGE_BUS_DESTINATION, "message_bus.destination");
     }
 
-    io.opentelemetry.trace.Span span;
-    private CorrelationContextManager contextManager;
-    private CorrelationContext correlationContext;
-    private OpenTelemetrySpanAdapter parent;
+    private Baggage baggage;
+    private io.opentelemetry.api.trace.Span span;
 
-    OpenTelemetrySpanAdapter(io.opentelemetry.trace.Span span) {
+    OpenTelemetrySpanAdapter(io.opentelemetry.api.trace.Span span) {
         this.span = span;
-        this.contextManager = OpenTelemetry.getCorrelationContextManager();
     }
 
-    OpenTelemetrySpanAdapter(io.opentelemetry.trace.Span span, CorrelationContext correlationContext) {
+    OpenTelemetrySpanAdapter(io.opentelemetry.api.trace.Span span, Baggage baggage) {
         this.span = span;
-        this.contextManager = OpenTelemetry.getCorrelationContextManager();
-        this.correlationContext = correlationContext;
+        this.baggage = baggage;
     }
 
-    io.opentelemetry.trace.Span getOpenTelemetrySpan() {
+    io.opentelemetry.api.trace.Span getOpenTelemetrySpan() {
         return this.span;
     }
 
@@ -115,7 +110,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     }
 
     Attributes convertToAttributes(Map<String, ?> fields) {
-        Attributes.Builder attributesBuilder = Attributes.newBuilder();
+        AttributesBuilder attributesBuilder = Attributes.builder();
 
         for (Map.Entry<String, ?> entry : fields.entrySet()) {
             String key = entry.getKey();
@@ -127,37 +122,37 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
                     || value instanceof Short
                     || value instanceof Integer
                     || value instanceof Long) {
-                attributesBuilder.setAttribute(key, AttributeValue.longAttributeValue(((Number) value).longValue()));
+                attributesBuilder.put(key, ((Number) value).longValue());
             } else if (value instanceof Float || value instanceof Double) {
-                attributesBuilder.setAttribute(key, AttributeValue.doubleAttributeValue(((Number) value).doubleValue()));
+                attributesBuilder.put(key, ((Number) value).doubleValue());
             } else if (value instanceof Boolean) {
-                attributesBuilder.setAttribute(key, AttributeValue.booleanAttributeValue((Boolean) value));
+                attributesBuilder.put(key, (Boolean) value);
             } else {
-                attributesBuilder.setAttribute(key, AttributeValue.stringAttributeValue(value.toString()));
+                attributesBuilder.put(key, value.toString());
             }
         }
         return attributesBuilder.build();
     }
 
-    public CorrelationContext getCorrelationContext() {
-        return this.correlationContext;
+    public Baggage getBaggage() {
+        return this.baggage;
     }
 
-    public void setCorrelationContext(CorrelationContext correlationContext) {
-        this.correlationContext = correlationContext;
+    public void setBaggage(Baggage baggage) {
+        this.baggage = baggage;
     }
 
     public void setCorrelationContextItem(String key, String value) {
-        CorrelationContext.Builder builder = contextManager.contextBuilder();
-        if (correlationContext != null) {
-            builder = builder.setParent(correlationContext);
+        BaggageBuilder builder = Baggage.builder();
+        if (baggage != null) {
+            builder = builder.setParent(Context.current().with(baggage));
         }
-        correlationContext = builder.put(key, value, DEFAULT_ENTRY_METADATA).build();
+        baggage = builder.put(key, value, EntryMetadata.EMPTY).build();
     }
 
     public String getContextPropagationItem(String key) {
-        if (correlationContext != null) {
-            return correlationContext.getEntryValue(key);
+        if (baggage != null) {
+            return baggage.getEntryValue(key);
         }
         return null;
     }
