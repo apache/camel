@@ -982,7 +982,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String key = StringHelper.before(keyAndType, ",");
             String type = StringHelper.after(keyAndType, ",");
             remainder = StringHelper.after(remainder, ")");
-            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isNotEmpty(remainder)) {
+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
                 throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
             }
             key = StringHelper.removeQuotes(key);

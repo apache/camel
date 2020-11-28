@@ -83,6 +83,7 @@ public final class CSimpleHelper {
 
     public static <T> T bodyAsIndex(Message message, Class<T> type, String key) {
         // TODO: array
+        // TODO: key can have multiple elements [0][foo] or [0][0]
         Object body = message.getBody();
         if (body instanceof Map) {
             Map map = (Map) body;
