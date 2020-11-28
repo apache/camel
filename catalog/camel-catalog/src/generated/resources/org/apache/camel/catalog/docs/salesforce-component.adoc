@@ -670,7 +670,7 @@ The Salesforce component supports 73 options, which are listed below.
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
-| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap |  | Long
+| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
 | *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
 | *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *httpClientConnectionTimeout* (common) | Connection timeout used by the HttpClient when connecting to the Salesforce server. | 60000 | long
@@ -781,7 +781,7 @@ with the following path and query parameters:
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
-| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap |  | Long
+| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
 | *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
 | *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean

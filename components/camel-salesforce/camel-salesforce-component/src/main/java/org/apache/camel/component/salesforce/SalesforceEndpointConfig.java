@@ -81,6 +81,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     // parameters for Streaming API
     public static final String DEFAULT_REPLAY_ID = "defaultReplayId";
     public static final String INITIAL_REPLAY_ID_MAP = "initialReplayIdMap";
+    public static final long REPLAY_FROM_TIP = -1L;
 
     // parameters for Approval API
     public static final String APPROVAL = "approval";
@@ -166,8 +167,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String instanceId;
 
     // Streaming API properties
-    @UriParam
-    private Long defaultReplayId;
+    @UriParam(description = "Default replayId setting if no value is found in initialReplayIdMap",
+              defaultValue = "" + REPLAY_FROM_TIP)
+    private Long defaultReplayId = REPLAY_FROM_TIP;
     @UriParam
     private Map<String, Long> initialReplayIdMap;
 
