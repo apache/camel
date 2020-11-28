@@ -167,8 +167,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String instanceId;
 
     // Streaming API properties
-    @UriParam(description = "Default replayId setting if no value is found in " +
-                            "{@link #initialReplayIdMap}",
+    @UriParam(description = "Default replayId setting if no value is found in initialReplayIdMap",
               defaultValue = "" + REPLAY_FROM_TIP)
     private Long defaultReplayId = REPLAY_FROM_TIP;
     @UriParam
