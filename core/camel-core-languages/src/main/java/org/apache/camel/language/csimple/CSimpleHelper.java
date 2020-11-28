@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -73,6 +75,43 @@ public final class CSimpleHelper {
 
     public static <T> T mandatoryBodyAs(Message message, Class<T> type) throws InvalidPayloadException {
         return message.getMandatoryBody(type);
+    }
+
+    public static <T> T bodyAsIndex(Message message, Class<T> type, int key) {
+        return bodyAsIndex(message, type, "" + key);
+    }
+
+    public static <T> T bodyAsIndex(Message message, Class<T> type, String key) {
+        // TODO: array
+        Object body = message.getBody();
+        if (body instanceof Map) {
+            Map map = (Map) body;
+            body = map.get(key);
+        } else if (body instanceof List) {
+            List list = (List) body;
+            Integer num;
+            if (key.startsWith("last")) {
+                num = list.size() - 1;
+
+                // maybe its an expression to subtract a number after last
+                String after = StringHelper.after(key, "-");
+                if (after != null) {
+                    Integer redux
+                            = message.getExchange().getContext().getTypeConverter().tryConvertTo(Integer.class, after.trim());
+                    if (redux != null) {
+                        num -= redux;
+                    } else {
+                        throw new ExpressionIllegalSyntaxException(key);
+                    }
+                }
+            } else {
+                num = message.getExchange().getContext().getTypeConverter().tryConvertTo(Integer.class, key);
+            }
+            if (num != null && num >= 0 && !list.isEmpty() && list.size() > num - 1) {
+                body = list.get(num);
+            }
+        }
+        return type.cast(body);
     }
 
     public static Object header(Message message, String name) {
