@@ -21,7 +21,7 @@ import java.time.ZonedDateTime;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
 import org.junit.jupiter.api.Test;
@@ -49,10 +49,12 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
         Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("TestNotification");
-        merchandise.setDescription__c("Merchandise for testing Streaming API updated on " + ZonedDateTime.now().toString());
+        merchandise.setDescription__c("Merchandise for testing Streaming API updated on " +
+                                      ZonedDateTime.now().toString());
         merchandise.setPrice__c(9.99);
         merchandise.setTotal_Inventory__c(1000.0);
-        CreateSObjectResult result = template().requestBody("direct:upsertSObject", merchandise, CreateSObjectResult.class);
+        UpsertSObjectResult result = template().requestBody("direct:upsertSObject", merchandise,
+                UpsertSObjectResult.class);
         assertTrue(result == null || result.getSuccess(), "Merchandise test record not created");
 
         try {
@@ -67,7 +69,6 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             assertNotNull(merchandise.getName(), "Missing field Name");
 
             // validate dynamic message headers
-            assertNotNull(in.getHeader("CamelSalesforceClientId"), "Missing header CamelSalesforceClientId");
             assertNotNull(in.getHeader("CamelSalesforceEventType"), "Missing header CamelSalesforceEventType");
             assertNotNull(in.getHeader("CamelSalesforceCreatedDate"), "Missing header CamelSalesforceCreatedDate");
 

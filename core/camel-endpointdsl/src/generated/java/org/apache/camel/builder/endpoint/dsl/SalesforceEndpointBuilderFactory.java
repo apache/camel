@@ -172,6 +172,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder defaultReplayId(
@@ -184,6 +185,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder defaultReplayId(
@@ -1091,6 +1093,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointProducerBuilder defaultReplayId(
@@ -1103,6 +1106,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointProducerBuilder defaultReplayId(
@@ -1933,6 +1937,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointBuilder defaultReplayId(Long defaultReplayId) {
@@ -1944,6 +1949,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointBuilder defaultReplayId(String defaultReplayId) {

@@ -140,6 +140,7 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceComponentBuilder defaultReplayId(
