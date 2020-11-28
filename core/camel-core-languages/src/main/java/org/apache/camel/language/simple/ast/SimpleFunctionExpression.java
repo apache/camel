@@ -575,7 +575,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${camelContext.OGNL} was: " + function, token.getIndex());
             }
-            return "context" + ognlCodeMethods(remainder);
+            return "context" + ognlCodeMethods(remainder, null);
         }
 
         // ExceptionAs OGNL
@@ -593,7 +593,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (type.isEmpty() || invalid) {
                 throw new SimpleParserException("Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
             }
-            return "exceptionAs(exchange, " + type + ")" + ognlCodeMethods(remainder);
+            return "exceptionAs(exchange, " + type + ")" + ognlCodeMethods(remainder, type);
         }
         // Exception OGNL
         remainder = ifStartsWithReturnRemainder("exception", function);
@@ -602,7 +602,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
             }
-            return "exception(exchange)" + ognlCodeMethods(remainder);
+            return "exception(exchange)" + ognlCodeMethods(remainder, null);
         }
 
         // exchangePropertyAs
@@ -629,7 +629,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             type = type.replace('$', '.');
             type = type.trim();
-            return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder);
+            return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
         }
 
         // exchange property
@@ -688,7 +688,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${exchange.OGNL} was: " + function, token.getIndex());
             }
-            return "exchange" + ognlCodeMethods(remainder);
+            return "exchange" + ognlCodeMethods(remainder, null);
         }
 
         // file: prefix
@@ -850,8 +850,44 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private String createCodeBodyOrHeader(String function) {
+        // bodyAsIndex
+        String remainder = ifStartsWithReturnRemainder("bodyAsIndex(", function);
+        if (remainder != null) {
+            String typeAndIndex = StringHelper.before(remainder, ")");
+            if (typeAndIndex == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${bodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
+            }
+
+            String type = StringHelper.before(typeAndIndex, ",");
+            String index = StringHelper.after(typeAndIndex, ",");
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isEmpty(type) || ObjectHelper.isEmpty(index)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${bodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
+            }
+            type = StringHelper.removeQuotes(type);
+            type = type.trim();
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.replace('$', '.');
+            index = StringHelper.removeQuotes(index);
+            index = index.trim();
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${bodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
+                }
+                return "bodyAsIndex(message, " + type + ", \"" + index + "\")" + ognlCodeMethods(remainder, type);
+            } else {
+                return "bodyAsIndex(message, " + type + ", \"" + index + "\")";
+            }
+        }
+
         // bodyAs
-        String remainder = ifStartsWithReturnRemainder("bodyAs(", function);
+        remainder = ifStartsWithReturnRemainder("bodyAs(", function);
         if (remainder != null) {
             String type = StringHelper.before(remainder, ")");
             if (type == null) {
@@ -869,7 +905,20 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (invalid) {
                     throw new SimpleParserException("Valid syntax: ${bodyAs(type).OGNL} was: " + function, token.getIndex());
                 }
-                return "bodyAs(message, " + type + ")" + ognlCodeMethods(remainder);
+                // it is an index?
+                String index = null;
+                String after = null;
+                if (remainder.startsWith("[")) {
+                    // the OGNL starts with an index so lets use bodyAsIndex
+                    index = StringHelper.between(remainder, "[", "]");
+                    after = StringHelper.after(remainder, "]");
+                }
+                if (index != null) {
+                    index = StringHelper.removeLeadingAndEndingQuotes(index);
+                    return "bodyAsIndex(message, " + type + ", \"" + index + "\")" + ognlCodeMethods(after, type);
+                } else {
+                    return "bodyAs(message, " + type + ")" + ognlCodeMethods(remainder, type);
+                }
             } else {
                 return "bodyAs(message, " + type + ")";
             }
@@ -890,12 +939,13 @@ public class SimpleFunctionExpression extends LiteralExpression {
             type = type.trim();
             remainder = StringHelper.after(remainder, ")");
             if (ObjectHelper.isNotEmpty(remainder)) {
+                // TODO: mandatoryBodyAsIndex
                 boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
                 if (invalid) {
                     throw new SimpleParserException(
                             "Valid syntax: ${mandatoryBodyAs(type).OGNL} was: " + function, token.getIndex());
                 }
-                return "mandatoryBodyAs(message, " + type + ")" + ognlCodeMethods(remainder);
+                return "mandatoryBodyAs(message, " + type + ")" + ognlCodeMethods(remainder, type);
             } else {
                 return "mandatoryBodyAs(message, " + type + ")";
             }
@@ -913,7 +963,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${body.OGNL} was: " + function, token.getIndex());
             }
-            return "body" + ognlCodeMethods(remainder);
+            String answer = ognlCodeMethods(remainder, null);
+            if (answer.startsWith("body")) {
+                return answer;
+            } else {
+                return "body" + answer;
+            }
         }
 
         // headerAs
@@ -938,7 +993,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             type = type.replace('$', '.');
             type = type.trim();
-            return "headerAs(message, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder);
+            return "headerAs(message, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
         }
 
         // headers function
@@ -1084,7 +1139,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
-    private static String ognlCodeMethods(String remainder) {
+    private static String ognlCodeMethods(String remainder, String type) {
         StringBuilder sb = new StringBuilder();
 
         if (remainder != null) {
@@ -1099,21 +1154,60 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (m.startsWith(".")) {
                     m = m.substring(1);
                 }
-                sb.append(".");
+
+                // clip index
+                String index = StringHelper.between(m, "[", "]");
+                if (index != null) {
+                    m = StringHelper.before(m, "[");
+                }
 
                 // shorthand getter syntax: .name -> .getName()
-                char ch = m.charAt(m.length() - 1);
-                if (Character.isAlphabetic(ch)) {
-                    if (!m.startsWith("get")) {
-                        sb.append("get");
-                        sb.append(Character.toUpperCase(m.charAt(0)));
-                        sb.append(m.substring(1));
+                if (m != null && !m.isEmpty()) {
+                    // a method so append with a dot
+                    sb.append(".");
+                    char ch = m.charAt(m.length() - 1);
+                    if (Character.isAlphabetic(ch)) {
+                        if (!m.startsWith("get")) {
+                            sb.append("get");
+                            sb.append(Character.toUpperCase(m.charAt(0)));
+                            sb.append(m.substring(1));
+                        } else {
+                            sb.append(m);
+                        }
+                        sb.append("()");
                     } else {
                         sb.append(m);
                     }
-                    sb.append("()");
-                } else {
-                    sb.append(m);
+                }
+
+                // append index via a get method - eg get for a list, or get for a map (array not supported)
+                if (index != null) {
+                    // if there was no method then its direct on the body, so use bodyAsIndex instead of get
+                    if (m == null || m.isEmpty()) {
+                        sb.append("bodyAsIndex(message, ");
+                        if (type != null) {
+                            sb.append(type);
+                        } else {
+                            sb.append("Object.class");
+                        }
+                        sb.append(", ");
+                    } else {
+                        sb.append(".get(");
+                    }
+                    try {
+                        long lon = Long.parseLong(index);
+                        sb.append(lon);
+                        if (lon > Integer.MAX_VALUE) {
+                            sb.append("l");
+                        }
+                    } catch (Exception e) {
+                        // its text based
+                        index = StringHelper.removeLeadingAndEndingQuotes(index);
+                        sb.append("\"");
+                        sb.append(index);
+                        sb.append("\"");
+                    }
+                    sb.append(")");
                 }
             }
         }

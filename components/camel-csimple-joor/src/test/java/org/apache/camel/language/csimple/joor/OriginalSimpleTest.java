@@ -64,7 +64,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         CSimpleLanguage cs = (CSimpleLanguage) context.resolveLanguage("csimple");
-        cs.addImport("org.apache.camel.language.csimple.joor.OriginalSimpleTest");
+        cs.addImport("org.apache.camel.language.csimple.joor.OriginalSimpleTest.*");
         return context;
     }
 
@@ -1046,7 +1046,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         map.put("foo.bar", "Camel");
         exchange.getIn().setBody(map);
 
-        assertExpression("${in.body[foo.bar]}", "Camel");
+        assertExpression("${body[foo.bar]}", "Camel");
     }
 
     @Test
@@ -1065,8 +1065,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         Animal camel = new Animal("Camel", 6);
         exchange.getIn().setBody(camel);
 
-        assertExpression("${in.body.getName}", "Camel");
-        assertExpression("${in.body.getAge}", 6);
+        assertExpression("${bodyAs(Animal).getName}", "Camel");
+        assertExpression("${bodyAs(Animal).getAge}", 6);
     }
 
     @Test
@@ -1083,8 +1083,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         Animal camel = new Animal("Camel", 6);
         exchange.getIn().setBody(camel);
 
-        assertExpression("${in.body.name}", "Camel");
-        assertExpression("${in.body.age}", 6);
+        assertExpression("${bodyAs(Animal).name}", "Camel");
+        assertExpression("${bodyAs(Animal).age}", 6);
     }
 
     @Test
@@ -1095,15 +1095,15 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertPredicate("${in.body.getName} contains \"Camel\"", true);
-        assertPredicate("${in.body.getName} contains \"Tiger\"", false);
-        assertPredicate("${in.body.getAge} < 10", true);
-        assertPredicate("${in.body.getAge} > 10", false);
-        assertPredicate("${in.body.getAge} <= \"6\"", true);
-        assertPredicate("${in.body.getAge} > \"6\"", false);
+        assertPredicate("${bodyAs(Animal).getName} contains \"Camel\"", true);
+        assertPredicate("${bodyAs(Animal).getName} contains \"Tiger\"", false);
+        assertPredicate("${bodyAs(Animal).getAge} < 10", true);
+        assertPredicate("${bodyAs(Animal).getAge} > 10", false);
+        assertPredicate("${bodyAs(Animal).getAge} <= \"6\"", true);
+        assertPredicate("${bodyAs(Animal).getAge} > \"6\"", false);
 
-        assertPredicate("${in.body.getAge} < ${body.getFriend.getAge}", true);
-        assertPredicate("${in.body.getFriend.isDangerous} == true", true);
+        assertPredicate("${bodyAs(Animal).getAge} < ${bodyAs(Animal).getFriend.getAge}", true);
+        assertPredicate("${bodyAs(Animal).getFriend.isDangerous} == true", true);
     }
 
     @Test
@@ -1114,15 +1114,15 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertPredicate("${in.body.name} contains \"Camel\"", true);
-        assertPredicate("${in.body.name} contains \"Tiger\"", false);
-        assertPredicate("${in.body.age} < 10", true);
-        assertPredicate("${in.body.age} > 10", false);
-        assertPredicate("${in.body.age} <= \"6\"", true);
-        assertPredicate("${in.body.age} > \"6\"", false);
+        assertPredicate("${bodyAs(Animal).name} contains \"Camel\"", true);
+        assertPredicate("${bodyAs(Animal).name} contains \"Tiger\"", false);
+        assertPredicate("${bodyAs(Animal).age} < 10", true);
+        assertPredicate("${bodyAs(Animal).age} > 10", false);
+        assertPredicate("${bodyAs(Animal).age} <= \"6\"", true);
+        assertPredicate("${bodyAs(Animal).age} > \"6\"", false);
 
-        assertPredicate("${in.body.age} < ${body.friend.age}", true);
-        assertPredicate("${in.body.friend.dangerous} == true", true);
+        assertPredicate("${bodyAs(Animal).age} < ${bodyAs(Animal).friend.age}", true);
+        assertPredicate("${bodyAs(Animal).friend.dangerous} == true", true);
     }
 
     @Test
@@ -1133,11 +1133,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertExpression("${in.body.getName}", "Camel");
-        assertExpression("${in.body.getAge}", 6);
+        assertExpression("${bodyAs(Animal).getName}", "Camel");
+        assertExpression("${bodyAs(Animal).getAge}", 6);
 
-        assertExpression("${in.body.getFriend.getName}", "Tony the Tiger");
-        assertExpression("${in.body.getFriend.getAge}", "13");
+        assertExpression("${bodyAs(Animal).getFriend.getName}", "Tony the Tiger");
+        assertExpression("${bodyAs(Animal).getFriend.getAge}", "13");
     }
 
     @Test
@@ -1148,11 +1148,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertExpression("${in.body.name}", "Camel");
-        assertExpression("${in.body.age}", 6);
+        assertExpression("${bodyAs(Animal).name}", "Camel");
+        assertExpression("${bodyAs(Animal).age}", 6);
 
-        assertExpression("${in.body.friend.name}", "Tony the Tiger");
-        assertExpression("${in.body.friend.age}", "13");
+        assertExpression("${bodyAs(Animal).friend.name}", "Tony the Tiger");
+        assertExpression("${bodyAs(Animal).friend.age}", "13");
     }
 
     @Test
@@ -1164,17 +1164,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(order);
 
-        assertExpression("${in.body.getLines[0].getId}", 123);
-        assertExpression("${in.body.getLines[0].getName}", "Camel in Action");
+        assertExpression("${bodyAs(Order).getLines().get(0).getId}", 123);
+        assertExpression("${bodyAs(Order).getLines().get(0).getName}", "Camel in Action");
 
-        assertExpression("${in.body.getLines[1].getId}", 456);
-        assertExpression("${in.body.getLines[1].getName}", "ActiveMQ in Action");
-
-        assertExpression("${in.body.getLines[last].getId}", 456);
-        assertExpression("${in.body.getLines[last].getName}", "ActiveMQ in Action");
-
-        assertExpression("${in.body.getLines[last-1].getId}", 123);
-        assertExpression("${in.body.getLines[last-1].getName}", "Camel in Action");
+        assertExpression("${bodyAs(Order).getLines().get(1).getId}", 456);
+        assertExpression("${bodyAs(Order).getLines().get(1).getName}", "ActiveMQ in Action");
     }
 
     @Test
@@ -1231,11 +1225,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(lines);
 
-        assertExpression("${in.body[0].getId}", 123);
-        assertExpression("${in.body[0].getName}", "Camel in Action");
+        assertExpression("${bodyAs(OrderLine)[0].getId}", 123);
+        assertExpression("${bodyAs(OrderLine)[0].getName}", "Camel in Action");
 
-        assertExpression("${in.body[1].getId}", 456);
-        assertExpression("${in.body[1].getName}", "ActiveMQ in Action");
+        assertExpression("${bodyAs(OrderLine)[1].getId}", 456);
+        assertExpression("${bodyAs(OrderLine)[1].getName}", "ActiveMQ in Action");
     }
 
     @Test
@@ -1246,11 +1240,26 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(lines);
 
-        assertExpression("${in.body[0].id}", 123);
-        assertExpression("${in.body[0].name}", "Camel in Action");
+        assertExpression("${bodyAs(OrderLine)[0].id}", 123);
+        assertExpression("${bodyAs(OrderLine)[0].name}", "Camel in Action");
 
-        assertExpression("${in.body[1].id}", 456);
-        assertExpression("${in.body[1].name}", "ActiveMQ in Action");
+        assertExpression("${bodyAs(OrderLine)[1].id}", 456);
+        assertExpression("${bodyAs(OrderLine)[1].name}", "ActiveMQ in Action");
+    }
+
+    @Test
+
+    public void testBodyAsIndexOGNL() throws Exception {
+        List<OrderLine> lines = new ArrayList<>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+
+        exchange.getIn().setBody(lines);
+
+        assertExpression("${bodyAsIndex(OrderLine, 0).id}", 123);
+        assertExpression("${bodyAsIndex(OrderLine, 0).name}", "Camel in Action");
+        assertExpression("${bodyAsIndex(OrderLine, 1).id}", 456);
+        assertExpression("${bodyAsIndex(OrderLine, 1).name}", "ActiveMQ in Action");
     }
 
     @Test
@@ -1261,11 +1270,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(lines);
 
-        assertExpression("${in.body[0].getId}", 123);
-        assertExpression("${in.body[0].getName}", "Camel in Action");
+        assertExpression("${bodyAs(OrderLine)[0].getId}", 123);
+        assertExpression("${bodyAs(OrderLine)[0].getName}", "Camel in Action");
 
-        assertExpression("${in.body[1].getId}", 456);
-        assertExpression("${in.body[1].getName}", "ActiveMQ in Action");
+        assertExpression("${bodyAs(OrderLine)[1].getId}", 456);
+        assertExpression("${bodyAs(OrderLine)[1].getName}", "ActiveMQ in Action");
     }
 
     @Test
@@ -1327,27 +1336,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody(order);
 
         try {
-            assertExpression("${in.body.lines[3].id}", 123);
+            assertExpression("${bodyAs(Order).lines[3].id}", 123);
             fail("Should have thrown an exception");
-        } catch (RuntimeBeanExpressionException e) {
+        } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Index: 3, Size: 2 out of bounds with List from bean"));
-        }
-
-        try {
-            assertExpression("${in.body.lines[last - 2].id}", 123);
-            fail("Should have thrown an exception");
-        } catch (RuntimeBeanExpressionException e) {
-            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Index: -1, Size: 2 out of bounds with List from bean"));
-        }
-
-        try {
-            assertExpression("${in.body.lines[last - XXX].id}", 123);
-            fail("Should have thrown an exception");
-        } catch (RuntimeBeanExpressionException e) {
-            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, e.getCause());
-            assertEquals("last - XXX", cause.getExpression());
+            assertTrue(cause.getMessage().startsWith("Index 3 out of bounds for length 2"));
         }
     }
 
@@ -1360,7 +1353,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(order);
 
-        assertExpression("${in.body?.getLines[3].getId}", null);
+        assertExpression("${bodyAs(Order)?.getLines[3].getId}", null);
     }
 
     @Test
@@ -1372,7 +1365,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(order);
 
-        assertExpression("${in.body?.lines[3].id}", null);
+        assertExpression("${bodyAs(Order)?.lines[3].id}", null);
     }
 
     @Test
@@ -1385,7 +1378,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody(order);
 
         try {
-            assertExpression("${in.body.getLines[0]?.getRating}", "");
+            assertExpression("${bodyAs(Order).getLines[0]?.getRating}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
             MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
@@ -1403,7 +1396,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody(order);
 
         try {
-            assertExpression("${in.body.lines[0]?.rating}", "");
+            assertExpression("${bodyAs(Order).lines[0]?.rating}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
             MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
@@ -1419,17 +1412,17 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertExpression("${in.body.getName}", "Camel");
-        assertExpression("${in.body.getAge}", 6);
+        assertExpression("${bodyAs(Animal).getName}", "Camel");
+        assertExpression("${bodyAs(Animal).getAge}", 6);
 
-        assertExpression("${in.body.getFriend.getName}", "Tony the Tiger");
-        assertExpression("${in.body.getFriend.getAge}", "13");
+        assertExpression("${bodyAs(Animal).getFriend.getName}", "Tony the Tiger");
+        assertExpression("${bodyAs(Animal).getFriend.getAge}", "13");
 
         // using null safe to avoid the NPE
-        assertExpression("${in.body.getFriend?.getFriend.getName}", null);
+        assertExpression("${bodyAs(Animal).getFriend?.getFriend.getName}", null);
         try {
             // without null safe we get an NPE
-            assertExpression("${in.body.getFriend.getFriend.getName}", "");
+            assertExpression("${bodyAs(Animal).getFriend.getFriend.getName}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
             assertEquals(
@@ -1447,18 +1440,18 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertExpression("${in.body.name}", "Camel");
-        assertExpression("${in.body.age}", 6);
+        assertExpression("${bodyAs(Animal).name}", "Camel");
+        assertExpression("${bodyAs(Animal).age}", 6);
 
         // just to mix it a bit
-        assertExpression("${in.body.friend.getName}", "Tony the Tiger");
-        assertExpression("${in.body.getFriend.age}", "13");
+        assertExpression("${bodyAs(Animal).friend.getName}", "Tony the Tiger");
+        assertExpression("${bodyAs(Animal).getFriend.age}", "13");
 
         // using null safe to avoid the NPE
-        assertExpression("${in.body.friend?.friend.name}", null);
+        assertExpression("${bodyAs(Animal).friend?.friend.name}", null);
         try {
             // without null safe we get an NPE
-            assertExpression("${in.body.friend.friend.name}", "");
+            assertExpression("${bodyAs(Animal).friend.friend.name}", "");
             fail("Should have thrown exception");
         } catch (RuntimeBeanExpressionException e) {
             assertEquals("Failed to invoke method: .friend.friend.name on org.apache.camel.language.simple.SimpleTest.Animal"
@@ -1479,9 +1472,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertExpression("${body.getFriend.getFriend.getFriend.getName}", "Camel");
-        assertExpression("${body.getFriend.getFriend.getFriend.getFriend.getName}", "Tony the Tiger");
-        assertExpression("${body.getFriend.getFriend.getFriend.getFriend.getFriend.getName}", "Big Ella");
+        assertExpression("${bodyAs(Animal).getFriend.getFriend.getFriend.getName}", "Camel");
+        assertExpression("${bodyAs(Animal).getFriend.getFriend.getFriend.getFriend.getName}", "Tony the Tiger");
+        assertExpression("${bodyAs(Animal).getFriend.getFriend.getFriend.getFriend.getFriend.getName}", "Big Ella");
     }
 
     @Test
@@ -1496,9 +1489,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertExpression("${body.friend.friend.friend.name}", "Camel");
-        assertExpression("${body.friend.friend.friend.friend.name}", "Tony the Tiger");
-        assertExpression("${body.friend.friend.friend.friend.friend.name}", "Big Ella");
+        assertExpression("${bodyAs(Animal).friend.friend.friend.name}", "Camel");
+        assertExpression("${bodyAs(Animal).friend.friend.friend.friend.name}", "Tony the Tiger");
+        assertExpression("${bodyAs(Animal).friend.friend.friend.friend.friend.name}", "Big Ella");
     }
 
     @Test
@@ -1506,27 +1499,27 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         Animal tiger = new Animal("Tony the Tiger", 13);
         exchange.getIn().setBody(tiger);
 
-        assertExpression("${body.isDangerous}", "true");
-        assertExpression("${body.dangerous}", "true");
+        assertExpression("${bodyAs(Animal).isDangerous}", "true");
+        assertExpression("${bodyAs(Animal).dangerous}", "true");
 
         Animal camel = new Animal("Camel", 6);
         exchange.getIn().setBody(camel);
 
-        assertExpression("${body.isDangerous}", "false");
-        assertExpression("${body.dangerous}", "false");
+        assertExpression("${bodyAs(Animal).isDangerous}", "false");
+        assertExpression("${bodyAs(Animal).dangerous}", "false");
     }
 
     @Test
     public void testBodyOgnlOnString() throws Exception {
         exchange.getIn().setBody("Camel");
 
-        assertExpression("${body.substring(2)}", "mel");
-        assertExpression("${body.substring(2, 4)}", "me");
-        assertExpression("${body.length()}", 5);
-        assertExpression("${body.toUpperCase()}", "CAMEL");
-        assertExpression("${body.toUpperCase()}", "CAMEL");
-        assertExpression("${body.toUpperCase().substring(2)}", "MEL");
-        assertExpression("${body.toLowerCase().length()}", 5);
+        assertExpression("${bodyAs(String).substring(2)}", "mel");
+        assertExpression("${bodyAs(String).substring(2, 4)}", "me");
+        assertExpression("${bodyAs(String).length()}", 5);
+        assertExpression("${bodyAs(String).toUpperCase()}", "CAMEL");
+        assertExpression("${bodyAs(String).toUpperCase()}", "CAMEL");
+        assertExpression("${bodyAs(String).toUpperCase().substring(2)}", "MEL");
+        assertExpression("${bodyAs(String).toLowerCase().length()}", 5);
     }
 
     @Test
@@ -1535,7 +1528,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getIn().setHeader("max", 4);
         exchange.getIn().setHeader("min", 2);
 
-        assertExpression("${body.substring(${header.min}, ${header.max})}", "me");
+        assertExpression("${bodyAs(String).substring(${header.min}, ${header.max})}", "me");
     }
 
     @Test
@@ -1545,7 +1538,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getIn().setHeader("max", 4);
         exchange.getIn().setHeader("min", 2);
 
-        assertExpression("${header.name.substring(${header.min}, ${header.max})}", "me");
+        assertExpression("${headerAs(name, String).substring(${headerAs(min, int)}, ${headerAs(max, int)})}", "me");
     }
 
     @Test
@@ -1559,36 +1552,36 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     public void testBodyOgnlReplaceEscapedChar() throws Exception {
         exchange.getIn().setBody("foo$bar$baz");
 
-        assertExpression("${body.replace(\"$\", \"-\")}", "foo-bar-baz");
+        assertExpression("${bodyAs(String).replace(\"$\", \"-\")}", "foo-bar-baz");
     }
 
     @Test
     public void testBodyOgnlReplaceEscapedBackslashChar() throws Exception {
         exchange.getIn().setBody("foo\\bar\\baz");
 
-        assertExpression("${body.replace(\"\\\", \"\\\\\")}", "foo\\\\bar\\\\baz");
+        assertExpression("${bodyAs(String).replace(\"\\\", \"\\\\\")}", "foo\\\\bar\\\\baz");
     }
 
     @Test
     public void testBodyOgnlReplaceFirst() throws Exception {
         exchange.getIn().setBody("http:camel.apache.org");
 
-        assertExpression("${body.replaceFirst(\"http:\", \"https:\")}", "https:camel.apache.org");
-        assertExpression("${body.replaceFirst(\"http:\", \"\")}", "camel.apache.org");
-        assertExpression("${body.replaceFirst(\"http:\", \" \")}", " camel.apache.org");
-        assertExpression("${body.replaceFirst(\"http:\",    \" \")}", " camel.apache.org");
-        assertExpression("${body.replaceFirst(\"http:\",\" \")}", " camel.apache.org");
+        assertExpression("${bodyAs(String).replaceFirst(\"http:\", \"https:\")}", "https:camel.apache.org");
+        assertExpression("${bodyAs(String).replaceFirst(\"http:\", \"\")}", "camel.apache.org");
+        assertExpression("${bodyAs(String).replaceFirst(\"http:\", \" \")}", " camel.apache.org");
+        assertExpression("${bodyAs(String).replaceFirst(\"http:\",    \" \")}", " camel.apache.org");
+        assertExpression("${bodyAs(String).replaceFirst(\"http:\",\" \")}", " camel.apache.org");
     }
 
     @Test
     public void testBodyOgnlReplaceSingleQuoteInDouble() throws Exception {
         exchange.getIn().setBody("Hello O\"Conner");
 
-        assertExpression("${body.replace(\"O\"C\", \"OC\")}", "Hello OConner");
-        assertExpression("${body.replace(\"O\"C\", \"O C\")}", "Hello O Conner");
-        assertExpression("${body.replace(\"O\"C\", \"O-C\")}", "Hello O-Conner");
-        assertExpression("${body.replace(\"O\"C\", \"O\"\"C\")}", "Hello O\"\"Conner");
-        assertExpression("${body.replace(\"O\"C\", \"O\n\"C\")}", "Hello O\n\"Conner");
+        assertExpression("${bodyAs(String).replace(\"O\"C\", \"OC\")}", "Hello OConner");
+        assertExpression("${bodyAs(String).replace(\"O\"C\", \"O C\")}", "Hello O Conner");
+        assertExpression("${bodyAs(String).replace(\"O\"C\", \"O-C\")}", "Hello O-Conner");
+        assertExpression("${bodyAs(String).replace(\"O\"C\", \"O\"\"C\")}", "Hello O\"\"Conner");
+        assertExpression("${bodyAs(String).replace(\"O\"C\", \"O\n\"C\")}", "Hello O\n\"Conner");
     }
 
     @Test
@@ -1596,15 +1589,16 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody("Hello World");
 
         // no quotes, which is discouraged to use
-        assertExpression("${body.compareTo(Hello World)}", 0);
+        // TODO: single quotes as double quotes
+        // assertExpression("${bodyAs(String).compareTo('Hello World')}", 0);
 
-        assertExpression("${body.compareTo(\"Hello World\")}", 0);
-        assertExpression("${body.compareTo(${body})}", 0);
-        assertExpression("${body.compareTo(\"foo\")}", "Hello World".compareTo("foo"));
+        assertExpression("${bodyAs(String).compareTo(\"Hello World\")}", 0);
+        assertExpression("${bodyAs(String).compareTo(${bodyAs(String)})}", 0);
+        assertExpression("${bodyAs(String).compareTo(\"foo\")}", "Hello World".compareTo("foo"));
 
-        assertExpression("${body.compareTo( \"Hello World\" )}", 0);
-        assertExpression("${body.compareTo( ${body} )}", 0);
-        assertExpression("${body.compareTo( \"foo\" )}", "Hello World".compareTo("foo"));
+        assertExpression("${bodyAs(String).compareTo( \"Hello World\" )}", 0);
+        assertExpression("${bodyAs(String).compareTo( ${bodyAs(String)} )}", 0);
+        assertExpression("${bodyAs(String).compareTo( \"foo\" )}", "Hello World".compareTo("foo"));
     }
 
     @Test
@@ -1922,22 +1916,6 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${bodyOneLine}", "HelloGreatWorld");
         assertExpression("Hi ${bodyOneLine}", "Hi HelloGreatWorld");
         assertExpression("Hi ${bodyOneLine} Again", "Hi HelloGreatWorld Again");
-    }
-
-    @Test
-    public void testNestedTypeFunction() throws Exception {
-        // when using type: function we need special logic to not lazy evaluate
-        // it so its evaluated only once
-        // and won\"t fool Camel to think its a nested OGNL method call
-        // expression instead (CAMEL-10664)
-        exchange.setProperty(Exchange.AUTHENTICATION, 123);
-        String exp = "${exchangeProperty.${type:org.apache.camel.Exchange.AUTHENTICATION}.toString()}";
-        assertExpression(exp, "123");
-
-        exchange.getIn().setHeader("whichOne", "AUTHENTICATION");
-        exchange.setProperty(Exchange.AUTHENTICATION, 456);
-        exp = "${exchangeProperty.${type:org.apache.camel.Exchange.${header.whichOne}}.toString()}";
-        assertExpression(exp, "456");
     }
 
     @Test
