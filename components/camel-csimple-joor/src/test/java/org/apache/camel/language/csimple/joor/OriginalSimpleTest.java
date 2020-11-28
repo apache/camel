@@ -342,14 +342,14 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(map);
 
-        assertExpression("${in.body?.get(\"list\")[0].toString}", null);
+        assertExpression("${BodyAs(Map)?.get(\"list\")[0].toString}", null);
     }
 
     @Test
     public void testOGNLBodyExpression() throws Exception {
         exchange.getIn().setBody("hello world");
         assertPredicate("${body} == \"hello world\"", true);
-        assertPredicate("${body.toUpperCase()} == \"HELLO WORLD\"", true);
+        assertPredicate("${bodyAs(String).toUpperCase()} == \"HELLO WORLD\"", true);
     }
 
     @Test
@@ -360,11 +360,10 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         // there is no upper case method on byte array, but we can convert to
         // String as below
         try {
-            assertPredicate("${body.toUpperCase()} == \"HELLO WORLD\"", true);
+            assertPredicate("${bodyAs(byte[]).toUpperCase()} == \"HELLO WORLD\"", true);
             fail("Should throw exception");
-        } catch (RuntimeBeanExpressionException e) {
-            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
-            assertEquals("toUpperCase()", cause.getMethodName());
+        } catch (JoorCSimpleCompilationException e) {
+            assertTrue(e.getCause().getMessage().contains("method toUpperCase()"));
         }
 
         assertPredicate("${bodyAs(String)} == \"hello world\"", true);
@@ -382,11 +381,10 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         // there is no upper case method on byte array, but we can convert to
         // String as below
         try {
-            assertPredicate("${body.toUpperCase()} == \"HELLO WORLD\"", true);
+            assertPredicate("${bodyAs(byte[]).toUpperCase()} == \"HELLO WORLD\"", true);
             fail("Should throw exception");
-        } catch (RuntimeBeanExpressionException e) {
-            MethodNotFoundException cause = assertIsInstanceOf(MethodNotFoundException.class, e.getCause());
-            assertEquals("toUpperCase()", cause.getMethodName());
+        } catch (JoorCSimpleCompilationException e) {
+            assertTrue(e.getCause().getMessage().contains("method toUpperCase()"));
         }
 
         assertPredicate("${mandatoryBodyAs(String)} == \"hello world\"", true);
@@ -403,7 +401,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         map.put("dude", "Hey dude");
         exchange.getIn().setHeaders(map);
 
-        assertExpression("${headers.cool.replaceAll(\"rocks\", \"is so cool\")}", "Camel is so cool");
+        assertExpression("${headerAs(cool, String).replaceAll(\"rocks\", \"is so cool\")}", "Camel is so cool");
     }
 
     @Test
@@ -458,8 +456,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
         exchange.setProperty("wicket", lines);
 
-        assertExpression("${exchangeProperty.wicket[0].getId}", 123);
-        assertExpression("${exchangeProperty.wicket[1].getName}", "ActiveMQ in Action");
+        assertExpression("${exchangePropertyAs(wicket, List)[0].getId}", 123);
+        assertExpression("${exchangePropertyAs(wicket, List)[1].getName}", "ActiveMQ in Action");
         try {
             assertExpression("${exchangeProperty.wicket[2]}", "");
             fail("Should have thrown an exception");
@@ -899,8 +897,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         try {
             assertExpression("${headerAs(fool,String).test}", null);
             fail("Should have thrown an exception");
-        } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Valid syntax: ${headerAs(key, type)} was: headerAs(fool,String).test"));
+        } catch (JoorCSimpleCompilationException e) {
+            // expected
         }
 
         try {
