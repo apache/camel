@@ -17,7 +17,6 @@ public enum Case_PickListAccentMarkEnum {
     // Audiencia de Conciliación
     AUDIENCIA_DE_CONCILIACIÓN("Audiencia de Conciliaci\u00F3n");
 
-
     final String value;
 
     private Case_PickListAccentMarkEnum(String value) {
@@ -38,5 +37,4 @@ public enum Case_PickListAccentMarkEnum {
         }
         throw new IllegalArgumentException(value);
     }
-
 }

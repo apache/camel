@@ -9,17 +9,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Salesforce Enumeration DTO for picklist PickListQuotationMark
+ * Salesforce Enumeration DTO for picklist PickListValueOverride
  */
 @Generated("org.apache.camel.maven.CamelSalesforceMojo")
-public enum Case_PickListQuotationMarkEnum {
+public enum Case_PickListValueOverrideEnum {
 
-    // No apretar "miralo"
-    NO_APRETAR__MIRALO_("No apretar \"miralo\"");
+    // A+
+    APlus("A+");
 
     final String value;
 
-    private Case_PickListQuotationMarkEnum(String value) {
+    private Case_PickListValueOverrideEnum(String value) {
         this.value = value;
     }
 
@@ -29,8 +29,8 @@ public enum Case_PickListQuotationMarkEnum {
     }
 
     @JsonCreator
-    public static Case_PickListQuotationMarkEnum fromValue(String value) {
-        for (Case_PickListQuotationMarkEnum e : Case_PickListQuotationMarkEnum.values()) {
+    public static Case_PickListValueOverrideEnum fromValue(String value) {
+        for (Case_PickListValueOverrideEnum e : Case_PickListValueOverrideEnum.values()) {
             if (e.value.equals(value)) {
                 return e;
             }

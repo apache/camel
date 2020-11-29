@@ -85,16 +85,21 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             return descriptions.externalIdsOf(name);
         }
 
-        public String getEnumConstant(final String value) {
+        public String getEnumConstant(
+                final String objectName, final String fieldName,
+                final String picklistValue) {
+            final String key = String.join(".", objectName, fieldName, picklistValue);
+            if (enumerationOverrideProperties.containsKey(key)) {
+                return enumerationOverrideProperties.get(key).toString();
+            }
 
-            // TODO add support for supplementary characters
             final StringBuilder result = new StringBuilder();
             boolean changed = false;
-            if (!Character.isJavaIdentifierStart(value.charAt(0))) {
+            if (!Character.isJavaIdentifierStart(picklistValue.charAt(0))) {
                 result.append("_");
                 changed = true;
             }
-            for (final char c : value.toCharArray()) {
+            for (final char c : picklistValue.toCharArray()) {
                 if (Character.isJavaIdentifierPart(c)) {
                     result.append(c);
                 } else {
@@ -104,7 +109,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 }
             }
 
-            return changed ? result.toString().toUpperCase() : value.toUpperCase();
+            return changed ? result.toString().toUpperCase() : picklistValue.toUpperCase();
         }
 
         public String getFieldType(final SObjectDescription description, final SObjectField field) {
@@ -355,6 +360,13 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     String childRelationshipNameSuffix;
 
     /**
+     * Override picklist enum value generation via a java.util.Properties instance. Property name format:
+     * `SObject.FieldName.PicklistValue`. Property value is the desired enum value.
+     */
+    @Parameter(property = "camelSalesforce.enumerationOverrideProperties")
+    Properties enumerationOverrideProperties = new Properties();
+
+    /**
      * Names of specific picklist/multipicklist fields, which should be converted to Enum (default case) if property
      * {@link this#useStringsForPicklists} is set to true. Format: SObjectApiName.FieldApiName (e.g. Account.DataSource)
      */
@@ -455,6 +467,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                     final String enumFileName = enumName + JAVA_EXT;
                     final File enumFile = new File(pkgDir, enumFileName);
 
+                    context.put("sObjectName", description.getName());
                     context.put("field", field);
                     context.put("enumName", enumName);
                     final Template enumTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM, UTF_8);
