@@ -175,7 +175,7 @@ public final class SmppUtils {
             dest.setDefaultMode();
         }
         if (src.isEsmeDeliveryAcknowledgement()) {
-            dest.setEsmeDelivertAcknowledgement();
+            dest.setEsmeDeliveryAcknowledgement();
         }
         if (src.isEsmeManualAcknowledgement()) {
             dest.setEsmeManualAcknowledgement();
