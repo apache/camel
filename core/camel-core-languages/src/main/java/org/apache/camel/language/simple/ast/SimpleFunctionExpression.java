@@ -564,7 +564,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // body and headers first
-        answer = createCodeBodyOrHeader(function);
+        answer = createCodeBody(function);
+        if (answer != null) {
+            return answer;
+        }
+        answer = createCodeHeader(function);
         if (answer != null) {
             return answer;
         }
@@ -863,7 +867,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
-    private String createCodeBodyOrHeader(final String function) {
+    private String createCodeBody(final String function) {
         // bodyAsIndex
         String remainder = ifStartsWithReturnRemainder("bodyAsIndex(", function);
         if (remainder != null) {
@@ -929,7 +933,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         if (!last.isEmpty()) {
                             func += "." + last;
                         }
-                        return createCodeBodyOrHeader(func);
+                        return createCodeBody(func);
                     }
                 }
                 return "bodyAs(message, " + type + ")" + ognlCodeMethods(remainder, type);
@@ -1004,7 +1008,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         if (!last.isEmpty()) {
                             func += "." + last;
                         }
-                        return createCodeBodyOrHeader(func);
+                        return createCodeBody(func);
                     }
                 }
                 return "mandatoryBodyAs(message, " + type + ")" + ognlCodeMethods(remainder, type);
@@ -1035,10 +1039,58 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     if (!last.isEmpty()) {
                         func += "." + last;
                     }
-                    return createCodeBodyOrHeader(func);
+                    return createCodeBody(func);
                 }
             }
             return "body" + ognlCodeMethods(remainder, null);
+        }
+
+        return null;
+    }
+
+    private String createCodeHeader(final String function) {
+        // headerAsIndex
+        String remainder = ifStartsWithReturnRemainder("headerAsIndex(", function);
+        if (remainder != null) {
+            String keyTypeAndIndex = StringHelper.before(remainder, ")");
+            if (keyTypeAndIndex == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${headerAsIndex(key, type, index)} was: " + function, token.getIndex());
+            }
+            String[] parts = keyTypeAndIndex.split(",");
+            if (parts.length != 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${headerAsIndex(key, type, index)} was: " + function, token.getIndex());
+            }
+            String key = parts[0];
+            String type = parts[1];
+            String index = parts[2];
+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isEmpty(index)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${headerAsIndex(key, type, index)} was: " + function, token.getIndex());
+            }
+            key = StringHelper.removeQuotes(key);
+            key = key.trim();
+            type = StringHelper.removeQuotes(type);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.replace('$', '.');
+            type = type.trim();
+            index = StringHelper.removeQuotes(index);
+            index = index.trim();
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${headerAsIndex(key, type, index).OGNL} was: " + function, token.getIndex());
+                }
+                return "headerAsIndex(message, " + type + ", \"" + key + "\", \"" + index + "\")"
+                       + ognlCodeMethods(remainder, type);
+            } else {
+                return "headerAsIndex(message, " + type + ", \"" + key + "\", \"" + index + "\")";
+            }
         }
 
         // headerAs
@@ -1071,6 +1123,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "message.getHeaders()";
         }
 
+        // TODO: exchangePropertyAsIndex
+
         // in header function
         remainder = ifStartsWithReturnRemainder("in.headers", function);
         if (remainder == null) {
@@ -1100,19 +1154,37 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${header.name[key]} was: " + function, token.getIndex());
             }
-            // it is an index?
-            String index = null;
-            if (key.endsWith("]")) {
-                index = StringHelper.between(key, "[", "]");
-                if (index != null) {
-                    key = StringHelper.before(key, "[");
+
+            // the key can contain index as it may be a map header.foo[0]
+            // and the key can also be OGNL (eg if there is a dot)
+            boolean index = false;
+            List<String> parts = splitOgnl(key);
+            if (parts.size() > 0) {
+                String s = parts.get(0);
+                int pos = s.indexOf('[');
+                if (pos != -1) {
+                    index = true;
+                    // split key into name and index
+                    String before = s.substring(0, pos);
+                    String after = s.substring(pos);
+                    parts.set(0, before);
+                    parts.add(1, after);
                 }
             }
-            if (index != null) {
-                return "headerAsIndex(message, Object.class, \"" + key + "\", \"" + index + "\")";
+            if (index) {
+                // is there any index, then we should use headerAsIndex function instead
+                // (use splitOgnl which assembles multiple indexes into a single part)
+                String func = "headerAsIndex(\"" + parts.get(0) + "\", Object.class, \"" + parts.get(1) + "\")";
+                if (parts.size() > 2) {
+                    String last = String.join("", parts.subList(2, parts.size()));
+                    if (!last.isEmpty()) {
+                        func += "." + last;
+                    }
+                }
+                return createCodeHeader(func);
             } else if (OgnlHelper.isValidOgnlExpression(key)) {
                 // ognl based header must be typed
-                throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
+                throw new SimpleParserException("Valid syntax: ${headerAs(key, type).OGNL} was: " + function, token.getIndex());
             } else {
                 // regular header
                 return "header(message, \"" + key + "\")";
