@@ -14,15 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration;
+package org.apache.camel.test.infra.minio.services;
 
-import org.apache.camel.test.infra.minio.services.MinioService;
-import org.apache.camel.test.infra.minio.services.MinioServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.infra.common.services.TestService;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-class MinioTestContainerSupport extends CamelTestSupport {
-    @RegisterExtension
-    static MinioService service = MinioServiceFactory.createService();
+/**
+ * Test infra service for Minio
+ */
+public interface MinioService extends BeforeAllCallback, AfterAllCallback, TestService {
 
+    String secretKey();
+
+    String accessKey();
+
+    int port();
+
+    String host();
+
+    @Override
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
+        initialize();
+    }
+
+    @Override
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        shutdown();
+    }
 }
