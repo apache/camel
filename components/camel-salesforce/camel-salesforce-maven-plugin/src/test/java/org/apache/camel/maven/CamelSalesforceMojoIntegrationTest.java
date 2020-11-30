@@ -80,5 +80,4 @@ public class CamelSalesforceMojoIntegrationTest {
 
         return mojo;
     }
-
 }
