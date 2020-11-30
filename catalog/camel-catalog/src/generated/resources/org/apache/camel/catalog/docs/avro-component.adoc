@@ -274,4 +274,8 @@ is used and `getProcessor` will receive Value class directly in body,
 while `putProcessor` will receive an array of size 2 with String key and
 Value value filled as array contents.
 
+== Karaf support
+
+This component is not supported in Karaf.
+
 include::camel-spring-boot::page$avro-starter.adoc[]

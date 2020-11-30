@@ -36,7 +36,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
     KeyValueProtocolImpl keyValue = new KeyValueProtocolImpl();
     TestReflectionImpl testReflection = new TestReflectionImpl();
 
-    protected abstract void initializeServer() throws IOException;
+    protected abstract void initializeServer() throws IOException, InterruptedException;
 
     @Override
     protected void doPreSetup() throws Exception {
@@ -140,6 +140,14 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
         mock.expectedBodiesReceived(++age);
         template.sendBody("direct:inout-reflection", request);
         mock.assertIsSatisfied(5000);
+    }
+
+    protected ProducerRouteType getRouteType() {
+        if (getCurrentTestName().contains("Reflection")) {
+            return ProducerRouteType.reflect;
+        }
+
+        return ProducerRouteType.specific;
     }
 
 }
