@@ -72,11 +72,13 @@ public class InfinispanTestContainersGetOrDefaultProducerTest extends Infinispan
             @Override
             public void configure() {
                 from("direct:put")
-                        .to("infinispan:mycache?hosts=" + getInfispanUrl()
-                            + "&operation=PUT&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan");
+                        .toF("infinispan:mycache?hosts=%s&operation=PUT&username=%s&password=%s&secure=true"
+                             + "&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan",
+                                getInfispanUrl(), service.username(), service.password());
                 from("direct:getOrDefault")
-                        .to("infinispan:mycache?hosts=" + getInfispanUrl()
-                            + "&operation=GETORDEFAULT&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan")
+                        .toF("infinispan:mycache?hosts=%s&operation=GETORDEFAULT&username=%s&password=%s&secure=true"
+                             + "&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan",
+                                getInfispanUrl(), service.username(), service.password())
                         .to("mock:result");
             }
         };

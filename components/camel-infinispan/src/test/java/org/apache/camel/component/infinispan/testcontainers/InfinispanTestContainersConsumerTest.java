@@ -69,12 +69,12 @@ public class InfinispanTestContainersConsumerTest extends InfinispanTestContaine
                 from("direct:put")
                         .delay(5000)
                         .startupOrder(2)
-                        .to("infinispan:mycache?hosts=" + getInfispanUrl()
-                            + "&operation=PUT&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan&sync=false");
-                from("infinispan:mycache?hosts=" + getInfispanUrl()
-                     + "&operation=GET&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan&eventTypes=CLIENT_CACHE_ENTRY_CREATED&sync=false")
-                             .startupOrder(1)
-                             .to("mock:result");
+                        .toF("infinispan:mycache?hosts=%s&operation=PUT&username=%s&password=%s&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan&sync=false",
+                                getInfispanUrl(), service.username(), service.password());
+                fromF("infinispan:mycache?hosts=%s&operation=GET&username=%s&password=%s&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan&eventTypes=CLIENT_CACHE_ENTRY_CREATED&sync=false",
+                        getInfispanUrl(), service.username(), service.password())
+                                .startupOrder(1)
+                                .to("mock:result");
             }
         };
     }

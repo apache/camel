@@ -16,50 +16,32 @@
  */
 package org.apache.camel.component.infinispan.testcontainers;
 
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.junit5.Wait;
+import org.apache.camel.test.infra.infinispan.services.InfinispanService;
+import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.infinispan.client.hotrod.DefaultTemplate;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.containers.GenericContainer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class InfinispanTestContainerSupport extends ContainerAwareTestSupport {
-
-    public static final String CONTAINER_IMAGE = "infinispan/server:11.0.5.Final-1";
-    public static final String CONTAINER_NAME = "infinispan";
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return localstackContainer();
-    }
-
-    public static GenericContainer localstackContainer() {
-        return new GenericContainer(CONTAINER_IMAGE)
-                .withNetworkAliases(CONTAINER_NAME)
-                .withEnv("USER", "admin")
-                .withEnv("PASS", "password")
-                .withExposedPorts(11222)
-                .waitingFor(Wait.forListeningPort())
-                .waitingFor(Wait.forLogMessageContaining("Infinispan Server 11.0.5.Final started", 1));
-    }
-
-    public String getInfispanUrl() {
-        return String.format(
-                "%s:%d",
-                getContainerHost(CONTAINER_NAME),
-                getContainerPort(CONTAINER_NAME, 11222));
-    }
+public class InfinispanTestContainerSupport extends CamelTestSupport {
+    @RegisterExtension
+    InfinispanService service = InfinispanServiceFactory.createService();
 
     public RemoteCacheManager createAndGetDefaultCache() {
         ConfigurationBuilder clientBuilder = new ConfigurationBuilder();
-        clientBuilder.addServer().host(getContainerHost(CONTAINER_NAME)).port(getContainerPort(CONTAINER_NAME, 11222))
+        clientBuilder.addServer().host(service.host()).port(service.port())
                 .security().authentication().username("admin").password("password").serverName("infinispan")
                 .saslMechanism("DIGEST-MD5").realm("default").remoteCache("mycache").templateName(DefaultTemplate.DIST_SYNC);
 
         RemoteCacheManager remoteCacheManager = new RemoteCacheManager(clientBuilder.build());
         remoteCacheManager.getCache("mycache");
         return remoteCacheManager;
+    }
+
+    protected String getInfispanUrl() {
+        return service.getServiceAddress();
     }
 }

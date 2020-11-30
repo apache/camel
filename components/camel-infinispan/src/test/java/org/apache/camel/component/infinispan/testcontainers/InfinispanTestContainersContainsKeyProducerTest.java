@@ -64,11 +64,13 @@ public class InfinispanTestContainersContainsKeyProducerTest extends InfinispanT
             @Override
             public void configure() {
                 from("direct:put")
-                        .to("infinispan:mycache?hosts=" + getInfispanUrl()
-                            + "&operation=PUT&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan");
+                        .toF("infinispan:mycache?hosts=%s&operation=PUT&username=%s&password=%s&secure=true"
+                             + "&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan",
+                                getInfispanUrl(), service.username(), service.password());
                 from("direct:containsKey")
-                        .to("infinispan:mycache?hosts=" + getInfispanUrl()
-                            + "&operation=CONTAINSKEY&username=admin&password=password&secure=true&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan");
+                        .toF("infinispan:mycache?hosts=%s&operation=CONTAINSKEY&username=%s&password=%s&secure=true"
+                             + "&saslMechanism=RAW(DIGEST-MD5)&securityRealm=default&securityServerName=infinispan",
+                                getInfispanUrl(), service.username(), service.password());
             }
         };
     }

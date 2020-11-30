@@ -64,8 +64,8 @@ public class InfinispanTestContainersIdempotentRepositoryTest extends Infinispan
                                         new RemoteCacheManager(
                                                 new ConfigurationBuilder()
                                                         .addServers(getInfispanUrl())
-                                                        .security().authentication().username("admin")
-                                                        .password("password").realm("default")
+                                                        .security().authentication().username(service.username())
+                                                        .password(service.password()).realm("default")
                                                         .serverName("infinispan").saslMechanism("DIGEST-MD5")
                                                         .build(),
                                                 true),
