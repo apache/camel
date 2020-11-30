@@ -692,8 +692,8 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * If you wish to seek the offset a particular offset, you can set it
-         * here. This config will take precedence over seekTo config.
+         * Set if KafkaConsumer will read from a particular offset on startup.
+         * This config will take precedence over seekTo config.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 

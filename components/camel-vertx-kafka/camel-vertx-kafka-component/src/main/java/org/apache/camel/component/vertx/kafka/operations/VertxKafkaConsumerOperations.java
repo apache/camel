@@ -1,6 +1,5 @@
 package org.apache.camel.component.vertx.kafka.operations;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -36,7 +35,7 @@ public class VertxKafkaConsumerOperations {
             final Consumer<KafkaConsumerRecord<Object, Object>> recordHandler, final Consumer<Throwable> errorHandler) {
 
         if (ObjectHelper.isEmpty(configuration.getTopic())) {
-            throw new IllegalArgumentException("Topic, list of topics or topic pattern needs to be set in the topic config.");
+            throw new IllegalArgumentException("Topic or list of topics need to be set in the topic config.");
         }
 
         final TopicSubscription topicSubscription = new TopicSubscription(
@@ -46,36 +45,56 @@ public class VertxKafkaConsumerOperations {
         // register our record handler
         kafkaConsumer.handler(recordHandler::accept);
 
-        // once the consumer has assigned partitions, we will attempt to seek in case conditions met
-        // TODO: this is wrong, we seek only if we store our offsets, hence we need to change this to only see upon starting
-        seekOnPartitionAssignment(topicSubscription, errorHandler);
-
         if (ObjectHelper.isEmpty(topicSubscription.getPartitionId())) {
             // we subscribe to all partitions if the user does not specify any particular partition to consume from
-            subscribeToTopics(topicSubscription, errorHandler);
+            subscribe(topicSubscription, errorHandler);
         } else {
             // else we have to assign to particular partition manually
+            assign(topicSubscription, errorHandler);
         }
+    }
+
+    private void subscribe(
+            final TopicSubscription topicSubscription, final Consumer<Throwable> errorHandler) {
+        LOG.info("Subscribing to {} topics", topicSubscription.getConfiguredTopicName());
+        // once the consumer has assigned partitions on startup, we will attempt to seek, we just register the handler before
+        // since we use on assigment handler
+        seekOnPartitionAssignment(topicSubscription, errorHandler);
+
+        // for now support we support single topic, however we can add set of topics as well as pattern assignment
+        subscribeToTopics(topicSubscription.getTopics())
+                .subscribe((unused) -> {
+                }, errorHandler, () -> {
+                });
     }
 
     private void seekOnPartitionAssignment(
             final TopicSubscription topicSubscription, final Consumer<Throwable> errorHandler) {
-        // seek if we have either position or offset
-        if (ObjectHelper.isNotEmpty(topicSubscription.getSeekToOffset()) || ObjectHelper.isNotEmpty(topicSubscription.getSeekToPosition())) {
+        // seek if we have either position
+        if (isSeekToSet(topicSubscription)) {
             // once we have our partitions assigned, we start to seek
-            /*onPartitionAssignment()
+            onPartitionAssignment()
                     .flatMap(topicPartition -> seekToOffsetOrPositionInPartition(topicPartition, topicSubscription))
-                    .subscribe(result -> {}, errorHandler, () -> {});*/
+                    .subscribe(result -> {
+                    }, errorHandler, () -> LOG.info("Seeking partitions is done."));
         }
+    }
+
+    private boolean isSeekToSet(final TopicSubscription topicSubscription) {
+        return ObjectHelper.isNotEmpty(topicSubscription.getSeekToOffset())
+                || ObjectHelper.isNotEmpty(topicSubscription.getSeekToPosition());
     }
 
     private Flux<TopicPartition> onPartitionAssignment() {
         return Flux.create(sink -> kafkaConsumer.partitionsAssignedHandler(partitions -> {
             LOG.info("Partition {} is assigned to consumer", partitions);
             partitions.forEach(topicPartition -> {
-                LOG.info("Partition {} is assigned to consumer for topic {}", topicPartition.getPartition(), topicPartition.getTopic());
+                LOG.info("Partition {} is assigned to consumer for topic {}", topicPartition.getPartition(),
+                        topicPartition.getTopic());
                 sink.next(topicPartition);
             });
+            // make sure we complete all partitions so it only happens once
+            sink.complete();
         }));
     }
 
@@ -111,22 +130,35 @@ public class VertxKafkaConsumerOperations {
         }
     }
 
-    private void subscribeToTopics(
-            final TopicSubscription topicSubscription, final Consumer<Throwable> errorHandler) {
-        // for now support we support single topic, however we can add set of topics as well as pattern assignment
-        subscribeToTopics(Collections.singleton(topicSubscription.getTopicName()))
-                .onErrorResume(Mono::error)
-                .subscribe((unused) -> {}, errorHandler, () -> {});
+    private Mono<Void> subscribeToTopics(final Set<String> topics) {
+        return wrapToMono(kafkaConsumer::subscribe, topics);
     }
 
-    private Mono<Void> subscribeToTopics(final Set<String> topics) {
-        return Mono.create(sink -> kafkaConsumer.subscribe(topics, result -> {
-            if (result.failed()) {
-                sink.error(result.cause());
-            } else {
-                sink.success();
-            }
-        }));
+    private void assign(final TopicSubscription topicSubscription, final Consumer<Throwable> errorHandler) {
+        LOG.info("Assigning topics {} to partition {}", topicSubscription.getConfiguredTopicName(),
+                topicSubscription.getPartitionId());
+
+        assignToPartitions(topicSubscription.getTopicPartitions())
+                // once we have successfully assigned our partition, we proceed to seek in case we have conditions met
+                .then(seekPartitionsManually(topicSubscription))
+                .subscribe(unused -> {
+                }, errorHandler, () -> {
+                });
+    }
+
+    private Mono<Void> seekPartitionsManually(final TopicSubscription topicSubscription) {
+        // seek if we have either position
+        if (isSeekToSet(topicSubscription)) {
+            return Flux.fromIterable(topicSubscription.getTopicPartitions())
+                    .flatMap(topicPartition -> seekToOffsetOrPositionInPartition(topicPartition, topicSubscription))
+                    .doOnComplete(() -> LOG.info("Seeking partitions is done."))
+                    .then();
+        }
+        return Mono.empty();
+    }
+
+    private Mono<Void> assignToPartitions(final Set<TopicPartition> topicPartitions) {
+        return wrapToMono(kafkaConsumer::assign, topicPartitions);
     }
 
     private <R> Mono<R> wrapResultToMono(final Consumer<Handler<R>> fn) {
@@ -141,7 +173,8 @@ public class VertxKafkaConsumerOperations {
         return Mono.create(sink -> fn.accept(input, result -> wrapAsyncResult(sink, result)));
     }
 
-    private <R, V1, V2> Mono<R> wrapToMono(final TriConsumer<V1, V2, Handler<AsyncResult<R>>> fn, final V1 input1, final V2 input2) {
+    private <R, V1, V2> Mono<R> wrapToMono(
+            final TriConsumer<V1, V2, Handler<AsyncResult<R>>> fn, final V1 input1, final V2 input2) {
         return Mono.create(sink -> fn.accept(input1, input2, result -> wrapAsyncResult(sink, result)));
     }
 

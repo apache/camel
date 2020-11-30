@@ -18,6 +18,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
@@ -54,14 +55,17 @@ class VertxKafkaConsumerOperationsTest {
     }
 
     @Test
+    @Disabled
     void play() throws InterruptedException {
-        configuration.setTopic("test_topic");
+        configuration.setTopic("test_topic,test");
         configuration.setBootstrapServers("localhost:9092");
-        configuration.setGroupId("test-03");
+        configuration.setGroupId("test-07");
         configuration.setSeekToOffset(15L);
+        //configuration.setPartitionId(1);
+        //configuration.setAutoOffsetReset("earliest");
 
-
-        final VertxKafkaConsumerOperations operations = new VertxKafkaConsumerOperations(KafkaConsumer.create(Vertx.vertx(), configuration.createConsumerConfiguration()), configuration);
+        final VertxKafkaConsumerOperations operations = new VertxKafkaConsumerOperations(
+                KafkaConsumer.create(Vertx.vertx(), configuration.createConsumerConfiguration()), configuration);
 
         operations.receiveEvents(record -> {
             System.out.println(record);

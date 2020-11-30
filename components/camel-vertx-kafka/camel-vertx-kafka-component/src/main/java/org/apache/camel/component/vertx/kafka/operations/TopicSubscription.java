@@ -1,15 +1,21 @@
 package org.apache.camel.component.vertx.kafka.operations;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import io.vertx.kafka.client.common.TopicPartition;
 import org.apache.camel.util.ObjectHelper;
 
 public class TopicSubscription {
-    private final String topicName;
+    private final String configuredTopicName;
     private final Integer partitionId;
     private final Long seekToOffset;
     private final OffsetPosition seekToPosition;
 
-    public TopicSubscription(String topicName, Integer partitionId, Long seekToOffset, String seekToPosition) {
-        this.topicName = topicName;
+    public TopicSubscription(String configuredTopicName, Integer partitionId, Long seekToOffset, String seekToPosition) {
+        this.configuredTopicName = configuredTopicName;
         this.partitionId = partitionId;
         this.seekToOffset = seekToOffset;
 
@@ -22,8 +28,12 @@ public class TopicSubscription {
         }
     }
 
-    public String getTopicName() {
-        return topicName;
+    public String getConfiguredTopicName() {
+        return configuredTopicName;
+    }
+
+    public Set<String> getTopics() {
+        return new HashSet<>(Arrays.asList(configuredTopicName.split(",")));
     }
 
     public Integer getPartitionId() {
@@ -36,6 +46,13 @@ public class TopicSubscription {
 
     public OffsetPosition getSeekToPosition() {
         return seekToPosition;
+    }
+
+    public Set<TopicPartition> getTopicPartitions() {
+        return getTopics()
+                .stream()
+                .map(topic -> new TopicPartition().setPartition(partitionId).setTopic(topic))
+                .collect(Collectors.toSet());
     }
 
     public enum OffsetPosition {

@@ -968,8 +968,8 @@ public class VertxKafkaConfiguration {
     }
 
     /**
-     * If you wish to seek the offset a particular offset, you can set it here.
-     * This config will take precedence over seekTo config
+     * Set if KafkaConsumer will read from a particular offset on startup. This
+     * config will take precedence over seekTo config
      */
     public void setSeekToOffset(Long seekToOffset) {
         this.seekToOffset = seekToOffset;

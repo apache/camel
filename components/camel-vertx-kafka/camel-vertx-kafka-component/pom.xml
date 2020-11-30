@@ -149,7 +149,7 @@
                         <seek.to.offset>
                             <name>seek.to.offset</name>
                             <type>LONG</type>
-                            <documentation>If you wish to seek the offset a particular offset, you can set it here. This config will take precedence over seekTo config</documentation>
+                            <documentation>Set if KafkaConsumer will read from a particular offset on startup. This config will take precedence over seekTo config</documentation>
                         </seek.to.offset>
                     </additionalConsumerConfigs>
                     <overriddenDefaultValues>
