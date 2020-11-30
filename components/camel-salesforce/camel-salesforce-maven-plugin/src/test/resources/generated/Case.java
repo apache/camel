@@ -76,6 +76,19 @@ public class Case extends AbstractDescribedSObjectBase {
         this.PickListQuotationMark = PickListQuotationMark;
     }
 
+    @XStreamConverter(PicklistEnumConverter.class)
+    private Case_PickListValueOverrideEnum PickListValueOverride;
+
+    @JsonProperty("PickListValueOverride")
+    public Case_PickListValueOverrideEnum getPickListValueOverride() {
+        return this.PickListValueOverride;
+    }
+
+    @JsonProperty("PickListValueOverride")
+    public void setPickListValueOverride(Case_PickListValueOverrideEnum PickListValueOverride) {
+        this.PickListValueOverride = PickListValueOverride;
+    }
+
  
     @Override
     public final SObjectDescription description() {
@@ -104,6 +117,8 @@ public class Case extends AbstractDescribedSObjectBase {
         fields1.add(sObjectField2);
         final SObjectField sObjectField3 = createField("PickListQuotationMark", "QuotationMark", "picklist", "xsd:string", 255, false, true, false, false, true, false, false);
         fields1.add(sObjectField3);
+        final SObjectField sObjectField4 = createField("PickListValueOverride", "ValueOverride", "picklist", "xsd:string", 255, false, true, false, false, true, false, false);
+        fields1.add(sObjectField4);
 
         description.setKeyPrefix("500");
         description.setLabel("Caso");

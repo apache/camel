@@ -190,6 +190,57 @@
             "highScaleNumber": false,
             "queryByDistance": false,
             "encrypted": false
+        },
+        {
+            "length": 255,
+            "name": "PickListValueOverride",
+            "type": "picklist",
+            "label": "ValueOverride",
+            "updateable": true,
+            "calculated": false,
+            "caseSensitive": false,
+            "unique": false,
+            "nillable": true,
+            "precision": 0,
+            "scale": 0,
+            "byteLength": 765,
+            "nameField": false,
+            "sortable": true,
+            "filterable": true,
+            "writeRequiresMasterRead": false,
+            "externalId": false,
+            "idLookup": false,
+            "inlineHelpText": "",
+            "createable": true,
+            "soapType": "xsd:string",
+            "autoNumber": false,
+            "restrictedPicklist": false,
+            "namePointing": false,
+            "custom": true,
+            "defaultedOnCreate": false,
+            "deprecatedAndHidden": false,
+            "htmlFormatted": false,
+            "picklistValues": [
+                {
+                    "value": "A+",
+                    "label": "A+",
+                    "active": true,
+                    "defaultValue": false
+                }
+            ],
+            "dependentPicklist": false,
+            "referenceTo": [
+
+            ],
+            "cascadeDelete": false,
+            "restrictedDelete": false,
+            "digits": "0",
+            "groupable": true,
+            "permissionable": true,
+            "displayLocationInDecimal": false,
+            "highScaleNumber": false,
+            "queryByDistance": false,
+            "encrypted": false
         }
     ]
 }

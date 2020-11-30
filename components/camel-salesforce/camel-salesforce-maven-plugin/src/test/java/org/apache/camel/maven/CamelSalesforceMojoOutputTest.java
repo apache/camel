@@ -78,6 +78,8 @@ public class CamelSalesforceMojoOutputTest {
 
         mojo.descriptions = new ObjectDescriptions(client, 0, null, null, null, null, mojo.getLog());
 
+        mojo.enumerationOverrideProperties.put("Case.PickListValueOverride.A+", "APlus");
+
         Set<String> sObjectNames = StreamSupport.stream(mojo.descriptions.fetched().spliterator(), false)
                 .map(SObjectDescription::getName).collect(Collectors.toSet());
 
@@ -102,7 +104,8 @@ public class CamelSalesforceMojoOutputTest {
         return Arrays.asList(testCase(TEST_CASE_FILE, "Case.java"),
                 testCase(TEST_CASE_FILE, "Case_PickListAccentMarkEnum.java"),
                 testCase(TEST_CASE_FILE, "Case_PickListQuotationMarkEnum.java"),
-                testCase(TEST_CASE_FILE, "Case_PickListSlashEnum.java"), //
+                testCase(TEST_CASE_FILE, "Case_PickListSlashEnum.java"),
+                testCase(TEST_CASE_FILE, "Case_PickListValueOverrideEnum.java"),
                 testCase(TEST_CASE_FILE, "QueryRecordsCase.java"),
                 testCase(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
                 testCase(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"),
