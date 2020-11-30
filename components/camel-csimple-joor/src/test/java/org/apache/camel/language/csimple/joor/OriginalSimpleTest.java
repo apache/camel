@@ -489,8 +489,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
         exchange.setProperty("wicket", lines);
 
-        assertExpression("${exchangePropertyAs(wicket, List)[0].getId}", 123);
-        assertExpression("${exchangePropertyAs(wicket, List)[1].getName}", "ActiveMQ in Action");
+        assertExpression("${exchangePropertyAsIndex(wicket, OrderLine, '0').getId}", 123);
+        assertExpression("${exchangePropertyAsIndex(wicket, OrderLine, '1').getName}", "ActiveMQ in Action");
+
+        assertExpression("${exchangePropertyAs(wicket, OrderLine)[0].getId}", 123);
+        assertExpression("${exchangePropertyAs(wicket, OrderLine)[1].getName}", "ActiveMQ in Action");
         try {
             assertExpression("${exchangeProperty.wicket[2]}", "");
             fail("Should have thrown an exception");
@@ -989,8 +992,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         lines.add(new OrderLine(456, "ActiveMQ in Action"));
         exchange.getIn().setHeader("wicket", lines);
 
-        assertExpression("${header.wicket[0].getId}", 123);
-        assertExpression("${header.wicket[1].getName}", "ActiveMQ in Action");
+        assertExpression("${headerAsIndex(wicket, OrderLine, 0).getId}", 123);
+        assertExpression("${headerAsIndex(wicket, OrderLine, 1).getName}", "ActiveMQ in Action");
         try {
             assertExpression("${header.wicket[2]}", "");
             fail("Should have thrown an exception");
