@@ -17,6 +17,7 @@
 package org.apache.camel.language.simple.ast;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -643,22 +644,35 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (remainder.startsWith("[") && remainder.endsWith("]")) {
                 remainder = remainder.substring(1, remainder.length() - 1);
             }
+            // remove quotes from key
+            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
+            key = key.trim();
 
             // validate syntax
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(key);
             if (invalid) {
-                // must use exchangePropertyAs as we need to be typed
                 throw new SimpleParserException(
-                        "Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: " + function, token.getIndex());
+                        "Valid syntax: ${exchangeProperty.name[key]} was: " + function, token.getIndex());
             }
 
-            if (OgnlHelper.isValidOgnlExpression(remainder)) {
-                // must use exchangePropertyAs as we need to be typed
+            // it is an index?
+            String index = null;
+            if (key.endsWith("]")) {
+                index = StringHelper.between(key, "[", "]");
+                if (index != null) {
+                    key = StringHelper.before(key, "[");
+                }
+            }
+            if (index != null) {
+                index = StringHelper.removeLeadingAndEndingQuotes(index);
+                return "exchangePropertyAsIndex(exchange, Object.class, \"" + key + "\", \"" + index + "\")";
+            } else if (OgnlHelper.isValidOgnlExpression(remainder)) {
+                // ognl based exchange property must be typed
                 throw new SimpleParserException(
-                        "Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: " + function, token.getIndex());
+                        "Valid syntax: ${exchangePropertyAs(key, type)} was: " + function, token.getIndex());
             } else {
                 // regular property
-                return "exchangeProperty(exchange, \"" + remainder + "\")";
+                return "exchangeProperty(exchange, \"" + key + "\")";
             }
         }
 
@@ -849,7 +863,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
-    private String createCodeBodyOrHeader(String function) {
+    private String createCodeBodyOrHeader(final String function) {
         // bodyAsIndex
         String remainder = ifStartsWithReturnRemainder("bodyAsIndex(", function);
         if (remainder != null) {
@@ -905,22 +919,58 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (invalid) {
                     throw new SimpleParserException("Valid syntax: ${bodyAs(type).OGNL} was: " + function, token.getIndex());
                 }
-                // it is an index?
-                String index = null;
-                String after = null;
                 if (remainder.startsWith("[")) {
-                    // the OGNL starts with an index so lets use bodyAsIndex
-                    index = StringHelper.between(remainder, "[", "]");
-                    after = StringHelper.after(remainder, "]");
+                    // is there any index, then we should use bodyAsIndex function instead
+                    // (use splitOgnl which assembles multiple indexes into a single part)
+                    List<String> parts = splitOgnl(remainder);
+                    if (!parts.isEmpty()) {
+                        String func = "bodyAsIndex(" + type + ", \"" + parts.remove(0) + "\")";
+                        String last = String.join("", parts);
+                        if (!last.isEmpty()) {
+                            func += "." + last;
+                        }
+                        return createCodeBodyOrHeader(func);
+                    }
                 }
-                if (index != null) {
-                    index = StringHelper.removeLeadingAndEndingQuotes(index);
-                    return "bodyAsIndex(message, " + type + ", \"" + index + "\")" + ognlCodeMethods(after, type);
-                } else {
-                    return "bodyAs(message, " + type + ")" + ognlCodeMethods(remainder, type);
-                }
+                return "bodyAs(message, " + type + ")" + ognlCodeMethods(remainder, type);
             } else {
                 return "bodyAs(message, " + type + ")";
+            }
+        }
+
+        // mandatoryBodyAsIndex
+        remainder = ifStartsWithReturnRemainder("mandatoryBodyAsIndex(", function);
+        if (remainder != null) {
+            String typeAndIndex = StringHelper.before(remainder, ")");
+            if (typeAndIndex == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mandatoryBodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
+            }
+
+            String type = StringHelper.before(typeAndIndex, ",");
+            String index = StringHelper.after(typeAndIndex, ",");
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isEmpty(type) || ObjectHelper.isEmpty(index)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${mandatoryBodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
+            }
+            type = StringHelper.removeQuotes(type);
+            type = type.trim();
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.replace('$', '.');
+            index = StringHelper.removeQuotes(index);
+            index = index.trim();
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${mandatoryBodyAsIndex(type, index).OGNL} was: " + function, token.getIndex());
+                }
+                return "mandatoryBodyAsIndex(message, " + type + ", \"" + index + "\")" + ognlCodeMethods(remainder, type);
+            } else {
+                return "mandatoryBodyAsIndex(message, " + type + ", \"" + index + "\")";
             }
         }
 
@@ -939,11 +989,23 @@ public class SimpleFunctionExpression extends LiteralExpression {
             type = type.trim();
             remainder = StringHelper.after(remainder, ")");
             if (ObjectHelper.isNotEmpty(remainder)) {
-                // TODO: mandatoryBodyAsIndex
                 boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
                 if (invalid) {
                     throw new SimpleParserException(
                             "Valid syntax: ${mandatoryBodyAs(type).OGNL} was: " + function, token.getIndex());
+                }
+                if (remainder.startsWith("[")) {
+                    // is there any index, then we should use mandatoryBodyAsIndex function instead
+                    // (use splitOgnl which assembles multiple indexes into a single part)
+                    List<String> parts = splitOgnl(remainder);
+                    if (!parts.isEmpty()) {
+                        String func = "mandatoryBodyAsIndex(" + type + ", \"" + parts.remove(0) + "\")";
+                        String last = String.join("", parts);
+                        if (!last.isEmpty()) {
+                            func += "." + last;
+                        }
+                        return createCodeBodyOrHeader(func);
+                    }
                 }
                 return "mandatoryBodyAs(message, " + type + ")" + ognlCodeMethods(remainder, type);
             } else {
@@ -963,12 +1025,20 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${body.OGNL} was: " + function, token.getIndex());
             }
-            String answer = ognlCodeMethods(remainder, null);
-            if (answer.startsWith("body")) {
-                return answer;
-            } else {
-                return "body" + answer;
+            if (remainder.startsWith("[")) {
+                // is there any index, then we should use bodyAsIndex function instead
+                // (use splitOgnl which assembles multiple indexes into a single part)
+                List<String> parts = splitOgnl(remainder);
+                if (!parts.isEmpty()) {
+                    String func = "bodyAsIndex(Object.class, \"" + parts.remove(0) + "\")";
+                    String last = String.join("", parts);
+                    if (!last.isEmpty()) {
+                        func += "." + last;
+                    }
+                    return createCodeBodyOrHeader(func);
+                }
             }
+            return "body" + ognlCodeMethods(remainder, null);
         }
 
         // headerAs
@@ -1030,8 +1100,17 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${header.name[key]} was: " + function, token.getIndex());
             }
-
-            if (OgnlHelper.isValidOgnlExpression(key)) {
+            // it is an index?
+            String index = null;
+            if (key.endsWith("]")) {
+                index = StringHelper.between(key, "[", "]");
+                if (index != null) {
+                    key = StringHelper.before(key, "[");
+                }
+            }
+            if (index != null) {
+                return "headerAsIndex(message, Object.class, \"" + key + "\", \"" + index + "\")";
+            } else if (OgnlHelper.isValidOgnlExpression(key)) {
                 // ognl based header must be typed
                 throw new SimpleParserException("Valid syntax: ${headerAs(key, type)} was: " + function, token.getIndex());
             } else {
@@ -1139,11 +1218,37 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
+    private static List<String> splitOgnl(String remainder) {
+        List<String> methods = OgnlHelper.splitOgnl(remainder);
+        // if its a double index [foo][0] then we want them combined into a single element
+        List<String> answer = new ArrayList<>();
+        for (String m : methods) {
+            if (m.startsWith(".")) {
+                m = m.substring(1);
+            }
+            boolean index = m.startsWith("[") && m.endsWith("]");
+            if (index) {
+                String last = answer.isEmpty() ? null : answer.get(answer.size() - 1);
+                boolean lastIndex = last != null && last.startsWith("[") && last.endsWith("]");
+                if (lastIndex) {
+                    String line = last + m;
+                    answer.set(answer.size() - 1, line);
+                } else {
+                    answer.add(m);
+                }
+            } else {
+                answer.add(m);
+            }
+        }
+
+        return answer;
+    }
+
     private static String ognlCodeMethods(String remainder, String type) {
         StringBuilder sb = new StringBuilder();
 
         if (remainder != null) {
-            List<String> methods = OgnlHelper.splitOgnl(remainder);
+            List<String> methods = splitOgnl(remainder);
             for (int i = 0; i < methods.size(); i++) {
                 String m = methods.get(i);
                 if (m.startsWith("(")) {
@@ -1151,12 +1256,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     sb.append(m);
                     continue;
                 }
-                if (m.startsWith(".")) {
-                    m = m.substring(1);
-                }
 
                 // clip index
-                String index = StringHelper.between(m, "[", "]");
+                String index = StringHelper.betweenOuterPair(m, '[', ']');
                 if (index != null) {
                     m = StringHelper.before(m, "[");
                 }
@@ -1182,18 +1284,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
                 // append index via a get method - eg get for a list, or get for a map (array not supported)
                 if (index != null) {
-                    // if there was no method then its direct on the body, so use bodyAsIndex instead of get
-                    if (m == null || m.isEmpty()) {
-                        sb.append("bodyAsIndex(message, ");
-                        if (type != null) {
-                            sb.append(type);
-                        } else {
-                            sb.append("Object.class");
-                        }
-                        sb.append(", ");
-                    } else {
-                        sb.append(".get(");
-                    }
+                    sb.append(".get(");
                     try {
                         long lon = Long.parseLong(index);
                         sb.append(lon);

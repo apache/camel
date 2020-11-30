@@ -49,6 +49,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -82,37 +83,32 @@ public final class CSimpleHelper {
     }
 
     public static <T> T bodyAsIndex(Message message, Class<T> type, String key) {
-        // TODO: array
-        // TODO: key can have multiple elements [0][foo] or [0][0]
-        Object body = message.getBody();
-        if (body instanceof Map) {
-            Map map = (Map) body;
-            body = map.get(key);
-        } else if (body instanceof List) {
-            List list = (List) body;
-            Integer num;
-            if (key.startsWith("last")) {
-                num = list.size() - 1;
-
-                // maybe its an expression to subtract a number after last
-                String after = StringHelper.after(key, "-");
-                if (after != null) {
-                    Integer redux
-                            = message.getExchange().getContext().getTypeConverter().tryConvertTo(Integer.class, after.trim());
-                    if (redux != null) {
-                        num -= redux;
-                    } else {
-                        throw new ExpressionIllegalSyntaxException(key);
-                    }
-                }
-            } else {
-                num = message.getExchange().getContext().getTypeConverter().tryConvertTo(Integer.class, key);
+        Object obj = message.getBody();
+        // the key may contain multiple keys ([0][foo]) so we need to walk these keys
+        List<String> keys = OgnlHelper.splitOgnl(key);
+        for (String k : keys) {
+            if (k.startsWith("[") && k.endsWith("]")) {
+                k = StringHelper.between(k, "[", "]");
             }
-            if (num != null && num >= 0 && !list.isEmpty() && list.size() > num - 1) {
-                body = list.get(num);
-            }
+            obj = doObjectAsIndex(message.getExchange().getContext(), obj, k);
         }
-        return type.cast(body);
+        return type.cast(obj);
+    }
+
+    public static <T> T mandatoryBodyAsIndex(Message message, Class<T> type, int key) throws InvalidPayloadException {
+        T out = bodyAsIndex(message, type, "" + key);
+        if (out == null) {
+            throw new InvalidPayloadException(message.getExchange(), type, message);
+        }
+        return out;
+    }
+
+    public static <T> T mandatoryBodyAsIndex(Message message, Class<T> type, String key) throws InvalidPayloadException {
+        T out = bodyAsIndex(message, type, key);
+        if (out == null) {
+            throw new InvalidPayloadException(message.getExchange(), type, message);
+        }
+        return out;
     }
 
     public static Object header(Message message, String name) {
@@ -123,12 +119,38 @@ public final class CSimpleHelper {
         return message.getHeader(name, type);
     }
 
+    public static <T> T headerAsIndex(Message message, Class<T> type, String name, String key) {
+        Object obj = message.getHeader(name);
+        // the key may contain multiple keys ([0][foo]) so we need to walk these keys
+        List<String> keys = OgnlHelper.splitOgnl(key);
+        for (String k : keys) {
+            if (k.startsWith("[") && k.endsWith("]")) {
+                k = StringHelper.between(k, "[", "]");
+            }
+            obj = doObjectAsIndex(message.getExchange().getContext(), obj, k);
+        }
+        return type.cast(obj);
+    }
+
     public static Object exchangeProperty(Exchange exchange, String name) {
         return exchange.getProperty(name);
     }
 
     public static <T> T exchangePropertyAs(Exchange exchange, String name, Class<T> type) {
         return exchange.getProperty(name, type);
+    }
+
+    public static <T> T exchangePropertyAsIndex(Exchange exchange, Class<T> type, String name, String key) {
+        Object obj = exchange.getProperty(name);
+        // the key may contain multiple keys ([0][foo]) so we need to walk these keys
+        List<String> keys = OgnlHelper.splitOgnl(key);
+        for (String k : keys) {
+            if (k.startsWith("[") && k.endsWith("]")) {
+                k = StringHelper.between(k, "[", "]");
+            }
+            obj = doObjectAsIndex(exchange.getContext(), obj, k);
+        }
+        return type.cast(obj);
     }
 
     public static String bodyOneLine(Exchange exchange) {
@@ -630,6 +652,37 @@ public final class CSimpleHelper {
 
     public static boolean is(Exchange exchange, Object leftValue, Class<?> type) {
         return type.isInstance(leftValue);
+    }
+
+    private static Object doObjectAsIndex(CamelContext context, Object obj, String key) {
+        if (obj instanceof Map) {
+            Map map = (Map) obj;
+            obj = map.get(key);
+        } else if (obj instanceof List) {
+            List list = (List) obj;
+            Integer num;
+            if (key.startsWith("last")) {
+                num = list.size() - 1;
+
+                // maybe its an expression to subtract a number after last
+                String after = StringHelper.after(key, "-");
+                if (after != null) {
+                    Integer redux
+                            = context.getTypeConverter().tryConvertTo(Integer.class, after.trim());
+                    if (redux != null) {
+                        num -= redux;
+                    } else {
+                        throw new ExpressionIllegalSyntaxException(key);
+                    }
+                }
+            } else {
+                num = context.getTypeConverter().tryConvertTo(Integer.class, key);
+            }
+            if (num != null && num >= 0 && !list.isEmpty() && list.size() > num - 1) {
+                obj = list.get(num);
+            }
+        }
+        return obj;
     }
 
 }

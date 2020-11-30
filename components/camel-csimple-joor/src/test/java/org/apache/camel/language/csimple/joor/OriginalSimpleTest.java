@@ -406,23 +406,56 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testOGNLBodyListAndMapAndMethod() throws Exception {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, OrderLine> map = new HashMap<>();
         map.put("camel", new OrderLine(123, "Camel in Action"));
         map.put("amq", new OrderLine(456, "ActiveMQ in Action"));
 
-        List<Map<String, Object>> lines = new ArrayList<>();
+        List<Map<String, OrderLine>> lines = new ArrayList<>();
         lines.add(map);
 
         exchange.getIn().setBody(lines);
 
-        assertExpression("${in.body[0][camel].id}", 123);
-        assertExpression("${in.body[0][camel].name}", "Camel in Action");
-        assertExpression("${in.body[0][camel].getId}", 123);
-        assertExpression("${in.body[0][camel].getName}", "Camel in Action");
-        assertExpression("${body[0][camel].id}", 123);
-        assertExpression("${body[0][camel].name}", "Camel in Action");
-        assertExpression("${body[0][camel].getId}", 123);
-        assertExpression("${body[0][camel].getName}", "Camel in Action");
+        assertExpression("${bodyAsIndex(OrderLine, '[0][camel]').id}", 123);
+        assertExpression("${bodyAsIndex(OrderLine, '[0][camel]').name}", "Camel in Action");
+        assertExpression("${bodyAsIndex(OrderLine, '[0][camel]').getId}", 123);
+        assertExpression("${bodyAsIndex(OrderLine, '[0][camel]').getName}", "Camel in Action");
+
+        assertExpression("${bodyAs(OrderLine)[0][camel].id}", 123);
+        assertExpression("${bodyAs(OrderLine)[0][camel].name}", "Camel in Action");
+        assertExpression("${bodyAs(OrderLine)[0][camel].getId}", 123);
+        assertExpression("${bodyAs(OrderLine)[0][camel].getName}", "Camel in Action");
+    }
+
+    @Test
+    public void testOGNLMandatoryBodyListAndMapAndMethod() throws Exception {
+        Map<String, OrderLine> map = new HashMap<>();
+        map.put("camel", new OrderLine(123, "Camel in Action"));
+        map.put("amq", new OrderLine(456, "ActiveMQ in Action"));
+        map.put("noname", new OrderLine(789, null));
+
+        List<Map<String, OrderLine>> lines = new ArrayList<>();
+        lines.add(map);
+
+        exchange.getIn().setBody(lines);
+
+        assertExpression("${mandatoryBodyAsIndex(OrderLine, '[0][camel]').id}", 123);
+        assertExpression("${mandatoryBodyAsIndex(OrderLine, '[0][camel]').name}", "Camel in Action");
+        assertExpression("${mandatoryBodyAsIndex(OrderLine, '[0][camel]').getId}", 123);
+        assertExpression("${mandatoryBodyAsIndex(OrderLine, '[0][camel]').getName}", "Camel in Action");
+
+        assertExpression("${mandatoryBodyAsIndex(OrderLine, '[0][noname]').getId}", 789);
+        assertExpression("${mandatoryBodyAsIndex(OrderLine, '[0][noname]').getName}", null);
+        try {
+            assertExpression("${mandatoryBodyAsIndex(OrderLine, '[0][doesnotexists]').getName}", null);
+            fail("Should throw exception");
+        } catch (Exception e) {
+            assertIsInstanceOf(InvalidPayloadException.class, e.getCause());
+        }
+
+        assertExpression("${mandatoryBodyAs(OrderLine)[0][camel].id}", 123);
+        assertExpression("${mandatoryBodyAs(OrderLine)[0][camel].name}", "Camel in Action");
+        assertExpression("${mandatoryBodyAs(OrderLine)[0][camel].getId}", 123);
+        assertExpression("${mandatoryBodyAs(OrderLine)[0][camel].getName}", "Camel in Action");
     }
 
     @Test
@@ -517,14 +550,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testOGNLPropertyMapNotMap() throws Exception {
-        try {
-            assertExpression("${exchangeProperty.foobar[bar]}", null);
-            fail("Should have thrown an exception");
-        } catch (RuntimeBeanExpressionException e) {
-            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Key: bar not found in bean: cba of type: java.lang.String using OGNL path [[bar]]",
-                    cause.getMessage());
-        }
+        assertExpression("${exchangeProperty.foobar[bar]}", null);
     }
 
     @Test
@@ -565,12 +591,12 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertPredicate("${header.beer} == \" \"", true);
         assertPredicate("${header.beer} == \" \"", true);
 
-        assertPredicate("${header.beer.toString().trim()} == \"\"", true);
-        assertPredicate("${header.beer.toString().trim()} == \"\"", true);
+        assertPredicate("${headerAs(beer, String).toString().trim()} == \"\"", true);
+        assertPredicate("${headerAs(beer, String).toString().trim()} == \"\"", true);
 
         exchange.getIn().setHeader("beer", "   ");
-        assertPredicate("${header.beer.trim()} == \"\"", true);
-        assertPredicate("${header.beer.trim()} == \"\"", true);
+        assertPredicate("${headerAs(beer, String).trim()} == \"\"", true);
+        assertPredicate("${headerAs(beer, String).trim()} == \"\"", true);
     }
 
     @Test
@@ -1073,7 +1099,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT,
                 new CamelAuthorizationException("The camel authorization exception", exchange));
 
-        assertExpression("${exception.getPolicyId}", "myPolicy");
+        assertExpression("${exceptionAs(org.apache.camel.CamelAuthorizationException).getPolicyId}", "myPolicy");
     }
 
     @Test
