@@ -14,15 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.minio.integration;
 
-import org.apache.camel.test.infra.minio.services.MinioService;
-import org.apache.camel.test.infra.minio.services.MinioServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+package org.apache.camel.test.infra.minio.common;
 
-class MinioTestContainerSupport extends CamelTestSupport {
-    @RegisterExtension
-    static MinioService service = MinioServiceFactory.createService();
+public final class MinioProperties {
+    public static final String ACCESS_KEY = "minio.access.key";
+    public static final String SECRET_KEY = "minio.secret.key";
+    public static final String USERNAME = "minio.access.username";
+    public static final String SERVICE_HOST = "minio.service.host";
+    public static final String SERVICE_PORT = "minio.service.port";
+    public static final int DEFAULT_SERVICE_PORT = 9000;
 
+    private MinioProperties() {
+
+    }
 }

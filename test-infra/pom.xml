@@ -58,5 +58,6 @@
         <module>camel-test-infra-etcd</module>
         <module>camel-test-infra-hbase</module>
         <module>camel-test-infra-infinispan</module>
+        <module>camel-test-infra-minio</module>
     </modules>
 </project>
