@@ -40,8 +40,8 @@ class MinioListObjectsOperationTest extends MinioTestContainerSupport {
 
     @BindToRegistry("minioClient")
     MinioClient client = MinioClient.builder()
-            .endpoint("http://" + CONTAINER.getHost(), CONTAINER.getMappedPort(BROKER_PORT), false)
-            .credentials(ACCESS_KEY, SECRET_KEY)
+            .endpoint("http://" + service.host(), service.port(), false)
+            .credentials(service.accessKey(), service.secretKey())
             .build();
 
     @EndpointInject
