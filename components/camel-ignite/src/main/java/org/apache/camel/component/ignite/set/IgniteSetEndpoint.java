@@ -28,7 +28,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
 import org.apache.ignite.configuration.CollectionConfiguration;
 
@@ -56,12 +55,10 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
         super(endpointUri, igniteComponent);
         name = remaining;
 
-        ObjectHelper.notNull(name, "Set name");
-
         // Set the configuration values.
         if (!parameters.containsKey("configuration")) {
             Map<String, Object> configProps = PropertiesHelper.extractProperties(parameters, "config.");
-            PropertyBindingSupport.bindProperties(this.getCamelContext(), configProps, parameters);
+            PropertyBindingSupport.bindProperties(this.getCamelContext(), parameters, configProps);
         }
     }
 
