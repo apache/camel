@@ -213,8 +213,16 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "valueDeserializer": getOrCreateConfiguration(target).setValueDeserializer(property(camelContext, java.lang.String.class, value)); return true;
         case "valueserializer":
         case "valueSerializer": getOrCreateConfiguration(target).setValueSerializer(property(camelContext, java.lang.String.class, value)); return true;
+        case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
+        case "vertxoptions":
+        case "vertxOptions": target.setVertxOptions(property(camelContext, io.vertx.core.VertxOptions.class, value)); return true;
         default: return false;
         }
+    }
+
+    @Override
+    public String[] getAutowiredNames() {
+        return new String[]{"vertx"};
     }
 
     @Override
@@ -405,6 +413,9 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "valueDeserializer": return java.lang.String.class;
         case "valueserializer":
         case "valueSerializer": return java.lang.String.class;
+        case "vertx": return io.vertx.core.Vertx.class;
+        case "vertxoptions":
+        case "vertxOptions": return io.vertx.core.VertxOptions.class;
         default: return null;
         }
     }
@@ -598,6 +609,9 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "valueDeserializer": return getOrCreateConfiguration(target).getValueDeserializer();
         case "valueserializer":
         case "valueSerializer": return getOrCreateConfiguration(target).getValueSerializer();
+        case "vertx": return target.getVertx();
+        case "vertxoptions":
+        case "vertxOptions": return target.getVertxOptions();
         default: return null;
         }
     }

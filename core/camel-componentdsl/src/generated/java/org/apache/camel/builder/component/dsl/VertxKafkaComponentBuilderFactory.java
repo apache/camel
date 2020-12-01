@@ -1122,6 +1122,29 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * To use an existing vertx instead of creating a new instance.
+         * 
+         * The option is a: <code>io.vertx.core.Vertx</code> type.
+         * 
+         * Group: advanced
+         */
+        default VertxKafkaComponentBuilder vertx(io.vertx.core.Vertx vertx) {
+            doSetProperty("vertx", vertx);
+            return this;
+        }
+        /**
+         * To provide a custom set of vertx options for configuring vertx.
+         * 
+         * The option is a: <code>io.vertx.core.VertxOptions</code> type.
+         * 
+         * Group: advanced
+         */
+        default VertxKafkaComponentBuilder vertxOptions(
+                io.vertx.core.VertxOptions vertxOptions) {
+            doSetProperty("vertxOptions", vertxOptions);
+            return this;
+        }
+        /**
          * The fully qualified name of a SASL client callback handler class that
          * implements the AuthenticateCallbackHandler interface.
          * 
@@ -1687,6 +1710,8 @@ public interface VertxKafkaComponentBuilderFactory {
             case "transactionTimeoutMs": getOrCreateConfiguration((VertxKafkaComponent) component).setTransactionTimeoutMs((int) value); return true;
             case "valueSerializer": getOrCreateConfiguration((VertxKafkaComponent) component).setValueSerializer((java.lang.String) value); return true;
             case "autowiredEnabled": ((VertxKafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "vertx": ((VertxKafkaComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
+            case "vertxOptions": ((VertxKafkaComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
             case "saslClientCallbackHandlerClass": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslClientCallbackHandlerClass((java.lang.String) value); return true;
             case "saslJaasConfig": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslJaasConfig((java.lang.String) value); return true;
             case "saslKerberosKinitCmd": getOrCreateConfiguration((VertxKafkaComponent) component).setSaslKerberosKinitCmd((java.lang.String) value); return true;
