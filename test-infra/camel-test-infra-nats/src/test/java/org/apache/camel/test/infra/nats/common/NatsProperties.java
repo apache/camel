@@ -14,23 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.test.infra.nats.services.NatsLocalContainerAuthTokenService;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+package org.apache.camel.test.infra.nats.common;
 
-public class NatsAuthTokenTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    static NatsLocalContainerAuthTokenService service = new NatsLocalContainerAuthTokenService();
+public final class NatsProperties {
+    public static final String SERVICE_ADDRESS = "nat.service.address";
+    public static final String ACCESS_USERNAME = "nats.access.username";
+    public static final String ACCESS_PASSWORD = "nats.access.password";
+    public static final String ACCESS_TOKEN = "nats.access.token";
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        NatsComponent nats = context.getComponent("nats", NatsComponent.class);
-        nats.setServers(service.getServiceAddress());
-        return context;
+    private NatsProperties() {
+
     }
-
 }

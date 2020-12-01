@@ -14,23 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.test.infra.nats.services;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.test.infra.nats.services.NatsLocalContainerAuthService;
-import org.apache.camel.test.infra.nats.services.NatsLocalContainerService;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.infra.common.services.TestService;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class NatsAuthTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    static NatsLocalContainerService service = new NatsLocalContainerAuthService();
+/**
+ * Test infra service for Nats
+ */
+public interface NatsService extends BeforeAllCallback, AfterAllCallback, TestService {
+
+    String getServiceAddress();
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        NatsComponent nats = context.getComponent("nats", NatsComponent.class);
-        nats.setServers(service.getServiceAddress());
-        return context;
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
+        initialize();
+    }
+
+    @Override
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        shutdown();
     }
 }
