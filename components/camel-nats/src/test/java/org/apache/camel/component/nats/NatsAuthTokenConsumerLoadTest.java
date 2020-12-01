@@ -35,7 +35,7 @@ public class NatsAuthTokenConsumerLoadTest extends NatsAuthTokenTestSupport {
     @Test
     public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
         mockResultEndpoint.setExpectedMessageCount(100);
-        Options options = new Options.Builder().server("nats://" + getNatsBrokerUrl()).build();
+        Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
         Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 100; i++) {

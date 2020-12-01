@@ -32,7 +32,7 @@ public class NatsConsumerLoadTest extends NatsTestSupport {
     @Test
     public void testLoadConsumer() throws Exception {
         mockResultEndpoint.setExpectedMessageCount(10000);
-        Options options = new Options.Builder().server("nats://" + getNatsBrokerUrl()).build();
+        Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
         Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 10000; i++) {

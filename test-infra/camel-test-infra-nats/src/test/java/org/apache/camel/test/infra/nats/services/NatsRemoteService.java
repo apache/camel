@@ -14,13 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.test.infra.nats.services;
 
-public final class NatsTestConstants {
+import org.apache.camel.test.infra.nats.common.NatsProperties;
 
-    public static final String CONTAINER_IMAGE = "nats:2.1.9";
+public class NatsRemoteService implements NatsService {
 
-    private NatsTestConstants() {
+    @Override
+    public void registerProperties() {
+        // NO-OP
     }
 
+    @Override
+    public void initialize() {
+        registerProperties();
+    }
+
+    @Override
+    public void shutdown() {
+        // NO-OP
+    }
+
+    @Override
+    public String getServiceAddress() {
+        return System.getProperty(NatsProperties.SERVICE_ADDRESS);
+    }
 }
