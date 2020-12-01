@@ -27,6 +27,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerUtils;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -54,6 +55,9 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         private final MicrometerRoutePolicyNamingStrategy namingStrategy;
         private final Counter exchangesSucceeded;
         private final Counter exchangesFailed;
+        private final Counter exchangesTotal;
+        private final Counter externalRedeliveries;
+        private final Counter failuresHandled;
 
         private MetricsStatistics(MeterRegistry meterRegistry, Route route,
                                   MicrometerRoutePolicyNamingStrategy namingStrategy) {
@@ -62,6 +66,9 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             this.route = route;
             this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route));
             this.exchangesFailed = createCounter(namingStrategy.getExchangesFailedName(route));
+            this.exchangesTotal = createCounter(namingStrategy.getExchangesTotalName(route));
+            this.externalRedeliveries = createCounter(namingStrategy.getExternalRedeliveriesName(route));
+            this.failuresHandled = createCounter(namingStrategy.getFailuresHandledName(route));
         }
 
         public void onExchangeBegin(Exchange exchange) {
@@ -79,10 +86,20 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                 sample.stop(timer);
             }
 
+            exchangesTotal.increment();
+
             if (exchange.isFailed()) {
                 exchangesFailed.increment();
             } else {
                 exchangesSucceeded.increment();
+
+                if (ExchangeHelper.isFailureHandled(exchange)) {
+                    failuresHandled.increment();
+                }
+
+                if (exchange.isExternalRedelivered()) {
+                    externalRedeliveries.increment();
+                }
             }
         }
 
