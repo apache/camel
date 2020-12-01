@@ -257,7 +257,7 @@
     <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
     <hibernate-validator-version>6.1.6.Final</hibernate-validator-version>
     <hibernate-version>5.4.13.Final</hibernate-version>
-    <hk2-version>2.5.0</hk2-version>
+    <hk2-version>2.6.1</hk2-version>
     <hsqldb-version>2.5.1</hsqldb-version>
     <htrace-version>3.1.0-incubating</htrace-version>
     <httpasyncclient-version>4.1.4</httpasyncclient-version>
