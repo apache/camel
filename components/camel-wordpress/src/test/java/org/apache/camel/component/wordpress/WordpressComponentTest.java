@@ -45,7 +45,7 @@ public class WordpressComponentTest extends CamelTestSupport {
         assertThat(endpoint.getConfiguration().getCriteria().get("page"), is("1"));
         assertThat(endpoint.getConfiguration().getCriteria().get("perPage"), is("10"));
         assertThat(endpoint.getConfiguration().getCriteria().get("search"), is("test"));
-        assertThat((endpoint.getConfiguration().getCriteria().get("orderBy")), is("author"));
+        assertThat(endpoint.getConfiguration().getCriteria().get("orderBy"), is("author"));
 
         LOGGER.info("Categories are {}",
                 ((PostSearchCriteria) endpoint.getConfiguration().getSearchCriteria()).getCategories());
