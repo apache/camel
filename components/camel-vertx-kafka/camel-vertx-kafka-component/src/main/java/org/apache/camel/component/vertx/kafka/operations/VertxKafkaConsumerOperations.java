@@ -45,6 +45,9 @@ public class VertxKafkaConsumerOperations {
         // register our record handler
         kafkaConsumer.handler(recordHandler::accept);
 
+        // register our exception handler
+        kafkaConsumer.exceptionHandler(errorHandler::accept);
+
         if (ObjectHelper.isEmpty(topicSubscription.getPartitionId())) {
             // we subscribe to all partitions if the user does not specify any particular partition to consume from
             subscribe(topicSubscription, errorHandler);

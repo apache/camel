@@ -1,119 +1,128 @@
 package org.apache.camel.component.vertx.kafka.operations;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
 import io.vertx.core.Vertx;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
+import io.vertx.kafka.client.consumer.KafkaConsumerRecord;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.MockConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VertxKafkaConsumerOperationsTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxKafkaConsumerOperationsTest.class);
 
-    private final VertxKafkaConfiguration configuration = new VertxKafkaConfiguration();
-    private final MockConsumer<Object, Object> mockConsumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
-    private final KafkaConsumer<Object, Object> consumer = KafkaConsumer.create(Vertx.vertx(), mockConsumer);
-    private final VertxKafkaConsumerOperations operations = new VertxKafkaConsumerOperations(consumer, configuration);
+    private VertxKafkaConfiguration configuration;
 
-    @BeforeAll
-    void prepare() {
+    @BeforeEach
+    void initConfig() {
+        configuration = new VertxKafkaConfiguration();
         configuration.setKeySerializer(StringSerializer.class.getName());
         configuration.setValueSerializer(StringSerializer.class.getName());
         configuration.setKeyDeserializer(StringDeserializer.class.getName());
         configuration.setValueDeserializer(StringDeserializer.class.getName());
-    }
 
-    @AfterAll
-    void closeConsumer() {
-        consumer.close();
-    }
-
-    @AfterEach
-    void unsubscribe() {
-        mockConsumer.unsubscribe();
-    }
-
-    @Test
-    @Disabled
-    void play() throws InterruptedException {
-        configuration.setTopic("test_topic,test");
-        configuration.setBootstrapServers("localhost:9092");
-        configuration.setGroupId("test-07");
-        configuration.setSeekToOffset(15L);
-        //configuration.setPartitionId(1);
-        //configuration.setAutoOffsetReset("earliest");
-
-        final VertxKafkaConsumerOperations operations = new VertxKafkaConsumerOperations(
-                KafkaConsumer.create(Vertx.vertx(), configuration.createConsumerConfiguration()), configuration);
-
-        operations.receiveEvents(record -> {
-            System.out.println(record);
-        }, error -> {
-            LOG.error("Error" + error.getLocalizedMessage());
-        });
-
-        Thread.sleep(100000000);
     }
 
     @Test
     void testConsumerSubscribeSingleRecords() {
-        testConsumerSubscribeRecords(1, "test_single_record_test_topic", 1000);
+        testConsumerSubscribeRecords(1, "testConsumerSubscribeSingleRecordsTopic", 1000);
     }
 
     @Test
     void testConsumerSubscribeBatchRecords() {
-        testConsumerSubscribeRecords(50, "test_batch_record_test_topic", 5000);
+        testConsumerSubscribeRecords(50, "testConsumerSubscribeBatchRecordsTopic", 5000);
     }
 
-    void testConsumerSubscribeRecords(final int numberOfRecords, final String topic, final long timeout) {
-        final Latch latch = new Latch();
+    @Test
+    void testConsumerSubscribeToSinglePartition() {
+        final String topic = "testConsumerSubscribeToSinglePartitionTopic";
+
+        configuration.setTopic(topic);
+        configuration.setPartitionId(1);
+        configuration.setSeekToOffset(0L);
+
+        final MockConsumer<Object, Object> mockConsumer = createConsumer();
+
+        produceRandomRecords(mockConsumer, 5, topic, false);
+
+        assertRecords(mockConsumer, 5, 1000, (record, count) -> {
+            assertEquals(topic, record.topic());
+            assertEquals(1, record.partition());
+        });
+    }
+
+    @Test
+    void testConsumerAssignWithSeek() {
+        final String topic = "testConsumerSubscribeWithSeekTopic";
+
+        configuration.setTopic(topic);
+        configuration.setPartitionId(1);
+        configuration.setSeekToOffset(4L);
+
+        final MockConsumer<Object, Object> mockConsumer = createConsumer();
+
+        produceRandomRecords(mockConsumer, 5, topic, false);
+
+        assertRecords(mockConsumer, 1, 1000, (record, count) -> {
+            assertEquals(topic, record.topic());
+            assertEquals(1, record.partition());
+            assertEquals(4L, record.offset()); // offsets in kafka starts from 0, that means the last record offset in 5 records is 4
+        });
+    }
+
+    @Test
+    void testConsumerOnError() {
+        final String topic = "testConsumerOnError";
 
         configuration.setTopic(topic);
 
-        final TopicPartition topicPartition0 = new TopicPartition(topic, 0);
-        final TopicPartition topicPartition1 = new TopicPartition(topic, 1);
+        final MockConsumer<Object, Object> mockConsumer = createConsumer();
 
-        mockConsumer.schedulePollTask(() -> {
-            // simulate a replacing for a partition
-            mockConsumer.rebalance(Arrays.asList(topicPartition0, topicPartition1));
-            // add our tests records
-            for (int i = 0; i < numberOfRecords; i++) {
-                mockConsumer.addRecord(record(topicPartition0.topic(), topicPartition0.partition(), i, "my-key-0-" + i,
-                        "test-message-0-" + i));
-                mockConsumer.addRecord(record(topicPartition1.topic(), topicPartition1.partition(), i, "my-key-1-" + i,
-                        "test-message-1-" + i));
-            }
-            // reset the consumer to 0 in order to subscribe from start of the offset
-            mockConsumer.seek(topicPartition0, 0L);
-            mockConsumer.seek(topicPartition1, 0L);
+        mockConsumer.schedulePollTask(() -> mockConsumer.setPollException(new KafkaException("Ohh, an error!")));
+
+        final VertxKafkaConsumerOperations operations = createOperations(mockConsumer, configuration);
+
+        final Latch latch = new Latch();
+
+        operations.receiveEvents(record -> {
+        }, error -> {
+            assertTrue(error instanceof KafkaException);
+            latch.done();
         });
 
-        final AtomicInteger count = new AtomicInteger();
+        latch.await(1000);
+    }
 
-        operations.receiveEvents(kafkaRecord -> {
-            int val = count.getAndIncrement();
+    void testConsumerSubscribeRecords(final int numberOfRecords, final String topic, final long timeout) {
+        configuration.setTopic(topic);
+        configuration.setSeekToOffset(0L);
 
+        final MockConsumer<Object, Object> mockConsumer = createConsumer();
+
+        produceRandomRecords(mockConsumer, numberOfRecords, topic, true);
+
+        assertRecords(mockConsumer, numberOfRecords, timeout, (kafkaRecord, val) -> {
             assertEquals(topic, kafkaRecord.topic());
 
             if (kafkaRecord.partition() == 0) {
@@ -123,6 +132,64 @@ class VertxKafkaConsumerOperationsTest {
                 assertEquals("my-key-1-" + val, kafkaRecord.key());
                 assertEquals("test-message-1-" + val, kafkaRecord.record().value());
             }
+        });
+    }
+
+    MockConsumer<Object, Object> createConsumer() {
+        return new MockConsumer<>(OffsetResetStrategy.EARLIEST);
+    }
+
+    VertxKafkaConsumerOperations createOperations(
+            final MockConsumer<Object, Object> mockConsumer, final VertxKafkaConfiguration configuration) {
+        return new VertxKafkaConsumerOperations(KafkaConsumer.create(Vertx.vertx(), mockConsumer), configuration);
+    }
+
+    private void produceRandomRecords(
+            final MockConsumer<Object, Object> mockConsumer, final int numOfRecords, final String topic,
+            final boolean shouldRebalance) {
+        final TopicPartition topicPartition0 = new TopicPartition(topic, 0);
+        final TopicPartition topicPartition1 = new TopicPartition(topic, 1);
+
+        schedulePollTaskOnPartition(mockConsumer, numOfRecords, topicPartition0, shouldRebalance);
+        schedulePollTaskOnPartition(mockConsumer, numOfRecords, topicPartition1, shouldRebalance);
+    }
+
+    void schedulePollTaskOnPartition(
+            final MockConsumer<Object, Object> mockConsumer, final int numOfRecords, final TopicPartition partition,
+            final boolean shouldRebalance) {
+        mockConsumer.schedulePollTask(() -> {
+            // simulate a replacing for a partition
+            if (shouldRebalance) {
+                mockConsumer.rebalance(Collections.singletonList(partition));
+            }
+            // add our tests records
+            for (int i = 0; i < numOfRecords; i++) {
+                mockConsumer.addRecord(record(partition.topic(), partition.partition(), i, "my-key-0-" + i,
+                        "test-message-0-" + i));
+            }
+            if (shouldRebalance) {
+                // reset the consumer to 0 in order to subscribe from start of the offset
+                mockConsumer.seek(partition, 0L);
+            }
+        });
+    }
+
+    private ConsumerRecord<Object, Object> record(String topic, int partition, long offset, Object key, Object value) {
+        return new ConsumerRecord<>(topic, partition, offset, key, value);
+    }
+
+    private void assertRecords(
+            final MockConsumer<Object, Object> mockConsumer, final int numberOfRecords, final long timeout,
+            final BiConsumer<KafkaConsumerRecord<Object, Object>, Integer> fn) {
+        final AtomicInteger count = new AtomicInteger();
+        final Latch latch = new Latch();
+
+        final VertxKafkaConsumerOperations operations = createOperations(mockConsumer, configuration);
+
+        operations.receiveEvents(kafkaRecord -> {
+            int val = count.getAndIncrement();
+
+            fn.accept(kafkaRecord, val);
 
             if (val == numberOfRecords - 1) {
                 latch.done();
@@ -130,10 +197,6 @@ class VertxKafkaConsumerOperationsTest {
         }, error -> LOG.error(error.getLocalizedMessage(), error.getCause()));
 
         latch.await(timeout);
-    }
-
-    private ConsumerRecord<Object, Object> record(String topic, int partition, long offset, Object key, Object value) {
-        return new ConsumerRecord<>(topic, partition, offset, key, value);
     }
 
     private static class Latch {
