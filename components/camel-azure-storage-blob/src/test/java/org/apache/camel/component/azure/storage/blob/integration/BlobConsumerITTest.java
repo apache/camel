@@ -31,6 +31,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -64,8 +65,6 @@ class BlobConsumerITTest extends BaseIT {
 
         containerClient = serviceClient.getBlobContainerClient(containerName);
         batchContainerClient = serviceClient.getBlobContainerClient(batchContainerName);
-
-        configuration.setContainerName(batchContainerName);
 
         // create test container
         containerClient.create();
@@ -164,16 +163,18 @@ class BlobConsumerITTest extends BaseIT {
 
         // create pdf blobs
         for (int i = 0; i < 10; i++) {
+            final int index = i;
             templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
-                exchange.getIn().setBody("Block Batch Blob Test");
+                exchange.getIn().setBody("Block Batch PDF Blob with RegEx Test: " + index);
                 exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
                 exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "pdf"));
             });
         }
 
         for (int i = 0; i < 5; i++) {
+            final int index = i;
             templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
-                exchange.getIn().setBody("Block Batch Blob Test");
+                exchange.getIn().setBody("Block Batch PDF Blob with Prefix Test: " + index);
                 exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
                 exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("aaaa-test_batch_blob_", "pdf"));
             });
@@ -181,8 +182,9 @@ class BlobConsumerITTest extends BaseIT {
 
         // create docx blobs
         for (int i = 0; i < 20; i++) {
+            final int index = i;
             templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
-                exchange.getIn().setBody("Block Batch Blob Test");
+                exchange.getIn().setBody("Block Batch DOCX Blob Test: " + index);
                 exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
                 exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "docx"));
             });
@@ -233,6 +235,7 @@ class BlobConsumerITTest extends BaseIT {
                 // if regex is set then prefix should have no effect
                 from("azure-storage-blob://cameldev/" + batchContainerName
                      + "?blobServiceClient=#serviceClient&prefix=aaaa&regex=" + regex)
+                             .idempotentConsumer(body(), new MemoryIdempotentRepository())
                              .to("mock:resultRegex");
             }
         };
