@@ -262,7 +262,7 @@
     <htrace-version>3.1.0-incubating</htrace-version>
     <httpasyncclient-version>4.1.4</httpasyncclient-version>
     <httpclient4-version>4.5.13</httpclient4-version>
-    <httpcore4-version>4.4.13</httpcore4-version>
+    <httpcore4-version>4.4.14</httpcore4-version>
     <httpunit-version>1.7</httpunit-version>
     <hystrix-version>1.5.18</hystrix-version>
     <ical4j-version>1.0.7</ical4j-version>
