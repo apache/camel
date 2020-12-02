@@ -5,7 +5,9 @@
     },
     "test%datasonnet": {
       "*version": "1.0",
-      "__text": "Hello World"
-    }
+      "__text": "Hello World",
+      "~": 1
+    },
+    "~": 1
   }
 }

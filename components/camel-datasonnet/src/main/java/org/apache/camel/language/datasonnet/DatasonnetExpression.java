@@ -18,7 +18,6 @@ package org.apache.camel.language.datasonnet;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,7 +91,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         } catch (Exception e) {
             throw new RuntimeExpressionException("Unable to evaluate DataSonnet expression : " + expression, e);
         } finally {
-            CML.exchange().remove();
+            CML.getInstance().getExchange().remove();
         }
     }
 
@@ -121,12 +120,12 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         Mapper mapper = language.computeIfMiss(expression, () -> new MapperBuilder(expression)
                 .withInputNames(inputs.keySet())
                 .withImports(resolveImports(language))
-                .withLibrary(CML$.MODULE$)
+                .withLibrary(CML.getInstance())
                 .withDefaultOutput(MediaTypes.APPLICATION_JAVA)
                 .build());
 
         // pass exchange to CML lib using thread as context
-        CML.exchange().set(exchange);
+        CML.getInstance().getExchange().set(exchange);
 
         if (outputMediaType == null) {
             //Try to auto-detect output mime type if it was not explicitly set
