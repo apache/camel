@@ -14,22 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nsq;
+package org.apache.camel.test.infra.nsq.services;
 
-import org.apache.camel.test.infra.nsq.services.NsqService;
-import org.apache.camel.test.infra.nsq.services.NsqServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.infra.common.services.TestService;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class NsqTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    static NsqService service = NsqServiceFactory.createService();
+/**
+ * Test infra service for Nsq
+ */
+public interface NsqService extends BeforeAllCallback, AfterAllCallback, TestService {
+    String getNsqProducerUrl();
 
-    public String getNsqConsumerUrl() {
-        return service.getNsqConsumerUrl();
+    String getNsqConsumerUrl();
+
+    @Override
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
+        initialize();
     }
 
-    public String getNsqProducerUrl() {
-        return service.getNsqProducerUrl();
+    @Override
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        shutdown();
     }
 }

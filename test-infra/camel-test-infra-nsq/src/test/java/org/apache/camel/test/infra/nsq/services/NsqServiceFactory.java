@@ -14,22 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nsq;
+package org.apache.camel.test.infra.nsq.services;
 
-import org.apache.camel.test.infra.nsq.services.NsqService;
-import org.apache.camel.test.infra.nsq.services.NsqServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class NsqTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    static NsqService service = NsqServiceFactory.createService();
+public final class NsqServiceFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(NsqServiceFactory.class);
 
-    public String getNsqConsumerUrl() {
-        return service.getNsqConsumerUrl();
+    private NsqServiceFactory() {
+
     }
 
-    public String getNsqProducerUrl() {
-        return service.getNsqProducerUrl();
+    public static NsqService createService() {
+        String instanceType = System.getProperty("nsq.instance.type");
+
+        if (instanceType == null || instanceType.equals("local-nsq-container")) {
+            return new NsqLocalContainerService();
+        }
+
+        if (instanceType.equals("remote")) {
+            return new NsqRemoteService();
+        }
+
+        LOG.error("Nsq instance must be one of 'local-nsq-container' or 'remote");
+        throw new UnsupportedOperationException("Invalid Nsq instance type");
     }
 }
