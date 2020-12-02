@@ -26,7 +26,6 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.specialized.BlobInputStream;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
@@ -76,7 +75,7 @@ class BlobConsumerITTest extends BaseIT {
         final MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
 
-        templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+        templateStart.send("direct:createBlob", exchange -> {
             exchange.getIn().setBody("Block Blob");
             exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, containerName);
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
@@ -91,7 +90,7 @@ class BlobConsumerITTest extends BaseIT {
 
     @Test
     void testPollingToInputStream() throws Exception {
-        templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+        templateStart.send("direct:createBlob", exchange -> {
             exchange.getIn().setBody("Block Blob");
             exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, containerName);
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName2);
@@ -119,13 +118,13 @@ class BlobConsumerITTest extends BaseIT {
         final MockEndpoint mockEndpointFile = getMockEndpoint("mock:resultBatchFile");
         mockEndpointFile.expectedMessageCount(2);
 
-        templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+        templateStart.send("direct:createBlob", exchange -> {
             exchange.getIn().setBody("Block Batch Blob 1");
             exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "test_batch_blob_1");
         });
 
-        templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+        templateStart.send("direct:createBlob", exchange -> {
             exchange.getIn().setBody("Block Batch Blob 2");
             exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "test_batch_blob_2");
@@ -164,7 +163,7 @@ class BlobConsumerITTest extends BaseIT {
         // create pdf blobs
         for (int i = 0; i < 10; i++) {
             final int index = i;
-            templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+            templateStart.send("direct:createBlob", exchange -> {
                 exchange.getIn().setBody("Block Batch PDF Blob with RegEx Test: " + index);
                 exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
                 exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "pdf"));
@@ -173,7 +172,7 @@ class BlobConsumerITTest extends BaseIT {
 
         for (int i = 0; i < 5; i++) {
             final int index = i;
-            templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+            templateStart.send("direct:createBlob", exchange -> {
                 exchange.getIn().setBody("Block Batch PDF Blob with Prefix Test: " + index);
                 exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
                 exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("aaaa-test_batch_blob_", "pdf"));
@@ -183,7 +182,7 @@ class BlobConsumerITTest extends BaseIT {
         // create docx blobs
         for (int i = 0; i < 20; i++) {
             final int index = i;
-            templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
+            templateStart.send("direct:createBlob", exchange -> {
                 exchange.getIn().setBody("Block Batch DOCX Blob Test: " + index);
                 exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
                 exchange.getIn().setHeader(BlobConstants.BLOB_NAME, generateRandomBlobName("regexp-test_batch_blob_", "docx"));
