@@ -60,5 +60,6 @@
         <module>camel-test-infra-infinispan</module>
         <module>camel-test-infra-minio</module>
         <module>camel-test-infra-nats</module>
+        <module>camel-test-infra-nsq</module>
     </modules>
 </project>

@@ -14,22 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nsq;
 
-import org.apache.camel.test.infra.nsq.services.NsqService;
-import org.apache.camel.test.infra.nsq.services.NsqServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+package org.apache.camel.test.infra.nsq.common;
 
-public class NsqTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    static NsqService service = NsqServiceFactory.createService();
+public final class NsqProperties {
+    public static final String PRODUCER_URL = "nsq.producer.url";
+    public static final String CONSUMER_URL = "nsq.consumer.url";
 
-    public String getNsqConsumerUrl() {
-        return service.getNsqConsumerUrl();
-    }
+    private NsqProperties() {
 
-    public String getNsqProducerUrl() {
-        return service.getNsqProducerUrl();
     }
 }

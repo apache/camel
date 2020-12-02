@@ -14,22 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nsq;
+package org.apache.camel.test.infra.nsq.services;
 
-import org.apache.camel.test.infra.nsq.services.NsqService;
-import org.apache.camel.test.infra.nsq.services.NsqServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.infra.nsq.common.NsqProperties;
 
-public class NsqTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    static NsqService service = NsqServiceFactory.createService();
+public class NsqRemoteService implements NsqService {
 
-    public String getNsqConsumerUrl() {
-        return service.getNsqConsumerUrl();
+    @Override
+    public void registerProperties() {
+        // NO-OP
     }
 
+    @Override
+    public void initialize() {
+        registerProperties();
+    }
+
+    @Override
+    public void shutdown() {
+        // NO-OP
+    }
+
+    @Override
     public String getNsqProducerUrl() {
-        return service.getNsqProducerUrl();
+        return System.getProperty(NsqProperties.PRODUCER_URL);
+    }
+
+    @Override
+    public String getNsqConsumerUrl() {
+        return System.getProperty(NsqProperties.CONSUMER_URL);
     }
 }
