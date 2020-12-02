@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class VertxKafkaTypeConverterTest extends CamelTestSupport {
+class VertxKafkaTypeSerializerTest extends CamelTestSupport {
 
     @Test
     void testNormalTypes() {
@@ -41,34 +41,34 @@ class VertxKafkaTypeConverterTest extends CamelTestSupport {
         final Message message = exchange.getIn();
 
         final Object convertedStringValue
-                = VertxKafkaTypeConverter.tryConvertToSerializedType(message, 12, StringSerializer.class.getName());
+                = VertxKafkaTypeSerializer.tryConvertToSerializedType(message, 12, StringSerializer.class.getName());
 
         assertEquals("12", convertedStringValue);
 
         final Object convertedByteArr
-                = VertxKafkaTypeConverter.tryConvertToSerializedType(message, "test", ByteArraySerializer.class.getName());
+                = VertxKafkaTypeSerializer.tryConvertToSerializedType(message, "test", ByteArraySerializer.class.getName());
 
         assertTrue(convertedByteArr instanceof byte[]);
 
         final Object convertedByteBuffer
-                = VertxKafkaTypeConverter.tryConvertToSerializedType(message, "test", ByteBufferSerializer.class.getName());
+                = VertxKafkaTypeSerializer.tryConvertToSerializedType(message, "test", ByteBufferSerializer.class.getName());
 
         assertTrue(convertedByteBuffer instanceof ByteBuffer);
 
         final Object convertedBytes
-                = VertxKafkaTypeConverter.tryConvertToSerializedType(message, "test", BytesSerializer.class.getName());
+                = VertxKafkaTypeSerializer.tryConvertToSerializedType(message, "test", BytesSerializer.class.getName());
 
         assertTrue(convertedBytes instanceof Bytes);
 
         final Object convertedFallback
-                = VertxKafkaTypeConverter.tryConvertToSerializedType(message, "test", "dummy");
+                = VertxKafkaTypeSerializer.tryConvertToSerializedType(message, "test", "dummy");
 
         assertEquals("test", convertedFallback);
 
-        assertNull(VertxKafkaTypeConverter.tryConvertToSerializedType(message, null, "dummy"));
+        assertNull(VertxKafkaTypeSerializer.tryConvertToSerializedType(message, null, "dummy"));
 
-        assertNull(VertxKafkaTypeConverter.tryConvertToSerializedType(message, null, null));
+        assertNull(VertxKafkaTypeSerializer.tryConvertToSerializedType(message, null, null));
 
-        assertEquals("test", VertxKafkaTypeConverter.tryConvertToSerializedType(message, "test", null));
+        assertEquals("test", VertxKafkaTypeSerializer.tryConvertToSerializedType(message, "test", null));
     }
 }

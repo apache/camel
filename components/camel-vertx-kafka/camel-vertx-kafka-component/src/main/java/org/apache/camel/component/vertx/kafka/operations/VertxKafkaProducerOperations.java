@@ -19,27 +19,19 @@ package org.apache.camel.component.vertx.kafka.operations;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
-import io.vertx.core.buffer.Buffer;
-import io.vertx.kafka.client.producer.KafkaHeader;
 import io.vertx.kafka.client.producer.KafkaProducer;
 import io.vertx.kafka.client.producer.KafkaProducerRecord;
 import io.vertx.kafka.client.producer.RecordMetadata;
-import io.vertx.kafka.client.producer.impl.KafkaHeaderImpl;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.vertx.kafka.VertxKafkaConfigurationOptionsProxy;
 import org.apache.camel.component.vertx.kafka.VertxKafkaConstants;
-import org.apache.camel.component.vertx.kafka.VertxKafkaHeaderFilterStrategy;
-import org.apache.camel.component.vertx.kafka.VertxKafkaTypeConverter;
+import org.apache.camel.component.vertx.kafka.VertxKafkaHeadersPropagation;
+import org.apache.camel.component.vertx.kafka.VertxKafkaTypeSerializer;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
-import org.apache.camel.component.vertx.kafka.serde.DefaultVertxKafkaHeaderSerializer;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +44,6 @@ public class VertxKafkaProducerOperations {
 
     private final KafkaProducer<Object, Object> kafkaProducer;
     private final VertxKafkaConfigurationOptionsProxy configurationOptionsProxy;
-    // for now we don't support overriding this in the config, we shall add it in the next iteration
-    private final HeaderFilterStrategy headerFilterStrategy = new VertxKafkaHeaderFilterStrategy();
 
     public VertxKafkaProducerOperations(final KafkaProducer<Object, Object> kafkaProducer,
                                         final VertxKafkaConfiguration configuration) {
@@ -157,7 +147,7 @@ public class VertxKafkaProducerOperations {
         final Integer partitionId = getPartitionId(message);
 
         return KafkaProducerRecord.create(topic, messageKey, messageValue, partitionId)
-                .addHeaders(getPropagatedHeaders(message));
+                .addHeaders(VertxKafkaHeadersPropagation.getPropagatedHeaders(message));
     }
 
     private String getTopic(final Message message, final String parentTopic) {
@@ -185,7 +175,7 @@ public class VertxKafkaProducerOperations {
     }
 
     private Object getMessageKey(final Message message) {
-        return VertxKafkaTypeConverter.tryConvertToSerializedType(message,
+        return VertxKafkaTypeSerializer.tryConvertToSerializedType(message,
                 configurationOptionsProxy.getMessageKey(message),
                 configurationOptionsProxy.getKeySerializer(message));
     }
@@ -195,30 +185,7 @@ public class VertxKafkaProducerOperations {
     }
 
     private Object getMessageValue(final Message message, final Object inputData) {
-        return VertxKafkaTypeConverter.tryConvertToSerializedType(message, inputData,
+        return VertxKafkaTypeSerializer.tryConvertToSerializedType(message, inputData,
                 configurationOptionsProxy.getValueSerializer(message));
-    }
-
-    private List<KafkaHeader> getPropagatedHeaders(final Message message) {
-        return message.getHeaders().entrySet().stream()
-                .filter(entry -> shouldBeFiltered(entry, message.getExchange(), headerFilterStrategy))
-                .map(this::getRecordHeader)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
-    private boolean shouldBeFiltered(
-            Map.Entry<String, Object> entry, Exchange exchange, HeaderFilterStrategy headerFilterStrategy) {
-        return !headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange);
-    }
-
-    private KafkaHeader getRecordHeader(final Map.Entry<String, Object> entry) {
-        final Buffer headerValue = DefaultVertxKafkaHeaderSerializer.serialize(entry.getValue());
-
-        if (headerValue == null) {
-            return null;
-        }
-
-        return new KafkaHeaderImpl(entry.getKey(), headerValue);
     }
 }

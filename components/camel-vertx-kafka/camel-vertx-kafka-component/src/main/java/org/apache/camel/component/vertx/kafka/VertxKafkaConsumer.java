@@ -73,6 +73,9 @@ public class VertxKafkaConsumer extends DefaultConsumer {
 
     private void onEventListener(final KafkaConsumerRecord<Object, Object> record) {
         final Exchange exchange = getEndpoint().createVertxKafkaExchange(record);
+        // set propagated headers
+        VertxKafkaHeadersPropagation.getPropagatedHeaders(record, exchange.getIn())
+                .forEach((key, value) -> exchange.getIn().setHeader(key, value));
 
         // add exchange callback
         exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
