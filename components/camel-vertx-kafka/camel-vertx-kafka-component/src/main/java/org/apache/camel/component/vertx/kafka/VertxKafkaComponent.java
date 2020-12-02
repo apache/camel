@@ -20,6 +20,7 @@ import java.util.Map;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
 import org.apache.camel.spi.Metadata;
@@ -39,6 +40,10 @@ public class VertxKafkaComponent extends DefaultComponent {
     private VertxOptions vertxOptions;
 
     public VertxKafkaComponent() {
+    }
+
+    public VertxKafkaComponent(CamelContext context) {
+        super(context);
     }
 
     @Override

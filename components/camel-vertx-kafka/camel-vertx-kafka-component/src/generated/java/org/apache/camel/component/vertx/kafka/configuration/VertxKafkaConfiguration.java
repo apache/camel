@@ -8,7 +8,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class VertxKafkaConfiguration {
+public class VertxKafkaConfiguration implements Cloneable {
 
     // partition.id
     @UriParam(label = "common")

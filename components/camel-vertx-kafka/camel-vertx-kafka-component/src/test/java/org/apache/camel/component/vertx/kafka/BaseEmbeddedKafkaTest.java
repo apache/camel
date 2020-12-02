@@ -18,6 +18,7 @@ package org.apache.camel.component.vertx.kafka;
 
 import java.util.Properties;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -49,6 +50,28 @@ public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
         if (kafkaAdminClient == null) {
             kafkaAdminClient = createAdminClient();
         }
+    }
+
+    protected Properties getDefaultProperties() {
+        LOG.info("Connecting to Kafka {}", service.getBootstrapServers());
+
+        Properties props = new Properties();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, service.getBootstrapServers());
+        props.put(ProducerConfig.ACKS_CONFIG, "1");
+        return props;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getPropertiesComponent().setLocation("ref:prop");
+
+        VertxKafkaComponent kafka = new VertxKafkaComponent(context);
+        kafka.init();
+        kafka.getConfiguration().setBootstrapServers(service.getBootstrapServers());
+        context.addComponent("vertx-kafka", kafka);
+
+        return context;
     }
 
     private static AdminClient createAdminClient() {

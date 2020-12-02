@@ -8,7 +8,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class UnitTestConfiguration {
+public class UnitTestConfiguration implements Cloneable {
 
     // topic.config.1
     @UriPath(label = "common", defaultValue = "default value")

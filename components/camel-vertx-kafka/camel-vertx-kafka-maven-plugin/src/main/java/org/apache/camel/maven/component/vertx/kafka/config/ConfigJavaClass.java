@@ -107,9 +107,11 @@ public final class ConfigJavaClass {
         if (ObjectHelper.isNotEmpty(parentClass)) {
             javaClass.setName(className)
                     .extendSuperType(parentClass)
+                    .implementInterface("Cloneable")
                     .addAnnotation(UriParams.class);
         } else {
             javaClass.setName(className)
+                    .implementInterface("Cloneable")
                     .addAnnotation(UriParams.class);
         }
     }
