@@ -147,8 +147,8 @@ public abstract class BuilderSupport {
         CSimpleExpression exp = new CSimpleExpression(value);
         exp.setResultType(resultType);
         return new ValueBuilder(exp);
-    }  
-  
+    }
+
     /**
      * Returns a Datasonnet expression value builder
      */

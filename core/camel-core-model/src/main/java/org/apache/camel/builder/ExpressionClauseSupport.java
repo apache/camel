@@ -325,7 +325,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         exp.setResultType(resultType);
         return expression(exp);
     }
-    
+
     /**
      * Evaluates a <a href="http://camel.apache.org/datasonnet.html">Datasonnet expression</a>
      *
