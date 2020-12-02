@@ -1,0 +1,8 @@
+= Apache Camel Migration and Upgrade Guides
+
+We do frequent releases, a release almost every month, and even though we strive to maintain backward compatibility, we may on occasion introduce a breaking change in the interest of the long-term evolution of the project.
+
+Listed here are the notes on how to migrate between major versions, and what to watch out when upgrading from minor versions.
+
+- xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 migration guide]
+- xref:camel-3x-upgrade-guide.adoc[Upgrade guide for 3.x releases]
