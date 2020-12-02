@@ -25,20 +25,23 @@ import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerDeadLetterPolicyTest.class);
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
-    private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("mock:result")
     private MockEndpoint to;
@@ -76,8 +79,18 @@ public class PulsarConsumerDeadLetterPolicyTest extends PulsarTestSupport {
         } catch (Exception ignored) {
 
         }
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+        String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
 
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(TOPIC_URI).create();
+    }
+
+    @AfterEach
+    public void tearDownProducer() {
+        try {
+            producer.close();
+        } catch (PulsarClientException e) {
+            LOGGER.warn("Failed to close client: {}", e.getMessage(), e);
+        }
     }
 
     @Test

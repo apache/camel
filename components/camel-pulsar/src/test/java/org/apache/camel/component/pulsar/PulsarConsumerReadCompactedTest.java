@@ -27,6 +27,7 @@ import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.pulsar.client.admin.LongRunningProcessStatus;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
@@ -37,17 +38,16 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PulsarConsumerReadCompactedTest extends PulsarTestSupport {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerReadCompactedTest.class);
 
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
-    private static final String PRODUCER = "camel-producer-1";
 
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
@@ -64,7 +64,18 @@ public class PulsarConsumerReadCompactedTest extends PulsarTestSupport {
     @BeforeEach
     public void setup() throws Exception {
         context.removeRoute("myRoute");
-        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(PRODUCER).topic(TOPIC_URI).create();
+
+        String producerName = this.getClass().getSimpleName() + TestUtils.randomWithRange(1, 100);
+        producer = givenPulsarClient().newProducer(Schema.STRING).producerName(producerName).topic(TOPIC_URI).create();
+    }
+
+    @AfterEach
+    public void tearDownProducer() {
+        try {
+            producer.close();
+        } catch (PulsarClientException e) {
+            LOGGER.warn("Failed to close client: {}", e.getMessage(), e);
+        }
     }
 
     @Override
@@ -88,11 +99,11 @@ public class PulsarConsumerReadCompactedTest extends PulsarTestSupport {
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
+        return new ClientBuilderImpl().serviceUrl(service.getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
     }
 
     private PulsarAdmin givenPulsarAdmin() throws PulsarClientException {
-        return new PulsarAdminBuilderImpl().serviceHttpUrl(getPulsarAdminUrl()).build();
+        return new PulsarAdminBuilderImpl().serviceHttpUrl(service.getPulsarAdminUrl()).build();
     }
 
     private void triggerCompaction() throws PulsarAdminException, PulsarClientException {
