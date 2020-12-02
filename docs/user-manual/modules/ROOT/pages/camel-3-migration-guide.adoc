@@ -570,7 +570,7 @@ as property placeholders are already supported via Camel Main, Camel Spring Boot
 
 === camel-test
 
-If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead
+If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegistry` class, then this is no longer necessary, and instead
 you should just use the `bind` method from the `Registry` API which you can call directly from `CamelContext`, such as:
 
   context.getRegistry().bind("myId", myBean);
