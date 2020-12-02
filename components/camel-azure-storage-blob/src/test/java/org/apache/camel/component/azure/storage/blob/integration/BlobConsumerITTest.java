@@ -18,11 +18,8 @@ package org.apache.camel.component.azure.storage.blob.integration;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import com.azure.storage.blob.BlobContainerClient;
@@ -34,11 +31,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.storage.blob.BlobConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -78,24 +73,25 @@ class BlobConsumerITTest extends BaseIT {
     }
 
     @Test
-    void testPollingToFile() throws IOException, InterruptedException {
+    void testPollingToFile() throws Exception {
+        final MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(1);
+
         templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setBody("Block Blob");
             exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, containerName);
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
         });
 
-        final MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedMessageCount(1);
-        mockEndpoint.assertIsSatisfied(100);
+        mockEndpoint.assertIsSatisfied();
 
         final File file = mockEndpoint.getExchanges().get(0).getIn().getBody(File.class);
         assertNotNull(file, "File must be set");
-        assertEquals("Block Blob", FileUtils.readFileToString(file, Charset.defaultCharset()));
+        assertEquals("Block Blob", context().getTypeConverter().convertTo(String.class, file));
     }
 
     @Test
-    void testPollingToInputStream() throws InterruptedException, IOException {
+    void testPollingToInputStream() throws Exception {
         templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setBody("Block Blob");
             exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, containerName);
@@ -104,7 +100,7 @@ class BlobConsumerITTest extends BaseIT {
 
         final MockEndpoint mockEndpoint = getMockEndpoint("mock:resultOutputStream");
         mockEndpoint.expectedMessageCount(1);
-        mockEndpoint.assertIsSatisfied(10000);
+        mockEndpoint.assertIsSatisfied();
 
         final BlobInputStream blobInputStream = mockEndpoint.getExchanges().get(0).getIn().getBody(BlobInputStream.class);
         assertNotNull(blobInputStream, "BlobInputStream must be set");
@@ -115,7 +111,15 @@ class BlobConsumerITTest extends BaseIT {
     }
 
     @Test
-    void testBatchFilePolling() throws InterruptedException, IOException {
+    void testBatchFilePolling() throws Exception {
+        // test output stream based
+        final MockEndpoint mockEndpoint = getMockEndpoint("mock:resultBatch");
+        mockEndpoint.expectedMessageCount(2);
+
+        // test file based
+        final MockEndpoint mockEndpointFile = getMockEndpoint("mock:resultBatchFile");
+        mockEndpointFile.expectedMessageCount(2);
+
         templateStart.send("direct:createBlob", ExchangePattern.InOnly, exchange -> {
             exchange.getIn().setBody("Block Batch Blob 1");
             exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, batchContainerName);
@@ -128,10 +132,7 @@ class BlobConsumerITTest extends BaseIT {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "test_batch_blob_2");
         });
 
-        // test output stream based
-        final MockEndpoint mockEndpoint = getMockEndpoint("mock:resultBatch");
-        mockEndpoint.expectedMessageCount(2);
-        mockEndpoint.assertIsSatisfied(100);
+        MockEndpoint.assertIsSatisfied(context());
 
         final BlobInputStream blobInputStream = mockEndpoint.getExchanges().get(0).getIn().getBody(BlobInputStream.class);
         final BlobInputStream blobInputStream2 = mockEndpoint.getExchanges().get(1).getIn().getBody(BlobInputStream.class);
@@ -139,16 +140,11 @@ class BlobConsumerITTest extends BaseIT {
         assertNotNull(blobInputStream, "BlobInputStream must be set");
         assertNotNull(blobInputStream2, "BlobInputStream must be set");
 
-        final String bufferedText = new BufferedReader(new InputStreamReader(blobInputStream)).readLine();
-        final String bufferedText2 = new BufferedReader(new InputStreamReader(blobInputStream2)).readLine();
+        final String bufferedText = context().getTypeConverter().convertTo(String.class, blobInputStream);
+        final String bufferedText2 = context().getTypeConverter().convertTo(String.class, blobInputStream2);
 
         assertEquals("Block Batch Blob 1", bufferedText);
         assertEquals("Block Batch Blob 2", bufferedText2);
-
-        // test file based
-        final MockEndpoint mockEndpointFile = getMockEndpoint("mock:resultBatchFile");
-        mockEndpointFile.expectedMessageCount(2);
-        mockEndpointFile.assertIsSatisfied(100);
 
         final File file = mockEndpointFile.getExchanges().get(0).getIn().getBody(File.class);
         final File file2 = mockEndpointFile.getExchanges().get(1).getIn().getBody(File.class);
@@ -156,14 +152,15 @@ class BlobConsumerITTest extends BaseIT {
         assertNotNull(file, "File must be set");
         assertNotNull(file2, "File must be set");
 
-        assertEquals("Block Batch Blob 1", FileUtils.readFileToString(file, Charset.defaultCharset()));
-        assertEquals("Block Batch Blob 2", FileUtils.readFileToString(file2, Charset.defaultCharset()));
+        assertEquals("Block Batch Blob 1", context().getTypeConverter().convertTo(String.class, file));
+        assertEquals("Block Batch Blob 2", context().getTypeConverter().convertTo(String.class, file2));
     }
 
     @Test
-    @Disabled("This test should be fixed to use mock:resultRegex endpoint instead of mock:resultBatch")
-    void testRegexPolling() throws InterruptedException {
-        Pattern pattern = Pattern.compile(regex);
+    void testRegexPolling() throws Exception {
+        // test regex based
+        final MockEndpoint mockEndpoint = getMockEndpoint("mock:resultRegex");
+        mockEndpoint.expectedMessageCount(15);
 
         // create pdf blobs
         for (int i = 0; i < 10; i++) {
@@ -191,14 +188,11 @@ class BlobConsumerITTest extends BaseIT {
             });
         }
 
-        final MockEndpoint mockEndpoint = getMockEndpoint("mock:resultBatch");
-        mockEndpoint.expectedMessageCount(15);
-        mockEndpoint.assertIsSatisfied(5000);
-        mockEndpoint.await(10, TimeUnit.SECONDS);
-        String blobName;
+        mockEndpoint.assertIsSatisfied();
+
+        Pattern pattern = Pattern.compile(regex);
         for (Exchange e : mockEndpoint.getExchanges()) {
-            BlobInputStream blob = e.getIn().getBody(BlobInputStream.class);
-            blobName = e.getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
+            String blobName = e.getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
             assertTrue(pattern.matcher(blobName).matches());
         }
     }
@@ -215,10 +209,10 @@ class BlobConsumerITTest extends BaseIT {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:createBlob")
                         .to("azure-storage-blob://cameldev?blobServiceClient=#serviceClient&operation=uploadBlockBlob");
 
@@ -236,6 +230,7 @@ class BlobConsumerITTest extends BaseIT {
                 from("azure-storage-blob://cameldev/" + batchContainerName + "?blobServiceClient=#serviceClient&fileDir="
                      + testDir.toString()).to("mock:resultBatchFile");
 
+                // if regex is set then prefix should have no effect
                 from("azure-storage-blob://cameldev/" + batchContainerName
                      + "?blobServiceClient=#serviceClient&prefix=aaaa&regex=" + regex)
                              .to("mock:resultRegex");
