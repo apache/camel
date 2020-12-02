@@ -210,11 +210,11 @@ public class VertxKafkaConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean checkCrcs = true;
     // key.deserializer
-    @UriParam(label = "consumer")
-    private String keyDeserializer;
+    @UriParam(label = "consumer", defaultValue = "org.apache.kafka.common.serialization.StringDeserializer")
+    private String keyDeserializer = "org.apache.kafka.common.serialization.StringDeserializer";
     // value.deserializer
-    @UriParam(label = "consumer")
-    private String valueDeserializer;
+    @UriParam(label = "consumer", defaultValue = "org.apache.kafka.common.serialization.StringDeserializer")
+    private String valueDeserializer = "org.apache.kafka.common.serialization.StringDeserializer";
     // default.api.timeout.ms
     @UriParam(label = "consumer", defaultValue = "1m", javaType = "java.time.Duration")
     private int defaultApiTimeoutMs = 60000;

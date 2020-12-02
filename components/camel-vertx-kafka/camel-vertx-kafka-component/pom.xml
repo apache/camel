@@ -155,6 +155,8 @@
                     <overriddenDefaultValues>
                         <key.serializer>org.apache.kafka.common.serialization.StringSerializer</key.serializer>
                         <value.serializer>org.apache.kafka.common.serialization.StringSerializer</value.serializer>
+                        <key.deserializer>org.apache.kafka.common.serialization.StringDeserializer</key.deserializer>
+                        <value.deserializer>org.apache.kafka.common.serialization.StringDeserializer</value.deserializer>
                     </overriddenDefaultValues>
                     <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                 </configuration>

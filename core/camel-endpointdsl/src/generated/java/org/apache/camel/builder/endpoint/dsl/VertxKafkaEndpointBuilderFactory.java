@@ -942,6 +942,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringDeserializer
          * Group: consumer
          */
         default VertxKafkaEndpointConsumerBuilder keyDeserializer(
@@ -1166,6 +1167,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringDeserializer
          * Group: consumer
          */
         default VertxKafkaEndpointConsumerBuilder valueDeserializer(
