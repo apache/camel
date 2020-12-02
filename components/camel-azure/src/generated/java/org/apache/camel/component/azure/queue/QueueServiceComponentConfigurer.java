@@ -4,9 +4,10 @@ package org.apache.camel.component.azure.queue;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,26 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("azureQueueClient", com.microsoft.azure.storage.queue.CloudQueue.class);
-        map.put("credentials", com.microsoft.azure.storage.StorageCredentials.class);
-        map.put("validateClientURI", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("messageTimeToLive", int.class);
-        map.put("messageVisibilityDelay", int.class);
-        map.put("operation", org.apache.camel.component.azure.queue.QueueServiceOperations.class);
-        map.put("queuePrefix", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.azure.queue.QueueServiceConfiguration.class);
-        map.put("credentialsAccountKey", java.lang.String.class);
-        map.put("credentialsAccountName", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(QueueServiceComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.azure.queue.QueueServiceConfiguration getOrCreateConfiguration(QueueServiceComponent target) {
         if (target.getConfiguration() == null) {
@@ -47,10 +28,10 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QueueServiceComponent target = (QueueServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "azurequeueclient":
         case "azureQueueClient": getOrCreateConfiguration(target).setAzureQueueClient(property(camelContext, com.microsoft.azure.storage.queue.CloudQueue.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.queue.QueueServiceConfiguration.class, value)); return true;
@@ -75,25 +56,43 @@ public class QueueServiceComponentConfigurer extends PropertyConfigurerSupport i
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "azurequeueclient":
+        case "azureQueueClient": return com.microsoft.azure.storage.queue.CloudQueue.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.azure.queue.QueueServiceConfiguration.class;
+        case "credentials": return com.microsoft.azure.storage.StorageCredentials.class;
+        case "credentialsaccountkey":
+        case "credentialsAccountKey": return java.lang.String.class;
+        case "credentialsaccountname":
+        case "credentialsAccountName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messagetimetolive":
+        case "messageTimeToLive": return int.class;
+        case "messagevisibilitydelay":
+        case "messageVisibilityDelay": return int.class;
+        case "operation": return org.apache.camel.component.azure.queue.QueueServiceOperations.class;
+        case "queueprefix":
+        case "queuePrefix": return java.lang.String.class;
+        case "validateclienturi":
+        case "validateClientURI": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         QueueServiceComponent target = (QueueServiceComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "azurequeueclient":
         case "azureQueueClient": return getOrCreateConfiguration(target).getAzureQueueClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();

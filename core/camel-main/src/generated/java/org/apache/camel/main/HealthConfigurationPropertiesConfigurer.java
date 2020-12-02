@@ -4,9 +4,10 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.main.HealthConfigurationProperties;
 
@@ -15,19 +16,6 @@ import org.apache.camel.main.HealthConfigurationProperties;
  */
 @SuppressWarnings("unchecked")
 public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("Config", java.util.Map.class);
-        map.put("ContextEnabled", java.lang.Boolean.class);
-        map.put("Enabled", java.lang.Boolean.class);
-        map.put("RegistryEnabled", java.lang.Boolean.class);
-        map.put("RoutesEnabled", java.lang.Boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HealthConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(HealthConfigurationPropertiesConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -48,16 +36,20 @@ public class HealthConfigurationPropertiesConfigurer extends org.apache.camel.su
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "config":
+        case "Config": return java.util.Map.class;
+        case "contextenabled":
+        case "ContextEnabled": return java.lang.Boolean.class;
+        case "enabled":
+        case "Enabled": return java.lang.Boolean.class;
+        case "registryenabled":
+        case "RegistryEnabled": return java.lang.Boolean.class;
+        case "routesenabled":
+        case "RoutesEnabled": return java.lang.Boolean.class;
+        default: return null;
+        }
     }
 
     @Override

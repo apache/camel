@@ -4,9 +4,10 @@ package org.apache.camel.component.ahc;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,30 +17,14 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class AhcComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("lazyStartProducer", boolean.class);
-        map.put("allowJavaSerializedObject", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("binding", org.apache.camel.component.ahc.AhcBinding.class);
-        map.put("client", org.asynchttpclient.AsyncHttpClient.class);
-        map.put("clientConfig", org.asynchttpclient.AsyncHttpClientConfig.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AhcComponentConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AhcComponent target = (AhcComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.ahc.AhcBinding.class, value)); return true;
         case "client": target.setClient(property(camelContext, org.asynchttpclient.AsyncHttpClient.class, value)); return true;
         case "clientconfig":
@@ -57,15 +42,26 @@ public class AhcComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "binding": return org.apache.camel.component.ahc.AhcBinding.class;
+        case "client": return org.asynchttpclient.AsyncHttpClient.class;
+        case "clientconfig":
+        case "clientConfig": return org.asynchttpclient.AsyncHttpClientConfig.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -74,8 +70,8 @@ public class AhcComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "binding": return target.getBinding();
         case "client": return target.getClient();
         case "clientconfig":

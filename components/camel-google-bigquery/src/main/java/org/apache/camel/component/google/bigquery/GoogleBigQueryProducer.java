@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.api.client.util.Strings;
-import com.google.api.services.bigquery.Bigquery;
-import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
-import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
-import com.google.api.services.bigquery.model.TableRow;
+import com.google.cloud.bigquery.BigQuery;
+import com.google.cloud.bigquery.InsertAllRequest;
+import com.google.cloud.bigquery.InsertAllResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +38,9 @@ public class GoogleBigQueryProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleBigQueryProducer.class);
 
     private final GoogleBigQueryConfiguration configuration;
-    private Bigquery bigquery;
+    private BigQuery bigquery;
 
-    public GoogleBigQueryProducer(Bigquery bigquery, GoogleBigQueryEndpoint endpoint,
+    public GoogleBigQueryProducer(BigQuery bigquery, GoogleBigQueryEndpoint endpoint,
                                   GoogleBigQueryConfiguration configuration) {
         super(endpoint);
         this.bigquery = bigquery;
@@ -124,7 +124,7 @@ public class GoogleBigQueryProducer extends DefaultProducer {
                 ? tableId
                 : (tableId + "$" + partitionDecorator);
 
-        List<TableDataInsertAllRequest.Rows> apiRequestRows = new ArrayList<>();
+        List<InsertAllRequest.RowToInsert> apiRequestRows = new ArrayList<>();
         for (Exchange ex : exchanges) {
             Object entryObject = ex.getIn().getBody();
             if (entryObject instanceof List) {
@@ -142,24 +142,21 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             return 0;
         }
 
-        TableDataInsertAllRequest apiRequestData = new TableDataInsertAllRequest().setRows(apiRequestRows);
+        InsertAllRequest.Builder builder = InsertAllRequest.newBuilder(configuration.getDatasetId(), tableIdWithPartition)
+                .setRows(apiRequestRows);
 
-        Bigquery.Tabledata.InsertAll apiRequest = bigquery
-                .tabledata()
-                .insertAll(configuration.getProjectId(),
-                        configuration.getDatasetId(),
-                        tableIdWithPartition,
-                        apiRequestData);
-        if (suffix != null) {
-            apiRequest.set("template_suffix", suffix);
+        if (ObjectHelper.isNotEmpty(suffix)) {
+            builder.setTemplateSuffix(suffix);
         }
+
+        InsertAllRequest insertAllRequest = builder.build();
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Sending {} messages to bigquery table {}, suffix {}, partition {}",
                     apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
 
-        TableDataInsertAllResponse apiResponse = apiRequest.execute();
+        InsertAllResponse apiResponse = bigquery.insertAll(insertAllRequest);
 
         if (apiResponse.getInsertErrors() != null && !apiResponse.getInsertErrors().isEmpty()) {
             throw new Exception("InsertAll into " + tableId + " failed: " + apiResponse.getInsertErrors());
@@ -172,12 +169,10 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         if (LOG.isDebugEnabled()) {
             LOG.debug("uploader thread/id: {} / {} . api call completed.", Thread.currentThread().getId(), exchangeId);
         }
-        return apiRequestData.size();
+        return insertAllRequest.getRows().size();
     }
 
-    private TableDataInsertAllRequest.Rows createRowRequest(Exchange exchange, Map<String, Object> object) {
-        TableRow tableRow = new TableRow();
-        tableRow.putAll(object);
+    private InsertAllRequest.RowToInsert createRowRequest(Exchange exchange, Map<String, Object> object) {
         String insertId = null;
         if (configuration.getUseAsInsertId() != null) {
             insertId = (String) (object.get(configuration.getUseAsInsertId()));
@@ -186,10 +181,10 @@ public class GoogleBigQueryProducer extends DefaultProducer {
                 insertId = exchange.getIn().getHeader(GoogleBigQueryConstants.INSERT_ID, String.class);
             }
         }
-        TableDataInsertAllRequest.Rows rows = new TableDataInsertAllRequest.Rows();
-        rows.setInsertId(insertId);
-        rows.setJson(tableRow);
-        return rows;
+        if (insertId != null) {
+            return InsertAllRequest.RowToInsert.of(insertId, object);
+        }
+        return InsertAllRequest.RowToInsert.of(object);
     }
 
     @Override

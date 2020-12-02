@@ -4,9 +4,10 @@ package org.apache.camel.component.resteasy;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.http.HttpComponentConfigurer;
 
@@ -15,19 +16,6 @@ import org.apache.camel.component.http.HttpComponentConfigurer;
  */
 @SuppressWarnings("unchecked")
 public class ResteasyComponentConfigurer extends HttpComponentConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("proxyConsumersClasses", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("allowJavaSerializedObject", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ResteasyComponentConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -42,15 +30,14 @@ public class ResteasyComponentConfigurer extends HttpComponentConfigurer impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "proxyconsumersclasses":
+        case "proxyConsumersClasses": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

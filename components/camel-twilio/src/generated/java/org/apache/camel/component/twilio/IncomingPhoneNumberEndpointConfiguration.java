@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a IncomingPhoneNumberCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberCreator creator(String areaCode)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberCreator creator(com.twilio.type.PhoneNumber phoneNumber)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberCreator creator(String pathAccountSid, String areaCode)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberCreator creator(String pathAccountSid, com.twilio.type.PhoneNumber phoneNumber)"}), @ApiMethod(methodName = "deleter", description="Create a IncomingPhoneNumberDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a IncomingPhoneNumberFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a IncomingPhoneNumberReader to execute read", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberReader reader()", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a IncomingPhoneNumberUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class IncomingPhoneNumberEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator", description="The desired area code for the new phone number")})

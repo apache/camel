@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +26,17 @@ public class RemoteKafkaService implements KafkaService {
 
     @Override
     public String getBootstrapServers() {
-        return System.getProperty("kafka.bootstrap.servers");
+        return System.getProperty(KafkaProperties.KAFKA_BOOTSTRAP_SERVERS);
+    }
+
+    @Override
+    public void registerProperties() {
+        // NO-OP
     }
 
     @Override
     public void initialize() {
+        registerProperties();
         LOG.info("Kafka bootstrap server running at address {}", getBootstrapServers());
     }
 

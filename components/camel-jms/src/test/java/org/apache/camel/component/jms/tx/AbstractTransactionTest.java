@@ -32,8 +32,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test case derived from: http://camel.apache.org/transactional-client.html and Martin Krasser's sample:
@@ -63,7 +63,7 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
 
         notify.matchesWaitTime();
 
-        assertTrue(getConditionalExceptionProcessor().getCount() == 2,
+        assertEquals(2, getConditionalExceptionProcessor().getCount(),
                 "Expected only 2 calls to process() (1 failure, 1 success) but encountered "
                                                                        + getConditionalExceptionProcessor().getCount() + ".");
     }

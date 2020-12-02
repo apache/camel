@@ -4,9 +4,10 @@ package org.apache.camel.component.jpa;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,60 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("entityType", java.lang.Class.class);
-        map.put("joinTransaction", boolean.class);
-        map.put("maximumResults", int.class);
-        map.put("namedQuery", java.lang.String.class);
-        map.put("nativeQuery", java.lang.String.class);
-        map.put("persistenceUnit", java.lang.String.class);
-        map.put("query", java.lang.String.class);
-        map.put("resultClass", java.lang.Class.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("consumeDelete", boolean.class);
-        map.put("consumeLockEntity", boolean.class);
-        map.put("deleteHandler", org.apache.camel.component.jpa.DeleteHandler.class);
-        map.put("lockModeType", javax.persistence.LockModeType.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("preDeleteHandler", org.apache.camel.component.jpa.DeleteHandler.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("skipLockedEntity", boolean.class);
-        map.put("transacted", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("parameters", java.util.Map.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("findEntity", boolean.class);
-        map.put("flushOnSend", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("remove", boolean.class);
-        map.put("useExecuteUpdate", java.lang.Boolean.class);
-        map.put("usePersist", boolean.class);
-        map.put("usePassedInEntityManager", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("entityManagerProperties", java.util.Map.class);
-        map.put("sharedEntityManager", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JpaEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -80,8 +27,6 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumedelete":
@@ -163,15 +108,92 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumedelete":
+        case "consumeDelete": return boolean.class;
+        case "consumelockentity":
+        case "consumeLockEntity": return boolean.class;
+        case "delay": return long.class;
+        case "deletehandler":
+        case "deleteHandler": return org.apache.camel.component.jpa.DeleteHandler.class;
+        case "entitymanagerproperties":
+        case "entityManagerProperties": return java.util.Map.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "findentity":
+        case "findEntity": return boolean.class;
+        case "flushonsend":
+        case "flushOnSend": return boolean.class;
+        case "greedy": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "jointransaction":
+        case "joinTransaction": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "lockmodetype":
+        case "lockModeType": return javax.persistence.LockModeType.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "maximumresults":
+        case "maximumResults": return int.class;
+        case "namedquery":
+        case "namedQuery": return java.lang.String.class;
+        case "nativequery":
+        case "nativeQuery": return java.lang.String.class;
+        case "parameters": return java.util.Map.class;
+        case "persistenceunit":
+        case "persistenceUnit": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "predeletehandler":
+        case "preDeleteHandler": return org.apache.camel.component.jpa.DeleteHandler.class;
+        case "query": return java.lang.String.class;
+        case "remove": return boolean.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "resultclass":
+        case "resultClass": return java.lang.Class.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "sharedentitymanager":
+        case "sharedEntityManager": return boolean.class;
+        case "skiplockedentity":
+        case "skipLockedEntity": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "transacted": return boolean.class;
+        case "useexecuteupdate":
+        case "useExecuteUpdate": return java.lang.Boolean.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "usepassedinentitymanager":
+        case "usePassedInEntityManager": return boolean.class;
+        case "usepersist":
+        case "usePersist": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -184,8 +206,6 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumedelete":
@@ -262,6 +282,24 @@ public class JpaEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "usePassedInEntityManager": return target.isUsePassedInEntityManager();
         case "usepersist":
         case "usePersist": return target.isUsePersist();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "deletehandler":
+        case "deleteHandler": return java.lang.Object.class;
+        case "entitymanagerproperties":
+        case "entityManagerProperties": return java.lang.Object.class;
+        case "parameters": return java.lang.Object.class;
+        case "predeletehandler":
+        case "preDeleteHandler": return java.lang.Object.class;
+        case "resultclass":
+        case "resultClass": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

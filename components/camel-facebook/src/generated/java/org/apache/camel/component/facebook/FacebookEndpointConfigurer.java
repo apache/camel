@@ -4,9 +4,10 @@ package org.apache.camel.component.facebook;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,118 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("methodName", java.lang.String.class);
-        map.put("achievementURL", java.net.URL.class);
-        map.put("albumId", java.lang.String.class);
-        map.put("albumUpdate", facebook4j.AlbumUpdate.class);
-        map.put("appId", java.lang.String.class);
-        map.put("center", facebook4j.GeoLocation.class);
-        map.put("checkinId", java.lang.String.class);
-        map.put("checkinUpdate", facebook4j.CheckinUpdate.class);
-        map.put("clientURL", java.lang.String.class);
-        map.put("clientVersion", java.lang.String.class);
-        map.put("commentId", java.lang.String.class);
-        map.put("commentUpdate", facebook4j.CommentUpdate.class);
-        map.put("debugEnabled", java.lang.Boolean.class);
-        map.put("description", java.lang.String.class);
-        map.put("distance", java.lang.Integer.class);
-        map.put("domainId", java.lang.String.class);
-        map.put("domainName", java.lang.String.class);
-        map.put("domainNames", java.util.List.class);
-        map.put("eventId", java.lang.String.class);
-        map.put("eventUpdate", facebook4j.EventUpdate.class);
-        map.put("friendId", java.lang.String.class);
-        map.put("friendlistId", java.lang.String.class);
-        map.put("friendlistName", java.lang.String.class);
-        map.put("friendUserId", java.lang.String.class);
-        map.put("groupId", java.lang.String.class);
-        map.put("gzipEnabled", java.lang.Boolean.class);
-        map.put("httpConnectionTimeout", java.lang.Integer.class);
-        map.put("httpDefaultMaxPerRoute", java.lang.Integer.class);
-        map.put("httpMaxTotalConnections", java.lang.Integer.class);
-        map.put("httpReadTimeout", java.lang.Integer.class);
-        map.put("httpRetryCount", java.lang.Integer.class);
-        map.put("httpRetryIntervalSeconds", java.lang.Integer.class);
-        map.put("httpStreamingReadTimeout", java.lang.Integer.class);
-        map.put("ids", java.util.List.class);
-        map.put("inBody", java.lang.String.class);
-        map.put("includeRead", java.lang.Boolean.class);
-        map.put("isHidden", java.lang.Boolean.class);
-        map.put("jsonStoreEnabled", java.lang.Boolean.class);
-        map.put("link", java.net.URL.class);
-        map.put("linkId", java.lang.String.class);
-        map.put("locale", java.util.Locale.class);
-        map.put("mbeanEnabled", java.lang.Boolean.class);
-        map.put("message", java.lang.String.class);
-        map.put("messageId", java.lang.String.class);
-        map.put("metric", java.lang.String.class);
-        map.put("milestoneId", java.lang.String.class);
-        map.put("name", java.lang.String.class);
-        map.put("noteId", java.lang.String.class);
-        map.put("notificationId", java.lang.String.class);
-        map.put("objectId", java.lang.String.class);
-        map.put("offerId", java.lang.String.class);
-        map.put("optionDescription", java.lang.String.class);
-        map.put("pageId", java.lang.String.class);
-        map.put("permissionName", java.lang.String.class);
-        map.put("permissions", java.lang.String.class);
-        map.put("photoId", java.lang.String.class);
-        map.put("pictureId", java.lang.Integer.class);
-        map.put("pictureId2", java.lang.Integer.class);
-        map.put("pictureSize", facebook4j.PictureSize.class);
-        map.put("placeId", java.lang.String.class);
-        map.put("postId", java.lang.String.class);
-        map.put("postUpdate", facebook4j.PostUpdate.class);
-        map.put("prettyDebugEnabled", java.lang.Boolean.class);
-        map.put("queries", java.util.Map.class);
-        map.put("query", java.lang.String.class);
-        map.put("questionId", java.lang.String.class);
-        map.put("reading", facebook4j.Reading.class);
-        map.put("readingOptions", java.util.Map.class);
-        map.put("restBaseURL", java.lang.String.class);
-        map.put("scoreValue", java.lang.Integer.class);
-        map.put("size", facebook4j.PictureSize.class);
-        map.put("source", facebook4j.Media.class);
-        map.put("subject", java.lang.String.class);
-        map.put("tabId", java.lang.String.class);
-        map.put("tagUpdate", facebook4j.TagUpdate.class);
-        map.put("testUser1", facebook4j.TestUser.class);
-        map.put("testUser2", facebook4j.TestUser.class);
-        map.put("testUserId", java.lang.String.class);
-        map.put("title", java.lang.String.class);
-        map.put("toUserId", java.lang.String.class);
-        map.put("toUserIds", java.util.List.class);
-        map.put("userId", java.lang.String.class);
-        map.put("userId1", java.lang.String.class);
-        map.put("userId2", java.lang.String.class);
-        map.put("userIds", java.util.List.class);
-        map.put("userLocale", java.lang.String.class);
-        map.put("useSSL", java.lang.Boolean.class);
-        map.put("videoBaseURL", java.lang.String.class);
-        map.put("videoId", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("httpProxyHost", java.lang.String.class);
-        map.put("httpProxyPassword", java.lang.String.class);
-        map.put("httpProxyPort", java.lang.Integer.class);
-        map.put("httpProxyUser", java.lang.String.class);
-        map.put("oAuthAccessToken", java.lang.String.class);
-        map.put("oAuthAccessTokenURL", java.lang.String.class);
-        map.put("oAuthAppId", java.lang.String.class);
-        map.put("oAuthAppSecret", java.lang.String.class);
-        map.put("oAuthAuthorizationURL", java.lang.String.class);
-        map.put("oAuthPermissions", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FacebookEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -140,8 +29,6 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "albumUpdate": target.getConfiguration().setAlbumUpdate(property(camelContext, facebook4j.AlbumUpdate.class, value)); return true;
         case "appid":
         case "appId": target.getConfiguration().setAppId(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "center": target.getConfiguration().setCenter(property(camelContext, facebook4j.GeoLocation.class, value)); return true;
@@ -327,15 +214,198 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "achievementurl":
+        case "achievementURL": return java.net.URL.class;
+        case "albumid":
+        case "albumId": return java.lang.String.class;
+        case "albumupdate":
+        case "albumUpdate": return facebook4j.AlbumUpdate.class;
+        case "appid":
+        case "appId": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "center": return facebook4j.GeoLocation.class;
+        case "checkinid":
+        case "checkinId": return java.lang.String.class;
+        case "checkinupdate":
+        case "checkinUpdate": return facebook4j.CheckinUpdate.class;
+        case "clienturl":
+        case "clientURL": return java.lang.String.class;
+        case "clientversion":
+        case "clientVersion": return java.lang.String.class;
+        case "commentid":
+        case "commentId": return java.lang.String.class;
+        case "commentupdate":
+        case "commentUpdate": return facebook4j.CommentUpdate.class;
+        case "debugenabled":
+        case "debugEnabled": return java.lang.Boolean.class;
+        case "description": return java.lang.String.class;
+        case "distance": return java.lang.Integer.class;
+        case "domainid":
+        case "domainId": return java.lang.String.class;
+        case "domainname":
+        case "domainName": return java.lang.String.class;
+        case "domainnames":
+        case "domainNames": return java.util.List.class;
+        case "eventid":
+        case "eventId": return java.lang.String.class;
+        case "eventupdate":
+        case "eventUpdate": return facebook4j.EventUpdate.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "friendid":
+        case "friendId": return java.lang.String.class;
+        case "frienduserid":
+        case "friendUserId": return java.lang.String.class;
+        case "friendlistid":
+        case "friendlistId": return java.lang.String.class;
+        case "friendlistname":
+        case "friendlistName": return java.lang.String.class;
+        case "groupid":
+        case "groupId": return java.lang.String.class;
+        case "gzipenabled":
+        case "gzipEnabled": return java.lang.Boolean.class;
+        case "httpconnectiontimeout":
+        case "httpConnectionTimeout": return java.lang.Integer.class;
+        case "httpdefaultmaxperroute":
+        case "httpDefaultMaxPerRoute": return java.lang.Integer.class;
+        case "httpmaxtotalconnections":
+        case "httpMaxTotalConnections": return java.lang.Integer.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyuser":
+        case "httpProxyUser": return java.lang.String.class;
+        case "httpreadtimeout":
+        case "httpReadTimeout": return java.lang.Integer.class;
+        case "httpretrycount":
+        case "httpRetryCount": return java.lang.Integer.class;
+        case "httpretryintervalseconds":
+        case "httpRetryIntervalSeconds": return java.lang.Integer.class;
+        case "httpstreamingreadtimeout":
+        case "httpStreamingReadTimeout": return java.lang.Integer.class;
+        case "ids": return java.util.List.class;
+        case "inbody":
+        case "inBody": return java.lang.String.class;
+        case "includeread":
+        case "includeRead": return java.lang.Boolean.class;
+        case "ishidden":
+        case "isHidden": return java.lang.Boolean.class;
+        case "jsonstoreenabled":
+        case "jsonStoreEnabled": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "link": return java.net.URL.class;
+        case "linkid":
+        case "linkId": return java.lang.String.class;
+        case "locale": return java.util.Locale.class;
+        case "mbeanenabled":
+        case "mbeanEnabled": return java.lang.Boolean.class;
+        case "message": return java.lang.String.class;
+        case "messageid":
+        case "messageId": return java.lang.String.class;
+        case "metric": return java.lang.String.class;
+        case "milestoneid":
+        case "milestoneId": return java.lang.String.class;
+        case "name": return java.lang.String.class;
+        case "noteid":
+        case "noteId": return java.lang.String.class;
+        case "notificationid":
+        case "notificationId": return java.lang.String.class;
+        case "oauthaccesstoken":
+        case "oAuthAccessToken": return java.lang.String.class;
+        case "oauthaccesstokenurl":
+        case "oAuthAccessTokenURL": return java.lang.String.class;
+        case "oauthappid":
+        case "oAuthAppId": return java.lang.String.class;
+        case "oauthappsecret":
+        case "oAuthAppSecret": return java.lang.String.class;
+        case "oauthauthorizationurl":
+        case "oAuthAuthorizationURL": return java.lang.String.class;
+        case "oauthpermissions":
+        case "oAuthPermissions": return java.lang.String.class;
+        case "objectid":
+        case "objectId": return java.lang.String.class;
+        case "offerid":
+        case "offerId": return java.lang.String.class;
+        case "optiondescription":
+        case "optionDescription": return java.lang.String.class;
+        case "pageid":
+        case "pageId": return java.lang.String.class;
+        case "permissionname":
+        case "permissionName": return java.lang.String.class;
+        case "permissions": return java.lang.String.class;
+        case "photoid":
+        case "photoId": return java.lang.String.class;
+        case "pictureid":
+        case "pictureId": return java.lang.Integer.class;
+        case "pictureid2":
+        case "pictureId2": return java.lang.Integer.class;
+        case "picturesize":
+        case "pictureSize": return facebook4j.PictureSize.class;
+        case "placeid":
+        case "placeId": return java.lang.String.class;
+        case "postid":
+        case "postId": return java.lang.String.class;
+        case "postupdate":
+        case "postUpdate": return facebook4j.PostUpdate.class;
+        case "prettydebugenabled":
+        case "prettyDebugEnabled": return java.lang.Boolean.class;
+        case "queries": return java.util.Map.class;
+        case "query": return java.lang.String.class;
+        case "questionid":
+        case "questionId": return java.lang.String.class;
+        case "reading": return facebook4j.Reading.class;
+        case "readingoptions":
+        case "readingOptions": return java.util.Map.class;
+        case "restbaseurl":
+        case "restBaseURL": return java.lang.String.class;
+        case "scorevalue":
+        case "scoreValue": return java.lang.Integer.class;
+        case "size": return facebook4j.PictureSize.class;
+        case "source": return facebook4j.Media.class;
+        case "subject": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tabid":
+        case "tabId": return java.lang.String.class;
+        case "tagupdate":
+        case "tagUpdate": return facebook4j.TagUpdate.class;
+        case "testuser1":
+        case "testUser1": return facebook4j.TestUser.class;
+        case "testuser2":
+        case "testUser2": return facebook4j.TestUser.class;
+        case "testuserid":
+        case "testUserId": return java.lang.String.class;
+        case "title": return java.lang.String.class;
+        case "touserid":
+        case "toUserId": return java.lang.String.class;
+        case "touserids":
+        case "toUserIds": return java.util.List.class;
+        case "usessl":
+        case "useSSL": return java.lang.Boolean.class;
+        case "userid":
+        case "userId": return java.lang.String.class;
+        case "userid1":
+        case "userId1": return java.lang.String.class;
+        case "userid2":
+        case "userId2": return java.lang.String.class;
+        case "userids":
+        case "userIds": return java.util.List.class;
+        case "userlocale":
+        case "userLocale": return java.lang.String.class;
+        case "videobaseurl":
+        case "videoBaseURL": return java.lang.String.class;
+        case "videoid":
+        case "videoId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -350,8 +420,6 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "albumUpdate": return target.getConfiguration().getAlbumUpdate();
         case "appid":
         case "appId": return target.getConfiguration().getAppId();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "center": return target.getConfiguration().getCenter();
@@ -532,6 +600,23 @@ public class FacebookEndpointConfigurer extends PropertyConfigurerSupport implem
         case "videoBaseURL": return target.getConfiguration().getVideoBaseURL();
         case "videoid":
         case "videoId": return target.getConfiguration().getVideoId();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "domainnames":
+        case "domainNames": return java.lang.String.class;
+        case "ids": return java.lang.String.class;
+        case "queries": return java.lang.String.class;
+        case "readingoptions":
+        case "readingOptions": return java.lang.Object.class;
+        case "touserids":
+        case "toUserIds": return java.lang.String.class;
+        case "userids":
+        case "userIds": return java.lang.String.class;
         default: return null;
         }
     }

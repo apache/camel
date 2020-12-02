@@ -4,9 +4,10 @@ package org.apache.camel.component.servicenow;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,60 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("instanceName", java.lang.String.class);
-        map.put("display", java.lang.String.class);
-        map.put("displayValue", java.lang.String.class);
-        map.put("excludeReferenceLink", java.lang.Boolean.class);
-        map.put("favorites", java.lang.Boolean.class);
-        map.put("includeAggregates", java.lang.Boolean.class);
-        map.put("includeAvailableAggregates", java.lang.Boolean.class);
-        map.put("includeAvailableBreakdowns", java.lang.Boolean.class);
-        map.put("includeScoreNotes", java.lang.Boolean.class);
-        map.put("includeScores", java.lang.Boolean.class);
-        map.put("inputDisplayValue", java.lang.Boolean.class);
-        map.put("key", java.lang.Boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("models", java.util.Map.class);
-        map.put("perPage", java.lang.Integer.class);
-        map.put("release", org.apache.camel.component.servicenow.ServiceNowRelease.class);
-        map.put("requestModels", java.util.Map.class);
-        map.put("resource", java.lang.String.class);
-        map.put("responseModels", java.util.Map.class);
-        map.put("sortBy", java.lang.String.class);
-        map.put("sortDir", java.lang.String.class);
-        map.put("suppressAutoSysField", java.lang.Boolean.class);
-        map.put("suppressPaginationHeader", java.lang.Boolean.class);
-        map.put("table", java.lang.String.class);
-        map.put("target", java.lang.Boolean.class);
-        map.put("topLevelOnly", java.lang.Boolean.class);
-        map.put("apiVersion", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("dateFormat", java.lang.String.class);
-        map.put("dateTimeFormat", java.lang.String.class);
-        map.put("httpClientPolicy", org.apache.cxf.transports.http.configuration.HTTPClientPolicy.class);
-        map.put("mapper", com.fasterxml.jackson.databind.ObjectMapper.class);
-        map.put("proxyAuthorizationPolicy", org.apache.cxf.configuration.security.ProxyAuthorizationPolicy.class);
-        map.put("retrieveTargetRecordOnImport", java.lang.Boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("timeFormat", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("apiUrl", java.lang.String.class);
-        map.put("oauthClientId", java.lang.String.class);
-        map.put("oauthClientSecret", java.lang.String.class);
-        map.put("oauthTokenUrl", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("proxyPassword", java.lang.String.class);
-        map.put("proxyUserName", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("userName", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ServiceNowEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServiceNowEndpoint target = (ServiceNowEndpoint) obj;
@@ -78,8 +25,6 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiUrl": target.getConfiguration().setApiUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "dateformat":
         case "dateFormat": target.getConfiguration().setDateFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "datetimeformat":
@@ -160,15 +105,89 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiurl":
+        case "apiUrl": return java.lang.String.class;
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "dateformat":
+        case "dateFormat": return java.lang.String.class;
+        case "datetimeformat":
+        case "dateTimeFormat": return java.lang.String.class;
+        case "display": return java.lang.String.class;
+        case "displayvalue":
+        case "displayValue": return java.lang.String.class;
+        case "excludereferencelink":
+        case "excludeReferenceLink": return java.lang.Boolean.class;
+        case "favorites": return java.lang.Boolean.class;
+        case "httpclientpolicy":
+        case "httpClientPolicy": return org.apache.cxf.transports.http.configuration.HTTPClientPolicy.class;
+        case "includeaggregates":
+        case "includeAggregates": return java.lang.Boolean.class;
+        case "includeavailableaggregates":
+        case "includeAvailableAggregates": return java.lang.Boolean.class;
+        case "includeavailablebreakdowns":
+        case "includeAvailableBreakdowns": return java.lang.Boolean.class;
+        case "includescorenotes":
+        case "includeScoreNotes": return java.lang.Boolean.class;
+        case "includescores":
+        case "includeScores": return java.lang.Boolean.class;
+        case "inputdisplayvalue":
+        case "inputDisplayValue": return java.lang.Boolean.class;
+        case "key": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "models": return java.util.Map.class;
+        case "oauthclientid":
+        case "oauthClientId": return java.lang.String.class;
+        case "oauthclientsecret":
+        case "oauthClientSecret": return java.lang.String.class;
+        case "oauthtokenurl":
+        case "oauthTokenUrl": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "perpage":
+        case "perPage": return java.lang.Integer.class;
+        case "proxyauthorizationpolicy":
+        case "proxyAuthorizationPolicy": return org.apache.cxf.configuration.security.ProxyAuthorizationPolicy.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxypassword":
+        case "proxyPassword": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyusername":
+        case "proxyUserName": return java.lang.String.class;
+        case "release": return org.apache.camel.component.servicenow.ServiceNowRelease.class;
+        case "requestmodels":
+        case "requestModels": return java.util.Map.class;
+        case "resource": return java.lang.String.class;
+        case "responsemodels":
+        case "responseModels": return java.util.Map.class;
+        case "retrievetargetrecordonimport":
+        case "retrieveTargetRecordOnImport": return java.lang.Boolean.class;
+        case "sortby":
+        case "sortBy": return java.lang.String.class;
+        case "sortdir":
+        case "sortDir": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "suppressautosysfield":
+        case "suppressAutoSysField": return java.lang.Boolean.class;
+        case "suppresspaginationheader":
+        case "suppressPaginationHeader": return java.lang.Boolean.class;
+        case "synchronous": return boolean.class;
+        case "table": return java.lang.String.class;
+        case "target": return java.lang.Boolean.class;
+        case "timeformat":
+        case "timeFormat": return java.lang.String.class;
+        case "toplevelonly":
+        case "topLevelOnly": return java.lang.Boolean.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -179,8 +198,6 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "apiUrl": return target.getConfiguration().getApiUrl();
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "dateformat":
         case "dateFormat": return target.getConfiguration().getDateFormat();
         case "datetimeformat":
@@ -256,6 +273,18 @@ public class ServiceNowEndpointConfigurer extends PropertyConfigurerSupport impl
         case "topLevelOnly": return target.getConfiguration().getTopLevelOnly();
         case "username":
         case "userName": return target.getConfiguration().getUserName();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "models": return java.lang.Class.class;
+        case "requestmodels":
+        case "requestModels": return java.lang.Class.class;
+        case "responsemodels":
+        case "responseModels": return java.lang.Class.class;
         default: return null;
         }
     }

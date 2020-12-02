@@ -60,21 +60,6 @@ public interface Aws2MqComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2MqComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Component configuration.
          * 
          * The option is a:
@@ -200,18 +185,20 @@ public interface Aws2MqComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Aws2MqComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2MqComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -261,7 +248,6 @@ public interface Aws2MqComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonMqClient": getOrCreateConfiguration((MQ2Component) component).setAmazonMqClient((software.amazon.awssdk.services.mq.MqClient) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((MQ2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((MQ2Component) component).setConfiguration((org.apache.camel.component.aws2.mq.MQ2Configuration) value); return true;
             case "lazyStartProducer": ((MQ2Component) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((MQ2Component) component).setOperation((org.apache.camel.component.aws2.mq.MQ2Operations) value); return true;
@@ -271,7 +257,7 @@ public interface Aws2MqComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((MQ2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((MQ2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((MQ2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((MQ2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((MQ2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((MQ2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((MQ2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

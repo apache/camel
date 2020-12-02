@@ -4,9 +4,10 @@ package org.apache.camel.component.google.sheets.stream;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,30 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("applicationName", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration.class);
-        map.put("includeGridData", boolean.class);
-        map.put("majorDimension", java.lang.String.class);
-        map.put("maxResults", int.class);
-        map.put("range", java.lang.String.class);
-        map.put("scopes", java.util.List.class);
-        map.put("splitResults", boolean.class);
-        map.put("spreadsheetId", java.lang.String.class);
-        map.put("valueRenderOption", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientFactory", org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("clientSecret", java.lang.String.class);
-        map.put("refreshToken", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleSheetsStreamComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration getOrCreateConfiguration(GoogleSheetsStreamComponent target) {
         if (target.getConfiguration() == null) {
@@ -55,8 +32,8 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
         case "applicationName": getOrCreateConfiguration(target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clientfactory":
@@ -87,15 +64,41 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientfactory":
+        case "clientFactory": return org.apache.camel.component.google.sheets.GoogleSheetsClientFactory.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration.class;
+        case "includegriddata":
+        case "includeGridData": return boolean.class;
+        case "majordimension":
+        case "majorDimension": return java.lang.String.class;
+        case "maxresults":
+        case "maxResults": return int.class;
+        case "range": return java.lang.String.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        case "scopes": return java.util.List.class;
+        case "splitresults":
+        case "splitResults": return boolean.class;
+        case "spreadsheetid":
+        case "spreadsheetId": return java.lang.String.class;
+        case "valuerenderoption":
+        case "valueRenderOption": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -106,8 +109,8 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "applicationname":
         case "applicationName": return getOrCreateConfiguration(target).getApplicationName();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clientfactory":
@@ -133,6 +136,14 @@ public class GoogleSheetsStreamComponentConfigurer extends PropertyConfigurerSup
         case "spreadsheetId": return getOrCreateConfiguration(target).getSpreadsheetId();
         case "valuerenderoption":
         case "valueRenderOption": return getOrCreateConfiguration(target).getValueRenderOption();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

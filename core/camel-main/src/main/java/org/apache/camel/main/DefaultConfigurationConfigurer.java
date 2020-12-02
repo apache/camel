@@ -156,6 +156,7 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setAutoStartup(config.isAutoStartup());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
         camelContext.setCaseInsensitiveHeaders(config.isCaseInsensitiveHeaders());
+        camelContext.setAutowiredEnabled(config.isAutowiredEnabled());
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
@@ -172,7 +173,7 @@ public final class DefaultConfigurationConfigurer {
         }
 
         // global endpoint configurations
-        camelContext.getGlobalEndpointConfiguration().setBasicPropertyBinding(config.isEndpointBasicPropertyBinding());
+        camelContext.getGlobalEndpointConfiguration().setAutowiredEnabled(config.isAutowiredEnabled());
         camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
         camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
 
@@ -355,14 +356,21 @@ public final class DefaultConfigurationConfigurer {
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(),
                 camelContext::addLifecycleStrategy);
-        final Predicate<LogListener> containsLogListener
-                = camelContext.adapt(ExtendedCamelContext.class).getLogListeners()::contains;
-        registerPropertiesForBeanTypesWithCondition(registry, LogListener.class, containsLogListener.negate(),
-                camelContext.adapt(ExtendedCamelContext.class)::addLogListener);
         ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
         final Predicate<ModelLifecycleStrategy> containsModelLifecycleStrategy = mcc.getModelLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, ModelLifecycleStrategy.class,
                 containsModelLifecycleStrategy.negate(), mcc::addModelLifecycleStrategy);
+
+        // log listeners
+        Map<String, LogListener> logListeners = registry.findByTypeWithName(LogListener.class);
+        if (logListeners != null && !logListeners.isEmpty()) {
+            for (LogListener logListener : logListeners.values()) {
+                boolean contains = ecc.getLogListeners() != null && ecc.getLogListeners().contains(logListener);
+                if (!contains) {
+                    ecc.addLogListener(logListener);
+                }
+            }
+        }
 
         // service registry
         Map<String, ServiceRegistry> serviceRegistries = registry.findByTypeWithName(ServiceRegistry.class);

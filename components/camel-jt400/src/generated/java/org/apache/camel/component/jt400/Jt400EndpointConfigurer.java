@@ -4,9 +4,10 @@ package org.apache.camel.component.jt400;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,52 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("userID", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("systemName", java.lang.String.class);
-        map.put("objectPath", java.lang.String.class);
-        map.put("type", org.apache.camel.component.jt400.Jt400Type.class);
-        map.put("ccsid", int.class);
-        map.put("format", org.apache.camel.component.jt400.Jt400Configuration.Format.class);
-        map.put("guiAvailable", boolean.class);
-        map.put("keyed", boolean.class);
-        map.put("searchKey", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("messageAction", org.apache.camel.component.jt400.Jt400Configuration.MessageAction.class);
-        map.put("readTimeout", int.class);
-        map.put("searchType", org.apache.camel.component.jt400.Jt400Configuration.SearchType.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("outputFieldsIdxArray", java.lang.Integer[].class);
-        map.put("outputFieldsLengthArray", java.lang.Integer[].class);
-        map.put("procedureName", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("secured", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Jt400EndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -72,8 +27,6 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "ccsid": target.getConfiguration().setCcsid(property(camelContext, int.class, value)); return true;
@@ -131,15 +84,68 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "ccsid": return int.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "format": return org.apache.camel.component.jt400.Jt400Configuration.Format.class;
+        case "greedy": return boolean.class;
+        case "guiavailable":
+        case "guiAvailable": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "keyed": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messageaction":
+        case "messageAction": return org.apache.camel.component.jt400.Jt400Configuration.MessageAction.class;
+        case "outputfieldsidxarray":
+        case "outputFieldsIdxArray": return java.lang.Integer[].class;
+        case "outputfieldslengtharray":
+        case "outputFieldsLengthArray": return java.lang.Integer[].class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "procedurename":
+        case "procedureName": return java.lang.String.class;
+        case "readtimeout":
+        case "readTimeout": return int.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "searchkey":
+        case "searchKey": return java.lang.String.class;
+        case "searchtype":
+        case "searchType": return org.apache.camel.component.jt400.Jt400Configuration.SearchType.class;
+        case "secured": return boolean.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -152,8 +158,6 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "ccsid": return target.getConfiguration().getCcsid();
@@ -206,6 +210,15 @@ public class Jt400EndpointConfigurer extends PropertyConfigurerSupport implement
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

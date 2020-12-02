@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -91,173 +92,6 @@ public final class PropertyBindingSupport {
 
     public static Builder build() {
         return new Builder();
-    }
-
-    /**
-     * This will discover all the properties on the target, and automatic bind the properties that are null by looking
-     * up in the registry to see if there is a single instance of the same type as the property. This is used for
-     * convention over configuration to automatic configure resources such as DataSource, Amazon Logins and so on.
-     *
-     * @param  camelContext the camel context
-     * @param  target       the target object
-     * @return              true if one ore more properties was auto wired
-     */
-    public static boolean autowireSingletonPropertiesFromRegistry(CamelContext camelContext, Object target) {
-        return autowireSingletonPropertiesFromRegistry(camelContext, target, false, false, null);
-    }
-
-    /**
-     * This will discover all the properties on the target, and automatic bind the properties by looking up in the
-     * registry to see if there is a single instance of the same type as the property. This is used for convention over
-     * configuration to automatic configure resources such as DataSource, Amazon Logins and so on.
-     *
-     * @param  camelContext the camel context
-     * @param  target       the target object
-     * @param  bindNullOnly whether to only autowire if the property has no default value or has not been configured
-     *                      explicit
-     * @param  deepNesting  whether to attempt to walk as deep down the object graph by creating new empty objects on
-     *                      the way if needed (Camel can only create new empty objects if they have a default no-arg
-     *                      constructor, also mind that this may lead to creating many empty objects, even if they will
-     *                      not have any objects autowired from the registry, so use this with caution)
-     * @param  callback     optional callback when a property was auto wired
-     * @return              true if one ore more properties was auto wired
-     */
-    public static boolean autowireSingletonPropertiesFromRegistry(
-            CamelContext camelContext, Object target,
-            boolean bindNullOnly, boolean deepNesting, OnAutowiring callback) {
-        try {
-            if (target != null) {
-                Set<Object> parents = new HashSet<>();
-                return doAutowireSingletonPropertiesFromRegistry(camelContext, target, parents, bindNullOnly, deepNesting,
-                        callback);
-            }
-        } catch (Exception e) {
-            throw new PropertyBindingException(target, e);
-        }
-
-        return false;
-    }
-
-    private static boolean doAutowireSingletonPropertiesFromRegistry(
-            final CamelContext camelContext, Object target, Set<Object> parents,
-            boolean bindNullOnly, boolean deepNesting, OnAutowiring callback)
-            throws Exception {
-
-        // properties of all the current values from the target
-        Map<String, Object> properties = new LinkedHashMap<>();
-
-        // if there a configurer
-        PropertyConfigurer configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, target);
-
-        // use configurer to get all the current options and its values
-        Map<String, Object> getterAllOption = null;
-        if (configurer instanceof PropertyConfigurerGetter) {
-            final PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
-            final Object lambdaTarget = target;
-            getterAllOption = getter.getAllOptions(target);
-            getterAllOption.forEach((key, type) -> {
-                // we only need the complex types
-                if (isComplexUserType((Class) type)) {
-                    Object value = getter.getOptionValue(lambdaTarget, key, true);
-                    properties.put(key, value);
-                }
-            });
-        } else {
-            // okay use reflection based
-            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(target, properties, null);
-        }
-
-        boolean hit = false;
-
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-
-            // skip based on some known names
-            if ("basicPropertyBinding".equals(key) || "bridgeErrorHandler".equals(key) || "lazyStartProducer".equals(key)) {
-                continue;
-            }
-
-            boolean skip = parents.contains(value) || value instanceof CamelContext;
-            if (skip) {
-                // we have already covered this as parent of parents so dont walk down this as we want to avoid
-                // circular dependencies when walking the OGNL graph, also we dont want to walk down CamelContext
-                continue;
-            }
-
-            Class<?> type;
-            if (getterAllOption != null) {
-                // use getter configurer to know the property class type
-                type = (Class<?>) getterAllOption.get(key);
-            } else {
-                // okay fallback to use reflection based
-                type = getGetterType(camelContext, target, key, false);
-            }
-            if (type != null && CamelContext.class.isAssignableFrom(type)) {
-                // the camel context is usually bound by other means so don't bind it to the target object
-                // and most important do not walk it down and re-configure it.
-                //
-                // In some cases, such as Camel Quarkus, the Registry and the Context itself are added to
-                // the IoC Container and an attempt to auto re-wire the Context may ends up in a circular
-                // reference and a subsequent stack overflow.
-                continue;
-            }
-
-            if (isComplexUserType(type)) {
-                // if the property has not been set and its a complex type (not simple or string etc)
-                if (!bindNullOnly || value == null) {
-                    Set lookup = camelContext.getRegistry().findByType(type);
-                    if (lookup.size() == 1) {
-                        value = lookup.iterator().next();
-                        if (value != null) {
-                            if (configurer != null) {
-                                // favour using source code generated configurer
-                                hit = configurer.configure(camelContext, target, undashKey(key), value, true);
-                            }
-                            if (!hit) {
-                                // fallback to use reflection based
-                                hit = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection()
-                                        .setProperty(camelContext, target, key, value);
-                            }
-                            if (hit && callback != null) {
-                                callback.onAutowire(target, key, type, value);
-                            }
-                        }
-                    }
-                }
-
-                // attempt to create new instances to walk down the tree if its null (deepNesting option)
-                if (value == null && deepNesting) {
-                    // okay is there a setter so we can create a new instance and set it automatic
-                    Method method = findBestSetterMethod(camelContext, target.getClass(), key, true, true, false);
-                    if (method != null) {
-                        Class<?> parameterType = method.getParameterTypes()[0];
-                        if (parameterType != null
-                                && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
-                            Object instance = camelContext.getInjector().newInstance(parameterType);
-                            if (instance != null) {
-                                org.apache.camel.support.ObjectHelper.invokeMethod(method, target, instance);
-                                target = instance;
-                                // remember this as parent and also autowire nested properties
-                                // do not walk down if it point to our-selves (circular reference)
-                                parents.add(target);
-                                value = instance;
-                                hit |= doAutowireSingletonPropertiesFromRegistry(camelContext, value, parents, bindNullOnly,
-                                        deepNesting, callback);
-                            }
-                        }
-                    }
-                } else if (value != null && deepNesting) {
-                    // remember this as parent and also autowire nested properties
-                    // do not walk down if it point to our-selves (circular reference)
-                    parents.add(target);
-                    hit |= doAutowireSingletonPropertiesFromRegistry(camelContext, value, parents, bindNullOnly, deepNesting,
-                            callback);
-                }
-            }
-        }
-
-        return hit;
     }
 
     /**
@@ -368,7 +202,7 @@ public final class PropertyBindingSupport {
             Object value = entry.getValue();
 
             // if nesting is not allowed, then only bind properties without dots (OGNL graph)
-            if (!nesting && key.indexOf('.') != -1) {
+            if (!nesting && isDotKey(key)) {
                 continue;
             }
 
@@ -406,8 +240,8 @@ public final class PropertyBindingSupport {
 
         // we should only walk and create OGNL path for the middle graph
         String[] parts;
-        if (name.contains(".")) {
-            parts = name.split("\\.");
+        if (isDotKey(name)) {
+            parts = splitKey(name);
         } else {
             parts = new String[] { name };
         }
@@ -463,10 +297,16 @@ public final class PropertyBindingSupport {
                     // so we can use that to lookup as configurer
                     Class<?> collectionType = (Class<?>) ((PropertyConfigurerGetter) configurer)
                             .getCollectionValueType(newTarget, undashKey(key), ignoreCase);
-                    if (collectionType != null) {
-                        configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, collectionType);
-                    } else {
-                        configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, prop.getClass());
+
+                    if (collectionType == null) {
+                        collectionType = prop.getClass();
+                    }
+
+                    configurer = PropertyConfigurerHelper.resolvePropertyConfigurer(camelContext, collectionType);
+                    if (configurer == null) {
+                        if (Map.class.isAssignableFrom(collectionType)) {
+                            configurer = MapConfigurer.INSTANCE;
+                        }
                     }
                 }
                 // prepare for next iterator
@@ -498,8 +338,10 @@ public final class PropertyBindingSupport {
         if (method != null) {
             Class<?> parameterType = method.getParameterTypes()[0];
             Object obj = null;
-            // special for map/list/array
-            if (Map.class.isAssignableFrom(parameterType)) {
+            // special for properties/map/list/array
+            if (Properties.class.isAssignableFrom(parameterType)) {
+                obj = new Properties();
+            } else if (Map.class.isAssignableFrom(parameterType)) {
                 obj = new LinkedHashMap<>();
             } else if (Collection.class.isAssignableFrom(parameterType)) {
                 obj = new ArrayList<>();
@@ -531,12 +373,14 @@ public final class PropertyBindingSupport {
         Object answer = null;
         Class<?> parameterType = null;
         if (configurer instanceof PropertyConfigurerGetter) {
-            parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(newTarget).get(key);
+            parameterType = ((PropertyConfigurerGetter) configurer).getOptionType(key, true);
         }
         if (parameterType != null) {
             Object obj = null;
-            // special for map/list/array
-            if (Map.class.isAssignableFrom(parameterType)) {
+            // special for properties/map/list/array
+            if (Properties.class.isAssignableFrom(parameterType)) {
+                obj = new Properties();
+            } else if (Map.class.isAssignableFrom(parameterType)) {
                 obj = new LinkedHashMap<>();
             } else if (Collection.class.isAssignableFrom(parameterType)) {
                 obj = new ArrayList<>();
@@ -608,6 +452,12 @@ public final class PropertyBindingSupport {
                 if (configurer != null) {
                     bound = setSimplePropertyViaConfigurer(camelContext, target, key, value, ignoreCase, configurer);
                 }
+                // if the target value is a map type, then we can skip reflection
+                // and set the entry
+                if (!bound && Map.class.isAssignableFrom(target.getClass())) {
+                    ((Map) target).put(key, value);
+                    bound = true;
+                }
                 if (!bound && reflection) {
                     // fallback to reflection based
                     bound = setSimplePropertyViaReflection(camelContext, target, key, value, fluentBuilder, allowPrivateSetter,
@@ -650,7 +500,9 @@ public final class PropertyBindingSupport {
             if (getter != null) {
                 // what type does it have
                 Class<?> returnType = getter.getReturnType();
-                if (Map.class.isAssignableFrom(returnType)) {
+                if (Properties.class.isAssignableFrom(returnType)) {
+                    obj = new Properties();
+                } else if (Map.class.isAssignableFrom(returnType)) {
                     obj = new LinkedHashMap<>();
                 } else if (Collection.class.isAssignableFrom(returnType)) {
                     obj = new ArrayList<>();
@@ -681,6 +533,7 @@ public final class PropertyBindingSupport {
         }
 
         if (obj instanceof Map) {
+            // this supports both Map and Properties
             Map map = (Map) obj;
             map.put(lookupKey, value);
             return true;
@@ -755,12 +608,14 @@ public final class PropertyBindingSupport {
             // it was supposed to be a list or map, but its null, so lets create a new list or map and set it automatically
             Class<?> returnType = null;
             if (configurer instanceof PropertyConfigurerGetter) {
-                returnType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(undashKey);
+                returnType = ((PropertyConfigurerGetter) configurer).getOptionType(undashKey, true);
             }
             if (returnType == null) {
                 return false;
             }
-            if (Map.class.isAssignableFrom(returnType)) {
+            if (Properties.class.isAssignableFrom(returnType)) {
+                obj = new Properties();
+            } else if (Map.class.isAssignableFrom(returnType)) {
                 obj = new LinkedHashMap<>();
             } else if (Collection.class.isAssignableFrom(returnType)) {
                 obj = new ArrayList<>();
@@ -786,6 +641,7 @@ public final class PropertyBindingSupport {
         }
 
         if (obj instanceof Map) {
+            // this supports both Map and Properties
             Map map = (Map) obj;
             map.put(lookupKey, value);
             return true;
@@ -882,7 +738,7 @@ public final class PropertyBindingSupport {
                 Class<?> parameterType = null;
                 if (configurer instanceof PropertyConfigurerGetter) {
                     // favour using configurer
-                    parameterType = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(undashKey);
+                    parameterType = ((PropertyConfigurerGetter) configurer).getOptionType(undashKey, true);
                 }
                 if (parameterType == null && reflection) {
                     // fallback to reflection
@@ -1003,7 +859,7 @@ public final class PropertyBindingSupport {
         if (answer != null) {
             type = answer.getClass();
         } else if (configurer instanceof PropertyConfigurerGetter) {
-            type = (Class<?>) ((PropertyConfigurerGetter) configurer).getAllOptions(target).get(undashKey);
+            type = ((PropertyConfigurerGetter) configurer).getOptionType(undashKey, true);
         }
 
         if (answer == null && type == null) {
@@ -1013,7 +869,9 @@ public final class PropertyBindingSupport {
 
         if (answer == null) {
             if (lookupKey != null) {
-                if (Map.class.isAssignableFrom(type)) {
+                if (Properties.class.isAssignableFrom(type)) {
+                    answer = new Properties();
+                } else if (Map.class.isAssignableFrom(type)) {
                     answer = new LinkedHashMap<>();
                 } else if (Collection.class.isAssignableFrom(type)) {
                     answer = new ArrayList<>();
@@ -1142,7 +1000,9 @@ public final class PropertyBindingSupport {
 
         if (answer == null) {
             if (lookupKey != null) {
-                if (Map.class.isAssignableFrom(type)) {
+                if (Properties.class.isAssignableFrom(type)) {
+                    answer = new Properties();
+                } else if (Map.class.isAssignableFrom(type)) {
                     answer = new LinkedHashMap<>();
                 } else if (Collection.class.isAssignableFrom(type)) {
                     answer = new ArrayList<>();
@@ -1656,6 +1516,54 @@ public final class PropertyBindingSupport {
         return key;
     }
 
+    private static boolean isDotKey(String key) {
+        // we only want to know if there is a dot in OGNL path, so any map keys [iso.code] is accepted
+
+        if (key.indexOf('[') == -1 && key.indexOf('.') != -1) {
+            return true;
+        }
+
+        boolean mapKey = false;
+        for (char ch : key.toCharArray()) {
+            if (ch == '[') {
+                mapKey = true;
+            } else if (ch == ']') {
+                mapKey = false;
+            }
+            if (ch == '.' && !mapKey) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String[] splitKey(String key) {
+        // split the key into parts separated by dot (but handle map keys [iso.code] etc.
+        List<String> parts = new ArrayList<>();
+
+        boolean mapKey = false;
+        StringBuilder sb = new StringBuilder();
+        for (char ch : key.toCharArray()) {
+            if (ch == '[') {
+                mapKey = true;
+            } else if (ch == ']') {
+                mapKey = false;
+            }
+            if (ch == '.' && !mapKey) {
+                // dont include the separator dot
+                parts.add(sb.toString());
+                sb.setLength(0);
+            } else {
+                sb.append(ch);
+            }
+        }
+        if (sb.length() > 0) {
+            parts.add(sb.toString());
+        }
+
+        return parts.toArray(new String[parts.size()]);
+    }
+
     @FunctionalInterface
     public interface OnAutowiring {
 
@@ -1975,7 +1883,7 @@ public final class PropertyBindingSupport {
             // so we can remove the corresponding key from the original map
 
             // walk key with dots to remove right node
-            String[] parts = key.toString().split("\\.");
+            String[] parts = splitKey(key.toString());
             Map map = originalMap;
             for (int i = 0; i < parts.length; i++) {
                 String part = parts[i];
@@ -2028,6 +1936,18 @@ public final class PropertyBindingSupport {
             }
             // 3) sort by name
             return o1.compareTo(o2);
+        }
+    }
+
+    private static final class MapConfigurer implements PropertyConfigurer {
+        public static final PropertyConfigurer INSTANCE = new MapConfigurer();
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean configure(
+                CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
+            ((Map) target).put(name, value);
+            return true;
         }
     }
 

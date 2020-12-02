@@ -60,7 +60,7 @@ The gRPC component supports 3 options, which are listed below.
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 |===
 // component options: END
 
@@ -91,6 +91,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *autoDiscoverClientInterceptors* (common) | Setting the autoDiscoverClientInterceptors mechanism, if true, the component will look for a ClientInterceptor instance in the registry automatically otherwise it will skip that checking. | true | boolean
 | *flowControlWindow* (common) | The HTTP/2 flow control window size (MiB) | 1048576 | int
 | *maxMessageSize* (common) | The maximum message size allowed to be received/sent (MiB) | 4194304 | int
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -106,7 +107,6 @@ with the following path and query parameters:
 | *producerStrategy* (producer) | The mode used to communicate with a remote gRPC server. In SIMPLE mode a single exchange is translated into a remote procedure call. In STREAMING mode all exchanges will be sent within the same request (input and output of the recipient gRPC service must be of type 'stream'). There are 2 enums and the value can be one of: SIMPLE, STREAMING | SIMPLE | GrpcProducerStrategy
 | *streamRepliesTo* (producer) | When using STREAMING client mode, it indicates the endpoint where responses should be forwarded. |  | String
 | *userAgent* (producer) | The user agent header passed to the server |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *authenticationType* (security) | Authentication method type in advance to the SSL/TLS negotiation. There are 3 enums and the value can be one of: NONE, GOOGLE, JWT | NONE | GrpcAuthType
 | *jwtAlgorithm* (security) | JSON Web Token sign algorithm. There are 3 enums and the value can be one of: HMAC256, HMAC384, HMAC512 | HMAC256 | JwtAlgorithm

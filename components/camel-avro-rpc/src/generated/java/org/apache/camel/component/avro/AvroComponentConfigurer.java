@@ -4,9 +4,10 @@ package org.apache.camel.component.avro;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,23 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class AvroComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("protocol", org.apache.avro.Protocol.class);
-        map.put("protocolClassName", java.lang.String.class);
-        map.put("protocolLocation", java.lang.String.class);
-        map.put("reflectionProtocol", boolean.class);
-        map.put("singleParameter", boolean.class);
-        map.put("uriAuthority", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.avro.AvroConfiguration.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AvroComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.avro.AvroConfiguration getOrCreateConfiguration(AvroComponent target) {
         if (target.getConfiguration() == null) {
@@ -44,8 +28,8 @@ public class AvroComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         AvroComponent target = (AvroComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.avro.AvroConfiguration.class, value)); return true;
@@ -67,23 +51,36 @@ public class AvroComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.avro.AvroConfiguration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "protocol": return org.apache.avro.Protocol.class;
+        case "protocolclassname":
+        case "protocolClassName": return java.lang.String.class;
+        case "protocollocation":
+        case "protocolLocation": return java.lang.String.class;
+        case "reflectionprotocol":
+        case "reflectionProtocol": return boolean.class;
+        case "singleparameter":
+        case "singleParameter": return boolean.class;
+        case "uriauthority":
+        case "uriAuthority": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         AvroComponent target = (AvroComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();

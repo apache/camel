@@ -19,7 +19,7 @@ package org.apache.camel.component.aws2.s3.client;
 import software.amazon.awssdk.services.s3.S3Client;
 
 /**
- * Mange the required actions of an s3 client for either local or remote.
+ * Manage the required actions of an s3 client for either local or remote.
  */
 public interface AWS2CamelS3InternalClient {
 

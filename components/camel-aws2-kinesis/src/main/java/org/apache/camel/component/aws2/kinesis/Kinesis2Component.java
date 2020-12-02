@@ -17,14 +17,12 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
 
 @Component("aws2-kinesis")
 public class Kinesis2Component extends DefaultComponent {
@@ -49,9 +47,6 @@ public class Kinesis2Component extends DefaultComponent {
         configuration.setStreamName(remaining);
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration);
-        }
         if (configuration.getAmazonKinesisClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonKinesisClient or accessKey and secretKey must be specified");
@@ -68,12 +63,5 @@ public class Kinesis2Component extends DefaultComponent {
      */
     public void setConfiguration(Kinesis2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(Kinesis2Configuration configuration) {
-        Set<KinesisClient> clients = getCamelContext().getRegistry().findByType(KinesisClient.class);
-        if (clients.size() == 1) {
-            configuration.setAmazonKinesisClient(clients.stream().findFirst().get());
-        }
     }
 }

@@ -76,7 +76,7 @@ The ServiceNow component supports 48 options, which are listed below.
 | *target* (producer) | Set this parameter to true to return only scorecards that have a target. |  | Boolean
 | *topLevelOnly* (producer) | Gets only those categories whose parent is a catalog. |  | Boolean
 | *apiVersion* (advanced) | The ServiceNow REST API version, default latest |  | String
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *dateFormat* (advanced) | The date format used for Json serialization/deserialization | yyyy-MM-dd | String
 | *dateTimeFormat* (advanced) | The date-time format used for Json serialization/deserialization | yyyy-MM-dd HH:mm:ss | String
 | *httpClientPolicy* (advanced) | To configure http-client |  | HTTPClientPolicy
@@ -120,7 +120,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (46 parameters):
+=== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -152,7 +152,6 @@ with the following path and query parameters:
 | *target* (producer) | Set this parameter to true to return only scorecards that have a target. |  | Boolean
 | *topLevelOnly* (producer) | Gets only those categories whose parent is a catalog. |  | Boolean
 | *apiVersion* (advanced) | The ServiceNow REST API version, default latest |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *dateFormat* (advanced) | The date format used for Json serialization/deserialization | yyyy-MM-dd | String
 | *dateTimeFormat* (advanced) | The date-time format used for Json serialization/deserialization | yyyy-MM-dd HH:mm:ss | String
 | *httpClientPolicy* (advanced) | To configure http-client |  | HTTPClientPolicy

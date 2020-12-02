@@ -4,9 +4,10 @@ package org.apache.camel.component.azure.storage.blob;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,46 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("accountName", java.lang.String.class);
-        map.put("containerName", java.lang.String.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("blobName", java.lang.String.class);
-        map.put("blobOffset", long.class);
-        map.put("blobServiceClient", com.azure.storage.blob.BlobServiceClient.class);
-        map.put("blobType", org.apache.camel.component.azure.storage.blob.BlobType.class);
-        map.put("closeStreamAfterRead", boolean.class);
-        map.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
-        map.put("dataCount", java.lang.Long.class);
-        map.put("fileDir", java.lang.String.class);
-        map.put("maxResultsPerPage", java.lang.Integer.class);
-        map.put("maxRetryRequests", int.class);
-        map.put("prefix", java.lang.String.class);
-        map.put("regex", java.lang.String.class);
-        map.put("serviceClient", com.azure.storage.blob.BlobServiceClient.class);
-        map.put("timeout", java.time.Duration.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("blobSequenceNumber", java.lang.Long.class);
-        map.put("blockListType", com.azure.storage.blob.models.BlockListType.class);
-        map.put("closeStreamAfterWrite", boolean.class);
-        map.put("commitBlockListLater", boolean.class);
-        map.put("createAppendBlob", boolean.class);
-        map.put("createPageBlob", boolean.class);
-        map.put("downloadLinkExpiration", java.lang.Long.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class);
-        map.put("pageBlobSize", java.lang.Long.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(BlobEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         BlobEndpoint target = (BlobEndpoint) obj;
@@ -64,8 +25,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobname":
         case "blobName": target.getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
         case "bloboffset":
@@ -121,15 +80,64 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "blobname":
+        case "blobName": return java.lang.String.class;
+        case "bloboffset":
+        case "blobOffset": return long.class;
+        case "blobsequencenumber":
+        case "blobSequenceNumber": return java.lang.Long.class;
+        case "blobserviceclient":
+        case "blobServiceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "blobtype":
+        case "blobType": return org.apache.camel.component.azure.storage.blob.BlobType.class;
+        case "blocklisttype":
+        case "blockListType": return com.azure.storage.blob.models.BlockListType.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "closestreamafterread":
+        case "closeStreamAfterRead": return boolean.class;
+        case "closestreamafterwrite":
+        case "closeStreamAfterWrite": return boolean.class;
+        case "commitblocklistlater":
+        case "commitBlockListLater": return boolean.class;
+        case "createappendblob":
+        case "createAppendBlob": return boolean.class;
+        case "createpageblob":
+        case "createPageBlob": return boolean.class;
+        case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
+        case "datacount":
+        case "dataCount": return java.lang.Long.class;
+        case "downloadlinkexpiration":
+        case "downloadLinkExpiration": return java.lang.Long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filedir":
+        case "fileDir": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxresultsperpage":
+        case "maxResultsPerPage": return java.lang.Integer.class;
+        case "maxretryrequests":
+        case "maxRetryRequests": return int.class;
+        case "operation": return org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class;
+        case "pageblobsize":
+        case "pageBlobSize": return java.lang.Long.class;
+        case "prefix": return java.lang.String.class;
+        case "regex": return java.lang.String.class;
+        case "serviceclient":
+        case "serviceClient": return com.azure.storage.blob.BlobServiceClient.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return java.time.Duration.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -140,8 +148,6 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobname":
         case "blobName": return target.getConfiguration().getBlobName();
         case "bloboffset":

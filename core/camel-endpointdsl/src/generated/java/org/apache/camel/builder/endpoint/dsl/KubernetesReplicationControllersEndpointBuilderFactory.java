@@ -157,6 +157,66 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Consumer CRD Resource Group we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesReplicationControllersEndpointConsumerBuilder crdGroup(
+                String crdGroup) {
+            doSetProperty("crdGroup", crdGroup);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource name we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesReplicationControllersEndpointConsumerBuilder crdName(
+                String crdName) {
+            doSetProperty("crdName", crdName);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource Plural we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesReplicationControllersEndpointConsumerBuilder crdPlural(
+                String crdPlural) {
+            doSetProperty("crdPlural", crdPlural);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource Scope we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesReplicationControllersEndpointConsumerBuilder crdScope(
+                String crdScope) {
+            doSetProperty("crdScope", crdScope);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource Version we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesReplicationControllersEndpointConsumerBuilder crdVersion(
+                String crdVersion) {
+            doSetProperty("crdVersion", crdVersion);
+            return this;
+        }
+        /**
          * The Consumer Label key when watching at some resources.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -454,34 +514,6 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
         default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -850,34 +882,6 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
             return (KubernetesReplicationControllersEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesReplicationControllersEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesReplicationControllersEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
@@ -1188,34 +1192,6 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
                 AdvancedKubernetesReplicationControllersEndpointProducerBuilder {
         default KubernetesReplicationControllersEndpointBuilder basic() {
             return (KubernetesReplicationControllersEndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesReplicationControllersEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesReplicationControllersEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Connection timeout in milliseconds to use when making requests to the

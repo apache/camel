@@ -102,10 +102,10 @@ class MinioComponentTest extends MinioTestContainerSupport {
             @Override
             public void configure() {
                 String minioEndpointUri
-                        = "minio://mycamelbucket?accessKey=" + ACCESS_KEY
-                          + "&secretKey=RAW(" + SECRET_KEY
-                          + ")&autoCreateBucket=true&endpoint=http://" + CONTAINER.getHost() + "&proxyPort="
-                          + CONTAINER.getMappedPort(BROKER_PORT);
+                        = "minio://mycamelbucket?accessKey=" + service.accessKey()
+                          + "&secretKey=RAW(" + service.secretKey()
+                          + ")&autoCreateBucket=true&endpoint=http://" + service.host() + "&proxyPort="
+                          + service.port();
                 from("direct:start").to(minioEndpointUri);
                 from(minioEndpointUri).to("mock:result");
 

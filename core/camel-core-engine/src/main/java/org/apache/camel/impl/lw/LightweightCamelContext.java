@@ -36,7 +36,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
-import org.apache.camel.Navigate;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -53,7 +52,6 @@ import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.engine.DefaultRoute;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -187,6 +185,11 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
 
     public CamelContext getCamelContextReference() {
         return this;
+    }
+
+    @Override
+    public void disposeModel() {
+        delegate.adapt(ExtendedCamelContext.class).disposeModel();
     }
 
     @Override
@@ -1061,6 +1064,16 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         delegate.setCaseInsensitiveHeaders(caseInsensitiveHeaders);
     }
 
+    @Override
+    public Boolean isAutowiredEnabled() {
+        return delegate.isAutowiredEnabled();
+    }
+
+    @Override
+    public void setAutowiredEnabled(Boolean autowiredEnabled) {
+        delegate.setAutowiredEnabled(autowiredEnabled);
+    }
+
     //
     // ExtendedCamelContext
     //
@@ -1846,24 +1859,9 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
         }
         delegate.init();
         for (Route route : delegate.getRoutes()) {
-            clearModelReferences(route);
+            route.clearRouteModel();
         }
         delegate = new LightweightRuntimeCamelContext(this, delegate);
-    }
-
-    private void clearModelReferences(Route r) {
-        if (r instanceof DefaultRoute) {
-            ((DefaultRoute) r).clearModelReferences();
-        }
-        clearModelReferences(r.navigate());
-    }
-
-    private void clearModelReferences(Navigate<Processor> nav) {
-        for (Processor processor : nav.next()) {
-            if (processor instanceof Navigate) {
-                clearModelReferences((Navigate<Processor>) processor);
-            }
-        }
     }
 
     public void startImmutable() {

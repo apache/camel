@@ -4,9 +4,10 @@ package org.apache.camel.component.google.pubsub;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,26 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("endpoint", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("publisherCacheSize", int.class);
-        map.put("publisherCacheTimeout", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("publisherTerminationTimeout", int.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GooglePubsubComponentConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GooglePubsubComponent target = (GooglePubsubComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "endpoint": target.setEndpoint(property(camelContext, java.lang.String.class, value)); return true;
@@ -52,23 +39,31 @@ public class GooglePubsubComponentConfigurer extends PropertyConfigurerSupport i
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "endpoint": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "publishercachesize":
+        case "publisherCacheSize": return int.class;
+        case "publishercachetimeout":
+        case "publisherCacheTimeout": return int.class;
+        case "publisherterminationtimeout":
+        case "publisherTerminationTimeout": return int.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GooglePubsubComponent target = (GooglePubsubComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "endpoint": return target.getEndpoint();

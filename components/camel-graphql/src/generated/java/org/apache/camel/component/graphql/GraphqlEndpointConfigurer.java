@@ -4,9 +4,10 @@ package org.apache.camel.component.graphql;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,33 +17,14 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("httpUri", java.net.URI.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operationName", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("query", java.lang.String.class);
-        map.put("queryFile", java.lang.String.class);
-        map.put("variables", org.apache.camel.util.json.JsonObject.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GraphqlEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GraphqlEndpoint target = (GraphqlEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": target.setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "jwtauthorizationtype":
+        case "jwtAuthorizationType": target.setJwtAuthorizationType(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "operationname":
@@ -61,15 +43,27 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "jwtauthorizationtype":
+        case "jwtAuthorizationType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operationname":
+        case "operationName": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "query": return java.lang.String.class;
+        case "queryfile":
+        case "queryFile": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "variables": return org.apache.camel.util.json.JsonObject.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -78,8 +72,8 @@ public class GraphqlEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesstoken":
         case "accessToken": return target.getAccessToken();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "jwtauthorizationtype":
+        case "jwtAuthorizationType": return target.getJwtAuthorizationType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "operationname":

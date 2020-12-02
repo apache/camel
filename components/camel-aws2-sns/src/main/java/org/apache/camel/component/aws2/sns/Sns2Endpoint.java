@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.sns;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +24,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws2.sns.client.Sns2ClientFactory;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -35,16 +35,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOption;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.http.apache.ProxyConfiguration;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
-import software.amazon.awssdk.services.sns.SnsClientBuilder;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
 import software.amazon.awssdk.services.sns.model.ListTopicsRequest;
@@ -53,7 +45,6 @@ import software.amazon.awssdk.services.sns.model.SetTopicAttributesRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeRequest;
 import software.amazon.awssdk.services.sns.model.SubscribeResponse;
 import software.amazon.awssdk.services.sns.model.Topic;
-import software.amazon.awssdk.utils.AttributeMap;
 
 /**
  * Send messages to an AWS Simple Notification Topic using AWS SDK version 2.x.
@@ -71,7 +62,7 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @Metadata(required = true)
     private String topicNameOrArn; // to support component docs
     @UriParam
-    private Sns2Configuration configuration;
+    private final Sns2Configuration configuration;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -106,7 +97,8 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @Override
     public void doInit() throws Exception {
         super.doInit();
-        snsClient = configuration.getAmazonSNSClient() != null ? configuration.getAmazonSNSClient() : createSNSClient();
+        snsClient = configuration.getAmazonSNSClient() != null
+                ? configuration.getAmazonSNSClient() : Sns2ClientFactory.getSnsClient(configuration).getSNSClient();
 
         // check the setting the headerFilterStrategy
         if (headerFilterStrategy == null) {
@@ -139,12 +131,18 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
             // creates a new topic, or returns the URL of an existing one
             CreateTopicRequest.Builder builder = CreateTopicRequest.builder().name(configuration.getTopicName());
 
+            Map<String, String> attributes = new HashMap<>();
+
             if (configuration.isServerSideEncryptionEnabled()) {
                 if (ObjectHelper.isNotEmpty(configuration.getKmsMasterKeyId())) {
-                    Map<String, String> attributes = new HashMap<>();
                     attributes.put("KmsMasterKeyId", configuration.getKmsMasterKeyId());
                     builder.attributes(attributes);
                 }
+            }
+
+            if (configuration.isFifoTopic()) {
+                attributes.put("FifoTopic", "true");
+                builder.attributes(attributes);
             }
 
             LOG.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), builder);
@@ -193,63 +191,11 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return configuration;
     }
 
-    public void setConfiguration(Sns2Configuration configuration) {
-        this.configuration = configuration;
-    }
-
     public void setSNSClient(SnsClient snsClient) {
         this.snsClient = snsClient;
     }
 
     public SnsClient getSNSClient() {
         return snsClient;
-    }
-
-    /**
-     * Provide the possibility to override this method for an mock implementation
-     *
-     * @return AmazonSNSClient
-     */
-    SnsClient createSNSClient() {
-        SnsClient client = null;
-        SnsClientBuilder clientBuilder = SnsClient.builder();
-        ProxyConfiguration.Builder proxyConfig = null;
-        ApacheHttpClient.Builder httpClientBuilder = null;
-        boolean isClientConfigFound = false;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            proxyConfig = ProxyConfiguration.builder();
-            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + "://" + configuration.getProxyHost() + ":"
-                                           + configuration.getProxyPort());
-            proxyConfig.endpoint(proxyEndpoint);
-            httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
-            isClientConfigFound = true;
-        }
-        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-            if (isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
-                        .credentialsProvider(StaticCredentialsProvider.create(cred));
-            } else {
-                clientBuilder = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred));
-            }
-        } else {
-            if (!isClientConfigFound) {
-                clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
-            }
-        }
-        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
-            clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
-        }
-        if (configuration.isTrustAllCertificates()) {
-            SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
-                    .builder()
-                    .put(
-                            SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES,
-                            Boolean.TRUE)
-                    .build());
-            clientBuilder.httpClient(ahc);
-        }
-        client = clientBuilder.build();
-        return client;
     }
 }

@@ -131,7 +131,7 @@ The Mail component supports 42 options, which are listed below.
 | *alternativeBodyHeader* (advanced) | Specifies the key to an IN message header that contains an alternative email body. For example, if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients, set the alternative mail body with this key as a header. | CamelMailAlternativeBody | String
 | *attachmentsContentTransfer{zwsp}EncodingResolver* (advanced) | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContentTransferEncodingResolver
 | *authenticator* (advanced) | The authenticator for login. If set then the password and username are ignored. Can be used for tokens which can expire and therefore must be read dynamically. |  | MailAuthenticator
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *configuration* (advanced) | Sets the Mail configuration |  | MailConfiguration
 | *connectionTimeout* (advanced) | The connection timeout in milliseconds. | 30000 | int
 | *contentType* (advanced) | The mail message content type. Use text/html for HTML mails. | text/plain | String
@@ -175,7 +175,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (67 parameters):
+=== Query Parameters (66 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -214,7 +214,6 @@ with the following path and query parameters:
 | *alternativeBodyHeader* (advanced) | Specifies the key to an IN message header that contains an alternative email body. For example, if you send emails in text/html format and want to provide an alternative mail body for non-HTML email clients, set the alternative mail body with this key as a header. | CamelMailAlternativeBody | String
 | *attachmentsContentTransfer{zwsp}EncodingResolver* (advanced) | To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments. |  | AttachmentsContentTransferEncodingResolver
 | *authenticator* (advanced) | The authenticator for login. If set then the password and username are ignored. Can be used for tokens which can expire and therefore must be read dynamically. |  | MailAuthenticator
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *binding* (advanced) | Sets the binding used to convert from a Camel message to and from a Mail message |  | MailBinding
 | *connectionTimeout* (advanced) | The connection timeout in milliseconds. | 30000 | int
 | *contentType* (advanced) | The mail message content type. Use text/html for HTML mails. | text/plain | String

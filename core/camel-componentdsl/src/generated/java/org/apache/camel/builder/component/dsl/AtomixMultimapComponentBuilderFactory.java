@@ -182,18 +182,21 @@ public interface AtomixMultimapComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default AtomixMultimapComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AtomixMultimapComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -307,7 +310,7 @@ public interface AtomixMultimapComponentBuilderFactory {
             case "resultHeader": getOrCreateConfiguration((AtomixMultiMapComponent) component).setResultHeader((java.lang.String) value); return true;
             case "transportClassName": getOrCreateConfiguration((AtomixMultiMapComponent) component).setTransportClassName((java.lang.String) value); return true;
             case "ttl": getOrCreateConfiguration((AtomixMultiMapComponent) component).setTtl((long) value); return true;
-            case "basicPropertyBinding": ((AtomixMultiMapComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((AtomixMultiMapComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "defaultResourceConfig": getOrCreateConfiguration((AtomixMultiMapComponent) component).setDefaultResourceConfig((java.util.Properties) value); return true;
             case "defaultResourceOptions": getOrCreateConfiguration((AtomixMultiMapComponent) component).setDefaultResourceOptions((java.util.Properties) value); return true;
             case "ephemeral": getOrCreateConfiguration((AtomixMultiMapComponent) component).setEphemeral((boolean) value); return true;

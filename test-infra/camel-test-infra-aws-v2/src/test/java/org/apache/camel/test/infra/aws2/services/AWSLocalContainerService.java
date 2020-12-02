@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.regions.Region;
 
-abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerService<AWSContainer> {
+public abstract class AWSLocalContainerService implements AWSService, ContainerService<AWSContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private AWSContainer container;
 
@@ -61,6 +61,17 @@ abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerSe
         properties.put(AWSConfigs.AMAZON_AWS_HOST, container.getAmazonHost());
         properties.put(AWSConfigs.PROTOCOL, "http");
 
+        return properties;
+    }
+
+    public URI getServiceEndpoint() {
+        return container.getServiceEndpoint();
+    }
+
+    @Override
+    public void registerProperties() {
+        AwsCredentials credentials = container.getCredentialsProvider().resolveCredentials();
+
         /**
          * We need to set these. For some sets, when they instantiate the clients within Camel, they need to know what
          * is the Amazon host being used (ie.: when creating them using the withEndpointConfiguration()). Because this
@@ -75,12 +86,6 @@ abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerSe
         System.setProperty(AWSConfigs.AMAZON_AWS_HOST, getAmazonHost());
         System.setProperty(AWSConfigs.REGION, Region.US_EAST_1.toString());
         System.setProperty(AWSConfigs.PROTOCOL, "http");
-
-        return properties;
-    }
-
-    public URI getServiceEndpoint() {
-        return container.getServiceEndpoint();
     }
 
     @Override
@@ -88,8 +93,8 @@ abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerSe
         LOG.debug("Trying to start the container");
         container.start();
 
+        registerProperties();
         LOG.info("AWS service running at address {}", getServiceEndpoint());
-        getConnectionProperties();
     }
 
     @Override

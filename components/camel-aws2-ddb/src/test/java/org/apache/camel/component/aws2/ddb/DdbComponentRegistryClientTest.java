@@ -20,7 +20,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -45,19 +44,7 @@ public class DdbComponentRegistryClientTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverFalse() throws Exception {
-        AmazonDDBClientMock ddbClient = new AmazonDDBClientMock();
-        context.getRegistry().bind("ddbClient", ddbClient);
-        Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);
-        Ddb2Endpoint endpoint = (Ddb2Endpoint) component
-                .createEndpoint("aws2-ddb://myTable?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertEquals("myTable", endpoint.getConfiguration().getTableName());
-        assertNotSame(ddbClient, endpoint.getConfiguration().getAmazonDDBClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
         AmazonDDBClientMock ddbClient = new AmazonDDBClientMock();
         context.getRegistry().bind("ddbClient", ddbClient);
         Ddb2Component component = context.getComponent("aws2-ddb", Ddb2Component.class);

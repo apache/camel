@@ -4,9 +4,10 @@ package org.apache.camel.component.mongodb.gridfs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,38 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("connectionBean", java.lang.String.class);
-        map.put("bucket", java.lang.String.class);
-        map.put("database", java.lang.String.class);
-        map.put("readPreference", com.mongodb.ReadPreference.class);
-        map.put("writeConcern", com.mongodb.WriteConcern.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("delay", long.class);
-        map.put("fileAttributeName", java.lang.String.class);
-        map.put("initialDelay", long.class);
-        map.put("persistentTSCollection", java.lang.String.class);
-        map.put("persistentTSObject", java.lang.String.class);
-        map.put("query", java.lang.String.class);
-        map.put("queryStrategy", org.apache.camel.component.mongodb.gridfs.QueryStrategy.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GridFsEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GridFsEndpoint target = (GridFsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "bucket": target.setBucket(property(camelContext, java.lang.String.class, value)); return true;
@@ -81,23 +54,44 @@ public class GridFsEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "bucket": return java.lang.String.class;
+        case "database": return java.lang.String.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fileattributename":
+        case "fileAttributeName": return java.lang.String.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "persistenttscollection":
+        case "persistentTSCollection": return java.lang.String.class;
+        case "persistenttsobject":
+        case "persistentTSObject": return java.lang.String.class;
+        case "query": return java.lang.String.class;
+        case "querystrategy":
+        case "queryStrategy": return org.apache.camel.component.mongodb.gridfs.QueryStrategy.class;
+        case "readpreference":
+        case "readPreference": return com.mongodb.ReadPreference.class;
+        case "synchronous": return boolean.class;
+        case "writeconcern":
+        case "writeConcern": return com.mongodb.WriteConcern.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GridFsEndpoint target = (GridFsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "bucket": return target.getBucket();

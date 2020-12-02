@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.tracing.ExtractAdapter;
 
@@ -48,6 +49,11 @@ public final class CamelMessagingHeadersExtractAdapter implements ExtractAdapter
     @Override
     public Object get(String key) {
         return this.map.get(key);
+    }
+
+    @Override
+    public Set<String> keys() {
+        return map.keySet();
     }
 
     /**

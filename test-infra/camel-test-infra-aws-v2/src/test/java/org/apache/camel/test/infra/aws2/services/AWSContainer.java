@@ -35,7 +35,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
  behave as in runtime.
  */
 public class AWSContainer extends GenericContainer<AWSContainer> {
-    private static final String LOCALSTACK_CONTAINER = "localstack/localstack:0.11.3";
+    private static final String LOCALSTACK_CONTAINER = "localstack/localstack:0.12.2";
 
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private static final int SERVICE_PORT = 4566;
@@ -51,6 +51,16 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
                 .map(Service::serviceName)
                 .collect(Collectors.joining(","));
 
+        setupContainer(serviceList);
+    }
+
+    protected AWSContainer(String container, String serviceList) {
+        super(container);
+
+        setupContainer(serviceList);
+    }
+
+    protected void setupContainer(String serviceList) {
         LOG.debug("Creating services {}", serviceList);
         withEnv("SERVICE", serviceList);
         withExposedPorts(SERVICE_PORT);

@@ -4,9 +4,10 @@ package org.apache.camel.component.influxdb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,28 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class InfluxDbEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("connectionBean", java.lang.String.class);
-        map.put("batch", boolean.class);
-        map.put("databaseName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("query", java.lang.String.class);
-        map.put("retentionPolicy", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(InfluxDbEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         InfluxDbEndpoint target = (InfluxDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batch": target.setBatch(property(camelContext, boolean.class, value)); return true;
         case "databasename":
         case "databaseName": target.setDatabaseName(property(camelContext, java.lang.String.class, value)); return true;
@@ -53,23 +36,26 @@ public class InfluxDbEndpointConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "batch": return boolean.class;
+        case "databasename":
+        case "databaseName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "query": return java.lang.String.class;
+        case "retentionpolicy":
+        case "retentionPolicy": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         InfluxDbEndpoint target = (InfluxDbEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "batch": return target.isBatch();
         case "databasename":
         case "databaseName": return target.getDatabaseName();

@@ -20,8 +20,7 @@ public class Kinesis2EndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(38);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(36);
         props.add("backoffMultiplier");
         props.add("synchronous");
         props.add("initialDelay");
@@ -38,7 +37,6 @@ public class Kinesis2EndpointUriFactory extends org.apache.camel.support.compone
         props.add("scheduledExecutorService");
         props.add("repeatCount");
         props.add("timeUnit");
-        props.add("autoDiscoverClient");
         props.add("sequenceNumber");
         props.add("proxyProtocol");
         props.add("secretKey");

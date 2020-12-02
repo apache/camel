@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.as2;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "Receives EDI Messages over HTTP",
            apiMethods = {@ApiMethod(methodName = "listen", signatures={"void listen(String requestUriPattern, org.apache.http.protocol.HttpRequestHandler handler)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class AS2ServerManagerEndpointConfiguration extends AS2Configuration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "listen")})

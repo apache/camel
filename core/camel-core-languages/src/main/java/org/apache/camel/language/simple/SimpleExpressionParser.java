@@ -34,6 +34,7 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A parser to parse simple language as a Camel {@link Expression}
@@ -50,8 +51,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     }
 
     public Expression parseExpression() {
-        clear();
         try {
+            parseTokens();
             return doParseExpression();
         } catch (SimpleParserException e) {
             // catch parser exception and turn that into a syntax exceptions
@@ -62,7 +63,27 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         }
     }
 
-    protected Expression doParseExpression() {
+    public String parseCode() {
+        try {
+            parseTokens();
+            return doParseCode();
+        } catch (SimpleParserException e) {
+            // catch parser exception and turn that into a syntax exceptions
+            throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
+        } catch (Exception e) {
+            // include exception in rethrown exception
+            throw new SimpleIllegalSyntaxException(expression, -1, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * First step parsing into a list of nodes.
+     *
+     * This is used as SPI for camel-csimple to do AST transformation and parse into java source code.
+     */
+    protected List<SimpleNode> parseTokens() {
+        clear();
+
         // parse the expression using the following grammar
         nextToken();
         while (!token.getType().isEol()) {
@@ -84,6 +105,13 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         // compact and stack unary operators
         prepareUnaryExpressions();
 
+        return nodes;
+    }
+
+    /**
+     * Second step parsing into an expression
+     */
+    protected Expression doParseExpression() {
         // create and return as a Camel expression
         List<Expression> expressions = createExpressions();
         if (expressions.isEmpty()) {
@@ -168,6 +196,62 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             }
         }
         return answer;
+    }
+
+    /**
+     * Second step parsing into code
+     */
+    protected String doParseCode() {
+        StringBuilder sb = new StringBuilder();
+        boolean firstIsLiteral = false;
+        for (SimpleNode node : nodes) {
+            String exp = node.createCode(expression);
+            if (exp != null) {
+                if (sb.length() == 0 && (node instanceof LiteralNode)) {
+                    firstIsLiteral = true;
+                }
+                if (sb.length() > 0) {
+                    // okay we append together and this requires that the first node to be literal
+                    if (!firstIsLiteral) {
+                        // then insert an empty string + to force type into string so the compiler
+                        // can compile with the + function
+                        sb.insert(0, "\"\" + ");
+                    }
+                    sb.append(" + ");
+                }
+                if (node instanceof LiteralNode) {
+                    exp = StringHelper.removeLeadingAndEndingQuotes(exp);
+                    sb.append("\"");
+                    // " should be escaped to \"
+                    exp = escapeQuotes(exp);
+                    // \n \t \r should be escaped
+                    exp = exp.replaceAll("\n", "\\\\n");
+                    exp = exp.replaceAll("\t", "\\\\t");
+                    exp = exp.replaceAll("\r", "\\\\r");
+                    sb.append(exp);
+                    sb.append("\"");
+                } else {
+                    sb.append(exp);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String escapeQuotes(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char prev = i > 0 ? text.charAt(i - 1) : 0;
+            char ch = text.charAt(i);
+
+            if (ch == '"' && (i == 0 || prev != '\\')) {
+                sb.append('\\');
+                sb.append('"');
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 
     // --------------------------------------------------------------

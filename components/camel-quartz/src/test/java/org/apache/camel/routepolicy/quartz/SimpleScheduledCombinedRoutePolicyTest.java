@@ -26,7 +26,7 @@ import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
 
@@ -64,10 +64,10 @@ public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
         context.start();
 
         Thread.sleep(5000);
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
+        assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
         template.sendBody("direct:start", "Ready or not, Here, I come");
         Thread.sleep(5000);
-        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
+        assertSame(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("test"));
 
         context.getComponent("quartz", QuartzComponent.class).stop();
         success.assertIsSatisfied();

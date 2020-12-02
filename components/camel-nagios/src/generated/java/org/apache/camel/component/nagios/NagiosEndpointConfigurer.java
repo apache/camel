@@ -4,9 +4,10 @@ package org.apache.camel.component.nagios;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,29 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("host", java.lang.String.class);
-        map.put("port", int.class);
-        map.put("connectionTimeout", int.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("sendSync", boolean.class);
-        map.put("timeout", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("encryption", com.googlecode.jsendnsca.encryption.Encryption.class);
-        map.put("password", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(NagiosEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NagiosEndpoint target = (NagiosEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "encryption": target.getConfiguration().setEncryption(property(camelContext, com.googlecode.jsendnsca.encryption.Encryption.class, value)); return true;
@@ -54,23 +36,26 @@ public class NagiosEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "encryption": return com.googlecode.jsendnsca.encryption.Encryption.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "sendsync":
+        case "sendSync": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return int.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         NagiosEndpoint target = (NagiosEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
         case "encryption": return target.getConfiguration().getEncryption();

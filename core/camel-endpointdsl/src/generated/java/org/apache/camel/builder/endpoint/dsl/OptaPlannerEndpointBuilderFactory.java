@@ -212,34 +212,6 @@ public interface OptaPlannerEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -446,34 +418,6 @@ public interface OptaPlannerEndpointBuilderFactory {
             return (OptaPlannerEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -588,34 +532,6 @@ public interface OptaPlannerEndpointBuilderFactory {
                 AdvancedOptaPlannerEndpointProducerBuilder {
         default OptaPlannerEndpointBuilder basic() {
             return (OptaPlannerEndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel

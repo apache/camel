@@ -178,34 +178,6 @@ public interface JGroupsRaftEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -298,34 +270,6 @@ public interface JGroupsRaftEndpointBuilderFactory {
             return (JGroupsRaftEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -376,34 +320,6 @@ public interface JGroupsRaftEndpointBuilderFactory {
                 AdvancedJGroupsRaftEndpointProducerBuilder {
         default JGroupsRaftEndpointBuilder basic() {
             return (JGroupsRaftEndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel

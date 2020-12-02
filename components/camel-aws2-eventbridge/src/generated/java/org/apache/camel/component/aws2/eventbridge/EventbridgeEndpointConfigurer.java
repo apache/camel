@@ -4,9 +4,10 @@ package org.apache.camel.component.aws2.eventbridge;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,39 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("eventbusNameOrArn", java.lang.String.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("eventbridgeClient", software.amazon.awssdk.services.eventbridge.EventBridgeClient.class);
-        map.put("eventPatternFile", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class);
-        map.put("pojoRequest", boolean.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        map.put("region", java.lang.String.class);
-        map.put("trustAllCertificates", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(EventbridgeEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EventbridgeEndpoint target = (EventbridgeEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "eventpatternfile":
         case "eventPatternFile": target.getConfiguration().setEventPatternFile(property(camelContext, java.lang.String.class, value)); return true;
         case "eventbridgeclient":
@@ -75,15 +49,38 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
+    public String[] getAutowiredNames() {
+        return new String[]{"eventbridgeClient"};
     }
 
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "eventpatternfile":
+        case "eventPatternFile": return java.lang.String.class;
+        case "eventbridgeclient":
+        case "eventbridgeClient": return software.amazon.awssdk.services.eventbridge.EventBridgeClient.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.aws2.eventbridge.EventbridgeOperations.class;
+        case "pojorequest":
+        case "pojoRequest": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -92,10 +89,6 @@ public class EventbridgeEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "accesskey":
         case "accessKey": return target.getConfiguration().getAccessKey();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "eventpatternfile":
         case "eventPatternFile": return target.getConfiguration().getEventPatternFile();
         case "eventbridgeclient":

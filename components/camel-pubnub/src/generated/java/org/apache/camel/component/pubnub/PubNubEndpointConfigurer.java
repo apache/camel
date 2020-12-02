@@ -4,9 +4,10 @@ package org.apache.camel.component.pubnub;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,38 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("channel", java.lang.String.class);
-        map.put("uuid", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("withPresence", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("pubnub", com.pubnub.api.PubNub.class);
-        map.put("synchronous", boolean.class);
-        map.put("authKey", java.lang.String.class);
-        map.put("cipherKey", java.lang.String.class);
-        map.put("publishKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        map.put("secure", boolean.class);
-        map.put("subscribeKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(PubNubEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PubNubEndpoint target = (PubNubEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authkey":
         case "authKey": target.getConfiguration().setAuthKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cipherkey":
@@ -76,15 +51,35 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authkey":
+        case "authKey": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cipherkey":
+        case "cipherKey": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "publishkey":
+        case "publishKey": return java.lang.String.class;
+        case "pubnub": return com.pubnub.api.PubNub.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "secure": return boolean.class;
+        case "subscribekey":
+        case "subscribeKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "uuid": return java.lang.String.class;
+        case "withpresence":
+        case "withPresence": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -93,8 +88,6 @@ public class PubNubEndpointConfigurer extends PropertyConfigurerSupport implemen
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "authkey":
         case "authKey": return target.getConfiguration().getAuthKey();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cipherkey":

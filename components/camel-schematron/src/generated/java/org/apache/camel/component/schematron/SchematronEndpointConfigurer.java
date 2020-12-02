@@ -4,9 +4,10 @@ package org.apache.camel.component.schematron;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,27 +17,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SchematronEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("path", java.lang.String.class);
-        map.put("abort", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("rules", javax.xml.transform.Templates.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("uriResolver", javax.xml.transform.URIResolver.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SchematronEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SchematronEndpoint target = (SchematronEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abort": target.setAbort(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "rules": target.setRules(property(camelContext, javax.xml.transform.Templates.class, value)); return true;
@@ -48,15 +33,17 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "abort": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "rules": return javax.xml.transform.Templates.class;
+        case "synchronous": return boolean.class;
+        case "uriresolver":
+        case "uriResolver": return javax.xml.transform.URIResolver.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -64,8 +51,6 @@ public class SchematronEndpointConfigurer extends PropertyConfigurerSupport impl
         SchematronEndpoint target = (SchematronEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "abort": return target.isAbort();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "rules": return target.getRules();

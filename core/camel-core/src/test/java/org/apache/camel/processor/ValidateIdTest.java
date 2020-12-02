@@ -40,10 +40,10 @@ public class ValidateIdTest extends ContextTestSupport {
         assertNotNull(route);
 
         // mock:result should be the only with the result as id
-        assertTrue(route.getOutputs().get(0).getId().equals("myValidate"));
-        assertFalse(route.getOutputs().get(1).getId().equals("result"));
-        assertTrue(route.getOutputs().get(2).getId().equals("result"));
-        assertTrue(route.getOutputs().get(3).getId().equals("after"));
+        assertEquals("myValidate", route.getOutputs().get(0).getId());
+        assertNotEquals("result", route.getOutputs().get(1).getId());
+        assertEquals("result", route.getOutputs().get(2).getId());
+        assertEquals("after", route.getOutputs().get(3).getId());
     }
 
     @Override

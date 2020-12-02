@@ -4,9 +4,10 @@ package org.apache.camel.component.milo.server;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,33 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MiloServerComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("applicationName", java.lang.String.class);
-        map.put("applicationUri", java.lang.String.class);
-        map.put("bindAddresses", java.lang.String.class);
-        map.put("buildInfo", org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo.class);
-        map.put("namespaceUri", java.lang.String.class);
-        map.put("path", java.lang.String.class);
-        map.put("port", int.class);
-        map.put("productUri", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("certificate", java.security.cert.X509Certificate.class);
-        map.put("certificateManager", org.eclipse.milo.opcua.stack.core.security.CertificateManager.class);
-        map.put("certificateValidator", org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class);
-        map.put("defaultCertificateValidator", java.lang.String.class);
-        map.put("enableAnonymousAuthentication", boolean.class);
-        map.put("securityPolicies", java.util.Set.class);
-        map.put("securityPoliciesById", java.lang.String.class);
-        map.put("userAuthenticationCredentials", java.lang.String.class);
-        map.put("usernameSecurityPolicyUri", org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MiloServerComponentConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MiloServerComponent target = (MiloServerComponent) obj;
@@ -51,8 +25,8 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "applicationName": target.setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationuri":
         case "applicationUri": target.setApplicationUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bindaddresses":
         case "bindAddresses": target.setBindAddresses(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -89,15 +63,47 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "applicationuri":
+        case "applicationUri": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bindaddresses":
+        case "bindAddresses": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buildinfo":
+        case "buildInfo": return org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo.class;
+        case "certificate": return java.security.cert.X509Certificate.class;
+        case "certificatemanager":
+        case "certificateManager": return org.eclipse.milo.opcua.stack.core.security.CertificateManager.class;
+        case "certificatevalidator":
+        case "certificateValidator": return org.eclipse.milo.opcua.stack.core.security.CertificateValidator.class;
+        case "defaultcertificatevalidator":
+        case "defaultCertificateValidator": return java.lang.String.class;
+        case "enableanonymousauthentication":
+        case "enableAnonymousAuthentication": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "namespaceuri":
+        case "namespaceUri": return java.lang.String.class;
+        case "path": return java.lang.String.class;
+        case "port": return int.class;
+        case "producturi":
+        case "productUri": return java.lang.String.class;
+        case "securitypolicies":
+        case "securityPolicies": return java.util.Set.class;
+        case "securitypoliciesbyid":
+        case "securityPoliciesById": return java.lang.String.class;
+        case "userauthenticationcredentials":
+        case "userAuthenticationCredentials": return java.lang.String.class;
+        case "usernamesecuritypolicyuri":
+        case "usernameSecurityPolicyUri": return org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -108,8 +114,8 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "applicationName": return target.getApplicationName();
         case "applicationuri":
         case "applicationUri": return target.getApplicationUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bindaddresses":
         case "bindAddresses": return target.getBindAddresses();
         case "bridgeerrorhandler":
@@ -141,6 +147,15 @@ public class MiloServerComponentConfigurer extends PropertyConfigurerSupport imp
         case "userAuthenticationCredentials": return target.getUserAuthenticationCredentials();
         case "usernamesecuritypolicyuri":
         case "usernameSecurityPolicyUri": return target.getUsernameSecurityPolicyUri();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "securitypolicies":
+        case "securityPolicies": return org.eclipse.milo.opcua.stack.core.security.SecurityPolicy.class;
         default: return null;
         }
     }

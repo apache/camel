@@ -4,9 +4,10 @@ package org.apache.camel.component.file;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,106 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class FileEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("directoryName", java.io.File.class);
-        map.put("charset", java.lang.String.class);
-        map.put("doneFileName", java.lang.String.class);
-        map.put("fileName", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("delete", boolean.class);
-        map.put("moveFailed", java.lang.String.class);
-        map.put("noop", boolean.class);
-        map.put("preMove", java.lang.String.class);
-        map.put("preSort", boolean.class);
-        map.put("recursive", boolean.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("directoryMustExist", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("extendedAttributes", java.lang.String.class);
-        map.put("inProgressRepository", org.apache.camel.spi.IdempotentRepository.class);
-        map.put("localWorkDirectory", java.lang.String.class);
-        map.put("onCompletionExceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("probeContentType", boolean.class);
-        map.put("processStrategy", org.apache.camel.component.file.GenericFileProcessStrategy.class);
-        map.put("startingDirectoryMustExist", boolean.class);
-        map.put("startingDirectoryMustHaveAccess", boolean.class);
-        map.put("appendChars", java.lang.String.class);
-        map.put("fileExist", org.apache.camel.component.file.GenericFileExist.class);
-        map.put("flatten", boolean.class);
-        map.put("jailStartingDirectory", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("moveExisting", java.lang.String.class);
-        map.put("tempFileName", java.lang.String.class);
-        map.put("tempPrefix", java.lang.String.class);
-        map.put("allowNullBody", boolean.class);
-        map.put("chmod", java.lang.String.class);
-        map.put("chmodDirectory", java.lang.String.class);
-        map.put("eagerDeleteTargetFile", boolean.class);
-        map.put("forceWrites", boolean.class);
-        map.put("keepLastModified", boolean.class);
-        map.put("moveExistingFileStrategy", org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class);
-        map.put("autoCreate", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("bufferSize", int.class);
-        map.put("copyAndDeleteOnRenameFail", boolean.class);
-        map.put("renameUsingCopy", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("antExclude", java.lang.String.class);
-        map.put("antFilterCaseSensitive", boolean.class);
-        map.put("antInclude", java.lang.String.class);
-        map.put("eagerMaxMessagesPerPoll", boolean.class);
-        map.put("exclude", java.lang.String.class);
-        map.put("filter", org.apache.camel.component.file.GenericFileFilter.class);
-        map.put("filterDirectory", java.lang.String.class);
-        map.put("filterFile", java.lang.String.class);
-        map.put("idempotent", java.lang.Boolean.class);
-        map.put("idempotentKey", java.lang.String.class);
-        map.put("idempotentRepository", org.apache.camel.spi.IdempotentRepository.class);
-        map.put("include", java.lang.String.class);
-        map.put("maxDepth", int.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("minDepth", int.class);
-        map.put("move", java.lang.String.class);
-        map.put("exclusiveReadLockStrategy", org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class);
-        map.put("readLock", java.lang.String.class);
-        map.put("readLockCheckInterval", long.class);
-        map.put("readLockDeleteOrphanLockFiles", boolean.class);
-        map.put("readLockIdempotentReleaseAsync", boolean.class);
-        map.put("readLockIdempotentReleaseAsyncPoolSize", int.class);
-        map.put("readLockIdempotentReleaseDelay", int.class);
-        map.put("readLockIdempotentReleaseExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("readLockLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("readLockMarkerFile", boolean.class);
-        map.put("readLockMinAge", long.class);
-        map.put("readLockMinLength", long.class);
-        map.put("readLockRemoveOnCommit", boolean.class);
-        map.put("readLockRemoveOnRollback", boolean.class);
-        map.put("readLockTimeout", long.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("shuffle", boolean.class);
-        map.put("sortBy", java.lang.String.class);
-        map.put("sorter", java.util.Comparator.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FileEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -138,8 +39,6 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "buffersize":
@@ -292,15 +191,175 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "antexclude":
+        case "antExclude": return java.lang.String.class;
+        case "antfiltercasesensitive":
+        case "antFilterCaseSensitive": return boolean.class;
+        case "antinclude":
+        case "antInclude": return java.lang.String.class;
+        case "appendchars":
+        case "appendChars": return java.lang.String.class;
+        case "autocreate":
+        case "autoCreate": return boolean.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return int.class;
+        case "charset": return java.lang.String.class;
+        case "chmod": return java.lang.String.class;
+        case "chmoddirectory":
+        case "chmodDirectory": return java.lang.String.class;
+        case "copyanddeleteonrenamefail":
+        case "copyAndDeleteOnRenameFail": return boolean.class;
+        case "delay": return long.class;
+        case "delete": return boolean.class;
+        case "directorymustexist":
+        case "directoryMustExist": return boolean.class;
+        case "donefilename":
+        case "doneFileName": return java.lang.String.class;
+        case "eagerdeletetargetfile":
+        case "eagerDeleteTargetFile": return boolean.class;
+        case "eagermaxmessagesperpoll":
+        case "eagerMaxMessagesPerPoll": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "exclude": return java.lang.String.class;
+        case "exclusivereadlockstrategy":
+        case "exclusiveReadLockStrategy": return org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class;
+        case "extendedattributes":
+        case "extendedAttributes": return java.lang.String.class;
+        case "fileexist":
+        case "fileExist": return org.apache.camel.component.file.GenericFileExist.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "filter": return org.apache.camel.component.file.GenericFileFilter.class;
+        case "filterdirectory":
+        case "filterDirectory": return java.lang.String.class;
+        case "filterfile":
+        case "filterFile": return java.lang.String.class;
+        case "flatten": return boolean.class;
+        case "forcewrites":
+        case "forceWrites": return boolean.class;
+        case "greedy": return boolean.class;
+        case "idempotent": return java.lang.Boolean.class;
+        case "idempotentkey":
+        case "idempotentKey": return java.lang.String.class;
+        case "idempotentrepository":
+        case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "inprogressrepository":
+        case "inProgressRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "include": return java.lang.String.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "jailstartingdirectory":
+        case "jailStartingDirectory": return boolean.class;
+        case "keeplastmodified":
+        case "keepLastModified": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "localworkdirectory":
+        case "localWorkDirectory": return java.lang.String.class;
+        case "maxdepth":
+        case "maxDepth": return int.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "mindepth":
+        case "minDepth": return int.class;
+        case "move": return java.lang.String.class;
+        case "moveexisting":
+        case "moveExisting": return java.lang.String.class;
+        case "moveexistingfilestrategy":
+        case "moveExistingFileStrategy": return org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class;
+        case "movefailed":
+        case "moveFailed": return java.lang.String.class;
+        case "noop": return boolean.class;
+        case "oncompletionexceptionhandler":
+        case "onCompletionExceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "premove":
+        case "preMove": return java.lang.String.class;
+        case "presort":
+        case "preSort": return boolean.class;
+        case "probecontenttype":
+        case "probeContentType": return boolean.class;
+        case "processstrategy":
+        case "processStrategy": return org.apache.camel.component.file.GenericFileProcessStrategy.class;
+        case "readlock":
+        case "readLock": return java.lang.String.class;
+        case "readlockcheckinterval":
+        case "readLockCheckInterval": return long.class;
+        case "readlockdeleteorphanlockfiles":
+        case "readLockDeleteOrphanLockFiles": return boolean.class;
+        case "readlockidempotentreleaseasync":
+        case "readLockIdempotentReleaseAsync": return boolean.class;
+        case "readlockidempotentreleaseasyncpoolsize":
+        case "readLockIdempotentReleaseAsyncPoolSize": return int.class;
+        case "readlockidempotentreleasedelay":
+        case "readLockIdempotentReleaseDelay": return int.class;
+        case "readlockidempotentreleaseexecutorservice":
+        case "readLockIdempotentReleaseExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "readlocklogginglevel":
+        case "readLockLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "readlockmarkerfile":
+        case "readLockMarkerFile": return boolean.class;
+        case "readlockminage":
+        case "readLockMinAge": return long.class;
+        case "readlockminlength":
+        case "readLockMinLength": return long.class;
+        case "readlockremoveoncommit":
+        case "readLockRemoveOnCommit": return boolean.class;
+        case "readlockremoveonrollback":
+        case "readLockRemoveOnRollback": return boolean.class;
+        case "readlocktimeout":
+        case "readLockTimeout": return long.class;
+        case "recursive": return boolean.class;
+        case "renameusingcopy":
+        case "renameUsingCopy": return boolean.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "shuffle": return boolean.class;
+        case "sortby":
+        case "sortBy": return java.lang.String.class;
+        case "sorter": return java.util.Comparator.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "startingdirectorymustexist":
+        case "startingDirectoryMustExist": return boolean.class;
+        case "startingdirectorymusthaveaccess":
+        case "startingDirectoryMustHaveAccess": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "tempfilename":
+        case "tempFileName": return java.lang.String.class;
+        case "tempprefix":
+        case "tempPrefix": return java.lang.String.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -325,8 +384,6 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "buffersize":
@@ -474,6 +531,21 @@ public class FileEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "exclusivereadlockstrategy":
+        case "exclusiveReadLockStrategy": return java.io.File.class;
+        case "filter": return java.io.File.class;
+        case "processstrategy":
+        case "processStrategy": return java.io.File.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
+        case "sorter": return org.apache.camel.component.file.GenericFile.class;
         default: return null;
         }
     }

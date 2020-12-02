@@ -4,9 +4,10 @@ package org.apache.camel.component.chunk;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,25 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("resourceUri", java.lang.String.class);
-        map.put("allowContextMapAll", boolean.class);
-        map.put("allowTemplateFromHeader", boolean.class);
-        map.put("contentCache", boolean.class);
-        map.put("encoding", java.lang.String.class);
-        map.put("extension", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("themeFolder", java.lang.String.class);
-        map.put("themeLayer", java.lang.String.class);
-        map.put("themeSubfolder", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ChunkEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ChunkEndpoint target = (ChunkEndpoint) obj;
@@ -43,8 +25,6 @@ public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
         case "encoding": target.setEncoding(property(camelContext, java.lang.String.class, value)); return true;
@@ -63,15 +43,27 @@ public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "encoding": return java.lang.String.class;
+        case "extension": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "themefolder":
+        case "themeFolder": return java.lang.String.class;
+        case "themelayer":
+        case "themeLayer": return java.lang.String.class;
+        case "themesubfolder":
+        case "themeSubfolder": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -82,8 +74,6 @@ public class ChunkEndpointConfigurer extends PropertyConfigurerSupport implement
         case "allowContextMapAll": return target.isAllowContextMapAll();
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "contentcache":
         case "contentCache": return target.isContentCache();
         case "encoding": return target.getEncoding();

@@ -17,17 +17,14 @@
 package org.apache.camel.component.aws2.eventbridge;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 /**
  * For working with Amazon Eventbridge SDK v2.
@@ -60,9 +57,6 @@ public class EventbridgeComponent extends DefaultComponent {
         configuration.setEventbusName(remaining);
         EventbridgeEndpoint endpoint = new EventbridgeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getEventbridgeClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon Eventbridge client or accessKey and secretKey must be specified");
@@ -80,20 +74,5 @@ public class EventbridgeComponent extends DefaultComponent {
      */
     public void setConfiguration(EventbridgeConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(EventbridgeConfiguration configuration, EventbridgeEndpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getEventbridgeClient())) {
-            LOG.debug("Looking for an EventBridgeClient instance in the registry");
-            Set<EventBridgeClient> clients = getCamelContext().getRegistry().findByType(EventBridgeClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one EventBridgeClient instance in the registry");
-                configuration.setEventbridgeClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No EventbridgeClient instance in the registry");
-            }
-        } else {
-            LOG.debug("EventbridgeClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }

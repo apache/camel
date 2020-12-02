@@ -4,9 +4,10 @@ package org.apache.camel.component.jetty9;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,55 +17,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("httpUri", java.net.URI.class);
-        map.put("disableStreamCache", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        map.put("async", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("chunked", boolean.class);
-        map.put("continuationTimeout", java.lang.Long.class);
-        map.put("enableCORS", boolean.class);
-        map.put("enableJmx", boolean.class);
-        map.put("enableMultipartFilter", boolean.class);
-        map.put("httpMethodRestrict", java.lang.String.class);
-        map.put("matchOnUriPrefix", boolean.class);
-        map.put("muteException", boolean.class);
-        map.put("responseBufferSize", java.lang.Integer.class);
-        map.put("sendDateHeader", boolean.class);
-        map.put("sendServerVersion", boolean.class);
-        map.put("sessionSupport", boolean.class);
-        map.put("transferException", boolean.class);
-        map.put("useContinuation", java.lang.Boolean.class);
-        map.put("eagerCheckContentAvailable", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("filterInitParameters", java.util.Map.class);
-        map.put("filters", java.util.List.class);
-        map.put("handlers", java.util.List.class);
-        map.put("multipartFilter", javax.servlet.Filter.class);
-        map.put("optionsEnabled", boolean.class);
-        map.put("traceEnabled", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("mapHttpMessageBody", boolean.class);
-        map.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
-        map.put("mapHttpMessageHeaders", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JettyHttpEndpoint9Configurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JettyHttpEndpoint9 target = (JettyHttpEndpoint9) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
@@ -130,15 +87,71 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "chunked": return boolean.class;
+        case "continuationtimeout":
+        case "continuationTimeout": return java.lang.Long.class;
+        case "disablestreamcache":
+        case "disableStreamCache": return boolean.class;
+        case "eagercheckcontentavailable":
+        case "eagerCheckContentAvailable": return boolean.class;
+        case "enablecors":
+        case "enableCORS": return boolean.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "enablemultipartfilter":
+        case "enableMultipartFilter": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filterinitparameters":
+        case "filterInitParameters": return java.util.Map.class;
+        case "filters": return java.util.List.class;
+        case "handlers": return java.util.List.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": return java.lang.String.class;
+        case "maphttpmessagebody":
+        case "mapHttpMessageBody": return boolean.class;
+        case "maphttpmessageformurlencodedbody":
+        case "mapHttpMessageFormUrlEncodedBody": return boolean.class;
+        case "maphttpmessageheaders":
+        case "mapHttpMessageHeaders": return boolean.class;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": return boolean.class;
+        case "multipartfilter":
+        case "multipartFilter": return javax.servlet.Filter.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
+        case "optionsenabled":
+        case "optionsEnabled": return boolean.class;
+        case "responsebuffersize":
+        case "responseBufferSize": return java.lang.Integer.class;
+        case "senddateheader":
+        case "sendDateHeader": return boolean.class;
+        case "sendserverversion":
+        case "sendServerVersion": return boolean.class;
+        case "sessionsupport":
+        case "sessionSupport": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "traceenabled":
+        case "traceEnabled": return boolean.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        case "usecontinuation":
+        case "useContinuation": return java.lang.Boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -146,8 +159,6 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         JettyHttpEndpoint9 target = (JettyHttpEndpoint9) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "async": return target.isAsync();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chunked": return target.isChunked();
@@ -208,6 +219,17 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "transferException": return target.isTransferException();
         case "usecontinuation":
         case "useContinuation": return target.getUseContinuation();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "filterinitparameters":
+        case "filterInitParameters": return java.lang.String.class;
+        case "filters": return javax.servlet.Filter.class;
+        case "handlers": return org.eclipse.jetty.server.Handler.class;
         default: return null;
         }
     }

@@ -277,16 +277,6 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         assertTrue(prop.isEmpty(), "Should bind all properties");
     }
 
-    @Test
-    public void testConfigurerShouldNotFailForAnonymousClasses() throws Exception {
-        PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(context, new Bar() {
-            @Override
-            public int getAge() {
-                return super.getAge();
-            }
-        });
-    }
-
     public static class Bar {
         private int age;
         private boolean rider;
@@ -376,15 +366,17 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
         }
 
         @Override
-        public Map<String, Object> getAllOptions(Object target) {
-            Map<String, Object> map = new HashMap<>();
-            if (target instanceof Bar) {
-                map.put("age", int.class);
-                map.put("rider", boolean.class);
-                map.put("work", Company.class);
-                map.put("goldCustomer", boolean.class);
+        public Class<?> getOptionType(String name, boolean ignoreCase) {
+            if ("age".equals(name)) {
+                return int.class;
+            } else if ("rider".equals(name)) {
+                return boolean.class;
+            } else if ("work".equals(name)) {
+                return Company.class;
+            } else if ("goldCustomer".equals(name) || "goldcustomer".equals(name)) {
+                return boolean.class;
             }
-            return map;
+            return null;
         }
 
         @Override

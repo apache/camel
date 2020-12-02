@@ -141,18 +141,21 @@ public interface GoogleSheetsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default GoogleSheetsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default GoogleSheetsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -238,7 +241,7 @@ public interface GoogleSheetsComponentBuilderFactory {
             case "bridgeErrorHandler": ((GoogleSheetsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "splitResult": getOrCreateConfiguration((GoogleSheetsComponent) component).setSplitResult((boolean) value); return true;
             case "lazyStartProducer": ((GoogleSheetsComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((GoogleSheetsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((GoogleSheetsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleSheetsComponent) component).setClientFactory((org.apache.camel.component.google.sheets.GoogleSheetsClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleSheetsComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleSheetsComponent) component).setClientSecret((java.lang.String) value); return true;

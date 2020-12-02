@@ -18,8 +18,6 @@ package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +32,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.utils.UrlUtils;
 import org.apache.camel.component.salesforce.api.utils.Version;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -378,7 +377,7 @@ public final class SObjectBatch implements Serializable {
     String rowBaseUrl(final String type, final String fieldName, final String fieldValue) {
         try {
             return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/" + notEmpty(fieldName, "fieldName") + "/"
-                   + URLEncoder.encode(notEmpty(fieldValue, "fieldValue"), StandardCharsets.UTF_8.name());
+                   + UrlUtils.encodePath(notEmpty(fieldValue, "fieldValue"));
         } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }

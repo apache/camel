@@ -622,18 +622,20 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default NettyComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default NettyComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -1140,7 +1142,7 @@ public interface NettyComponentBuilderFactory {
             case "udpConnectionlessSending": getOrCreateConfiguration((NettyComponent) component).setUdpConnectionlessSending((boolean) value); return true;
             case "useByteBuf": getOrCreateConfiguration((NettyComponent) component).setUseByteBuf((boolean) value); return true;
             case "allowSerializedHeaders": getOrCreateConfiguration((NettyComponent) component).setAllowSerializedHeaders((boolean) value); return true;
-            case "basicPropertyBinding": ((NettyComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((NettyComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "channelGroup": getOrCreateConfiguration((NettyComponent) component).setChannelGroup((io.netty.channel.group.ChannelGroup) value); return true;
             case "nativeTransport": getOrCreateConfiguration((NettyComponent) component).setNativeTransport((boolean) value); return true;
             case "options": getOrCreateConfiguration((NettyComponent) component).setOptions((java.util.Map) value); return true;

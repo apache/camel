@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpMethods;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UndertowHttpStreamCachingTest extends BaseUndertowTest {
 
@@ -31,7 +31,7 @@ public class UndertowHttpStreamCachingTest extends BaseUndertowTest {
     public void testTwoWayStreaming() throws Exception {
         Exchange exchange = template.request("undertow:http://localhost:{{port}}/client", null);
 
-        assertTrue(new String((byte[]) exchange.getMessage().getBody()).equals(data));
+        assertEquals(data, new String((byte[]) exchange.getMessage().getBody()));
     }
 
     @Override

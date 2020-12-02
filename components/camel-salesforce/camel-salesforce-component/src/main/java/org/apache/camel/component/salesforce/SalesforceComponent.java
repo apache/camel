@@ -32,6 +32,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
+import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
@@ -81,9 +82,12 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     public static final String HTTP_CONNECTION_TIMEOUT = "httpConnectionTimeout";
     public static final String HTTP_IDLE_TIMEOUT = "httpIdleTimeout";
     public static final String HTTP_MAX_CONTENT_LENGTH = "httpMaxContentLength";
+    public static final String HTTP_REQUEST_BUFFER_SIZE = "httpRequestBufferSize";
 
     static final int CONNECTION_TIMEOUT = 60000;
     static final int IDLE_TIMEOUT = 10000;
+    static final int REQUEST_BUFFER_SIZE = 8192;
+
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
@@ -167,6 +171,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     @Metadata(description = "Max content length of an HTTP response.", label = "common")
     private Integer httpMaxContentLength;
 
+    @Metadata(description = "HTTP request buffer size. May need to be increased for large SOQL" +
+                            " queries.",
+              label = "common", defaultValue = "" + REQUEST_BUFFER_SIZE)
+    private Integer httpRequestBufferSize;
+
     @Metadata(description = "Used to set any properties that can be configured on the underlying HTTP client. Have a"
                             + " look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options.",
               label = "common,advanced")
@@ -228,7 +237,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private boolean httpProxyUseDigestAuth;
 
     @Metadata(description = "In what packages are the generated DTO classes. Typically the classes would be generated"
-                            + " using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short "
+                            + " using camel-salesforce-maven-plugin. This must be set if using the XML format. Also,"
+                            + " set it if using the generated DTOs to gain the benefit of using short "
                             + " SObject names in parameters/header values. Multiple packages can be separated by comma.",
               javaType = "java.lang.String", label = "common")
     private String packages;
@@ -249,7 +259,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public SalesforceComponent(CamelContext context) {
         super(context);
-
         registerExtension(SalesforceComponentVerifierExtension::new);
         registerExtension(SalesforceMetaDataExtension::new);
     }
@@ -321,6 +330,16 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         return result;
     }
 
+    private void setXStreamPackageWhiteList() {
+        if (packages != null) {
+            String[] packagesArray = getPackagesAsArray();
+            for (int i = 0; i < packagesArray.length; i++) {
+                packagesArray[i] = packagesArray[i] + ".*";
+            }
+            XStreamUtils.packageWhiteList = String.join(",", packagesArray);
+        }
+    }
+
     public SalesforceHttpClient getHttpClient() {
         return httpClient;
     }
@@ -388,6 +407,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             // parse the packages to create SObject name to class map
             classMap = parsePackages();
             LOG.info("Found {} generated classes in packages: {}", classMap.size(), packages);
+            setXStreamPackageWhiteList();
         } else {
             // use an empty map to avoid NPEs later
             LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
@@ -592,6 +612,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         this.httpMaxContentLength = httpMaxContentLength;
     }
 
+    public Integer getHttpRequestBufferSize() {
+        return httpRequestBufferSize;
+    }
+
+    public void setHttpRequestBufferSize(Integer httpRequestBufferSize) {
+        this.httpRequestBufferSize = httpRequestBufferSize;
+    }
+
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
@@ -784,6 +812,11 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         final Long httpIdleTimeout = typeConverter.convertTo(Long.class, httpClientProperties.get(HTTP_IDLE_TIMEOUT));
         final Integer maxContentLength
                 = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_MAX_CONTENT_LENGTH));
+        Integer requestBufferSize
+                = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_REQUEST_BUFFER_SIZE));
+        if (requestBufferSize == null) {
+            requestBufferSize = REQUEST_BUFFER_SIZE;
+        }
 
         final String httpProxyHost = typeConverter.convertTo(String.class, httpClientProperties.get(HTTP_PROXY_HOST));
         final Integer httpProxyPort = typeConverter.convertTo(Integer.class, httpClientProperties.get(HTTP_PROXY_PORT));
@@ -812,6 +845,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         if (maxContentLength != null) {
             httpClient.setMaxContentLength(maxContentLength);
         }
+        httpClient.setRequestBufferSize(requestBufferSize);
 
         // set HTTP proxy settings
         if (httpProxyHost != null && httpProxyPort != null) {
@@ -844,7 +878,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             }
             httpClient.getAuthenticationStore().addAuthentication(authentication);
         }
-
         return httpClient;
     }
 
@@ -862,6 +895,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_REALM, salesforce::getHttpProxyRealm);
         putValueIfGivenTo(httpClientProperties, HTTP_PROXY_AUTH_URI, salesforce::getHttpProxyAuthUri);
         putValueIfGivenTo(httpClientProperties, HTTP_MAX_CONTENT_LENGTH, salesforce::getHttpMaxContentLength);
+        putValueIfGivenTo(httpClientProperties, HTTP_REQUEST_BUFFER_SIZE, salesforce::getHttpRequestBufferSize);
 
         if (ObjectHelper.isNotEmpty(salesforce.getHttpProxyHost())) {
             // let's not put `false` values in client properties if no proxy is

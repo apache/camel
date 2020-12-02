@@ -521,7 +521,7 @@ public interface ExtendedCamelContext extends CamelContext {
     void setupManagement(Map<String, Object> options);
 
     /**
-     * Gets a list of {@link LogListener}.
+     * Gets a list of {@link LogListener} (can be null if empty).
      */
     Set<LogListener> getLogListeners();
 
@@ -688,5 +688,12 @@ public interface ExtendedCamelContext extends CamelContext {
      * Camel to be less dynamic such as adding new route after Camel is started would not be possible.
      */
     boolean isLightweight();
+
+    /**
+     * Danger!!! This will dispose the route model from the {@link CamelContext} which is used for lightweight mode.
+     * This means afterwards no new routes can be dynamically added. Any operations on the
+     * org.apache.camel.model.ModelCamelContext will return null or be a noop operation.
+     */
+    void disposeModel();
 
 }

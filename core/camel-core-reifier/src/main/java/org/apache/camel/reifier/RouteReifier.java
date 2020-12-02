@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConsumerResolver;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
@@ -32,6 +33,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -39,13 +41,18 @@ import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RouteReifier extends ProcessorReifier<RouteDefinition> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RouteReifier.class);
 
     private static final String[] RESERVED_PROPERTIES = new String[] {
             Route.ID_PROPERTY, Route.CUSTOM_ID_PROPERTY, Route.PARENT_PROPERTY,
@@ -102,7 +109,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             if (isTrace != null) {
                 route.setTracing(isTrace);
                 if (isTrace) {
-                    log.debug("Tracing is enabled on route: {}", definition.getId());
+                    LOG.debug("Tracing is enabled on route: {}", definition.getId());
                     // tracing is added in the DefaultChannel so we can enable
                     // it on the fly
                 }
@@ -115,7 +122,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             if (isMessageHistory != null) {
                 route.setMessageHistory(isMessageHistory);
                 if (isMessageHistory) {
-                    log.debug("Message history is enabled on route: {}", definition.getId());
+                    LOG.debug("Message history is enabled on route: {}", definition.getId());
                 }
             }
         }
@@ -126,7 +133,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             if (isLogMask != null) {
                 route.setLogMask(isLogMask);
                 if (isLogMask) {
-                    log.debug("Security mask for Logging is enabled on route: {}", definition.getId());
+                    LOG.debug("Security mask for Logging is enabled on route: {}", definition.getId());
                 }
             }
         }
@@ -137,7 +144,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             if (isStreamCache != null) {
                 route.setStreamCaching(isStreamCache);
                 if (isStreamCache) {
-                    log.debug("StreamCaching is enabled on route: {}", definition.getId());
+                    LOG.debug("StreamCaching is enabled on route: {}", definition.getId());
                 }
             }
         }
@@ -148,9 +155,9 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             if (delayer != null) {
                 route.setDelayer(delayer);
                 if (delayer > 0) {
-                    log.debug("Delayer is enabled with: {} ms. on route: {}", delayer, definition.getId());
+                    LOG.debug("Delayer is enabled with: {} ms. on route: {}", delayer, definition.getId());
                 } else {
-                    log.debug("Delayer is disabled on route: {}", definition.getId());
+                    LOG.debug("Delayer is disabled on route: {}", definition.getId());
                 }
             }
         }
@@ -158,7 +165,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // configure route policy
         if (definition.getRoutePolicies() != null && !definition.getRoutePolicies().isEmpty()) {
             for (RoutePolicy policy : definition.getRoutePolicies()) {
-                log.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
+                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
                 route.getRoutePolicyList().add(policy);
             }
         }
@@ -167,7 +174,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             while (policyTokens.hasMoreTokens()) {
                 String ref = policyTokens.nextToken().trim();
                 RoutePolicy policy = mandatoryLookup(ref, RoutePolicy.class);
-                log.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
+                LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
                 route.getRoutePolicyList().add(policy);
             }
         }
@@ -175,7 +182,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             for (RoutePolicyFactory factory : camelContext.getRoutePolicyFactories()) {
                 RoutePolicy policy = factory.createRoutePolicy(camelContext, definition.getId(), definition);
                 if (policy != null) {
-                    log.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
+                    LOG.debug("RoutePolicy is enabled: {} on route: {}", policy, definition.getId());
                     route.getRoutePolicyList().add(policy);
                 }
             }
@@ -189,11 +196,11 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
 
         // configure shutdown
         if (definition.getShutdownRoute() != null) {
-            log.debug("Using ShutdownRoute {} on route: {}", definition.getShutdownRoute(), definition.getId());
+            LOG.debug("Using ShutdownRoute {} on route: {}", definition.getShutdownRoute(), definition.getId());
             route.setShutdownRoute(parse(ShutdownRoute.class, definition.getShutdownRoute()));
         }
         if (definition.getShutdownRunningTask() != null) {
-            log.debug("Using ShutdownRunningTask {} on route: {}", definition.getShutdownRunningTask(), definition.getId());
+            LOG.debug("Using ShutdownRunningTask {} on route: {}", definition.getShutdownRunningTask(), definition.getId());
             route.setShutdownRunningTask(parse(ShutdownRunningTask.class, definition.getShutdownRunningTask()));
         }
 
@@ -302,7 +309,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         route.getProperties().putAll(routeProperties);
         route.setStartupOrder(startupOrder);
         if (isAutoStartup != null) {
-            log.debug("Using AutoStartup {} on route: {}", isAutoStartup, definition.getId());
+            LOG.debug("Using AutoStartup {} on route: {}", isAutoStartup, definition.getId());
             route.setAutoStartup(isAutoStartup);
         }
 
@@ -316,10 +323,27 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
             }
         }
 
+        // inject the route error handler for processors that are error handler aware
+        // this needs to be done here at the end because the route may be transactional and have a transaction error handler
+        // automatic be configured which some EIPs like Multicast/RecipientList needs to be using for special fine grained error handling
+        ErrorHandlerFactory builder = route.getErrorHandlerFactory();
+        Processor errorHandler = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createErrorHandler(route,
+                builder, null);
+        prepareErrorHandlerAware(route, errorHandler);
+
         // okay route has been created from the model, then the model is no longer needed and we can de-reference
         route.clearRouteModel();
 
         return route;
+    }
+
+    private void prepareErrorHandlerAware(Route route, Processor errorHandler) {
+        List<Processor> processors = route.filter("*");
+        for (Processor p : processors) {
+            if (p instanceof ErrorHandlerAware) {
+                ((ErrorHandlerAware) p).setErrorHandler(errorHandler);
+            }
+        }
     }
 
     protected Map<String, Object> computeRouteProperties() {

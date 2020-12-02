@@ -4,9 +4,10 @@ package org.apache.camel.component.iec60870.server;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,37 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ServerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("uriPath", org.apache.camel.component.iec60870.ObjectAddress.class);
-        map.put("dataModuleOptions", org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions.class);
-        map.put("filterNonExecute", boolean.class);
-        map.put("protocolOptions", org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("acknowledgeWindow", short.class);
-        map.put("adsuAddressType", org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class);
-        map.put("causeOfTransmissionType", org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType.class);
-        map.put("informationObjectAddressType", org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType.class);
-        map.put("maxUnacknowledged", short.class);
-        map.put("timeout1", int.class);
-        map.put("timeout2", int.class);
-        map.put("timeout3", int.class);
-        map.put("causeSourceAddress", byte.class);
-        map.put("connectionTimeout", int.class);
-        map.put("ignoreBackgroundScan", boolean.class);
-        map.put("ignoreDaylightSavingTime", boolean.class);
-        map.put("timeZone", java.util.TimeZone.class);
-        map.put("connectionId", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ServerEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServerEndpoint target = (ServerEndpoint) obj;
@@ -55,8 +25,6 @@ public class ServerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "acknowledgeWindow": target.getConnectionOptions().setAcknowledgeWindow(property(camelContext, short.class, value)); return true;
         case "adsuaddresstype":
         case "adsuAddressType": target.getConnectionOptions().setAdsuAddressType(property(camelContext, org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "causeoftransmissiontype":
@@ -98,15 +66,50 @@ public class ServerEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acknowledgewindow":
+        case "acknowledgeWindow": return short.class;
+        case "adsuaddresstype":
+        case "adsuAddressType": return org.eclipse.neoscada.protocol.iec60870.ASDUAddressType.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "causeoftransmissiontype":
+        case "causeOfTransmissionType": return org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType.class;
+        case "causesourceaddress":
+        case "causeSourceAddress": return byte.class;
+        case "connectionid":
+        case "connectionId": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "datamoduleoptions":
+        case "dataModuleOptions": return org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filternonexecute":
+        case "filterNonExecute": return boolean.class;
+        case "ignorebackgroundscan":
+        case "ignoreBackgroundScan": return boolean.class;
+        case "ignoredaylightsavingtime":
+        case "ignoreDaylightSavingTime": return boolean.class;
+        case "informationobjectaddresstype":
+        case "informationObjectAddressType": return org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxunacknowledged":
+        case "maxUnacknowledged": return short.class;
+        case "protocoloptions":
+        case "protocolOptions": return org.eclipse.neoscada.protocol.iec60870.ProtocolOptions.class;
+        case "synchronous": return boolean.class;
+        case "timezone":
+        case "timeZone": return java.util.TimeZone.class;
+        case "timeout1": return int.class;
+        case "timeout2": return int.class;
+        case "timeout3": return int.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -117,8 +120,6 @@ public class ServerEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "acknowledgeWindow": return target.getConnectionOptions().getAcknowledgeWindow();
         case "adsuaddresstype":
         case "adsuAddressType": return target.getConnectionOptions().getAdsuAddressType();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "causeoftransmissiontype":

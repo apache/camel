@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
 
@@ -50,14 +50,13 @@ public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedFileExists(FTP_ROOT_DIR + "/exist/hello.txt", "Hello World");
 
-        try {
-            template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            GenericFileOperationFailedException cause
-                    = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals("File already exist: exist/hello.txt. Cannot write new file.", cause.getMessage());
-        }
+        String uri = getFtpUrl();
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "hello.txt"));
+
+        GenericFileOperationFailedException cause
+                = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
+        assertEquals("File already exist: exist/hello.txt. Cannot write new file.", cause.getMessage());
 
         assertMockEndpointsSatisfied();
     }

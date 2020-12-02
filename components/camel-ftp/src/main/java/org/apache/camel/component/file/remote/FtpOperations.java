@@ -112,6 +112,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             client.configure(clientConfig);
         }
 
+        if (endpoint.getSoTimeout() > 0) {
+            client.setDefaultTimeout(endpoint.getSoTimeout());
+        }
+
         if (log.isTraceEnabled()) {
             log.trace("Connecting to {} using connection timeout: {}", configuration.remoteServerInformation(),
                     client.getConnectTimeout());

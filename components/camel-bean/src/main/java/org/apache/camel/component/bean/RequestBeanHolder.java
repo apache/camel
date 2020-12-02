@@ -36,6 +36,11 @@ public class RequestBeanHolder implements BeanHolder {
     }
 
     @Override
+    public void setErrorHandler(Processor errorHandler) {
+        holder.setErrorHandler(errorHandler);
+    }
+
+    @Override
     public Map<String, Object> getOptions() {
         return holder.getOptions();
     }

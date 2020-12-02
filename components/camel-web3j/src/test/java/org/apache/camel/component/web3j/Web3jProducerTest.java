@@ -86,6 +86,8 @@ import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.core.methods.response.Web3Sha3;
 
 import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -140,7 +142,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         exchange.getIn().setBody("0x68");
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("0x471"));
+        assertEquals("0x471", body);
     }
 
     @Test
@@ -167,7 +169,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.NET_PEER_COUNT);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(peerCount));
+        assertEquals(peerCount, body);
     }
 
     @Test
@@ -180,7 +182,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_PROTOCOL_VERSION);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("123"));
+        assertEquals("123", body);
     }
 
     @Test
@@ -193,7 +195,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_COINBASE);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("123"));
+        assertEquals("123", body);
     }
 
     @Test
@@ -232,7 +234,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_HASHRATE);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -245,7 +247,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GAS_PRICE);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -271,7 +273,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_BLOCK_NUMBER);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -286,7 +288,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
 
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -299,7 +301,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_STORAGE_AT);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -312,7 +314,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_TRANSACTION_COUNT);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -326,7 +328,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
                 = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_BLOCK_TRANSACTION_COUNT_BY_HASH);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -340,7 +342,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
                 = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_BLOCK_TRANSACTION_COUNT_BY_NUMBER);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -353,7 +355,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_UNCLE_COUNT_BY_BLOCK_HASH);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -367,7 +369,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
                 = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_UNCLE_COUNT_BY_BLOCK_NUMBER);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -380,7 +382,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_CODE);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -393,7 +395,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_SIGN);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -406,7 +408,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_SEND_TRANSACTION);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -419,7 +421,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_SEND_RAW_TRANSACTION);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -432,7 +434,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_CALL);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -445,7 +447,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_ESTIMATE_GAS);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -458,7 +460,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_BLOCK_BY_HASH);
         template.send(exchange);
         EthBlock.Block body = exchange.getIn().getBody(EthBlock.Block.class);
-        assertTrue(body != null);
+        assertNotNull(body);
     }
 
     @Test
@@ -474,7 +476,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
 
         template.send(exchange);
         EthBlock.Block body = exchange.getIn().getBody(EthBlock.Block.class);
-        assertTrue(body != null);
+        assertNotNull(body);
     }
 
     @Test
@@ -489,7 +491,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_TRANSACTION_BY_HASH);
         template.send(exchange);
         Transaction body = exchange.getIn().getBody(Transaction.class);
-        assertTrue(body != null);
+        assertNotNull(body);
     }
 
     @Test
@@ -505,7 +507,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
                 = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_TRANSACTION_BY_BLOCK_HASH_AND_INDEX);
         template.send(exchange);
         Transaction body = exchange.getIn().getBody(Transaction.class);
-        assertTrue(body != null);
+        assertNotNull(body);
     }
 
     @Test
@@ -521,7 +523,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
                 Web3jConstants.ETH_GET_TRANSACTION_BY_BLOCK_NUMBER_AND_INDEX);
         template.send(exchange);
         Transaction body = exchange.getIn().getBody(Transaction.class);
-        assertTrue(body != null);
+        assertNotNull(body);
     }
 
     @Test
@@ -534,7 +536,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_TRANSACTION_RECEIPT);
         template.send(exchange);
         Optional<Transaction> body = exchange.getIn().getBody(Optional.class);
-        assertTrue(body != null);
+        assertNotNull(body);
     }
 
     @Test
@@ -548,7 +550,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
                 = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_UNCLE_BY_BLOCK_HASH_AND_INDEX);
         template.send(exchange);
         EthBlock.Block body = exchange.getIn().getBody(EthBlock.Block.class);
-        assertTrue(body != null);
+        assertNotNull(body);
     }
 
     @Test
@@ -574,7 +576,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_COMPILE_LLL);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -600,7 +602,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_COMPILE_SERPENT);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -613,7 +615,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_NEW_FILTER);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -626,7 +628,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_NEW_BLOCK_FILTER);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -639,7 +641,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_NEW_PENDING_TRANSACTION_FILTER);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -704,7 +706,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_WORK);
         template.send(exchange);
         List body = exchange.getIn().getBody(List.class);
-        assertTrue(body.equals(Collections.EMPTY_LIST));
+        assertEquals(Collections.EMPTY_LIST, body);
     }
 
     @Test
@@ -756,7 +758,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.DB_GET_STRING);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -782,7 +784,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.DB_GET_HEX);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -808,7 +810,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.SHH_VERSION);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -821,7 +823,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.SHH_NEW_IDENTITY);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -847,7 +849,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.SHH_NEW_GROUP);
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        assertEquals("test", body);
     }
 
     @Test
@@ -873,7 +875,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.SHH_NEW_FILTER);
         template.send(exchange);
         BigInteger body = exchange.getIn().getBody(BigInteger.class);
-        assertTrue(body.equals(BigInteger.ONE));
+        assertEquals(BigInteger.ONE, body);
     }
 
     @Test
@@ -941,9 +943,9 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, Web3jConstants.ID, Long.valueOf(2));
         template.send(exchange);
-        assertTrue(exchange.getIn().getHeader(Web3jConstants.ERROR_CODE, Integer.class).equals(Integer.valueOf(1)));
-        assertTrue(exchange.getIn().getHeader(Web3jConstants.ERROR_MESSAGE, String.class).equals("error message"));
-        assertTrue(exchange.getIn().getHeader(Web3jConstants.ERROR_DATA, String.class).equals("error data"));
+        assertEquals(Integer.valueOf(1), exchange.getIn().getHeader(Web3jConstants.ERROR_CODE, Integer.class));
+        assertEquals("error message", exchange.getIn().getHeader(Web3jConstants.ERROR_MESSAGE, String.class));
+        assertEquals("error data", exchange.getIn().getHeader(Web3jConstants.ERROR_DATA, String.class));
     }
 
     @Override

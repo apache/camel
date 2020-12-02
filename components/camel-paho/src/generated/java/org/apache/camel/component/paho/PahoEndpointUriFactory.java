@@ -20,9 +20,8 @@ public class PahoEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(33);
         props.add("serverURIs");
-        props.add("basicPropertyBinding");
         props.add("customWebSocketHeaders");
         props.add("maxInflight");
         props.add("synchronous");

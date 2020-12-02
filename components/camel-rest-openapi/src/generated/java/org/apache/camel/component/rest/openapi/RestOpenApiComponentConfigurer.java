@@ -4,9 +4,10 @@ package org.apache.camel.component.rest.openapi;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,31 +17,14 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("basePath", java.lang.String.class);
-        map.put("componentName", java.lang.String.class);
-        map.put("consumes", java.lang.String.class);
-        map.put("host", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("produces", java.lang.String.class);
-        map.put("specificationUri", java.net.URI.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RestOpenApiComponentConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestOpenApiComponent target = (RestOpenApiComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "basepath":
         case "basePath": target.setBasePath(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "componentname":
         case "componentName": target.setComponentName(property(camelContext, java.lang.String.class, value)); return true;
         case "consumes": target.setConsumes(property(camelContext, java.lang.String.class, value)); return true;
@@ -59,25 +43,37 @@ public class RestOpenApiComponentConfigurer extends PropertyConfigurerSupport im
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "basepath":
+        case "basePath": return java.lang.String.class;
+        case "componentname":
+        case "componentName": return java.lang.String.class;
+        case "consumes": return java.lang.String.class;
+        case "host": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "produces": return java.lang.String.class;
+        case "specificationuri":
+        case "specificationUri": return java.net.URI.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RestOpenApiComponent target = (RestOpenApiComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "basepath":
         case "basePath": return target.getBasePath();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "componentname":
         case "componentName": return target.getComponentName();
         case "consumes": return target.getConsumes();

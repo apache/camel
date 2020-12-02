@@ -475,34 +475,6 @@ public interface EventHubsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEventHubsEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEventHubsEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -797,34 +769,6 @@ public interface EventHubsEndpointBuilderFactory {
             return (EventHubsEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEventHubsEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEventHubsEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1003,34 +947,6 @@ public interface EventHubsEndpointBuilderFactory {
                 AdvancedEventHubsEndpointProducerBuilder {
         default EventHubsEndpointBuilder basic() {
             return (EventHubsEndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEventHubsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedEventHubsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel

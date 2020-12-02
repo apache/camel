@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.google.drive;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "The realtime collection of methods",
            apiMethods = {@ApiMethod(methodName = "get", description="Exports the contents of the Realtime API data model associated with this file as JSON", signatures={"com.google.api.services.drive.Drive$Realtime$Get get(String fileId)"}), @ApiMethod(methodName = "update", description="Overwrites the Realtime API data model associated with this file with the provided JSON data model", signatures={"com.google.api.services.drive.Drive$Realtime$Update update(String fileId)", "com.google.api.services.drive.Drive$Realtime$Update update(String fileId, com.google.api.client.http.AbstractInputStreamContent mediaContent)"}), }, aliases = {})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class DriveRealtimeEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "get", description="The ID of the file that the Realtime API data model is associated with"), @ApiMethod(methodName = "update", description="The ID of the file that the Realtime API data model is associated with"), @ApiMethod(methodName = "update", description="The ID of the file that the Realtime API data model is associated with")})

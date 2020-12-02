@@ -154,7 +154,7 @@ The maven plugin *validate* goal supports the following options which can be con
 For example to turn off ignoring usage of deprecated options from the command line, you can run:
 
 ----
-$mvn camel-report:validate -Dcamel.ignoreDeprecated=true
+$mvn camel-report:validate -Dcamel.ignoreDeprecated=false
 ----
 
 Notice that you must prefix the `-D` command argument with `camel.`, eg `camel.ignoreDeprecated` as the option name.

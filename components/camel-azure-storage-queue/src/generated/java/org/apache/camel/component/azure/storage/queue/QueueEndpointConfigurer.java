@@ -4,9 +4,10 @@ package org.apache.camel.component.azure.storage.queue;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,33 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class QueueEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("accountName", java.lang.String.class);
-        map.put("queueName", java.lang.String.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("createQueue", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("maxMessages", java.lang.Integer.class);
-        map.put("messageId", java.lang.String.class);
-        map.put("popReceipt", java.lang.String.class);
-        map.put("timeout", java.time.Duration.class);
-        map.put("timeToLive", java.time.Duration.class);
-        map.put("visibilityTimeout", java.time.Duration.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(QueueEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         QueueEndpoint target = (QueueEndpoint) obj;
@@ -51,8 +25,6 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "createqueue":
@@ -84,15 +56,40 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "createqueue":
+        case "createQueue": return boolean.class;
+        case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxmessages":
+        case "maxMessages": return java.lang.Integer.class;
+        case "messageid":
+        case "messageId": return java.lang.String.class;
+        case "operation": return org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class;
+        case "popreceipt":
+        case "popReceipt": return java.lang.String.class;
+        case "serviceclient":
+        case "serviceClient": return com.azure.storage.queue.QueueServiceClient.class;
+        case "synchronous": return boolean.class;
+        case "timetolive":
+        case "timeToLive": return java.time.Duration.class;
+        case "timeout": return java.time.Duration.class;
+        case "visibilitytimeout":
+        case "visibilityTimeout": return java.time.Duration.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -103,8 +100,6 @@ public class QueueEndpointConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "createqueue":

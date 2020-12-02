@@ -17,17 +17,23 @@
 package org.apache.camel.component.aws2.s3;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @UriParams
 public class AWS2S3Configuration implements Cloneable {
 
     private String bucketName;
     @UriParam
+    @Metadata(autowired = true)
     private S3Client amazonS3Client;
+    @UriParam
+    @Metadata(autowired = true)
+    private S3Presigner amazonS3Presigner;
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
@@ -91,7 +97,7 @@ public class AWS2S3Configuration implements Cloneable {
     @UriParam(label = "common,advanced")
     private String customerAlgorithm;
     @UriParam(defaultValue = "false")
-    private boolean useIAMCredentials;
+    private boolean useDefaultCredentialsProvider;
     @UriParam(label = "producer")
     private String keyName;
     @UriParam(defaultValue = "false")
@@ -102,8 +108,6 @@ public class AWS2S3Configuration implements Cloneable {
     private String uriEndpointOverride;
     @UriParam(defaultValue = "false")
     private boolean pojoRequest;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
 
     public long getPartSize() {
         return partSize;
@@ -468,15 +472,15 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to
-     * be passed in.
+     * Set whether the S3 client should expect to load credentials through a default credentials provider or to expect
+     * static credentials to be passed in.
      */
-    public void setUseIAMCredentials(Boolean useIAMCredentials) {
-        this.useIAMCredentials = useIAMCredentials;
+    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+        this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseIAMCredentials() {
-        return useIAMCredentials;
+    public Boolean isUseDefaultCredentialsProvider() {
+        return useDefaultCredentialsProvider;
     }
 
     public boolean isAutoCreateBucket() {
@@ -547,16 +551,15 @@ public class AWS2S3Configuration implements Cloneable {
         this.trustAllCertificates = trustAllCertificates;
     }
 
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
+    public S3Presigner getAmazonS3Presigner() {
+        return amazonS3Presigner;
     }
 
     /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
-     * automatically otherwise it will skip that checking.
+     * An S3 Presigner for Request, used mainly in createDownloadLink operation
      */
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
+    public void setAmazonS3Presigner(S3Presigner amazonS3Presigner) {
+        this.amazonS3Presigner = amazonS3Presigner;
     }
 
     public AWS2S3Configuration copy() {

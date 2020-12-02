@@ -16,12 +16,17 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Interact with the GitHub API.
@@ -136,6 +141,419 @@ public interface GitHubEndpointBuilderFactory {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default GitHubEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default GitHubEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder backoffErrorThreshold(
+                int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder backoffErrorThreshold(
+                String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder backoffIdleThreshold(
+                int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder backoffIdleThreshold(
+                String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder backoffMultiplier(
+                int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder backoffMultiplier(
+                String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 500
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder initialDelay(String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 0
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder runLoggingLevel(
+                LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Default: TRACE
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder runLoggingLevel(
+                String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder scheduledExecutorService(
+                ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder scheduledExecutorService(
+                String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option is a: <code>java.lang.Object</code> type.
+         * 
+         * Default: none
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder scheduler(Object scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component. Use value spring or quartz for built in scheduler.
+         * 
+         * The option will be converted to a <code>java.lang.Object</code> type.
+         * 
+         * Default: none
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder schedulerProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("schedulerProperties", "scheduler." + key, value);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * schedulerProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder schedulerProperties(Map values) {
+            doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder startScheduler(
+                boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder startScheduler(
+                String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Default: MILLISECONDS
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder useFixedDelay(
+                boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: scheduler
+         */
+        default GitHubEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
     }
 
     /**
@@ -146,6 +564,34 @@ public interface GitHubEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default GitHubEndpointConsumerBuilder basic() {
             return (GitHubEndpointConsumerBuilder) this;
+        }
+        /**
+         * To specify a custom strategy that configures how the EventsConsumer
+         * fetches events.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.github.event.GitHubEventFetchStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedGitHubEndpointConsumerBuilder eventFetchStrategy(
+                Object eventFetchStrategy) {
+            doSetProperty("eventFetchStrategy", eventFetchStrategy);
+            return this;
+        }
+        /**
+         * To specify a custom strategy that configures how the EventsConsumer
+         * fetches events.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.github.event.GitHubEventFetchStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedGitHubEndpointConsumerBuilder eventFetchStrategy(
+                String eventFetchStrategy) {
+            doSetProperty("eventFetchStrategy", eventFetchStrategy);
+            return this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -205,31 +651,35 @@ public interface GitHubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default: false
-         * Group: advanced
+         * Group: consumer (advanced)
          */
-        default AdvancedGitHubEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedGitHubEndpointConsumerBuilder pollStrategy(
+                PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
          * 
-         * Default: false
-         * Group: advanced
+         * Group: consumer (advanced)
          */
-        default AdvancedGitHubEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedGitHubEndpointConsumerBuilder pollStrategy(
+                String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -415,34 +865,6 @@ public interface GitHubEndpointBuilderFactory {
             return (GitHubEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -552,34 +974,6 @@ public interface GitHubEndpointBuilderFactory {
             return (GitHubEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitHubEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -620,9 +1014,9 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * What git operation to execute
-         * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+         * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
          * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
          * 
          * Path parameter: branchName
          * Name of branch
@@ -644,9 +1038,9 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * Path parameter: type (required)
          * What git operation to execute
-         * There are 9 enums and the value can be one of: CLOSEPULLREQUEST,
+         * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
          * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
-         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE
+         * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
          * 
          * Path parameter: branchName
          * Name of branch

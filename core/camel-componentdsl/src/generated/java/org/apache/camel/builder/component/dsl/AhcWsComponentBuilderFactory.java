@@ -104,18 +104,20 @@ public interface AhcWsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default AhcWsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AhcWsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -222,7 +224,7 @@ public interface AhcWsComponentBuilderFactory {
             case "bridgeErrorHandler": ((WsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((WsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "allowJavaSerializedObject": ((WsComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
-            case "basicPropertyBinding": ((WsComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((WsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "binding": ((WsComponent) component).setBinding((org.apache.camel.component.ahc.AhcBinding) value); return true;
             case "client": ((WsComponent) component).setClient((org.asynchttpclient.AsyncHttpClient) value); return true;
             case "clientConfig": ((WsComponent) component).setClientConfig((org.asynchttpclient.AsyncHttpClientConfig) value); return true;

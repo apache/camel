@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.createDirectory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JettyHttpFileCacheTest extends CamelTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough"
@@ -53,7 +52,7 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
 
         File file = new File("target/cachedir");
         String[] files = file.list();
-        assertTrue(files.length == 0, "There should not have any temp file");
+        assertEquals(files.length, 0, "There should not have any temp file");
 
     }
 

@@ -40,7 +40,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
             return (AdvancedGoogleBigQuerySQLEndpointBuilder) this;
         }
         /**
-         * ConnectionFactory to obtain connection to Bigquery Service. If non
+         * ConnectionFactory to obtain connection to Bigquery Service. If not
          * provided the default one will be used.
          * 
          * The option is a:
@@ -54,7 +54,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
             return this;
         }
         /**
-         * ConnectionFactory to obtain connection to Bigquery Service. If non
+         * ConnectionFactory to obtain connection to Bigquery Service. If not
          * provided the default one will be used.
          * 
          * The option will be converted to a
@@ -120,34 +120,6 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default GoogleBigQuerySQLEndpointBuilder basic() {
             return (GoogleBigQuerySQLEndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel

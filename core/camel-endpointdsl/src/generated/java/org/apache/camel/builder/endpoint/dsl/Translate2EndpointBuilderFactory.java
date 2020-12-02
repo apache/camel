@@ -66,36 +66,6 @@ public interface Translate2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Translate2EndpointBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Translate2EndpointBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -370,34 +340,6 @@ public interface Translate2EndpointBuilderFactory {
                 EndpointProducerBuilder {
         default Translate2EndpointBuilder basic() {
             return (Translate2EndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedTranslate2EndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedTranslate2EndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel

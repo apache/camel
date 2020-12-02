@@ -18,9 +18,17 @@
 package org.apache.camel.test.infra.aws2.services;
 
 public enum Service {
+    CLOUD_WATCH("cloudwatch"),
+    EC2("ec2"),
+    EVENT_BRIDGE("eventbridge"),
+    IAM("iam"),
     KINESIS("kinesis"),
+    KMS("kms"),
+    LAMBDA("lambda"),
+    S3("s3"),
+    SNS("sns"),
     SQS("sqs"),
-    S3("s3");
+    STS("sts");
 
     private final String serviceName;
 

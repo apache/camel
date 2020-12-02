@@ -24,6 +24,7 @@ import org.apache.camel.component.google.calendar.internal.CalendarCalendarListA
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -40,7 +41,7 @@ public class CalendarCalendarListIntegrationTest extends AbstractGoogleCalendarT
         assertTrue(isCalendarInList(calendar), "Test calendar should be in the list");
 
         CalendarListEntry calendarFromGet = requestBody("direct://GET", calendar.getId());
-        assertTrue(calendar.getId().equals(calendarFromGet.getId()));
+        assertEquals(calendar.getId(), calendarFromGet.getId());
     }
 
     protected boolean isCalendarInList(Calendar calendar) {

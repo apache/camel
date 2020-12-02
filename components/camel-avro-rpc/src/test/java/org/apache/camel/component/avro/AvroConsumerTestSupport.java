@@ -188,4 +188,26 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         Object response = reflectRequestor.request("getTestPojo", request);
         assertEquals(testPojo.getPojoName(), ((TestPojo) response).getPojoName());
     }
+
+    protected ConsumerRouteType getRouteType() {
+        switch (getCurrentTestName()) {
+            case "testInOut()":
+            case "testInOnly()":
+                return ConsumerRouteType.specific;
+            case "testInOutMessageInRoute()":
+            case "testInOnlyWrongMessageName()":
+            case "testInOnlyMessageInRoute()":
+                return ConsumerRouteType.specificProcessor;
+            case "testInOnlyReflectSingleParameterNotSet()":
+            case "testInOutReflectionPojoTest()":
+            case "testInOnlyReflectionPojoTest()":
+            case "testInOutReflectRequestor()":
+            case "testInOnlyReflectRequestor()":
+                return ConsumerRouteType.reflect;
+            case "testInOnlyToNotExistingRoute()":
+                return ConsumerRouteType.specificProcessorWrong;
+            default:
+                throw new IllegalStateException(String.format("Test '%s' is not listed.", getCurrentTestName()));
+        }
+    }
 }

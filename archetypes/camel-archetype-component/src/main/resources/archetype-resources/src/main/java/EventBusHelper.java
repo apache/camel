@@ -26,11 +26,11 @@ import java.util.function.Consumer;
  */
 public class EventBusHelper {
 
-    // TODO: Delete me when you implementy your custom component
+    // TODO: Delete me when you implemented your custom component
 
     private static EventBusHelper INSTANCE;
 
-    final private Set<Consumer> subscribers = ConcurrentHashMap.newKeySet();
+    private final Set<Consumer> subscribers = ConcurrentHashMap.newKeySet();
 
     private EventBusHelper() {
     }

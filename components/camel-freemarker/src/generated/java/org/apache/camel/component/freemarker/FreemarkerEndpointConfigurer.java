@@ -4,9 +4,10 @@ package org.apache.camel.component.freemarker;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,23 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class FreemarkerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("resourceUri", java.lang.String.class);
-        map.put("allowContextMapAll", boolean.class);
-        map.put("allowTemplateFromHeader", boolean.class);
-        map.put("configuration", freemarker.template.Configuration.class);
-        map.put("contentCache", boolean.class);
-        map.put("encoding", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("templateUpdateDelay", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FreemarkerEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FreemarkerEndpoint target = (FreemarkerEndpoint) obj;
@@ -41,8 +25,6 @@ public class FreemarkerEndpointConfigurer extends PropertyConfigurerSupport impl
         case "allowContextMapAll": target.setAllowContextMapAll(property(camelContext, boolean.class, value)); return true;
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": target.setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, freemarker.template.Configuration.class, value)); return true;
         case "contentcache":
         case "contentCache": target.setContentCache(property(camelContext, boolean.class, value)); return true;
@@ -57,15 +39,23 @@ public class FreemarkerEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "configuration": return freemarker.template.Configuration.class;
+        case "contentcache":
+        case "contentCache": return boolean.class;
+        case "encoding": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "templateupdatedelay":
+        case "templateUpdateDelay": return int.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -76,8 +66,6 @@ public class FreemarkerEndpointConfigurer extends PropertyConfigurerSupport impl
         case "allowContextMapAll": return target.isAllowContextMapAll();
         case "allowtemplatefromheader":
         case "allowTemplateFromHeader": return target.isAllowTemplateFromHeader();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "configuration": return target.getConfiguration();
         case "contentcache":
         case "contentCache": return target.isContentCache();

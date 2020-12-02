@@ -4,9 +4,10 @@ package org.apache.camel.component.vertx.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,42 +17,18 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("lazyStartProducer", boolean.class);
-        map.put("allowJavaSerializedObject", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("vertx", io.vertx.core.Vertx.class);
-        map.put("vertxHttpBinding", org.apache.camel.component.vertx.http.VertxHttpBinding.class);
-        map.put("vertxOptions", io.vertx.core.VertxOptions.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPassword", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyType", io.vertx.core.net.ProxyType.class);
-        map.put("proxyUsername", java.lang.String.class);
-        map.put("basicAuthPassword", java.lang.String.class);
-        map.put("basicAuthUsername", java.lang.String.class);
-        map.put("bearerToken", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(VertxHttpComponentConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxHttpComponent target = (VertxHttpComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "basicauthpassword":
         case "basicAuthPassword": target.setBasicAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "basicauthusername":
         case "basicAuthUsername": target.setBasicAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "headerfilterstrategy":
@@ -82,15 +59,43 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "basicauthpassword":
+        case "basicAuthPassword": return java.lang.String.class;
+        case "basicauthusername":
+        case "basicAuthUsername": return java.lang.String.class;
+        case "bearertoken":
+        case "bearerToken": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxypassword":
+        case "proxyPassword": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxytype":
+        case "proxyType": return io.vertx.core.net.ProxyType.class;
+        case "proxyusername":
+        case "proxyUsername": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "vertx": return io.vertx.core.Vertx.class;
+        case "vertxhttpbinding":
+        case "vertxHttpBinding": return org.apache.camel.component.vertx.http.VertxHttpBinding.class;
+        case "vertxoptions":
+        case "vertxOptions": return io.vertx.core.VertxOptions.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -99,12 +104,12 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowjavaserializedobject":
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "basicauthpassword":
         case "basicAuthPassword": return target.getBasicAuthPassword();
         case "basicauthusername":
         case "basicAuthUsername": return target.getBasicAuthUsername();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bearertoken":
         case "bearerToken": return target.getBearerToken();
         case "headerfilterstrategy":

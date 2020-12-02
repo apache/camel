@@ -17,12 +17,10 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Processor;
 import org.apache.camel.model.errorhandler.DeadLetterChannelConfiguration;
-import org.apache.camel.processor.FatalFallbackErrorHandler;
-import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.model.errorhandler.DeadLetterChannelProperties;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerConfiguration;
 import org.apache.camel.processor.errorhandler.DeadLetterChannel;
 import org.apache.camel.spi.CamelLogger;
 import org.slf4j.LoggerFactory;
@@ -30,20 +28,25 @@ import org.slf4j.LoggerFactory;
 /**
  * A builder of a <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a>
  */
-public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder implements DeadLetterChannelConfiguration {
+public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder implements DeadLetterChannelProperties {
 
     public DeadLetterChannelBuilder() {
         // no-arg constructor used by Spring DSL
     }
 
     public DeadLetterChannelBuilder(Endpoint deadLetter) {
-        setDeadLetter(deadLetter);
+        setDeadLetterUri(deadLetter.getEndpointUri());
         // DLC do not log exhausted by default
         getRedeliveryPolicy().setLogExhausted(false);
     }
 
     public DeadLetterChannelBuilder(String uri) {
         setDeadLetterUri(uri);
+    }
+
+    @Override
+    DefaultErrorHandlerConfiguration createConfiguration() {
+        return new DeadLetterChannelConfiguration();
     }
 
     @Override
@@ -57,25 +60,12 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder impleme
     // -------------------------------------------------------------------------
 
     @Override
-    public Processor getFailureProcessor() {
-        if (failureProcessor == null) {
-            // wrap in our special safe fallback error handler if sending to
-            // dead letter channel fails
-            Processor child = new SendProcessor(deadLetter, ExchangePattern.InOnly);
-            // force MEP to be InOnly so when sending to DLQ we would not expect
-            // a reply if the MEP was InOut
-            failureProcessor = new FatalFallbackErrorHandler(child, true);
-        }
-        return failureProcessor;
-    }
-
-    @Override
     protected CamelLogger createLogger() {
         return new CamelLogger(LoggerFactory.getLogger(DeadLetterChannel.class), LoggingLevel.ERROR);
     }
 
     @Override
     public String toString() {
-        return "DeadLetterChannelBuilder(" + deadLetterUri + ")";
+        return "DeadLetterChannelBuilder(" + getDeadLetterUri() + ")";
     }
 }

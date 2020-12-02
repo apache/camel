@@ -48,7 +48,7 @@ public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
         ConsulServiceRegistry registry = new ConsulServiceRegistry();
         registry.setId(context.getUuidGenerator().generateUuid());
         registry.setCamelContext(context());
-        registry.setUrl(consulUrl());
+        registry.setUrl(service.getConsulUrl());
         registry.setServiceHost(SERVICE_HOST);
         registry.setOverrideServiceHost(true);
 
@@ -74,7 +74,7 @@ public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
                 from("direct:start")
                         .serviceCall()
                             .name(serviceName).component("undertow").defaultLoadBalancer()
-                            .consulServiceDiscovery().url(consulUrl()).end()
+                            .consulServiceDiscovery().url(service.getConsulUrl()).end()
                         .end()
                         .log("${body}");
 
@@ -98,12 +98,12 @@ public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                // context path is had coded so it should fail as it not exposed
+                // context path is hard coded so it should fail as it not exposed
                 // by jetty
                 from("direct:start")
                         .serviceCall()
                             .name(serviceName + "/bad/path").component("http")
-                            .defaultLoadBalancer().consulServiceDiscovery().url(consulUrl()).end()
+                            .defaultLoadBalancer().consulServiceDiscovery().url(service.getConsulUrl()).end()
                         .end()
                         .log("${body}");
 
@@ -115,6 +115,7 @@ public class ConsulServiceCallWithRegistrationTest extends ConsulTestSupport {
 
         context.start();
 
-        assertThrows(CamelExecutionException.class, () -> template.requestBody("direct:start", "ping", String.class));
+        assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:start", "ping", String.class));
     }
 }

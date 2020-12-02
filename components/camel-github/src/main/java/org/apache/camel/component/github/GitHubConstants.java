@@ -35,4 +35,6 @@ public interface GitHubConstants {
     String GITHUB_PULLREQUEST_HEAD_COMMIT_SHA = "GitHubPullRequestHeadCommitSHA";
 
     String GITHUB_ISSUE_TITLE = "GitHubIssueTitle";
+
+    String GITHUB_EVENT_SERVICE = "GitHubEventService";
 }

@@ -27,7 +27,6 @@ import java.util.Random;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.PageRange;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
@@ -64,7 +63,7 @@ class BlobProducerITTest extends BaseIT {
 
         result.expectedMessageCount(1);
 
-        template.send("direct:uploadBlockBlob", ExchangePattern.InOnly, exchange -> {
+        template.send("direct:uploadBlockBlob", exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
             exchange.getIn().setBody("Block Blob");
         });
@@ -80,7 +79,7 @@ class BlobProducerITTest extends BaseIT {
 
         result.expectedBodiesReceived(true);
 
-        template.send("direct:stageBlockBlobList", ExchangePattern.InOnly, exchange -> {
+        template.send("direct:stageBlockBlobList", exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
             exchange.getIn().setHeader(BlobConstants.COMMIT_BLOCK_LIST_LATER, false);
 
@@ -101,7 +100,7 @@ class BlobProducerITTest extends BaseIT {
     void testCommitAppendBlobWithError() throws InterruptedException {
         final String blobName = RandomStringUtils.randomAlphabetic(10);
 
-        template.send("direct:commitAppendBlobWithError", ExchangePattern.InOnly, exchange -> {
+        template.send("direct:commitAppendBlobWithError", exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
             exchange.getIn().setHeader(BlobConstants.CREATE_APPEND_BLOB, false);
 
@@ -125,7 +124,7 @@ class BlobProducerITTest extends BaseIT {
 
         result.expectedBodiesReceived(true);
 
-        template.send("direct:commitAppendBlob", ExchangePattern.InOnly, exchange -> {
+        template.send("direct:commitAppendBlob", exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
 
             final String data = "Hello world from my awesome tests!";
@@ -148,7 +147,7 @@ class BlobProducerITTest extends BaseIT {
 
         result.expectedBodiesReceived(true);
 
-        template.send("direct:uploadPageBlob", ExchangePattern.InOnly, exchange -> {
+        template.send("direct:uploadPageBlob", exchange -> {
             exchange.getIn().setHeader(BlobConstants.BLOB_NAME, blobName);
 
             byte[] dataBytes = new byte[512]; // we set range for the page from 0-511
@@ -169,7 +168,7 @@ class BlobProducerITTest extends BaseIT {
     void testUploadBlockBlobWithConfigUri() throws InterruptedException {
         result.expectedMessageCount(1);
 
-        template.send("direct:uploadBlockBlobWithConfigUri", ExchangePattern.InOnly,
+        template.send("direct:uploadBlockBlobWithConfigUri",
                 exchange -> exchange.getIn().setBody("Block Blob"));
 
         result.assertIsSatisfied();

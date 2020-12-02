@@ -87,21 +87,6 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2SqsComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * The AWS SQS default configuration.
          * 
          * The option is a:
@@ -180,6 +165,20 @@ public interface Aws2SqsComponentBuilderFactory {
         default Aws2SqsComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Aws2SqsComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -447,18 +446,21 @@ public interface Aws2SqsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Aws2SqsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2SqsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -623,13 +625,13 @@ public interface Aws2SqsComponentBuilderFactory {
             case "amazonAWSHost": getOrCreateConfiguration((Sqs2Component) component).setAmazonAWSHost((java.lang.String) value); return true;
             case "amazonSQSClient": getOrCreateConfiguration((Sqs2Component) component).setAmazonSQSClient((software.amazon.awssdk.services.sqs.SqsClient) value); return true;
             case "autoCreateQueue": getOrCreateConfiguration((Sqs2Component) component).setAutoCreateQueue((boolean) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((Sqs2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Sqs2Component) component).setConfiguration((org.apache.camel.component.aws2.sqs.Sqs2Configuration) value); return true;
             case "protocol": getOrCreateConfiguration((Sqs2Component) component).setProtocol((java.lang.String) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((Sqs2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "queueOwnerAWSAccountId": getOrCreateConfiguration((Sqs2Component) component).setQueueOwnerAWSAccountId((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((Sqs2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Sqs2Component) component).setTrustAllCertificates((boolean) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Sqs2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "attributeNames": getOrCreateConfiguration((Sqs2Component) component).setAttributeNames((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((Sqs2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "concurrentConsumers": getOrCreateConfiguration((Sqs2Component) component).setConcurrentConsumers((int) value); return true;
@@ -648,7 +650,7 @@ public interface Aws2SqsComponentBuilderFactory {
             case "messageDeduplicationIdStrategy": getOrCreateConfiguration((Sqs2Component) component).setMessageDeduplicationIdStrategy((java.lang.String) value); return true;
             case "messageGroupIdStrategy": getOrCreateConfiguration((Sqs2Component) component).setMessageGroupIdStrategy((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((Sqs2Component) component).setOperation((org.apache.camel.component.aws2.sqs.Sqs2Operations) value); return true;
-            case "basicPropertyBinding": ((Sqs2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Sqs2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "delayQueue": getOrCreateConfiguration((Sqs2Component) component).setDelayQueue((boolean) value); return true;
             case "queueUrl": getOrCreateConfiguration((Sqs2Component) component).setQueueUrl((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Sqs2Component) component).setProxyHost((java.lang.String) value); return true;

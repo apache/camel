@@ -4,9 +4,10 @@ package org.apache.camel.component.aws2.ses;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,29 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("amazonSESClient", software.amazon.awssdk.services.ses.SesClient.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("configuration", org.apache.camel.component.aws2.ses.Ses2Configuration.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        map.put("region", java.lang.String.class);
-        map.put("replyToAddresses", java.util.List.class);
-        map.put("returnPath", java.lang.String.class);
-        map.put("subject", java.lang.String.class);
-        map.put("to", java.util.List.class);
-        map.put("trustAllCertificates", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Ses2ComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.aws2.ses.Ses2Configuration getOrCreateConfiguration(Ses2Component target) {
         if (target.getConfiguration() == null) {
@@ -54,10 +32,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonsesclient":
         case "amazonSESClient": getOrCreateConfiguration(target).setAmazonSESClient(property(camelContext, software.amazon.awssdk.services.ses.SesClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.ses.Ses2Configuration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -83,15 +59,41 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonSESClient"};
     }
 
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonsesclient":
+        case "amazonSESClient": return software.amazon.awssdk.services.ses.SesClient.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws2.ses.Ses2Configuration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "replytoaddresses":
+        case "replyToAddresses": return java.util.List.class;
+        case "returnpath":
+        case "returnPath": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "subject": return java.lang.String.class;
+        case "to": return java.util.List.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -102,10 +104,8 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazonsesclient":
         case "amazonSESClient": return getOrCreateConfiguration(target).getAmazonSESClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
@@ -126,6 +126,16 @@ public class Ses2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "to": return getOrCreateConfiguration(target).getTo();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "replytoaddresses":
+        case "replyToAddresses": return java.lang.String.class;
+        case "to": return java.lang.String.class;
         default: return null;
         }
     }

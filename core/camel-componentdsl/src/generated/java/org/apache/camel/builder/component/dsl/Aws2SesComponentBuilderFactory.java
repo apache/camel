@@ -60,21 +60,6 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2SesComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * component configuration.
          * 
          * The option is a:
@@ -223,18 +208,21 @@ public interface Aws2SesComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Aws2SesComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2SesComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -284,7 +272,6 @@ public interface Aws2SesComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonSESClient": getOrCreateConfiguration((Ses2Component) component).setAmazonSESClient((software.amazon.awssdk.services.ses.SesClient) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((Ses2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Ses2Component) component).setConfiguration((org.apache.camel.component.aws2.ses.Ses2Configuration) value); return true;
             case "lazyStartProducer": ((Ses2Component) component).setLazyStartProducer((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((Ses2Component) component).setProxyHost((java.lang.String) value); return true;
@@ -296,7 +283,7 @@ public interface Aws2SesComponentBuilderFactory {
             case "subject": getOrCreateConfiguration((Ses2Component) component).setSubject((java.lang.String) value); return true;
             case "to": getOrCreateConfiguration((Ses2Component) component).setTo((java.util.List) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Ses2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((Ses2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Ses2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Ses2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Ses2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

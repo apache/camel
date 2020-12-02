@@ -4,9 +4,10 @@ package org.apache.camel.component.rest;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,42 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class RestEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("method", java.lang.String.class);
-        map.put("path", java.lang.String.class);
-        map.put("uriTemplate", java.lang.String.class);
-        map.put("consumes", java.lang.String.class);
-        map.put("inType", java.lang.String.class);
-        map.put("outType", java.lang.String.class);
-        map.put("produces", java.lang.String.class);
-        map.put("routeId", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("consumerComponentName", java.lang.String.class);
-        map.put("description", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("apiDoc", java.lang.String.class);
-        map.put("bindingMode", org.apache.camel.spi.RestConfiguration.RestBindingMode.class);
-        map.put("host", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("producerComponentName", java.lang.String.class);
-        map.put("queryParameters", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RestEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestEndpoint target = (RestEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apidoc":
         case "apiDoc": target.setApiDoc(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bindingmode":
         case "bindingMode": target.setBindingMode(property(camelContext, org.apache.camel.spi.RestConfiguration.RestBindingMode.class, value)); return true;
         case "bridgeerrorhandler":
@@ -84,15 +55,39 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apidoc":
+        case "apiDoc": return java.lang.String.class;
+        case "bindingmode":
+        case "bindingMode": return org.apache.camel.spi.RestConfiguration.RestBindingMode.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumercomponentname":
+        case "consumerComponentName": return java.lang.String.class;
+        case "consumes": return java.lang.String.class;
+        case "description": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "host": return java.lang.String.class;
+        case "intype":
+        case "inType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "outtype":
+        case "outType": return java.lang.String.class;
+        case "producercomponentname":
+        case "producerComponentName": return java.lang.String.class;
+        case "produces": return java.lang.String.class;
+        case "queryparameters":
+        case "queryParameters": return java.lang.String.class;
+        case "routeid":
+        case "routeId": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -101,8 +96,6 @@ public class RestEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apidoc":
         case "apiDoc": return target.getApiDoc();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bindingmode":
         case "bindingMode": return target.getBindingMode();
         case "bridgeerrorhandler":

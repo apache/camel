@@ -47,21 +47,6 @@ public interface Aws2KmsComponentBuilderFactory {
      */
     interface Aws2KmsComponentBuilder extends ComponentBuilder<KMS2Component> {
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2KmsComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Component configuration.
          * 
          * The option is a:
@@ -199,18 +184,21 @@ public interface Aws2KmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Aws2KmsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2KmsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -259,7 +247,6 @@ public interface Aws2KmsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "autoDiscoverClient": getOrCreateConfiguration((KMS2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((KMS2Component) component).setConfiguration((org.apache.camel.component.aws2.kms.KMS2Configuration) value); return true;
             case "kmsClient": getOrCreateConfiguration((KMS2Component) component).setKmsClient((software.amazon.awssdk.services.kms.KmsClient) value); return true;
             case "lazyStartProducer": ((KMS2Component) component).setLazyStartProducer((boolean) value); return true;
@@ -270,7 +257,7 @@ public interface Aws2KmsComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((KMS2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((KMS2Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((KMS2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((KMS2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((KMS2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((KMS2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((KMS2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

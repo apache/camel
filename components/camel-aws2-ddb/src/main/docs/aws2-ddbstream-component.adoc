@@ -43,15 +43,14 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS 2 DynamoDB Streams component supports 15 options, which are listed below.
+The AWS 2 DynamoDB Streams component supports 14 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
-| *amazonDynamoDbStreamsClient* (consumer) | Amazon DynamoDB client to use for all requests for this endpoint |  | DynamoDbStreamsClient
+| *amazonDynamoDbStreamsClient* (consumer) | *Autowired* Amazon DynamoDB client to use for all requests for this endpoint |  | DynamoDbStreamsClient
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *configuration* (consumer) | The component configuration |  | Ddb2StreamConfiguration
 | *iteratorType* (consumer) | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider MUST be supplied. There are 5 enums and the value can be one of: TRIM_HORIZON, LATEST, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, null | LATEST | ShardIteratorType
@@ -62,7 +61,7 @@ The AWS 2 DynamoDB Streams component supports 15 options, which are listed below
 | *region* (consumer) | The region in which DDBStreams client needs to work |  | String
 | *sequenceNumberProvider* (consumer) | Provider for the sequence number when using one of the two ShardIteratorType.{AT,AFTER}_SEQUENCE_NUMBER iterator types. Can be a registry reference or a literal sequence number. |  | SequenceNumberProvider
 | *trustAllCertificates* (consumer) | If we want to trust all certificates in case of overriding the endpoint | false | boolean
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Access Key |  | String
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
@@ -92,14 +91,13 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (33 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
-| *amazonDynamoDbStreamsClient* (consumer) | Amazon DynamoDB client to use for all requests for this endpoint |  | DynamoDbStreamsClient
+| *amazonDynamoDbStreamsClient* (consumer) | *Autowired* Amazon DynamoDB client to use for all requests for this endpoint |  | DynamoDbStreamsClient
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *iteratorType* (consumer) | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider MUST be supplied. There are 5 enums and the value can be one of: TRIM_HORIZON, LATEST, AT_SEQUENCE_NUMBER, AFTER_SEQUENCE_NUMBER, null | LATEST | ShardIteratorType
 | *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll |  | int
@@ -113,7 +111,6 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int

@@ -37,8 +37,9 @@ public class ConsulServiceRegistryTest extends ConsulTestSupport {
     @Test
     public void testSimpleServiceRegistration() {
         ConsulServiceRegistry registry = new ConsulServiceRegistry();
+
         registry.setCamelContext(context());
-        registry.setUrl(consulUrl());
+        registry.setUrl(service.getConsulUrl());
         registry.setServiceHost("service-host");
         registry.setOverrideServiceHost(true);
         registry.start();

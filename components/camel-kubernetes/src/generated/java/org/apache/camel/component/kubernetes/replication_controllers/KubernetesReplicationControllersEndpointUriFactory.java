@@ -20,8 +20,9 @@ public class KubernetesReplicationControllersEndpointUriFactory extends org.apac
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(31);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(35);
+        props.add("crdScope");
+        props.add("crdVersion");
         props.add("portProtocol");
         props.add("synchronous");
         props.add("caCertData");
@@ -35,6 +36,7 @@ public class KubernetesReplicationControllersEndpointUriFactory extends org.apac
         props.add("clientKeyFile");
         props.add("connectionTimeout");
         props.add("kubernetesClient");
+        props.add("crdPlural");
         props.add("poolSize");
         props.add("exchangePattern");
         props.add("resourceName");
@@ -44,6 +46,8 @@ public class KubernetesReplicationControllersEndpointUriFactory extends org.apac
         props.add("lazyStartProducer");
         props.add("clientKeyData");
         props.add("masterUrl");
+        props.add("crdGroup");
+        props.add("crdName");
         props.add("namespace");
         props.add("labelValue");
         props.add("labelKey");

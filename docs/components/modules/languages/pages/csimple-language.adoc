@@ -1,0 +1,161 @@
+[[csimple-language]]
+= CSimple Language
+//THIS FILE IS COPIED: EDIT THE SOURCE FILE:
+:page-source: core/camel-core-languages/src/main/docs/modules/languages/pages/csimple-language.adoc
+:docTitle: CSimple
+:artifactId: camel-core-languages
+:description: Evaluate a compile simple expression language.
+:since: 3.7
+:supportLevel: Preview
+include::{cq-version}@camel-quarkus:ROOT:partial$reference/languages/csimple.adoc[opts=optional]
+
+*Since Camel {since}*
+
+The CSimple language is *compiled* xref:simple-language.adoc[Simple] language.
+
+== Different between CSimple and Simple
+
+The simple language is a dynamic expression language which is runtime parsed into a set of Camel Expressions or Predicates.
+
+The csimple language is parsed into regular Java source code and compiled together with all the other source code,
+or compiled once during bootstrap via the `camel-csimple-joor` module.
+
+The simple langauge is generally very lightweight and fast, however for some use-cases with dynamic method calls via OGNL paths,
+then the simple language does runtime introspection and reflection calls. This has an overhead on performance,
+and was one of the reasons why csimple was created.
+
+The csimple language requires to be typesafe and method calls via OGNL paths requires to know the type during parsing.
+This means for csimple languages expressions you would need to provide the class type in the script,
+where as simple introspects this at runtime.
+
+In other words the simple language is using _duck typing_ (if it looks like a duck, and quacks like a duck, then it is a duck)
+and csimple is using Java type (typesafety). If there is a type error then simple will report this at runtime,
+and with csimple there will be a Java compilation error.
+
+== Compilation
+
+The csimple language is parsed into regular Java source code and compiled together with all the other source code, or it can be compiled once during bootstrap via the `camel-csimple-joor` module.
+
+There are two ways to compile csimple
+
+- using the `camel-csimple-maven-plugin` generating source code at built time.
+- using `camel-csimple-joor` which does runtime in-memory compilation during bootstrap of Camel.
+
+=== Using camel-csimple-maven-plugin
+
+The `camel-csimple-maven-plugin` Maven plugin is used for discoving all the csimple scripts from the source code, and then automatic generate source code in the `src/generated/java` folder, which then gets compiled together with all the other sources.
+
+The maven plugin will do source code scanning of `.java` and `.xml` files (Java and XML DSL).
+The scanner limits to detect certain code patterns, and it may miss discovering some csimple scripts if they are being used in unusual/rare ways.
+
+The runtime compilation using `camel-csimple-joor` does not have this limitation.
+
+However the pros is that all of the csimple scripts will be compiled using the regular Java compiler and therefore everything
+is included out of the box as `.class` files in the application JAR file, and no additional dependencies is required at runtime.
+
+To use `camel-csimple-maven-plugin` you need to add it to your `pom.xml` file as shown:
+
+[source,xml]
+----
+<plugins>
+    <!-- generate source code for csimple languages -->
+    <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-csimple-maven-plugin</artifactId>
+        <version>${camel.version}</version>
+        <executions>
+            <execution>
+                <id>generate</id>
+                <goals>
+                    <goal>generate</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+    <!-- include source code generated to maven sources paths -->
+    <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+            <execution>
+                <phase>generate-sources</phase>
+                <goals>
+                    <goal>add-source</goal>
+                    <goal>add-resource</goal>
+                </goals>
+                <configuration>
+                    <sources>
+                        <source>src/generated/java</source>
+                    </sources>
+                    <resources>
+                        <resource>
+                            <directory>src/generated/resources</directory>
+                        </resource>
+                    </resources>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+</plugins>
+----
+
+And then you must also add the `build-helper-maven-plugin` Maven plugin to include `src/generated` to the list of source folders for the Java compiler,
+to ensure the generated source code is compiled and included in the application JAR file.
+
+See the `camel-example-csimple` example at https://github.com/apache/camel-examples[Camel Examples] which uses the maven plugin.
+
+=== Using camel-csimple-joor
+
+The jOOR library integrates with the Java compiler and performs runtime compilation of Java code.
+
+The supported runtime when using `camel-simple-joor` is intended for Java standalone, Spring Boot, Camel Quarkus and other microservices runtimes.
+It is not supported in OSGi, Camel Karaf or any kind of Java Application Server runtime.
+
+jOOR does not support runtime compilation with Spring Boot using _fat jar_ packaging (https://github.com/jOOQ/jOOR/issues/69),
+it works with exploded classpath.
+
+To use `camel-simple-joor` you simply just add it as dependency to the classpath:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-csimple-joor</artifactId>
+  <version>x.x.x</version>
+</dependency>
+----
+
+There is no need for adding Maven plugins to the `pom.xml` file.
+
+See the `camel-example-csimple-joor` example at https://github.com/apache/camel-examples[Camel Examples] which uses the jOOR compiler.
+
+== CSimple Language options
+
+// language options: START
+The CSimple language supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| resultType |  | String | Sets the class name of the result type (type from output)
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+
+== Limitations
+
+Currently the csimple language does **not** support the _null safe_ operator (`?`).
+
+For example the following script cannot compile:
+
+[source,text]
+----
+    ${bodyAs(MyUser)?.address?.zip} > 10000
+----
+
+== More documentation
+
+See the xref:simple-language.adoc[Simple] language as csimple has the same set of functions as simple language.

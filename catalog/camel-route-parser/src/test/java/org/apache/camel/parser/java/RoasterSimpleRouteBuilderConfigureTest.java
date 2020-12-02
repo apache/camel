@@ -42,7 +42,7 @@ public class RoasterSimpleRouteBuilderConfigureTest {
                 .parse(new File("src/test/java/org/apache/camel/parser/java/MySimpleRouteBuilder.java"));
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
 
-        List<ParserResult> list = CamelJavaParserHelper.parseCamelSimpleExpressions(method);
+        List<ParserResult> list = CamelJavaParserHelper.parseCamelLanguageExpressions(method, "simple");
         for (ParserResult simple : list) {
             LOG.info("Simple: " + simple.getElement());
             LOG.info("  Line: " + findLineNumber(simple.getPosition()));

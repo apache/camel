@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,7 @@ public class Sns2Producer extends DefaultProducer {
         request.messageStructure(determineMessageStructure(exchange));
         request.message(exchange.getIn().getBody(String.class));
         request.messageAttributes(this.translateAttributes(exchange.getIn().getHeaders(), exchange));
+        configureFifoAttributes(request, exchange);
 
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
 
@@ -130,6 +132,25 @@ public class Sns2Producer extends DefaultProducer {
             }
         }
         return result;
+    }
+
+    private void configureFifoAttributes(PublishRequest.Builder request, Exchange exchange) {
+        if (getEndpoint().getConfiguration().isFifoTopic()) {
+            // use strategies
+            if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
+                MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+                String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
+                request.messageGroupId(messageGroupId);
+            }
+
+            if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy())) {
+                MessageDeduplicationIdStrategy messageDeduplicationIdStrategy
+                        = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+                String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
+                request.messageDeduplicationId(messageDeduplicationId);
+            }
+
+        }
     }
 
     protected Sns2Configuration getConfiguration() {

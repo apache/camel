@@ -4,9 +4,10 @@ package org.apache.camel.component.log;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,48 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class LogEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("loggerName", java.lang.String.class);
-        map.put("groupActiveOnly", java.lang.Boolean.class);
-        map.put("groupDelay", java.lang.Long.class);
-        map.put("groupInterval", java.lang.Long.class);
-        map.put("groupSize", java.lang.Integer.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("level", java.lang.String.class);
-        map.put("logMask", java.lang.Boolean.class);
-        map.put("marker", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("exchangeFormatter", org.apache.camel.spi.ExchangeFormatter.class);
-        map.put("synchronous", boolean.class);
-        map.put("maxChars", int.class);
-        map.put("multiline", boolean.class);
-        map.put("showAll", boolean.class);
-        map.put("showBody", boolean.class);
-        map.put("showBodyType", boolean.class);
-        map.put("showCaughtException", boolean.class);
-        map.put("showException", boolean.class);
-        map.put("showExchangeId", boolean.class);
-        map.put("showExchangePattern", boolean.class);
-        map.put("showFiles", boolean.class);
-        map.put("showFuture", boolean.class);
-        map.put("showHeaders", boolean.class);
-        map.put("showProperties", boolean.class);
-        map.put("showStackTrace", boolean.class);
-        map.put("showStreams", boolean.class);
-        map.put("skipBodyLineSeparator", boolean.class);
-        map.put("style", org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(LogEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LogEndpoint target = (LogEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "exchangeformatter":
         case "exchangeFormatter": target.setExchangeFormatter(property(camelContext, org.apache.camel.spi.ExchangeFormatter.class, value)); return true;
         case "groupactiveonly":
@@ -112,23 +75,65 @@ public class LogEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "exchangeformatter":
+        case "exchangeFormatter": return org.apache.camel.spi.ExchangeFormatter.class;
+        case "groupactiveonly":
+        case "groupActiveOnly": return java.lang.Boolean.class;
+        case "groupdelay":
+        case "groupDelay": return java.lang.Long.class;
+        case "groupinterval":
+        case "groupInterval": return java.lang.Long.class;
+        case "groupsize":
+        case "groupSize": return java.lang.Integer.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "level": return java.lang.String.class;
+        case "logmask":
+        case "logMask": return java.lang.Boolean.class;
+        case "marker": return java.lang.String.class;
+        case "maxchars":
+        case "maxChars": return int.class;
+        case "multiline": return boolean.class;
+        case "showall":
+        case "showAll": return boolean.class;
+        case "showbody":
+        case "showBody": return boolean.class;
+        case "showbodytype":
+        case "showBodyType": return boolean.class;
+        case "showcaughtexception":
+        case "showCaughtException": return boolean.class;
+        case "showexception":
+        case "showException": return boolean.class;
+        case "showexchangeid":
+        case "showExchangeId": return boolean.class;
+        case "showexchangepattern":
+        case "showExchangePattern": return boolean.class;
+        case "showfiles":
+        case "showFiles": return boolean.class;
+        case "showfuture":
+        case "showFuture": return boolean.class;
+        case "showheaders":
+        case "showHeaders": return boolean.class;
+        case "showproperties":
+        case "showProperties": return boolean.class;
+        case "showstacktrace":
+        case "showStackTrace": return boolean.class;
+        case "showstreams":
+        case "showStreams": return boolean.class;
+        case "skipbodylineseparator":
+        case "skipBodyLineSeparator": return boolean.class;
+        case "style": return org.apache.camel.support.processor.DefaultExchangeFormatter.OutputStyle.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LogEndpoint target = (LogEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "exchangeformatter":
         case "exchangeFormatter": return target.getExchangeFormatter();
         case "groupactiveonly":

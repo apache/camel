@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSupport {
 
@@ -57,13 +57,13 @@ public class BindySimpleFixedLengthMarshallWithNoClipTest extends CamelTestSuppo
 
     @Test
     public void testMarshallMessage() throws Exception {
-        try {
-            template.sendBody("direct:start", generateModel());
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Length for the firstName must not be larger than allowed, was: 13, allowed: 9", cause.getMessage());
-        }
+        List<Map<String, Object>> model = generateModel();
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", model));
+
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertEquals("Length for the firstName must not be larger than allowed, was: 13, allowed: 9",
+                cause.getMessage());
     }
 
     public List<Map<String, Object>> generateModel() {

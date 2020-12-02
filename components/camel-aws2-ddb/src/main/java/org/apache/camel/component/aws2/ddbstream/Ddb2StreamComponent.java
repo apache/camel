@@ -17,17 +17,14 @@
 package org.apache.camel.component.aws2.ddbstream;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 @Component("aws2-ddbstream")
 public class Ddb2StreamComponent extends DefaultComponent {
@@ -58,9 +55,6 @@ public class Ddb2StreamComponent extends DefaultComponent {
         configuration.setTableName(remaining);
         Ddb2StreamEndpoint endpoint = new Ddb2StreamEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getAmazonDynamoDbStreamsClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonDDBStreamsClient or accessKey and secretKey must be specified");
@@ -77,20 +71,5 @@ public class Ddb2StreamComponent extends DefaultComponent {
      */
     public void setConfiguration(Ddb2StreamConfiguration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(Ddb2StreamConfiguration configuration, Ddb2StreamEndpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getAmazonDynamoDbStreamsClient())) {
-            LOG.debug("Looking for an DynamoDbStreamsClient instance in the registry");
-            Set<DynamoDbStreamsClient> clients = getCamelContext().getRegistry().findByType(DynamoDbStreamsClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one DynamoDbStreamsClient instance in the registry");
-                configuration.setAmazonDynamoDbStreamsClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No DynamoDbStreamsClient instance in the registry");
-            }
-        } else {
-            LOG.debug("DynamoDbStreamsClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }

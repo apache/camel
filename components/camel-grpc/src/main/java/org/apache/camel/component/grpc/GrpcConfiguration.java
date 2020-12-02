@@ -17,7 +17,10 @@
 package org.apache.camel.component.grpc;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
 
+import io.grpc.ClientInterceptor;
 import io.grpc.internal.GrpcUtil;
 import io.grpc.netty.NegotiationType;
 import io.grpc.netty.NettyChannelBuilder;
@@ -107,6 +110,11 @@ public class GrpcConfiguration {
 
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean routeControlledStreamObserver;
+
+    private List<ClientInterceptor> clientInterceptors = Collections.emptyList();
+
+    @UriParam(label = "common", defaultValue = "true")
+    private boolean autoDiscoverClientInterceptors = true;
 
     /**
      * Fully qualified service name from the protocol buffer descriptor file (package dot service definition name)
@@ -390,6 +398,30 @@ public class GrpcConfiguration {
      */
     public void setMaxConcurrentCallsPerConnection(int maxConcurrentCallsPerConnection) {
         this.maxConcurrentCallsPerConnection = maxConcurrentCallsPerConnection;
+    }
+
+    public List<ClientInterceptor> getClientInterceptors() {
+        return clientInterceptors;
+    }
+
+    /**
+     * Setting the client interceptors on the netty channel in order to intercept outgoing calls before they are
+     * dispatched by the channel.
+     */
+    public void setClientInterceptors(List<ClientInterceptor> clientInterceptors) {
+        this.clientInterceptors = clientInterceptors;
+    }
+
+    public boolean isAutoDiscoverClientInterceptors() {
+        return autoDiscoverClientInterceptors;
+    }
+
+    /**
+     * Setting the autoDiscoverClientInterceptors mechanism, if true, the component will look for a ClientInterceptor
+     * instance in the registry automatically otherwise it will skip that checking.
+     */
+    public void setAutoDiscoverClientInterceptors(boolean autoDiscoverClientInterceptors) {
+        this.autoDiscoverClientInterceptors = autoDiscoverClientInterceptors;
     }
 
     public void parseURI(URI uri) {

@@ -115,7 +115,7 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jira://newComments?jiraUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT + "&delay=500")
+                from("jira://newComments?jiraUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT + "&delay=1000")
                         .to(mockResult);
             }
         };

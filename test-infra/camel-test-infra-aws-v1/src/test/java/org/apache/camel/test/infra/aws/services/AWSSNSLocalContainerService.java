@@ -17,11 +17,9 @@
 
 package org.apache.camel.test.infra.aws.services;
 
-import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 
-public class AWSSNSLocalContainerService extends AWSLocalContainerService<AmazonSQS> {
+public class AWSSNSLocalContainerService extends AWSLocalContainerService {
 
     public AWSSNSLocalContainerService() {
         super(LocalStackContainer.Service.SQS,
@@ -31,22 +29,5 @@ public class AWSSNSLocalContainerService extends AWSLocalContainerService<Amazon
     @Override
     public String getServiceEndpoint() {
         return super.getServiceEndpoint(LocalStackContainer.Service.SNS);
-    }
-
-    @Override
-    public String getAmazonHost() {
-        final int snsPort = 4575;
-
-        return super.getAmazonHost(snsPort);
-    }
-
-    @Override
-    public AmazonSQS getClient() {
-        return AmazonSQSClientBuilder
-                .standard()
-                .withEndpointConfiguration(getContainer()
-                        .getEndpointConfiguration(LocalStackContainer.Service.SQS))
-                .withCredentials(getContainer().getDefaultCredentialsProvider())
-                .build();
     }
 }

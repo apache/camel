@@ -64,6 +64,21 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default Aws2S3ComponentBuilder amazonS3Presigner(
+                software.amazon.awssdk.services.s3.presigner.S3Presigner amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
          * also in case of moveAfterRead option enabled and it will create the
          * destinationBucket if it doesn't exist already.
@@ -75,21 +90,6 @@ public interface Aws2S3ComponentBuilderFactory {
          */
         default Aws2S3ComponentBuilder autoCreateBucket(boolean autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2S3ComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
             return this;
         }
         /**
@@ -221,17 +221,18 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default Aws2S3ComponentBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default Aws2S3ComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -586,18 +587,20 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Aws2S3ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2S3ComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -647,8 +650,8 @@ public interface Aws2S3ComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "amazonS3Client": getOrCreateConfiguration((AWS2S3Component) component).setAmazonS3Client((software.amazon.awssdk.services.s3.S3Client) value); return true;
+            case "amazonS3Presigner": getOrCreateConfiguration((AWS2S3Component) component).setAmazonS3Presigner((software.amazon.awssdk.services.s3.presigner.S3Presigner) value); return true;
             case "autoCreateBucket": getOrCreateConfiguration((AWS2S3Component) component).setAutoCreateBucket((boolean) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((AWS2S3Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((AWS2S3Component) component).setConfiguration((org.apache.camel.component.aws2.s3.AWS2S3Configuration) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((AWS2S3Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((AWS2S3Component) component).setPojoRequest((boolean) value); return true;
@@ -659,7 +662,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "region": getOrCreateConfiguration((AWS2S3Component) component).setRegion((java.lang.String) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((AWS2S3Component) component).setTrustAllCertificates((boolean) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((AWS2S3Component) component).setUriEndpointOverride((java.lang.String) value); return true;
-            case "useIAMCredentials": getOrCreateConfiguration((AWS2S3Component) component).setUseIAMCredentials((boolean) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((AWS2S3Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "customerAlgorithm": getOrCreateConfiguration((AWS2S3Component) component).setCustomerAlgorithm((java.lang.String) value); return true;
             case "customerKeyId": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyId((java.lang.String) value); return true;
             case "customerKeyMD5": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyMD5((java.lang.String) value); return true;
@@ -685,7 +688,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "awsKMSKeyId": getOrCreateConfiguration((AWS2S3Component) component).setAwsKMSKeyId((java.lang.String) value); return true;
             case "useAwsKMS": getOrCreateConfiguration((AWS2S3Component) component).setUseAwsKMS((boolean) value); return true;
             case "useCustomerKey": getOrCreateConfiguration((AWS2S3Component) component).setUseCustomerKey((boolean) value); return true;
-            case "basicPropertyBinding": ((AWS2S3Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((AWS2S3Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((AWS2S3Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((AWS2S3Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

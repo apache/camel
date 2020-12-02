@@ -23,26 +23,38 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.support.ChildServiceSupport;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 
 /**
  * Support class for {@link ErrorHandler} implementations.
  */
 public abstract class ErrorHandlerSupport extends ChildServiceSupport implements ErrorHandler {
 
-    protected final Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies = new LinkedHashMap<>();
-    protected ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
+    // optimize to use a shared instance
+    protected static final DefaultExchangeFormatter DEFAULT_EXCHANGE_FORMATTER = new DefaultExchangeFormatter();
+    static {
+        DEFAULT_EXCHANGE_FORMATTER.setShowExchangeId(true);
+        DEFAULT_EXCHANGE_FORMATTER.setMultiline(true);
+        DEFAULT_EXCHANGE_FORMATTER.setShowHeaders(true);
+        DEFAULT_EXCHANGE_FORMATTER.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+    }
+    // optimize to use a shared instance
+    protected final ExceptionPolicyStrategy exceptionPolicy = DefaultExceptionPolicyStrategy.INSTANCE;
+    protected Map<ExceptionPolicyKey, ExceptionPolicy> exceptionPolicies;
 
     public void addErrorHandler(Processor errorHandler) {
         addChildService(errorHandler);
     }
 
     public void addExceptionPolicy(ExceptionPolicyKey key, ExceptionPolicy policy) {
+        if (exceptionPolicies == null) {
+            exceptionPolicies = new LinkedHashMap<>();
+        }
         exceptionPolicies.put(key, policy);
     }
 
     /**
-     * CamelContextHelper Attempts to find the best suited {@link ExceptionPolicy} to be used for handling the given
-     * thrown exception.
+     * Attempts to find the best suited {@link ExceptionPolicy} to be used for handling the given thrown exception.
      *
      * @param  exchange  the exchange
      * @param  exception the exception that was thrown
@@ -52,25 +64,11 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
         if (exceptionPolicy == null) {
             throw new IllegalStateException("The exception policy has not been set");
         }
-
+        if (exceptionPolicies == null) {
+            return null;
+        }
         ExceptionPolicyKey key = exceptionPolicy.getExceptionPolicy(exceptionPolicies.keySet(), exchange, exception);
         return key != null ? exceptionPolicies.get(key) : null;
-    }
-
-    /**
-     * Sets the strategy to use for resolving the {@link ExceptionPolicy} to use for handling thrown exceptions.
-     */
-    public void setExceptionPolicy(ExceptionPolicyStrategy exceptionPolicy) {
-        if (exceptionPolicy != null) {
-            this.exceptionPolicy = exceptionPolicy;
-        }
-    }
-
-    /**
-     * Creates the default exception policy strategy to use.
-     */
-    public static ExceptionPolicyStrategy createDefaultExceptionPolicyStrategy() {
-        return new DefaultExceptionPolicyStrategy();
     }
 
     /**
@@ -89,5 +87,10 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
      * Gets the output
      */
     public abstract Processor getOutput();
+
+    /**
+     * Clones the current error handler and changes the output
+     */
+    public abstract ErrorHandler clone(Processor output);
 
 }

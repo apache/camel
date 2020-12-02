@@ -74,7 +74,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
 
-    private final Model model = new DefaultModel(this);
+    private Model model = new DefaultModel(this);
 
     /**
      * Creates the {@link ModelCamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
@@ -110,243 +110,393 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
+    public void disposeModel() {
+        LOG.debug("Disposing Model on CamelContext");
+        model = null;
+    }
+
+    @Override
     public void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addModelLifecycleStrategy(modelLifecycleStrategy);
     }
 
     @Override
     public List<ModelLifecycleStrategy> getModelLifecycleStrategies() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getModelLifecycleStrategies();
     }
 
     @Override
     public List<RouteDefinition> getRouteDefinitions() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getRouteDefinitions();
     }
 
     @Override
     public RouteDefinition getRouteDefinition(String id) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getRouteDefinition(id);
     }
 
     @Override
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addRouteDefinitions(routeDefinitions);
     }
 
     @Override
     public void addRouteDefinition(RouteDefinition routeDefinition) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addRouteDefinition(routeDefinition);
     }
 
     @Override
     public void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.removeRouteDefinitions(routeDefinitions);
     }
 
     @Override
     public void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.removeRouteDefinition(routeDefinition);
     }
 
     @Override
     public List<RouteTemplateDefinition> getRouteTemplateDefinitions() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getRouteTemplateDefinitions();
     }
 
     @Override
     public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getRouteTemplateDefinition(id);
     }
 
     @Override
     public void addRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addRouteTemplateDefinitions(routeTemplateDefinitions);
     }
 
     @Override
     public void addRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addRouteTemplateDefinition(routeTemplateDefinition);
     }
 
     @Override
     public void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.removeRouteTemplateDefinitions(routeTemplateDefinitions);
     }
 
     @Override
     public void removeRouteTemplateDefinition(RouteTemplateDefinition routeTemplateDefinition) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.removeRouteTemplateDefinition(routeTemplateDefinition);
     }
 
     @Override
     public void addRouteTemplateDefinitionConverter(String templateIdPattern, RouteTemplateDefinition.Converter converter) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addRouteTemplateDefinitionConverter(templateIdPattern, converter);
     }
 
     @Override
     public String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
             throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.addRouteFromTemplate(routeId, routeTemplateId, parameters);
     }
 
     @Override
     public List<RestDefinition> getRestDefinitions() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getRestDefinitions();
     }
 
     @Override
     public void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addRestDefinitions(restDefinitions, addToRoutes);
     }
 
     @Override
     public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setDataFormats(dataFormats);
     }
 
     @Override
     public Map<String, DataFormatDefinition> getDataFormats() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getDataFormats();
     }
 
     @Override
     public DataFormatDefinition resolveDataFormatDefinition(String name) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.resolveDataFormatDefinition(name);
     }
 
     @Override
     public ProcessorDefinition<?> getProcessorDefinition(String id) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getProcessorDefinition(id);
     }
 
     @Override
     public <T extends ProcessorDefinition<T>> T getProcessorDefinition(String id, Class<T> type) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getProcessorDefinition(id, type);
     }
 
     @Override
     public void setValidators(List<ValidatorDefinition> validators) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setValidators(validators);
     }
 
     @Override
     public HystrixConfigurationDefinition getHystrixConfiguration(String id) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getHystrixConfiguration(id);
     }
 
     @Override
     public void setHystrixConfiguration(HystrixConfigurationDefinition configuration) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setHystrixConfiguration(configuration);
     }
 
     @Override
     public void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setHystrixConfigurations(configurations);
     }
 
     @Override
     public void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addHystrixConfiguration(id, configuration);
     }
 
     @Override
     public Resilience4jConfigurationDefinition getResilience4jConfiguration(String id) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getResilience4jConfiguration(id);
     }
 
     @Override
     public void setResilience4jConfiguration(Resilience4jConfigurationDefinition configuration) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setResilience4jConfiguration(configuration);
     }
 
     @Override
     public void setResilience4jConfigurations(List<Resilience4jConfigurationDefinition> configurations) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setResilience4jConfigurations(configurations);
     }
 
     @Override
     public void addResilience4jConfiguration(String id, Resilience4jConfigurationDefinition configuration) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addResilience4jConfiguration(id, configuration);
     }
 
     @Override
     public FaultToleranceConfigurationDefinition getFaultToleranceConfiguration(String id) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getFaultToleranceConfiguration(id);
     }
 
     @Override
     public void setFaultToleranceConfiguration(FaultToleranceConfigurationDefinition configuration) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setFaultToleranceConfiguration(configuration);
     }
 
     @Override
     public void setFaultToleranceConfigurations(List<FaultToleranceConfigurationDefinition> configurations) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setFaultToleranceConfigurations(configurations);
     }
 
     @Override
     public void addFaultToleranceConfiguration(String id, FaultToleranceConfigurationDefinition configuration) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addFaultToleranceConfiguration(id, configuration);
     }
 
     @Override
     public List<ValidatorDefinition> getValidators() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getValidators();
     }
 
     @Override
     public void setTransformers(List<TransformerDefinition> transformers) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setTransformers(transformers);
     }
 
     @Override
     public List<TransformerDefinition> getTransformers() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getTransformers();
     }
 
     @Override
     public ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getServiceCallConfiguration(serviceName);
     }
 
     @Override
     public void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setServiceCallConfiguration(configuration);
     }
 
     @Override
     public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setServiceCallConfigurations(configurations);
     }
 
     @Override
     public void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.addServiceCallConfiguration(serviceName, configuration);
     }
 
     @Override
     public void setRouteFilterPattern(String include, String exclude) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setRouteFilterPattern(include, exclude);
     }
 
     @Override
     public void setRouteFilter(Function<RouteDefinition, Boolean> filter) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setRouteFilter(filter);
     }
 
     @Override
     public Function<RouteDefinition, Boolean> getRouteFilter() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getRouteFilter();
     }
 
     @Override
     public ModelReifierFactory getModelReifierFactory() {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getModelReifierFactory();
     }
 
     @Override
     public void setModelReifierFactory(ModelReifierFactory modelReifierFactory) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.setModelReifierFactory(modelReifierFactory);
     }
 
@@ -359,21 +509,25 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     protected void bindDataFormats() throws Exception {
         // eager lookup data formats and bind to registry so the dataformats can
         // be looked up and used
-        for (Map.Entry<String, DataFormatDefinition> e : model.getDataFormats().entrySet()) {
-            String id = e.getKey();
-            DataFormatDefinition def = e.getValue();
-            LOG.debug("Creating Dataformat with id: {} and definition: {}", id, def);
-            DataFormat df = model.getModelReifierFactory().createDataFormat(this, def);
-            addService(df, true);
-            getRegistry().bind(id, df);
+        if (model != null) {
+            for (Map.Entry<String, DataFormatDefinition> e : model.getDataFormats().entrySet()) {
+                String id = e.getKey();
+                DataFormatDefinition def = e.getValue();
+                LOG.debug("Creating Dataformat with id: {} and definition: {}", id, def);
+                DataFormat df = model.getModelReifierFactory().createDataFormat(this, def);
+                addService(df, true);
+                getRegistry().bind(id, df);
+            }
         }
     }
 
     @Override
     protected synchronized void shutdownRouteService(RouteService routeService) throws Exception {
-        RouteDefinition rd = model.getRouteDefinition(routeService.getId());
-        if (rd != null) {
-            model.getRouteDefinitions().remove(rd);
+        if (model != null) {
+            RouteDefinition rd = model.getRouteDefinition(routeService.getId());
+            if (rd != null) {
+                model.getRouteDefinitions().remove(rd);
+            }
         }
         super.shutdownRouteService(routeService);
     }
@@ -395,6 +549,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void startRouteDefinitions() throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         List<RouteDefinition> routeDefinitions = model.getRouteDefinitions();
         if (routeDefinitions != null) {
             startRouteDefinitions(routeDefinitions);
@@ -402,6 +559,10 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     public void startRouteDefinitions(List<RouteDefinition> routeDefinitions) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
+
         // indicate we are staring the route using this thread so
         // we are able to query this if needed
         boolean alreadyStartingRoutes = isStartingRoutes();
@@ -457,16 +618,25 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public Processor createErrorHandler(Route route, Processor processor) throws Exception {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getModelReifierFactory().createErrorHandler(route, processor);
     }
 
     @Override
     public Expression createExpression(ExpressionDefinition definition) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getModelReifierFactory().createExpression(this, definition);
     }
 
     @Override
     public Predicate createPredicate(ExpressionDefinition definition) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         return model.getModelReifierFactory().createPredicate(this, definition);
     }
 
@@ -477,6 +647,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void registerValidator(ValidatorDefinition def) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.getValidators().add(def);
         Validator validator = model.getModelReifierFactory().createValidator(this, def);
         getValidatorRegistry().put(createValidatorKey(def), validator);
@@ -488,6 +661,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     public void registerTransformer(TransformerDefinition def) {
+        if (model == null && isLightweight()) {
+            throw new IllegalStateException("Access to model not supported in lightweight mode");
+        }
         model.getTransformers().add(def);
         Transformer transformer = model.getModelReifierFactory().createTransformer(this, def);
         getTransformerRegistry().put(createTransformerKey(def), transformer);

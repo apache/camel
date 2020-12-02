@@ -16,43 +16,23 @@
  */
 package org.apache.camel.reifier.errorhandler;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.model.errorhandler.NoErrorHandlerConfiguraiton;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.model.errorhandler.NoErrorHandlerProperties;
+import org.apache.camel.processor.errorhandler.NoErrorHandler;
+import org.apache.camel.spi.ErrorHandler;
 
-public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerConfiguraiton> {
+public class NoErrorHandlerReifier extends ErrorHandlerReifier<NoErrorHandlerProperties> {
 
     public NoErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
-        super(route, (NoErrorHandlerConfiguraiton) definition);
+        super(route, (NoErrorHandlerProperties) definition);
     }
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
-        return new DelegateAsyncProcessor(processor) {
-            @Override
-            public boolean process(final Exchange exchange, final AsyncCallback callback) {
-                return super.process(exchange, new AsyncCallback() {
-                    @Override
-                    public void done(boolean doneSync) {
-                        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
-                        callback.done(doneSync);
-                    }
-                });
-            }
-
-            @Override
-            public String toString() {
-                if (processor == null) {
-                    // if no output then dont do any description
-                    return "";
-                }
-                return "NoErrorHandler[" + processor + "]";
-            }
-        };
+        ErrorHandler answer = new NoErrorHandler(processor);
+        configure(answer);
+        return answer;
     }
 }

@@ -20,9 +20,7 @@ public class Cw2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(17);
-        props.add("basicPropertyBinding");
-        props.add("autoDiscoverClient");
+        Set<String> props = new HashSet<>(15);
         props.add("proxyProtocol");
         props.add("secretKey");
         props.add("synchronous");

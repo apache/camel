@@ -4,9 +4,10 @@ package org.apache.camel.component.servlet;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,38 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ServletEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("contextPath", java.lang.String.class);
-        map.put("chunked", boolean.class);
-        map.put("disableStreamCache", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        map.put("async", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("httpMethodRestrict", java.lang.String.class);
-        map.put("matchOnUriPrefix", boolean.class);
-        map.put("muteException", boolean.class);
-        map.put("responseBufferSize", java.lang.Integer.class);
-        map.put("servletName", java.lang.String.class);
-        map.put("transferException", boolean.class);
-        map.put("attachmentMultipartBinding", boolean.class);
-        map.put("eagerCheckContentAvailable", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("fileNameExtWhitelist", java.lang.String.class);
-        map.put("optionsEnabled", boolean.class);
-        map.put("traceEnabled", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("mapHttpMessageBody", boolean.class);
-        map.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
-        map.put("mapHttpMessageHeaders", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ServletEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServletEndpoint target = (ServletEndpoint) obj;
@@ -55,8 +24,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "async": target.setAsync(property(camelContext, boolean.class, value)); return true;
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": target.setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chunked": target.setChunked(property(camelContext, boolean.class, value)); return true;
@@ -102,15 +69,53 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": return boolean.class;
+        case "attachmentmultipartbinding":
+        case "attachmentMultipartBinding": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "chunked": return boolean.class;
+        case "disablestreamcache":
+        case "disableStreamCache": return boolean.class;
+        case "eagercheckcontentavailable":
+        case "eagerCheckContentAvailable": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filenameextwhitelist":
+        case "fileNameExtWhitelist": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": return java.lang.String.class;
+        case "maphttpmessagebody":
+        case "mapHttpMessageBody": return boolean.class;
+        case "maphttpmessageformurlencodedbody":
+        case "mapHttpMessageFormUrlEncodedBody": return boolean.class;
+        case "maphttpmessageheaders":
+        case "mapHttpMessageHeaders": return boolean.class;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
+        case "optionsenabled":
+        case "optionsEnabled": return boolean.class;
+        case "responsebuffersize":
+        case "responseBufferSize": return java.lang.Integer.class;
+        case "servletname":
+        case "servletName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "traceenabled":
+        case "traceEnabled": return boolean.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -120,8 +125,6 @@ public class ServletEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "async": return target.isAsync();
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": return target.isAttachmentMultipartBinding();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chunked": return target.isChunked();

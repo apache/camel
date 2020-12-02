@@ -32,6 +32,7 @@ import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -63,7 +64,7 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
             assertTrue(b1);
             boolean b = e.getCause().getCause().getCause() instanceof RuntimeException;
             assertTrue(b);
-            assertTrue(e.getCause().getCause().getCause().getMessage().equals("Bang! Unhandled exception"));
+            assertEquals("Bang! Unhandled exception", e.getCause().getCause().getCause().getMessage());
             mock.assertIsSatisfied();
             return;
         }

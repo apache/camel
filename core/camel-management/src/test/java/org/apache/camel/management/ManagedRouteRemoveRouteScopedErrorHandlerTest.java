@@ -52,10 +52,6 @@ public class ManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagementTes
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state, "Should be started");
 
-        // and one context scoped error handler
-        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
-        assertEquals(1, set.size());
-
         // stop
         mbeanServer.invoke(on, "stop", null, null);
 
@@ -70,11 +66,7 @@ public class ManagedRouteRemoveRouteScopedErrorHandlerTest extends ManagementTes
         assertFalse(registered, "Route mbean should have been unregistered");
 
         // and no more routes
-        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
-        assertEquals(0, set.size());
-
-        // and the route scoped error handler should be removed
-        set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
+        Set set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());
     }
 

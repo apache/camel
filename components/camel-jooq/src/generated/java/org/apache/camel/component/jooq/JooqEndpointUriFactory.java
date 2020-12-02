@@ -20,8 +20,7 @@ public class JooqEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(27);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(26);
         props.add("backoffMultiplier");
         props.add("databaseConfiguration");
         props.add("synchronous");

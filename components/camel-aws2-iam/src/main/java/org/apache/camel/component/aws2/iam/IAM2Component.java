@@ -17,17 +17,14 @@
 package org.apache.camel.component.aws2.iam;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.iam.IamClient;
 
 /**
  * For working with Amazon IAM SDK v2.
@@ -55,9 +52,6 @@ public class IAM2Component extends DefaultComponent {
         IAM2Configuration configuration = this.configuration != null ? this.configuration.copy() : new IAM2Configuration();
         IAM2Endpoint endpoint = new IAM2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getIamClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon IAM client or accessKey and secretKey must be specified");
@@ -75,20 +69,5 @@ public class IAM2Component extends DefaultComponent {
      */
     public void setConfiguration(IAM2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(IAM2Configuration configuration, IAM2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getIamClient())) {
-            LOG.debug("Looking for an IamClient instance in the registry");
-            Set<IamClient> clients = getCamelContext().getRegistry().findByType(IamClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one IamClient instance in the registry");
-                configuration.setIamClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No IamClient instance in the registry");
-            }
-        } else {
-            LOG.debug("IamClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }

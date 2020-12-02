@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithInitParamTestSupport {
@@ -68,7 +69,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         wsclient3.await(awaitTime);
 
         //all connections were registered in external store
-        assertTrue(connectionKeyUserMap.size() == EXISTED_USERS.length);
+        assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size());
 
         broadcastMessageTo = new String[] { EXISTED_USERS[0], EXISTED_USERS[1] };
 
@@ -115,7 +116,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         wsclient3.await(awaitTime);
 
         //all connections were registered in external store
-        assertTrue(connectionKeyUserMap.size() == EXISTED_USERS.length);
+        assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size());
 
         wsclient2.close();
         wsclient2.await(awaitTime);
@@ -272,7 +273,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         Object msg = exchange.getIn().getBody();
 
         assertEquals(null, msg);
-        assertTrue(connectionKey != null);
+        assertNotNull(connectionKey);
 
         if (eventType instanceof Integer) {
             assertTrue(eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)
@@ -287,7 +288,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         Object msg = exchange.getIn().getBody();
 
         assertEquals(null, msg);
-        assertTrue(connectionKey != null);
+        assertNotNull(connectionKey);
 
         if ((eventType instanceof Integer) && eventType.equals(WebsocketConstants.ONOPEN_EVENT_TYPE)) {
 

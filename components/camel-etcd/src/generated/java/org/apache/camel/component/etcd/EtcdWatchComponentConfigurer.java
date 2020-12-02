@@ -4,9 +4,10 @@ package org.apache.camel.component.etcd;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,26 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class EtcdWatchComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("configuration", org.apache.camel.component.etcd.EtcdConfiguration.class);
-        map.put("recursive", boolean.class);
-        map.put("servicePath", java.lang.String.class);
-        map.put("timeout", java.lang.Long.class);
-        map.put("uris", java.lang.String.class);
-        map.put("sendEmptyExchangeOnTimeout", boolean.class);
-        map.put("fromIndex", long.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("password", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        map.put("userName", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(EtcdWatchComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.etcd.EtcdConfiguration getOrCreateConfiguration(EtcdWatchComponent target) {
         if (target.getConfiguration() == null) {
@@ -47,8 +28,8 @@ public class EtcdWatchComponentConfigurer extends PropertyConfigurerSupport impl
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EtcdWatchComponent target = (EtcdWatchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.etcd.EtcdConfiguration.class, value)); return true;
@@ -73,23 +54,39 @@ public class EtcdWatchComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.etcd.EtcdConfiguration.class;
+        case "fromindex":
+        case "fromIndex": return long.class;
+        case "password": return java.lang.String.class;
+        case "recursive": return boolean.class;
+        case "sendemptyexchangeontimeout":
+        case "sendEmptyExchangeOnTimeout": return boolean.class;
+        case "servicepath":
+        case "servicePath": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "timeout": return java.lang.Long.class;
+        case "uris": return java.lang.String.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         EtcdWatchComponent target = (EtcdWatchComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();

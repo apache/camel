@@ -227,18 +227,20 @@ public interface CordaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default CordaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CordaComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -298,7 +300,7 @@ public interface CordaComponentBuilderFactory {
             case "queryCriteria": getOrCreateConfiguration((CordaComponent) component).setQueryCriteria((net.corda.core.node.services.vault.QueryCriteria) value); return true;
             case "lazyStartProducer": ((CordaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((CordaComponent) component).setOperation((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((CordaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((CordaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "password": getOrCreateConfiguration((CordaComponent) component).setPassword((java.lang.String) value); return true;
             case "username": getOrCreateConfiguration((CordaComponent) component).setUsername((java.lang.String) value); return true;
             default: return false;

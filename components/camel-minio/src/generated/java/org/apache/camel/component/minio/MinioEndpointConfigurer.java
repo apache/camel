@@ -4,9 +4,10 @@ package org.apache.camel.component.minio;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,79 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class MinioEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bucketName", java.lang.String.class);
-        map.put("autoCreateBucket", boolean.class);
-        map.put("customHttpClient", okhttp3.OkHttpClient.class);
-        map.put("endpoint", java.lang.String.class);
-        map.put("minioClient", io.minio.MinioClient.class);
-        map.put("objectLock", boolean.class);
-        map.put("policy", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("region", java.lang.String.class);
-        map.put("secure", boolean.class);
-        map.put("serverSideEncryption", io.minio.ServerSideEncryption.class);
-        map.put("serverSideEncryptionCustomerKey", io.minio.ServerSideEncryptionCustomerKey.class);
-        map.put("autoCloseBody", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("bypassGovernanceMode", boolean.class);
-        map.put("deleteAfterRead", boolean.class);
-        map.put("delimiter", java.lang.String.class);
-        map.put("destinationBucketName", java.lang.String.class);
-        map.put("destinationObjectName", java.lang.String.class);
-        map.put("includeBody", boolean.class);
-        map.put("includeFolders", boolean.class);
-        map.put("includeUserMetadata", boolean.class);
-        map.put("includeVersions", boolean.class);
-        map.put("length", long.class);
-        map.put("matchETag", java.lang.String.class);
-        map.put("maxConnections", int.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("modifiedSince", java.time.ZonedDateTime.class);
-        map.put("moveAfterRead", boolean.class);
-        map.put("notMatchETag", java.lang.String.class);
-        map.put("objectName", java.lang.String.class);
-        map.put("offset", long.class);
-        map.put("prefix", java.lang.String.class);
-        map.put("recursive", boolean.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("startAfter", java.lang.String.class);
-        map.put("unModifiedSince", java.time.ZonedDateTime.class);
-        map.put("useVersion1", boolean.class);
-        map.put("versionId", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("deleteAfterWrite", boolean.class);
-        map.put("keyName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.minio.MinioOperations.class);
-        map.put("pojoRequest", boolean.class);
-        map.put("storageClass", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MinioEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -105,8 +33,6 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "bypassgovernancemode":
@@ -214,15 +140,129 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
+    public String[] getAutowiredNames() {
+        return new String[]{"minioClient"};
     }
 
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "autoclosebody":
+        case "autoCloseBody": return boolean.class;
+        case "autocreatebucket":
+        case "autoCreateBucket": return boolean.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "bypassgovernancemode":
+        case "bypassGovernanceMode": return boolean.class;
+        case "customhttpclient":
+        case "customHttpClient": return okhttp3.OkHttpClient.class;
+        case "delay": return long.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "deleteafterwrite":
+        case "deleteAfterWrite": return boolean.class;
+        case "delimiter": return java.lang.String.class;
+        case "destinationbucketname":
+        case "destinationBucketName": return java.lang.String.class;
+        case "destinationobjectname":
+        case "destinationObjectName": return java.lang.String.class;
+        case "endpoint": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "greedy": return boolean.class;
+        case "includebody":
+        case "includeBody": return boolean.class;
+        case "includefolders":
+        case "includeFolders": return boolean.class;
+        case "includeusermetadata":
+        case "includeUserMetadata": return boolean.class;
+        case "includeversions":
+        case "includeVersions": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "keyname":
+        case "keyName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "length": return long.class;
+        case "matchetag":
+        case "matchETag": return java.lang.String.class;
+        case "maxconnections":
+        case "maxConnections": return int.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "minioclient":
+        case "minioClient": return io.minio.MinioClient.class;
+        case "modifiedsince":
+        case "modifiedSince": return java.time.ZonedDateTime.class;
+        case "moveafterread":
+        case "moveAfterRead": return boolean.class;
+        case "notmatchetag":
+        case "notMatchETag": return java.lang.String.class;
+        case "objectlock":
+        case "objectLock": return boolean.class;
+        case "objectname":
+        case "objectName": return java.lang.String.class;
+        case "offset": return long.class;
+        case "operation": return org.apache.camel.component.minio.MinioOperations.class;
+        case "pojorequest":
+        case "pojoRequest": return boolean.class;
+        case "policy": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "prefix": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "recursive": return boolean.class;
+        case "region": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "secure": return boolean.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "serversideencryption":
+        case "serverSideEncryption": return io.minio.ServerSideEncryption.class;
+        case "serversideencryptioncustomerkey":
+        case "serverSideEncryptionCustomerKey": return io.minio.ServerSideEncryptionCustomerKey.class;
+        case "startafter":
+        case "startAfter": return java.lang.String.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "storageclass":
+        case "storageClass": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "unmodifiedsince":
+        case "unModifiedSince": return java.time.ZonedDateTime.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "useversion1":
+        case "useVersion1": return boolean.class;
+        case "versionid":
+        case "versionId": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -241,8 +281,6 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "bypassgovernancemode":
@@ -345,6 +383,15 @@ public class MinioEndpointConfigurer extends PropertyConfigurerSupport implement
         case "useVersion1": return target.getConfiguration().isUseVersion1();
         case "versionid":
         case "versionId": return target.getConfiguration().getVersionId();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

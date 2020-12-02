@@ -4,9 +4,10 @@ package org.apache.camel.component.validator.msv;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.validator.ValidatorComponentConfigurer;
 
@@ -15,17 +16,6 @@ import org.apache.camel.component.validator.ValidatorComponentConfigurer;
  */
 @SuppressWarnings("unchecked")
 public class MsvComponentConfigurer extends ValidatorComponentConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("resourceResolverFactory", org.apache.camel.component.validator.ValidatorResourceResolverFactory.class);
-        map.put("schemaFactory", javax.xml.validation.SchemaFactory.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MsvComponentConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -38,15 +28,12 @@ public class MsvComponentConfigurer extends ValidatorComponentConfigurer impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schemafactory":
+        case "schemaFactory": return javax.xml.validation.SchemaFactory.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

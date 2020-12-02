@@ -127,6 +127,24 @@ public interface AwsLambdaComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: advanced
+         */
+        default AwsLambdaComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
+            return this;
+        }
+        /**
          * To use a existing configured AwsLambdaClient as client.
          * 
          * The option is a: <code>com.amazonaws.services.lambda.AWSLambda</code>
@@ -137,21 +155,6 @@ public interface AwsLambdaComponentBuilderFactory {
         default AwsLambdaComponentBuilder awsLambdaClient(
                 com.amazonaws.services.lambda.AWSLambda awsLambdaClient) {
             doSetProperty("awsLambdaClient", awsLambdaClient);
-            return this;
-        }
-        /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        @Deprecated
-        default AwsLambdaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -240,8 +243,8 @@ public interface AwsLambdaComponentBuilderFactory {
             case "lazyStartProducer": ((LambdaComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((LambdaComponent) component).setOperation((org.apache.camel.component.aws.lambda.LambdaOperations) value); return true;
             case "region": getOrCreateConfiguration((LambdaComponent) component).setRegion((java.lang.String) value); return true;
+            case "autowiredEnabled": ((LambdaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "awsLambdaClient": getOrCreateConfiguration((LambdaComponent) component).setAwsLambdaClient((com.amazonaws.services.lambda.AWSLambda) value); return true;
-            case "basicPropertyBinding": ((LambdaComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "proxyHost": getOrCreateConfiguration((LambdaComponent) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((LambdaComponent) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((LambdaComponent) component).setProxyProtocol((com.amazonaws.Protocol) value); return true;

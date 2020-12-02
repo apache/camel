@@ -4,9 +4,10 @@ package org.apache.camel.component.websocket;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,44 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("host", java.lang.String.class);
-        map.put("port", java.lang.Integer.class);
-        map.put("resourceUri", java.lang.String.class);
-        map.put("maxBinaryMessageSize", java.lang.Integer.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("sessionSupport", boolean.class);
-        map.put("staticResources", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("sendTimeout", java.lang.Integer.class);
-        map.put("sendToAll", java.lang.Boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("bufferSize", java.lang.Integer.class);
-        map.put("maxIdleTime", java.lang.Integer.class);
-        map.put("maxTextMessageSize", java.lang.Integer.class);
-        map.put("minVersion", java.lang.Integer.class);
-        map.put("synchronous", boolean.class);
-        map.put("allowedOrigins", java.lang.String.class);
-        map.put("crossOriginFilterOn", boolean.class);
-        map.put("filterPath", java.lang.String.class);
-        map.put("enableJmx", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WebsocketEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebsocketEndpoint target = (WebsocketEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedorigins":
         case "allowedOrigins": target.setAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "buffersize":
@@ -94,15 +63,47 @@ public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedorigins":
+        case "allowedOrigins": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return java.lang.Integer.class;
+        case "crossoriginfilteron":
+        case "crossOriginFilterOn": return boolean.class;
+        case "enablejmx":
+        case "enableJmx": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filterpath":
+        case "filterPath": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxbinarymessagesize":
+        case "maxBinaryMessageSize": return java.lang.Integer.class;
+        case "maxidletime":
+        case "maxIdleTime": return java.lang.Integer.class;
+        case "maxtextmessagesize":
+        case "maxTextMessageSize": return java.lang.Integer.class;
+        case "minversion":
+        case "minVersion": return java.lang.Integer.class;
+        case "sendtimeout":
+        case "sendTimeout": return java.lang.Integer.class;
+        case "sendtoall":
+        case "sendToAll": return java.lang.Boolean.class;
+        case "sessionsupport":
+        case "sessionSupport": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "staticresources":
+        case "staticResources": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -111,8 +112,6 @@ public class WebsocketEndpointConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedorigins":
         case "allowedOrigins": return target.getAllowedOrigins();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "buffersize":

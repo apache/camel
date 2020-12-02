@@ -27,7 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.processor.errorhandler.NoErrorHandler;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteIdAware;
@@ -46,7 +48,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Implements a dynamic <a href="http://camel.apache.org/recipient-list.html">Recipient List</a> pattern where the list
  * of actual endpoints to send a message exchange to are dependent on some dynamic expression.
  */
-public class RecipientList extends AsyncProcessorSupport implements IdAware, RouteIdAware {
+public class RecipientList extends AsyncProcessorSupport implements IdAware, RouteIdAware, ErrorHandlerAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
 
@@ -54,6 +56,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     private final CamelContext camelContext;
     private String id;
     private String routeId;
+    private Processor errorHandler;
     private ProducerCache producerCache;
     private Expression expression;
     private final String delimiter;
@@ -157,6 +160,16 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
     }
 
     @Override
+    public void setErrorHandler(Processor errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
+    @Override
+    public Processor getErrorHandler() {
+        return errorHandler;
+    }
+
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (!isStarted()) {
             throw new IllegalStateException("RecipientList has not been started: " + this);
@@ -189,6 +202,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
                 isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
                 isStopOnAggregateException());
+        rlp.setErrorHandler(errorHandler);
         rlp.setAggregateExecutorService(aggregateExecutorService);
         rlp.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints());
         rlp.setCacheSize(getCacheSize());
@@ -210,6 +224,14 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
         return producerCache.getEndpointUtilizationStatistics();
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        if (errorHandler == null) {
+            // NoErrorHandler is the default base error handler if none has been configured
+            errorHandler = new NoErrorHandler(null);
+        }
     }
 
     @Override

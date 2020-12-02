@@ -38,6 +38,8 @@ import org.apache.camel.component.salesforce.api.dto.Limits;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SearchResult2;
+import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
@@ -95,12 +97,16 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
             case UPSERT_SOBJECT:
                 // handle known response type
-                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+                exchange.setProperty(RESPONSE_CLASS, UpsertSObjectResult.class);
                 break;
 
             case SEARCH:
                 // handle known response type
-                exchange.setProperty(RESPONSE_TYPE, TypeReferences.SEARCH_RESULT_TYPE);
+                if (Double.parseDouble(endpoint.getConfiguration().getApiVersion()) >= 37.0) {
+                    exchange.setProperty(RESPONSE_CLASS, SearchResult2.class);
+                } else {
+                    exchange.setProperty(RESPONSE_TYPE, TypeReferences.SEARCH_RESULT_TYPE);
+                }
                 break;
 
             case RECENT:

@@ -57,7 +57,7 @@ public class JCachePolicy implements Policy {
 
     @Override
     public void beforeWrap(Route route, NamedNode namedNode) {
-
+        // noop
     }
 
     @Override
@@ -105,9 +105,7 @@ public class JCachePolicy implements Policy {
 
         }
 
-        //Create processor
-        return new JCachePolicyProcessor(cache, keyExpression, processor);
-
+        return new JCachePolicyProcessor(route.getCamelContext(), cache, keyExpression, processor);
     }
 
     public Cache getCache() {

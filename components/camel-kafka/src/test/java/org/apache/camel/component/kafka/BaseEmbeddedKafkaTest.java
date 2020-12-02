@@ -77,7 +77,6 @@ public abstract class BaseEmbeddedKafkaTest extends CamelTestSupport {
         return context;
     }
 
-    @Deprecated
     protected static String getBootstrapServers() {
         return service.getBootstrapServers();
     }

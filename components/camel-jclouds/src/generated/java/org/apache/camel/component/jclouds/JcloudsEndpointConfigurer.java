@@ -4,9 +4,10 @@ package org.apache.camel.component.jclouds;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,38 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("command", org.apache.camel.component.jclouds.JcloudsCommand.class);
-        map.put("providerId", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("blobName", java.lang.String.class);
-        map.put("container", java.lang.String.class);
-        map.put("directory", java.lang.String.class);
-        map.put("group", java.lang.String.class);
-        map.put("hardwareId", java.lang.String.class);
-        map.put("imageId", java.lang.String.class);
-        map.put("locationId", java.lang.String.class);
-        map.put("nodeId", java.lang.String.class);
-        map.put("nodeState", java.lang.String.class);
-        map.put("operation", java.lang.String.class);
-        map.put("user", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JcloudsEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JcloudsEndpoint target = (JcloudsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blobname":
         case "blobName": target.getConfiguration().setBlobName(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -79,23 +52,42 @@ public class JcloudsEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "blobname":
+        case "blobName": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "container": return java.lang.String.class;
+        case "directory": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "group": return java.lang.String.class;
+        case "hardwareid":
+        case "hardwareId": return java.lang.String.class;
+        case "imageid":
+        case "imageId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "locationid":
+        case "locationId": return java.lang.String.class;
+        case "nodeid":
+        case "nodeId": return java.lang.String.class;
+        case "nodestate":
+        case "nodeState": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         JcloudsEndpoint target = (JcloudsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blobname":
         case "blobName": return target.getConfiguration().getBlobName();
         case "bridgeerrorhandler":

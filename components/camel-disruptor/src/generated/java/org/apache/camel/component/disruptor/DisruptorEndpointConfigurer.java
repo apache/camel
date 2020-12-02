@@ -4,9 +4,10 @@ package org.apache.camel.component.disruptor;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,34 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("name", java.lang.String.class);
-        map.put("size", int.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("concurrentConsumers", int.class);
-        map.put("multipleConsumers", boolean.class);
-        map.put("waitStrategy", org.apache.camel.component.disruptor.DisruptorWaitStrategy.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("blockWhenFull", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("producerType", org.apache.camel.component.disruptor.DisruptorProducerType.class);
-        map.put("timeout", long.class);
-        map.put("waitForTaskToComplete", org.apache.camel.WaitForTaskToComplete.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DisruptorEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DisruptorEndpoint target = (DisruptorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "blockwhenfull":
         case "blockWhenFull": target.setBlockWhenFull(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -72,23 +49,39 @@ public class DisruptorEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "blockwhenfull":
+        case "blockWhenFull": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "multipleconsumers":
+        case "multipleConsumers": return boolean.class;
+        case "producertype":
+        case "producerType": return org.apache.camel.component.disruptor.DisruptorProducerType.class;
+        case "size": return int.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return long.class;
+        case "waitfortasktocomplete":
+        case "waitForTaskToComplete": return org.apache.camel.WaitForTaskToComplete.class;
+        case "waitstrategy":
+        case "waitStrategy": return org.apache.camel.component.disruptor.DisruptorWaitStrategy.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DisruptorEndpoint target = (DisruptorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "blockwhenfull":
         case "blockWhenFull": return target.isBlockWhenFull();
         case "bridgeerrorhandler":

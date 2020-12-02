@@ -4,9 +4,10 @@ package org.apache.camel.component.webhook;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,21 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class WebhookComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("webhookAutoRegister", boolean.class);
-        map.put("webhookBasePath", java.lang.String.class);
-        map.put("webhookComponentName", java.lang.String.class);
-        map.put("webhookExternalUrl", java.lang.String.class);
-        map.put("webhookPath", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.webhook.WebhookConfiguration.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WebhookComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.webhook.WebhookConfiguration getOrCreateConfiguration(WebhookComponent target) {
         if (target.getConfiguration() == null) {
@@ -42,8 +28,8 @@ public class WebhookComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WebhookComponent target = (WebhookComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.webhook.WebhookConfiguration.class, value)); return true;
@@ -62,23 +48,33 @@ public class WebhookComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.webhook.WebhookConfiguration.class;
+        case "webhookautoregister":
+        case "webhookAutoRegister": return boolean.class;
+        case "webhookbasepath":
+        case "webhookBasePath": return java.lang.String.class;
+        case "webhookcomponentname":
+        case "webhookComponentName": return java.lang.String.class;
+        case "webhookexternalurl":
+        case "webhookExternalUrl": return java.lang.String.class;
+        case "webhookpath":
+        case "webhookPath": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WebhookComponent target = (WebhookComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();

@@ -16,67 +16,14 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
-import org.apache.camel.util.ObjectHelper;
-
 /**
  * Base class for builders of error handling.
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
-    private ExceptionPolicyStrategy exceptionPolicyStrategy;
-    private String exceptionPolicyStrategyRef;
 
     @Override
     public boolean supportTransacted() {
         return false;
-    }
-
-    protected void cloneBuilder(ErrorHandlerBuilderSupport other) {
-        other.exceptionPolicyStrategy = exceptionPolicyStrategy;
-        other.exceptionPolicyStrategyRef = exceptionPolicyStrategyRef;
-    }
-
-    /**
-     * Sets the exception policy to use
-     */
-    public ErrorHandlerBuilderSupport exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        setExceptionPolicyStrategy(exceptionPolicyStrategy);
-        return this;
-    }
-
-    /**
-     * Sets the exception policy to use
-     */
-    public ErrorHandlerBuilderSupport exceptionPolicyStrategy(String exceptionPolicyStrategyRef) {
-        setExceptionPolicyStrategyRef(exceptionPolicyStrategyRef);
-        return this;
-    }
-
-    /**
-     * Gets the exception policy strategy
-     */
-    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
-        return exceptionPolicyStrategy;
-    }
-
-    /**
-     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
-     * to use for a given thrown exception
-     *
-     * @param exceptionPolicyStrategy the exception policy strategy
-     */
-    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        ObjectHelper.notNull(exceptionPolicyStrategy, "ExceptionPolicyStrategy");
-        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
-    }
-
-    public String getExceptionPolicyStrategyRef() {
-        return exceptionPolicyStrategyRef;
-    }
-
-    public void setExceptionPolicyStrategyRef(String exceptionPolicyStrategyRef) {
-        ObjectHelper.notNull(exceptionPolicyStrategyRef, "ExceptionPolicyStrategyRef");
-        this.exceptionPolicyStrategyRef = exceptionPolicyStrategyRef;
     }
 
 }

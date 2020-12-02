@@ -28,6 +28,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport {
@@ -45,7 +46,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
         List<Exchange> exchanges = getMockEndpoint(mockEnpointName).getExchanges();
 
-        assertTrue(exchanges.size() == 1);
+        assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
         }
@@ -74,7 +75,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
         List<Exchange> exchanges = getMockEndpoint(mockEnpointName).getExchanges();
 
-        assertTrue(exchanges.size() == 1);
+        assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
             assertTrue(exchange.getIn().getBody() instanceof byte[]);
             // assertTrue(Arrays.equals(FileUtils.readFileToByteArray(testFile),
@@ -112,7 +113,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
         List<Exchange> exchanges = getMockEndpoint("mock:unmarshal").getExchanges();
 
-        assertTrue(exchanges.size() == 1);
+        assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
         }
@@ -132,7 +133,7 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
         List<Exchange> exchangesFirst = getMockEndpoint(firstMockEnpointName).getExchanges();
 
-        assertTrue(exchangesFirst.size() == 1);
+        assertEquals(1, exchangesFirst.size());
         SmsCdr firstUnmarshalledCdr = null;
         for (Exchange exchange : exchangesFirst) {
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
@@ -143,14 +144,14 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
         List<Exchange> exchangesSecond = getMockEndpoint(secondMockEnpointName).getExchanges();
 
-        assertTrue(exchangesSecond.size() == 1);
+        assertEquals(1, exchangesSecond.size());
         SmsCdr secondUnmarshalledCdr = null;
         for (Exchange exchange : exchangesSecond) {
             assertTrue(exchange.getIn().getBody() instanceof SmsCdr);
             secondUnmarshalledCdr = exchange.getIn().getBody(SmsCdr.class);
         }
 
-        assertTrue(firstUnmarshalledCdr.toString().equals(secondUnmarshalledCdr.toString()));
+        assertEquals(secondUnmarshalledCdr.toString(), firstUnmarshalledCdr.toString());
 
         assertMockEndpointsSatisfied();
     }

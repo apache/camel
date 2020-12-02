@@ -4,9 +4,10 @@ package org.apache.camel.component.openstack.nova;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,33 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class NovaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("host", java.lang.String.class);
-        map.put("apiVersion", java.lang.String.class);
-        map.put("config", org.openstack4j.core.transport.Config.class);
-        map.put("domain", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("project", java.lang.String.class);
-        map.put("subsystem", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(NovaEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NovaEndpoint target = (NovaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": target.setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "config": target.setConfig(property(camelContext, org.openstack4j.core.transport.Config.class, value)); return true;
         case "domain": target.setDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -58,15 +38,22 @@ public class NovaEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "config": return org.openstack4j.core.transport.Config.class;
+        case "domain": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "project": return java.lang.String.class;
+        case "subsystem": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -75,8 +62,6 @@ public class NovaEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": return target.getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "config": return target.getConfig();
         case "domain": return target.getDomain();
         case "lazystartproducer":

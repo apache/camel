@@ -4,9 +4,10 @@ package org.apache.camel.component.soroushbot.component;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,36 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("action", org.apache.camel.component.soroushbot.models.SoroushAction.class);
-        map.put("connectionTimeout", int.class);
-        map.put("maxConnectionRetry", int.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("concurrentConsumers", int.class);
-        map.put("queueCapacityPerThread", int.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("autoDownload", boolean.class);
-        map.put("autoUploadFile", boolean.class);
-        map.put("downloadThumbnail", boolean.class);
-        map.put("forceDownload", boolean.class);
-        map.put("forceUpload", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("backOffStrategy", java.lang.String.class);
-        map.put("maxRetryWaitingTime", long.class);
-        map.put("reconnectIdleConnectionTimeout", long.class);
-        map.put("retryExponentialCoefficient", long.class);
-        map.put("retryLinearIncrement", long.class);
-        map.put("retryWaitingTime", long.class);
-        map.put("authorizationToken", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SoroushBotEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -58,8 +29,6 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoUploadFile": target.setAutoUploadFile(property(camelContext, boolean.class, value)); return true;
         case "backoffstrategy":
         case "backOffStrategy": target.setBackOffStrategy(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -98,15 +67,51 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "authorizationtoken":
+        case "authorizationToken": return java.lang.String.class;
+        case "autodownload":
+        case "autoDownload": return boolean.class;
+        case "autouploadfile":
+        case "autoUploadFile": return boolean.class;
+        case "backoffstrategy":
+        case "backOffStrategy": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "downloadthumbnail":
+        case "downloadThumbnail": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "forcedownload":
+        case "forceDownload": return boolean.class;
+        case "forceupload":
+        case "forceUpload": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxconnectionretry":
+        case "maxConnectionRetry": return int.class;
+        case "maxretrywaitingtime":
+        case "maxRetryWaitingTime": return long.class;
+        case "queuecapacityperthread":
+        case "queueCapacityPerThread": return int.class;
+        case "reconnectidleconnectiontimeout":
+        case "reconnectIdleConnectionTimeout": return long.class;
+        case "retryexponentialcoefficient":
+        case "retryExponentialCoefficient": return long.class;
+        case "retrylinearincrement":
+        case "retryLinearIncrement": return long.class;
+        case "retrywaitingtime":
+        case "retryWaitingTime": return long.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -121,8 +126,6 @@ public class SoroushBotEndpointConfigurer extends PropertyConfigurerSupport impl
         case "autoUploadFile": return target.isAutoUploadFile();
         case "backoffstrategy":
         case "backOffStrategy": return target.getBackOffStrategy();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":

@@ -4,9 +4,10 @@ package org.apache.camel.component.hbase;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,38 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("tableName", java.lang.String.class);
-        map.put("cellMappingStrategyFactory", org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory.class);
-        map.put("filters", java.util.List.class);
-        map.put("mappingStrategyClassName", java.lang.String.class);
-        map.put("mappingStrategyName", java.lang.String.class);
-        map.put("rowMapping", java.util.Map.class);
-        map.put("rowModel", org.apache.camel.component.hbase.model.HBaseRow.class);
-        map.put("userGroupInformation", org.apache.hadoop.security.UserGroupInformation.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("operation", java.lang.String.class);
-        map.put("remove", boolean.class);
-        map.put("removeHandler", org.apache.camel.component.hbase.HBaseRemoveHandler.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("maxResults", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(HBaseEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HBaseEndpoint target = (HBaseEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cellmappingstrategyfactory":
@@ -83,23 +56,46 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cellmappingstrategyfactory":
+        case "cellMappingStrategyFactory": return org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filters": return java.util.List.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mappingstrategyclassname":
+        case "mappingStrategyClassName": return java.lang.String.class;
+        case "mappingstrategyname":
+        case "mappingStrategyName": return java.lang.String.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "maxresults":
+        case "maxResults": return int.class;
+        case "operation": return java.lang.String.class;
+        case "remove": return boolean.class;
+        case "removehandler":
+        case "removeHandler": return org.apache.camel.component.hbase.HBaseRemoveHandler.class;
+        case "rowmapping":
+        case "rowMapping": return java.util.Map.class;
+        case "rowmodel":
+        case "rowModel": return org.apache.camel.component.hbase.model.HBaseRow.class;
+        case "synchronous": return boolean.class;
+        case "usergroupinformation":
+        case "userGroupInformation": return org.apache.hadoop.security.UserGroupInformation.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HBaseEndpoint target = (HBaseEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cellmappingstrategyfactory":
@@ -130,6 +126,16 @@ public class HBaseEndpointConfigurer extends PropertyConfigurerSupport implement
         case "synchronous": return target.isSynchronous();
         case "usergroupinformation":
         case "userGroupInformation": return target.getUserGroupInformation();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "filters": return org.apache.hadoop.hbase.filter.Filter.class;
+        case "rowmapping":
+        case "rowMapping": return java.lang.Object.class;
         default: return null;
         }
     }

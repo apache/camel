@@ -55,7 +55,7 @@ The Minio component supports 47 options, which are listed below.
 | *configuration* (common) | The component configuration |  | MinioConfiguration
 | *customHttpClient* (common) | Set custom HTTP client for authenticated access. |  | OkHttpClient
 | *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address. |  | String
-| *minioClient* (common) | Reference to a Minio Client object in the registry. |  | MinioClient
+| *minioClient* (common) | *Autowired* Reference to a Minio Client object in the registry. |  | MinioClient
 | *objectLock* (common) | Set when creating new bucket. | false | boolean
 | *policy* (common) | The policy for this queue to set in the method. |  | String
 | *proxyPort* (common) | TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
@@ -95,7 +95,7 @@ The Minio component supports 47 options, which are listed below.
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 8 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteObjects, deleteBucket, listBuckets, getObject, getObjectRange |  | MinioOperations
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not. | false | boolean
 | *storageClass* (producer) | The storage class to set in the request. |  | String
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *accessKey* (security) | Amazon AWS Secret Access Key or Minio Access Key. If not set camel will connect to service for anonymous access. |  | String
 | *secretKey* (security) | Amazon AWS Access Key Id or Minio Secret Key. If not set camel will connect to service for anonymous access. |  | String
 |===
@@ -120,7 +120,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (65 parameters):
+=== Query Parameters (64 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -129,7 +129,7 @@ with the following path and query parameters:
 | *autoCreateBucket* (common) | Setting the autocreation of the bucket if bucket name not exist. | true | boolean
 | *customHttpClient* (common) | Set custom HTTP client for authenticated access. |  | OkHttpClient
 | *endpoint* (common) | Endpoint can be an URL, domain name, IPv4 address or IPv6 address. |  | String
-| *minioClient* (common) | Reference to a Minio Client object in the registry. |  | MinioClient
+| *minioClient* (common) | *Autowired* Reference to a Minio Client object in the registry. |  | MinioClient
 | *objectLock* (common) | Set when creating new bucket. | false | boolean
 | *policy* (common) | The policy for this queue to set in the method. |  | String
 | *proxyPort* (common) | TCP/IP port number. 80 and 443 are used as defaults for HTTP and HTTPS. |  | Integer
@@ -173,7 +173,6 @@ with the following path and query parameters:
 | *operation* (producer) | The operation to do in case the user don't want to do only an upload. There are 8 enums and the value can be one of: copyObject, listObjects, deleteObject, deleteObjects, deleteBucket, listBuckets, getObject, getObjectRange |  | MinioOperations
 | *pojoRequest* (producer) | If we want to use a POJO request as body or not. | false | boolean
 | *storageClass* (producer) | The storage class to set in the request. |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
@@ -508,3 +507,5 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 
 where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+include::camel-spring-boot::page$minio-starter.adoc[]

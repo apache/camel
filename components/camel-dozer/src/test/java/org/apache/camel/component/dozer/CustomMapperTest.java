@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CustomMapperTest {
 
@@ -64,12 +64,9 @@ public class CustomMapperTest {
     @Test
     void mapCustomInvalidOperation() {
         customMapper.setParameter(MapperWithTwoMethods.class.getName() + ",convertToB");
-        try {
-            customMapper.mapCustom(new B(), B.class);
-            fail("Invalid operation should result in exception");
-        } catch (RuntimeException ex) {
-            assertTrue(ex.getCause() instanceof NoSuchMethodException);
-        }
+        B b = new B();
+        Exception ex = assertThrows(RuntimeException.class, () -> customMapper.mapCustom(b, B.class));
+        assertTrue(ex.getCause() instanceof NoSuchMethodException);
     }
 
     @Test

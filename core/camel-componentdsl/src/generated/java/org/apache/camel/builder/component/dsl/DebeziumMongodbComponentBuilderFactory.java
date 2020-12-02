@@ -240,18 +240,21 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default DebeziumMongodbComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default DebeziumMongodbComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -846,7 +849,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "offsetStoragePartitions": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetStoragePartitions((int) value); return true;
             case "offsetStorageReplicationFactor": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetStorageReplicationFactor((int) value); return true;
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((DebeziumMongodbComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((DebeziumMongodbComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "collectionExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionExcludeList((java.lang.String) value); return true;
             case "collectionIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionIncludeList((java.lang.String) value); return true;
             case "connectBackoffInitialDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectBackoffInitialDelayMs((long) value); return true;

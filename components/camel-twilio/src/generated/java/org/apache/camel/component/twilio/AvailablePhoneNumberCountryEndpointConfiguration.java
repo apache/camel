@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "fetcher", description="Create a AvailablePhoneNumberCountryFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountryFetcher fetcher(String pathCountryCode)", "com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountryFetcher fetcher(String pathAccountSid, String pathCountryCode)"}), @ApiMethod(methodName = "reader", description="Create a AvailablePhoneNumberCountryReader to execute read", signatures={"com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountryReader reader()", "com.twilio.rest.api.v2010.account.AvailablePhoneNumberCountryReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class AvailablePhoneNumberCountryEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "fetcher", description="The SID of the Account requesting the available phone number Country resource"), @ApiMethod(methodName = "reader", description="The SID of the Account requesting the available phone number Country resources")})

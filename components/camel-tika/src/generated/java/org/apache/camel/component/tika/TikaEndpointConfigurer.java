@@ -4,9 +4,10 @@ package org.apache.camel.component.tika;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,27 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("operation", org.apache.camel.component.tika.TikaOperation.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("tikaConfig", org.apache.tika.config.TikaConfig.class);
-        map.put("tikaConfigUri", java.lang.String.class);
-        map.put("tikaParseOutputEncoding", java.lang.String.class);
-        map.put("tikaParseOutputFormat", org.apache.camel.component.tika.TikaParseOutputFormat.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(TikaEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TikaEndpoint target = (TikaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
@@ -53,23 +37,27 @@ public class TikaEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "tikaconfig":
+        case "tikaConfig": return org.apache.tika.config.TikaConfig.class;
+        case "tikaconfiguri":
+        case "tikaConfigUri": return java.lang.String.class;
+        case "tikaparseoutputencoding":
+        case "tikaParseOutputEncoding": return java.lang.String.class;
+        case "tikaparseoutputformat":
+        case "tikaParseOutputFormat": return org.apache.camel.component.tika.TikaParseOutputFormat.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         TikaEndpoint target = (TikaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "synchronous": return target.isSynchronous();

@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -53,20 +52,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
-
-        LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
-        context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
-        Lambda2Component component = context.getComponent("aws2-lambda", Lambda2Component.class);
-        Lambda2Endpoint endpoint = (Lambda2Endpoint) component
-                .createEndpoint(
-                        "aws2-lambda://myFunction?operation=getFunction&accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(awsLambdaClient, endpoint.getConfiguration().getAwsLambdaClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         LambdaClient awsLambdaClient = new AmazonLambdaClientMock();
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);

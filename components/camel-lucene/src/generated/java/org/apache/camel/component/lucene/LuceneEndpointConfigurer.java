@@ -4,9 +4,10 @@ package org.apache.camel.component.lucene;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,29 +17,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("host", java.lang.String.class);
-        map.put("operation", org.apache.camel.component.lucene.LuceneOperation.class);
-        map.put("analyzer", org.apache.lucene.analysis.Analyzer.class);
-        map.put("indexDir", java.io.File.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("maxHits", int.class);
-        map.put("srcDir", java.io.File.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(LuceneEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LuceneEndpoint target = (LuceneEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "analyzer": target.getConfig().setAnalyzer(property(camelContext, org.apache.lucene.analysis.Analyzer.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "indexdir":
         case "indexDir": target.getConfig().setIndexDir(property(camelContext, java.io.File.class, value)); return true;
         case "lazystartproducer":
@@ -53,15 +36,20 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "analyzer": return org.apache.lucene.analysis.Analyzer.class;
+        case "indexdir":
+        case "indexDir": return java.io.File.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxhits":
+        case "maxHits": return int.class;
+        case "srcdir":
+        case "srcDir": return java.io.File.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -69,8 +57,6 @@ public class LuceneEndpointConfigurer extends PropertyConfigurerSupport implemen
         LuceneEndpoint target = (LuceneEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "analyzer": return target.getConfig().getAnalyzer();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "indexdir":
         case "indexDir": return target.getConfig().getIndexDir();
         case "lazystartproducer":

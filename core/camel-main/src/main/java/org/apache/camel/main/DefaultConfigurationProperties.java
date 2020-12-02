@@ -62,6 +62,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
     private boolean caseInsensitiveHeaders = true;
+    private boolean autowiredEnabled = true;
     private boolean endpointRuntimeStatisticsEnabled;
     private boolean endpointLazyStartProducer;
     private boolean endpointBridgeErrorHandler;
@@ -554,6 +555,22 @@ public abstract class DefaultConfigurationProperties<T> {
         this.caseInsensitiveHeaders = caseInsensitiveHeaders;
     }
 
+    public boolean isAutowiredEnabled() {
+        return autowiredEnabled;
+    }
+
+    /**
+     * Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as
+     * autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets
+     * configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection
+     * factories, AWS Clients, etc.
+     *
+     * Default is true.
+     */
+    public void setAutowiredEnabled(boolean autowiredEnabled) {
+        this.autowiredEnabled = autowiredEnabled;
+    }
+
     public boolean isEndpointRuntimeStatisticsEnabled() {
         return endpointRuntimeStatisticsEnabled;
     }
@@ -968,12 +985,12 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Pattern for filtering routes to be excluded as supervised.
+     * Pattern for filtering routes to be included as supervised.
      *
      * The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma.
      *
-     * For example to exclude all JMS routes, you can say <tt>jms:*</tt>. And to exclude routes with specific route ids
-     * <tt>mySpecialRoute,myOtherSpecialRoute</tt>. The pattern supports wildcards and uses the matcher from
+     * For example to include all kafka routes, you can say <tt>kafka:*</tt>. And to include routes with specific route
+     * ids <tt>myRoute,myOtherRoute</tt>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
     public void setRouteControllerIncludeRoutes(String routeControllerIncludeRoutes) {
@@ -985,12 +1002,12 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Pattern for filtering routes to be included as supervised.
+     * Pattern for filtering routes to be excluded as supervised.
      *
      * The pattern is matching on route id, and endpoint uri for the route. Multiple patterns can be separated by comma.
      *
-     * For example to include all kafka routes, you can say <tt>kafka:*</tt>. And to include routes with specific route
-     * ids <tt>myRoute,myOtherRoute</tt>. The pattern supports wildcards and uses the matcher from
+     * For example to exclude all JMS routes, you can say <tt>jms:*</tt>. And to exclude routes with specific route ids
+     * <tt>mySpecialRoute,myOtherSpecialRoute</tt>. The pattern supports wildcards and uses the matcher from
      * org.apache.camel.support.PatternHelper#matchPattern.
      */
     public void setRouteControllerExcludeRoutes(String routeControllerExcludeRoutes) {

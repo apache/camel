@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class LogicalExpression extends BaseSimpleNode {
 
-    private LogicalOperatorType operator;
+    private final LogicalOperatorType operator;
     private SimpleNode left;
     private SimpleNode right;
 
@@ -58,6 +58,14 @@ public class LogicalExpression extends BaseSimpleNode {
 
     public LogicalOperatorType getOperator() {
         return operator;
+    }
+
+    public SimpleNode getLeft() {
+        return left;
+    }
+
+    public SimpleNode getRight() {
+        return right;
     }
 
     @Override
@@ -113,4 +121,20 @@ public class LogicalExpression extends BaseSimpleNode {
         };
     }
 
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        ObjectHelper.notNull(left, "left node", this);
+        ObjectHelper.notNull(right, "right node", this);
+
+        final String leftExp = left.createCode(expression);
+        final String rightExp = right.createCode(expression);
+
+        if (operator == LogicalOperatorType.AND) {
+            return leftExp + " && " + rightExp;
+        } else if (operator == LogicalOperatorType.OR) {
+            return leftExp + " || " + rightExp;
+        }
+
+        throw new SimpleParserException("Unknown logical operator " + operator, token.getIndex());
+    }
 }

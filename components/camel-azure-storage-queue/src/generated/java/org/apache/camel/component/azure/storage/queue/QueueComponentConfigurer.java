@@ -4,9 +4,10 @@ package org.apache.camel.component.azure.storage.queue;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,29 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class QueueComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("configuration", org.apache.camel.component.azure.storage.queue.QueueConfiguration.class);
-        map.put("serviceClient", com.azure.storage.queue.QueueServiceClient.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("createQueue", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("maxMessages", java.lang.Integer.class);
-        map.put("messageId", java.lang.String.class);
-        map.put("popReceipt", java.lang.String.class);
-        map.put("timeout", java.time.Duration.class);
-        map.put("timeToLive", java.time.Duration.class);
-        map.put("visibilityTimeout", java.time.Duration.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("credentials", com.azure.storage.common.StorageSharedKeyCredential.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(QueueComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.azure.storage.queue.QueueConfiguration getOrCreateConfiguration(QueueComponent target) {
         if (target.getConfiguration() == null) {
@@ -54,8 +32,8 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.azure.storage.queue.QueueConfiguration.class, value)); return true;
@@ -83,15 +61,38 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.azure.storage.queue.QueueConfiguration.class;
+        case "createqueue":
+        case "createQueue": return boolean.class;
+        case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxmessages":
+        case "maxMessages": return java.lang.Integer.class;
+        case "messageid":
+        case "messageId": return java.lang.String.class;
+        case "operation": return org.apache.camel.component.azure.storage.queue.QueueOperationDefinition.class;
+        case "popreceipt":
+        case "popReceipt": return java.lang.String.class;
+        case "serviceclient":
+        case "serviceClient": return com.azure.storage.queue.QueueServiceClient.class;
+        case "timetolive":
+        case "timeToLive": return java.time.Duration.class;
+        case "timeout": return java.time.Duration.class;
+        case "visibilitytimeout":
+        case "visibilityTimeout": return java.time.Duration.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -102,8 +103,8 @@ public class QueueComponentConfigurer extends PropertyConfigurerSupport implemen
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();

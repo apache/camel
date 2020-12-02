@@ -1143,18 +1143,20 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default KafkaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default KafkaComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -1634,7 +1636,7 @@ public interface KafkaComponentBuilderFactory {
             case "workerPool": getOrCreateConfiguration((KafkaComponent) component).setWorkerPool((java.util.concurrent.ExecutorService) value); return true;
             case "workerPoolCoreSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolCoreSize((java.lang.Integer) value); return true;
             case "workerPoolMaxSize": getOrCreateConfiguration((KafkaComponent) component).setWorkerPoolMaxSize((java.lang.Integer) value); return true;
-            case "basicPropertyBinding": ((KafkaComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((KafkaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "schemaRegistryURL": getOrCreateConfiguration((KafkaComponent) component).setSchemaRegistryURL((java.lang.String) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((KafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
             case "kerberosBeforeReloginMinTime": getOrCreateConfiguration((KafkaComponent) component).setKerberosBeforeReloginMinTime((java.lang.Integer) value); return true;

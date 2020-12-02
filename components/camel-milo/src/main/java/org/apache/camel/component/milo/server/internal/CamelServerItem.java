@@ -55,7 +55,7 @@ public class CamelServerItem {
         this.itemId = itemId;
         this.baseNode = baseNode;
 
-        final NodeId nodeId = new NodeId(namespaceIndex, "items-" + itemId);
+        final NodeId nodeId = new NodeId(namespaceIndex, itemId);
         final QualifiedName qname = new QualifiedName(namespaceIndex, itemId);
         final LocalizedText displayName = LocalizedText.english(itemId);
 
@@ -75,7 +75,6 @@ public class CamelServerItem {
 
         };
 
-        // item.setDataType();
         this.item.setAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
         this.item.setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE)));
 

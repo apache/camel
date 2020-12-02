@@ -20,8 +20,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(63);
-        props.add("useIAMCredentials");
+        Set<String> props = new HashSet<>(62);
         props.add("customerAlgorithm");
         props.add("fileName");
         props.add("useCustomerKey");
@@ -56,9 +55,9 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
         props.add("deleteAfterWrite");
         props.add("region");
         props.add("exceptionHandler");
-        props.add("basicPropertyBinding");
         props.add("backoffMultiplier");
         props.add("destinationBucket");
+        props.add("amazonS3Presigner");
         props.add("partSize");
         props.add("scheduler");
         props.add("multiPartUpload");
@@ -69,7 +68,6 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
         props.add("policy");
         props.add("maxConnections");
         props.add("timeUnit");
-        props.add("autoDiscoverClient");
         props.add("autoCreateBucket");
         props.add("destinationBucketSuffix");
         props.add("proxyProtocol");
@@ -78,6 +76,7 @@ public class AWS2S3EndpointUriFactory extends org.apache.camel.support.component
         props.add("exchangePattern");
         props.add("keyName");
         props.add("includeFolders");
+        props.add("useDefaultCredentialsProvider");
         props.add("destinationBucketPrefix");
         props.add("autocloseBody");
         props.add("pollStrategy");

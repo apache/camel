@@ -4,9 +4,10 @@ package org.apache.camel.component.kubernetes.deployments;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,52 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class KubernetesDeploymentsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("masterUrl", java.lang.String.class);
-        map.put("apiVersion", java.lang.String.class);
-        map.put("dnsDomain", java.lang.String.class);
-        map.put("kubernetesClient", io.fabric8.kubernetes.client.KubernetesClient.class);
-        map.put("portName", java.lang.String.class);
-        map.put("portProtocol", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("labelKey", java.lang.String.class);
-        map.put("labelValue", java.lang.String.class);
-        map.put("namespace", java.lang.String.class);
-        map.put("poolSize", int.class);
-        map.put("resourceName", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("connectionTimeout", java.lang.Integer.class);
-        map.put("synchronous", boolean.class);
-        map.put("caCertData", java.lang.String.class);
-        map.put("caCertFile", java.lang.String.class);
-        map.put("clientCertData", java.lang.String.class);
-        map.put("clientCertFile", java.lang.String.class);
-        map.put("clientKeyAlgo", java.lang.String.class);
-        map.put("clientKeyData", java.lang.String.class);
-        map.put("clientKeyFile", java.lang.String.class);
-        map.put("clientKeyPassphrase", java.lang.String.class);
-        map.put("oauthToken", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("trustCerts", java.lang.Boolean.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(KubernetesDeploymentsEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KubernetesDeploymentsEndpoint target = (KubernetesDeploymentsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cacertdata":
@@ -82,6 +43,16 @@ public class KubernetesDeploymentsEndpointConfigurer extends PropertyConfigurerS
         case "clientKeyPassphrase": target.getConfiguration().setClientKeyPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "crdgroup":
+        case "crdGroup": target.getConfiguration().setCrdGroup(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdname":
+        case "crdName": target.getConfiguration().setCrdName(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdplural":
+        case "crdPlural": target.getConfiguration().setCrdPlural(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdscope":
+        case "crdScope": target.getConfiguration().setCrdScope(property(camelContext, java.lang.String.class, value)); return true;
+        case "crdversion":
+        case "crdVersion": target.getConfiguration().setCrdVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "dnsdomain":
         case "dnsDomain": target.getConfiguration().setDnsDomain(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -118,15 +89,73 @@ public class KubernetesDeploymentsEndpointConfigurer extends PropertyConfigurerS
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cacertdata":
+        case "caCertData": return java.lang.String.class;
+        case "cacertfile":
+        case "caCertFile": return java.lang.String.class;
+        case "clientcertdata":
+        case "clientCertData": return java.lang.String.class;
+        case "clientcertfile":
+        case "clientCertFile": return java.lang.String.class;
+        case "clientkeyalgo":
+        case "clientKeyAlgo": return java.lang.String.class;
+        case "clientkeydata":
+        case "clientKeyData": return java.lang.String.class;
+        case "clientkeyfile":
+        case "clientKeyFile": return java.lang.String.class;
+        case "clientkeypassphrase":
+        case "clientKeyPassphrase": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return java.lang.Integer.class;
+        case "crdgroup":
+        case "crdGroup": return java.lang.String.class;
+        case "crdname":
+        case "crdName": return java.lang.String.class;
+        case "crdplural":
+        case "crdPlural": return java.lang.String.class;
+        case "crdscope":
+        case "crdScope": return java.lang.String.class;
+        case "crdversion":
+        case "crdVersion": return java.lang.String.class;
+        case "dnsdomain":
+        case "dnsDomain": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "kubernetesclient":
+        case "kubernetesClient": return io.fabric8.kubernetes.client.KubernetesClient.class;
+        case "labelkey":
+        case "labelKey": return java.lang.String.class;
+        case "labelvalue":
+        case "labelValue": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "namespace": return java.lang.String.class;
+        case "oauthtoken":
+        case "oauthToken": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "poolsize":
+        case "poolSize": return int.class;
+        case "portname":
+        case "portName": return java.lang.String.class;
+        case "portprotocol":
+        case "portProtocol": return java.lang.String.class;
+        case "resourcename":
+        case "resourceName": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustcerts":
+        case "trustCerts": return java.lang.Boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -135,8 +164,6 @@ public class KubernetesDeploymentsEndpointConfigurer extends PropertyConfigurerS
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cacertdata":
@@ -157,6 +184,16 @@ public class KubernetesDeploymentsEndpointConfigurer extends PropertyConfigurerS
         case "clientKeyPassphrase": return target.getConfiguration().getClientKeyPassphrase();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
+        case "crdgroup":
+        case "crdGroup": return target.getConfiguration().getCrdGroup();
+        case "crdname":
+        case "crdName": return target.getConfiguration().getCrdName();
+        case "crdplural":
+        case "crdPlural": return target.getConfiguration().getCrdPlural();
+        case "crdscope":
+        case "crdScope": return target.getConfiguration().getCrdScope();
+        case "crdversion":
+        case "crdVersion": return target.getConfiguration().getCrdVersion();
         case "dnsdomain":
         case "dnsDomain": return target.getConfiguration().getDnsDomain();
         case "exceptionhandler":

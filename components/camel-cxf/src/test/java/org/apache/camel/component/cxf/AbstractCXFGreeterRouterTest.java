@@ -35,6 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -110,18 +111,16 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testRoutingSOAPFault() throws Exception {
-        try {
-            template.sendBody("http://localhost:" + getPort2() + "/"
-                              + getClass().getSimpleName()
-                              + "/CamelContext/RouterPort/",
-                    testDocLitFaultBody);
-            fail("Should get an exception here.");
-        } catch (RuntimeCamelException exception) {
-            assertTrue(exception.getCause() instanceof HttpOperationFailedException, "It should get the response error");
-            assertEquals(500, ((HttpOperationFailedException) exception.getCause()).getStatusCode(),
-                    "Get a wrong response code");
-        }
+    public void testRoutingSOAPFault() {
+        String endpointUri = "http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
+                             + "/CamelContext/RouterPort/";
+
+        Exception ex = assertThrows(RuntimeCamelException.class,
+                () -> template.sendBody(endpointUri, testDocLitFaultBody));
+
+        assertTrue(ex.getCause() instanceof HttpOperationFailedException, "It should get the response error");
+        assertEquals(500, ((HttpOperationFailedException) ex.getCause()).getStatusCode(),
+                "Get a wrong response code");
     }
 
     @Test

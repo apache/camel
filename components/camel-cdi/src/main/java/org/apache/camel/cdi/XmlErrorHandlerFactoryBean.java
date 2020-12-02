@@ -21,6 +21,7 @@ import java.util.function.Function;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
@@ -37,6 +38,7 @@ import static java.util.Objects.nonNull;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
+@Vetoed
 final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder> {
 
     private final BeanManager manager;

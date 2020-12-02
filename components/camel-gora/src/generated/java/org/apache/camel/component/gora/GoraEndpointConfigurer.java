@@ -4,9 +4,10 @@ package org.apache.camel.component.gora;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,43 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GoraEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("name", java.lang.String.class);
-        map.put("dataStoreClass", java.lang.String.class);
-        map.put("keyClass", java.lang.String.class);
-        map.put("valueClass", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("concurrentConsumers", int.class);
-        map.put("endKey", java.lang.Object.class);
-        map.put("endTime", long.class);
-        map.put("fields", com.google.common.base.Strings.class);
-        map.put("keyRangeFrom", java.lang.Object.class);
-        map.put("keyRangeTo", java.lang.Object.class);
-        map.put("limit", long.class);
-        map.put("startKey", java.lang.Object.class);
-        map.put("startTime", long.class);
-        map.put("timeRangeFrom", long.class);
-        map.put("timeRangeTo", long.class);
-        map.put("timestamp", long.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("flushOnEveryOperation", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("hadoopConfiguration", org.apache.hadoop.conf.Configuration.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoraEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoraEndpoint target = (GoraEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -98,23 +66,56 @@ public class GoraEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "datastoreclass":
+        case "dataStoreClass": return java.lang.String.class;
+        case "endkey":
+        case "endKey": return java.lang.Object.class;
+        case "endtime":
+        case "endTime": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fields": return com.google.common.base.Strings.class;
+        case "flushoneveryoperation":
+        case "flushOnEveryOperation": return boolean.class;
+        case "hadoopconfiguration":
+        case "hadoopConfiguration": return org.apache.hadoop.conf.Configuration.class;
+        case "keyclass":
+        case "keyClass": return java.lang.String.class;
+        case "keyrangefrom":
+        case "keyRangeFrom": return java.lang.Object.class;
+        case "keyrangeto":
+        case "keyRangeTo": return java.lang.Object.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "limit": return long.class;
+        case "startkey":
+        case "startKey": return java.lang.Object.class;
+        case "starttime":
+        case "startTime": return long.class;
+        case "synchronous": return boolean.class;
+        case "timerangefrom":
+        case "timeRangeFrom": return long.class;
+        case "timerangeto":
+        case "timeRangeTo": return long.class;
+        case "timestamp": return long.class;
+        case "valueclass":
+        case "valueClass": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoraEndpoint target = (GoraEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":

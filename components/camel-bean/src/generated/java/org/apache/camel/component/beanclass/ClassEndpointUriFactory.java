@@ -20,8 +20,7 @@ public class ClassEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(8);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(7);
         props.add("cache");
         props.add("lazyStartProducer");
         props.add("method");

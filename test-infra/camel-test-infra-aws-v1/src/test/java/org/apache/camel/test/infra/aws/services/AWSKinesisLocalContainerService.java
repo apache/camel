@@ -17,13 +17,9 @@
 
 package org.apache.camel.test.infra.aws.services;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.Protocol;
-import com.amazonaws.services.kinesis.AmazonKinesis;
-import com.amazonaws.services.kinesis.AmazonKinesisClientBuilder;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 
-public class AWSKinesisLocalContainerService extends AWSLocalContainerService<AmazonKinesis> {
+public class AWSKinesisLocalContainerService extends AWSLocalContainerService {
 
     public AWSKinesisLocalContainerService() {
         super(LocalStackContainer.Service.KINESIS);
@@ -32,25 +28,5 @@ public class AWSKinesisLocalContainerService extends AWSLocalContainerService<Am
     @Override
     public String getServiceEndpoint() {
         return super.getServiceEndpoint(LocalStackContainer.Service.KINESIS);
-    }
-
-    @Override
-    public String getAmazonHost() {
-        final int kinesisPort = 4568;
-
-        return getContainer().getContainerIpAddress() + ":" + getContainer().getMappedPort(kinesisPort);
-    }
-
-    @Override
-    public AmazonKinesis getClient() {
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
-        clientConfiguration.setProtocol(Protocol.HTTP);
-
-        return AmazonKinesisClientBuilder
-                .standard()
-                .withEndpointConfiguration(getContainer().getEndpointConfiguration(LocalStackContainer.Service.KINESIS))
-                .withCredentials(getContainer().getDefaultCredentialsProvider())
-                .withClientConfiguration(clientConfiguration)
-                .build();
     }
 }

@@ -401,6 +401,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     // skip option named id
                     model.getOptions().removeIf(
                             opt -> Objects.equals(opt.getName(), "id") || Objects.equals(opt.getName(), "expression"));
+                    // enhanced for autowired
+                    model.getOptions().stream().filter(BaseOptionModel::isAutowired).forEach(option -> {
+                        option.setDescription("*Autowired* " + option.getDescription());
+                    });
                     // enhance description for deprecated options
                     model.getOptions().stream().filter(BaseOptionModel::isDeprecated).forEach(option -> {
                         String desc = "*Deprecated* " + option.getDescription();
@@ -473,7 +477,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             PackageHelper.findJsonFiles(target, jsonFiles);
         }
 
-        // only if there is dataformat we should update the documentation files
+        // only if there is EIP we should update the documentation files
         if (!jsonFiles.isEmpty()) {
             getLog().debug("Found " + jsonFiles.size() + " eips");
             for (File jsonFile : jsonFiles) {
@@ -485,6 +489,11 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                             .removeIf(option -> "id".equals(option.getName()) || "description".equals(option.getName())
                                     || "expression".equals(option.getName())
                                     || "outputs".equals(option.getName()));
+                    // lets put autowired in the description
+                    model.getOptions().stream().filter(EipOptionModel::isAutowired).forEach(option -> {
+                        String desc = "*Autowired* " + option.getDescription();
+                        option.setDescription(desc);
+                    });
                     // lets put required in the description
                     model.getOptions().stream().filter(EipOptionModel::isRequired).forEach(option -> {
                         String desc = "*Required* " + option.getDescription();
@@ -834,6 +843,11 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     private ComponentModel generateComponentModel(String json) {
         ComponentModel component = JsonMapper.generateComponentModel(json);
         Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
+                .filter(BaseOptionModel::isAutowired).forEach(option -> {
+                    String desc = "*Autowired* " + option.getDescription();
+                    option.setDescription(desc);
+                });
+        Stream.concat(component.getComponentOptions().stream(), component.getEndpointOptions().stream())
                 .filter(BaseOptionModel::isRequired).forEach(option -> {
                     String desc = "*Required* " + option.getDescription();
                     option.setDescription(desc);
@@ -871,6 +885,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
         DataFormatModel model = JsonMapper.generateDataFormatModel(json);
         // skip option named id
         model.getOptions().removeIf(opt -> Objects.equals(opt.getName(), "id"));
+        model.getOptions().stream().filter(BaseOptionModel::isAutowired).forEach(option -> {
+            String desc = "*Autowired* " + option.getDescription();
+            option.setDescription(desc);
+        });
         // enhance description for deprecated options
         model.getOptions().stream().filter(BaseOptionModel::isDeprecated).forEach(option -> {
             String desc = "*Deprecated* " + option.getDescription();

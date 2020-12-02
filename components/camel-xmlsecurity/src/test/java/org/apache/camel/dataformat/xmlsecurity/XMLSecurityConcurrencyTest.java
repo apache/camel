@@ -29,8 +29,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XMLSecurityConcurrencyTest extends CamelTestSupport {
 
@@ -65,7 +65,7 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
 
         String secure = getMockEndpoint("mock:secure").getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertNotNull(secure);
-        assertTrue(secure.indexOf("read") == -1, "Should not be readable");
+        assertEquals(-1, secure.indexOf("read"), "Should not be readable");
         executor.shutdownNow();
     }
 

@@ -99,7 +99,7 @@ public class RecipientListReifier extends ProcessorReifier<RecipientListDefiniti
         // special error handling
         // when sending to the recipients individually
         Processor evalProcessor = new EvaluateExpressionProcessor(expression);
-        evalProcessor = wrapInErrorHandler(evalProcessor, true);
+        evalProcessor = wrapInErrorHandler(evalProcessor);
 
         pipe.add(evalProcessor);
         pipe.add(answer);

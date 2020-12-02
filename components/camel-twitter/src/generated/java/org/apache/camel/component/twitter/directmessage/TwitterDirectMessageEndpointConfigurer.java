@@ -4,9 +4,10 @@ package org.apache.camel.component.twitter.directmessage;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,58 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class TwitterDirectMessageEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("user", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("type", org.apache.camel.component.twitter.data.EndpointType.class);
-        map.put("distanceMetric", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("extendedMode", boolean.class);
-        map.put("latitude", java.lang.Double.class);
-        map.put("locations", java.lang.String.class);
-        map.put("longitude", java.lang.Double.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("radius", java.lang.Double.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("count", java.lang.Integer.class);
-        map.put("filterOld", boolean.class);
-        map.put("lang", java.lang.String.class);
-        map.put("numberOfPages", java.lang.Integer.class);
-        map.put("sinceId", long.class);
-        map.put("userIds", java.lang.String.class);
-        map.put("httpProxyHost", java.lang.String.class);
-        map.put("httpProxyPassword", java.lang.String.class);
-        map.put("httpProxyPort", java.lang.Integer.class);
-        map.put("httpProxyUser", java.lang.String.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("accessTokenSecret", java.lang.String.class);
-        map.put("consumerKey", java.lang.String.class);
-        map.put("consumerSecret", java.lang.String.class);
-        map.put("sortById", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(TwitterDirectMessageEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -82,8 +31,6 @@ public class TwitterDirectMessageEndpointConfigurer extends PropertyConfigurerSu
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "consumerkey":
@@ -154,15 +101,85 @@ public class TwitterDirectMessageEndpointConfigurer extends PropertyConfigurerSu
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "accesstokensecret":
+        case "accessTokenSecret": return java.lang.String.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "consumerkey":
+        case "consumerKey": return java.lang.String.class;
+        case "consumersecret":
+        case "consumerSecret": return java.lang.String.class;
+        case "count": return java.lang.Integer.class;
+        case "delay": return long.class;
+        case "distancemetric":
+        case "distanceMetric": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "extendedmode":
+        case "extendedMode": return boolean.class;
+        case "filterold":
+        case "filterOld": return boolean.class;
+        case "greedy": return boolean.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyuser":
+        case "httpProxyUser": return java.lang.String.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "lang": return java.lang.String.class;
+        case "latitude": return java.lang.Double.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "locations": return java.lang.String.class;
+        case "longitude": return java.lang.Double.class;
+        case "numberofpages":
+        case "numberOfPages": return java.lang.Integer.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "radius": return java.lang.Double.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "sinceid":
+        case "sinceId": return long.class;
+        case "sortbyid":
+        case "sortById": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "type": return org.apache.camel.component.twitter.data.EndpointType.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "userids":
+        case "userIds": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -179,8 +196,6 @@ public class TwitterDirectMessageEndpointConfigurer extends PropertyConfigurerSu
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "consumerkey":
@@ -246,6 +261,15 @@ public class TwitterDirectMessageEndpointConfigurer extends PropertyConfigurerSu
         case "useFixedDelay": return target.isUseFixedDelay();
         case "userids":
         case "userIds": return target.getProperties().getUserIds();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

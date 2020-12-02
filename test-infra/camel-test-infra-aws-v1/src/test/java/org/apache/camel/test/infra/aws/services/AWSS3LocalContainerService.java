@@ -17,13 +17,9 @@
 
 package org.apache.camel.test.infra.aws.services;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.Protocol;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 
-public class AWSS3LocalContainerService extends AWSLocalContainerService<AmazonS3> {
+public class AWSS3LocalContainerService extends AWSLocalContainerService {
 
     public AWSS3LocalContainerService() {
         super(LocalStackContainer.Service.S3);
@@ -32,25 +28,5 @@ public class AWSS3LocalContainerService extends AWSLocalContainerService<AmazonS
     @Override
     public String getServiceEndpoint() {
         return super.getServiceEndpoint(LocalStackContainer.Service.S3);
-    }
-
-    @Override
-    public String getAmazonHost() {
-        final int s3Port = 4572;
-
-        return getContainer().getContainerIpAddress() + ":" + getContainer().getMappedPort(s3Port);
-    }
-
-    @Override
-    public AmazonS3 getClient() {
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
-        clientConfiguration.setProtocol(Protocol.HTTP);
-
-        return AmazonS3ClientBuilder
-                .standard()
-                .withEndpointConfiguration(getContainer().getEndpointConfiguration(LocalStackContainer.Service.S3))
-                .withCredentials(getContainer().getDefaultCredentialsProvider())
-                .withClientConfiguration(clientConfiguration)
-                .build();
     }
 }

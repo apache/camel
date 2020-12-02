@@ -186,6 +186,7 @@ public class GrpcProducer extends DefaultAsyncProducer {
                 .flowControlWindow(configuration.getFlowControlWindow())
                 .userAgent(configuration.getUserAgent())
                 .maxInboundMessageSize(configuration.getMaxMessageSize())
+                .intercept(configuration.getClientInterceptors())
                 .build();
     }
 }

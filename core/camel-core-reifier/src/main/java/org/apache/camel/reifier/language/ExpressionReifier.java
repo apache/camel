@@ -16,7 +16,7 @@
  */
 package org.apache.camel.reifier.language;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -27,6 +27,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.ExpressionSubElementDefinition;
+import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -59,21 +60,24 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractReifier {
 
-    private static final Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> EXPRESSIONS;
-
-    static {
-        // for custom reifiers
-        Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> map
-                = new LinkedHashMap<>(0);
-        EXPRESSIONS = map;
-        ReifierStrategy.addReifierClearer(ExpressionReifier::clearReifiers);
-    }
+    // for custom reifiers
+    private static final Map<Class<?>, BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>>> EXPRESSIONS
+            = new HashMap<>(0);
 
     protected final T definition;
 
     public ExpressionReifier(CamelContext camelContext, T definition) {
         super(camelContext);
         this.definition = definition;
+    }
+
+    public static void registerReifier(
+            Class<?> processorClass,
+            BiFunction<CamelContext, ExpressionDefinition, ExpressionReifier<? extends ExpressionDefinition>> creator) {
+        if (EXPRESSIONS.isEmpty()) {
+            ReifierStrategy.addReifierClearer(ExpressionReifier::clearReifiers);
+        }
+        EXPRESSIONS.put(processorClass, creator);
     }
 
     public static ExpressionReifier<? extends ExpressionDefinition> reifier(
@@ -106,6 +110,8 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
             CamelContext camelContext, ExpressionDefinition definition) {
         if (definition instanceof ConstantExpression) {
             return new ExpressionReifier<>(camelContext, definition);
+        } else if (definition instanceof CSimpleExpression) {
+            return new CSimpleExpressionReifier(camelContext, definition);
         } else if (definition instanceof DatasonnetExpression) {
             return new DatasonnetExpressionReifier(camelContext, definition);
         } else if (definition instanceof ExchangePropertyExpression) {

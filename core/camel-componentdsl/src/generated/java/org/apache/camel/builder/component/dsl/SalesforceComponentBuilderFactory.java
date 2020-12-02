@@ -89,7 +89,7 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: 34.0
+         * Default: 50.0
          * Group: common
          */
         default SalesforceComponentBuilder apiVersion(
@@ -140,6 +140,7 @@ public interface SalesforceComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceComponentBuilder defaultReplayId(
@@ -212,6 +213,20 @@ public interface SalesforceComponentBuilderFactory {
         default SalesforceComponentBuilder httpMaxContentLength(
                 java.lang.Integer httpMaxContentLength) {
             doSetProperty("httpMaxContentLength", httpMaxContentLength);
+            return this;
+        }
+        /**
+         * HTTP request buffer size. May need to be increased for large SOQL
+         * queries.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 8192
+         * Group: common
+         */
+        default SalesforceComponentBuilder httpRequestBufferSize(
+                java.lang.Integer httpRequestBufferSize) {
+            doSetProperty("httpRequestBufferSize", httpRequestBufferSize);
             return this;
         }
         /**
@@ -397,10 +412,10 @@ public interface SalesforceComponentBuilderFactory {
         }
         /**
          * In what packages are the generated DTO classes. Typically the classes
-         * would be generated using camel-salesforce-maven-plugin. Set it if
-         * using the generated DTOs to gain the benefit of using short SObject
-         * names in parameters/header values. Multiple packages can be separated
-         * by comma.
+         * would be generated using camel-salesforce-maven-plugin. This must be
+         * set if using the XML format. Also, set it if using the generated DTOs
+         * to gain the benefit of using short SObject names in parameters/header
+         * values. Multiple packages can be separated by comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -664,18 +679,21 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default SalesforceComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default SalesforceComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -1044,6 +1062,7 @@ public interface SalesforceComponentBuilderFactory {
             case "httpClientConnectionTimeout": ((SalesforceComponent) component).setHttpClientConnectionTimeout((long) value); return true;
             case "httpClientIdleTimeout": ((SalesforceComponent) component).setHttpClientIdleTimeout((long) value); return true;
             case "httpMaxContentLength": ((SalesforceComponent) component).setHttpMaxContentLength((java.lang.Integer) value); return true;
+            case "httpRequestBufferSize": ((SalesforceComponent) component).setHttpRequestBufferSize((java.lang.Integer) value); return true;
             case "includeDetails": getOrCreateConfiguration((SalesforceComponent) component).setIncludeDetails((java.lang.Boolean) value); return true;
             case "initialReplayIdMap": getOrCreateConfiguration((SalesforceComponent) component).setInitialReplayIdMap((java.util.Map) value); return true;
             case "instanceId": getOrCreateConfiguration((SalesforceComponent) component).setInstanceId((java.lang.String) value); return true;
@@ -1078,7 +1097,7 @@ public interface SalesforceComponentBuilderFactory {
             case "longPollingTransportProperties": ((SalesforceComponent) component).setLongPollingTransportProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((SalesforceComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SalesforceComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((SalesforceComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((SalesforceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "httpProxyExcludedAddresses": ((SalesforceComponent) component).setHttpProxyExcludedAddresses((java.util.Set) value); return true;
             case "httpProxyHost": ((SalesforceComponent) component).setHttpProxyHost((java.lang.String) value); return true;
             case "httpProxyIncludedAddresses": ((SalesforceComponent) component).setHttpProxyIncludedAddresses((java.util.Set) value); return true;

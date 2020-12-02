@@ -4,9 +4,10 @@ package org.apache.camel.service.lra;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.service.lra.LRASagaService;
 
@@ -15,18 +16,6 @@ import org.apache.camel.service.lra.LRASagaService;
  */
 @SuppressWarnings("unchecked")
 public class LRASagaServiceConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("CamelContext", org.apache.camel.CamelContext.class);
-        map.put("CoordinatorContextPath", java.lang.String.class);
-        map.put("CoordinatorUrl", java.lang.String.class);
-        map.put("LocalParticipantContextPath", java.lang.String.class);
-        map.put("LocalParticipantUrl", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(LRASagaServiceConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -47,15 +36,20 @@ public class LRASagaServiceConfigurer extends org.apache.camel.support.component
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "camelcontext":
+        case "CamelContext": return org.apache.camel.CamelContext.class;
+        case "coordinatorcontextpath":
+        case "CoordinatorContextPath": return java.lang.String.class;
+        case "coordinatorurl":
+        case "CoordinatorUrl": return java.lang.String.class;
+        case "localparticipantcontextpath":
+        case "LocalParticipantContextPath": return java.lang.String.class;
+        case "localparticipanturl":
+        case "LocalParticipantUrl": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

@@ -25,8 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ManagedRemoveRouteAggregateThreadPoolTest extends ManagementTestSupport {
 
@@ -59,7 +59,7 @@ public class ManagedRemoveRouteAggregateThreadPoolTest extends ManagementTestSup
         Set<ObjectName> after = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
 
         // there should be 1 less thread pool
-        assertTrue(before.size() - 1 == after.size(), "There should be one less thread pool");
+        assertEquals(before.size() - 1, after.size(), "There should be one less thread pool");
     }
 
     @Override

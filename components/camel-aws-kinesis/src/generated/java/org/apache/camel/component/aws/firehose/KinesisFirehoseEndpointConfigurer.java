@@ -4,9 +4,10 @@ package org.apache.camel.component.aws.firehose;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,25 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("streamName", java.lang.String.class);
-        map.put("amazonKinesisFirehoseClient", com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", com.amazonaws.Protocol.class);
-        map.put("region", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(KinesisFirehoseEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -45,8 +27,6 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
         case "amazonKinesisFirehoseClient": target.getConfiguration().setAmazonKinesisFirehoseClient(property(camelContext, com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "proxyhost":
@@ -64,15 +44,28 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonkinesisfirehoseclient":
+        case "amazonKinesisFirehoseClient": return com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -85,8 +78,6 @@ public class KinesisFirehoseEndpointConfigurer extends PropertyConfigurerSupport
         case "amazonKinesisFirehoseClient": return target.getConfiguration().getAmazonKinesisFirehoseClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "proxyhost":

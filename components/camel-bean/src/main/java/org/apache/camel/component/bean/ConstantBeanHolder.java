@@ -51,6 +51,13 @@ public class ConstantBeanHolder implements BeanHolder {
     }
 
     @Override
+    public void setErrorHandler(Processor errorHandler) {
+        for (MethodInfo mi : beanInfo.getMethods()) {
+            mi.setErrorHandler(errorHandler);
+        }
+    }
+
+    @Override
     public Map<String, Object> getOptions() {
         return options;
     }

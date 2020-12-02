@@ -4,9 +4,10 @@ package org.apache.camel.component.workday;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,31 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("entity", org.apache.camel.component.workday.WorkdayConfiguration.Entity.class);
-        map.put("path", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("httpConnectionManager", org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class);
-        map.put("synchronous", boolean.class);
-        map.put("reportFormat", java.lang.String.class);
-        map.put("host", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("clientSecret", java.lang.String.class);
-        map.put("tokenRefresh", java.lang.String.class);
-        map.put("tenant", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WorkdayEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WorkdayEndpoint target = (WorkdayEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientid":
         case "clientId": target.getWorkdayConfiguration().setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -61,23 +41,31 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "host": return java.lang.String.class;
+        case "httpconnectionmanager":
+        case "httpConnectionManager": return org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "reportformat":
+        case "reportFormat": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tenant": return java.lang.String.class;
+        case "tokenrefresh":
+        case "tokenRefresh": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WorkdayEndpoint target = (WorkdayEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientid":
         case "clientId": return target.getWorkdayConfiguration().getClientId();
         case "clientsecret":

@@ -73,21 +73,6 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2SnsComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * Component configuration.
          * 
          * The option is a:
@@ -133,6 +118,37 @@ public interface Aws2SnsComponentBuilderFactory {
         default Aws2SnsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageDeduplicationId
+         * on the message. Can be one of the following options: useExchangeId,
+         * useContentBasedDeduplication. For the useContentBasedDeduplication
+         * option, no messageDeduplicationId will be set on the message.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: useExchangeId
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder messageDeduplicationIdStrategy(
+                java.lang.String messageDeduplicationIdStrategy) {
+            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageGroupId on the
+         * message. Can be one of the following options: useConstant,
+         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
+         * value of property CamelAwsMessageGroupId will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder messageGroupIdStrategy(
+                java.lang.String messageGroupIdStrategy) {
+            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
             return this;
         }
         /**
@@ -273,18 +289,35 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
+         * Group: producer
+         */
+        default Aws2SnsComponentBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Aws2SnsComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2SnsComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -335,10 +368,11 @@ public interface Aws2SnsComponentBuilderFactory {
             switch (name) {
             case "amazonSNSClient": getOrCreateConfiguration((Sns2Component) component).setAmazonSNSClient((software.amazon.awssdk.services.sns.SnsClient) value); return true;
             case "autoCreateTopic": getOrCreateConfiguration((Sns2Component) component).setAutoCreateTopic((boolean) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((Sns2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Sns2Component) component).setConfiguration((org.apache.camel.component.aws2.sns.Sns2Configuration) value); return true;
             case "kmsMasterKeyId": getOrCreateConfiguration((Sns2Component) component).setKmsMasterKeyId((java.lang.String) value); return true;
             case "lazyStartProducer": ((Sns2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "messageDeduplicationIdStrategy": getOrCreateConfiguration((Sns2Component) component).setMessageDeduplicationIdStrategy((java.lang.String) value); return true;
+            case "messageGroupIdStrategy": getOrCreateConfiguration((Sns2Component) component).setMessageGroupIdStrategy((java.lang.String) value); return true;
             case "messageStructure": getOrCreateConfiguration((Sns2Component) component).setMessageStructure((java.lang.String) value); return true;
             case "policy": getOrCreateConfiguration((Sns2Component) component).setPolicy((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((Sns2Component) component).setProxyHost((java.lang.String) value); return true;
@@ -350,7 +384,8 @@ public interface Aws2SnsComponentBuilderFactory {
             case "subject": getOrCreateConfiguration((Sns2Component) component).setSubject((java.lang.String) value); return true;
             case "subscribeSNStoSQS": getOrCreateConfiguration((Sns2Component) component).setSubscribeSNStoSQS((boolean) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Sns2Component) component).setTrustAllCertificates((boolean) value); return true;
-            case "basicPropertyBinding": ((Sns2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "useDefaultCredentialsProvider": getOrCreateConfiguration((Sns2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
+            case "autowiredEnabled": ((Sns2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "accessKey": getOrCreateConfiguration((Sns2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Sns2Component) component).setSecretKey((java.lang.String) value); return true;
             default: return false;

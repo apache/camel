@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a FeedbackCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.call.FeedbackCreator creator(String pathCallSid, Integer qualityScore)", "com.twilio.rest.api.v2010.account.call.FeedbackCreator creator(String pathAccountSid, String pathCallSid, Integer qualityScore)"}), @ApiMethod(methodName = "fetcher", description="Create a FeedbackFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.call.FeedbackFetcher fetcher(String pathCallSid)", "com.twilio.rest.api.v2010.account.call.FeedbackFetcher fetcher(String pathAccountSid, String pathCallSid)"}), @ApiMethod(methodName = "updater", description="Create a FeedbackUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.call.FeedbackUpdater updater(String pathCallSid, Integer qualityScore)", "com.twilio.rest.api.v2010.account.call.FeedbackUpdater updater(String pathAccountSid, String pathCallSid, Integer qualityScore)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class CallFeedbackEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator", description="The unique sid that identifies this account"), @ApiMethod(methodName = "fetcher", description="The unique sid that identifies this account"), @ApiMethod(methodName = "updater", description="The unique sid that identifies this account")})

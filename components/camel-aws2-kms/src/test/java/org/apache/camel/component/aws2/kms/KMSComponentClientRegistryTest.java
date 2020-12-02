@@ -20,7 +20,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -47,19 +46,7 @@ public class KMSComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
-
-        AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
-        context.getRegistry().bind("amazonKmsClient", clientMock);
-        KMS2Component component = context.getComponent("aws2-kms", KMS2Component.class);
-        KMS2Endpoint endpoint = (KMS2Endpoint) component
-                .createEndpoint("aws2-kms://TestDomain?accessKey=xxx&secretKey=yyy&region=eu-west-1&autoDiscoverClient=false");
-
-        assertNotSame(clientMock, endpoint.getConfiguration().getKmsClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
         context.getRegistry().bind("amazonKmsClient", clientMock);

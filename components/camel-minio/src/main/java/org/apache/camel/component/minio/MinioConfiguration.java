@@ -62,6 +62,7 @@ public class MinioConfiguration implements Cloneable {
     @UriParam(label = "common")
     private ServerSideEncryption serverSideEncryption;
     @UriParam(label = "common")
+    @Metadata(autowired = true)
     private MinioClient minioClient;
 
     @UriParam(label = "consumer", defaultValue = "10")

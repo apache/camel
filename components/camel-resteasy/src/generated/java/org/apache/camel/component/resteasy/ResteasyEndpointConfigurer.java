@@ -4,9 +4,10 @@ package org.apache.camel.component.resteasy;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.http.HttpEndpointConfigurer;
 
@@ -15,56 +16,6 @@ import org.apache.camel.component.http.HttpEndpointConfigurer;
  */
 @SuppressWarnings("unchecked")
 public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("httpUri", java.net.URI.class);
-        map.put("chunked", boolean.class);
-        map.put("disableStreamCache", boolean.class);
-        map.put("resteasyMethod", java.lang.String.class);
-        map.put("servletName", java.lang.String.class);
-        map.put("transferException", boolean.class);
-        map.put("async", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("httpMethodRestrict", java.lang.String.class);
-        map.put("matchOnUriPrefix", boolean.class);
-        map.put("muteException", boolean.class);
-        map.put("responseBufferSize", java.lang.Integer.class);
-        map.put("eagerCheckContentAvailable", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("optionsEnabled", boolean.class);
-        map.put("traceEnabled", boolean.class);
-        map.put("bridgeEndpoint", boolean.class);
-        map.put("clearExpiredCookies", boolean.class);
-        map.put("connectionClose", boolean.class);
-        map.put("copyHeaders", boolean.class);
-        map.put("customHostHeader", java.lang.String.class);
-        map.put("httpMethod", org.apache.camel.http.common.HttpMethods.class);
-        map.put("ignoreResponseBody", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("preserveHostHeader", boolean.class);
-        map.put("throwExceptionOnFailure", boolean.class);
-        map.put("cookieHandler", org.apache.camel.http.base.cookie.CookieHandler.class);
-        map.put("deleteWithBody", boolean.class);
-        map.put("getWithBody", boolean.class);
-        map.put("okStatusCodeRange", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("mapHttpMessageBody", boolean.class);
-        map.put("mapHttpMessageFormUrlEncodedBody", boolean.class);
-        map.put("mapHttpMessageHeaders", boolean.class);
-        map.put("setHttpResponseDuringProcessing", java.lang.Boolean.class);
-        map.put("skipServletProcessing", java.lang.Boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("useSystemProperties", boolean.class);
-        map.put("proxyClientClass", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ResteasyEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -108,15 +59,43 @@ public class ResteasyEndpointConfigurer extends HttpEndpointConfigurer implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "async": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "eagercheckcontentavailable":
+        case "eagerCheckContentAvailable": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "httpmethodrestrict":
+        case "httpMethodRestrict": return java.lang.String.class;
+        case "matchonuriprefix":
+        case "matchOnUriPrefix": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
+        case "optionsenabled":
+        case "optionsEnabled": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "proxyclientclass":
+        case "proxyClientClass": return java.lang.String.class;
+        case "responsebuffersize":
+        case "responseBufferSize": return java.lang.Integer.class;
+        case "resteasymethod":
+        case "resteasyMethod": return java.lang.String.class;
+        case "servletname":
+        case "servletName": return java.lang.String.class;
+        case "sethttpresponseduringprocessing":
+        case "setHttpResponseDuringProcessing": return java.lang.Boolean.class;
+        case "skipservletprocessing":
+        case "skipServletProcessing": return java.lang.Boolean.class;
+        case "traceenabled":
+        case "traceEnabled": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return super.getOptionType(name, ignoreCase);
+        }
     }
 
     @Override

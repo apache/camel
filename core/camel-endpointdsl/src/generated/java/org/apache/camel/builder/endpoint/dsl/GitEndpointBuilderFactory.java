@@ -53,61 +53,6 @@ public interface GitEndpointBuilderFactory {
             return this;
         }
         /**
-         * Remote repository password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * The remote repository name to use in particular operation like pull.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointConsumerBuilder remoteName(String remoteName) {
-            doSetProperty("remoteName", remoteName);
-            return this;
-        }
-        /**
-         * The remote repository path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointConsumerBuilder remotePath(String remotePath) {
-            doSetProperty("remotePath", remotePath);
-            return this;
-        }
-        /**
-         * The tag name to work on.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointConsumerBuilder tagName(String tagName) {
-            doSetProperty("tagName", tagName);
-            return this;
-        }
-        /**
-         * Remote repository username.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointConsumerBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
-        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -238,34 +183,6 @@ public interface GitEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -313,61 +230,6 @@ public interface GitEndpointBuilderFactory {
          */
         default GitEndpointProducerBuilder branchName(String branchName) {
             doSetProperty("branchName", branchName);
-            return this;
-        }
-        /**
-         * Remote repository password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * The remote repository name to use in particular operation like pull.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointProducerBuilder remoteName(String remoteName) {
-            doSetProperty("remoteName", remoteName);
-            return this;
-        }
-        /**
-         * The remote repository path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointProducerBuilder remotePath(String remotePath) {
-            doSetProperty("remotePath", remotePath);
-            return this;
-        }
-        /**
-         * The tag name to work on.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointProducerBuilder tagName(String tagName) {
-            doSetProperty("tagName", tagName);
-            return this;
-        }
-        /**
-         * Remote repository username.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointProducerBuilder username(String username) {
-            doSetProperty("username", username);
             return this;
         }
         /**
@@ -447,6 +309,61 @@ public interface GitEndpointBuilderFactory {
             doSetProperty("operation", operation);
             return this;
         }
+        /**
+         * Remote repository password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default GitEndpointProducerBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * The remote repository name to use in particular operation like pull.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default GitEndpointProducerBuilder remoteName(String remoteName) {
+            doSetProperty("remoteName", remoteName);
+            return this;
+        }
+        /**
+         * The remote repository path.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default GitEndpointProducerBuilder remotePath(String remotePath) {
+            doSetProperty("remotePath", remotePath);
+            return this;
+        }
+        /**
+         * The tag name to work on.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default GitEndpointProducerBuilder tagName(String tagName) {
+            doSetProperty("tagName", tagName);
+            return this;
+        }
+        /**
+         * Remote repository username.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default GitEndpointProducerBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     /**
@@ -457,34 +374,6 @@ public interface GitEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default GitEndpointProducerBuilder basic() {
             return (GitEndpointProducerBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel
@@ -537,61 +426,6 @@ public interface GitEndpointBuilderFactory {
             doSetProperty("branchName", branchName);
             return this;
         }
-        /**
-         * Remote repository password.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * The remote repository name to use in particular operation like pull.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointBuilder remoteName(String remoteName) {
-            doSetProperty("remoteName", remoteName);
-            return this;
-        }
-        /**
-         * The remote repository path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointBuilder remotePath(String remotePath) {
-            doSetProperty("remotePath", remotePath);
-            return this;
-        }
-        /**
-         * The tag name to work on.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointBuilder tagName(String tagName) {
-            doSetProperty("tagName", tagName);
-            return this;
-        }
-        /**
-         * Remote repository username.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitEndpointBuilder username(String username) {
-            doSetProperty("username", username);
-            return this;
-        }
     }
 
     /**
@@ -603,34 +437,6 @@ public interface GitEndpointBuilderFactory {
                 AdvancedGitEndpointProducerBuilder {
         default GitEndpointBuilder basic() {
             return (GitEndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGitEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel

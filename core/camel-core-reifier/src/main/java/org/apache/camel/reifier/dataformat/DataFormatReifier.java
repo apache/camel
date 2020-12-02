@@ -83,14 +83,9 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
     private static final Logger LOG = LoggerFactory.getLogger(DataFormatReifier.class);
 
-    private static final Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS;
-    static {
-        // for custom reifiers
-        Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> map
-                = new HashMap<>(0);
-        DATAFORMATS = map;
-        ReifierStrategy.addReifierClearer(DataFormatReifier::clearReifiers);
-    }
+    // for custom reifiers
+    private static final Map<Class<? extends DataFormatDefinition>, BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>>> DATAFORMATS
+            = new HashMap<>(0);
 
     protected final T definition;
 
@@ -102,6 +97,9 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     public static void registerReifier(
             Class<? extends DataFormatDefinition> dataFormatClass,
             BiFunction<CamelContext, DataFormatDefinition, DataFormatReifier<? extends DataFormatDefinition>> creator) {
+        if (DATAFORMATS.isEmpty()) {
+            ReifierStrategy.addReifierClearer(DataFormatReifier::clearReifiers);
+        }
         DATAFORMATS.put(dataFormatClass, creator);
     }
 
@@ -174,6 +172,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         return answer;
     }
 
+    // CHECKSTYLE:OFF
     private static DataFormatReifier<? extends DataFormatDefinition> coreReifier(
             CamelContext camelContext, DataFormatDefinition definition) {
         if (definition instanceof Any23DataFormat) {
@@ -263,6 +262,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         }
         return null;
     }
+    // CHECKSTYLE:ON
 
     public DataFormat createDataFormat() {
         DataFormat dataFormat = definition.getDataFormat();

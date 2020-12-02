@@ -257,6 +257,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
+    public void disposeModel() {
+        // noop
+    }
+
+    @Override
     public boolean isStarted() {
         return false;
     }
@@ -451,6 +456,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Boolean isAutowiredEnabled() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setAutowiredEnabled(Boolean autowiredEnabled) {
         throw new UnsupportedOperationException();
     }
 

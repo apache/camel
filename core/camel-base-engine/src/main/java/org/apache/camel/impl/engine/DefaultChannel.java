@@ -188,7 +188,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 addAdvice(new DebuggerAdvice(debugger, nextProcessor, targetOutputDef));
             } else {
                 // use backlog debugger
-                BacklogDebugger debugger = getOrCreateBacklogDebugger();
+                BacklogDebugger debugger = getOrCreateBacklogDebugger(camelContext);
                 camelContext.addService(debugger);
                 addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
             }
@@ -196,7 +196,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
 
         if (route.isBacklogTracing()) {
             // add jmx backlog tracer
-            BacklogTracer backlogTracer = getOrCreateBacklogTracer();
+            BacklogTracer backlogTracer = getOrCreateBacklogTracer(camelContext);
             addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, routeDefinition, first));
         }
         if (route.isTracing()) {
@@ -267,7 +267,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         }
     }
 
-    private BacklogTracer getOrCreateBacklogTracer() {
+    private static BacklogTracer getOrCreateBacklogTracer(CamelContext camelContext) {
         BacklogTracer tracer = null;
         if (camelContext.getRegistry() != null) {
             // lookup in registry
@@ -286,7 +286,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         return tracer;
     }
 
-    private BacklogDebugger getOrCreateBacklogDebugger() {
+    private static BacklogDebugger getOrCreateBacklogDebugger(CamelContext camelContext) {
         BacklogDebugger debugger = null;
         if (camelContext.getRegistry() != null) {
             // lookup in registry

@@ -20,7 +20,7 @@ public class BoxEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(92);
+        Set<String> props = new HashSet<>(91);
         props.add("apiName");
         props.add("fileName");
         props.add("metadata");
@@ -75,7 +75,6 @@ public class BoxEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("memberViewabilityLevel");
         props.add("assignTo");
         props.add("fileId");
-        props.add("basicPropertyBinding");
         props.add("userPassword");
         props.add("role");
         props.add("access");

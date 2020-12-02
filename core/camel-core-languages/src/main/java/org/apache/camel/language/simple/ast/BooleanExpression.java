@@ -51,4 +51,9 @@ public class BooleanExpression extends BaseSimpleNode {
             }
         };
     }
+
+    @Override
+    public String createCode(String expression) throws SimpleParserException {
+        return value ? "true" : "false";
+    }
 }

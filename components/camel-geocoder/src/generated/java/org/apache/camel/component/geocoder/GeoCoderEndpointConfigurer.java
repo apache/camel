@@ -4,9 +4,10 @@ package org.apache.camel.component.geocoder;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,40 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("address", java.lang.String.class);
-        map.put("latlng", java.lang.String.class);
-        map.put("headersOnly", boolean.class);
-        map.put("language", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("serverUrl", java.lang.String.class);
-        map.put("type", org.apache.camel.component.geocoder.GeoCoderType.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("proxyAuthDomain", java.lang.String.class);
-        map.put("proxyAuthHost", java.lang.String.class);
-        map.put("proxyAuthMethod", java.lang.String.class);
-        map.put("proxyAuthPassword", java.lang.String.class);
-        map.put("proxyAuthUsername", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("apiKey", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("clientKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GeoCoderEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GeoCoderEndpoint target = (GeoCoderEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clientid":
         case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientkey":
@@ -82,15 +55,39 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apikey":
+        case "apiKey": return java.lang.String.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientkey":
+        case "clientKey": return java.lang.String.class;
+        case "headersonly":
+        case "headersOnly": return boolean.class;
+        case "language": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "proxyauthdomain":
+        case "proxyAuthDomain": return java.lang.String.class;
+        case "proxyauthhost":
+        case "proxyAuthHost": return java.lang.String.class;
+        case "proxyauthmethod":
+        case "proxyAuthMethod": return java.lang.String.class;
+        case "proxyauthpassword":
+        case "proxyAuthPassword": return java.lang.String.class;
+        case "proxyauthusername":
+        case "proxyAuthUsername": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "serverurl":
+        case "serverUrl": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "type": return org.apache.camel.component.geocoder.GeoCoderType.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -99,8 +96,6 @@ public class GeoCoderEndpointConfigurer extends PropertyConfigurerSupport implem
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return target.getApiKey();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clientid":
         case "clientId": return target.getClientId();
         case "clientkey":

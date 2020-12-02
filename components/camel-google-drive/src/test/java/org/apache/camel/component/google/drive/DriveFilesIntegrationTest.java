@@ -133,7 +133,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
         result = requestBodyAndHeaders("direct://LIST", null, headers);
         assertNotNull(result, "list result");
-        assertTrue(result.getItems().size() == 1);
+        assertEquals(1, result.getItems().size());
 
         // test paging the list
         List<File> resultList = new ArrayList<>();
@@ -150,7 +150,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         } while (pageToken != null && pageToken.length() > 0 && i < 2);
 
         // we should have 2 files in result (one file for each of the 2 pages)
-        assertTrue(resultList.size() == 2);
+        assertEquals(2, resultList.size());
         // they should be different files
         assertFalse(resultList.get(0).getId().equals(resultList.get(1)));
     }

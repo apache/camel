@@ -4,9 +4,10 @@ package org.apache.camel.component.aws2.s3;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,55 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("amazonS3Client", software.amazon.awssdk.services.s3.S3Client.class);
-        map.put("autoCreateBucket", boolean.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("configuration", org.apache.camel.component.aws2.s3.AWS2S3Configuration.class);
-        map.put("overrideEndpoint", boolean.class);
-        map.put("pojoRequest", boolean.class);
-        map.put("policy", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        map.put("region", java.lang.String.class);
-        map.put("trustAllCertificates", boolean.class);
-        map.put("uriEndpointOverride", java.lang.String.class);
-        map.put("useIAMCredentials", boolean.class);
-        map.put("customerAlgorithm", java.lang.String.class);
-        map.put("customerKeyId", java.lang.String.class);
-        map.put("customerKeyMD5", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("deleteAfterRead", boolean.class);
-        map.put("delimiter", java.lang.String.class);
-        map.put("destinationBucket", java.lang.String.class);
-        map.put("destinationBucketPrefix", java.lang.String.class);
-        map.put("destinationBucketSuffix", java.lang.String.class);
-        map.put("fileName", java.lang.String.class);
-        map.put("includeBody", boolean.class);
-        map.put("includeFolders", boolean.class);
-        map.put("moveAfterRead", boolean.class);
-        map.put("prefix", java.lang.String.class);
-        map.put("autocloseBody", boolean.class);
-        map.put("deleteAfterWrite", boolean.class);
-        map.put("keyName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("multiPartUpload", boolean.class);
-        map.put("operation", org.apache.camel.component.aws2.s3.AWS2S3Operations.class);
-        map.put("partSize", long.class);
-        map.put("storageClass", java.lang.String.class);
-        map.put("awsKMSKeyId", java.lang.String.class);
-        map.put("useAwsKMS", boolean.class);
-        map.put("useCustomerKey", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(AWS2S3ComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.aws2.s3.AWS2S3Configuration getOrCreateConfiguration(AWS2S3Component target) {
         if (target.getConfiguration() == null) {
@@ -80,16 +32,16 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": getOrCreateConfiguration(target).setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazons3client":
         case "amazonS3Client": getOrCreateConfiguration(target).setAmazonS3Client(property(camelContext, software.amazon.awssdk.services.s3.S3Client.class, value)); return true;
+        case "amazons3presigner":
+        case "amazonS3Presigner": getOrCreateConfiguration(target).setAmazonS3Presigner(property(camelContext, software.amazon.awssdk.services.s3.presigner.S3Presigner.class, value)); return true;
         case "autocreatebucket":
         case "autoCreateBucket": getOrCreateConfiguration(target).setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
         case "autoclosebody":
         case "autocloseBody": getOrCreateConfiguration(target).setAutocloseBody(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "awskmskeyid":
         case "awsKMSKeyId": getOrCreateConfiguration(target).setAwsKMSKeyId(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws2.s3.AWS2S3Configuration.class, value)); return true;
@@ -152,22 +104,100 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useAwsKMS": getOrCreateConfiguration(target).setUseAwsKMS(property(camelContext, boolean.class, value)); return true;
         case "usecustomerkey":
         case "useCustomerKey": getOrCreateConfiguration(target).setUseCustomerKey(property(camelContext, boolean.class, value)); return true;
-        case "useiamcredentials":
-        case "useIAMCredentials": getOrCreateConfiguration(target).setUseIAMCredentials(property(camelContext, boolean.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonS3Client","amazonS3Presigner"};
     }
 
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazons3client":
+        case "amazonS3Client": return software.amazon.awssdk.services.s3.S3Client.class;
+        case "amazons3presigner":
+        case "amazonS3Presigner": return software.amazon.awssdk.services.s3.presigner.S3Presigner.class;
+        case "autocreatebucket":
+        case "autoCreateBucket": return boolean.class;
+        case "autoclosebody":
+        case "autocloseBody": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "awskmskeyid":
+        case "awsKMSKeyId": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws2.s3.AWS2S3Configuration.class;
+        case "customeralgorithm":
+        case "customerAlgorithm": return java.lang.String.class;
+        case "customerkeyid":
+        case "customerKeyId": return java.lang.String.class;
+        case "customerkeymd5":
+        case "customerKeyMD5": return java.lang.String.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "deleteafterwrite":
+        case "deleteAfterWrite": return boolean.class;
+        case "delimiter": return java.lang.String.class;
+        case "destinationbucket":
+        case "destinationBucket": return java.lang.String.class;
+        case "destinationbucketprefix":
+        case "destinationBucketPrefix": return java.lang.String.class;
+        case "destinationbucketsuffix":
+        case "destinationBucketSuffix": return java.lang.String.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "includebody":
+        case "includeBody": return boolean.class;
+        case "includefolders":
+        case "includeFolders": return boolean.class;
+        case "keyname":
+        case "keyName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "moveafterread":
+        case "moveAfterRead": return boolean.class;
+        case "multipartupload":
+        case "multiPartUpload": return boolean.class;
+        case "operation": return org.apache.camel.component.aws2.s3.AWS2S3Operations.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
+        case "partsize":
+        case "partSize": return long.class;
+        case "pojorequest":
+        case "pojoRequest": return boolean.class;
+        case "policy": return java.lang.String.class;
+        case "prefix": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "storageclass":
+        case "storageClass": return java.lang.String.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
+        case "useawskms":
+        case "useAwsKMS": return boolean.class;
+        case "usecustomerkey":
+        case "useCustomerKey": return boolean.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -178,16 +208,16 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "accessKey": return getOrCreateConfiguration(target).getAccessKey();
         case "amazons3client":
         case "amazonS3Client": return getOrCreateConfiguration(target).getAmazonS3Client();
+        case "amazons3presigner":
+        case "amazonS3Presigner": return getOrCreateConfiguration(target).getAmazonS3Presigner();
         case "autocreatebucket":
         case "autoCreateBucket": return getOrCreateConfiguration(target).isAutoCreateBucket();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
         case "autoclosebody":
         case "autocloseBody": return getOrCreateConfiguration(target).isAutocloseBody();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "awskmskeyid":
         case "awsKMSKeyId": return getOrCreateConfiguration(target).getAwsKMSKeyId();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
@@ -250,8 +280,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useAwsKMS": return getOrCreateConfiguration(target).isUseAwsKMS();
         case "usecustomerkey":
         case "useCustomerKey": return getOrCreateConfiguration(target).isUseCustomerKey();
-        case "useiamcredentials":
-        case "useIAMCredentials": return getOrCreateConfiguration(target).isUseIAMCredentials();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         default: return null;
         }
     }

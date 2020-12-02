@@ -4,9 +4,10 @@ package org.apache.camel.component.timer;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,34 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class TimerEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("timerName", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("delay", long.class);
-        map.put("fixedRate", boolean.class);
-        map.put("includeMetadata", boolean.class);
-        map.put("period", long.class);
-        map.put("repeatCount", long.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("daemon", boolean.class);
-        map.put("pattern", java.lang.String.class);
-        map.put("synchronous", boolean.class);
-        map.put("time", java.util.Date.class);
-        map.put("timer", java.util.Timer.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(TimerEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         TimerEndpoint target = (TimerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "daemon": target.setDaemon(property(camelContext, boolean.class, value)); return true;
@@ -68,23 +45,35 @@ public class TimerEndpointConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "daemon": return boolean.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "fixedrate":
+        case "fixedRate": return boolean.class;
+        case "includemetadata":
+        case "includeMetadata": return boolean.class;
+        case "pattern": return java.lang.String.class;
+        case "period": return long.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "synchronous": return boolean.class;
+        case "time": return java.util.Date.class;
+        case "timer": return java.util.Timer.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         TimerEndpoint target = (TimerEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "daemon": return target.isDaemon();

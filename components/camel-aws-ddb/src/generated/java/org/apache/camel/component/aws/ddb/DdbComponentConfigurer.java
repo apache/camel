@@ -4,9 +4,10 @@ package org.apache.camel.component.aws.ddb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,30 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class DdbComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("amazonDDBClient", com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("configuration", org.apache.camel.component.aws.ddb.DdbConfiguration.class);
-        map.put("consistentRead", boolean.class);
-        map.put("keyAttributeName", java.lang.String.class);
-        map.put("keyAttributeType", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.aws.ddb.DdbOperations.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", com.amazonaws.Protocol.class);
-        map.put("readCapacity", java.lang.Long.class);
-        map.put("region", java.lang.String.class);
-        map.put("writeCapacity", java.lang.Long.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DdbComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.aws.ddb.DdbConfiguration getOrCreateConfiguration(DdbComponent target) {
         if (target.getConfiguration() == null) {
@@ -57,8 +34,8 @@ public class DdbComponentConfigurer extends PropertyConfigurerSupport implements
         case "amazonDDBClient": getOrCreateConfiguration(target).setAmazonDDBClient(property(camelContext, com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.ddb.DdbConfiguration.class, value)); return true;
         case "consistentread":
         case "consistentRead": getOrCreateConfiguration(target).setConsistentRead(property(camelContext, boolean.class, value)); return true;
@@ -87,15 +64,41 @@ public class DdbComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonddbclient":
+        case "amazonDDBClient": return com.amazonaws.services.dynamodbv2.AmazonDynamoDB.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws.ddb.DdbConfiguration.class;
+        case "consistentread":
+        case "consistentRead": return boolean.class;
+        case "keyattributename":
+        case "keyAttributeName": return java.lang.String.class;
+        case "keyattributetype":
+        case "keyAttributeType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.aws.ddb.DdbOperations.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "readcapacity":
+        case "readCapacity": return java.lang.Long.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "writecapacity":
+        case "writeCapacity": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -108,8 +111,8 @@ public class DdbComponentConfigurer extends PropertyConfigurerSupport implements
         case "amazonDDBClient": return getOrCreateConfiguration(target).getAmazonDDBClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "consistentread":
         case "consistentRead": return getOrCreateConfiguration(target).isConsistentRead();

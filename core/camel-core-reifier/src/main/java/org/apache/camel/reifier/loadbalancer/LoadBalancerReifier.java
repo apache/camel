@@ -36,20 +36,24 @@ import org.apache.camel.util.StringHelper;
 
 public class LoadBalancerReifier<T extends LoadBalancerDefinition> extends AbstractReifier {
 
-    private static final Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> LOAD_BALANCERS;
-    static {
-        // for custom reifiers
-        Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> map
-                = new HashMap<>(0);
-        LOAD_BALANCERS = map;
-        ReifierStrategy.addReifierClearer(LoadBalancerReifier::clearReifiers);
-    }
+    // for custom reifiers
+    private static final Map<Class<?>, BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>>> LOAD_BALANCERS
+            = new HashMap<>(0);
 
     protected final T definition;
 
     public LoadBalancerReifier(Route route, T definition) {
         super(route);
         this.definition = definition;
+    }
+
+    public static void registerReifier(
+            Class<?> processorClass,
+            BiFunction<Route, LoadBalancerDefinition, LoadBalancerReifier<? extends LoadBalancerDefinition>> creator) {
+        if (LOAD_BALANCERS.isEmpty()) {
+            ReifierStrategy.addReifierClearer(LoadBalancerReifier::clearReifiers);
+        }
+        LOAD_BALANCERS.put(processorClass, creator);
     }
 
     public static LoadBalancerReifier<? extends LoadBalancerDefinition> reifier(

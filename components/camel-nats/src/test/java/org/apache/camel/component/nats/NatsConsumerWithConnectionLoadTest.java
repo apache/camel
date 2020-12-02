@@ -39,7 +39,7 @@ public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
     @BindToRegistry("connection")
     public Connection connection() throws Exception {
         Builder options = new Options.Builder();
-        options.server("nats://" + getNatsBrokerUrl());
+        options.server("nats://" + service.getServiceAddress());
         connection = Nats.connect(options.build());
         return connection;
     }
@@ -48,7 +48,7 @@ public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
     public void testLoadConsumer() throws Exception {
         mockResultEndpoint.setExpectedMessageCount(100);
         mockResultEndpoint1.setExpectedMessageCount(0);
-        Options options = new Options.Builder().server("nats://" + getNatsBrokerUrl()).build();
+        Options options = new Options.Builder().server("nats://" + service.getServiceAddress()).build();
         Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 100; i++) {

@@ -4,9 +4,10 @@ package org.apache.camel.component.ssh;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,30 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SshComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("failOnUnknownHost", boolean.class);
-        map.put("knownHostsResource", java.lang.String.class);
-        map.put("timeout", long.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("pollCommand", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("channelType", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.ssh.SshConfiguration.class);
-        map.put("shellPrompt", java.lang.String.class);
-        map.put("sleepForShellPrompt", long.class);
-        map.put("certResource", java.lang.String.class);
-        map.put("certResourcePassword", java.lang.String.class);
-        map.put("keyPairProvider", org.apache.sshd.common.keyprovider.KeyPairProvider.class);
-        map.put("keyType", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SshComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.ssh.SshConfiguration getOrCreateConfiguration(SshComponent target) {
         if (target.getConfiguration() == null) {
@@ -51,8 +28,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SshComponent target = (SshComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "certresource":
@@ -86,23 +63,48 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "certresource":
+        case "certResource": return java.lang.String.class;
+        case "certresourcepassword":
+        case "certResourcePassword": return java.lang.String.class;
+        case "channeltype":
+        case "channelType": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.ssh.SshConfiguration.class;
+        case "failonunknownhost":
+        case "failOnUnknownHost": return boolean.class;
+        case "keypairprovider":
+        case "keyPairProvider": return org.apache.sshd.common.keyprovider.KeyPairProvider.class;
+        case "keytype":
+        case "keyType": return java.lang.String.class;
+        case "knownhostsresource":
+        case "knownHostsResource": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "pollcommand":
+        case "pollCommand": return java.lang.String.class;
+        case "shellprompt":
+        case "shellPrompt": return java.lang.String.class;
+        case "sleepforshellprompt":
+        case "sleepForShellPrompt": return long.class;
+        case "timeout": return long.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SshComponent target = (SshComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "certresource":

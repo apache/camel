@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -57,19 +56,7 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverFalse() throws Exception {
-        CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
-        context.getRegistry().bind("amazonCwClient", cloudWatchClient);
-        Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
-        Cw2Endpoint endpoint = (Cw2Endpoint) component
-                .createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
-        assertNotSame(cloudWatchClient, endpoint.getConfiguration().getAmazonCwClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
         CloudWatchClient cloudWatchClient = new CloudWatchClientMock();
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);

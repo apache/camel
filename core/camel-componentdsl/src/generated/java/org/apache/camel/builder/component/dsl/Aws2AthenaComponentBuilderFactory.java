@@ -74,21 +74,6 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Aws2AthenaComponentBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * The component configuration.
          * 
          * The option is a:
@@ -436,18 +421,21 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Aws2AthenaComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Aws2AthenaComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -489,7 +477,6 @@ public interface Aws2AthenaComponentBuilderFactory {
             switch (name) {
             case "accessKey": getOrCreateConfiguration((Athena2Component) component).setAccessKey((java.lang.String) value); return true;
             case "amazonAthenaClient": getOrCreateConfiguration((Athena2Component) component).setAmazonAthenaClient((software.amazon.awssdk.services.athena.AthenaClient) value); return true;
-            case "autoDiscoverClient": getOrCreateConfiguration((Athena2Component) component).setAutoDiscoverClient((boolean) value); return true;
             case "configuration": ((Athena2Component) component).setConfiguration((org.apache.camel.component.aws2.athena.Athena2Configuration) value); return true;
             case "database": getOrCreateConfiguration((Athena2Component) component).setDatabase((java.lang.String) value); return true;
             case "delay": getOrCreateConfiguration((Athena2Component) component).setDelay((long) value); return true;
@@ -515,7 +502,7 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "secretKey": getOrCreateConfiguration((Athena2Component) component).setSecretKey((java.lang.String) value); return true;
             case "waitTimeout": getOrCreateConfiguration((Athena2Component) component).setWaitTimeout((long) value); return true;
             case "workGroup": getOrCreateConfiguration((Athena2Component) component).setWorkGroup((java.lang.String) value); return true;
-            case "basicPropertyBinding": ((Athena2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Athena2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "clientRequestToken": getOrCreateConfiguration((Athena2Component) component).setClientRequestToken((java.lang.String) value); return true;
             default: return false;
             }

@@ -229,18 +229,21 @@ public interface CaffeineLoadcacheComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default CaffeineLoadcacheComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default CaffeineLoadcacheComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -317,7 +320,7 @@ public interface CaffeineLoadcacheComponentBuilderFactory {
             case "removalListener": getOrCreateConfiguration((CaffeineLoadCacheComponent) component).setRemovalListener((com.github.benmanes.caffeine.cache.RemovalListener) value); return true;
             case "statsCounter": getOrCreateConfiguration((CaffeineLoadCacheComponent) component).setStatsCounter((com.github.benmanes.caffeine.cache.stats.StatsCounter) value); return true;
             case "statsEnabled": getOrCreateConfiguration((CaffeineLoadCacheComponent) component).setStatsEnabled((boolean) value); return true;
-            case "basicPropertyBinding": ((CaffeineLoadCacheComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((CaffeineLoadCacheComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "configuration": ((CaffeineLoadCacheComponent) component).setConfiguration((org.apache.camel.component.caffeine.CaffeineConfiguration) value); return true;
             case "keyType": getOrCreateConfiguration((CaffeineLoadCacheComponent) component).setKeyType((java.lang.String) value); return true;
             case "valueType": getOrCreateConfiguration((CaffeineLoadCacheComponent) component).setValueType((java.lang.String) value); return true;

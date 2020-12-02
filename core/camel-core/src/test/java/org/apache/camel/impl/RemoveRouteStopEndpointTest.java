@@ -35,25 +35,25 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(((ServiceSupport) seda).isStarted(), "Should be started");
         assertTrue(((ServiceSupport) log).isStarted(), "Should be started");
 
-        assertTrue(context.hasEndpoint("seda:foo") != null);
-        assertTrue(context.hasEndpoint("seda:bar") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertTrue(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
-        assertTrue(context.hasEndpoint("seda://stop") != null);
-        assertTrue(context.hasEndpoint("mock://stop") != null);
+        assertNotNull(context.hasEndpoint("seda:foo"));
+        assertNotNull(context.hasEndpoint("seda:bar"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNotNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
+        assertNotNull(context.hasEndpoint("seda://stop"));
+        assertNotNull(context.hasEndpoint("mock://stop"));
 
         // stop and remove bar route
         context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
-        assertTrue(context.hasEndpoint("seda://foo") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertFalse(context.hasEndpoint("seda://bar") != null);
-        assertFalse(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
-        assertTrue(context.hasEndpoint("seda://stop") != null);
-        assertTrue(context.hasEndpoint("mock://stop") != null);
+        assertNotNull(context.hasEndpoint("seda://foo"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNull(context.hasEndpoint("seda://bar"));
+        assertNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
+        assertNotNull(context.hasEndpoint("seda://stop"));
+        assertNotNull(context.hasEndpoint("mock://stop"));
 
         assertTrue(((ServiceSupport) seda).isStarted(), "Should be started");
         assertTrue(((ServiceSupport) log).isStopped(), "Should be stopped");
@@ -62,24 +62,24 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         context.getRouteController().stopRoute("baz");
         context.removeRoute("baz");
 
-        assertTrue(context.hasEndpoint("seda://foo") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertFalse(context.hasEndpoint("seda://bar") != null);
-        assertFalse(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
-        assertFalse(context.hasEndpoint("seda://stop") != null);
-        assertFalse(context.hasEndpoint("mock://stop") != null);
+        assertNotNull(context.hasEndpoint("seda://foo"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNull(context.hasEndpoint("seda://bar"));
+        assertNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
+        assertNull(context.hasEndpoint("seda://stop"));
+        assertNull(context.hasEndpoint("mock://stop"));
         // stop and remove foo route
         context.getRouteController().stopRoute("foo");
         context.removeRoute("foo");
 
-        assertFalse(context.hasEndpoint("seda://foo") != null);
-        assertFalse(context.hasEndpoint("log://foo") != null);
-        assertFalse(context.hasEndpoint("seda://bar") != null);
-        assertFalse(context.hasEndpoint("log://bar") != null);
-        assertFalse(context.hasEndpoint("mock://result") != null);
-        assertFalse(context.hasEndpoint("seda://stop") != null);
-        assertFalse(context.hasEndpoint("mock://stop") != null);
+        assertNull(context.hasEndpoint("seda://foo"));
+        assertNull(context.hasEndpoint("log://foo"));
+        assertNull(context.hasEndpoint("seda://bar"));
+        assertNull(context.hasEndpoint("log://bar"));
+        assertNull(context.hasEndpoint("mock://result"));
+        assertNull(context.hasEndpoint("seda://stop"));
+        assertNull(context.hasEndpoint("mock://stop"));
 
         assertFalse(((ServiceSupport) seda).isStarted(), "Should not be started");
         assertFalse(((ServiceSupport) log).isStarted(), "Should not be started");
@@ -94,13 +94,13 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(((ServiceSupport) seda).isStarted(), "Should be started");
         assertTrue(((ServiceSupport) log).isStarted(), "Should be started");
 
-        assertTrue(context.hasEndpoint("seda://foo") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertTrue(context.hasEndpoint("seda://bar") != null);
-        assertTrue(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
-        assertTrue(context.hasEndpoint("seda://stop") != null);
-        assertTrue(context.hasEndpoint("mock://stop") != null);
+        assertNotNull(context.hasEndpoint("seda://foo"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNotNull(context.hasEndpoint("seda://bar"));
+        assertNotNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
+        assertNotNull(context.hasEndpoint("seda://stop"));
+        assertNotNull(context.hasEndpoint("mock://stop"));
 
         // stop and remove bar route
         context.getRouteController().stopRoute("bar");
@@ -109,25 +109,25 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(((ServiceSupport) seda).isStarted(), "Should be started");
         assertTrue(((ServiceSupport) log).isStopped(), "Should be stopped");
 
-        assertTrue(context.hasEndpoint("seda:foo") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertFalse(context.hasEndpoint("seda://bar") != null);
-        assertFalse(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
-        assertTrue(context.hasEndpoint("seda://stop") != null);
-        assertTrue(context.hasEndpoint("mock://stop") != null);
+        assertNotNull(context.hasEndpoint("seda:foo"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNull(context.hasEndpoint("seda://bar"));
+        assertNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
+        assertNotNull(context.hasEndpoint("seda://stop"));
+        assertNotNull(context.hasEndpoint("mock://stop"));
 
         // stop and remove baz route
         context.getRouteController().stopRoute("baz");
         context.removeRoute("baz");
 
-        assertTrue(context.hasEndpoint("seda://foo") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertFalse(context.hasEndpoint("seda://bar") != null);
-        assertFalse(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
-        assertFalse(context.hasEndpoint("seda://stop") != null);
-        assertFalse(context.hasEndpoint("mock://stop") != null);
+        assertNotNull(context.hasEndpoint("seda://foo"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNull(context.hasEndpoint("seda://bar"));
+        assertNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
+        assertNull(context.hasEndpoint("seda://stop"));
+        assertNull(context.hasEndpoint("mock://stop"));
 
         // stop camel which should stop the endpoint
 

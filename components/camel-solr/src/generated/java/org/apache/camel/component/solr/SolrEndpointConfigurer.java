@@ -4,9 +4,10 @@ package org.apache.camel.component.solr;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,39 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("url", java.lang.String.class);
-        map.put("allowCompression", java.lang.Boolean.class);
-        map.put("connectionTimeout", java.lang.Integer.class);
-        map.put("defaultMaxConnectionsPerHost", java.lang.Integer.class);
-        map.put("followRedirects", java.lang.Boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("maxRetries", java.lang.Integer.class);
-        map.put("maxTotalConnections", java.lang.Integer.class);
-        map.put("requestHandler", java.lang.String.class);
-        map.put("soTimeout", java.lang.Integer.class);
-        map.put("streamingQueueSize", int.class);
-        map.put("streamingThreadCount", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        map.put("collection", java.lang.String.class);
-        map.put("zkHost", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SolrEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SolrEndpoint target = (SolrEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcompression":
         case "allowCompression": target.setAllowCompression(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "collection": target.setCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.setConnectionTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -80,15 +54,38 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcompression":
+        case "allowCompression": return java.lang.Boolean.class;
+        case "collection": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return java.lang.Integer.class;
+        case "defaultmaxconnectionsperhost":
+        case "defaultMaxConnectionsPerHost": return java.lang.Integer.class;
+        case "followredirects":
+        case "followRedirects": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxretries":
+        case "maxRetries": return java.lang.Integer.class;
+        case "maxtotalconnections":
+        case "maxTotalConnections": return java.lang.Integer.class;
+        case "password": return java.lang.String.class;
+        case "requesthandler":
+        case "requestHandler": return java.lang.String.class;
+        case "sotimeout":
+        case "soTimeout": return java.lang.Integer.class;
+        case "streamingqueuesize":
+        case "streamingQueueSize": return int.class;
+        case "streamingthreadcount":
+        case "streamingThreadCount": return int.class;
+        case "synchronous": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "zkhost":
+        case "zkHost": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -97,8 +94,6 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowcompression":
         case "allowCompression": return target.getAllowCompression();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "collection": return target.getCollection();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConnectionTimeout();

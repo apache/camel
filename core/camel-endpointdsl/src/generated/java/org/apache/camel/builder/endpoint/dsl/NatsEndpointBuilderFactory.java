@@ -619,34 +619,6 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Reference an already instantiated connection to Nats server.
          * 
          * The option is a: <code>io.nats.client.Connection</code> type.
@@ -695,6 +667,34 @@ public interface NatsEndpointBuilderFactory {
         default AdvancedNatsEndpointConsumerBuilder synchronous(
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointConsumerBuilder traceConnection(
+                boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointConsumerBuilder traceConnection(
+                String traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
             return this;
         }
     }
@@ -1171,34 +1171,6 @@ public interface NatsEndpointBuilderFactory {
             return (NatsEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Reference an already instantiated connection to Nats server.
          * 
          * The option is a: <code>io.nats.client.Connection</code> type.
@@ -1247,6 +1219,34 @@ public interface NatsEndpointBuilderFactory {
         default AdvancedNatsEndpointProducerBuilder synchronous(
                 String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointProducerBuilder traceConnection(
+                boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointProducerBuilder traceConnection(
+                String traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
             return this;
         }
     }
@@ -1665,34 +1665,6 @@ public interface NatsEndpointBuilderFactory {
             return (NatsEndpointBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedNatsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Reference an already instantiated connection to Nats server.
          * 
          * The option is a: <code>io.nats.client.Connection</code> type.
@@ -1739,6 +1711,34 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointBuilder traceConnection(
+                boolean traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
+            return this;
+        }
+        /**
+         * Whether or not connection trace messages should be printed to
+         * standard out for fine grained debugging of connection issues.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointBuilder traceConnection(
+                String traceConnection) {
+            doSetProperty("traceConnection", traceConnection);
             return this;
         }
     }

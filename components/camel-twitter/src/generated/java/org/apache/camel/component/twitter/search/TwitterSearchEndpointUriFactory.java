@@ -20,8 +20,7 @@ public class TwitterSearchEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(45);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(44);
         props.add("backoffMultiplier");
         props.add("keywords");
         props.add("synchronous");

@@ -21,13 +21,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.model.errorhandler.DefaultErrorHandlerConfiguration;
+import org.apache.camel.model.errorhandler.DefaultErrorHandlerProperties;
 import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
-import org.apache.camel.processor.errorhandler.ExceptionPolicyStrategy;
+import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
 
-public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerConfiguration> extends ErrorHandlerReifier<T> {
+public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerProperties> extends ErrorHandlerReifier<T> {
 
     public DefaultErrorHandlerReifier(Route route, ErrorHandlerFactory definition) {
         super(route, (T) definition);
@@ -35,12 +36,15 @@ public class DefaultErrorHandlerReifier<T extends DefaultErrorHandlerConfigurati
 
     @Override
     public Processor createErrorHandler(Processor processor) throws Exception {
+        // optimize to use shared default instance if using out of the box settings
+        RedeliveryPolicy redeliveryPolicy
+                = definition.hasRedeliveryPolicy() ? definition.getRedeliveryPolicy() : definition.getDefaultRedeliveryPolicy();
+        CamelLogger logger = definition.hasLogger() ? definition.getLogger() : null;
+
         DefaultErrorHandler answer = new DefaultErrorHandler(
-                camelContext, processor, definition.getLogger(),
+                camelContext, processor, logger,
                 getBean(Processor.class, definition.getOnRedelivery(), definition.getOnRedeliveryRef()),
-                definition.getRedeliveryPolicy(),
-                getBean(ExceptionPolicyStrategy.class, definition.getExceptionPolicyStrategy(),
-                        definition.getExceptionPolicyStrategyRef()),
+                redeliveryPolicy,
                 getPredicate(definition.getRetryWhile(), definition.getRetryWhileRef()),
                 getExecutorService(definition.getExecutorService(), definition.getExecutorServiceRef()),
                 getBean(Processor.class, definition.getOnPrepareFailure(), definition.getOnPrepareFailureRef()),

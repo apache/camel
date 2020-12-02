@@ -36,7 +36,7 @@ import org.elasticsearch.client.RestClient;
 @Component("elasticsearch-rest")
 public class ElasticsearchComponent extends DefaultComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", autowired = true)
     private RestClient client;
     @Metadata(label = "advanced")
     private String hostAddresses;

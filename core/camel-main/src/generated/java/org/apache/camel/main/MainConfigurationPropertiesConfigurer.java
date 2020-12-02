@@ -4,9 +4,10 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.main.MainConfigurationProperties;
 
@@ -15,98 +16,6 @@ import org.apache.camel.main.MainConfigurationProperties;
  */
 @SuppressWarnings("unchecked")
 public class MainConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("AllowUseOriginalMessage", boolean.class);
-        map.put("AutoConfigurationEnabled", boolean.class);
-        map.put("AutoConfigurationEnvironmentVariablesEnabled", boolean.class);
-        map.put("AutoConfigurationFailFast", boolean.class);
-        map.put("AutoConfigurationLogSummary", boolean.class);
-        map.put("AutoStartup", boolean.class);
-        map.put("AutowireComponentProperties", boolean.class);
-        map.put("AutowireComponentPropertiesAllowPrivateSetter", boolean.class);
-        map.put("AutowireComponentPropertiesDeep", boolean.class);
-        map.put("AutowireComponentPropertiesNonNullOnly", boolean.class);
-        map.put("BacklogTracing", boolean.class);
-        map.put("BeanIntrospectionExtendedStatistics", boolean.class);
-        map.put("BeanIntrospectionLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("BeanPostProcessorEnabled", boolean.class);
-        map.put("CaseInsensitiveHeaders", boolean.class);
-        map.put("ConfigurationClasses", java.lang.String.class);
-        map.put("Configurations", java.util.List.class);
-        map.put("ConsumerTemplateCacheSize", int.class);
-        map.put("DurationHitExitCode", int.class);
-        map.put("DurationMaxIdleSeconds", int.class);
-        map.put("DurationMaxMessages", int.class);
-        map.put("DurationMaxSeconds", int.class);
-        map.put("EndpointBasicPropertyBinding", boolean.class);
-        map.put("EndpointBridgeErrorHandler", boolean.class);
-        map.put("EndpointLazyStartProducer", boolean.class);
-        map.put("EndpointRuntimeStatisticsEnabled", boolean.class);
-        map.put("FileConfigurations", java.lang.String.class);
-        map.put("InflightRepositoryBrowseEnabled", boolean.class);
-        map.put("JavaRoutesExcludePattern", java.lang.String.class);
-        map.put("JavaRoutesIncludePattern", java.lang.String.class);
-        map.put("JmxEnabled", boolean.class);
-        map.put("JmxManagementNamePattern", java.lang.String.class);
-        map.put("JmxManagementStatisticsLevel", org.apache.camel.ManagementStatisticsLevel.class);
-        map.put("Lightweight", boolean.class);
-        map.put("LoadTypeConverters", boolean.class);
-        map.put("LogDebugMaxChars", int.class);
-        map.put("LogExhaustedMessageBody", boolean.class);
-        map.put("LogMask", boolean.class);
-        map.put("MdcLoggingKeysPattern", java.lang.String.class);
-        map.put("MessageHistory", boolean.class);
-        map.put("Name", java.lang.String.class);
-        map.put("PackageScanRouteBuilders", java.lang.String.class);
-        map.put("ProducerTemplateCacheSize", int.class);
-        map.put("RouteControllerBackOffDelay", long.class);
-        map.put("RouteControllerBackOffMaxAttempts", long.class);
-        map.put("RouteControllerBackOffMaxDelay", long.class);
-        map.put("RouteControllerBackOffMaxElapsedTime", long.class);
-        map.put("RouteControllerBackOffMultiplier", double.class);
-        map.put("RouteControllerExcludeRoutes", java.lang.String.class);
-        map.put("RouteControllerIncludeRoutes", java.lang.String.class);
-        map.put("RouteControllerInitialDelay", long.class);
-        map.put("RouteControllerRouteStartupLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("RouteControllerSuperviseEnabled", boolean.class);
-        map.put("RouteControllerThreadPoolSize", int.class);
-        map.put("RouteControllerUnhealthyOnExhausted", boolean.class);
-        map.put("RouteFilterExcludePattern", java.lang.String.class);
-        map.put("RouteFilterIncludePattern", java.lang.String.class);
-        map.put("RoutesBuilderClasses", java.lang.String.class);
-        map.put("RoutesBuilders", java.util.List.class);
-        map.put("RoutesCollectorEnabled", boolean.class);
-        map.put("ShutdownLogInflightExchangesOnTimeout", boolean.class);
-        map.put("ShutdownNowOnTimeout", boolean.class);
-        map.put("ShutdownRoutesInReverseOrder", boolean.class);
-        map.put("ShutdownSuppressLoggingOnTimeout", boolean.class);
-        map.put("ShutdownTimeout", int.class);
-        map.put("StreamCachingAnySpoolRules", boolean.class);
-        map.put("StreamCachingBufferSize", int.class);
-        map.put("StreamCachingEnabled", boolean.class);
-        map.put("StreamCachingRemoveSpoolDirectoryWhenStopping", boolean.class);
-        map.put("StreamCachingSpoolCipher", java.lang.String.class);
-        map.put("StreamCachingSpoolDirectory", java.lang.String.class);
-        map.put("StreamCachingSpoolThreshold", long.class);
-        map.put("StreamCachingSpoolUsedHeapMemoryLimit", java.lang.String.class);
-        map.put("StreamCachingSpoolUsedHeapMemoryThreshold", int.class);
-        map.put("StreamCachingStatisticsEnabled", boolean.class);
-        map.put("ThreadNamePattern", java.lang.String.class);
-        map.put("Tracing", boolean.class);
-        map.put("TracingPattern", java.lang.String.class);
-        map.put("UseBreadcrumb", boolean.class);
-        map.put("UseDataType", boolean.class);
-        map.put("UseMdcLogging", boolean.class);
-        map.put("XmlRests", java.lang.String.class);
-        map.put("XmlRouteTemplates", java.lang.String.class);
-        map.put("XmlRoutes", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(MainConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(MainConfigurationPropertiesConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -124,14 +33,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationLogSummary": target.setAutoConfigurationLogSummary(property(camelContext, boolean.class, value)); return true;
         case "autostartup":
         case "AutoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
-        case "autowirecomponentproperties":
-        case "AutowireComponentProperties": target.setAutowireComponentProperties(property(camelContext, boolean.class, value)); return true;
-        case "autowirecomponentpropertiesallowprivatesetter":
-        case "AutowireComponentPropertiesAllowPrivateSetter": target.setAutowireComponentPropertiesAllowPrivateSetter(property(camelContext, boolean.class, value)); return true;
-        case "autowirecomponentpropertiesdeep":
-        case "AutowireComponentPropertiesDeep": target.setAutowireComponentPropertiesDeep(property(camelContext, boolean.class, value)); return true;
-        case "autowirecomponentpropertiesnonnullonly":
-        case "AutowireComponentPropertiesNonNullOnly": target.setAutowireComponentPropertiesNonNullOnly(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "AutowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "backlogtracing":
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, boolean.class, value)); return true;
         case "beanintrospectionextendedstatistics":
@@ -285,16 +188,172 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowuseoriginalmessage":
+        case "AllowUseOriginalMessage": return boolean.class;
+        case "autoconfigurationenabled":
+        case "AutoConfigurationEnabled": return boolean.class;
+        case "autoconfigurationenvironmentvariablesenabled":
+        case "AutoConfigurationEnvironmentVariablesEnabled": return boolean.class;
+        case "autoconfigurationfailfast":
+        case "AutoConfigurationFailFast": return boolean.class;
+        case "autoconfigurationlogsummary":
+        case "AutoConfigurationLogSummary": return boolean.class;
+        case "autostartup":
+        case "AutoStartup": return boolean.class;
+        case "autowiredenabled":
+        case "AutowiredEnabled": return boolean.class;
+        case "backlogtracing":
+        case "BacklogTracing": return boolean.class;
+        case "beanintrospectionextendedstatistics":
+        case "BeanIntrospectionExtendedStatistics": return boolean.class;
+        case "beanintrospectionlogginglevel":
+        case "BeanIntrospectionLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "beanpostprocessorenabled":
+        case "BeanPostProcessorEnabled": return boolean.class;
+        case "caseinsensitiveheaders":
+        case "CaseInsensitiveHeaders": return boolean.class;
+        case "configurationclasses":
+        case "ConfigurationClasses": return java.lang.String.class;
+        case "configurations":
+        case "Configurations": return java.util.List.class;
+        case "consumertemplatecachesize":
+        case "ConsumerTemplateCacheSize": return int.class;
+        case "durationhitexitcode":
+        case "DurationHitExitCode": return int.class;
+        case "durationmaxidleseconds":
+        case "DurationMaxIdleSeconds": return int.class;
+        case "durationmaxmessages":
+        case "DurationMaxMessages": return int.class;
+        case "durationmaxseconds":
+        case "DurationMaxSeconds": return int.class;
+        case "endpointbasicpropertybinding":
+        case "EndpointBasicPropertyBinding": return boolean.class;
+        case "endpointbridgeerrorhandler":
+        case "EndpointBridgeErrorHandler": return boolean.class;
+        case "endpointlazystartproducer":
+        case "EndpointLazyStartProducer": return boolean.class;
+        case "endpointruntimestatisticsenabled":
+        case "EndpointRuntimeStatisticsEnabled": return boolean.class;
+        case "fileconfigurations":
+        case "FileConfigurations": return java.lang.String.class;
+        case "inflightrepositorybrowseenabled":
+        case "InflightRepositoryBrowseEnabled": return boolean.class;
+        case "javaroutesexcludepattern":
+        case "JavaRoutesExcludePattern": return java.lang.String.class;
+        case "javaroutesincludepattern":
+        case "JavaRoutesIncludePattern": return java.lang.String.class;
+        case "jmxenabled":
+        case "JmxEnabled": return boolean.class;
+        case "jmxmanagementnamepattern":
+        case "JmxManagementNamePattern": return java.lang.String.class;
+        case "jmxmanagementstatisticslevel":
+        case "JmxManagementStatisticsLevel": return org.apache.camel.ManagementStatisticsLevel.class;
+        case "lightweight":
+        case "Lightweight": return boolean.class;
+        case "loadtypeconverters":
+        case "LoadTypeConverters": return boolean.class;
+        case "logdebugmaxchars":
+        case "LogDebugMaxChars": return int.class;
+        case "logexhaustedmessagebody":
+        case "LogExhaustedMessageBody": return boolean.class;
+        case "logmask":
+        case "LogMask": return boolean.class;
+        case "mdcloggingkeyspattern":
+        case "MdcLoggingKeysPattern": return java.lang.String.class;
+        case "messagehistory":
+        case "MessageHistory": return boolean.class;
+        case "name":
+        case "Name": return java.lang.String.class;
+        case "packagescanroutebuilders":
+        case "PackageScanRouteBuilders": return java.lang.String.class;
+        case "producertemplatecachesize":
+        case "ProducerTemplateCacheSize": return int.class;
+        case "routecontrollerbackoffdelay":
+        case "RouteControllerBackOffDelay": return long.class;
+        case "routecontrollerbackoffmaxattempts":
+        case "RouteControllerBackOffMaxAttempts": return long.class;
+        case "routecontrollerbackoffmaxdelay":
+        case "RouteControllerBackOffMaxDelay": return long.class;
+        case "routecontrollerbackoffmaxelapsedtime":
+        case "RouteControllerBackOffMaxElapsedTime": return long.class;
+        case "routecontrollerbackoffmultiplier":
+        case "RouteControllerBackOffMultiplier": return double.class;
+        case "routecontrollerexcluderoutes":
+        case "RouteControllerExcludeRoutes": return java.lang.String.class;
+        case "routecontrollerincluderoutes":
+        case "RouteControllerIncludeRoutes": return java.lang.String.class;
+        case "routecontrollerinitialdelay":
+        case "RouteControllerInitialDelay": return long.class;
+        case "routecontrollerroutestartuplogginglevel":
+        case "RouteControllerRouteStartupLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "routecontrollersuperviseenabled":
+        case "RouteControllerSuperviseEnabled": return boolean.class;
+        case "routecontrollerthreadpoolsize":
+        case "RouteControllerThreadPoolSize": return int.class;
+        case "routecontrollerunhealthyonexhausted":
+        case "RouteControllerUnhealthyOnExhausted": return boolean.class;
+        case "routefilterexcludepattern":
+        case "RouteFilterExcludePattern": return java.lang.String.class;
+        case "routefilterincludepattern":
+        case "RouteFilterIncludePattern": return java.lang.String.class;
+        case "routesbuilderclasses":
+        case "RoutesBuilderClasses": return java.lang.String.class;
+        case "routesbuilders":
+        case "RoutesBuilders": return java.util.List.class;
+        case "routescollectorenabled":
+        case "RoutesCollectorEnabled": return boolean.class;
+        case "shutdownloginflightexchangesontimeout":
+        case "ShutdownLogInflightExchangesOnTimeout": return boolean.class;
+        case "shutdownnowontimeout":
+        case "ShutdownNowOnTimeout": return boolean.class;
+        case "shutdownroutesinreverseorder":
+        case "ShutdownRoutesInReverseOrder": return boolean.class;
+        case "shutdownsuppressloggingontimeout":
+        case "ShutdownSuppressLoggingOnTimeout": return boolean.class;
+        case "shutdowntimeout":
+        case "ShutdownTimeout": return int.class;
+        case "streamcachinganyspoolrules":
+        case "StreamCachingAnySpoolRules": return boolean.class;
+        case "streamcachingbuffersize":
+        case "StreamCachingBufferSize": return int.class;
+        case "streamcachingenabled":
+        case "StreamCachingEnabled": return boolean.class;
+        case "streamcachingremovespooldirectorywhenstopping":
+        case "StreamCachingRemoveSpoolDirectoryWhenStopping": return boolean.class;
+        case "streamcachingspoolcipher":
+        case "StreamCachingSpoolCipher": return java.lang.String.class;
+        case "streamcachingspooldirectory":
+        case "StreamCachingSpoolDirectory": return java.lang.String.class;
+        case "streamcachingspoolthreshold":
+        case "StreamCachingSpoolThreshold": return long.class;
+        case "streamcachingspoolusedheapmemorylimit":
+        case "StreamCachingSpoolUsedHeapMemoryLimit": return java.lang.String.class;
+        case "streamcachingspoolusedheapmemorythreshold":
+        case "StreamCachingSpoolUsedHeapMemoryThreshold": return int.class;
+        case "streamcachingstatisticsenabled":
+        case "StreamCachingStatisticsEnabled": return boolean.class;
+        case "threadnamepattern":
+        case "ThreadNamePattern": return java.lang.String.class;
+        case "tracing":
+        case "Tracing": return boolean.class;
+        case "tracingpattern":
+        case "TracingPattern": return java.lang.String.class;
+        case "usebreadcrumb":
+        case "UseBreadcrumb": return boolean.class;
+        case "usedatatype":
+        case "UseDataType": return boolean.class;
+        case "usemdclogging":
+        case "UseMdcLogging": return boolean.class;
+        case "xmlrests":
+        case "XmlRests": return java.lang.String.class;
+        case "xmlroutetemplates":
+        case "XmlRouteTemplates": return java.lang.String.class;
+        case "xmlroutes":
+        case "XmlRoutes": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -313,14 +372,8 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "AutoConfigurationLogSummary": return target.isAutoConfigurationLogSummary();
         case "autostartup":
         case "AutoStartup": return target.isAutoStartup();
-        case "autowirecomponentproperties":
-        case "AutowireComponentProperties": return target.isAutowireComponentProperties();
-        case "autowirecomponentpropertiesallowprivatesetter":
-        case "AutowireComponentPropertiesAllowPrivateSetter": return target.isAutowireComponentPropertiesAllowPrivateSetter();
-        case "autowirecomponentpropertiesdeep":
-        case "AutowireComponentPropertiesDeep": return target.isAutowireComponentPropertiesDeep();
-        case "autowirecomponentpropertiesnonnullonly":
-        case "AutowireComponentPropertiesNonNullOnly": return target.isAutowireComponentPropertiesNonNullOnly();
+        case "autowiredenabled":
+        case "AutowiredEnabled": return target.isAutowiredEnabled();
         case "backlogtracing":
         case "BacklogTracing": return target.isBacklogTracing();
         case "beanintrospectionextendedstatistics":

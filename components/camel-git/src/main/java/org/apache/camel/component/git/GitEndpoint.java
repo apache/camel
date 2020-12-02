@@ -44,22 +44,22 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam
     private String branchName;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String tagName;
 
     @UriParam(enums = "commit,tag,branch", label = "consumer")
     private GitType type;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String username;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String password;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String remotePath;
 
-    @UriParam
+    @UriParam(label = "producer")
     private String remoteName;
 
     // Set to true for backward compatibility , better to set to false (native git behavior)

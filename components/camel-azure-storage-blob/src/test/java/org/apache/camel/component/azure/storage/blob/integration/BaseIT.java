@@ -16,38 +16,51 @@
  */
 package org.apache.camel.component.azure.storage.blob.integration;
 
-import java.util.Properties;
-
 import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
-import org.apache.camel.component.azure.storage.blob.BlobTestUtils;
+import org.apache.camel.test.infra.azure.common.AzureConfigs;
+import org.apache.camel.test.infra.azure.common.services.AzureService;
+import org.apache.camel.test.infra.azure.storage.blob.clients.AzureStorageBlobClientUtils;
+import org.apache.camel.test.infra.azure.storage.blob.services.AzureStorageBlobServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.containers.GenericContainer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BaseIT extends CamelTestSupport {
-    private static final String ACCESS_KEY = "accessKey";
-    private static final String ACCOUNT_NAME = "accountName";
-    private static final String AZURITE_IMAGE_NAME = "mcr.microsoft.com/azure-storage/azurite:3.9.0";
-    private static final int AZURITE_EXPOSED_PORT = 10000;
-    private static String accountName;
-    private static String accessKey;
-    private static String endpoint;
+    @RegisterExtension
+    public static AzureService service;
 
     protected BlobServiceClient serviceClient;
-    protected BlobConfiguration configuration;
     protected String containerName;
+    protected BlobConfiguration configuration;
 
     static {
-        // Start testcontainers as a singleton if needed
-        initEndpoint();
+        initCredentials();
+
+        service = AzureStorageBlobServiceFactory.createAzureService();
+    }
+
+    /*
+     * The previous behavior of the test code was such that if accessKey or accountName properties were
+     * set, the code would not start the azurite container and would execute against a remote environment.
+     * To avoid breaking tests for environments relying on this behavior, copy the old properties into the
+     *  new and set the test as remote.
+     */
+    private static void initCredentials() {
+        String accountName = System.getProperty("accountName");
+        String accessKey = System.getProperty("accessKey");
+
+        if (StringUtils.isNotEmpty(accountName) && StringUtils.isNotEmpty(accessKey)) {
+            System.setProperty(AzureConfigs.ACCOUNT_NAME, accountName);
+            System.setProperty(AzureConfigs.ACCOUNT_KEY, accessKey);
+            System.setProperty("azure.instance.type", "remote");
+        }
     }
 
     @Override
@@ -57,44 +70,16 @@ public class BaseIT extends CamelTestSupport {
         return context;
     }
 
-    static void initEndpoint() {
-        accountName = System.getProperty(ACCOUNT_NAME);
-        accessKey = System.getProperty(ACCESS_KEY);
-        endpoint = String.format("https://%s.blob.core.windows.net", accountName);
-
-        // If everything is set, do not start Azurite
-        if (StringUtils.isNotEmpty(accountName) && StringUtils.isNotEmpty(accessKey)) {
-            return;
-        }
-
-        if ((StringUtils.isEmpty(accountName) && StringUtils.isNotEmpty(accessKey)) ||
-                (StringUtils.isNotEmpty(accountName) && StringUtils.isEmpty(accessKey))) {
-            throw new IllegalArgumentException(
-                    "Make sure to supply both azure accessKey and accountName," +
-                                               " e.g:  mvn verify -DaccountName=myacc -DaccessKey=mykey");
-        }
-
-        final GenericContainer<?> azurite = new GenericContainer<>(AZURITE_IMAGE_NAME)
-                .withExposedPorts(AZURITE_EXPOSED_PORT);
-        azurite.start();
-        Properties azuriteProperties = BlobTestUtils.getAzuriteProperties();
-        accountName = azuriteProperties.getProperty(ACCOUNT_NAME);
-        accessKey = azuriteProperties.getProperty(ACCESS_KEY);
-        endpoint = String.format("http://%s:%d/%s", azurite.getContainerIpAddress(),
-                azurite.getMappedPort(AZURITE_EXPOSED_PORT), accountName);
-    }
-
     @BeforeAll
-    void initProperties() {
+    public void initProperties() {
         containerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
 
         configuration = new BlobConfiguration();
-        configuration.setCredentials(new StorageSharedKeyCredential(accountName, accessKey));
+        configuration.setCredentials(new StorageSharedKeyCredential(
+                service.azureCredentials().accountName(), service.azureCredentials().accountKey()));
         configuration.setContainerName(containerName);
 
-        serviceClient = new BlobServiceClientBuilder()
-                .credential(configuration.getCredentials())
-                .endpoint(endpoint)
-                .buildClient();
+        serviceClient = AzureStorageBlobClientUtils.getClient();
     }
+
 }

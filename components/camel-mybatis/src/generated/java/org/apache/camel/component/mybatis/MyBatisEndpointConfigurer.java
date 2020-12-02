@@ -4,9 +4,10 @@ package org.apache.camel.component.mybatis;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,46 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("statement", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("onConsume", java.lang.String.class);
-        map.put("routeEmptyResultSet", boolean.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("transacted", boolean.class);
-        map.put("useIterator", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("processingStrategy", org.apache.camel.component.mybatis.MyBatisProcessingStrategy.class);
-        map.put("executorType", org.apache.ibatis.session.ExecutorType.class);
-        map.put("inputHeader", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("outputHeader", java.lang.String.class);
-        map.put("statementType", org.apache.camel.component.mybatis.StatementType.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MyBatisEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -66,8 +27,6 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -124,15 +83,67 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "delay": return long.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "executortype":
+        case "executorType": return org.apache.ibatis.session.ExecutorType.class;
+        case "greedy": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "inputheader":
+        case "inputHeader": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "onconsume":
+        case "onConsume": return java.lang.String.class;
+        case "outputheader":
+        case "outputHeader": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "processingstrategy":
+        case "processingStrategy": return org.apache.camel.component.mybatis.MyBatisProcessingStrategy.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "routeemptyresultset":
+        case "routeEmptyResultSet": return boolean.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "statementtype":
+        case "statementType": return org.apache.camel.component.mybatis.StatementType.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "transacted": return boolean.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "useiterator":
+        case "useIterator": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -145,8 +156,6 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "delay": return target.getDelay();
@@ -198,6 +207,15 @@ public class MyBatisEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "useFixedDelay": return target.isUseFixedDelay();
         case "useiterator":
         case "useIterator": return target.isUseIterator();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

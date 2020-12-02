@@ -20,7 +20,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -43,18 +42,7 @@ public class AthenaComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
-        AmazonAthenaClientMock clientMock = new AmazonAthenaClientMock();
-        context.getRegistry().bind("amazonAthenaClient", clientMock);
-        Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);
-        Athena2Endpoint endpoint = (Athena2Endpoint) component
-                .createEndpoint("aws2-athena://label?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(clientMock, endpoint.getConfiguration().getAmazonAthenaClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
         AmazonAthenaClientMock clientMock = new AmazonAthenaClientMock();
         context.getRegistry().bind("amazonAthenaClient", clientMock);
         Athena2Component component = context.getComponent("aws2-athena", Athena2Component.class);

@@ -4,9 +4,10 @@ package org.apache.camel.component.aws.s3;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,73 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class S3EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bucketNameOrArn", java.lang.String.class);
-        map.put("amazonS3Client", com.amazonaws.services.s3.AmazonS3.class);
-        map.put("autoCreateBucket", boolean.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("endpointConfiguration", com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration.class);
-        map.put("pathStyleAccess", boolean.class);
-        map.put("policy", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", com.amazonaws.Protocol.class);
-        map.put("region", java.lang.String.class);
-        map.put("useIAMCredentials", boolean.class);
-        map.put("encryptionMaterials", com.amazonaws.services.s3.model.EncryptionMaterials.class);
-        map.put("useEncryption", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("deleteAfterRead", boolean.class);
-        map.put("delimiter", java.lang.String.class);
-        map.put("fileName", java.lang.String.class);
-        map.put("includeBody", boolean.class);
-        map.put("maxConnections", int.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("prefix", java.lang.String.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("autocloseBody", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("deleteAfterWrite", boolean.class);
-        map.put("keyName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("multiPartUpload", boolean.class);
-        map.put("operation", org.apache.camel.component.aws.s3.S3Operations.class);
-        map.put("partSize", long.class);
-        map.put("serverSideEncryption", java.lang.String.class);
-        map.put("storageClass", java.lang.String.class);
-        map.put("awsKMSKeyId", java.lang.String.class);
-        map.put("useAwsKMS", boolean.class);
-        map.put("accelerateModeEnabled", boolean.class);
-        map.put("chunkedEncodingDisabled", boolean.class);
-        map.put("dualstackEnabled", boolean.class);
-        map.put("forceGlobalBucketAccessEnabled", boolean.class);
-        map.put("payloadSigningEnabled", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(S3EndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -107,8 +41,6 @@ public class S3EndpointConfigurer extends PropertyConfigurerSupport implements G
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "chunkedencodingdisabled":
@@ -201,15 +133,117 @@ public class S3EndpointConfigurer extends PropertyConfigurerSupport implements G
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acceleratemodeenabled":
+        case "accelerateModeEnabled": return boolean.class;
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazons3client":
+        case "amazonS3Client": return com.amazonaws.services.s3.AmazonS3.class;
+        case "autocreatebucket":
+        case "autoCreateBucket": return boolean.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "autoclosebody":
+        case "autocloseBody": return boolean.class;
+        case "awskmskeyid":
+        case "awsKMSKeyId": return java.lang.String.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "chunkedencodingdisabled":
+        case "chunkedEncodingDisabled": return boolean.class;
+        case "delay": return long.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "deleteafterwrite":
+        case "deleteAfterWrite": return boolean.class;
+        case "delimiter": return java.lang.String.class;
+        case "dualstackenabled":
+        case "dualstackEnabled": return boolean.class;
+        case "encryptionmaterials":
+        case "encryptionMaterials": return com.amazonaws.services.s3.model.EncryptionMaterials.class;
+        case "endpointconfiguration":
+        case "endpointConfiguration": return com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "forceglobalbucketaccessenabled":
+        case "forceGlobalBucketAccessEnabled": return boolean.class;
+        case "greedy": return boolean.class;
+        case "includebody":
+        case "includeBody": return boolean.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "keyname":
+        case "keyName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxconnections":
+        case "maxConnections": return int.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "multipartupload":
+        case "multiPartUpload": return boolean.class;
+        case "operation": return org.apache.camel.component.aws.s3.S3Operations.class;
+        case "partsize":
+        case "partSize": return long.class;
+        case "pathstyleaccess":
+        case "pathStyleAccess": return boolean.class;
+        case "payloadsigningenabled":
+        case "payloadSigningEnabled": return boolean.class;
+        case "policy": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "prefix": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "serversideencryption":
+        case "serverSideEncryption": return java.lang.String.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "storageclass":
+        case "storageClass": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "useawskms":
+        case "useAwsKMS": return boolean.class;
+        case "useencryption":
+        case "useEncryption": return boolean.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "useiamcredentials":
+        case "useIAMCredentials": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -236,8 +270,6 @@ public class S3EndpointConfigurer extends PropertyConfigurerSupport implements G
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "chunkedencodingdisabled":
@@ -325,6 +357,15 @@ public class S3EndpointConfigurer extends PropertyConfigurerSupport implements G
         case "useFixedDelay": return target.isUseFixedDelay();
         case "useiamcredentials":
         case "useIAMCredentials": return target.getConfiguration().isUseIAMCredentials();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
         default: return null;
         }
     }

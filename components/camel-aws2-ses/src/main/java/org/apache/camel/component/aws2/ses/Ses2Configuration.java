@@ -34,6 +34,7 @@ public class Ses2Configuration implements Cloneable {
     @Metadata(required = true)
     private String from;
     @UriParam
+    @Metadata(autowired = true)
     private SesClient amazonSESClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -57,8 +58,6 @@ public class Ses2Configuration implements Cloneable {
     private String region;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
 
     public String getAccessKey() {
         return accessKey;
@@ -214,18 +213,6 @@ public class Ses2Configuration implements Cloneable {
      */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
-    }
-
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
-    }
-
-    /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
-     * automatically otherwise it will skip that checking.
-     */
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     // *************************************************

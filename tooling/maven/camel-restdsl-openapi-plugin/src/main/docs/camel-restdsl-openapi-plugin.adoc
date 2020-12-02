@@ -60,7 +60,8 @@ in the `<configuration>` tag.
 | Parameter | Default Value | Description
 | `skip` | `false` | Set to `true` to skip code generation.
 | `filterOperation` | | Used for including only the operation ids specified. Multiple ids can be separated by comma. Wildcards can be used, eg `find*` to include all operations starting with `find`.
-| `specificationUri` | `src/spec/openapi.json` | URI of the OpenApi specification, supports filesystem paths, HTTP and classpath resources, by default `src/spec/openapi.json` within the project directory.  Supports JSON and YAML.
+| `specificationUri` | `src/spec/openapi.json` | URI of the OpenApi specification, supports filesystem paths, HTTP and classpath resources, by default `src/spec/openapi.json` within the project directory. Supports JSON and YAML.
+| `auth` | | Adds authorization headers when fetching the OpenApi specification definitions remotely. Pass in a URL-encoded string of name:header with a comma separating multiple values.
 | `className` | from `title` or `RestDslRoute` | Name of the generated class, taken from the OpenApi specification title or set to `RestDslRoute` by default
 | `packageName` | from `host` or `rest.dsl.generated` | Name of the package for the generated class, taken from the OpenApi specification host value or `rest.dsl.generated` by default
 | `indent` | `"&nbsp;&nbsp;&nbsp;&nbsp;"` | What identing character(s) to use, by default four spaces, you can use `\t` to signify tab character
@@ -135,7 +136,8 @@ in the `<configuration>` tag.
 | Parameter | Default Value | Description
 | `skip` | `false` | Set to `true` to skip code generation.
 | `filterOperation` | | Used for including only the operation ids specified. Multiple ids can be separated by comma. Wildcards can be used, eg `find*` to include all operations starting with `find`.
-| `specificationUri` | `src/spec/openapi.json` | URI of the OpenApi specification, by default `src/spec/openapi.json` within the project directory. Supports JSON and YAML.
+| `specificationUri` | `src/spec/openapi.json` | URI of the OpenApi specification, supports filesystem paths, HTTP and classpath resources, by default `src/spec/openapi.json` within the project directory. Supports JSON and YAML.
+| `auth` | | Adds authorization headers when fetching the OpenApi specification definitions remotely. Pass in a URL-encoded string of name:header with a comma separating multiple values.
 | `outputDirectory` | `generated-sources/restdsl-openapi` | Where to place the generated source file, by default `generated-sources/restdsl-openapi` within the project directory
 | `fileName` | `camel-rest.xml` | The name of the XML file as output.
 | `blueprint` | `false` | If enabled generates OSGi Blueprint XML instead of Spring XML.

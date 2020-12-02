@@ -49,7 +49,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         SendDynamicProcessor dynamicTo = (SendDynamicProcessor) super.createProcessor();
 
         // create error handler we need to use for processing the wire tapped
-        Processor childProcessor = wrapInErrorHandler(dynamicTo, true);
+        Processor childProcessor = wrapInErrorHandler(dynamicTo);
 
         // and wrap in unit of work
         AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()

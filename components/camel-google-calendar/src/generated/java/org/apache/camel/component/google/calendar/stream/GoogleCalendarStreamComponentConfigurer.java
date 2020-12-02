@@ -4,9 +4,10 @@ package org.apache.camel.component.google.calendar.stream;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,28 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("applicationName", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("calendarId", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration.class);
-        map.put("considerLastUpdate", boolean.class);
-        map.put("consumeFromNow", boolean.class);
-        map.put("maxResults", int.class);
-        map.put("query", java.lang.String.class);
-        map.put("scopes", java.util.List.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientFactory", org.apache.camel.component.google.calendar.GoogleCalendarClientFactory.class);
-        map.put("accessToken", java.lang.String.class);
-        map.put("clientSecret", java.lang.String.class);
-        map.put("refreshToken", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleCalendarStreamComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration getOrCreateConfiguration(GoogleCalendarStreamComponent target) {
         if (target.getConfiguration() == null) {
@@ -53,8 +32,8 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "accessToken": getOrCreateConfiguration(target).setAccessToken(property(camelContext, java.lang.String.class, value)); return true;
         case "applicationname":
         case "applicationName": getOrCreateConfiguration(target).setApplicationName(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "calendarid":
@@ -81,15 +60,37 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesstoken":
+        case "accessToken": return java.lang.String.class;
+        case "applicationname":
+        case "applicationName": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "calendarid":
+        case "calendarId": return java.lang.String.class;
+        case "clientfactory":
+        case "clientFactory": return org.apache.camel.component.google.calendar.GoogleCalendarClientFactory.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "clientsecret":
+        case "clientSecret": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration.class;
+        case "considerlastupdate":
+        case "considerLastUpdate": return boolean.class;
+        case "consumefromnow":
+        case "consumeFromNow": return boolean.class;
+        case "maxresults":
+        case "maxResults": return int.class;
+        case "query": return java.lang.String.class;
+        case "refreshtoken":
+        case "refreshToken": return java.lang.String.class;
+        case "scopes": return java.util.List.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -100,8 +101,8 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "accessToken": return getOrCreateConfiguration(target).getAccessToken();
         case "applicationname":
         case "applicationName": return getOrCreateConfiguration(target).getApplicationName();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "calendarid":
@@ -123,6 +124,14 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         case "scopes": return getOrCreateConfiguration(target).getScopes();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "scopes": return java.lang.String.class;
         default: return null;
         }
     }

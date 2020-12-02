@@ -35,7 +35,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
  * Component configuration for Olingo4 component.
  */
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public class Olingo4Configuration {
 
     private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON.toString();

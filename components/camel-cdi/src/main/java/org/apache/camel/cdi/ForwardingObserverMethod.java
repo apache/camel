@@ -22,10 +22,12 @@ import java.util.Set;
 
 import javax.enterprise.event.Reception;
 import javax.enterprise.event.TransactionPhase;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.ObserverMethod;
 
 import org.apache.camel.CamelContext;
 
+@Vetoed
 final class ForwardingObserverMethod<T> implements ObserverMethod<T> {
 
     private final CdiEventEndpoint<T> endpoint;

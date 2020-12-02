@@ -21,7 +21,7 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
 
     @Override
     public int size() {
-        return 90;
+        return 92;
     }
 
     @Override
@@ -168,6 +168,12 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
         } else if (to == javax.xml.transform.Source.class) {
             if (value instanceof java.lang.String) {
                 return getXmlConverter().toSource((java.lang.String) value);
+            }
+            if (value instanceof byte[]) {
+                return getXmlConverter().toSource((byte[]) value);
+            }
+            if (value instanceof org.w3c.dom.Document) {
+                return getXmlConverter().toSource((org.w3c.dom.Document) value);
             }
         } else if (to == javax.xml.transform.dom.DOMSource.class) {
             if (value instanceof org.w3c.dom.Document) {
@@ -483,6 +489,12 @@ public final class CamelXmlJaxpBulkConverterLoader implements TypeConverterLoade
             }
         } else if (to == javax.xml.transform.Source.class) {
             if (from == java.lang.String.class) {
+                return this;
+            }
+            if (from == byte[].class) {
+                return this;
+            }
+            if (from == org.w3c.dom.Document.class) {
                 return this;
             }
         } else if (to == javax.xml.transform.dom.DOMSource.class) {

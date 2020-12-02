@@ -4,9 +4,10 @@ package org.apache.camel.component.web3j;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,51 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class Web3jComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("addresses", java.util.List.class);
-        map.put("configuration", org.apache.camel.component.web3j.Web3jConfiguration.class);
-        map.put("fromAddress", java.lang.String.class);
-        map.put("fromBlock", java.lang.String.class);
-        map.put("fullTransactionObjects", boolean.class);
-        map.put("gasLimit", java.math.BigInteger.class);
-        map.put("privateFor", java.util.List.class);
-        map.put("quorumAPI", boolean.class);
-        map.put("toAddress", java.lang.String.class);
-        map.put("toBlock", java.lang.String.class);
-        map.put("topics", java.lang.String.class);
-        map.put("web3j", org.web3j.protocol.Web3j.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("address", java.lang.String.class);
-        map.put("atBlock", java.lang.String.class);
-        map.put("blockHash", java.lang.String.class);
-        map.put("clientId", java.lang.String.class);
-        map.put("data", java.lang.String.class);
-        map.put("databaseName", java.lang.String.class);
-        map.put("filterId", java.math.BigInteger.class);
-        map.put("gasPrice", java.math.BigInteger.class);
-        map.put("hashrate", java.lang.String.class);
-        map.put("headerPowHash", java.lang.String.class);
-        map.put("index", java.math.BigInteger.class);
-        map.put("keyName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("mixDigest", java.lang.String.class);
-        map.put("nonce", java.lang.String.class);
-        map.put("operation", java.lang.String.class);
-        map.put("position", java.math.BigInteger.class);
-        map.put("priority", java.math.BigInteger.class);
-        map.put("sha3HashOfDataToSign", java.lang.String.class);
-        map.put("signedTransactionData", java.lang.String.class);
-        map.put("sourceCode", java.lang.String.class);
-        map.put("transactionHash", java.lang.String.class);
-        map.put("ttl", java.math.BigInteger.class);
-        map.put("value", java.math.BigInteger.class);
-        map.put("basicPropertyBinding", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Web3jComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.web3j.Web3jConfiguration getOrCreateConfiguration(Web3jComponent target) {
         if (target.getConfiguration() == null) {
@@ -76,8 +32,8 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "addresses": getOrCreateConfiguration(target).setAddresses(property(camelContext, java.util.List.class, value)); return true;
         case "atblock":
         case "atBlock": getOrCreateConfiguration(target).setAtBlock(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "blockhash":
         case "blockHash": getOrCreateConfiguration(target).setBlockHash(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -139,15 +95,72 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "address": return java.lang.String.class;
+        case "addresses": return java.util.List.class;
+        case "atblock":
+        case "atBlock": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "blockhash":
+        case "blockHash": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.web3j.Web3jConfiguration.class;
+        case "data": return java.lang.String.class;
+        case "databasename":
+        case "databaseName": return java.lang.String.class;
+        case "filterid":
+        case "filterId": return java.math.BigInteger.class;
+        case "fromaddress":
+        case "fromAddress": return java.lang.String.class;
+        case "fromblock":
+        case "fromBlock": return java.lang.String.class;
+        case "fulltransactionobjects":
+        case "fullTransactionObjects": return boolean.class;
+        case "gaslimit":
+        case "gasLimit": return java.math.BigInteger.class;
+        case "gasprice":
+        case "gasPrice": return java.math.BigInteger.class;
+        case "hashrate": return java.lang.String.class;
+        case "headerpowhash":
+        case "headerPowHash": return java.lang.String.class;
+        case "index": return java.math.BigInteger.class;
+        case "keyname":
+        case "keyName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mixdigest":
+        case "mixDigest": return java.lang.String.class;
+        case "nonce": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
+        case "position": return java.math.BigInteger.class;
+        case "priority": return java.math.BigInteger.class;
+        case "privatefor":
+        case "privateFor": return java.util.List.class;
+        case "quorumapi":
+        case "quorumAPI": return boolean.class;
+        case "sha3hashofdatatosign":
+        case "sha3HashOfDataToSign": return java.lang.String.class;
+        case "signedtransactiondata":
+        case "signedTransactionData": return java.lang.String.class;
+        case "sourcecode":
+        case "sourceCode": return java.lang.String.class;
+        case "toaddress":
+        case "toAddress": return java.lang.String.class;
+        case "toblock":
+        case "toBlock": return java.lang.String.class;
+        case "topics": return java.lang.String.class;
+        case "transactionhash":
+        case "transactionHash": return java.lang.String.class;
+        case "ttl": return java.math.BigInteger.class;
+        case "value": return java.math.BigInteger.class;
+        case "web3j": return org.web3j.protocol.Web3j.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -158,8 +171,8 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "addresses": return getOrCreateConfiguration(target).getAddresses();
         case "atblock":
         case "atBlock": return getOrCreateConfiguration(target).getAtBlock();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "blockhash":
         case "blockHash": return getOrCreateConfiguration(target).getBlockHash();
         case "bridgeerrorhandler":
@@ -216,6 +229,16 @@ public class Web3jComponentConfigurer extends PropertyConfigurerSupport implemen
         case "ttl": return getOrCreateConfiguration(target).getTtl();
         case "value": return getOrCreateConfiguration(target).getValue();
         case "web3j": return getOrCreateConfiguration(target).getWeb3j();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "addresses": return java.lang.String.class;
+        case "privatefor":
+        case "privateFor": return java.lang.String.class;
         default: return null;
         }
     }

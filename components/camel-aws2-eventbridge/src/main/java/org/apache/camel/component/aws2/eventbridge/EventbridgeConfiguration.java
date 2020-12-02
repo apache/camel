@@ -28,6 +28,7 @@ public class EventbridgeConfiguration implements Cloneable {
 
     private String eventbusName = "default";
     @UriParam
+    @Metadata(autowired = true)
     private EventBridgeClient eventbridgeClient;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -48,8 +49,6 @@ public class EventbridgeConfiguration implements Cloneable {
     private boolean pojoRequest;
     @UriParam(defaultValue = "false")
     private boolean trustAllCertificates;
-    @UriParam(label = "common", defaultValue = "true")
-    private boolean autoDiscoverClient = true;
     @UriParam
     private String eventPatternFile;
 
@@ -162,18 +161,6 @@ public class EventbridgeConfiguration implements Cloneable {
      */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
-    }
-
-    public boolean isAutoDiscoverClient() {
-        return autoDiscoverClient;
-    }
-
-    /**
-     * Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry
-     * automatically otherwise it will skip that checking.
-     */
-    public void setAutoDiscoverClient(boolean autoDiscoverClient) {
-        this.autoDiscoverClient = autoDiscoverClient;
     }
 
     public String getEventPatternFile() {

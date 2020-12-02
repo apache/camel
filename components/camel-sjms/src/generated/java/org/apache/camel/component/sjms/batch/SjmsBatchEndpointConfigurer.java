@@ -4,9 +4,10 @@ package org.apache.camel.component.sjms.batch;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,38 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("destinationName", java.lang.String.class);
-        map.put("aggregationStrategy", org.apache.camel.AggregationStrategy.class);
-        map.put("allowNullBody", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("completionInterval", int.class);
-        map.put("completionPredicate", java.lang.String.class);
-        map.put("completionSize", int.class);
-        map.put("completionTimeout", int.class);
-        map.put("consumerCount", int.class);
-        map.put("eagerCheckCompletion", boolean.class);
-        map.put("includeAllJMSXProperties", boolean.class);
-        map.put("mapJmsMessage", boolean.class);
-        map.put("pollDuration", int.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("asyncStartListener", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("jmsKeyFormatStrategy", org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class);
-        map.put("keepAliveDelay", int.class);
-        map.put("messageCreatedStrategy", org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class);
-        map.put("recoveryInterval", int.class);
-        map.put("synchronous", boolean.class);
-        map.put("timeoutCheckerExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SjmsBatchEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -58,8 +27,6 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
         case "asyncstartlistener":
         case "asyncStartListener": target.setAsyncStartListener(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "completioninterval":
@@ -104,15 +71,55 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "aggregationstrategy":
+        case "aggregationStrategy": return org.apache.camel.AggregationStrategy.class;
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "asyncstartlistener":
+        case "asyncStartListener": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "completioninterval":
+        case "completionInterval": return int.class;
+        case "completionpredicate":
+        case "completionPredicate": return java.lang.String.class;
+        case "completionsize":
+        case "completionSize": return int.class;
+        case "completiontimeout":
+        case "completionTimeout": return int.class;
+        case "consumercount":
+        case "consumerCount": return int.class;
+        case "eagercheckcompletion":
+        case "eagerCheckCompletion": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "includealljmsxproperties":
+        case "includeAllJMSXProperties": return boolean.class;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
+        case "keepalivedelay":
+        case "keepAliveDelay": return int.class;
+        case "mapjmsmessage":
+        case "mapJmsMessage": return boolean.class;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
+        case "pollduration":
+        case "pollDuration": return int.class;
+        case "recoveryinterval":
+        case "recoveryInterval": return int.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "timeoutcheckerexecutorservice":
+        case "timeoutCheckerExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -125,8 +132,6 @@ public class SjmsBatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "allowNullBody": return target.isAllowNullBody();
         case "asyncstartlistener":
         case "asyncStartListener": return target.isAsyncStartListener();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "completioninterval":

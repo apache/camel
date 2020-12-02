@@ -4,9 +4,10 @@ package org.apache.camel.component.sjms;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,38 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SjmsComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("connectionCount", java.lang.Integer.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("reconnectBackOff", long.class);
-        map.put("reconnectOnError", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("connectionClientId", java.lang.String.class);
-        map.put("connectionFactory", javax.jms.ConnectionFactory.class);
-        map.put("connectionMaxWait", long.class);
-        map.put("connectionResource", org.apache.camel.component.sjms.jms.ConnectionResource.class);
-        map.put("connectionTestOnBorrow", boolean.class);
-        map.put("destinationCreationStrategy", org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class);
-        map.put("jmsKeyFormatStrategy", org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class);
-        map.put("messageCreatedStrategy", org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class);
-        map.put("timedTaskManager", org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("connectionPassword", java.lang.String.class);
-        map.put("connectionUsername", java.lang.String.class);
-        map.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SjmsComponentConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SjmsComponent target = (SjmsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connectionclientid":
@@ -89,23 +64,61 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
+    public String[] getAutowiredNames() {
+        return new String[]{"connectionFactory"};
     }
 
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connectionclientid":
+        case "connectionClientId": return java.lang.String.class;
+        case "connectioncount":
+        case "connectionCount": return java.lang.Integer.class;
+        case "connectionfactory":
+        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "connectionmaxwait":
+        case "connectionMaxWait": return long.class;
+        case "connectionpassword":
+        case "connectionPassword": return java.lang.String.class;
+        case "connectionresource":
+        case "connectionResource": return org.apache.camel.component.sjms.jms.ConnectionResource.class;
+        case "connectiontestonborrow":
+        case "connectionTestOnBorrow": return boolean.class;
+        case "connectionusername":
+        case "connectionUsername": return java.lang.String.class;
+        case "destinationcreationstrategy":
+        case "destinationCreationStrategy": return org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
+        case "reconnectbackoff":
+        case "reconnectBackOff": return long.class;
+        case "reconnectonerror":
+        case "reconnectOnError": return boolean.class;
+        case "timedtaskmanager":
+        case "timedTaskManager": return org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class;
+        case "transactioncommitstrategy":
+        case "transactionCommitStrategy": return org.apache.camel.component.sjms.TransactionCommitStrategy.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SjmsComponent target = (SjmsComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connectionclientid":

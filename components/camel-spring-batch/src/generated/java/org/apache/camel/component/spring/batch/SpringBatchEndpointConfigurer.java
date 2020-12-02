@@ -4,9 +4,10 @@ package org.apache.camel.component.spring.batch;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,26 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("jobName", java.lang.String.class);
-        map.put("jobFromHeader", boolean.class);
-        map.put("jobLauncher", org.springframework.batch.core.launch.JobLauncher.class);
-        map.put("jobRegistry", org.springframework.batch.core.configuration.JobRegistry.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SpringBatchEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SpringBatchEndpoint target = (SpringBatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "jobfromheader":
         case "jobFromHeader": target.setJobFromHeader(property(camelContext, boolean.class, value)); return true;
         case "joblauncher":
@@ -50,23 +35,25 @@ public class SpringBatchEndpointConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "jobfromheader":
+        case "jobFromHeader": return boolean.class;
+        case "joblauncher":
+        case "jobLauncher": return org.springframework.batch.core.launch.JobLauncher.class;
+        case "jobregistry":
+        case "jobRegistry": return org.springframework.batch.core.configuration.JobRegistry.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SpringBatchEndpoint target = (SpringBatchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "jobfromheader":
         case "jobFromHeader": return target.isJobFromHeader();
         case "joblauncher":

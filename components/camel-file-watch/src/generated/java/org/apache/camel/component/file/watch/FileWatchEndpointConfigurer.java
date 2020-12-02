@@ -4,9 +4,10 @@ package org.apache.camel.component.file.watch;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,28 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("path", java.lang.String.class);
-        map.put("antInclude", java.lang.String.class);
-        map.put("autoCreate", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("concurrentConsumers", int.class);
-        map.put("events", java.util.Set.class);
-        map.put("fileHasher", io.methvin.watcher.hashing.FileHasher.class);
-        map.put("pollThreads", int.class);
-        map.put("queueSize", int.class);
-        map.put("recursive", boolean.class);
-        map.put("useFileHashing", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FileWatchEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FileWatchEndpoint target = (FileWatchEndpoint) obj;
@@ -46,8 +25,6 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "antInclude": target.setAntInclude(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreate":
         case "autoCreate": target.setAutoCreate(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -72,15 +49,33 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "antinclude":
+        case "antInclude": return java.lang.String.class;
+        case "autocreate":
+        case "autoCreate": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "events": return java.util.Set.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "filehasher":
+        case "fileHasher": return io.methvin.watcher.hashing.FileHasher.class;
+        case "pollthreads":
+        case "pollThreads": return int.class;
+        case "queuesize":
+        case "queueSize": return int.class;
+        case "recursive": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "usefilehashing":
+        case "useFileHashing": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -91,8 +86,6 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "antInclude": return target.getAntInclude();
         case "autocreate":
         case "autoCreate": return target.isAutoCreate();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
@@ -112,6 +105,14 @@ public class FileWatchEndpointConfigurer extends PropertyConfigurerSupport imple
         case "synchronous": return target.isSynchronous();
         case "usefilehashing":
         case "useFileHashing": return target.isUseFileHashing();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "events": return org.apache.camel.component.file.watch.constants.FileEventEnum.class;
         default: return null;
         }
     }

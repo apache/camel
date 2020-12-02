@@ -4,9 +4,10 @@ package org.apache.camel.component.vertx.http;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,38 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("httpUri", java.net.URI.class);
-        map.put("connectTimeout", int.class);
-        map.put("cookieStore", io.vertx.ext.web.client.spi.CookieStore.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("httpMethod", io.vertx.core.http.HttpMethod.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("okStatusCodeRange", java.lang.String.class);
-        map.put("sessionManagement", boolean.class);
-        map.put("throwExceptionOnFailure", boolean.class);
-        map.put("timeout", long.class);
-        map.put("transferException", boolean.class);
-        map.put("useCompression", boolean.class);
-        map.put("vertxHttpBinding", org.apache.camel.component.vertx.http.VertxHttpBinding.class);
-        map.put("webClientOptions", io.vertx.ext.web.client.WebClientOptions.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPassword", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyType", io.vertx.core.net.ProxyType.class);
-        map.put("proxyUsername", java.lang.String.class);
-        map.put("basicAuthPassword", java.lang.String.class);
-        map.put("basicAuthUsername", java.lang.String.class);
-        map.put("bearerToken", java.lang.String.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(VertxHttpEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxHttpEndpoint target = (VertxHttpEndpoint) obj;
@@ -56,8 +25,6 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthPassword": target.getConfiguration().setBasicAuthPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "basicauthusername":
         case "basicAuthUsername": target.getConfiguration().setBasicAuthUsername(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bearertoken":
         case "bearerToken": target.getConfiguration().setBearerToken(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
@@ -103,15 +70,54 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "basicauthpassword":
+        case "basicAuthPassword": return java.lang.String.class;
+        case "basicauthusername":
+        case "basicAuthUsername": return java.lang.String.class;
+        case "bearertoken":
+        case "bearerToken": return java.lang.String.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
+        case "cookiestore":
+        case "cookieStore": return io.vertx.ext.web.client.spi.CookieStore.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpmethod":
+        case "httpMethod": return io.vertx.core.http.HttpMethod.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "okstatuscoderange":
+        case "okStatusCodeRange": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxypassword":
+        case "proxyPassword": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxytype":
+        case "proxyType": return io.vertx.core.net.ProxyType.class;
+        case "proxyusername":
+        case "proxyUsername": return java.lang.String.class;
+        case "sessionmanagement":
+        case "sessionManagement": return boolean.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
+        case "timeout": return long.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
+        case "usecompression":
+        case "useCompression": return boolean.class;
+        case "vertxhttpbinding":
+        case "vertxHttpBinding": return org.apache.camel.component.vertx.http.VertxHttpBinding.class;
+        case "webclientoptions":
+        case "webClientOptions": return io.vertx.ext.web.client.WebClientOptions.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -122,8 +128,6 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "basicAuthPassword": return target.getConfiguration().getBasicAuthPassword();
         case "basicauthusername":
         case "basicAuthUsername": return target.getConfiguration().getBasicAuthUsername();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bearertoken":
         case "bearerToken": return target.getConfiguration().getBearerToken();
         case "connecttimeout":

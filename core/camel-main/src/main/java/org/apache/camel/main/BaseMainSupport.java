@@ -420,20 +420,8 @@ public abstract class BaseMainSupport extends BaseService {
         // try to load configuration classes
         loadConfigurations(camelContext);
 
-        // conventional configuration via properties to allow configuring options on
-        // component, dataformat, and languages (like spring-boot auto-configuration)
-        if (mainConfigurationProperties.isAutowireComponentProperties()
-                || mainConfigurationProperties.isAutowireComponentPropertiesDeep()) {
-            autowireConfigurationFromRegistry(
-                    camelContext,
-                    mainConfigurationProperties.isAutowireComponentPropertiesNonNullOnly(),
-                    mainConfigurationProperties.isAutowireComponentPropertiesDeep());
-        }
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFromProperties(camelContext, autoConfiguredProperties);
-        }
-        if (mainConfigurationProperties.isAutowireComponentProperties()
-                || mainConfigurationProperties.isAutowireComponentPropertiesDeep()) {
             autowireWildcardProperties(camelContext);
         }
 
@@ -1184,21 +1172,6 @@ public abstract class BaseMainSupport extends BaseService {
                 });
             }
         }
-    }
-
-    protected void autowireConfigurationFromRegistry(CamelContext camelContext, boolean bindNullOnly, boolean deepNesting)
-            throws Exception {
-        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
-            @Override
-            public void onComponentAdd(String name, Component component) {
-                PropertyBindingSupport.autowireSingletonPropertiesFromRegistry(camelContext, component, bindNullOnly,
-                        deepNesting, (obj, propertyName, type, value) -> {
-                            LOG.info(
-                                    "Autowired property: {} on component: {} as exactly one instance of type: {} found in the registry",
-                                    propertyName, component.getClass().getSimpleName(), type.getName());
-                        });
-            }
-        });
     }
 
     protected void autowireWildcardProperties(CamelContext camelContext) {

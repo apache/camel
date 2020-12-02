@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.braintree;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "Provides methods to create, delete, find, and update Customer objects",
            apiMethods = {@ApiMethod(methodName = "all", description="Finds all Customers and returns a ResourceCollection", signatures={"com.braintreegateway.ResourceCollection<com.braintreegateway.Customer> all()"}), @ApiMethod(methodName = "create", description="Creates a Customer", signatures={"com.braintreegateway.Result<com.braintreegateway.Customer> create(com.braintreegateway.CustomerRequest request)"}), @ApiMethod(methodName = "delete", description="Deletes a Customer by id", signatures={"com.braintreegateway.Result<com.braintreegateway.Customer> delete(String id)"}), @ApiMethod(methodName = "find", description="Finds a Customer by id", signatures={"com.braintreegateway.Customer find(String id)", "com.braintreegateway.Customer find(String id, String associationFilterId)"}), @ApiMethod(methodName = "search", description="Finds all Transactions that match the query and returns a ResourceCollection", signatures={"com.braintreegateway.ResourceCollection<com.braintreegateway.Customer> search(com.braintreegateway.CustomerSearchRequest query)"}), @ApiMethod(methodName = "update", description="Updates a Customer", signatures={"com.braintreegateway.Result<com.braintreegateway.Customer> update(String id, com.braintreegateway.CustomerRequest request)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class CustomerGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "find", description="The id of the association filter to use")})

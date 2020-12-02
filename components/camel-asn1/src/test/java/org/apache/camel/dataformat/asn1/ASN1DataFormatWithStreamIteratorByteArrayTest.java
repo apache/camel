@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupport {
@@ -47,7 +48,7 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
 
         List<Exchange> exchanges = getMockEndpoint(mockEnpointName).getExchanges();
 
-        assertTrue(exchanges.size() == 1);
+        assertEquals(1, exchanges.size());
         for (Exchange exchange : exchanges) {
             assertTrue(exchange.getIn().getBody() instanceof byte[]);
             assertTrue(Arrays.equals(FileUtils.readFileToByteArray(testFile), exchange.getIn().getBody(byte[].class)));

@@ -21,9 +21,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.github.consumer.CommitConsumer;
+import org.apache.camel.component.github.consumer.EventsConsumer;
 import org.apache.camel.component.github.consumer.PullRequestCommentConsumer;
 import org.apache.camel.component.github.consumer.PullRequestConsumer;
 import org.apache.camel.component.github.consumer.TagConsumer;
+import org.apache.camel.component.github.event.GitHubEventFetchStrategy;
 import org.apache.camel.component.github.producer.ClosePullRequestProducer;
 import org.apache.camel.component.github.producer.CreateIssueProducer;
 import org.apache.camel.component.github.producer.GetCommitFileProducer;
@@ -34,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -59,7 +61,7 @@ import org.apache.camel.util.StringHelper;
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName",
              category = { Category.FILE, Category.CLOUD, Category.API })
-public class GitHubEndpoint extends DefaultEndpoint {
+public class GitHubEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
     @Metadata(required = true)
@@ -84,6 +86,8 @@ public class GitHubEndpoint extends DefaultEndpoint {
     private String targetUrl;
     @UriParam(label = "producer")
     private String encoding;
+    @UriParam(label = "consumer,advanced")
+    private GitHubEventFetchStrategy eventFetchStrategy;
 
     public GitHubEndpoint(String uri, GitHubComponent component) {
         super(uri, component);
@@ -109,17 +113,26 @@ public class GitHubEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        Consumer consumer = null;
         if (type == GitHubType.COMMIT) {
             StringHelper.notEmpty(branchName, "branchName", this);
-            return new CommitConsumer(this, processor, branchName);
+            consumer = new CommitConsumer(this, processor, branchName);
         } else if (type == GitHubType.PULLREQUEST) {
-            return new PullRequestConsumer(this, processor);
+            consumer = new PullRequestConsumer(this, processor);
         } else if (type == GitHubType.PULLREQUESTCOMMENT) {
-            return new PullRequestCommentConsumer(this, processor);
+            consumer = new PullRequestCommentConsumer(this, processor);
         } else if (type == GitHubType.TAG) {
-            return new TagConsumer(this, processor);
+            consumer = new TagConsumer(this, processor);
+        } else if (type == GitHubType.EVENT) {
+            consumer = new EventsConsumer(this, processor);
         }
-        throw new IllegalArgumentException("Cannot create consumer with type " + type);
+
+        if (consumer == null) {
+            throw new IllegalArgumentException("Cannot create consumer with type " + type);
+        }
+
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public GitHubType getType() {
@@ -234,5 +247,16 @@ public class GitHubEndpoint extends DefaultEndpoint {
      */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public GitHubEventFetchStrategy getEventFetchStrategy() {
+        return eventFetchStrategy;
+    }
+
+    /**
+     * To specify a custom strategy that configures how the EventsConsumer fetches events.
+     */
+    public void setEventFetchStrategy(GitHubEventFetchStrategy eventFetchStrategy) {
+        this.eventFetchStrategy = eventFetchStrategy;
     }
 }

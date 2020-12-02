@@ -40,6 +40,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -104,25 +105,20 @@ public class SqlRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testLowNumberOfParameter() throws Exception {
-        try {
-            template.sendBody("direct:list", "ASF");
-            fail();
-        } catch (RuntimeCamelException e) {
-            // should have DataAccessException thrown
-            assertTrue(e.getCause() instanceof DataAccessException, "Exception thrown is wrong");
-        }
+    public void testLowNumberOfParameter() {
+        Exception ex = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:list", "ASF"));
+
+        // should have DataAccessException thrown
+        assertTrue(ex.getCause() instanceof DataAccessException, "Exception thrown is wrong");
     }
 
     @Test
-    public void testHighNumberOfParameter() throws Exception {
-        try {
-            template.sendBody("direct:simple", new Object[] { "ASF", "Foo" });
-            fail();
-        } catch (RuntimeCamelException e) {
-            // should have DataAccessException thrown
-            assertTrue(e.getCause() instanceof DataAccessException, "Exception thrown is wrong");
-        }
+    public void testHighNumberOfParameter() {
+        Exception ex = assertThrows(RuntimeCamelException.class,
+                () -> template.sendBody("direct:simple", new Object[] { "ASF", "Foo" }));
+
+        // should have DataAccessException thrown
+        assertTrue(ex.getCause() instanceof DataAccessException, "Exception thrown is wrong");
     }
 
     @Test
@@ -230,14 +226,13 @@ public class SqlRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBatchMissingParamAtEnd() throws Exception {
-        try {
-            List<?> data = Arrays.asList(Arrays.asList(9, "stu", "vwx"), Arrays.asList(10, "yza"));
-            template.sendBody("direct:batch", data);
-            fail();
-        } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof UncategorizedSQLException);
-        }
+    public void testBatchMissingParamAtEnd() {
+        List<?> data = Arrays.asList(Arrays.asList(9, "stu", "vwx"), Arrays.asList(10, "yza"));
+
+        Exception ex = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:batch", data));
+
+        assertTrue(ex.getCause() instanceof UncategorizedSQLException);
+
         assertEquals(Integer.valueOf(0),
                 jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
         assertEquals(Integer.valueOf(0),
@@ -245,14 +240,12 @@ public class SqlRouteTest extends CamelTestSupport {
     }
 
     @Test
-    public void testBatchMissingParamAtBeginning() throws Exception {
-        try {
-            List<?> data = Arrays.asList(Arrays.asList(9, "stu"), Arrays.asList(10, "vwx", "yza"));
-            template.sendBody("direct:batch", data);
-            fail();
-        } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof UncategorizedSQLException);
-        }
+    public void testBatchMissingParamAtBeginning() {
+        List<?> data = Arrays.asList(Arrays.asList(9, "stu"), Arrays.asList(10, "vwx", "yza"));
+
+        Exception ex = assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:batch", data));
+        assertTrue(ex.getCause() instanceof UncategorizedSQLException);
+
         assertEquals(Integer.valueOf(0),
                 jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
         assertEquals(Integer.valueOf(0),

@@ -4,9 +4,10 @@ package org.apache.camel.component.caffeine.load;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,38 +17,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("cacheName", java.lang.String.class);
-        map.put("action", java.lang.String.class);
-        map.put("cacheLoader", com.github.benmanes.caffeine.cache.CacheLoader.class);
-        map.put("createCacheIfNotExist", boolean.class);
-        map.put("evictionType", org.apache.camel.component.caffeine.EvictionType.class);
-        map.put("expireAfterAccessTime", int.class);
-        map.put("expireAfterWriteTime", int.class);
-        map.put("initialCapacity", int.class);
-        map.put("key", java.lang.Object.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("maximumSize", int.class);
-        map.put("removalListener", com.github.benmanes.caffeine.cache.RemovalListener.class);
-        map.put("statsCounter", com.github.benmanes.caffeine.cache.stats.StatsCounter.class);
-        map.put("statsEnabled", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("keyType", java.lang.String.class);
-        map.put("synchronous", boolean.class);
-        map.put("valueType", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(CaffeineLoadCacheEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CaffeineLoadCacheEndpoint target = (CaffeineLoadCacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "cacheloader":
         case "cacheLoader": target.getConfiguration().setCacheLoader(property(camelContext, com.github.benmanes.caffeine.cache.CacheLoader.class, value)); return true;
         case "createcacheifnotexist":
@@ -81,15 +55,39 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "cacheloader":
+        case "cacheLoader": return com.github.benmanes.caffeine.cache.CacheLoader.class;
+        case "createcacheifnotexist":
+        case "createCacheIfNotExist": return boolean.class;
+        case "evictiontype":
+        case "evictionType": return org.apache.camel.component.caffeine.EvictionType.class;
+        case "expireafteraccesstime":
+        case "expireAfterAccessTime": return int.class;
+        case "expireafterwritetime":
+        case "expireAfterWriteTime": return int.class;
+        case "initialcapacity":
+        case "initialCapacity": return int.class;
+        case "key": return java.lang.Object.class;
+        case "keytype":
+        case "keyType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maximumsize":
+        case "maximumSize": return int.class;
+        case "removallistener":
+        case "removalListener": return com.github.benmanes.caffeine.cache.RemovalListener.class;
+        case "statscounter":
+        case "statsCounter": return com.github.benmanes.caffeine.cache.stats.StatsCounter.class;
+        case "statsenabled":
+        case "statsEnabled": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "valuetype":
+        case "valueType": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -97,8 +95,6 @@ public class CaffeineLoadCacheEndpointConfigurer extends PropertyConfigurerSuppo
         CaffeineLoadCacheEndpoint target = (CaffeineLoadCacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getConfiguration().getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "cacheloader":
         case "cacheLoader": return target.getConfiguration().getCacheLoader();
         case "createcacheifnotexist":

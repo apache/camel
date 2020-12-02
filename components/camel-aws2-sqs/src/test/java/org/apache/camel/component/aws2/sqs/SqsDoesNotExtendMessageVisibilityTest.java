@@ -26,7 +26,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.model.Message;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
 
@@ -58,7 +58,7 @@ public class SqsDoesNotExtendMessageVisibilityTest extends CamelTestSupport {
         this.client.messages.add(message.build());
 
         assertMockEndpointsSatisfied(); // Wait for message to arrive.
-        assertTrue(this.client.changeMessageVisibilityRequests.size() == 0);
+        assertEquals(0, this.client.changeMessageVisibilityRequests.size());
     }
 
     @Override

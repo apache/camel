@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.google.drive;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "The replies collection of methods",
            apiMethods = {@ApiMethod(methodName = "delete", description="Deletes a reply", signatures={"com.google.api.services.drive.Drive$Replies$Delete delete(String fileId, String commentId, String replyId)"}), @ApiMethod(methodName = "get", description="Gets a reply", signatures={"com.google.api.services.drive.Drive$Replies$Get get(String fileId, String commentId, String replyId)"}), @ApiMethod(methodName = "insert", description="Creates a new reply to the given comment", signatures={"com.google.api.services.drive.Drive$Replies$Insert insert(String fileId, String commentId, com.google.api.services.drive.model.CommentReply content)"}), @ApiMethod(methodName = "list", description="Lists all of the replies to a comment", signatures={"com.google.api.services.drive.Drive$Replies$List list(String fileId, String commentId)"}), @ApiMethod(methodName = "patch", description="Updates an existing reply", signatures={"com.google.api.services.drive.Drive$Replies$Patch patch(String fileId, String commentId, String replyId, com.google.api.services.drive.model.CommentReply content)"}), @ApiMethod(methodName = "update", description="Updates an existing reply", signatures={"com.google.api.services.drive.Drive$Replies$Update update(String fileId, String commentId, String replyId, com.google.api.services.drive.model.CommentReply content)"})}, aliases = {})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class DriveRepliesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the comment"), @ApiMethod(methodName = "get", description="The ID of the comment"), @ApiMethod(methodName = "insert", description="The ID of the comment"), @ApiMethod(methodName = "list", description="The ID of the comment"), @ApiMethod(methodName = "patch", description="The ID of the comment"), @ApiMethod(methodName = "update", description="The ID of the comment")})

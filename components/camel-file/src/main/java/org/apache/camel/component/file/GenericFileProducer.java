@@ -146,7 +146,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                                     "File already exist: " + target + ". Cannot write new file.");
                         } else if (endpoint.getFileExist() == GenericFileExist.Move) {
                             // move any existing file first
-                            doMoveExistingFile(target);
+                            this.endpoint.getMoveExistingFileStrategy().moveExistingFile(endpoint, operations, target);
                         } else if (endpoint.isEagerDeleteTargetFile() && endpoint.getFileExist() == GenericFileExist.Override) {
                             // we override the target so we do this by deleting
                             // it so the temp file can be renamed later
@@ -240,34 +240,6 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
 
         postWriteCheck(exchange);
-    }
-
-    private void doMoveExistingFile(String fileName) throws GenericFileOperationFailedException {
-        // need to evaluate using a dummy and simulate the file first, to have
-        // access to all the file attributes
-        // create a dummy exchange as Exchange is needed for expression
-        // evaluation
-        // we support only the following 3 tokens.
-        Exchange dummy = endpoint.createExchange();
-        String parent = FileUtil.onlyPath(fileName);
-        String onlyName = FileUtil.stripPath(fileName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME, fileName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
-        dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
-
-        String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
-        // we must normalize it (to avoid having both \ and / in the name which
-        // confuses java.io.File)
-        to = FileUtil.normalizePath(to);
-        if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException(
-                    "moveExisting evaluated as empty String, cannot move existing file: " + fileName);
-        }
-
-        boolean renamed = operations.renameFile(fileName, to);
-        if (!renamed) {
-            throw new GenericFileOperationFailedException("Cannot rename file from: " + fileName + " to: " + to);
-        }
     }
 
     /**

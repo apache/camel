@@ -4,9 +4,10 @@ package org.apache.camel.component.undertow;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,32 +17,14 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class UndertowComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("muteException", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("hostOptions", org.apache.camel.component.undertow.UndertowHostOptions.class);
-        map.put("undertowHttpBinding", org.apache.camel.component.undertow.UndertowHttpBinding.class);
-        map.put("allowedRoles", java.lang.String.class);
-        map.put("securityConfiguration", java.lang.Object.class);
-        map.put("securityProvider", org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        map.put("useGlobalSslContextParameters", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(UndertowComponentConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         UndertowComponent target = (UndertowComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedroles":
         case "allowedRoles": target.setAllowedRoles(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "hostoptions":
@@ -65,15 +48,32 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowedroles":
+        case "allowedRoles": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "hostoptions":
+        case "hostOptions": return org.apache.camel.component.undertow.UndertowHostOptions.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "muteexception":
+        case "muteException": return boolean.class;
+        case "securityconfiguration":
+        case "securityConfiguration": return java.lang.Object.class;
+        case "securityprovider":
+        case "securityProvider": return org.apache.camel.component.undertow.spi.UndertowSecurityProvider.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "undertowhttpbinding":
+        case "undertowHttpBinding": return org.apache.camel.component.undertow.UndertowHttpBinding.class;
+        case "useglobalsslcontextparameters":
+        case "useGlobalSslContextParameters": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -82,8 +82,8 @@ public class UndertowComponentConfigurer extends PropertyConfigurerSupport imple
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowedroles":
         case "allowedRoles": return target.getAllowedRoles();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "hostoptions":

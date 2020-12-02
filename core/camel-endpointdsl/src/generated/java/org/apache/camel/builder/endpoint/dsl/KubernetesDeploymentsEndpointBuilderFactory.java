@@ -156,6 +156,66 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
             return this;
         }
         /**
+         * The Consumer CRD Resource Group we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesDeploymentsEndpointConsumerBuilder crdGroup(
+                String crdGroup) {
+            doSetProperty("crdGroup", crdGroup);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource name we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesDeploymentsEndpointConsumerBuilder crdName(
+                String crdName) {
+            doSetProperty("crdName", crdName);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource Plural we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesDeploymentsEndpointConsumerBuilder crdPlural(
+                String crdPlural) {
+            doSetProperty("crdPlural", crdPlural);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource Scope we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesDeploymentsEndpointConsumerBuilder crdScope(
+                String crdScope) {
+            doSetProperty("crdScope", crdScope);
+            return this;
+        }
+        /**
+         * The Consumer CRD Resource Version we would like to watch.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         */
+        default KubernetesDeploymentsEndpointConsumerBuilder crdVersion(
+                String crdVersion) {
+            doSetProperty("crdVersion", crdVersion);
+            return this;
+        }
+        /**
          * The Consumer Label key when watching at some resources.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -453,34 +513,6 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
         default AdvancedKubernetesDeploymentsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesDeploymentsEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesDeploymentsEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -848,34 +880,6 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
             return (KubernetesDeploymentsEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesDeploymentsEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesDeploymentsEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
@@ -1181,34 +1185,6 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
                 AdvancedKubernetesDeploymentsEndpointProducerBuilder {
         default KubernetesDeploymentsEndpointBuilder basic() {
             return (KubernetesDeploymentsEndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesDeploymentsEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedKubernetesDeploymentsEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Connection timeout in milliseconds to use when making requests to the

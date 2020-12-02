@@ -87,7 +87,6 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
-import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
@@ -200,7 +199,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
     private volatile FactoryFinder bootstrapFactoryFinder;
-    private ConfigurerResolver bootstrapConfigurerResolver;
+    private volatile ConfigurerResolver bootstrapConfigurerResolver;
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
     private final Object lock = new Object();
@@ -211,7 +210,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     private final StopWatch stopWatch = new StopWatch(false);
     private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
-    private final Set<LogListener> logListeners = new LinkedHashSet<>();
+    private Set<LogListener> logListeners;
     private final ThreadLocal<Set<String>> componentsInCreation = new ThreadLocal<Set<String>>() {
         @Override
         public Set<String> initialValue() {
@@ -247,6 +246,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
+    private Boolean autowiredEnabled = Boolean.TRUE;
     private boolean lightweight;
     private Long delay;
     private ErrorHandlerFactory errorHandlerFactory;
@@ -308,7 +308,7 @@ public abstract class AbstractCamelContext extends BaseService
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private Debugger debugger;
-    private Date startDate;
+    private long startDate;
 
     private SSLContextParameters sslContextParameters;
 
@@ -343,6 +343,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         // add a default LifecycleStrategy that discover strategies on the registry and invoke them
         this.lifecycleStrategies.add(new OnCamelContextLifecycleStrategy());
+
+        // add a default autowired strategy
+        this.lifecycleStrategies.add(new AutowiredLifecycleStrategy(this));
 
         // add a default LifecycleStrategy to customize services using customizers from registry
         this.lifecycleStrategies.add(new CustomizersLifecycleStrategy(this));
@@ -2014,6 +2017,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addLogListener(LogListener listener) {
+        if (logListeners == null) {
+            logListeners = new LinkedHashSet<>();
+        }
         logListeners.add(listener);
     }
 
@@ -2231,15 +2237,18 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public long getUptimeMillis() {
-        if (startDate == null) {
+        if (startDate == 0) {
             return 0;
         }
-        return new Date().getTime() - startDate.getTime();
+        return System.currentTimeMillis() - startDate;
     }
 
     @Override
     public Date getStartDate() {
-        return startDate;
+        if (startDate == 0) {
+            return null;
+        }
+        return new Date(startDate);
     }
 
     @Override
@@ -2665,7 +2674,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected void doStartContext() throws Exception {
         LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
         vetoed = null;
-        startDate = new Date();
+        startDate = System.currentTimeMillis();
         stopWatch.restart();
 
         // Start the route controller
@@ -2734,11 +2743,9 @@ public abstract class AbstractCamelContext extends BaseService
             bootstraps.clear();
 
             if (isLightweight()) {
-                LOG.info(
-                        "Lightweight enabled. Clearing services to free memory."
-                         + " Danger this impacts the CamelContext not being able to add new routes or use reflection-free configuration, etc.");
+                LOG.info("Lightweight mode enabled. Performing optimizations and memory reduction.");
                 ReifierStrategy.clearReifiers();
-                ConfigurerStrategy.clearConfigurers();
+                adapt(ExtendedCamelContext.class).disposeModel();
             }
         }
     }
@@ -2834,7 +2841,7 @@ public abstract class AbstractCamelContext extends BaseService
         } else {
             // log if stream caching is not in use as this can help people to
             // enable it if they use streams
-            LOG.info("StreamCaching is not in use. If using streams then its recommended to enable stream caching."
+            LOG.info("StreamCaching is not in use. If using streams then it's recommended to enable stream caching."
                      + " See more details at http://camel.apache.org/stream-caching.html");
         }
 
@@ -3024,7 +3031,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // and clear start date
-        startDate = null;
+        startDate = 0;
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
@@ -3844,12 +3851,24 @@ public abstract class AbstractCamelContext extends BaseService
         return allowUseOriginalMessage != null && allowUseOriginalMessage;
     }
 
+    @Override
     public Boolean isCaseInsensitiveHeaders() {
         return caseInsensitiveHeaders != null && caseInsensitiveHeaders;
     }
 
+    @Override
     public void setCaseInsensitiveHeaders(Boolean caseInsensitiveHeaders) {
         this.caseInsensitiveHeaders = caseInsensitiveHeaders;
+    }
+
+    @Override
+    public Boolean isAutowiredEnabled() {
+        return autowiredEnabled != null && autowiredEnabled;
+    }
+
+    @Override
+    public void setAutowiredEnabled(Boolean autowiredEnabled) {
+        this.autowiredEnabled = autowiredEnabled;
     }
 
     @Override

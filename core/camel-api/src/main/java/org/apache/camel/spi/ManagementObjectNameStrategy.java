@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -54,9 +53,6 @@ public interface ManagementObjectNameStrategy {
     ObjectName getObjectNameForEndpoint(Endpoint endpoint) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForDataFormat(CamelContext context, DataFormat endpoint) throws MalformedObjectNameException;
-
-    ObjectName getObjectNameForErrorHandler(Route route, Processor errorHandler, ErrorHandlerFactory builder)
-            throws MalformedObjectNameException;
 
     ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition)
             throws MalformedObjectNameException;

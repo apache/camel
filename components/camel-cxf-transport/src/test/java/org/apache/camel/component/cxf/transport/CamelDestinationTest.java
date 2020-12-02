@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.doThrow;
@@ -281,19 +282,18 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
     }
 
     @Test
-    public void testCAMEL4073() throws Exception {
-        try {
-            Endpoint.publish("camel://foo", new Person() {
-                public void getPerson(Holder<String> personId, Holder<String> ssn, Holder<String> name)
-                        throws UnknownPersonFault {
-                }
-            });
-            fail("Should throw and Exception");
-        } catch (WebServiceException ex) {
-            Throwable c = ex.getCause();
-            assertNotNull(c);
-            assertTrue(c instanceof NoSuchEndpointException);
-        }
+    public void testCAMEL4073() {
+        Person person = new Person() {
+            public void getPerson(Holder<String> personId, Holder<String> ssn, Holder<String> name)
+                    throws UnknownPersonFault {
+            }
+        };
+
+        Exception ex = assertThrows(WebServiceException.class, () -> Endpoint.publish("camel://foo", person));
+
+        Throwable c = ex.getCause();
+        assertNotNull(c);
+        assertTrue(c instanceof NoSuchEndpointException);
     }
 
 }

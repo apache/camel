@@ -4,9 +4,10 @@ package org.apache.camel.component.ganglia;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,28 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class GangliaComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("dmax", int.class);
-        map.put("groupName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("metricName", java.lang.String.class);
-        map.put("mode", info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.class);
-        map.put("prefix", java.lang.String.class);
-        map.put("slope", info.ganglia.gmetric4j.gmetric.GMetricSlope.class);
-        map.put("spoofHostname", java.lang.String.class);
-        map.put("tmax", int.class);
-        map.put("ttl", int.class);
-        map.put("type", info.ganglia.gmetric4j.gmetric.GMetricType.class);
-        map.put("units", java.lang.String.class);
-        map.put("wireFormat31x", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.ganglia.GangliaConfiguration.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GangliaComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.ganglia.GangliaConfiguration getOrCreateConfiguration(GangliaComponent target) {
         if (target.getConfiguration() == null) {
@@ -49,8 +28,8 @@ public class GangliaComponentConfigurer extends PropertyConfigurerSupport implem
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GangliaComponent target = (GangliaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.ganglia.GangliaConfiguration.class, value)); return true;
         case "dmax": getOrCreateConfiguration(target).setDmax(property(camelContext, int.class, value)); return true;
         case "groupname":
@@ -75,23 +54,39 @@ public class GangliaComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "configuration": return org.apache.camel.component.ganglia.GangliaConfiguration.class;
+        case "dmax": return int.class;
+        case "groupname":
+        case "groupName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "metricname":
+        case "metricName": return java.lang.String.class;
+        case "mode": return info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode.class;
+        case "prefix": return java.lang.String.class;
+        case "slope": return info.ganglia.gmetric4j.gmetric.GMetricSlope.class;
+        case "spoofhostname":
+        case "spoofHostname": return java.lang.String.class;
+        case "tmax": return int.class;
+        case "ttl": return int.class;
+        case "type": return info.ganglia.gmetric4j.gmetric.GMetricType.class;
+        case "units": return java.lang.String.class;
+        case "wireformat31x":
+        case "wireFormat31x": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GangliaComponent target = (GangliaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "dmax": return getOrCreateConfiguration(target).getDmax();
         case "groupname":

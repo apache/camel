@@ -291,24 +291,25 @@ public interface Route extends RuntimeConfiguration {
      */
     List<RoutePolicy> getRoutePolicyList();
 
+    // called at completion time
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
 
+    // called at runtime
     ErrorHandlerFactory getErrorHandlerFactory();
 
-    Processor createErrorHandler(Processor processor) throws Exception;
-
-    Collection<Processor> getOnCompletions();
-
     // called at runtime
-    Processor getOnCompletion(String onCompletionId);
+    Collection<Processor> getOnCompletions();
 
     // called at completion time
     void setOnCompletion(String onCompletionId, Processor processor);
 
+    // called at runtime
     Collection<Processor> getOnExceptions();
 
+    // called at runtime
     Processor getOnException(String onExceptionId);
 
+    // called at completion time
     void setOnException(String onExceptionId, Processor processor);
 
     /**

@@ -4,9 +4,10 @@ package org.apache.camel.component.google.bigquery.sql;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,25 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class GoogleBigQuerySQLEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("query", java.lang.String.class);
-        map.put("projectId", java.lang.String.class);
-        map.put("connectionFactory", org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(GoogleBigQuerySQLEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GoogleBigQuerySQLEndpoint target = (GoogleBigQuerySQLEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.getConfiguration().setConnectionFactory(property(camelContext, org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class, value)); return true;
         case "lazystartproducer":
@@ -45,23 +31,26 @@ public class GoogleBigQuerySQLEndpointConfigurer extends PropertyConfigurerSuppo
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
+    public String[] getAutowiredNames() {
+        return new String[]{"connectionFactory"};
     }
 
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "connectionfactory":
+        case "connectionFactory": return org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GoogleBigQuerySQLEndpoint target = (GoogleBigQuerySQLEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "connectionfactory":
         case "connectionFactory": return target.getConfiguration().getConnectionFactory();
         case "lazystartproducer":

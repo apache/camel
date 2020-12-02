@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -30,8 +31,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RemoteFileIgnoreDoPollErrorTest {
     private final RemoteFileEndpoint<Object> remoteFileEndpoint = new RemoteFileEndpoint<Object>() {
@@ -78,23 +79,23 @@ public class RemoteFileIgnoreDoPollErrorTest {
     @Test
     public void testReadDirErrorNotHandled() throws Exception {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("IllegalStateException", false);
-        try {
-            consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
-            fail("Must throw wrapped IllegalStateException in GenericFileOperationFailedException");
-        } catch (GenericFileOperationFailedException e) {
-            assertTrue(e.getCause() instanceof IllegalStateException);
-        }
+        List<GenericFile<Object>> list = Collections.emptyList();
+
+        Exception ex = assertThrows(GenericFileOperationFailedException.class,
+                () -> consumer.doSafePollSubDirectory("anyPath", "adir", list, 0));
+
+        assertTrue(ex.getCause() instanceof IllegalStateException);
     }
 
     @Test
     public void testReadDirErrorNotHandledForGenericFileOperationException() throws Exception {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("GenericFileOperationFailedException", false);
-        try {
-            consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
-            fail("Must throw GenericFileOperationFailedException");
-        } catch (GenericFileOperationFailedException e) {
-            assertNull(e.getCause());
-        }
+        List<GenericFile<Object>> list = Collections.emptyList();
+
+        Exception ex = assertThrows(GenericFileOperationFailedException.class,
+                () -> consumer.doSafePollSubDirectory("anyPath", "adir", list, 0));
+
+        assertNull(ex.getCause());
     }
 
     private RemoteFileConsumer<Object> getRemoteFileConsumer(

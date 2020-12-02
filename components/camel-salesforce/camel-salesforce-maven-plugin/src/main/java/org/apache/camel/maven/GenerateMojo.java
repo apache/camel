@@ -85,16 +85,21 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             return descriptions.externalIdsOf(name);
         }
 
-        public String getEnumConstant(final String value) {
+        public String getEnumConstant(
+                final String objectName, final String fieldName,
+                final String picklistValue) {
+            final String key = String.join(".", objectName, fieldName, picklistValue);
+            if (enumerationOverrideProperties.containsKey(key)) {
+                return enumerationOverrideProperties.get(key).toString();
+            }
 
-            // TODO add support for supplementary characters
             final StringBuilder result = new StringBuilder();
             boolean changed = false;
-            if (!Character.isJavaIdentifierStart(value.charAt(0))) {
+            if (!Character.isJavaIdentifierStart(picklistValue.charAt(0))) {
                 result.append("_");
                 changed = true;
             }
-            for (final char c : value.toCharArray()) {
+            for (final char c : picklistValue.toCharArray()) {
                 if (Character.isJavaIdentifierPart(c)) {
                     result.append(c);
                 } else {
@@ -104,7 +109,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 }
             }
 
-            return changed ? result.toString().toUpperCase() : value.toUpperCase();
+            return changed ? result.toString().toUpperCase() : picklistValue.toUpperCase();
         }
 
         public String getFieldType(final SObjectDescription description, final SObjectField field) {
@@ -176,12 +181,8 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             return result;
         }
 
-        public boolean hasExternalIds(final String name) {
-            return descriptions.hasExternalIds(name);
-        }
-
-        public boolean atLeastOneHasExternalIds(final List<String> names) {
-            return names.stream().anyMatch(n -> descriptions.hasExternalIds(n));
+        public boolean hasDescription(final String name) {
+            return descriptions.hasDescription(name);
         }
 
         public boolean hasMultiSelectPicklists(final SObjectDescription desc) {
@@ -253,6 +254,10 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
         public void pop() {
             stack.pop();
+        }
+
+        public String javaSafeString(final String val) {
+            return StringEscapeUtils.escapeJava(val);
         }
 
         public Set<Map.Entry<String, Object>> propertiesOf(final Object object) {
@@ -348,6 +353,20 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     String packageName;
 
     /**
+     * Suffix for child relationship property name. Necessary if an SObject has a lookup field with the same name as its
+     * Child Relationship Name. If setting to something other than default, "List" is a sensible value.
+     */
+    @Parameter(property = "camelSalesforce.childRelationshipNameSuffix")
+    String childRelationshipNameSuffix;
+
+    /**
+     * Override picklist enum value generation via a java.util.Properties instance. Property name format:
+     * `SObject.FieldName.PicklistValue`. Property value is the desired enum value.
+     */
+    @Parameter(property = "camelSalesforce.enumerationOverrideProperties")
+    Properties enumerationOverrideProperties = new Properties();
+
+    /**
      * Names of specific picklist/multipicklist fields, which should be converted to Enum (default case) if property
      * {@link this#useStringsForPicklists} is set to true. Format: SObjectApiName.FieldApiName (e.g. Account.DataSource)
      */
@@ -409,6 +428,9 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         parsePicklistToEnums();
         parsePicklistToStrings();
 
+        childRelationshipNameSuffix = childRelationshipNameSuffix != null
+                ? childRelationshipNameSuffix : "";
+
         // generate a source file for SObject
         final VelocityContext context = new VelocityContext();
         context.put("packageName", packageName);
@@ -416,6 +438,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         context.put("esc", StringEscapeUtils.class);
         context.put("desc", description);
         context.put("useStringsForPicklists", useStringsForPicklists);
+        context.put("childRelationshipNameSuffix", childRelationshipNameSuffix);
 
         final String pojoFileName = description.getName() + JAVA_EXT;
         final File pojoFile = new File(pkgDir, pojoFileName);
@@ -436,18 +459,23 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         }
 
         // write required Enumerations for any picklists
-        for (final SObjectField field : description.getFields()) {
-            if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
-                final String enumName = utility.enumTypeName(description.getName(), field.getName());
-                final String enumFileName = enumName + JAVA_EXT;
-                final File enumFile = new File(pkgDir, enumFileName);
+        if (!useStringsForPicklists || (picklistToEnums != null && picklistToEnums.length > 0)) {
+            for (final SObjectField field : description.getFields()) {
+                if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
+                    final String enumName = utility.enumTypeName(description.getName(),
+                            field.getName());
+                    final String enumFileName = enumName + JAVA_EXT;
+                    final File enumFile = new File(pkgDir, enumFileName);
 
-                context.put("field", field);
-                context.put("enumName", enumName);
-                final Template enumTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM, UTF_8);
+                    context.put("sObjectName", description.getName());
+                    context.put("field", field);
+                    context.put("enumName", enumName);
+                    final Template enumTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM, UTF_8);
 
-                try (final Writer writer = new OutputStreamWriter(new FileOutputStream(enumFile), StandardCharsets.UTF_8)) {
-                    enumTemplate.merge(context, writer);
+                    try (final Writer writer = new OutputStreamWriter(
+                            new FileOutputStream(enumFile), StandardCharsets.UTF_8)) {
+                        enumTemplate.merge(context, writer);
+                    }
                 }
             }
         }

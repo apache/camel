@@ -96,7 +96,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: 34.0
+         * Default: 50.0
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder apiVersion(String apiVersion) {
@@ -172,6 +172,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder defaultReplayId(
@@ -184,6 +185,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder defaultReplayId(
@@ -923,34 +925,6 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSalesforceEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSalesforceEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1043,7 +1017,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: 34.0
+         * Default: 50.0
          * Group: common
          */
         default SalesforceEndpointProducerBuilder apiVersion(String apiVersion) {
@@ -1119,6 +1093,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointProducerBuilder defaultReplayId(
@@ -1131,6 +1106,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointProducerBuilder defaultReplayId(
@@ -1795,34 +1771,6 @@ public interface SalesforceEndpointBuilderFactory {
             return (SalesforceEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSalesforceEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSalesforceEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1915,7 +1863,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: 34.0
+         * Default: 50.0
          * Group: common
          */
         default SalesforceEndpointBuilder apiVersion(String apiVersion) {
@@ -1989,6 +1937,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointBuilder defaultReplayId(Long defaultReplayId) {
@@ -2000,6 +1949,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default SalesforceEndpointBuilder defaultReplayId(String defaultReplayId) {
@@ -2606,34 +2556,6 @@ public interface SalesforceEndpointBuilderFactory {
                 AdvancedSalesforceEndpointProducerBuilder {
         default SalesforceEndpointBuilder basic() {
             return (SalesforceEndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSalesforceEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSalesforceEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel

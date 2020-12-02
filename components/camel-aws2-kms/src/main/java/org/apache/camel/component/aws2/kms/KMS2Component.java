@@ -17,17 +17,14 @@
 package org.apache.camel.component.aws2.kms;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.kms.KmsClient;
 
 /**
  * For working with Amazon KMS.
@@ -56,9 +53,6 @@ public class KMS2Component extends DefaultComponent {
 
         KMS2Endpoint endpoint = new KMS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getKmsClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon kms client or accessKey and secretKey must be specified");
@@ -76,20 +70,5 @@ public class KMS2Component extends DefaultComponent {
      */
     public void setConfiguration(KMS2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(KMS2Configuration configuration, KMS2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getKmsClient())) {
-            LOG.debug("Looking for an KmsClient instance in the registry");
-            Set<KmsClient> clients = getCamelContext().getRegistry().findByType(KmsClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one KmsClient instance in the registry");
-                configuration.setKmsClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No KmsClient instance in the registry");
-            }
-        } else {
-            LOG.debug("KmsClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }

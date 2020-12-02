@@ -51,6 +51,7 @@ import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
 import static org.apache.camel.support.ObjectHelper.isNumber;
@@ -70,8 +71,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
     }
 
     public Predicate parsePredicate() {
-        clear();
         try {
+            parseTokens();
             return doParsePredicate();
         } catch (SimpleParserException e) {
             // catch parser exception and turn that into a syntax exceptions
@@ -82,8 +83,26 @@ public class SimplePredicateParser extends BaseSimpleParser {
         }
     }
 
-    protected Predicate doParsePredicate() {
+    public String parseCode() {
+        try {
+            parseTokens();
+            return doParseCode();
+        } catch (SimpleParserException e) {
+            // catch parser exception and turn that into a syntax exceptions
+            throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
+        } catch (Exception e) {
+            // include exception in rethrown exception
+            throw new SimpleIllegalSyntaxException(expression, -1, e.getMessage(), e);
+        }
+    }
 
+    /**
+     * First step parsing into a list of nodes.
+     *
+     * This is used as SPI for camel-csimple to do AST transformation and parse into java source code.
+     */
+    public List<SimpleNode> parseTokens() {
+        clear();
         // parse using the following grammar
         nextToken();
         while (!token.getType().isEol()) {
@@ -124,6 +143,13 @@ public class SimplePredicateParser extends BaseSimpleParser {
         // compact and stack logical expressions
         prepareLogicalExpressions();
 
+        return nodes;
+    }
+
+    /**
+     * Second step parsing into a predicate
+     */
+    protected Predicate doParsePredicate() {
         // create and return as a Camel predicate
         List<Predicate> predicates = createPredicates();
         if (predicates.isEmpty()) {
@@ -134,6 +160,47 @@ public class SimplePredicateParser extends BaseSimpleParser {
         } else {
             return PredicateBuilder.and(predicates);
         }
+    }
+
+    /**
+     * Second step parsing into code
+     */
+    protected String doParseCode() {
+        StringBuilder sb = new StringBuilder();
+        for (SimpleNode node : nodes) {
+            String exp = node.createCode(expression);
+            if (node instanceof LiteralNode) {
+                exp = StringHelper.removeLeadingAndEndingQuotes(exp);
+                sb.append("\"");
+                // " should be escaped to \"
+                exp = escapeQuotes(exp);
+                // \n \t \r should be escaped
+                exp = exp.replaceAll("\n", "\\\\n");
+                exp = exp.replaceAll("\t", "\\\\t");
+                exp = exp.replaceAll("\r", "\\\\r");
+                sb.append(exp);
+                sb.append("\"");
+            } else {
+                sb.append(exp);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String escapeQuotes(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char prev = i > 0 ? text.charAt(i - 1) : 0;
+            char ch = text.charAt(i);
+
+            if (ch == '"' && (i == 0 || prev != '\\')) {
+                sb.append('\\');
+                sb.append('"');
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 
     /**

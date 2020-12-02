@@ -37,7 +37,7 @@ import org.openstack4j.model.compute.ServerCreate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -118,7 +118,7 @@ public class ServerProducerTest extends NovaProducerTestSupport {
         verify(serverService).action(idArgumentCaptor.capture(), actionArgumentCaptor.capture());
 
         assertEquals(id, idArgumentCaptor.getValue());
-        assertTrue(actionArgumentCaptor.getValue() == Action.PAUSE);
+        assertSame(Action.PAUSE, actionArgumentCaptor.getValue());
         assertNull(msg.getBody());
     }
 

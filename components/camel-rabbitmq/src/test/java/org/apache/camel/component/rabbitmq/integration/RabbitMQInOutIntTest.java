@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -43,6 +42,7 @@ import org.apache.camel.component.rabbitmq.testbeans.TestPartiallySerializableOb
 import org.apache.camel.component.rabbitmq.testbeans.TestSerializableObject;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -50,7 +50,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     public static final String ROUTING_KEY = "rk5";
@@ -63,20 +63,6 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     @Produce("direct:rabbitMQ")
     protected ProducerTemplate directProducer;
-
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE
-                    + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
-                    + "&autoAck=true&queue=q4&routingKey="
-                    + ROUTING_KEY + "&transferException=true&requestTimeout=" + TIMEOUT_MS
-                    + "&allowMessageBodySerialization=true")
-    private Endpoint rabbitMQEndpoint;
-
-    @EndpointInject("rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK
-                    + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
-                    + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY
-                    + "&transferException=true&requestTimeout="
-                    + TIMEOUT_MS + "&args=#args" + "&allowMessageBodySerialization=true")
-    private Endpoint noAutoAckEndpoint;
 
     @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
@@ -94,6 +80,21 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+        String rabbitMQEndpoint = String
+                .format("rabbitmq:%s:%d/%s?threadPoolSize=1&exchangeType=direct&username=%s&password=%s"
+                        + "&autoAck=true&queue=q4&routingKey=%s&transferException=true&requestTimeout=%d&allowMessageBodySerialization=true",
+                        connectionProperties.hostname(), connectionProperties.port(), EXCHANGE,
+                        connectionProperties.username(), connectionProperties.password(),
+                        ROUTING_KEY, TIMEOUT_MS);
+
+        String noAutoAckEndpoint = String.format("rabbitmq:%s:%d/%s"
+                                                 + "?threadPoolSize=1&exchangeType=direct&username=%s&password=%s"
+                                                 + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=%s"
+                                                 + "&transferException=true&requestTimeout=%d&args=#args&allowMessageBodySerialization=true",
+                connectionProperties.hostname(), connectionProperties.port(), EXCHANGE_NO_ACK, connectionProperties.username(),
+                connectionProperties.password(), ROUTING_KEY, TIMEOUT_MS);
+
         return new RouteBuilder() {
 
             @Override

@@ -4,9 +4,10 @@ package org.apache.camel.component.aws2.sqs;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,53 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("amazonAWSHost", java.lang.String.class);
-        map.put("amazonSQSClient", software.amazon.awssdk.services.sqs.SqsClient.class);
-        map.put("autoCreateQueue", boolean.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("configuration", org.apache.camel.component.aws2.sqs.Sqs2Configuration.class);
-        map.put("protocol", java.lang.String.class);
-        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        map.put("queueOwnerAWSAccountId", java.lang.String.class);
-        map.put("region", java.lang.String.class);
-        map.put("trustAllCertificates", boolean.class);
-        map.put("attributeNames", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("concurrentConsumers", int.class);
-        map.put("defaultVisibilityTimeout", java.lang.Integer.class);
-        map.put("deleteAfterRead", boolean.class);
-        map.put("deleteIfFiltered", boolean.class);
-        map.put("extendMessageVisibility", boolean.class);
-        map.put("kmsDataKeyReusePeriodSeconds", java.lang.Integer.class);
-        map.put("kmsMasterKeyId", java.lang.String.class);
-        map.put("messageAttributeNames", java.lang.String.class);
-        map.put("serverSideEncryptionEnabled", boolean.class);
-        map.put("visibilityTimeout", java.lang.Integer.class);
-        map.put("waitTimeSeconds", java.lang.Integer.class);
-        map.put("delaySeconds", java.lang.Integer.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("messageDeduplicationIdStrategy", java.lang.String.class);
-        map.put("messageGroupIdStrategy", java.lang.String.class);
-        map.put("operation", org.apache.camel.component.aws2.sqs.Sqs2Operations.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("delayQueue", boolean.class);
-        map.put("queueUrl", java.lang.String.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("maximumMessageSize", java.lang.Integer.class);
-        map.put("messageRetentionPeriod", java.lang.Integer.class);
-        map.put("policy", java.lang.String.class);
-        map.put("receiveMessageWaitTimeSeconds", java.lang.Integer.class);
-        map.put("redrivePolicy", java.lang.String.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Sqs2ComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.aws2.sqs.Sqs2Configuration getOrCreateConfiguration(Sqs2Component target) {
         if (target.getConfiguration() == null) {
@@ -84,10 +38,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "attributeNames": getOrCreateConfiguration(target).setAttributeNames(property(camelContext, java.lang.String.class, value)); return true;
         case "autocreatequeue":
         case "autoCreateQueue": getOrCreateConfiguration(target).setAutoCreateQueue(property(camelContext, boolean.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
@@ -145,6 +97,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": getOrCreateConfiguration(target).setServerSideEncryptionEnabled(property(camelContext, boolean.class, value)); return true;
         case "trustallcertificates":
         case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "visibilitytimeout":
         case "visibilityTimeout": getOrCreateConfiguration(target).setVisibilityTimeout(property(camelContext, java.lang.Integer.class, value)); return true;
         case "waittimeseconds":
@@ -154,15 +108,90 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonSQSClient"};
     }
 
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonawshost":
+        case "amazonAWSHost": return java.lang.String.class;
+        case "amazonsqsclient":
+        case "amazonSQSClient": return software.amazon.awssdk.services.sqs.SqsClient.class;
+        case "attributenames":
+        case "attributeNames": return java.lang.String.class;
+        case "autocreatequeue":
+        case "autoCreateQueue": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
+        case "configuration": return org.apache.camel.component.aws2.sqs.Sqs2Configuration.class;
+        case "defaultvisibilitytimeout":
+        case "defaultVisibilityTimeout": return java.lang.Integer.class;
+        case "delayqueue":
+        case "delayQueue": return boolean.class;
+        case "delayseconds":
+        case "delaySeconds": return java.lang.Integer.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "deleteiffiltered":
+        case "deleteIfFiltered": return boolean.class;
+        case "extendmessagevisibility":
+        case "extendMessageVisibility": return boolean.class;
+        case "kmsdatakeyreuseperiodseconds":
+        case "kmsDataKeyReusePeriodSeconds": return java.lang.Integer.class;
+        case "kmsmasterkeyid":
+        case "kmsMasterKeyId": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maximummessagesize":
+        case "maximumMessageSize": return java.lang.Integer.class;
+        case "messageattributenames":
+        case "messageAttributeNames": return java.lang.String.class;
+        case "messagededuplicationidstrategy":
+        case "messageDeduplicationIdStrategy": return java.lang.String.class;
+        case "messagegroupidstrategy":
+        case "messageGroupIdStrategy": return java.lang.String.class;
+        case "messageretentionperiod":
+        case "messageRetentionPeriod": return java.lang.Integer.class;
+        case "operation": return org.apache.camel.component.aws2.sqs.Sqs2Operations.class;
+        case "policy": return java.lang.String.class;
+        case "protocol": return java.lang.String.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "queueownerawsaccountid":
+        case "queueOwnerAWSAccountId": return java.lang.String.class;
+        case "queueurl":
+        case "queueUrl": return java.lang.String.class;
+        case "receivemessagewaittimeseconds":
+        case "receiveMessageWaitTimeSeconds": return java.lang.Integer.class;
+        case "redrivepolicy":
+        case "redrivePolicy": return java.lang.String.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "serversideencryptionenabled":
+        case "serverSideEncryptionEnabled": return boolean.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return boolean.class;
+        case "visibilitytimeout":
+        case "visibilityTimeout": return java.lang.Integer.class;
+        case "waittimeseconds":
+        case "waitTimeSeconds": return java.lang.Integer.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -179,10 +208,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "attributeNames": return getOrCreateConfiguration(target).getAttributeNames();
         case "autocreatequeue":
         case "autoCreateQueue": return getOrCreateConfiguration(target).isAutoCreateQueue();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
@@ -240,6 +267,8 @@ public class Sqs2ComponentConfigurer extends PropertyConfigurerSupport implement
         case "serverSideEncryptionEnabled": return getOrCreateConfiguration(target).isServerSideEncryptionEnabled();
         case "trustallcertificates":
         case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
+        case "usedefaultcredentialsprovider":
+        case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "visibilitytimeout":
         case "visibilityTimeout": return getOrCreateConfiguration(target).getVisibilityTimeout();
         case "waittimeseconds":

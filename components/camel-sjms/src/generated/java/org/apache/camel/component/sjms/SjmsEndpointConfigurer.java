@@ -4,9 +4,10 @@ package org.apache.camel.component.sjms;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,53 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("destinationType", java.lang.String.class);
-        map.put("destinationName", java.lang.String.class);
-        map.put("acknowledgementMode", org.apache.camel.component.sjms.jms.SessionAcknowledgementType.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("consumerCount", int.class);
-        map.put("durableSubscriptionId", java.lang.String.class);
-        map.put("reconnectBackOff", long.class);
-        map.put("reconnectOnError", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("messageSelector", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("namedReplyTo", java.lang.String.class);
-        map.put("persistent", boolean.class);
-        map.put("producerCount", int.class);
-        map.put("ttl", long.class);
-        map.put("allowNullBody", boolean.class);
-        map.put("prefillPool", boolean.class);
-        map.put("responseTimeOut", long.class);
-        map.put("asyncStartListener", boolean.class);
-        map.put("asyncStopListener", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("connectionCount", java.lang.Integer.class);
-        map.put("connectionFactory", javax.jms.ConnectionFactory.class);
-        map.put("connectionResource", org.apache.camel.component.sjms.jms.ConnectionResource.class);
-        map.put("destinationCreationStrategy", org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class);
-        map.put("exceptionListener", javax.jms.ExceptionListener.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        map.put("includeAllJMSXProperties", boolean.class);
-        map.put("jmsKeyFormatStrategy", org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class);
-        map.put("mapJmsMessage", boolean.class);
-        map.put("messageCreatedStrategy", org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class);
-        map.put("errorHandlerLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("errorHandlerLogStackTrace", boolean.class);
-        map.put("transacted", boolean.class);
-        map.put("transactionBatchCount", int.class);
-        map.put("transactionBatchTimeout", long.class);
-        map.put("transactionCommitStrategy", org.apache.camel.component.sjms.TransactionCommitStrategy.class);
-        map.put("sharedJMSSession", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SjmsEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -75,8 +29,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "asyncStartListener": target.setAsyncStartListener(property(camelContext, boolean.class, value)); return true;
         case "asyncstoplistener":
         case "asyncStopListener": target.setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connectioncount":
@@ -144,15 +96,80 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "acknowledgementmode":
+        case "acknowledgementMode": return org.apache.camel.component.sjms.jms.SessionAcknowledgementType.class;
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "asyncstartlistener":
+        case "asyncStartListener": return boolean.class;
+        case "asyncstoplistener":
+        case "asyncStopListener": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "connectioncount":
+        case "connectionCount": return java.lang.Integer.class;
+        case "connectionfactory":
+        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "connectionresource":
+        case "connectionResource": return org.apache.camel.component.sjms.jms.ConnectionResource.class;
+        case "consumercount":
+        case "consumerCount": return int.class;
+        case "destinationcreationstrategy":
+        case "destinationCreationStrategy": return org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class;
+        case "durablesubscriptionid":
+        case "durableSubscriptionId": return java.lang.String.class;
+        case "errorhandlerlogstacktrace":
+        case "errorHandlerLogStackTrace": return boolean.class;
+        case "errorhandlerlogginglevel":
+        case "errorHandlerLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exceptionlistener":
+        case "exceptionListener": return javax.jms.ExceptionListener.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "includealljmsxproperties":
+        case "includeAllJMSXProperties": return boolean.class;
+        case "jmskeyformatstrategy":
+        case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mapjmsmessage":
+        case "mapJmsMessage": return boolean.class;
+        case "messagecreatedstrategy":
+        case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
+        case "messageselector":
+        case "messageSelector": return java.lang.String.class;
+        case "namedreplyto":
+        case "namedReplyTo": return java.lang.String.class;
+        case "persistent": return boolean.class;
+        case "prefillpool":
+        case "prefillPool": return boolean.class;
+        case "producercount":
+        case "producerCount": return int.class;
+        case "reconnectbackoff":
+        case "reconnectBackOff": return long.class;
+        case "reconnectonerror":
+        case "reconnectOnError": return boolean.class;
+        case "responsetimeout":
+        case "responseTimeOut": return long.class;
+        case "sharedjmssession":
+        case "sharedJMSSession": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "transacted": return boolean.class;
+        case "transactionbatchcount":
+        case "transactionBatchCount": return int.class;
+        case "transactionbatchtimeout":
+        case "transactionBatchTimeout": return long.class;
+        case "transactioncommitstrategy":
+        case "transactionCommitStrategy": return org.apache.camel.component.sjms.TransactionCommitStrategy.class;
+        case "ttl": return long.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -167,8 +184,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "asyncStartListener": return target.isAsyncStartListener();
         case "asyncstoplistener":
         case "asyncStopListener": return target.isAsyncStopListener();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connectioncount":

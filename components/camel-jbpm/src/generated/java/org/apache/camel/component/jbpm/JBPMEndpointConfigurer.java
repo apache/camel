@@ -4,9 +4,10 @@ package org.apache.camel.component.jbpm;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,55 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("connectionURL", java.net.URL.class);
-        map.put("eventListenerType", java.lang.String.class);
-        map.put("attachmentId", java.lang.Long.class);
-        map.put("contentId", java.lang.Long.class);
-        map.put("deploymentId", java.lang.String.class);
-        map.put("emitterSendItems", java.lang.Boolean.class);
-        map.put("event", java.lang.Object.class);
-        map.put("eventType", java.lang.String.class);
-        map.put("identifier", java.lang.String.class);
-        map.put("maxNumber", java.lang.Integer.class);
-        map.put("page", java.lang.Integer.class);
-        map.put("pageSize", java.lang.Integer.class);
-        map.put("processId", java.lang.String.class);
-        map.put("processInstanceId", java.lang.Long.class);
-        map.put("targetUserId", java.lang.String.class);
-        map.put("task", org.kie.api.task.model.Task.class);
-        map.put("taskId", java.lang.Long.class);
-        map.put("timeout", java.lang.Integer.class);
-        map.put("userId", java.lang.String.class);
-        map.put("value", java.lang.Object.class);
-        map.put("workItemId", java.lang.Long.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("entities", java.util.List.class);
-        map.put("extraJaxbClasses", java.lang.Class[].class);
-        map.put("parameters", java.util.Map.class);
-        map.put("synchronous", boolean.class);
-        map.put("statuses", java.util.List.class);
-        map.put("password", java.lang.String.class);
-        map.put("userName", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(JBPMEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         JBPMEndpoint target = (JBPMEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "attachmentid":
         case "attachmentId": target.getConfiguration().setAttachmentId(property(camelContext, java.lang.Long.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "contentid":
@@ -118,15 +76,60 @@ public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "attachmentid":
+        case "attachmentId": return java.lang.Long.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "contentid":
+        case "contentId": return java.lang.Long.class;
+        case "deploymentid":
+        case "deploymentId": return java.lang.String.class;
+        case "emittersenditems":
+        case "emitterSendItems": return java.lang.Boolean.class;
+        case "entities": return java.util.List.class;
+        case "event": return java.lang.Object.class;
+        case "eventtype":
+        case "eventType": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "extrajaxbclasses":
+        case "extraJaxbClasses": return java.lang.Class[].class;
+        case "identifier": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxnumber":
+        case "maxNumber": return java.lang.Integer.class;
+        case "operation": return java.lang.String.class;
+        case "page": return java.lang.Integer.class;
+        case "pagesize":
+        case "pageSize": return java.lang.Integer.class;
+        case "parameters": return java.util.Map.class;
+        case "password": return java.lang.String.class;
+        case "processid":
+        case "processId": return java.lang.String.class;
+        case "processinstanceid":
+        case "processInstanceId": return java.lang.Long.class;
+        case "statuses": return java.util.List.class;
+        case "synchronous": return boolean.class;
+        case "targetuserid":
+        case "targetUserId": return java.lang.String.class;
+        case "task": return org.kie.api.task.model.Task.class;
+        case "taskid":
+        case "taskId": return java.lang.Long.class;
+        case "timeout": return java.lang.Integer.class;
+        case "userid":
+        case "userId": return java.lang.String.class;
+        case "username":
+        case "userName": return java.lang.String.class;
+        case "value": return java.lang.Object.class;
+        case "workitemid":
+        case "workItemId": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -135,8 +138,6 @@ public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "attachmentid":
         case "attachmentId": return target.getConfiguration().getAttachmentId();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "contentid":
@@ -185,6 +186,16 @@ public class JBPMEndpointConfigurer extends PropertyConfigurerSupport implements
         case "value": return target.getConfiguration().getValue();
         case "workitemid":
         case "workItemId": return target.getConfiguration().getWorkItemId();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "entities": return java.lang.String.class;
+        case "parameters": return java.lang.Object.class;
+        case "statuses": return java.lang.String.class;
         default: return null;
         }
     }

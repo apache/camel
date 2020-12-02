@@ -20,20 +20,19 @@ public class EKSEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(13);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(12);
         props.add("autoDiscoverClient");
-        props.add("proxyProtocol");
-        props.add("secretKey");
-        props.add("synchronous");
-        props.add("label");
-        props.add("proxyHost");
         props.add("proxyPort");
         props.add("lazyStartProducer");
+        props.add("proxyProtocol");
+        props.add("secretKey");
         props.add("accessKey");
+        props.add("synchronous");
         props.add("eksClient");
+        props.add("label");
         props.add("region");
         props.add("operation");
+        props.add("proxyHost");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("secretKey");

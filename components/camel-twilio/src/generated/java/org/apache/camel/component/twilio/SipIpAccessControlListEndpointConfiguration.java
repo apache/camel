@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a IpAccessControlListCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.sip.IpAccessControlListCreator creator(String friendlyName)", "com.twilio.rest.api.v2010.account.sip.IpAccessControlListCreator creator(String pathAccountSid, String friendlyName)"}), @ApiMethod(methodName = "deleter", description="Create a IpAccessControlListDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.sip.IpAccessControlListDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.sip.IpAccessControlListDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a IpAccessControlListFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.sip.IpAccessControlListFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.sip.IpAccessControlListFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a IpAccessControlListReader to execute read", signatures={"com.twilio.rest.api.v2010.account.sip.IpAccessControlListReader reader()", "com.twilio.rest.api.v2010.account.sip.IpAccessControlListReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", description="Create a IpAccessControlListUpdater to execute update", signatures={"com.twilio.rest.api.v2010.account.sip.IpAccessControlListUpdater updater(String pathSid, String friendlyName)", "com.twilio.rest.api.v2010.account.sip.IpAccessControlListUpdater updater(String pathAccountSid, String pathSid, String friendlyName)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class SipIpAccessControlListEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator", description="A human readable description of this resource"), @ApiMethod(methodName = "updater", description="A human readable description of this resource")})

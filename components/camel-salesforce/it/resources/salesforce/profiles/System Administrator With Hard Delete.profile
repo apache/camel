@@ -216,10 +216,6 @@
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
-        <name>CreatePackaging</name>
-    </userPermissions>
-    <userPermissions>
-        <enabled>true</enabled>
         <name>CreateReportFolders</name>
     </userPermissions>
     <userPermissions>
@@ -344,10 +340,6 @@
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>
-        <name>InstallPackaging</name>
-    </userPermissions>
-    <userPermissions>
-        <enabled>true</enabled>
         <name>LightningExperienceUser</name>
     </userPermissions>
     <userPermissions>
@@ -361,6 +353,18 @@
     <userPermissions>
         <enabled>true</enabled>
         <name>ManageBusinessHourHolidays</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ViewDataLeakageEvents</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>ViewPlatformEvents</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>CreatePackaging</name>
     </userPermissions>
     <userPermissions>
         <enabled>true</enabled>

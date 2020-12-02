@@ -4,9 +4,10 @@ package org.apache.camel.component.disruptor;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,28 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DisruptorComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bufferSize", int.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("defaultConcurrentConsumers", int.class);
-        map.put("defaultMultipleConsumers", boolean.class);
-        map.put("defaultWaitStrategy", org.apache.camel.component.disruptor.DisruptorWaitStrategy.class);
-        map.put("defaultBlockWhenFull", boolean.class);
-        map.put("defaultProducerType", org.apache.camel.component.disruptor.DisruptorProducerType.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DisruptorComponentConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DisruptorComponent target = (DisruptorComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "buffersize":
@@ -59,23 +44,36 @@ public class DisruptorComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return int.class;
+        case "defaultblockwhenfull":
+        case "defaultBlockWhenFull": return boolean.class;
+        case "defaultconcurrentconsumers":
+        case "defaultConcurrentConsumers": return int.class;
+        case "defaultmultipleconsumers":
+        case "defaultMultipleConsumers": return boolean.class;
+        case "defaultproducertype":
+        case "defaultProducerType": return org.apache.camel.component.disruptor.DisruptorProducerType.class;
+        case "defaultwaitstrategy":
+        case "defaultWaitStrategy": return org.apache.camel.component.disruptor.DisruptorWaitStrategy.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DisruptorComponent target = (DisruptorComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "buffersize":

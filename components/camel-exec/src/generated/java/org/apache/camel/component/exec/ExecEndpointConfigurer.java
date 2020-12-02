@@ -4,9 +4,10 @@ package org.apache.camel.component.exec;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,32 +17,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("executable", java.lang.String.class);
-        map.put("args", java.lang.String.class);
-        map.put("binding", org.apache.camel.component.exec.ExecBinding.class);
-        map.put("commandExecutor", org.apache.camel.component.exec.ExecCommandExecutor.class);
-        map.put("commandLogLevel", org.apache.camel.LoggingLevel.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("outFile", java.lang.String.class);
-        map.put("timeout", long.class);
-        map.put("useStderrOnEmptyStdout", boolean.class);
-        map.put("workingDir", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ExecEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ExecEndpoint target = (ExecEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": target.setArgs(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "binding": target.setBinding(property(camelContext, org.apache.camel.component.exec.ExecBinding.class, value)); return true;
         case "commandexecutor":
         case "commandExecutor": target.setCommandExecutor(property(camelContext, org.apache.camel.component.exec.ExecCommandExecutor.class, value)); return true;
@@ -62,15 +42,26 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "args": return java.lang.String.class;
+        case "binding": return org.apache.camel.component.exec.ExecBinding.class;
+        case "commandexecutor":
+        case "commandExecutor": return org.apache.camel.component.exec.ExecCommandExecutor.class;
+        case "commandloglevel":
+        case "commandLogLevel": return org.apache.camel.LoggingLevel.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "outfile":
+        case "outFile": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "timeout": return long.class;
+        case "usestderronemptystdout":
+        case "useStderrOnEmptyStdout": return boolean.class;
+        case "workingdir":
+        case "workingDir": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -78,8 +69,6 @@ public class ExecEndpointConfigurer extends PropertyConfigurerSupport implements
         ExecEndpoint target = (ExecEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "args": return target.getArgs();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "binding": return target.getBinding();
         case "commandexecutor":
         case "commandExecutor": return target.getCommandExecutor();

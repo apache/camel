@@ -18,7 +18,6 @@
 package org.apache.camel.test.infra.aws.services;
 
 import java.util.Properties;
-import java.util.function.Supplier;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -27,17 +26,12 @@ import org.apache.camel.test.infra.aws.common.AWSConfigs;
 import org.apache.camel.test.infra.aws.common.SystemPropertiesAWSCredentialsProvider;
 import org.apache.camel.test.infra.aws.common.services.AWSService;
 
-public class AWSRemoteService<T> implements AWSService<T> {
+public class AWSRemoteService implements AWSService {
     private static final AWSCredentialsProvider CREDENTIALS_PROVIDER = new SystemPropertiesAWSCredentialsProvider();
-    private Supplier<T> remoteClientSupplier;
-
-    public AWSRemoteService(Supplier<T> remoteClientSupplier) {
-        this.remoteClientSupplier = remoteClientSupplier;
-    }
 
     @Override
-    public T getClient() {
-        return remoteClientSupplier.get();
+    public void registerProperties() {
+        // NO-OP
     }
 
     private AWSCredentials getCredentials() {
@@ -59,7 +53,7 @@ public class AWSRemoteService<T> implements AWSService<T> {
 
     @Override
     public void initialize() {
-
+        registerProperties();
     }
 
     @Override

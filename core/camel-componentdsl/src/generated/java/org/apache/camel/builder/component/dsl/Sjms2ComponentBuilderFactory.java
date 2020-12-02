@@ -63,6 +63,19 @@ public interface Sjms2ComponentBuilderFactory {
             return this;
         }
         /**
+         * A ConnectionFactory is required to enable the SjmsComponent. It can
+         * be set directly or set set as part of a ConnectionResource.
+         * 
+         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
+         * 
+         * Group: common
+         */
+        default Sjms2ComponentBuilder connectionFactory(
+                javax.jms.ConnectionFactory connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -127,18 +140,20 @@ public interface Sjms2ComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Sjms2ComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Sjms2ComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
         /**
@@ -153,19 +168,6 @@ public interface Sjms2ComponentBuilderFactory {
         default Sjms2ComponentBuilder connectionClientId(
                 java.lang.String connectionClientId) {
             doSetProperty("connectionClientId", connectionClientId);
-            return this;
-        }
-        /**
-         * A ConnectionFactory is required to enable the SjmsComponent. It can
-         * be set directly or set set as part of a ConnectionResource.
-         * 
-         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
-         * 
-         * Group: advanced
-         */
-        default Sjms2ComponentBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -350,13 +352,13 @@ public interface Sjms2ComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "connectionCount": ((Sjms2Component) component).setConnectionCount((java.lang.Integer) value); return true;
+            case "connectionFactory": ((Sjms2Component) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
             case "bridgeErrorHandler": ((Sjms2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "reconnectBackOff": ((Sjms2Component) component).setReconnectBackOff((long) value); return true;
             case "reconnectOnError": ((Sjms2Component) component).setReconnectOnError((boolean) value); return true;
             case "lazyStartProducer": ((Sjms2Component) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((Sjms2Component) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((Sjms2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionClientId": ((Sjms2Component) component).setConnectionClientId((java.lang.String) value); return true;
-            case "connectionFactory": ((Sjms2Component) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
             case "connectionMaxWait": ((Sjms2Component) component).setConnectionMaxWait((long) value); return true;
             case "connectionResource": ((Sjms2Component) component).setConnectionResource((org.apache.camel.component.sjms.jms.ConnectionResource) value); return true;
             case "connectionTestOnBorrow": ((Sjms2Component) component).setConnectionTestOnBorrow((boolean) value); return true;

@@ -131,7 +131,7 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
     }
 
 #if ( $field.type == "reference" && $utility.notNull($field.relationshipName)
-    && $utility.atLeastOneHasExternalIds($field.getReferenceTo()) ) ## IS LOOKUP $hasDescription
+    && $utility.hasDescription($field.getReferenceTo().get(0)) ) ## IS LOOKUP $hasDescription
 #if ( $field.getReferenceTo().size() > 1)
 #set ( $propertyType = "AbstractDescribedSObjectBase")
 #set ( $needed = true )
@@ -162,16 +162,16 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
 #foreach ( $rel in $desc.childRelationships )
 #set (  $hasDescription = $sObjectNames.contains($rel.childSObject) )
 #if ( $utility.notNull($rel.relationshipName) && $hasDescription )
-    private QueryRecords${rel.childSObject} $rel.relationshipName;
+    private QueryRecords${rel.childSObject} ${rel.relationshipName}${childRelationshipNameSuffix};
 
     @JsonProperty("$rel.relationshipName")
-    public QueryRecords${rel.childSObject} get${rel.relationshipName}() {
-        return $rel.relationshipName;
+    public QueryRecords${rel.childSObject} get${rel.relationshipName}${childRelationshipNameSuffix}() {
+        return ${rel.relationshipName}${childRelationshipNameSuffix};
     }
 
     @JsonProperty("$rel.relationshipName")
-    public void set${rel.relationshipName}(QueryRecords${rel.childSObject} ${rel.relationshipName}) {
-        this.${rel.relationshipName} = ${rel.relationshipName};
+    public void set${rel.relationshipName}${childRelationshipNameSuffix}(QueryRecords${rel.childSObject} ${rel.relationshipName}) {
+        this.${rel.relationshipName}${childRelationshipNameSuffix} = ${rel.relationshipName};
     }
 #end
 #end
@@ -202,7 +202,7 @@ ${utility.pop()}
 #foreach ( $i in ${p.value} )## BEAN LIST LOOP
 #set ( $var = ${utility.variableName(${i.class.simpleName})} )
 #if ( ${i.class.simpleName} == "SObjectField" )
-        final ${i.class.simpleName} $var = createField("${i.name}", "${i.label}", "${i.type}", "${i.soapType}", ${i.length}, ${i.unique}, ${i.nillable}, ${i.nameField}, ${i.externalId}, ${i.custom}, ${i.caseSensitive}, ${i.idLookup});
+        final ${i.class.simpleName} $var = createField("${i.name}", "${utility.javaSafeString(${i.label})}", "${i.type}", "${i.soapType}", ${i.length}, ${i.unique}, ${i.nillable}, ${i.nameField}, ${i.externalId}, ${i.custom}, ${i.caseSensitive}, ${i.idLookup});
         ${utility.current()}.add(${var});
 #else
         final ${i.class.simpleName} $var = new ${i.class.simpleName}();

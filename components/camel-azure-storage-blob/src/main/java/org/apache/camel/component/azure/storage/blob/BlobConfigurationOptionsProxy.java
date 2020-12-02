@@ -65,7 +65,7 @@ public class BlobConfigurationOptionsProxy {
     }
 
     public String getPrefix(final Exchange exchange) {
-        //if regex is set, prefix will not takes effect
+        //if regex is set, prefix will not take effect
         if (ObjectHelper.isNotEmpty(getRegex(exchange))) {
             return null;
         }

@@ -4,9 +4,10 @@ package org.apache.camel.component.mock;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,35 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class MockEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("name", java.lang.String.class);
-        map.put("assertPeriod", long.class);
-        map.put("expectedCount", int.class);
-        map.put("failFast", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("reportGroup", int.class);
-        map.put("resultMinimumWaitTime", long.class);
-        map.put("resultWaitTime", long.class);
-        map.put("retainFirst", int.class);
-        map.put("retainLast", int.class);
-        map.put("sleepForEmptyTest", long.class);
-        map.put("copyOnExchange", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MockEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MockEndpoint target = (MockEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
         case "assertPeriod": target.setAssertPeriod(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "copyonexchange":
         case "copyOnExchange": target.setCopyOnExchange(property(camelContext, boolean.class, value)); return true;
         case "expectedcount":
@@ -71,15 +49,33 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "assertperiod":
+        case "assertPeriod": return long.class;
+        case "copyonexchange":
+        case "copyOnExchange": return boolean.class;
+        case "expectedcount":
+        case "expectedCount": return int.class;
+        case "failfast":
+        case "failFast": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "reportgroup":
+        case "reportGroup": return int.class;
+        case "resultminimumwaittime":
+        case "resultMinimumWaitTime": return long.class;
+        case "resultwaittime":
+        case "resultWaitTime": return long.class;
+        case "retainfirst":
+        case "retainFirst": return int.class;
+        case "retainlast":
+        case "retainLast": return int.class;
+        case "sleepforemptytest":
+        case "sleepForEmptyTest": return long.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -88,8 +84,6 @@ public class MockEndpointConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "assertperiod":
         case "assertPeriod": return target.getAssertPeriod();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "copyonexchange":
         case "copyOnExchange": return target.isCopyOnExchange();
         case "expectedcount":

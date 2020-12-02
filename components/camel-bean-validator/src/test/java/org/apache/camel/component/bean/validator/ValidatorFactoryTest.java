@@ -16,49 +16,15 @@
  */
 package org.apache.camel.component.bean.validator;
 
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-import javax.validation.bootstrap.GenericBootstrap;
-
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.condition.OS.AIX;
 
 public class ValidatorFactoryTest extends CamelTestSupport {
-
-    @BindToRegistry("myValidatorFactory")
-    private ValidatorFactory validatorFactory;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        GenericBootstrap bootstrap = Validation.byDefaultProvider();
-        bootstrap.providerResolver(new HibernateValidationProviderResolver());
-
-        this.validatorFactory = bootstrap.configure().buildValidatorFactory();
-
-        super.setUp();
-    }
-
-    @DisabledOnOs(AIX)
-    @Test
-    void configureValidatorFactoryFromRegistry() throws Exception {
-
-        BeanValidatorEndpoint endpoint
-                = context.getEndpoint("bean-validator:dummy?validatorFactory=#myValidatorFactory", BeanValidatorEndpoint.class);
-        BeanValidatorProducer producer = (BeanValidatorProducer) endpoint.createProducer();
-
-        assertSame(this.validatorFactory, endpoint.getValidatorFactory());
-        assertSame(this.validatorFactory, producer.getValidatorFactory());
-    }
 
     @DisabledOnOs(AIX)
     @Test
@@ -68,8 +34,6 @@ public class ValidatorFactoryTest extends CamelTestSupport {
         BeanValidatorProducer producer = (BeanValidatorProducer) endpoint.createProducer();
 
         assertNull(endpoint.getValidatorFactory());
-        assertNotSame(this.validatorFactory, endpoint.getValidatorFactory());
         assertNotNull(producer.getValidatorFactory());
-        assertNotSame(this.validatorFactory, producer.getValidatorFactory());
     }
 }

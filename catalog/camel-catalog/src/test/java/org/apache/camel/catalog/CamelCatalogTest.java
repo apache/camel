@@ -689,7 +689,7 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("foo:bar?me=you");
         assertTrue(result.isSuccess());
         assertTrue(result.hasWarnings());
-        assertTrue(result.getUnknownComponent().equals("foo"));
+        assertEquals("foo", result.getUnknownComponent());
         assertEquals(0, result.getNumberOfErrors());
         assertEquals(1, result.getNumberOfWarnings());
 
@@ -804,7 +804,7 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties("{{getFtpUrl}}?recursive=true");
         assertTrue(result.isSuccess());
         assertTrue(result.hasWarnings());
-        assertTrue(result.getIncapable() != null);
+        assertNotNull(result.getIncapable());
     }
 
     @Test
@@ -1213,6 +1213,30 @@ public class CamelCatalogTest {
         result = catalog.validateEndpointProperties(uri);
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("unknown"));
+
+        uri = "twilio:account/fetch";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+        uri = "twilio:account/fetch?pathSid=123";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        uri = "twilio:account/update";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+        uri = "twilio:account/update?pathSid=123";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+        uri = "twilio:account/read";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
+        assertEquals(2, result.getEnumChoices("methodName").size());
+        assertTrue(result.getEnumChoices("methodName").contains("fetch"));
+        assertTrue(result.getEnumChoices("methodName").contains("update"));
+
+        uri = "twilio:account/read?pathSid=123";
+        result = catalog.validateEndpointProperties(uri);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -1430,7 +1454,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testValidateConfigurationPropertyComponentJClouds() throws Exception {
-        String text = "camel.component.jclouds.basicPropertyBinding=true";
+        String text = "camel.component.jclouds.autowiredEnabled=true";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 

@@ -79,6 +79,9 @@ import org.slf4j.LoggerFactory;
  * until attempt number 5 where it will use 5 seconds going forward.
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
+    // default policy using out of the box settings which can be shared
+    public static final RedeliveryPolicy DEFAULT_POLICY = new RedeliveryPolicy();
+
     protected static Random randomNumberGenerator;
     private static final long serialVersionUID = -338222777701473252L;
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryPolicy.class);

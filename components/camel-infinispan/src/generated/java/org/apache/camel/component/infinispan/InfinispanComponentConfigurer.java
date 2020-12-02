@@ -4,9 +4,10 @@ package org.apache.camel.component.infinispan;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,42 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class InfinispanComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("configuration", org.apache.camel.component.infinispan.InfinispanConfiguration.class);
-        map.put("hosts", java.lang.String.class);
-        map.put("queryBuilder", org.apache.camel.component.infinispan.InfinispanQueryBuilder.class);
-        map.put("secure", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("clusteredListener", boolean.class);
-        map.put("command", java.lang.String.class);
-        map.put("customListener", org.apache.camel.component.infinispan.InfinispanCustomListener.class);
-        map.put("eventTypes", java.lang.String.class);
-        map.put("sync", boolean.class);
-        map.put("defaultValue", java.lang.Object.class);
-        map.put("key", java.lang.Object.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("oldValue", java.lang.Object.class);
-        map.put("operation", org.apache.camel.component.infinispan.InfinispanOperation.class);
-        map.put("value", java.lang.Object.class);
-        map.put("password", java.lang.String.class);
-        map.put("saslMechanism", java.lang.String.class);
-        map.put("securityRealm", java.lang.String.class);
-        map.put("securityServerName", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("cacheContainer", org.infinispan.commons.api.BasicCacheContainer.class);
-        map.put("cacheContainerConfiguration", java.lang.Object.class);
-        map.put("configurationProperties", java.util.Map.class);
-        map.put("configurationUri", java.lang.String.class);
-        map.put("flags", java.lang.String.class);
-        map.put("remappingFunction", java.util.function.BiFunction.class);
-        map.put("resultHeader", java.lang.Object.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(InfinispanComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.infinispan.InfinispanConfiguration getOrCreateConfiguration(InfinispanComponent target) {
         if (target.getConfiguration() == null) {
@@ -63,8 +28,8 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         InfinispanComponent target = (InfinispanComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachecontainer":
@@ -115,23 +80,70 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
+    public String[] getAutowiredNames() {
+        return new String[]{"cacheContainer"};
     }
 
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cachecontainer":
+        case "cacheContainer": return org.infinispan.commons.api.BasicCacheContainer.class;
+        case "cachecontainerconfiguration":
+        case "cacheContainerConfiguration": return java.lang.Object.class;
+        case "clusteredlistener":
+        case "clusteredListener": return boolean.class;
+        case "command": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.infinispan.InfinispanConfiguration.class;
+        case "configurationproperties":
+        case "configurationProperties": return java.util.Map.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "customlistener":
+        case "customListener": return org.apache.camel.component.infinispan.InfinispanCustomListener.class;
+        case "defaultvalue":
+        case "defaultValue": return java.lang.Object.class;
+        case "eventtypes":
+        case "eventTypes": return java.lang.String.class;
+        case "flags": return java.lang.String.class;
+        case "hosts": return java.lang.String.class;
+        case "key": return java.lang.Object.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oldvalue":
+        case "oldValue": return java.lang.Object.class;
+        case "operation": return org.apache.camel.component.infinispan.InfinispanOperation.class;
+        case "password": return java.lang.String.class;
+        case "querybuilder":
+        case "queryBuilder": return org.apache.camel.component.infinispan.InfinispanQueryBuilder.class;
+        case "remappingfunction":
+        case "remappingFunction": return java.util.function.BiFunction.class;
+        case "resultheader":
+        case "resultHeader": return java.lang.Object.class;
+        case "saslmechanism":
+        case "saslMechanism": return java.lang.String.class;
+        case "secure": return boolean.class;
+        case "securityrealm":
+        case "securityRealm": return java.lang.String.class;
+        case "securityservername":
+        case "securityServerName": return java.lang.String.class;
+        case "sync": return boolean.class;
+        case "username": return java.lang.String.class;
+        case "value": return java.lang.Object.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         InfinispanComponent target = (InfinispanComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachecontainer":
@@ -177,6 +189,15 @@ public class InfinispanComponentConfigurer extends PropertyConfigurerSupport imp
         case "sync": return getOrCreateConfiguration(target).isSync();
         case "username": return getOrCreateConfiguration(target).getUsername();
         case "value": return getOrCreateConfiguration(target).getValue();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configurationproperties":
+        case "configurationProperties": return java.lang.String.class;
         default: return null;
         }
     }

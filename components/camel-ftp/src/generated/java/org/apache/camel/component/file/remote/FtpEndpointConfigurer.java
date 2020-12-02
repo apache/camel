@@ -4,9 +4,10 @@ package org.apache.camel.component.file.remote;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,126 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("host", java.lang.String.class);
-        map.put("port", int.class);
-        map.put("directoryName", java.lang.String.class);
-        map.put("binary", boolean.class);
-        map.put("charset", java.lang.String.class);
-        map.put("disconnect", boolean.class);
-        map.put("doneFileName", java.lang.String.class);
-        map.put("fileName", java.lang.String.class);
-        map.put("passiveMode", boolean.class);
-        map.put("separator", org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class);
-        map.put("transferLoggingIntervalSeconds", int.class);
-        map.put("transferLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("transferLoggingVerbose", boolean.class);
-        map.put("fastExistsCheck", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("delete", boolean.class);
-        map.put("moveFailed", java.lang.String.class);
-        map.put("noop", boolean.class);
-        map.put("preMove", java.lang.String.class);
-        map.put("preSort", boolean.class);
-        map.put("recursive", boolean.class);
-        map.put("resumeDownload", boolean.class);
-        map.put("sendEmptyMessageWhenIdle", boolean.class);
-        map.put("streamDownload", boolean.class);
-        map.put("download", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("handleDirectoryParserAbsoluteResult", boolean.class);
-        map.put("ignoreFileNotFoundOrPermissionError", boolean.class);
-        map.put("inProgressRepository", org.apache.camel.spi.IdempotentRepository.class);
-        map.put("localWorkDirectory", java.lang.String.class);
-        map.put("onCompletionExceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("pollStrategy", org.apache.camel.spi.PollingConsumerPollStrategy.class);
-        map.put("processStrategy", org.apache.camel.component.file.GenericFileProcessStrategy.class);
-        map.put("useList", boolean.class);
-        map.put("fileExist", org.apache.camel.component.file.GenericFileExist.class);
-        map.put("flatten", boolean.class);
-        map.put("jailStartingDirectory", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("moveExisting", java.lang.String.class);
-        map.put("tempFileName", java.lang.String.class);
-        map.put("tempPrefix", java.lang.String.class);
-        map.put("allowNullBody", boolean.class);
-        map.put("chmod", java.lang.String.class);
-        map.put("disconnectOnBatchComplete", boolean.class);
-        map.put("eagerDeleteTargetFile", boolean.class);
-        map.put("keepLastModified", boolean.class);
-        map.put("moveExistingFileStrategy", org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class);
-        map.put("sendNoop", boolean.class);
-        map.put("activePortRange", java.lang.String.class);
-        map.put("autoCreate", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("bufferSize", int.class);
-        map.put("connectTimeout", int.class);
-        map.put("ftpClient", org.apache.commons.net.ftp.FTPClient.class);
-        map.put("ftpClientConfig", org.apache.commons.net.ftp.FTPClientConfig.class);
-        map.put("ftpClientConfigParameters", java.util.Map.class);
-        map.put("ftpClientParameters", java.util.Map.class);
-        map.put("maximumReconnectAttempts", int.class);
-        map.put("reconnectDelay", long.class);
-        map.put("siteCommand", java.lang.String.class);
-        map.put("soTimeout", int.class);
-        map.put("stepwise", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("throwExceptionOnConnectFailed", boolean.class);
-        map.put("timeout", int.class);
-        map.put("antExclude", java.lang.String.class);
-        map.put("antFilterCaseSensitive", boolean.class);
-        map.put("antInclude", java.lang.String.class);
-        map.put("eagerMaxMessagesPerPoll", boolean.class);
-        map.put("exclude", java.lang.String.class);
-        map.put("filter", org.apache.camel.component.file.GenericFileFilter.class);
-        map.put("filterDirectory", java.lang.String.class);
-        map.put("filterFile", java.lang.String.class);
-        map.put("idempotent", java.lang.Boolean.class);
-        map.put("idempotentKey", java.lang.String.class);
-        map.put("idempotentRepository", org.apache.camel.spi.IdempotentRepository.class);
-        map.put("include", java.lang.String.class);
-        map.put("maxDepth", int.class);
-        map.put("maxMessagesPerPoll", int.class);
-        map.put("minDepth", int.class);
-        map.put("move", java.lang.String.class);
-        map.put("exclusiveReadLockStrategy", org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class);
-        map.put("readLock", java.lang.String.class);
-        map.put("readLockCheckInterval", long.class);
-        map.put("readLockDeleteOrphanLockFiles", boolean.class);
-        map.put("readLockLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("readLockMarkerFile", boolean.class);
-        map.put("readLockMinAge", long.class);
-        map.put("readLockMinLength", long.class);
-        map.put("readLockRemoveOnCommit", boolean.class);
-        map.put("readLockRemoveOnRollback", boolean.class);
-        map.put("readLockTimeout", long.class);
-        map.put("backoffErrorThreshold", int.class);
-        map.put("backoffIdleThreshold", int.class);
-        map.put("backoffMultiplier", int.class);
-        map.put("delay", long.class);
-        map.put("greedy", boolean.class);
-        map.put("initialDelay", long.class);
-        map.put("repeatCount", long.class);
-        map.put("runLoggingLevel", org.apache.camel.LoggingLevel.class);
-        map.put("scheduledExecutorService", java.util.concurrent.ScheduledExecutorService.class);
-        map.put("scheduler", java.lang.Object.class);
-        map.put("schedulerProperties", java.util.Map.class);
-        map.put("startScheduler", boolean.class);
-        map.put("timeUnit", java.util.concurrent.TimeUnit.class);
-        map.put("useFixedDelay", boolean.class);
-        map.put("account", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
-        map.put("shuffle", boolean.class);
-        map.put("sortBy", java.lang.String.class);
-        map.put("sorter", java.util.Comparator.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FtpEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -159,8 +40,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffIdleThreshold": target.setBackoffIdleThreshold(property(camelContext, int.class, value)); return true;
         case "backoffmultiplier":
         case "backoffMultiplier": target.setBackoffMultiplier(property(camelContext, int.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "binary": target.getConfiguration().setBinary(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
@@ -339,15 +218,202 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "account": return java.lang.String.class;
+        case "activeportrange":
+        case "activePortRange": return java.lang.String.class;
+        case "allownullbody":
+        case "allowNullBody": return boolean.class;
+        case "antexclude":
+        case "antExclude": return java.lang.String.class;
+        case "antfiltercasesensitive":
+        case "antFilterCaseSensitive": return boolean.class;
+        case "antinclude":
+        case "antInclude": return java.lang.String.class;
+        case "autocreate":
+        case "autoCreate": return boolean.class;
+        case "backofferrorthreshold":
+        case "backoffErrorThreshold": return int.class;
+        case "backoffidlethreshold":
+        case "backoffIdleThreshold": return int.class;
+        case "backoffmultiplier":
+        case "backoffMultiplier": return int.class;
+        case "binary": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "buffersize":
+        case "bufferSize": return int.class;
+        case "charset": return java.lang.String.class;
+        case "chmod": return java.lang.String.class;
+        case "connecttimeout":
+        case "connectTimeout": return int.class;
+        case "delay": return long.class;
+        case "delete": return boolean.class;
+        case "disconnect": return boolean.class;
+        case "disconnectonbatchcomplete":
+        case "disconnectOnBatchComplete": return boolean.class;
+        case "donefilename":
+        case "doneFileName": return java.lang.String.class;
+        case "download": return boolean.class;
+        case "eagerdeletetargetfile":
+        case "eagerDeleteTargetFile": return boolean.class;
+        case "eagermaxmessagesperpoll":
+        case "eagerMaxMessagesPerPoll": return boolean.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "exclude": return java.lang.String.class;
+        case "exclusivereadlockstrategy":
+        case "exclusiveReadLockStrategy": return org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy.class;
+        case "fastexistscheck":
+        case "fastExistsCheck": return boolean.class;
+        case "fileexist":
+        case "fileExist": return org.apache.camel.component.file.GenericFileExist.class;
+        case "filename":
+        case "fileName": return java.lang.String.class;
+        case "filter": return org.apache.camel.component.file.GenericFileFilter.class;
+        case "filterdirectory":
+        case "filterDirectory": return java.lang.String.class;
+        case "filterfile":
+        case "filterFile": return java.lang.String.class;
+        case "flatten": return boolean.class;
+        case "ftpclient":
+        case "ftpClient": return org.apache.commons.net.ftp.FTPClient.class;
+        case "ftpclientconfig":
+        case "ftpClientConfig": return org.apache.commons.net.ftp.FTPClientConfig.class;
+        case "ftpclientconfigparameters":
+        case "ftpClientConfigParameters": return java.util.Map.class;
+        case "ftpclientparameters":
+        case "ftpClientParameters": return java.util.Map.class;
+        case "greedy": return boolean.class;
+        case "handledirectoryparserabsoluteresult":
+        case "handleDirectoryParserAbsoluteResult": return boolean.class;
+        case "idempotent": return java.lang.Boolean.class;
+        case "idempotentkey":
+        case "idempotentKey": return java.lang.String.class;
+        case "idempotentrepository":
+        case "idempotentRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "ignorefilenotfoundorpermissionerror":
+        case "ignoreFileNotFoundOrPermissionError": return boolean.class;
+        case "inprogressrepository":
+        case "inProgressRepository": return org.apache.camel.spi.IdempotentRepository.class;
+        case "include": return java.lang.String.class;
+        case "initialdelay":
+        case "initialDelay": return long.class;
+        case "jailstartingdirectory":
+        case "jailStartingDirectory": return boolean.class;
+        case "keeplastmodified":
+        case "keepLastModified": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "localworkdirectory":
+        case "localWorkDirectory": return java.lang.String.class;
+        case "maxdepth":
+        case "maxDepth": return int.class;
+        case "maxmessagesperpoll":
+        case "maxMessagesPerPoll": return int.class;
+        case "maximumreconnectattempts":
+        case "maximumReconnectAttempts": return int.class;
+        case "mindepth":
+        case "minDepth": return int.class;
+        case "move": return java.lang.String.class;
+        case "moveexisting":
+        case "moveExisting": return java.lang.String.class;
+        case "moveexistingfilestrategy":
+        case "moveExistingFileStrategy": return org.apache.camel.component.file.strategy.FileMoveExistingStrategy.class;
+        case "movefailed":
+        case "moveFailed": return java.lang.String.class;
+        case "noop": return boolean.class;
+        case "oncompletionexceptionhandler":
+        case "onCompletionExceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "passivemode":
+        case "passiveMode": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "pollstrategy":
+        case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
+        case "premove":
+        case "preMove": return java.lang.String.class;
+        case "presort":
+        case "preSort": return boolean.class;
+        case "processstrategy":
+        case "processStrategy": return org.apache.camel.component.file.GenericFileProcessStrategy.class;
+        case "readlock":
+        case "readLock": return java.lang.String.class;
+        case "readlockcheckinterval":
+        case "readLockCheckInterval": return long.class;
+        case "readlockdeleteorphanlockfiles":
+        case "readLockDeleteOrphanLockFiles": return boolean.class;
+        case "readlocklogginglevel":
+        case "readLockLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "readlockmarkerfile":
+        case "readLockMarkerFile": return boolean.class;
+        case "readlockminage":
+        case "readLockMinAge": return long.class;
+        case "readlockminlength":
+        case "readLockMinLength": return long.class;
+        case "readlockremoveoncommit":
+        case "readLockRemoveOnCommit": return boolean.class;
+        case "readlockremoveonrollback":
+        case "readLockRemoveOnRollback": return boolean.class;
+        case "readlocktimeout":
+        case "readLockTimeout": return long.class;
+        case "reconnectdelay":
+        case "reconnectDelay": return long.class;
+        case "recursive": return boolean.class;
+        case "repeatcount":
+        case "repeatCount": return long.class;
+        case "resumedownload":
+        case "resumeDownload": return boolean.class;
+        case "runlogginglevel":
+        case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "scheduledexecutorservice":
+        case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
+        case "scheduler": return java.lang.Object.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.util.Map.class;
+        case "sendemptymessagewhenidle":
+        case "sendEmptyMessageWhenIdle": return boolean.class;
+        case "sendnoop":
+        case "sendNoop": return boolean.class;
+        case "separator": return org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator.class;
+        case "shuffle": return boolean.class;
+        case "sitecommand":
+        case "siteCommand": return java.lang.String.class;
+        case "sotimeout":
+        case "soTimeout": return int.class;
+        case "sortby":
+        case "sortBy": return java.lang.String.class;
+        case "sorter": return java.util.Comparator.class;
+        case "startscheduler":
+        case "startScheduler": return boolean.class;
+        case "stepwise": return boolean.class;
+        case "streamdownload":
+        case "streamDownload": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "tempfilename":
+        case "tempFileName": return java.lang.String.class;
+        case "tempprefix":
+        case "tempPrefix": return java.lang.String.class;
+        case "throwexceptiononconnectfailed":
+        case "throwExceptionOnConnectFailed": return boolean.class;
+        case "timeunit":
+        case "timeUnit": return java.util.concurrent.TimeUnit.class;
+        case "timeout": return int.class;
+        case "transferloggingintervalseconds":
+        case "transferLoggingIntervalSeconds": return int.class;
+        case "transferlogginglevel":
+        case "transferLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "transferloggingverbose":
+        case "transferLoggingVerbose": return boolean.class;
+        case "usefixeddelay":
+        case "useFixedDelay": return boolean.class;
+        case "uselist":
+        case "useList": return boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -373,8 +439,6 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "backoffIdleThreshold": return target.getBackoffIdleThreshold();
         case "backoffmultiplier":
         case "backoffMultiplier": return target.getBackoffMultiplier();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "binary": return target.getConfiguration().isBinary();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
@@ -548,6 +612,25 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "uselist":
         case "useList": return target.getConfiguration().isUseList();
         case "username": return target.getConfiguration().getUsername();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "exclusivereadlockstrategy":
+        case "exclusiveReadLockStrategy": return org.apache.commons.net.ftp.FTPFile.class;
+        case "filter": return org.apache.commons.net.ftp.FTPFile.class;
+        case "ftpclientconfigparameters":
+        case "ftpClientConfigParameters": return java.lang.Object.class;
+        case "ftpclientparameters":
+        case "ftpClientParameters": return java.lang.Object.class;
+        case "processstrategy":
+        case "processStrategy": return org.apache.commons.net.ftp.FTPFile.class;
+        case "schedulerproperties":
+        case "schedulerProperties": return java.lang.Object.class;
+        case "sorter": return org.apache.camel.component.file.GenericFile.class;
         default: return null;
         }
     }

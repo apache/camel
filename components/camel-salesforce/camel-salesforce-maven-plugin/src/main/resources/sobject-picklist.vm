@@ -39,11 +39,10 @@ public enum $enumName {
 #foreach ( $entry in $values)
 #set ( $value = $entry.Value )
     // $value
-    $utility.getEnumConstant($value)("$esc.escapeJava($value)")#if ( $foreach.hasNext ),#else;#end
+    $utility.getEnumConstant($sObjectName, $field.name, $value)("$esc.escapeJava($value)")#if ( $foreach.hasNext ),#else;#end
 
 #end
 #end
-
     final String value;
 
     private $enumName(String value) {
@@ -65,5 +64,4 @@ public enum $enumName {
         }
         throw new IllegalArgumentException(value);
     }
-
 }

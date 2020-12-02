@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.elasticsearch.services;
 
 import org.apache.camel.test.infra.common.services.ContainerService;
+import org.apache.camel.test.infra.elasticsearch.common.ElasticSearchProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
@@ -55,9 +56,17 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
     }
 
     @Override
+    public void registerProperties() {
+        System.setProperty(ElasticSearchProperties.ELASTIC_SEARCH_HOST, getElasticSearchHost());
+        System.setProperty(ElasticSearchProperties.ELASTIC_SEARCH_PORT, String.valueOf(getPort()));
+    }
+
+    @Override
     public void initialize() {
         LOG.info("Trying to start the ElasticSearch container");
         container.start();
+
+        registerProperties();
         LOG.info("ElasticSearch instance running at {}", getHttpHostAddress());
     }
 

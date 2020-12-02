@@ -4,9 +4,10 @@ package org.apache.camel.component.pdf;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,31 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("operation", org.apache.camel.component.pdf.PdfOperation.class);
-        map.put("font", java.lang.String.class);
-        map.put("fontSize", float.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("marginBottom", int.class);
-        map.put("marginLeft", int.class);
-        map.put("marginRight", int.class);
-        map.put("marginTop", int.class);
-        map.put("pageSize", java.lang.String.class);
-        map.put("textProcessingFactory", org.apache.camel.component.pdf.TextProcessingFactory.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(PdfEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PdfEndpoint target = (PdfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "font": target.getPdfConfiguration().setFont(property(camelContext, java.lang.String.class, value)); return true;
         case "fontsize":
         case "fontSize": target.getPdfConfiguration().setFontSize(property(camelContext, float.class, value)); return true;
@@ -64,23 +44,34 @@ public class PdfEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "font": return java.lang.String.class;
+        case "fontsize":
+        case "fontSize": return float.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "marginbottom":
+        case "marginBottom": return int.class;
+        case "marginleft":
+        case "marginLeft": return int.class;
+        case "marginright":
+        case "marginRight": return int.class;
+        case "margintop":
+        case "marginTop": return int.class;
+        case "pagesize":
+        case "pageSize": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "textprocessingfactory":
+        case "textProcessingFactory": return org.apache.camel.component.pdf.TextProcessingFactory.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PdfEndpoint target = (PdfEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "font": return target.getPdfConfiguration().getFont();
         case "fontsize":
         case "fontSize": return target.getPdfConfiguration().getFontSize();

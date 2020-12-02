@@ -23,8 +23,6 @@ import java.util.function.Consumer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
@@ -290,16 +288,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
 
     @Override
     public void onRouteContextCreate(Route route) {
-        // noop
-    }
-
-    @Override
-    public void onErrorHandlerAdd(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
-        // noop
-    }
-
-    @Override
-    public void onErrorHandlerRemove(Route route, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         // noop
     }
 

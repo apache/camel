@@ -4,9 +4,10 @@ package org.apache.camel.component.wordpress;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,25 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class WordpressComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("apiVersion", java.lang.String.class);
-        map.put("configuration", org.apache.camel.component.wordpress.WordpressConfiguration.class);
-        map.put("criteria", java.util.Map.class);
-        map.put("force", boolean.class);
-        map.put("id", java.lang.Integer.class);
-        map.put("password", java.lang.String.class);
-        map.put("searchCriteria", org.apache.camel.component.wordpress.api.model.SearchCriteria.class);
-        map.put("url", java.lang.String.class);
-        map.put("user", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(WordpressComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.wordpress.WordpressConfiguration getOrCreateConfiguration(WordpressComponent target) {
         if (target.getConfiguration() == null) {
@@ -48,8 +30,8 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": getOrCreateConfiguration(target).setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.wordpress.WordpressConfiguration.class, value)); return true;
@@ -68,15 +50,27 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "configuration": return org.apache.camel.component.wordpress.WordpressConfiguration.class;
+        case "criteria": return java.util.Map.class;
+        case "force": return boolean.class;
+        case "id": return java.lang.Integer.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "password": return java.lang.String.class;
+        case "searchcriteria":
+        case "searchCriteria": return org.apache.camel.component.wordpress.api.model.SearchCriteria.class;
+        case "url": return java.lang.String.class;
+        case "user": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -85,8 +79,8 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": return getOrCreateConfiguration(target).getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "configuration": return target.getConfiguration();
@@ -100,6 +94,14 @@ public class WordpressComponentConfigurer extends PropertyConfigurerSupport impl
         case "searchCriteria": return getOrCreateConfiguration(target).getSearchCriteria();
         case "url": return getOrCreateConfiguration(target).getUrl();
         case "user": return getOrCreateConfiguration(target).getUser();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "criteria": return java.lang.Object.class;
         default: return null;
         }
     }

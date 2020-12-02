@@ -111,6 +111,8 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
                 }
             }
 
+            predicate.init(endpoint.getCamelContext());
+
             PredicateAssertHelper.assertMatches(predicate,
                     "Assertion error at index " + index + " on mock " + endpoint.getEndpointUri() + " with predicate: ",
                     exchange);

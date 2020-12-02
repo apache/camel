@@ -17,17 +17,14 @@
 package org.apache.camel.component.aws2.msk;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.kafka.KafkaClient;
 
 /**
  * For working with Amazon MSK SDK v2.
@@ -55,9 +52,6 @@ public class MSK2Component extends DefaultComponent {
         MSK2Configuration configuration = this.configuration != null ? this.configuration.copy() : new MSK2Configuration();
         MSK2Endpoint endpoint = new MSK2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (endpoint.getConfiguration().isAutoDiscoverClient()) {
-            checkAndSetRegistryClient(configuration, endpoint);
-        }
         if (configuration.getMskClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon msk client or accessKey and secretKey must be specified");
@@ -74,20 +68,5 @@ public class MSK2Component extends DefaultComponent {
      */
     public void setConfiguration(MSK2Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    private void checkAndSetRegistryClient(MSK2Configuration configuration, MSK2Endpoint endpoint) {
-        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getMskClient())) {
-            LOG.debug("Looking for an KafkaClient instance in the registry");
-            Set<KafkaClient> clients = getCamelContext().getRegistry().findByType(KafkaClient.class);
-            if (clients.size() == 1) {
-                LOG.debug("Found exactly one KafkaClient instance in the registry");
-                configuration.setMskClient(clients.stream().findFirst().get());
-            } else {
-                LOG.debug("No KafkaClient instance in the registry");
-            }
-        } else {
-            LOG.debug("KafkaClient instance is already set at endpoint level: skipping the check in the registry");
-        }
     }
 }

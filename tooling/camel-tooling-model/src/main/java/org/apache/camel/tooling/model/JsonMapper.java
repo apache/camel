@@ -422,6 +422,7 @@ public final class JsonMapper {
         option.setOptionalPrefix(mp.getString("optionalPrefix"));
         option.setMultiValue(mp.getBooleanOrDefault("multiValue", false));
         option.setDeprecated(mp.getBooleanOrDefault("deprecated", false));
+        option.setAutowired(mp.getBooleanOrDefault("autowired", false));
         option.setDeprecationNote(mp.getString("deprecationNote"));
         option.setSecret(mp.getBooleanOrDefault("secret", false));
         option.setDefaultValue(mp.get("defaultValue"));
@@ -499,6 +500,7 @@ public final class JsonMapper {
         prop.put("multiValue", option.isMultiValue());
         prop.put("deprecated", option.isDeprecated());
         prop.put("deprecationNote", option.getDeprecationNote());
+        prop.put("autowired", option.isAutowired());
         prop.put("secret", option.isSecret());
         prop.put("defaultValue", option.getDefaultValue());
         prop.put("asPredicate", option.isAsPredicate());
@@ -571,6 +573,9 @@ public final class JsonMapper {
             }
             if (prop.isDeprecated()) {
                 j.put("deprecated", prop.isDeprecated());
+            }
+            if (prop.isAutowired()) {
+                j.put("autowired", prop.isAutowired());
             }
             props.add(j);
         }

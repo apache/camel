@@ -181,6 +181,34 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
+         * If true consumer will return complete document instead data defined
+         * in view.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default CouchbaseEndpointConsumerBuilder fullDocument(
+                boolean fullDocument) {
+            doSetProperty("fullDocument", fullDocument);
+            return this;
+        }
+        /**
+         * If true consumer will return complete document instead data defined
+         * in view.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         */
+        default CouchbaseEndpointConsumerBuilder fullDocument(
+                String fullDocument) {
+            doSetProperty("fullDocument", fullDocument);
+            return this;
+        }
+        /**
          * The output limit to use.
          * 
          * The option is a: <code>int</code> type.
@@ -813,31 +841,29 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>long</code> type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointConsumerBuilder connectTimeout(
+                long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a <code>long</code> type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointConsumerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -1202,31 +1228,29 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>long</code> type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointProducerBuilder connectTimeout(
+                long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a <code>long</code> type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointProducerBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -1387,31 +1411,29 @@ public interface CouchbaseEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: <code>long</code> type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointBuilder connectTimeout(
+                long connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
+         * Define the timeoutconnect in milliseconds.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a <code>long</code> type.
          * 
-         * Default: false
+         * Default: 2500
          * Group: advanced
          */
-        default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default AdvancedCouchbaseEndpointBuilder connectTimeout(
+                String connectTimeout) {
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**

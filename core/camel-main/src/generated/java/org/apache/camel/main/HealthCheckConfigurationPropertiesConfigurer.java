@@ -4,9 +4,10 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.main.HealthCheckConfigurationProperties;
 
@@ -15,18 +16,6 @@ import org.apache.camel.main.HealthCheckConfigurationProperties;
  */
 @SuppressWarnings("unchecked")
 public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("Enabled", boolean.class);
-        map.put("FailureThreshold", int.class);
-        map.put("Interval", long.class);
-        map.put("Parent", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(HealthCheckConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(HealthCheckConfigurationPropertiesConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -45,16 +34,18 @@ public class HealthCheckConfigurationPropertiesConfigurer extends org.apache.cam
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "enabled":
+        case "Enabled": return boolean.class;
+        case "failurethreshold":
+        case "FailureThreshold": return int.class;
+        case "interval":
+        case "Interval": return long.class;
+        case "parent":
+        case "Parent": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override

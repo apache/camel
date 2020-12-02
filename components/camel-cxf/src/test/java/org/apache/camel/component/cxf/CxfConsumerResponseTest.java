@@ -37,7 +37,6 @@ import org.junit.jupiter.api.TestInstance;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CxfConsumerResponseTest extends CamelTestSupport {
@@ -128,7 +127,7 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
         int beforeCallingPing = pingCounter;
         client.ping();
         int afterCallingPing = pingCounter;
-        assertTrue(afterCallingPing - beforeCallingPing == 1, "The ping operation doesn't be called");
+        assertEquals(1, afterCallingPing - beforeCallingPing, "The ping operation doesn't be called");
     }
 
 }

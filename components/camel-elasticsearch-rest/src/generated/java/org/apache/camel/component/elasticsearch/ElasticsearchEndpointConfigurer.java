@@ -4,9 +4,10 @@ package org.apache.camel.component.elasticsearch;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,39 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("clusterName", java.lang.String.class);
-        map.put("connectionTimeout", int.class);
-        map.put("disconnect", boolean.class);
-        map.put("enableSniffer", boolean.class);
-        map.put("enableSSL", boolean.class);
-        map.put("from", java.lang.Integer.class);
-        map.put("hostAddresses", java.lang.String.class);
-        map.put("indexName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("maxRetryTimeout", int.class);
-        map.put("operation", org.apache.camel.component.elasticsearch.ElasticsearchOperation.class);
-        map.put("scrollKeepAliveMs", int.class);
-        map.put("size", java.lang.Integer.class);
-        map.put("sniffAfterFailureDelay", int.class);
-        map.put("snifferInterval", int.class);
-        map.put("socketTimeout", int.class);
-        map.put("useScroll", boolean.class);
-        map.put("waitForActiveShards", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ElasticsearchEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ElasticsearchEndpoint target = (ElasticsearchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "connectiontimeout":
         case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
@@ -85,23 +57,47 @@ public class ElasticsearchEndpointConfigurer extends PropertyConfigurerSupport i
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "connectiontimeout":
+        case "connectionTimeout": return int.class;
+        case "disconnect": return boolean.class;
+        case "enablessl":
+        case "enableSSL": return boolean.class;
+        case "enablesniffer":
+        case "enableSniffer": return boolean.class;
+        case "from": return java.lang.Integer.class;
+        case "hostaddresses":
+        case "hostAddresses": return java.lang.String.class;
+        case "indexname":
+        case "indexName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "maxretrytimeout":
+        case "maxRetryTimeout": return int.class;
+        case "operation": return org.apache.camel.component.elasticsearch.ElasticsearchOperation.class;
+        case "scrollkeepalivems":
+        case "scrollKeepAliveMs": return int.class;
+        case "size": return java.lang.Integer.class;
+        case "sniffafterfailuredelay":
+        case "sniffAfterFailureDelay": return int.class;
+        case "snifferinterval":
+        case "snifferInterval": return int.class;
+        case "sockettimeout":
+        case "socketTimeout": return int.class;
+        case "synchronous": return boolean.class;
+        case "usescroll":
+        case "useScroll": return boolean.class;
+        case "waitforactiveshards":
+        case "waitForActiveShards": return int.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ElasticsearchEndpoint target = (ElasticsearchEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "connectiontimeout":
         case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
         case "disconnect": return target.getConfiguration().isDisconnect();

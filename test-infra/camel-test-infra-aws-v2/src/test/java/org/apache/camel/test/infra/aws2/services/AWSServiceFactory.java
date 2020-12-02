@@ -17,14 +17,11 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
+import java.util.function.Supplier;
+
 import org.apache.camel.test.infra.aws.common.services.AWSService;
-import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.core.SdkSystemSetting;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.sqs.SqsClient;
 
 public final class AWSServiceFactory {
     private static final Logger LOG = LoggerFactory.getLogger(AWSServiceFactory.class);
@@ -37,19 +34,17 @@ public final class AWSServiceFactory {
         return awsInstanceType == null ? "default" : awsInstanceType;
     }
 
-    public static AWSService<KinesisClient> createKinesisService() {
-        String awsInstanceType = System.getProperty("aws-service.kinesis.instance.type");
-        LOG.info("Creating a {} AWS kinesis instance", getInstanceTypeName(awsInstanceType));
+    private static <
+            T extends AWSLocalContainerService> AWSService createService(String property, String name, Supplier<T> supplier) {
+        String awsInstanceType = System.getProperty(property);
+        LOG.info("Creating a {} {} instance", name, getInstanceTypeName(awsInstanceType));
 
         if (awsInstanceType == null || awsInstanceType.equals("local-aws-container")) {
-
-            System.setProperty(SdkSystemSetting.CBOR_ENABLED.property(), "false");
-
-            return new AWSKinesisLocalContainerService();
+            return supplier.get();
         }
 
         if (awsInstanceType.equals("remote")) {
-            return new AWSRemoteService<>(AWSSDKClientUtils::newKinesisClient);
+            return new AWSRemoteService();
         }
 
         LOG.error("Invalid AWS instance type: {}. Must be either 'remote' or 'local-aws-container'",
@@ -57,37 +52,52 @@ public final class AWSServiceFactory {
         throw new UnsupportedOperationException("Invalid AWS instance type");
     }
 
-    public static AWSService<SqsClient> createSQSService() {
-        String awsInstanceType = System.getProperty("aws-service.instance.type");
-        LOG.info("Creating a {} AWS SQS instance", getInstanceTypeName(awsInstanceType));
-
-        if (awsInstanceType == null || awsInstanceType.equals("local-aws-container")) {
-            return new AWSSQSLocalContainerService();
-        }
-
-        if (awsInstanceType.equals("remote")) {
-            return new AWSRemoteService<>(AWSSDKClientUtils::newSQSClient);
-        }
-
-        LOG.error("Invalid AWS instance type: {}. Must be either 'remote' or 'local-aws-container'",
-                awsInstanceType);
-        throw new UnsupportedOperationException("Invalid AWS instance type");
+    private static <T extends AWSLocalContainerService> AWSService createService(String name, Supplier<T> supplier) {
+        return createService("aws-service.instance.type", name, supplier);
     }
 
-    public static AWSService<S3Client> createS3Service() {
-        String awsInstanceType = System.getProperty("aws-service.instance.type");
-        LOG.info("Creating a {} AWS S3 instance", awsInstanceType);
+    public static AWSService createKinesisService() {
+        return createService("aws-service.kinesis.instance.type", "AWS Kinesis",
+                AWSKinesisLocalContainerService::new);
+    }
 
-        if (awsInstanceType == null || awsInstanceType.equals("local-aws-container")) {
-            return new AWSS3LocalContainerService();
-        }
+    public static AWSService createSQSService() {
+        return createService("AWS SQS", AWSSQSLocalContainerService::new);
+    }
 
-        if (awsInstanceType.equals("remote")) {
-            return new AWSRemoteService<>(AWSSDKClientUtils::newS3Client);
-        }
+    public static AWSService createS3Service() {
+        return createService("AWS S3", AWSS3LocalContainerService::new);
+    }
 
-        LOG.error("Invalid AWS instance type: {}. Must be either 'remote' or 'local-aws-container'",
-                awsInstanceType);
-        throw new UnsupportedOperationException("Invalid AWS instance type");
+    public static AWSService createSNSService() {
+        return createService("AWS SNS", AWSSNSLocalContainerService::new);
+    }
+
+    public static AWSService createCloudWatchService() {
+        return createService("AWS Cloud Watch", AWSCloudWatchLocalContainerService::new);
+    }
+
+    public static AWSService createEC2Service() {
+        return createService("AWS EC2", AWSEC2LocalContainerService::new);
+    }
+
+    public static AWSService createEventBridgeService() {
+        return createService("AWS EventBridge", AWSEventBridgeLocalContainerService::new);
+    }
+
+    public static AWSService createIAMService() {
+        return createService("AWS IAM", AWSIAMLocalContainerService::new);
+    }
+
+    public static AWSService createKMSService() {
+        return createService("AWS KMS", AWSKMSLocalContainerService::new);
+    }
+
+    public static AWSService createLambdaService() {
+        return createService("AWS Lambda", AWSLambdaLocalContainerService::new);
+    }
+
+    public static AWSService createSTSService() {
+        return createService("AWS STS", AWSSTSLocalContainerService::new);
     }
 }

@@ -88,35 +88,6 @@ public interface Sns2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sns2EndpointBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sns2EndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
@@ -192,6 +163,72 @@ public interface Sns2EndpointBuilderFactory {
          */
         default Sns2EndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageDeduplicationId
+         * on the message. Can be one of the following options: useExchangeId,
+         * useContentBasedDeduplication. For the useContentBasedDeduplication
+         * option, no messageDeduplicationId will be set on the message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.sns.MessageDeduplicationIdStrategy</code> type.
+         * 
+         * Default: useExchangeId
+         * Group: producer
+         */
+        default Sns2EndpointBuilder messageDeduplicationIdStrategy(
+                Object messageDeduplicationIdStrategy) {
+            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageDeduplicationId
+         * on the message. Can be one of the following options: useExchangeId,
+         * useContentBasedDeduplication. For the useContentBasedDeduplication
+         * option, no messageDeduplicationId will be set on the message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.aws2.sns.MessageDeduplicationIdStrategy</code> type.
+         * 
+         * Default: useExchangeId
+         * Group: producer
+         */
+        default Sns2EndpointBuilder messageDeduplicationIdStrategy(
+                String messageDeduplicationIdStrategy) {
+            doSetProperty("messageDeduplicationIdStrategy", messageDeduplicationIdStrategy);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageGroupId on the
+         * message. Can be one of the following options: useConstant,
+         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
+         * value of property CamelAwsMessageGroupId will be used.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.sns.MessageGroupIdStrategy</code> type.
+         * 
+         * Group: producer
+         */
+        default Sns2EndpointBuilder messageGroupIdStrategy(
+                Object messageGroupIdStrategy) {
+            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
+            return this;
+        }
+        /**
+         * Only for FIFO Topic. Strategy for setting the messageGroupId on the
+         * message. Can be one of the following options: useConstant,
+         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
+         * value of property CamelAwsMessageGroupId will be used.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.aws2.sns.MessageGroupIdStrategy</code> type.
+         * 
+         * Group: producer
+         */
+        default Sns2EndpointBuilder messageGroupIdStrategy(
+                String messageGroupIdStrategy) {
+            doSetProperty("messageGroupIdStrategy", messageGroupIdStrategy);
             return this;
         }
         /**
@@ -394,6 +431,34 @@ public interface Sns2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Sns2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         */
+        default Sns2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
          * Amazon AWS Access Key.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -426,34 +491,6 @@ public interface Sns2EndpointBuilderFactory {
                 EndpointProducerBuilder {
         default Sns2EndpointBuilder basic() {
             return (Sns2EndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSns2EndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSns2EndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel

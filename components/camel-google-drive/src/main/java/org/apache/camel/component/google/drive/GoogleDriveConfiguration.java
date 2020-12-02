@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleDrive component.
  */
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public class GoogleDriveConfiguration {
     private static final List<String> DEFAULT_SCOPES
             = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,

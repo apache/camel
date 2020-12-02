@@ -75,6 +75,36 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointConsumerBuilder amazonS3Presigner(
+                Object amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointConsumerBuilder amazonS3Presigner(
+                String amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
          * also in case of moveAfterRead option enabled and it will create the
          * destinationBucket if it doesn't exist already.
@@ -102,36 +132,6 @@ public interface AWS2S3EndpointBuilderFactory {
         default AWS2S3EndpointConsumerBuilder autoCreateBucket(
                 String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default AWS2S3EndpointConsumerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default AWS2S3EndpointConsumerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
             return this;
         }
         /**
@@ -315,31 +315,33 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointConsumerBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointConsumerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointConsumerBuilder useIAMCredentials(
-                String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointConsumerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -1267,34 +1269,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAWS2S3EndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAWS2S3EndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1361,6 +1335,36 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointProducerBuilder amazonS3Presigner(
+                Object amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointProducerBuilder amazonS3Presigner(
+                String amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
          * also in case of moveAfterRead option enabled and it will create the
          * destinationBucket if it doesn't exist already.
@@ -1388,36 +1392,6 @@ public interface AWS2S3EndpointBuilderFactory {
         default AWS2S3EndpointProducerBuilder autoCreateBucket(
                 String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default AWS2S3EndpointProducerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default AWS2S3EndpointProducerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
             return this;
         }
         /**
@@ -1601,31 +1575,33 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointProducerBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointProducerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointProducerBuilder useIAMCredentials(
-                String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointProducerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -1935,34 +1911,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAWS2S3EndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -2027,6 +1975,34 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option is a:
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointBuilder amazonS3Presigner(Object amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
+         * An S3 Presigner for Request, used mainly in createDownloadLink
+         * operation.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.services.s3.presigner.S3Presigner</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default AWS2S3EndpointBuilder amazonS3Presigner(String amazonS3Presigner) {
+            doSetProperty("amazonS3Presigner", amazonS3Presigner);
+            return this;
+        }
+        /**
          * Setting the autocreation of the S3 bucket bucketName. This will apply
          * also in case of moveAfterRead option enabled and it will create the
          * destinationBucket if it doesn't exist already.
@@ -2052,36 +2028,6 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder autoCreateBucket(String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default AWS2S3EndpointBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default AWS2S3EndpointBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
             return this;
         }
         /**
@@ -2262,30 +2208,33 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointBuilder useIAMCredentials(
-                boolean useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
-         * Set whether the S3 client should expect to load credentials on an EC2
-         * instance or to expect static credentials to be passed in.
+         * Set whether the S3 client should expect to load credentials through a
+         * default credentials provider or to expect static credentials to be
+         * passed in.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
          * Group: common
          */
-        default AWS2S3EndpointBuilder useIAMCredentials(String useIAMCredentials) {
-            doSetProperty("useIAMCredentials", useIAMCredentials);
+        default AWS2S3EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -2358,34 +2307,6 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAWS2S3EndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedAWS2S3EndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -2432,7 +2353,8 @@ public interface AWS2S3EndpointBuilderFactory {
         deleteBucket,
         listBuckets,
         getObject,
-        getObjectRange;
+        getObjectRange,
+        createDownloadLink;
     }
 
     public interface AWS2S3Builders {

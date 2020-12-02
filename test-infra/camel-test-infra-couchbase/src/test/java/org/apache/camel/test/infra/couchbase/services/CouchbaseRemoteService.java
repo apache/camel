@@ -17,6 +17,8 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
+import org.apache.camel.test.infra.couchbase.common.CouchbaseProperties;
+
 public class CouchbaseRemoteService implements CouchbaseService {
     @Override
     public String getConnectionString() {
@@ -26,29 +28,34 @@ public class CouchbaseRemoteService implements CouchbaseService {
 
     @Override
     public String getUsername() {
-        return System.getProperty("couchbase.username", "Administrator");
+        return System.getProperty(CouchbaseProperties.COUCHBASE_USERNAME, "Administrator");
     }
 
     @Override
     public String getPassword() {
-        return System.getProperty("couchbase.password");
+        return System.getProperty(CouchbaseProperties.COUCHBASE_PASSWORD);
     }
 
     @Override
     public String getHostname() {
-        return System.getProperty("couchbase.hostname");
+        return System.getProperty(CouchbaseProperties.COUCHBASE_HOSTNAME);
     }
 
     @Override
     public int getPort() {
-        String portValue = System.getProperty("couchbase.port", "8091");
+        String portValue = System.getProperty(CouchbaseProperties.COUCHBASE_PORT, "8091");
 
         return Integer.parseInt(portValue);
     }
 
     @Override
-    public void initialize() {
+    public void registerProperties() {
+        // NO-OP
+    }
 
+    @Override
+    public void initialize() {
+        registerProperties();
     }
 
     @Override

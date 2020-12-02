@@ -4,9 +4,10 @@ package org.apache.camel.component.aws.mq;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,25 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class MQComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("amazonMqClient", com.amazonaws.services.mq.AmazonMQ.class);
-        map.put("configuration", org.apache.camel.component.aws.mq.MQConfiguration.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.aws.mq.MQOperations.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", com.amazonaws.Protocol.class);
-        map.put("region", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(MQComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.aws.mq.MQConfiguration getOrCreateConfiguration(MQComponent target) {
         if (target.getConfiguration() == null) {
@@ -52,8 +34,8 @@ public class MQComponentConfigurer extends PropertyConfigurerSupport implements 
         case "amazonMqClient": getOrCreateConfiguration(target).setAmazonMqClient(property(camelContext, com.amazonaws.services.mq.AmazonMQ.class, value)); return true;
         case "autodiscoverclient":
         case "autoDiscoverClient": getOrCreateConfiguration(target).setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.aws.mq.MQConfiguration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -72,15 +54,31 @@ public class MQComponentConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonmqclient":
+        case "amazonMqClient": return com.amazonaws.services.mq.AmazonMQ.class;
+        case "autodiscoverclient":
+        case "autoDiscoverClient": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "configuration": return org.apache.camel.component.aws.mq.MQConfiguration.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.aws.mq.MQOperations.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return com.amazonaws.Protocol.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -93,8 +91,8 @@ public class MQComponentConfigurer extends PropertyConfigurerSupport implements 
         case "amazonMqClient": return getOrCreateConfiguration(target).getAmazonMqClient();
         case "autodiscoverclient":
         case "autoDiscoverClient": return getOrCreateConfiguration(target).isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

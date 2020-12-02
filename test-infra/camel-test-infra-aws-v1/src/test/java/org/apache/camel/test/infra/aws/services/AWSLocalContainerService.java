@@ -28,23 +28,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.localstack.LocalStackContainer;
 
-abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerService<LocalStackContainer> {
+abstract class AWSLocalContainerService implements AWSService, ContainerService<LocalStackContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(AWSLocalContainerService.class);
     private final LocalStackContainer container;
 
     public AWSLocalContainerService(LocalStackContainer.Service... services) {
         this.container = new LocalStackContainer().withServices(services);
-
-        container.start();
     }
-
-    protected abstract String getAmazonHost();
 
     protected abstract String getServiceEndpoint();
 
     @Override
+    public void registerProperties() {
+        AWSCredentials credentials = getCredentials();
+
+        /**
+         * We need to set this one. For some sets, when they instantiate the clients within Camel, they need to know
+         * what is the Amazon details being used (ie.: when creating them using the withEndpointConfiguration()).
+         * Because this happens within Camel, there's no way to pass that information easily. Therefore, the information
+         * is set as a property and read by whatever class/method creates the clients to pass to Camel.
+         *
+         * Do not unset.
+         */
+        System.setProperty(AWSConfigs.SECRET_KEY, credentials.getAWSSecretKey());
+        System.setProperty(AWSConfigs.ACCESS_KEY, credentials.getAWSAccessKeyId());
+        System.setProperty(AWSConfigs.AMAZON_AWS_HOST, getAmazonHost());
+        System.setProperty(AWSConfigs.REGION, Regions.US_EAST_1.name());
+        System.setProperty(AWSConfigs.PROTOCOL, "http");
+    }
+
+    @Override
     public void initialize() {
-        getConnectionProperties();
+        LOG.debug("Trying to start the container");
+        container.start();
+
+        registerProperties();
         LOG.info("AWS service running at address {}", getServiceEndpoint());
     }
 
@@ -70,20 +88,6 @@ abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerSe
         properties.put(AWSConfigs.AMAZON_AWS_HOST, getAmazonHost());
         properties.put(AWSConfigs.PROTOCOL, "http");
 
-        /**
-         * We need to set this one. For some sets, when they instantiate the clients within Camel, they need to know
-         * what is the Amazon details being used (ie.: when creating them using the withEndpointConfiguration()).
-         * Because this happens within Camel, there's no way to pass that information easily. Therefore, the information
-         * is set as a property and read by whatever class/method creates the clients to pass to Camel.
-         *
-         * Do not unset.
-         */
-        System.setProperty(AWSConfigs.SECRET_KEY, credentials.getAWSSecretKey());
-        System.setProperty(AWSConfigs.ACCESS_KEY, credentials.getAWSAccessKeyId());
-        System.setProperty(AWSConfigs.AMAZON_AWS_HOST, getAmazonHost());
-        System.setProperty(AWSConfigs.REGION, Regions.US_EAST_1.name());
-        System.setProperty(AWSConfigs.PROTOCOL, "http");
-
         return properties;
     }
 
@@ -93,7 +97,13 @@ abstract class AWSLocalContainerService<T> implements AWSService<T>, ContainerSe
     }
 
     protected String getAmazonHost(int port) {
-        return container.getContainerIpAddress() + ":" + container.getMappedPort(port);
+        return String.format("%s:%d", container.getContainerIpAddress(), container.getMappedPort(port));
+    }
+
+    public String getAmazonHost() {
+        final int edgePort = 4566;
+
+        return getAmazonHost(edgePort);
     }
 
     protected String getServiceEndpoint(LocalStackContainer.Service service) {

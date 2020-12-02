@@ -28,7 +28,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport {
 
@@ -44,8 +44,8 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         }
         // this should be sufficient as core pool size is the only thing I
         // changed from the default
-        assertTrue(threadPoolExecutor.getCorePoolSize() == getThreadPoolExecutor().getCorePoolSize());
-        assertTrue(threadPoolExecutor.getMaximumPoolSize() == getThreadPoolExecutor().getMaximumPoolSize());
+        assertEquals(threadPoolExecutor.getCorePoolSize(), getThreadPoolExecutor().getCorePoolSize());
+        assertEquals(threadPoolExecutor.getMaximumPoolSize(), getThreadPoolExecutor().getMaximumPoolSize());
     }
 
     protected ThreadPoolExecutor getThreadPoolExecutor() {

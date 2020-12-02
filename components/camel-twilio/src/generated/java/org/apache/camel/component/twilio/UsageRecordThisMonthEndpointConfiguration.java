@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "reader", description="Create a ThisMonthReader to execute read", signatures={"com.twilio.rest.api.v2010.account.usage.record.ThisMonthReader reader()", "com.twilio.rest.api.v2010.account.usage.record.ThisMonthReader reader(String pathAccountSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class UsageRecordThisMonthEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "reader", description="The SID of the Account that created the resources to read")})

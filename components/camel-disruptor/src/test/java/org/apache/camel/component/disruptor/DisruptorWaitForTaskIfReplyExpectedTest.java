@@ -47,10 +47,12 @@ public class DisruptorWaitForTaskIfReplyExpectedTest extends CamelTestSupport {
             }
         });
 
-        // we do not expecy a reply and thus do no wait so we just get our own
+        // we do not expect a reply and thus do no wait so we just get our own
         // input back
         assertEquals("Hello World", out.getIn().getBody());
-        assertEquals(null, out.getOut().getBody());
+
+        // Should return the in message as no reply is expected
+        assertEquals("Hello World", out.getMessage().getBody());
         assertMockEndpointsSatisfied();
 
     }

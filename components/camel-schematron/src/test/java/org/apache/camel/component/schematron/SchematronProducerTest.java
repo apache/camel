@@ -38,7 +38,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Schematron Producer Unit Test.
@@ -67,7 +67,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
+        assertEquals(Constants.SUCCESS, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
+        assertEquals(Constants.FAILED, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
 
     }
 
@@ -93,7 +93,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
+        assertEquals(Constants.SUCCESS, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         producer.process(exc);
 
         // assert
-        assertTrue(exc.getMessage().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
+        assertEquals(Constants.FAILED, exc.getMessage().getHeader(Constants.VALIDATION_STATUS));
 
     }
 

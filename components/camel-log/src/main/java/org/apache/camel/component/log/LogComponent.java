@@ -38,7 +38,9 @@ public class LogComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);
 
-    @Metadata(label = "advanced")
+    private ExchangeFormatter defaultExchangeFormatter;
+
+    @Metadata(label = "advanced", autowired = true)
     private ExchangeFormatter exchangeFormatter;
 
     public LogComponent() {
@@ -116,4 +118,22 @@ public class LogComponent extends DefaultComponent {
         this.exchangeFormatter = exchangeFormatter;
     }
 
+    /**
+     * Gets the default shared exchange formatter.
+     */
+    public ExchangeFormatter getDefaultExchangeFormatter() {
+        return defaultExchangeFormatter;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        DefaultExchangeFormatter def = new DefaultExchangeFormatter();
+        def.setShowExchangePattern(true);
+        def.setSkipBodyLineSeparator(true);
+        def.setShowBody(true);
+        def.setShowBodyType(true);
+        def.setStyle(DefaultExchangeFormatter.OutputStyle.Default);
+        def.setMaxChars(10000);
+        this.defaultExchangeFormatter = def;
+    }
 }

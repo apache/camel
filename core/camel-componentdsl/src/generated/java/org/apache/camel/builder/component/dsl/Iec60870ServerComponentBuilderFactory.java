@@ -105,18 +105,21 @@ public interface Iec60870ServerComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether the component should use basic property binding (Camel 2.x)
-         * or the newer property binding with additional capabilities.
+         * Whether autowiring is enabled. This is used for automatic autowiring
+         * options (the option must be marked as autowired) by looking up in the
+         * registry to find if there is a single instance of matching type,
+         * which then gets configured on the component. This can be used for
+         * automatic configuring JDBC data sources, JMS connection factories,
+         * AWS Clients, etc.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Default: false
+         * Default: true
          * Group: advanced
          */
-        @Deprecated
-        default Iec60870ServerComponentBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+        default Iec60870ServerComponentBuilder autowiredEnabled(
+                boolean autowiredEnabled) {
+            doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
     }
@@ -139,7 +142,7 @@ public interface Iec60870ServerComponentBuilderFactory {
             case "defaultConnectionOptions": ((ServerComponent) component).setDefaultConnectionOptions((org.apache.camel.component.iec60870.server.ServerOptions) value); return true;
             case "bridgeErrorHandler": ((ServerComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((ServerComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "basicPropertyBinding": ((ServerComponent) component).setBasicPropertyBinding((boolean) value); return true;
+            case "autowiredEnabled": ((ServerComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
         }

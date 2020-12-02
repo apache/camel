@@ -165,12 +165,8 @@ public class TimedLeaderNotifier implements Service {
             lastCommunicatedLeader = newLeader;
             LOG.info("The cluster has a new leader: {}", newLeader);
             try {
-                handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent() {
-                    @Override
-                    public Optional<String> getData() {
-                        return newLeader;
-                    }
-                });
+                handler.onKubernetesClusterEvent(
+                        (KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) () -> newLeader);
             } catch (Throwable t) {
                 LOG.warn("Error while communicating the new leader to the handler", t);
             }
@@ -181,12 +177,8 @@ public class TimedLeaderNotifier implements Service {
             lastCommunicatedMembers = newMembers;
             LOG.info("The list of cluster members has changed: {}", newMembers);
             try {
-                handler.onKubernetesClusterEvent(new KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent() {
-                    @Override
-                    public Set<String> getData() {
-                        return newMembers;
-                    }
-                });
+                handler.onKubernetesClusterEvent(
+                        (KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) () -> newMembers);
             } catch (Throwable t) {
                 LOG.warn("Error while communicating the cluster members to the handler", t);
             }

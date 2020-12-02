@@ -20,8 +20,7 @@ public class DirectVmEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(12);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(11);
         props.add("lazyStartProducer");
         props.add("bridgeErrorHandler");
         props.add("headerFilterStrategy");

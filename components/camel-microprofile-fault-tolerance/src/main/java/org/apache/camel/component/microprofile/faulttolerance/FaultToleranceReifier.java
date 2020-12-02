@@ -31,8 +31,8 @@ import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
@@ -174,8 +174,8 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
     private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
         BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         optional.ifPresent(bean -> {
-            if (configurer instanceof PropertyConfigurerGetter) {
-                PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
+            if (configurer instanceof ExtendedPropertyConfigurerGetter) {
+                ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
                 Map<String, Object> types = getter.getAllOptions(bean);
                 types.forEach((k, t) -> {
                     Object value = getter.getOptionValue(bean, k, true);

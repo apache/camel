@@ -4,9 +4,10 @@ package org.apache.camel.component.splunkhec;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,30 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("splunkURL", java.lang.String.class);
-        map.put("token", java.lang.String.class);
-        map.put("host", java.lang.String.class);
-        map.put("index", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("source", java.lang.String.class);
-        map.put("sourceType", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("https", boolean.class);
-        map.put("skipTlsVerify", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SplunkHECEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SplunkHECEndpoint target = (SplunkHECEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "https": target.getConfiguration().setHttps(property(camelContext, boolean.class, value)); return true;
         case "index": target.getConfiguration().setIndex(property(camelContext, java.lang.String.class, value)); return true;
@@ -56,23 +37,27 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "host": return java.lang.String.class;
+        case "https": return boolean.class;
+        case "index": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "skiptlsverify":
+        case "skipTlsVerify": return boolean.class;
+        case "source": return java.lang.String.class;
+        case "sourcetype":
+        case "sourceType": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SplunkHECEndpoint target = (SplunkHECEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "host": return target.getConfiguration().getHost();
         case "https": return target.getConfiguration().isHttps();
         case "index": return target.getConfiguration().getIndex();

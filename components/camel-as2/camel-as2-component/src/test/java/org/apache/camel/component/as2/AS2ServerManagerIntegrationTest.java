@@ -263,7 +263,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         assertTrue(entity instanceof MultipartSignedEntity, "Unexpected request entity type");
         MultipartSignedEntity signedEntity = (MultipartSignedEntity) entity;
         assertTrue(signedEntity.isMainBody(), "Entity not set as main body of request");
-        assertTrue(signedEntity.getPartCount() == 2, "Request contains invalid number of mime parts");
+        assertEquals(2, signedEntity.getPartCount(), "Request contains invalid number of mime parts");
 
         // Validated first mime part.
         assertTrue(signedEntity.getPart(0) instanceof ApplicationEDIFACTEntity, "First mime part incorrect type ");

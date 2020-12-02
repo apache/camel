@@ -176,7 +176,7 @@ public class MQ2Producer extends DefaultProducer {
                 brokerEngine = exchange.getIn().getHeader(MQ2Constants.BROKER_ENGINE, String.class);
                 builder.engineType(EngineType.fromValue(brokerEngine));
             } else {
-                builder.engineType(EngineType.ACTIVEMQ.name());
+                throw new IllegalArgumentException("A broker engine must be specified, it can be ACTIVEMQ or RABBITMQ");
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.BROKER_ENGINE_VERSION))) {
                 brokerEngineVersion = exchange.getIn().getHeader(MQ2Constants.BROKER_ENGINE_VERSION, String.class);

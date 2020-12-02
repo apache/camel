@@ -16,6 +16,8 @@
  */
 package org.apache.kafka.clients.consumer;
 
+import java.time.Duration;
+
 import org.hamcrest.core.IsNot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,18 +37,18 @@ public class KafkaConsumerTest {
 
     @BeforeEach
     public void init() {
-        when(kafkaConsumer.poll(1000)).thenReturn(ConsumerRecords.empty());
+        when(kafkaConsumer.poll(Duration.ofSeconds(1))).thenReturn(ConsumerRecords.empty());
     }
 
     @Test
     public void testPollGivenReturnsEmptyConsumerRecordShouldNotBeNull() {
-        ConsumerRecords<Object, Object> consumerRecords = kafkaConsumer.poll(1000);
+        ConsumerRecords<Object, Object> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
         assertThat(consumerRecords, IsNot.not(nullValue()));
     }
 
     @Test
     public void testPollGivenReturnsEmptyPartitionsShouldNotBeNull() {
-        ConsumerRecords<Object, Object> consumerRecords = kafkaConsumer.poll(1000);
+        ConsumerRecords<Object, Object> consumerRecords = kafkaConsumer.poll(Duration.ofSeconds(1));
         assertThat(consumerRecords.partitions(), IsNot.not(nullValue()));
     }
 }

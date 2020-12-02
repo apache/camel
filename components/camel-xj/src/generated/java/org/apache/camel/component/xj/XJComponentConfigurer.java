@@ -4,9 +4,10 @@ package org.apache.camel.component.xj;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.component.xslt.saxon.XsltSaxonComponentConfigurer;
 
@@ -15,23 +16,6 @@ import org.apache.camel.component.xslt.saxon.XsltSaxonComponentConfigurer;
  */
 @SuppressWarnings("unchecked")
 public class XJComponentConfigurer extends XsltSaxonComponentConfigurer implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("contentCache", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("saxonConfiguration", net.sf.saxon.Configuration.class);
-        map.put("saxonConfigurationProperties", java.util.Map.class);
-        map.put("saxonExtensionFunctions", java.lang.String.class);
-        map.put("transformerFactoryClass", java.lang.String.class);
-        map.put("transformerFactoryConfigurationStrategy", org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy.class);
-        map.put("uriResolver", javax.xml.transform.URIResolver.class);
-        map.put("uriResolverFactory", org.apache.camel.component.xslt.XsltUriResolverFactory.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XJComponentConfigurer::clearConfigurers);
-    }
 
 }
 

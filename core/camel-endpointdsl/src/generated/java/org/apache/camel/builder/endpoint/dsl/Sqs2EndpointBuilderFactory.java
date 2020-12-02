@@ -114,36 +114,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointConsumerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointConsumerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
@@ -260,6 +230,34 @@ public interface Sqs2EndpointBuilderFactory {
         default Sqs2EndpointConsumerBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointConsumerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -1302,34 +1300,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
@@ -1475,36 +1445,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointProducerBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointProducerBuilder autoDiscoverClient(
-                String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
@@ -1621,6 +1561,34 @@ public interface Sqs2EndpointBuilderFactory {
         default Sqs2EndpointProducerBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointProducerBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -1955,34 +1923,6 @@ public interface Sqs2EndpointBuilderFactory {
             return (Sqs2EndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Define if you want to apply delaySeconds option to the queue or on
          * single messages.
          * 
@@ -2124,35 +2064,6 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointBuilder autoDiscoverClient(
-                boolean autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
-         * Setting the autoDiscoverClient mechanism, if true, the component will
-         * look for a client instance in the registry automatically otherwise it
-         * will skip that checking.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: common
-         */
-        default Sqs2EndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
-            doSetProperty("autoDiscoverClient", autoDiscoverClient);
-            return this;
-        }
-        /**
          * To use a custom HeaderFilterStrategy to map headers to/from Camel.
          * 
          * The option is a:
@@ -2269,6 +2180,34 @@ public interface Sqs2EndpointBuilderFactory {
         default Sqs2EndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
             doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
+                boolean useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
+            return this;
+        }
+        /**
+         * Set whether the SQS client should expect to load credentials on an
+         * AWS infra instance or to expect static credentials to be passed in.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: common
+         */
+        default Sqs2EndpointBuilder useDefaultCredentialsProvider(
+                String useDefaultCredentialsProvider) {
+            doSetProperty("useDefaultCredentialsProvider", useDefaultCredentialsProvider);
             return this;
         }
         /**
@@ -2444,34 +2383,6 @@ public interface Sqs2EndpointBuilderFactory {
                 AdvancedSqs2EndpointProducerBuilder {
         default Sqs2EndpointBuilder basic() {
             return (Sqs2EndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedSqs2EndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Define if you want to apply delaySeconds option to the queue or on

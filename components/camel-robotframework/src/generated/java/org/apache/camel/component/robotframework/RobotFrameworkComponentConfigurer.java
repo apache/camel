@@ -4,9 +4,10 @@ package org.apache.camel.component.robotframework;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,64 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("allowContextMapAll", boolean.class);
-        map.put("allowTemplateFromHeader", boolean.class);
-        map.put("argumentFile", java.io.File.class);
-        map.put("combinedTagStats", java.lang.String.class);
-        map.put("criticalTags", java.lang.String.class);
-        map.put("debugFile", java.io.File.class);
-        map.put("document", java.lang.String.class);
-        map.put("dryrun", boolean.class);
-        map.put("excludes", java.lang.String.class);
-        map.put("exitOnFailure", boolean.class);
-        map.put("includes", java.lang.String.class);
-        map.put("listener", java.lang.String.class);
-        map.put("listeners", java.lang.String.class);
-        map.put("log", java.io.File.class);
-        map.put("logLevel", java.lang.String.class);
-        map.put("logTitle", java.lang.String.class);
-        map.put("metadata", java.lang.String.class);
-        map.put("monitorColors", java.lang.String.class);
-        map.put("monitorWidth", java.lang.String.class);
-        map.put("name", java.lang.String.class);
-        map.put("nonCriticalTags", java.lang.String.class);
-        map.put("noStatusReturnCode", boolean.class);
-        map.put("output", java.io.File.class);
-        map.put("outputDirectory", java.io.File.class);
-        map.put("randomize", java.lang.String.class);
-        map.put("report", java.io.File.class);
-        map.put("reportBackground", java.lang.String.class);
-        map.put("reportTitle", java.lang.String.class);
-        map.put("runEmptySuite", boolean.class);
-        map.put("runFailed", java.io.File.class);
-        map.put("runMode", java.lang.String.class);
-        map.put("skipTeardownOnExit", boolean.class);
-        map.put("splitOutputs", java.lang.String.class);
-        map.put("suites", java.lang.String.class);
-        map.put("suiteStatLevel", java.lang.String.class);
-        map.put("summaryTitle", java.lang.String.class);
-        map.put("tagDocs", java.lang.String.class);
-        map.put("tags", java.lang.String.class);
-        map.put("tagStatExcludes", java.lang.String.class);
-        map.put("tagStatIncludes", java.lang.String.class);
-        map.put("tagStatLinks", java.lang.String.class);
-        map.put("tests", java.lang.String.class);
-        map.put("timestampOutputs", boolean.class);
-        map.put("variableFiles", java.lang.String.class);
-        map.put("variables", java.lang.String.class);
-        map.put("warnOnSkippedFiles", boolean.class);
-        map.put("xunitFile", java.io.File.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(RobotFrameworkComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration getOrCreateConfiguration(RobotFrameworkComponent target) {
         if (target.getConfiguration() == null) {
@@ -91,8 +34,8 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "allowTemplateFromHeader": getOrCreateConfiguration(target).setAllowTemplateFromHeader(property(camelContext, boolean.class, value)); return true;
         case "argumentfile":
         case "argumentFile": getOrCreateConfiguration(target).setArgumentFile(property(camelContext, java.io.File.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "combinedtagstats":
@@ -175,15 +118,95 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcontextmapall":
+        case "allowContextMapAll": return boolean.class;
+        case "allowtemplatefromheader":
+        case "allowTemplateFromHeader": return boolean.class;
+        case "argumentfile":
+        case "argumentFile": return java.io.File.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "combinedtagstats":
+        case "combinedTagStats": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration.class;
+        case "criticaltags":
+        case "criticalTags": return java.lang.String.class;
+        case "debugfile":
+        case "debugFile": return java.io.File.class;
+        case "document": return java.lang.String.class;
+        case "dryrun": return boolean.class;
+        case "excludes": return java.lang.String.class;
+        case "exitonfailure":
+        case "exitOnFailure": return boolean.class;
+        case "includes": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "listener": return java.lang.String.class;
+        case "listeners": return java.lang.String.class;
+        case "log": return java.io.File.class;
+        case "loglevel":
+        case "logLevel": return java.lang.String.class;
+        case "logtitle":
+        case "logTitle": return java.lang.String.class;
+        case "metadata": return java.lang.String.class;
+        case "monitorcolors":
+        case "monitorColors": return java.lang.String.class;
+        case "monitorwidth":
+        case "monitorWidth": return java.lang.String.class;
+        case "name": return java.lang.String.class;
+        case "nostatusreturncode":
+        case "noStatusReturnCode": return boolean.class;
+        case "noncriticaltags":
+        case "nonCriticalTags": return java.lang.String.class;
+        case "output": return java.io.File.class;
+        case "outputdirectory":
+        case "outputDirectory": return java.io.File.class;
+        case "randomize": return java.lang.String.class;
+        case "report": return java.io.File.class;
+        case "reportbackground":
+        case "reportBackground": return java.lang.String.class;
+        case "reporttitle":
+        case "reportTitle": return java.lang.String.class;
+        case "runemptysuite":
+        case "runEmptySuite": return boolean.class;
+        case "runfailed":
+        case "runFailed": return java.io.File.class;
+        case "runmode":
+        case "runMode": return java.lang.String.class;
+        case "skipteardownonexit":
+        case "skipTeardownOnExit": return boolean.class;
+        case "splitoutputs":
+        case "splitOutputs": return java.lang.String.class;
+        case "suitestatlevel":
+        case "suiteStatLevel": return java.lang.String.class;
+        case "suites": return java.lang.String.class;
+        case "summarytitle":
+        case "summaryTitle": return java.lang.String.class;
+        case "tagdocs":
+        case "tagDocs": return java.lang.String.class;
+        case "tagstatexcludes":
+        case "tagStatExcludes": return java.lang.String.class;
+        case "tagstatincludes":
+        case "tagStatIncludes": return java.lang.String.class;
+        case "tagstatlinks":
+        case "tagStatLinks": return java.lang.String.class;
+        case "tags": return java.lang.String.class;
+        case "tests": return java.lang.String.class;
+        case "timestampoutputs":
+        case "timestampOutputs": return boolean.class;
+        case "variablefiles":
+        case "variableFiles": return java.lang.String.class;
+        case "variables": return java.lang.String.class;
+        case "warnonskippedfiles":
+        case "warnOnSkippedFiles": return boolean.class;
+        case "xunitfile":
+        case "xunitFile": return java.io.File.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -196,8 +219,8 @@ public class RobotFrameworkComponentConfigurer extends PropertyConfigurerSupport
         case "allowTemplateFromHeader": return getOrCreateConfiguration(target).isAllowTemplateFromHeader();
         case "argumentfile":
         case "argumentFile": return getOrCreateConfiguration(target).getArgumentFile();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "combinedtagstats":

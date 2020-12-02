@@ -16,29 +16,31 @@
  */
 package org.apache.camel.component.rabbitmq.integration;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.rabbitmq.services.ConnectionProperties;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RabbitMQBasicIntTest extends AbstractRabbitMQIntTest {
 
-    // Startup RabbitMQ via Docker (see readme.txt in camel-rabbitmq folder)
-
-    @EndpointInject("rabbitmq:localhost:5672/foo?username=cameltest&password=cameltest")
-    private Endpoint foo;
-
-    @EndpointInject("rabbitmq:localhost:5672/bar?username=cameltest&password=cameltest")
-    private Endpoint bar;
+    String foo;
+    String bar;
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        ConnectionProperties connectionProperties = service.connectionProperties();
+        foo = String.format("rabbitmq:%s:%d/foo?username=%s&password=%s", connectionProperties.hostname(),
+                connectionProperties.port(), connectionProperties.username(), connectionProperties.password());
+
+        bar = String.format("rabbitmq:%s:%d/bar?username=%s&password=%s", connectionProperties.hostname(),
+                connectionProperties.port(), connectionProperties.username(), connectionProperties.password());
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

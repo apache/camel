@@ -16,46 +16,13 @@
  */
 package org.apache.camel.component.minio.integration;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Properties;
+import org.apache.camel.test.infra.minio.services.MinioService;
+import org.apache.camel.test.infra.minio.services.MinioServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import org.apache.camel.component.minio.MinioTestUtils;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
+class MinioTestContainerSupport extends CamelTestSupport {
+    @RegisterExtension
+    static MinioService service = MinioServiceFactory.createService();
 
-class MinioTestContainerSupport extends ContainerAwareTestSupport {
-    static Properties properties;
-
-    static {
-        try {
-            properties = MinioTestUtils.loadMinioPropertiesFile();
-        } catch (IOException e) {
-            LoggerFactory.getLogger(MinioTestContainerSupport.class)
-                    .warn("I/O exception loading minio properties file: {}", e.getMessage(), e);
-        }
-    }
-
-    static final String CONTAINER_IMAGE = "minio/minio:latest";
-    static final String CONTAINER_NAME = "minio";
-    static final String ACCESS_KEY = properties.getProperty("accessKey");
-    static final String SECRET_KEY = properties.getProperty("secretKey");
-    static final int BROKER_PORT = 9000;
-    static final GenericContainer CONTAINER;
-
-    static {
-        CONTAINER = new GenericContainer<>(CONTAINER_IMAGE).withNetworkAliases(CONTAINER_NAME)
-                .withEnv("MINIO_ACCESS_KEY", ACCESS_KEY)
-                .withEnv("MINIO_SECRET_KEY", SECRET_KEY)
-                .withCommand("server /data")
-                .withExposedPorts(BROKER_PORT)
-                .waitingFor(new HttpWaitStrategy()
-                        .forPath("/minio/health/ready")
-                        .forPort(BROKER_PORT)
-                        .withStartupTimeout(Duration.ofSeconds(10)));
-
-        CONTAINER.start();
-    }
 }

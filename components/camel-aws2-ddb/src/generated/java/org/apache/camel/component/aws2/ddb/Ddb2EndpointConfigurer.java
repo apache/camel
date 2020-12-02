@@ -4,9 +4,10 @@ package org.apache.camel.component.aws2.ddb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,32 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("tableName", java.lang.String.class);
-        map.put("amazonDDBClient", software.amazon.awssdk.services.dynamodb.DynamoDbClient.class);
-        map.put("autoDiscoverClient", boolean.class);
-        map.put("consistentRead", boolean.class);
-        map.put("keyAttributeName", java.lang.String.class);
-        map.put("keyAttributeType", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", org.apache.camel.component.aws2.ddb.Ddb2Operations.class);
-        map.put("proxyHost", java.lang.String.class);
-        map.put("proxyPort", java.lang.Integer.class);
-        map.put("proxyProtocol", software.amazon.awssdk.core.Protocol.class);
-        map.put("readCapacity", java.lang.Long.class);
-        map.put("region", java.lang.String.class);
-        map.put("trustAllCertificates", boolean.class);
-        map.put("writeCapacity", java.lang.Long.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(Ddb2EndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Ddb2Endpoint target = (Ddb2Endpoint) obj;
@@ -50,10 +25,6 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": target.getConfiguration().setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "amazonddbclient":
         case "amazonDDBClient": target.getConfiguration().setAmazonDDBClient(property(camelContext, software.amazon.awssdk.services.dynamodb.DynamoDbClient.class, value)); return true;
-        case "autodiscoverclient":
-        case "autoDiscoverClient": target.getConfiguration().setAutoDiscoverClient(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "consistentread":
         case "consistentRead": target.getConfiguration().setConsistentRead(property(camelContext, boolean.class, value)); return true;
         case "keyattributename":
@@ -84,15 +55,44 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
+    public String[] getAutowiredNames() {
+        return new String[]{"amazonDDBClient"};
     }
 
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    @Override
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "amazonddbclient":
+        case "amazonDDBClient": return software.amazon.awssdk.services.dynamodb.DynamoDbClient.class;
+        case "consistentread":
+        case "consistentRead": return boolean.class;
+        case "keyattributename":
+        case "keyAttributeName": return java.lang.String.class;
+        case "keyattributetype":
+        case "keyAttributeType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return org.apache.camel.component.aws2.ddb.Ddb2Operations.class;
+        case "proxyhost":
+        case "proxyHost": return java.lang.String.class;
+        case "proxyport":
+        case "proxyPort": return java.lang.Integer.class;
+        case "proxyprotocol":
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
+        case "readcapacity":
+        case "readCapacity": return java.lang.Long.class;
+        case "region": return java.lang.String.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "writecapacity":
+        case "writeCapacity": return java.lang.Long.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -103,10 +103,6 @@ public class Ddb2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "accessKey": return target.getConfiguration().getAccessKey();
         case "amazonddbclient":
         case "amazonDDBClient": return target.getConfiguration().getAmazonDDBClient();
-        case "autodiscoverclient":
-        case "autoDiscoverClient": return target.getConfiguration().isAutoDiscoverClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "consistentread":
         case "consistentRead": return target.getConfiguration().isConsistentRead();
         case "keyattributename":

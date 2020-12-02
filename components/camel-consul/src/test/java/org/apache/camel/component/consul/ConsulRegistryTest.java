@@ -24,10 +24,11 @@ import java.util.Set;
 
 import com.orbitz.consul.Consul;
 import org.apache.camel.NoSuchBeanException;
-import org.junit.jupiter.api.AfterAll;
+import org.apache.camel.test.infra.consul.services.ConsulService;
+import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,10 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Unit test for Camel Registry implementation for Consul
  */
 public class ConsulRegistryTest implements Serializable {
+    @RegisterExtension
+    public static ConsulService consulService = ConsulServiceFactory.createService();
 
     private static final long serialVersionUID = -3482971969351609265L;
     private static ConsulRegistry registry;
-    private static GenericContainer container;
 
     public class ConsulTestClass implements Serializable {
         private static final long serialVersionUID = -4815945688487114891L;
@@ -53,15 +55,7 @@ public class ConsulRegistryTest implements Serializable {
 
     @BeforeAll
     public static void setUp() {
-        container = ConsulTestSupport.consulContainer();
-        container.start();
-
-        registry = new ConsulRegistry(container.getContainerIpAddress(), container.getMappedPort(Consul.DEFAULT_HTTP_PORT));
-    }
-
-    @AfterAll
-    public static void tearDown() {
-        container.stop();
+        registry = new ConsulRegistry(consulService.host(), consulService.port());
     }
 
     @Test

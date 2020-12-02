@@ -218,8 +218,8 @@ public class BarcodeDataFormatTest {
     private void checkParams(
             BarcodeImageType imageType, int width, int height, BarcodeFormat format, BarcodeParameters params) {
         assertEquals(params.getType(), imageType);
-        assertTrue(params.getWidth() == width);
-        assertTrue(params.getHeight() == height);
+        assertEquals(width, (int) params.getWidth());
+        assertEquals(height, (int) params.getHeight());
         assertEquals(params.getFormat(), format);
     }
 }

@@ -37,7 +37,13 @@ public @interface Configurer {
     boolean generateConfigurer() default true;
 
     /**
-     * Whether this configurer is used only during bootstrapping Camel.
+     * Whether this configurer should include extended configurer methods. For example API based components would
+     * require this.
+     */
+    boolean extended() default false;
+
+    /**
+     * Whether this configurer is only used during bootstrap
      */
     boolean bootstrap() default false;
 

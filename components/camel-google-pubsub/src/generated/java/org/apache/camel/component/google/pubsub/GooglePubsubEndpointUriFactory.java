@@ -21,9 +21,9 @@ public class GooglePubsubEndpointUriFactory extends org.apache.camel.support.com
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
         Set<String> props = new HashSet<>(13);
-        props.add("basicPropertyBinding");
         props.add("synchronous");
         props.add("exchangePattern");
+        props.add("serializer");
         props.add("synchronousPull");
         props.add("concurrentConsumers");
         props.add("lazyStartProducer");

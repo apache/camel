@@ -4,9 +4,10 @@ package org.apache.camel.component.aws.swf;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,46 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("type", java.lang.String.class);
-        map.put("amazonSWClient", com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class);
-        map.put("dataConverter", com.amazonaws.services.simpleworkflow.flow.DataConverter.class);
-        map.put("domainName", java.lang.String.class);
-        map.put("eventName", java.lang.String.class);
-        map.put("region", java.lang.String.class);
-        map.put("version", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("activityList", java.lang.String.class);
-        map.put("activitySchedulingOptions", com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions.class);
-        map.put("activityThreadPoolSize", int.class);
-        map.put("activityTypeExecutionOptions", com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions.class);
-        map.put("activityTypeRegistrationOptions", com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("clientConfigurationParameters", java.util.Map.class);
-        map.put("startWorkflowOptionsParameters", java.util.Map.class);
-        map.put("sWClientParameters", java.util.Map.class);
-        map.put("synchronous", boolean.class);
-        map.put("accessKey", java.lang.String.class);
-        map.put("secretKey", java.lang.String.class);
-        map.put("childPolicy", java.lang.String.class);
-        map.put("executionStartToCloseTimeout", java.lang.String.class);
-        map.put("operation", java.lang.String.class);
-        map.put("signalName", java.lang.String.class);
-        map.put("stateResultType", java.lang.String.class);
-        map.put("taskStartToCloseTimeout", java.lang.String.class);
-        map.put("terminationDetails", java.lang.String.class);
-        map.put("terminationReason", java.lang.String.class);
-        map.put("workflowList", java.lang.String.class);
-        map.put("workflowTypeRegistrationOptions", com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SWFEndpointConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -74,8 +35,6 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "activityTypeRegistrationOptions": target.getConfiguration().setActivityTypeRegistrationOptions(property(camelContext, com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions.class, value)); return true;
         case "amazonswclient":
         case "amazonSWClient": target.getConfiguration().setAmazonSWClient(property(camelContext, com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "childpolicy":
@@ -125,15 +84,68 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "accesskey":
+        case "accessKey": return java.lang.String.class;
+        case "activitylist":
+        case "activityList": return java.lang.String.class;
+        case "activityschedulingoptions":
+        case "activitySchedulingOptions": return com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions.class;
+        case "activitythreadpoolsize":
+        case "activityThreadPoolSize": return int.class;
+        case "activitytypeexecutionoptions":
+        case "activityTypeExecutionOptions": return com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions.class;
+        case "activitytyperegistrationoptions":
+        case "activityTypeRegistrationOptions": return com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions.class;
+        case "amazonswclient":
+        case "amazonSWClient": return com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "childpolicy":
+        case "childPolicy": return java.lang.String.class;
+        case "clientconfigurationparameters":
+        case "clientConfigurationParameters": return java.util.Map.class;
+        case "dataconverter":
+        case "dataConverter": return com.amazonaws.services.simpleworkflow.flow.DataConverter.class;
+        case "domainname":
+        case "domainName": return java.lang.String.class;
+        case "eventname":
+        case "eventName": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "executionstarttoclosetimeout":
+        case "executionStartToCloseTimeout": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "operation": return java.lang.String.class;
+        case "region": return java.lang.String.class;
+        case "swclientparameters":
+        case "sWClientParameters": return java.util.Map.class;
+        case "secretkey":
+        case "secretKey": return java.lang.String.class;
+        case "signalname":
+        case "signalName": return java.lang.String.class;
+        case "startworkflowoptionsparameters":
+        case "startWorkflowOptionsParameters": return java.util.Map.class;
+        case "stateresulttype":
+        case "stateResultType": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "taskstarttoclosetimeout":
+        case "taskStartToCloseTimeout": return java.lang.String.class;
+        case "terminationdetails":
+        case "terminationDetails": return java.lang.String.class;
+        case "terminationreason":
+        case "terminationReason": return java.lang.String.class;
+        case "version": return java.lang.String.class;
+        case "workflowlist":
+        case "workflowList": return java.lang.String.class;
+        case "workflowtyperegistrationoptions":
+        case "workflowTypeRegistrationOptions": return com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -154,8 +166,6 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "activityTypeRegistrationOptions": return target.getConfiguration().getActivityTypeRegistrationOptions();
         case "amazonswclient":
         case "amazonSWClient": return target.getConfiguration().getAmazonSWClient();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "childpolicy":
@@ -200,6 +210,19 @@ public class SWFEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "workflowList": return target.getConfiguration().getWorkflowList();
         case "workflowtyperegistrationoptions":
         case "workflowTypeRegistrationOptions": return target.getConfiguration().getWorkflowTypeRegistrationOptions();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "clientconfigurationparameters":
+        case "clientConfigurationParameters": return java.lang.Object.class;
+        case "swclientparameters":
+        case "sWClientParameters": return java.lang.Object.class;
+        case "startworkflowoptionsparameters":
+        case "startWorkflowOptionsParameters": return java.lang.Object.class;
         default: return null;
         }
     }

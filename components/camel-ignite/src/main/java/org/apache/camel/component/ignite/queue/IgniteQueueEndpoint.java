@@ -68,7 +68,7 @@ public class IgniteQueueEndpoint extends AbstractIgniteEndpoint {
         // Set the configuration values.
         if (!parameters.containsKey("configuration")) {
             Map<String, Object> configProps = PropertiesHelper.extractProperties(parameters, "config.");
-            PropertyBindingSupport.bindProperties(this.getCamelContext(), configProps, parameters);
+            PropertyBindingSupport.bindProperties(this.getCamelContext(), parameters, configProps);
         }
     }
 

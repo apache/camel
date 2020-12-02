@@ -4,9 +4,10 @@ package org.apache.camel.component.nsq;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,41 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("topic", java.lang.String.class);
-        map.put("servers", java.lang.String.class);
-        map.put("userAgent", java.lang.String.class);
-        map.put("autoFinish", java.lang.Boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("channel", java.lang.String.class);
-        map.put("customNSQLookup", com.github.brainlag.nsq.lookup.NSQLookup.class);
-        map.put("lookupInterval", long.class);
-        map.put("lookupServerPort", int.class);
-        map.put("messageTimeout", long.class);
-        map.put("poolSize", int.class);
-        map.put("requeueInterval", long.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("port", int.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("secure", boolean.class);
-        map.put("sslContextParameters", org.apache.camel.support.jsse.SSLContextParameters.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(NsqEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         NsqEndpoint target = (NsqEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autofinish":
         case "autoFinish": target.getConfiguration().setAutoFinish(property(camelContext, java.lang.Boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "channel": target.getConfiguration().setChannel(property(camelContext, java.lang.String.class, value)); return true;
@@ -85,15 +57,41 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autofinish":
+        case "autoFinish": return java.lang.Boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "channel": return java.lang.String.class;
+        case "customnsqlookup":
+        case "customNSQLookup": return com.github.brainlag.nsq.lookup.NSQLookup.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "lookupinterval":
+        case "lookupInterval": return long.class;
+        case "lookupserverport":
+        case "lookupServerPort": return int.class;
+        case "messagetimeout":
+        case "messageTimeout": return long.class;
+        case "poolsize":
+        case "poolSize": return int.class;
+        case "port": return int.class;
+        case "requeueinterval":
+        case "requeueInterval": return long.class;
+        case "secure": return boolean.class;
+        case "servers": return java.lang.String.class;
+        case "sslcontextparameters":
+        case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "synchronous": return boolean.class;
+        case "useragent":
+        case "userAgent": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -102,8 +100,6 @@ public class NsqEndpointConfigurer extends PropertyConfigurerSupport implements 
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autofinish":
         case "autoFinish": return target.getConfiguration().getAutoFinish();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "channel": return target.getConfiguration().getChannel();

@@ -17,11 +17,11 @@
 package org.apache.camel.component.hbase;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
+import org.apache.camel.test.infra.hbase.services.HBaseService;
+import org.apache.camel.test.infra.hbase.services.HBaseServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.TableNotFoundException;
@@ -34,9 +34,11 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.testcontainers.containers.GenericContainer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
+public abstract class CamelHBaseTestSupport extends CamelTestSupport {
+    @RegisterExtension
+    public static HBaseService service = HBaseServiceFactory.createService();
 
     protected static final String PERSON_TABLE = "person";
     protected static final String INFO_FAMILY = "info";
@@ -61,9 +63,6 @@ public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
             family[1].getBytes(),
             family[2].getBytes() };
 
-    // init container once for a class
-    private GenericContainer cont;
-
     @Override
     @BeforeEach
     public void setUp() throws Exception {
@@ -86,20 +85,6 @@ public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
         super.tearDown();
     }
 
-    @Override
-    protected GenericContainer<?> createContainer() {
-        if (cont == null) {
-            cont = new HBaseContainer();
-        }
-        return cont;
-    }
-
-    @Override
-    protected long containersStartupTimeout() {
-        // on my laptop it takes around 30-60 seconds to start the cluster.
-        return TimeUnit.MINUTES.toSeconds(5);
-    }
-
     protected void putMultipleRows() throws IOException {
         Table table = connectHBase().getTable(TableName.valueOf(PERSON_TABLE.getBytes()));
         for (int r = 0; r < key.length; r++) {
@@ -110,12 +95,8 @@ public abstract class CamelHBaseTestSupport extends ContainerAwareTestSupport {
         IOHelper.close(table);
     }
 
-    protected Configuration getHBaseConfig() {
-        return HBaseContainer.defaultConf();
-    }
-
     protected Connection connectHBase() throws IOException {
-        Connection connection = ConnectionFactory.createConnection(getHBaseConfig());
+        Connection connection = ConnectionFactory.createConnection(service.getConfiguration());
         return connection;
     }
 

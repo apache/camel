@@ -4,9 +4,10 @@ package org.apache.camel.component.xmlsecurity;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,41 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("name", java.lang.String.class);
-        map.put("baseUri", java.lang.String.class);
-        map.put("clearHeaders", java.lang.Boolean.class);
-        map.put("cryptoContextProperties", java.util.Map.class);
-        map.put("disallowDoctypeDecl", java.lang.Boolean.class);
-        map.put("keySelector", javax.xml.crypto.KeySelector.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("omitXmlDeclaration", java.lang.Boolean.class);
-        map.put("outputNodeSearch", java.lang.Object.class);
-        map.put("outputNodeSearchType", java.lang.String.class);
-        map.put("outputXmlEncoding", java.lang.String.class);
-        map.put("removeSignatureElements", java.lang.Boolean.class);
-        map.put("schemaResourceUri", java.lang.String.class);
-        map.put("secureValidation", java.lang.Boolean.class);
-        map.put("validationFailedHandler", org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class);
-        map.put("xmlSignature2Message", org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class);
-        map.put("xmlSignatureChecker", org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("uriDereferencer", javax.xml.crypto.URIDereferencer.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(XmlVerifierEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         XmlVerifierEndpoint target = (XmlVerifierEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "baseuri":
         case "baseUri": target.getConfiguration().setBaseUri(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "clearheaders":
         case "clearHeaders": target.getConfiguration().setClearHeaders(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "cryptocontextproperties":
@@ -89,15 +61,45 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "baseuri":
+        case "baseUri": return java.lang.String.class;
+        case "clearheaders":
+        case "clearHeaders": return java.lang.Boolean.class;
+        case "cryptocontextproperties":
+        case "cryptoContextProperties": return java.util.Map.class;
+        case "disallowdoctypedecl":
+        case "disallowDoctypeDecl": return java.lang.Boolean.class;
+        case "keyselector":
+        case "keySelector": return javax.xml.crypto.KeySelector.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "omitxmldeclaration":
+        case "omitXmlDeclaration": return java.lang.Boolean.class;
+        case "outputnodesearch":
+        case "outputNodeSearch": return java.lang.Object.class;
+        case "outputnodesearchtype":
+        case "outputNodeSearchType": return java.lang.String.class;
+        case "outputxmlencoding":
+        case "outputXmlEncoding": return java.lang.String.class;
+        case "removesignatureelements":
+        case "removeSignatureElements": return java.lang.Boolean.class;
+        case "schemaresourceuri":
+        case "schemaResourceUri": return java.lang.String.class;
+        case "securevalidation":
+        case "secureValidation": return java.lang.Boolean.class;
+        case "synchronous": return boolean.class;
+        case "uridereferencer":
+        case "uriDereferencer": return javax.xml.crypto.URIDereferencer.class;
+        case "validationfailedhandler":
+        case "validationFailedHandler": return org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler.class;
+        case "xmlsignature2message":
+        case "xmlSignature2Message": return org.apache.camel.component.xmlsecurity.api.XmlSignature2Message.class;
+        case "xmlsignaturechecker":
+        case "xmlSignatureChecker": return org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -106,8 +108,6 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "baseuri":
         case "baseUri": return target.getConfiguration().getBaseUri();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "clearheaders":
         case "clearHeaders": return target.getConfiguration().getClearHeaders();
         case "cryptocontextproperties":
@@ -141,6 +141,15 @@ public class XmlVerifierEndpointConfigurer extends PropertyConfigurerSupport imp
         case "xmlSignature2Message": return target.getConfiguration().getXmlSignature2Message();
         case "xmlsignaturechecker":
         case "xmlSignatureChecker": return target.getConfiguration().getXmlSignatureChecker();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "cryptocontextproperties":
+        case "cryptoContextProperties": return java.lang.Object.class;
         default: return null;
         }
     }

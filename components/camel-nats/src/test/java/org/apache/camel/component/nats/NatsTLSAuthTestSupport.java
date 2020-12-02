@@ -17,48 +17,20 @@
 package org.apache.camel.component.nats;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.junit5.Wait;
-import org.testcontainers.containers.BindMode;
-import org.testcontainers.containers.GenericContainer;
+import org.apache.camel.test.infra.nats.services.NatsLocalContainerService;
+import org.apache.camel.test.infra.nats.services.NatsLocalContainerTLSAuthService;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-/*Certificates used for tests with TLS authentication come from:
- *https://github.com/nats-io/jnats/tree/master/src/test/resources */
-public class NatsTLSAuthTestSupport extends ContainerAwareTestSupport {
-
-    public static final String CONTAINER_IMAGE = "nats:2.1.8";
-    public static final String CONTAINER_NAME = "nats-tls";
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return natsContainer();
-    }
-
-    public static GenericContainer natsContainer() {
-        return new GenericContainer(CONTAINER_IMAGE)
-                .withNetworkAliases(CONTAINER_NAME)
-                .withClasspathResourceMapping("org/apache/camel/component/nats", "/nats", BindMode.READ_ONLY)
-                .waitingFor(Wait.forLogMessageContaining("Server is ready", 1))
-                .withCommand(
-                        "--tls",
-                        "--tlscert=/nats/server.pem",
-                        "--tlskey=/nats/key.pem",
-                        "--tlsverify",
-                        "--tlscacert=/nats/ca.pem");
-    }
-
-    public String getNatsBrokerUrl() {
-        return String.format(
-                "%s:%d",
-                getContainerHost(CONTAINER_NAME),
-                getContainerPort(CONTAINER_NAME, 4222));
-    }
+public class NatsTLSAuthTestSupport extends CamelTestSupport {
+    @RegisterExtension
+    static NatsLocalContainerService service = new NatsLocalContainerTLSAuthService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         NatsComponent nats = context.getComponent("nats", NatsComponent.class);
-        nats.setServers(getNatsBrokerUrl());
+        nats.setServers(service.getServiceAddress());
         return context;
     }
 

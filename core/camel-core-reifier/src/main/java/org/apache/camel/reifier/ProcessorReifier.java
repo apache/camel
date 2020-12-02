@@ -104,10 +104,10 @@ import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.util.ObjectHelper;
@@ -116,15 +116,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends AbstractReifier {
 
-    private static final Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS;
-    static {
-        // for custom reifiers
-        Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> map
-                = new HashMap<>(0);
-        PROCESSORS = map;
-        ReifierStrategy.addReifierClearer(ProcessorReifier::clearReifiers);
-    }
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessorReifier.class);
+
+    // for custom reifiers
+    private static final Map<Class<?>, BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>>> PROCESSORS
+            = new HashMap<>(0);
 
     protected final T definition;
 
@@ -141,6 +137,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     public static void registerReifier(
             Class<?> processorClass,
             BiFunction<Route, ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> creator) {
+        if (PROCESSORS.isEmpty()) {
+            ReifierStrategy.addReifierClearer(ProcessorReifier::clearReifiers);
+        }
         PROCESSORS.put(processorClass, creator);
     }
 
@@ -167,6 +166,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         return answer;
     }
 
+    // CHECKSTYLE:OFF
     public static ProcessorReifier<? extends ProcessorDefinition<?>> coreReifier(
             Route route, ProcessorDefinition<?> definition) {
 
@@ -299,9 +299,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         } else if (definition instanceof WhenDefinition) {
             return new WhenReifier(route, definition);
         }
-
         return null;
     }
+    // CHECKSTYLE:OFF
 
     /**
      * Determines whether a new thread pool will be created or not.
@@ -585,9 +585,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         // only add regular processors as event driven
         if (endpointInterceptor) {
-            log.debug("Endpoint interceptor should not be added as an event driven consumer route: {}", processor);
+            LOG.debug("Endpoint interceptor should not be added as an event driven consumer route: {}", processor);
         } else {
-            log.trace("Adding event driven processor: {}", processor);
+            LOG.trace("Adding event driven processor: {}", processor);
             route.getEventDrivenProcessors().add(processor);
         }
     }
@@ -655,7 +655,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 || definition instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it
             // will handle errors itself
-            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", definition);
+            LOG.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", definition);
         } else if (ProcessorDefinitionHelper.isParentOfType(TryDefinition.class, definition, true)
                 || ProcessorDefinitionHelper.isParentOfType(CatchDefinition.class, definition, true)
                 || ProcessorDefinitionHelper.isParentOfType(FinallyDefinition.class, definition, true)) {
@@ -663,10 +663,10 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             // will handle errors itself
             // by checking that any of our parent(s) is not a try .. catch or
             // finally type
-            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", definition);
+            LOG.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", definition);
         } else if (definition instanceof OnExceptionDefinition
                 || ProcessorDefinitionHelper.isParentOfType(OnExceptionDefinition.class, definition, true)) {
-            log.trace("{} is part of OnException so no error handler is applied", definition);
+            LOG.trace("{} is part of OnException so no error handler is applied", definition);
             // do not use error handler for onExceptions blocks as it will
             // handle errors itself
         } else if (definition instanceof CircuitBreakerDefinition
@@ -677,7 +677,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 // only wrap the parent (not the children of the circuit breaker)
                 wrap = true;
             } else {
-                log.trace("{} is part of CircuitBreaker so no error handler is applied", definition);
+                LOG.trace("{} is part of CircuitBreaker so no error handler is applied", definition);
             }
         } else if (definition instanceof MulticastDefinition) {
             // do not use error handler for multicast as it offers fine grained
@@ -690,7 +690,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 // only wrap the parent (not the children of the multicast)
                 wrap = true;
             } else {
-                log.trace("{} is part of multicast which have special error handling so no error handler is applied",
+                LOG.trace("{} is part of multicast which have special error handling so no error handler is applied",
                         definition);
             }
         } else {
@@ -703,7 +703,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         // do post init at the end
         channel.postInitChannel();
-        log.trace("{} wrapped in Channel: {}", definition, channel);
+        LOG.trace("{} wrapped in Channel: {}", definition, channel);
 
         return channel;
     }
@@ -717,13 +717,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      */
     private void wrapChannelInErrorHandler(Channel channel, Boolean inheritErrorHandler) throws Exception {
         if (inheritErrorHandler == null || inheritErrorHandler) {
-            log.trace("{} is configured to inheritErrorHandler", definition);
+            LOG.trace("{} is configured to inheritErrorHandler", definition);
             Processor output = channel.getOutput();
-            Processor errorHandler = wrapInErrorHandler(output, true);
+            Processor errorHandler = wrapInErrorHandler(output);
             // set error handler on channel
             channel.setErrorHandler(errorHandler);
         } else {
-            log.debug("{} is configured to not inheritErrorHandler.", definition);
+            LOG.debug("{} is configured to not inheritErrorHandler.", definition);
         }
     }
 
@@ -731,22 +731,18 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
      * Wraps the given output in an error handler
      *
      * @param  output    the output
-     * @param  longLived if the processor is longLived or not
      * @return           the output wrapped with the error handler
      * @throws Exception can be thrown if failed to create error handler builder
      */
-    protected Processor wrapInErrorHandler(Processor output, boolean longLived) throws Exception {
+    protected Processor wrapInErrorHandler(Processor output) throws Exception {
         ErrorHandlerFactory builder = route.getErrorHandlerFactory();
 
         // create error handler
         Processor errorHandler = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createErrorHandler(route,
                 builder, output);
 
-        if (longLived) {
-            // invoke lifecycles so we can manage this error handler builder
-            for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                strategy.onErrorHandlerAdd(route, errorHandler, builder);
-            }
+        if (output instanceof ErrorHandlerAware) {
+            ((ErrorHandlerAware) output).setErrorHandler(errorHandler);
         }
 
         return errorHandler;

@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JoorExpression;
@@ -131,6 +132,23 @@ public abstract class BuilderSupport {
         return new ValueBuilder(exp);
     }
 
+    /**
+     * Returns a compiled simple expression value builder
+     */
+    public ValueBuilder csimple(String value) {
+        CSimpleExpression exp = new CSimpleExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a compiled simple expression value builder
+     */
+    public ValueBuilder csimple(String value, Class<?> resultType) {
+        CSimpleExpression exp = new CSimpleExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }  
+  
     /**
      * Returns a Datasonnet expression value builder
      */

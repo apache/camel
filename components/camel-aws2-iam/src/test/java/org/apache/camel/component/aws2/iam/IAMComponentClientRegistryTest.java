@@ -20,7 +20,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -47,19 +46,7 @@ public class IAMComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
-
-        AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
-        context.getRegistry().bind("amazonIamClient", clientMock);
-        IAM2Component component = context.getComponent("aws2-iam", IAM2Component.class);
-        IAM2Endpoint endpoint = (IAM2Endpoint) component
-                .createEndpoint("aws2-iam://TestDomain?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(clientMock, endpoint.getConfiguration().getIamClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
         context.getRegistry().bind("amazonIamClient", clientMock);

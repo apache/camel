@@ -4,9 +4,10 @@ package org.apache.camel.main;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.main.ThreadPoolConfigurationProperties;
 
@@ -15,22 +16,6 @@ import org.apache.camel.main.ThreadPoolConfigurationProperties;
  */
 @SuppressWarnings("unchecked")
 public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.camel.support.component.PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("AllowCoreThreadTimeOut", java.lang.Boolean.class);
-        map.put("Config", java.util.Map.class);
-        map.put("KeepAliveTime", java.lang.Long.class);
-        map.put("MaxPoolSize", java.lang.Integer.class);
-        map.put("MaxQueueSize", java.lang.Integer.class);
-        map.put("PoolSize", java.lang.Integer.class);
-        map.put("RejectedPolicy", org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class);
-        map.put("TimeUnit", java.util.concurrent.TimeUnit.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addBootstrapConfigurerClearer(ThreadPoolConfigurationPropertiesConfigurer::clearBootstrapConfigurers);
-        ConfigurerStrategy.addConfigurerClearer(ThreadPoolConfigurationPropertiesConfigurer::clearConfigurers);
-    }
 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
@@ -57,16 +42,26 @@ public class ThreadPoolConfigurationPropertiesConfigurer extends org.apache.came
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-        ALL_OPTIONS.clear();
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowcorethreadtimeout":
+        case "AllowCoreThreadTimeOut": return java.lang.Boolean.class;
+        case "config":
+        case "Config": return java.util.Map.class;
+        case "keepalivetime":
+        case "KeepAliveTime": return java.lang.Long.class;
+        case "maxpoolsize":
+        case "MaxPoolSize": return java.lang.Integer.class;
+        case "maxqueuesize":
+        case "MaxQueueSize": return java.lang.Integer.class;
+        case "poolsize":
+        case "PoolSize": return java.lang.Integer.class;
+        case "rejectedpolicy":
+        case "RejectedPolicy": return org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.class;
+        case "timeunit":
+        case "TimeUnit": return java.util.concurrent.TimeUnit.class;
+        default: return null;
+        }
     }
 
     @Override

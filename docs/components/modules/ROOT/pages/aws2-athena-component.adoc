@@ -62,7 +62,7 @@ from("direct:start")
 
 
 // component options: START
-The AWS 2 Athena component supports 30 options, which are listed below.
+The AWS 2 Athena component supports 29 options, which are listed below.
 
 
 
@@ -70,8 +70,7 @@ The AWS 2 Athena component supports 30 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *accessKey* (producer) | Amazon AWS Access Key. |  | String
-| *amazonAthenaClient* (producer) | The AmazonAthena instance to use as the client. |  | AthenaClient
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
+| *amazonAthenaClient* (producer) | *Autowired* The AmazonAthena instance to use as the client. |  | AthenaClient
 | *configuration* (producer) | The component configuration. |  | Athena2Configuration
 | *database* (producer) | The Athena database to use. |  | String
 | *delay* (producer) | Milliseconds before the next poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 2000 | long
@@ -97,7 +96,7 @@ The AWS 2 Athena component supports 30 options, which are listed below.
 | *secretKey* (producer) | Amazon AWS Secret Key. |  | String
 | *waitTimeout* (producer) | Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 0 | long
 | *workGroup* (producer) | The workgroup to use for running the query. |  | String
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String
 |===
 // component options: END
@@ -131,15 +130,14 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (30 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *autoDiscoverClient* (common) | Setting the autoDiscoverClient mechanism, if true, the component will look for a client instance in the registry automatically otherwise it will skip that checking | true | boolean
 | *accessKey* (producer) | Amazon AWS Access Key. |  | String
-| *amazonAthenaClient* (producer) | The AmazonAthena instance to use as the client. |  | AthenaClient
+| *amazonAthenaClient* (producer) | *Autowired* The AmazonAthena instance to use as the client. |  | AthenaClient
 | *database* (producer) | The Athena database to use. |  | String
 | *delay* (producer) | Milliseconds before the next poll for query execution status. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 2000 | long
 | *encryptionOption* (producer) | The encryption type to use when storing query results in S3. One of SSE_S3, SSE_KMS, or CSE_KMS. There are 4 enums and the value can be one of: SSE_S3, SSE_KMS, CSE_KMS, null |  | EncryptionOption
@@ -164,7 +162,6 @@ with the following path and query parameters:
 | *secretKey* (producer) | Amazon AWS Secret Key. |  | String
 | *waitTimeout* (producer) | Optional max wait time in millis to wait for a successful query completion. See the section 'Waiting for Query Completion and Retrying Failed Queries' to learn more. | 0 | long
 | *workGroup* (producer) | The workgroup to use for running the query. |  | String
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *clientRequestToken* (advanced) | A unique string to ensure issues queries are idempotent. It is unlikely you will need to set this. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

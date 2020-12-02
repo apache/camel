@@ -4,9 +4,10 @@ package org.apache.camel.component.facebook;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -15,44 +16,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
  */
 @SuppressWarnings("unchecked")
 public class FacebookComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
-
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("clientURL", java.lang.String.class);
-        map.put("clientVersion", java.lang.String.class);
-        map.put("debugEnabled", java.lang.Boolean.class);
-        map.put("gzipEnabled", java.lang.Boolean.class);
-        map.put("httpConnectionTimeout", java.lang.Integer.class);
-        map.put("httpDefaultMaxPerRoute", java.lang.Integer.class);
-        map.put("httpMaxTotalConnections", java.lang.Integer.class);
-        map.put("httpReadTimeout", java.lang.Integer.class);
-        map.put("httpRetryCount", java.lang.Integer.class);
-        map.put("httpRetryIntervalSeconds", java.lang.Integer.class);
-        map.put("httpStreamingReadTimeout", java.lang.Integer.class);
-        map.put("jsonStoreEnabled", java.lang.Boolean.class);
-        map.put("mbeanEnabled", java.lang.Boolean.class);
-        map.put("prettyDebugEnabled", java.lang.Boolean.class);
-        map.put("restBaseURL", java.lang.String.class);
-        map.put("useSSL", java.lang.Boolean.class);
-        map.put("videoBaseURL", java.lang.String.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.apache.camel.component.facebook.config.FacebookConfiguration.class);
-        map.put("httpProxyHost", java.lang.String.class);
-        map.put("httpProxyPassword", java.lang.String.class);
-        map.put("httpProxyPort", java.lang.Integer.class);
-        map.put("httpProxyUser", java.lang.String.class);
-        map.put("oAuthAccessToken", java.lang.String.class);
-        map.put("oAuthAccessTokenURL", java.lang.String.class);
-        map.put("oAuthAppId", java.lang.String.class);
-        map.put("oAuthAppSecret", java.lang.String.class);
-        map.put("oAuthAuthorizationURL", java.lang.String.class);
-        map.put("oAuthPermissions", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(FacebookComponentConfigurer::clearConfigurers);
-    }
 
     private org.apache.camel.component.facebook.config.FacebookConfiguration getOrCreateConfiguration(FacebookComponent target) {
         if (target.getConfiguration() == null) {
@@ -65,8 +28,8 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FacebookComponent target = (FacebookComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "clienturl":
@@ -131,23 +94,79 @@ public class FacebookComponentConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "clienturl":
+        case "clientURL": return java.lang.String.class;
+        case "clientversion":
+        case "clientVersion": return java.lang.String.class;
+        case "configuration": return org.apache.camel.component.facebook.config.FacebookConfiguration.class;
+        case "debugenabled":
+        case "debugEnabled": return java.lang.Boolean.class;
+        case "gzipenabled":
+        case "gzipEnabled": return java.lang.Boolean.class;
+        case "httpconnectiontimeout":
+        case "httpConnectionTimeout": return java.lang.Integer.class;
+        case "httpdefaultmaxperroute":
+        case "httpDefaultMaxPerRoute": return java.lang.Integer.class;
+        case "httpmaxtotalconnections":
+        case "httpMaxTotalConnections": return java.lang.Integer.class;
+        case "httpproxyhost":
+        case "httpProxyHost": return java.lang.String.class;
+        case "httpproxypassword":
+        case "httpProxyPassword": return java.lang.String.class;
+        case "httpproxyport":
+        case "httpProxyPort": return java.lang.Integer.class;
+        case "httpproxyuser":
+        case "httpProxyUser": return java.lang.String.class;
+        case "httpreadtimeout":
+        case "httpReadTimeout": return java.lang.Integer.class;
+        case "httpretrycount":
+        case "httpRetryCount": return java.lang.Integer.class;
+        case "httpretryintervalseconds":
+        case "httpRetryIntervalSeconds": return java.lang.Integer.class;
+        case "httpstreamingreadtimeout":
+        case "httpStreamingReadTimeout": return java.lang.Integer.class;
+        case "jsonstoreenabled":
+        case "jsonStoreEnabled": return java.lang.Boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "mbeanenabled":
+        case "mbeanEnabled": return java.lang.Boolean.class;
+        case "oauthaccesstoken":
+        case "oAuthAccessToken": return java.lang.String.class;
+        case "oauthaccesstokenurl":
+        case "oAuthAccessTokenURL": return java.lang.String.class;
+        case "oauthappid":
+        case "oAuthAppId": return java.lang.String.class;
+        case "oauthappsecret":
+        case "oAuthAppSecret": return java.lang.String.class;
+        case "oauthauthorizationurl":
+        case "oAuthAuthorizationURL": return java.lang.String.class;
+        case "oauthpermissions":
+        case "oAuthPermissions": return java.lang.String.class;
+        case "prettydebugenabled":
+        case "prettyDebugEnabled": return java.lang.Boolean.class;
+        case "restbaseurl":
+        case "restBaseURL": return java.lang.String.class;
+        case "usessl":
+        case "useSSL": return java.lang.Boolean.class;
+        case "videobaseurl":
+        case "videoBaseURL": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FacebookComponent target = (FacebookComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "clienturl":

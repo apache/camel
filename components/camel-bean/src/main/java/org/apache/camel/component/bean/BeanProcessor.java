@@ -24,9 +24,10 @@ import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.support.service.ServiceSupport;
 
-public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
+public class BeanProcessor extends ServiceSupport implements AsyncProcessor, ErrorHandlerAware {
 
     private final DelegateBeanProcessor delegate;
 
@@ -42,6 +43,19 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
     public BeanProcessor(BeanHolder beanHolder) {
         this.delegate = new DelegateBeanProcessor(beanHolder);
+    }
+
+    @Override
+    public Processor getErrorHandler() {
+        return null;
+    }
+
+    @Override
+    public void setErrorHandler(Processor errorHandler) {
+        BeanHolder holder = delegate.getBeanHolder();
+        if (holder != null) {
+            holder.setErrorHandler(errorHandler);
+        }
     }
 
     @Override

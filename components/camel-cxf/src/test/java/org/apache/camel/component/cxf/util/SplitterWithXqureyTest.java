@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitterWithXqureyTest extends CamelTestSupport {
 
@@ -82,7 +81,7 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
             Element element = (Element) exchange.getIn().getBody();
             String message = CxfUtilsTestHelper.elementToString(element);
             LOG.info("The splited message is " + message);
-            assertTrue(message.indexOf("<other") == 0, "The splitted message should start with <other");
+            assertEquals(0, message.indexOf("<other"), "The splitted message should start with <other");
             assertEquals(verifyStrings[i], message, "Get a wrong message");
             i++;
         }

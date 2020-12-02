@@ -42,6 +42,36 @@ public interface GrpcEndpointBuilderFactory {
             return (AdvancedGrpcEndpointConsumerBuilder) this;
         }
         /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointConsumerBuilder autoDiscoverClientInterceptors(
+                boolean autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointConsumerBuilder autoDiscoverClientInterceptors(
+                String autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
          * The HTTP/2 flow control window size (MiB).
          * 
          * The option is a: <code>int</code> type.
@@ -534,34 +564,6 @@ public interface GrpcEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -599,6 +601,36 @@ public interface GrpcEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedGrpcEndpointProducerBuilder advanced() {
             return (AdvancedGrpcEndpointProducerBuilder) this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
+                boolean autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
+                String autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
         }
         /**
          * The HTTP/2 flow control window size (MiB).
@@ -956,34 +988,6 @@ public interface GrpcEndpointBuilderFactory {
             return (GrpcEndpointProducerBuilder) this;
         }
         /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -1022,6 +1026,36 @@ public interface GrpcEndpointBuilderFactory {
                 GrpcEndpointProducerBuilder {
         default AdvancedGrpcEndpointBuilder advanced() {
             return (AdvancedGrpcEndpointBuilder) this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointBuilder autoDiscoverClientInterceptors(
+                boolean autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
+        }
+        /**
+         * Setting the autoDiscoverClientInterceptors mechanism, if true, the
+         * component will look for a ClientInterceptor instance in the registry
+         * automatically otherwise it will skip that checking.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: common
+         */
+        default GrpcEndpointBuilder autoDiscoverClientInterceptors(
+                String autoDiscoverClientInterceptors) {
+            doSetProperty("autoDiscoverClientInterceptors", autoDiscoverClientInterceptors);
+            return this;
         }
         /**
          * The HTTP/2 flow control window size (MiB).
@@ -1258,34 +1292,6 @@ public interface GrpcEndpointBuilderFactory {
                 AdvancedGrpcEndpointProducerBuilder {
         default GrpcEndpointBuilder basic() {
             return (GrpcEndpointBuilder) this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGrpcEndpointBuilder basicPropertyBinding(
-                boolean basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * Whether the endpoint should use basic property binding (Camel 2.x) or
-         * the newer property binding with additional capabilities.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: advanced
-         */
-        default AdvancedGrpcEndpointBuilder basicPropertyBinding(
-                String basicPropertyBinding) {
-            doSetProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
         }
         /**
          * Sets whether synchronous processing should be strictly used, or Camel

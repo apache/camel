@@ -4,10 +4,10 @@
  */
 package org.apache.camel.component.twilio;
 
-import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
@@ -18,7 +18,7 @@ import org.apache.camel.spi.UriParams;
            description = "",
            apiMethods = {@ApiMethod(methodName = "creator", description="Create a CredentialListMappingCreator to execute create", signatures={"com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingCreator creator(String pathDomainSid, String credentialListSid)", "com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingCreator creator(String pathAccountSid, String pathDomainSid, String credentialListSid)"}), @ApiMethod(methodName = "deleter", description="Create a CredentialListMappingDeleter to execute delete", signatures={"com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingDeleter deleter(String pathDomainSid, String pathSid)", "com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingDeleter deleter(String pathAccountSid, String pathDomainSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", description="Create a CredentialListMappingFetcher to execute fetch", signatures={"com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingFetcher fetcher(String pathDomainSid, String pathSid)", "com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingFetcher fetcher(String pathAccountSid, String pathDomainSid, String pathSid)"}), @ApiMethod(methodName = "reader", description="Create a CredentialListMappingReader to execute read", signatures={"com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingReader reader(String pathDomainSid)", "com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingReader reader(String pathAccountSid, String pathDomainSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
-@Configurer
+@Configurer(extended = true)
 public final class SipDomainCredentialListMappingEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator", description="A string that identifies the CredentialList resource to map to the SIP domain")})

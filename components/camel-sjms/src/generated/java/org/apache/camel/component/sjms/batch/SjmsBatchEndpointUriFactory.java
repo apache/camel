@@ -20,14 +20,20 @@ public class SjmsBatchEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(25);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(24);
         props.add("aggregationStrategy");
         props.add("mapJmsMessage");
+        props.add("consumerCount");
+        props.add("recoveryInterval");
         props.add("synchronous");
+        props.add("sendEmptyMessageWhenIdle");
         props.add("includeAllJMSXProperties");
+        props.add("pollDuration");
+        props.add("exchangePattern");
         props.add("eagerCheckCompletion");
+        props.add("completionSize");
         props.add("timeoutCheckerExecutorService");
+        props.add("completionTimeout");
         props.add("bridgeErrorHandler");
         props.add("jmsKeyFormatStrategy");
         props.add("keepAliveDelay");
@@ -37,15 +43,8 @@ public class SjmsBatchEndpointUriFactory extends org.apache.camel.support.compon
         props.add("messageCreatedStrategy");
         props.add("asyncStartListener");
         props.add("completionPredicate");
-        props.add("allowNullBody");
-        props.add("consumerCount");
-        props.add("recoveryInterval");
-        props.add("sendEmptyMessageWhenIdle");
-        props.add("pollDuration");
-        props.add("exchangePattern");
-        props.add("completionSize");
-        props.add("completionTimeout");
         props.add("exceptionHandler");
+        props.add("allowNullBody");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }

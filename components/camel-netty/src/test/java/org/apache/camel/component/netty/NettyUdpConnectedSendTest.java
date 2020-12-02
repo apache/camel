@@ -39,7 +39,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //We need to run the tests with fix order
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class NettyUdpConnectedSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
     private static final int SEND_COUNT = 10;

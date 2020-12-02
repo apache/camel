@@ -20,8 +20,7 @@ public class RestEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(21);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(20);
         props.add("method");
         props.add("consumerComponentName");
         props.add("uriTemplate");

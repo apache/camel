@@ -20,8 +20,7 @@ public class MicroProfileMetricsEndpointUriFactory extends org.apache.camel.supp
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(16);
-        props.add("basicPropertyBinding");
+        Set<String> props = new HashSet<>(15);
         props.add("metricName");
         props.add("displayName");
         props.add("synchronous");

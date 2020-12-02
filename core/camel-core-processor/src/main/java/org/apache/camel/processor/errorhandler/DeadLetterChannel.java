@@ -19,15 +19,21 @@ package org.apache.camel.processor.errorhandler;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.spi.ErrorHandler;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements a <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a> after attempting to
  * redeliver the message using the {@link RedeliveryPolicy}
  */
 public class DeadLetterChannel extends RedeliveryErrorHandler {
+
+    private static final CamelLogger DEFAULT_LOGGER
+            = new CamelLogger(LoggerFactory.getLogger(DeadLetterChannel.class), LoggingLevel.ERROR);
 
     /**
      * Creates the dead letter channel.
@@ -37,7 +43,6 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      * @param logger                       logger to use for logging failures and redelivery attempts
      * @param redeliveryProcessor          an optional processor to run before redelivery attempt
      * @param redeliveryPolicy             policy for redelivery
-     * @param exceptionPolicyStrategy      strategy for onException handling
      * @param deadLetter                   the failure processor to send failed exchanges to
      * @param deadLetterUri                an optional uri for logging purpose
      * @param deadLetterHandleException    whether dead letter channel should handle (and ignore) exceptions which may
@@ -57,17 +62,30 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      */
     public DeadLetterChannel(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
                              RedeliveryPolicy redeliveryPolicy,
-                             ExceptionPolicyStrategy exceptionPolicyStrategy, Processor deadLetter, String deadLetterUri,
+                             Processor deadLetter, String deadLetterUri,
                              boolean deadLetterHandleException,
                              boolean useOriginalMessagePolicy, boolean useOriginalBodyPolicy, Predicate retryWhile,
                              ScheduledExecutorService executorService, Processor onPrepareProcessor,
                              Processor onExceptionOccurredProcessor) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, deadLetter, deadLetterUri,
+        super(camelContext, output, logger != null ? logger : DEFAULT_LOGGER, redeliveryProcessor, redeliveryPolicy, deadLetter,
+              deadLetterUri,
               deadLetterHandleException,
               useOriginalMessagePolicy, useOriginalBodyPolicy, retryWhile, executorService, onPrepareProcessor,
               onExceptionOccurredProcessor);
-        setExceptionPolicy(exceptionPolicyStrategy);
+    }
+
+    @Override
+    public ErrorHandler clone(Processor output) {
+        DeadLetterChannel answer = new DeadLetterChannel(
+                camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, deadLetter, deadLetterUri,
+                deadLetterHandleNewException, useOriginalMessagePolicy, useOriginalBodyPolicy, retryWhilePolicy,
+                executorService, onPrepareProcessor, onExceptionProcessor);
+        // shallow clone is okay as we do not mutate these
+        if (exceptionPolicies != null) {
+            answer.exceptionPolicies = exceptionPolicies;
+        }
+        return answer;
     }
 
     @Override

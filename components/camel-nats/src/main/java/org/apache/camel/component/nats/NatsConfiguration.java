@@ -79,6 +79,8 @@ public class NatsConfiguration {
     private boolean secure;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "advanced")
+    private boolean traceConnection;
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
@@ -340,6 +342,9 @@ public class NatsConfiguration {
         if (isVerbose()) {
             builder.verbose();
         }
+        if (isTraceConnection()) {
+            builder.traceConnection();
+        }
         if (isPedantic()) {
             builder.pedantic();
         }
@@ -381,5 +386,17 @@ public class NatsConfiguration {
             }
         }
         return servers.toString();
+    }
+
+    /**
+     * Whether or not connection trace messages should be printed to standard out for fine grained debugging of
+     * connection issues.
+     */
+    public boolean isTraceConnection() {
+        return traceConnection;
+    }
+
+    public void setTraceConnection(boolean traceConnection) {
+        this.traceConnection = traceConnection;
     }
 }

@@ -27,16 +27,20 @@ import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.test.testcontainers.spring.junit5.ContainerAwareSpringTestSupport;
+import org.apache.camel.test.infra.consul.services.ConsulService;
+import org.apache.camel.test.infra.consul.services.ConsulServiceFactory;
+import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public abstract class SpringConsulServiceCallRouteTest extends ContainerAwareSpringTestSupport {
+public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSupport {
+    @RegisterExtension
+    public static ConsulService service = ConsulServiceFactory.createService();
+
     private AgentClient client;
     private List<Registration> registrations;
 
@@ -48,7 +52,7 @@ public abstract class SpringConsulServiceCallRouteTest extends ContainerAwareSpr
     public void doPreSetup() throws Exception {
         super.doPreSetup();
 
-        this.client = Consul.builder().withUrl(consulUrl()).build().agentClient();
+        this.client = Consul.builder().withUrl(service.getConsulUrl()).build().agentClient();
 
         this.registrations = Arrays.asList(
                 ImmutableRegistration.builder().id("service-1-1").name("http-service-1").address("127.0.0.1").port(9011)
@@ -123,15 +127,5 @@ public abstract class SpringConsulServiceCallRouteTest extends ContainerAwareSpr
         }
 
         return processors;
-    }
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return ConsulTestSupport.consulContainer();
-    }
-
-    protected String consulUrl() {
-        return String.format("http://%s:%d", getContainerHost(ConsulTestSupport.CONTAINER_NAME),
-                getContainerPort(ConsulTestSupport.CONTAINER_NAME, Consul.DEFAULT_HTTP_PORT));
     }
 }

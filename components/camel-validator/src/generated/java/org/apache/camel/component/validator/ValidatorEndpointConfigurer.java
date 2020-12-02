@@ -4,9 +4,10 @@ package org.apache.camel.component.validator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,32 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("resourceUri", java.lang.String.class);
-        map.put("failOnNullBody", boolean.class);
-        map.put("failOnNullHeader", boolean.class);
-        map.put("headerName", java.lang.String.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("errorHandler", org.apache.camel.support.processor.validation.ValidatorErrorHandler.class);
-        map.put("resourceResolver", org.w3c.dom.ls.LSResourceResolver.class);
-        map.put("resourceResolverFactory", org.apache.camel.component.validator.ValidatorResourceResolverFactory.class);
-        map.put("schemaFactory", javax.xml.validation.SchemaFactory.class);
-        map.put("schemaLanguage", java.lang.String.class);
-        map.put("synchronous", boolean.class);
-        map.put("useSharedSchema", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ValidatorEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ValidatorEndpoint target = (ValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "errorhandler":
         case "errorHandler": target.setErrorHandler(property(camelContext, org.apache.camel.support.processor.validation.ValidatorErrorHandler.class, value)); return true;
         case "failonnullbody":
@@ -68,23 +47,37 @@ public class ValidatorEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "errorhandler":
+        case "errorHandler": return org.apache.camel.support.processor.validation.ValidatorErrorHandler.class;
+        case "failonnullbody":
+        case "failOnNullBody": return boolean.class;
+        case "failonnullheader":
+        case "failOnNullHeader": return boolean.class;
+        case "headername":
+        case "headerName": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "resourceresolver":
+        case "resourceResolver": return org.w3c.dom.ls.LSResourceResolver.class;
+        case "resourceresolverfactory":
+        case "resourceResolverFactory": return org.apache.camel.component.validator.ValidatorResourceResolverFactory.class;
+        case "schemafactory":
+        case "schemaFactory": return javax.xml.validation.SchemaFactory.class;
+        case "schemalanguage":
+        case "schemaLanguage": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "usesharedschema":
+        case "useSharedSchema": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         ValidatorEndpoint target = (ValidatorEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "errorhandler":
         case "errorHandler": return target.getErrorHandler();
         case "failonnullbody":

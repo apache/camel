@@ -4,9 +4,10 @@ package org.apache.camel.component.debezium;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,103 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("name", java.lang.String.class);
-        map.put("additionalProperties", java.util.Map.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("internalKeyConverter", java.lang.String.class);
-        map.put("internalValueConverter", java.lang.String.class);
-        map.put("offsetCommitPolicy", java.lang.String.class);
-        map.put("offsetCommitTimeoutMs", long.class);
-        map.put("offsetFlushIntervalMs", long.class);
-        map.put("offsetStorage", java.lang.String.class);
-        map.put("offsetStorageFileName", java.lang.String.class);
-        map.put("offsetStoragePartitions", int.class);
-        map.put("offsetStorageReplicationFactor", int.class);
-        map.put("offsetStorageTopic", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        map.put("bigintUnsignedHandlingMode", java.lang.String.class);
-        map.put("binaryHandlingMode", java.lang.String.class);
-        map.put("binlogBufferSize", int.class);
-        map.put("columnBlacklist", java.lang.String.class);
-        map.put("columnExcludeList", java.lang.String.class);
-        map.put("columnIncludeList", java.lang.String.class);
-        map.put("connectKeepAlive", boolean.class);
-        map.put("connectKeepAliveIntervalMs", long.class);
-        map.put("connectTimeoutMs", int.class);
-        map.put("databaseExcludeList", java.lang.String.class);
-        map.put("databaseHistory", java.lang.String.class);
-        map.put("databaseHistoryFileFilename", java.lang.String.class);
-        map.put("databaseHistoryKafkaBootstrapServers", java.lang.String.class);
-        map.put("databaseHistoryKafkaRecoveryAttempts", int.class);
-        map.put("databaseHistoryKafkaRecoveryPollIntervalMs", int.class);
-        map.put("databaseHistoryKafkaTopic", java.lang.String.class);
-        map.put("databaseHistorySkipUnparseableDdl", boolean.class);
-        map.put("databaseHistoryStoreOnlyMonitoredTablesDdl", boolean.class);
-        map.put("databaseHostname", java.lang.String.class);
-        map.put("databaseIncludeList", java.lang.String.class);
-        map.put("databaseInitialStatements", java.lang.String.class);
-        map.put("databaseJdbcDriver", java.lang.String.class);
-        map.put("databasePassword", java.lang.String.class);
-        map.put("databasePort", int.class);
-        map.put("databaseServerId", long.class);
-        map.put("databaseServerIdOffset", long.class);
-        map.put("databaseServerName", java.lang.String.class);
-        map.put("databaseSslKeystore", java.lang.String.class);
-        map.put("databaseSslKeystorePassword", java.lang.String.class);
-        map.put("databaseSslMode", java.lang.String.class);
-        map.put("databaseSslTruststore", java.lang.String.class);
-        map.put("databaseSslTruststorePassword", java.lang.String.class);
-        map.put("databaseUser", java.lang.String.class);
-        map.put("decimalHandlingMode", java.lang.String.class);
-        map.put("enableTimeAdjuster", boolean.class);
-        map.put("eventDeserializationFailureHandlingMode", java.lang.String.class);
-        map.put("eventProcessingFailureHandlingMode", java.lang.String.class);
-        map.put("gtidNewChannelPosition", java.lang.String.class);
-        map.put("gtidSourceExcludes", java.lang.String.class);
-        map.put("gtidSourceFilterDmlEvents", boolean.class);
-        map.put("gtidSourceIncludes", java.lang.String.class);
-        map.put("heartbeatIntervalMs", int.class);
-        map.put("heartbeatTopicsPrefix", java.lang.String.class);
-        map.put("includeQuery", boolean.class);
-        map.put("includeSchemaChanges", boolean.class);
-        map.put("inconsistentSchemaHandlingMode", java.lang.String.class);
-        map.put("maxBatchSize", int.class);
-        map.put("maxQueueSize", int.class);
-        map.put("messageKeyColumns", java.lang.String.class);
-        map.put("pollIntervalMs", long.class);
-        map.put("skippedOperations", java.lang.String.class);
-        map.put("snapshotDelayMs", long.class);
-        map.put("snapshotFetchSize", int.class);
-        map.put("snapshotLockingMode", java.lang.String.class);
-        map.put("snapshotMode", java.lang.String.class);
-        map.put("snapshotNewTables", java.lang.String.class);
-        map.put("snapshotSelectStatementOverrides", java.lang.String.class);
-        map.put("sourceStructVersion", java.lang.String.class);
-        map.put("tableBlacklist", java.lang.String.class);
-        map.put("tableExcludeList", java.lang.String.class);
-        map.put("tableIgnoreBuiltin", boolean.class);
-        map.put("tableIncludeList", java.lang.String.class);
-        map.put("tableWhitelist", java.lang.String.class);
-        map.put("timePrecisionMode", java.lang.String.class);
-        map.put("tombstonesOnDelete", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(DebeziumMySqlEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DebeziumMySqlEndpoint target = (DebeziumMySqlEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": target.getConfiguration().setBigintUnsignedHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "binaryhandlingmode":
@@ -275,15 +185,169 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
+        case "bigintunsignedhandlingmode":
+        case "bigintUnsignedHandlingMode": return java.lang.String.class;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return java.lang.String.class;
+        case "binlogbuffersize":
+        case "binlogBufferSize": return int.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "columnblacklist":
+        case "columnBlacklist": return java.lang.String.class;
+        case "columnexcludelist":
+        case "columnExcludeList": return java.lang.String.class;
+        case "columnincludelist":
+        case "columnIncludeList": return java.lang.String.class;
+        case "connectkeepalive":
+        case "connectKeepAlive": return boolean.class;
+        case "connectkeepaliveintervalms":
+        case "connectKeepAliveIntervalMs": return long.class;
+        case "connecttimeoutms":
+        case "connectTimeoutMs": return int.class;
+        case "databaseexcludelist":
+        case "databaseExcludeList": return java.lang.String.class;
+        case "databasehistory":
+        case "databaseHistory": return java.lang.String.class;
+        case "databasehistoryfilefilename":
+        case "databaseHistoryFileFilename": return java.lang.String.class;
+        case "databasehistorykafkabootstrapservers":
+        case "databaseHistoryKafkaBootstrapServers": return java.lang.String.class;
+        case "databasehistorykafkarecoveryattempts":
+        case "databaseHistoryKafkaRecoveryAttempts": return int.class;
+        case "databasehistorykafkarecoverypollintervalms":
+        case "databaseHistoryKafkaRecoveryPollIntervalMs": return int.class;
+        case "databasehistorykafkatopic":
+        case "databaseHistoryKafkaTopic": return java.lang.String.class;
+        case "databasehistoryskipunparseableddl":
+        case "databaseHistorySkipUnparseableDdl": return boolean.class;
+        case "databasehistorystoreonlymonitoredtablesddl":
+        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return boolean.class;
+        case "databasehostname":
+        case "databaseHostname": return java.lang.String.class;
+        case "databaseincludelist":
+        case "databaseIncludeList": return java.lang.String.class;
+        case "databaseinitialstatements":
+        case "databaseInitialStatements": return java.lang.String.class;
+        case "databasejdbcdriver":
+        case "databaseJdbcDriver": return java.lang.String.class;
+        case "databasepassword":
+        case "databasePassword": return java.lang.String.class;
+        case "databaseport":
+        case "databasePort": return int.class;
+        case "databaseserverid":
+        case "databaseServerId": return long.class;
+        case "databaseserveridoffset":
+        case "databaseServerIdOffset": return long.class;
+        case "databaseservername":
+        case "databaseServerName": return java.lang.String.class;
+        case "databasesslkeystore":
+        case "databaseSslKeystore": return java.lang.String.class;
+        case "databasesslkeystorepassword":
+        case "databaseSslKeystorePassword": return java.lang.String.class;
+        case "databasesslmode":
+        case "databaseSslMode": return java.lang.String.class;
+        case "databasessltruststore":
+        case "databaseSslTruststore": return java.lang.String.class;
+        case "databasessltruststorepassword":
+        case "databaseSslTruststorePassword": return java.lang.String.class;
+        case "databaseuser":
+        case "databaseUser": return java.lang.String.class;
+        case "decimalhandlingmode":
+        case "decimalHandlingMode": return java.lang.String.class;
+        case "enabletimeadjuster":
+        case "enableTimeAdjuster": return boolean.class;
+        case "eventdeserializationfailurehandlingmode":
+        case "eventDeserializationFailureHandlingMode": return java.lang.String.class;
+        case "eventprocessingfailurehandlingmode":
+        case "eventProcessingFailureHandlingMode": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "gtidnewchannelposition":
+        case "gtidNewChannelPosition": return java.lang.String.class;
+        case "gtidsourceexcludes":
+        case "gtidSourceExcludes": return java.lang.String.class;
+        case "gtidsourcefilterdmlevents":
+        case "gtidSourceFilterDmlEvents": return boolean.class;
+        case "gtidsourceincludes":
+        case "gtidSourceIncludes": return java.lang.String.class;
+        case "heartbeatintervalms":
+        case "heartbeatIntervalMs": return int.class;
+        case "heartbeattopicsprefix":
+        case "heartbeatTopicsPrefix": return java.lang.String.class;
+        case "includequery":
+        case "includeQuery": return boolean.class;
+        case "includeschemachanges":
+        case "includeSchemaChanges": return boolean.class;
+        case "inconsistentschemahandlingmode":
+        case "inconsistentSchemaHandlingMode": return java.lang.String.class;
+        case "internalkeyconverter":
+        case "internalKeyConverter": return java.lang.String.class;
+        case "internalvalueconverter":
+        case "internalValueConverter": return java.lang.String.class;
+        case "maxbatchsize":
+        case "maxBatchSize": return int.class;
+        case "maxqueuesize":
+        case "maxQueueSize": return int.class;
+        case "messagekeycolumns":
+        case "messageKeyColumns": return java.lang.String.class;
+        case "offsetcommitpolicy":
+        case "offsetCommitPolicy": return java.lang.String.class;
+        case "offsetcommittimeoutms":
+        case "offsetCommitTimeoutMs": return long.class;
+        case "offsetflushintervalms":
+        case "offsetFlushIntervalMs": return long.class;
+        case "offsetstorage":
+        case "offsetStorage": return java.lang.String.class;
+        case "offsetstoragefilename":
+        case "offsetStorageFileName": return java.lang.String.class;
+        case "offsetstoragepartitions":
+        case "offsetStoragePartitions": return int.class;
+        case "offsetstoragereplicationfactor":
+        case "offsetStorageReplicationFactor": return int.class;
+        case "offsetstoragetopic":
+        case "offsetStorageTopic": return java.lang.String.class;
+        case "pollintervalms":
+        case "pollIntervalMs": return long.class;
+        case "skippedoperations":
+        case "skippedOperations": return java.lang.String.class;
+        case "snapshotdelayms":
+        case "snapshotDelayMs": return long.class;
+        case "snapshotfetchsize":
+        case "snapshotFetchSize": return int.class;
+        case "snapshotlockingmode":
+        case "snapshotLockingMode": return java.lang.String.class;
+        case "snapshotmode":
+        case "snapshotMode": return java.lang.String.class;
+        case "snapshotnewtables":
+        case "snapshotNewTables": return java.lang.String.class;
+        case "snapshotselectstatementoverrides":
+        case "snapshotSelectStatementOverrides": return java.lang.String.class;
+        case "sourcestructversion":
+        case "sourceStructVersion": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "tableblacklist":
+        case "tableBlacklist": return java.lang.String.class;
+        case "tableexcludelist":
+        case "tableExcludeList": return java.lang.String.class;
+        case "tableignorebuiltin":
+        case "tableIgnoreBuiltin": return boolean.class;
+        case "tableincludelist":
+        case "tableIncludeList": return java.lang.String.class;
+        case "tablewhitelist":
+        case "tableWhitelist": return java.lang.String.class;
+        case "timeprecisionmode":
+        case "timePrecisionMode": return java.lang.String.class;
+        case "tombstonesondelete":
+        case "tombstonesOnDelete": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -292,8 +356,6 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "additionalproperties":
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bigintunsignedhandlingmode":
         case "bigintUnsignedHandlingMode": return target.getConfiguration().getBigintUnsignedHandlingMode();
         case "binaryhandlingmode":
@@ -451,6 +513,15 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "timePrecisionMode": return target.getConfiguration().getTimePrecisionMode();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.lang.Object.class;
         default: return null;
         }
     }

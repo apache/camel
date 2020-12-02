@@ -51,7 +51,6 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -70,8 +69,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandler.class);
 
+    // state
     protected final AtomicInteger redeliverySleepCounter = new AtomicInteger();
     protected ScheduledExecutorService executorService;
+    protected volatile boolean preparingShutdown;
+
+    // output
+    protected Processor output;
+    protected AsyncProcessor outputAsync;
+
+    // configuration
     protected final ExtendedCamelContext camelContext;
     protected final ReactiveExecutor reactiveExecutor;
     protected final AsyncProcessorAwaitManager awaitManager;
@@ -79,8 +86,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     protected final Processor deadLetter;
     protected final String deadLetterUri;
     protected final boolean deadLetterHandleNewException;
-    protected Processor output;
-    protected AsyncProcessor outputAsync;
     protected final Processor redeliveryProcessor;
     protected final RedeliveryPolicy redeliveryPolicy;
     protected final Predicate retryWhilePolicy;
@@ -89,7 +94,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     protected final boolean useOriginalBodyPolicy;
     protected boolean redeliveryEnabled;
     protected boolean simpleTask;
-    protected volatile boolean preparingShutdown;
     protected final ExchangeFormatter exchangeFormatter;
     protected final boolean customExchangeFormatter;
     protected final Processor onPrepareProcessor;
@@ -137,22 +141,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
         } else {
             this.customExchangeFormatter = false;
-            // setup exchange formatter to be used for message history dump
-            DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
-            formatter.setShowExchangeId(true);
-            formatter.setMultiline(true);
-            formatter.setShowHeaders(true);
-            formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
+            this.exchangeFormatter = DEFAULT_EXCHANGE_FORMATTER;
             try {
                 Integer maxChars = CamelContextHelper.parseInteger(camelContext,
                         camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
                 if (maxChars != null) {
-                    formatter.setMaxChars(maxChars);
+                    DEFAULT_EXCHANGE_FORMATTER.setMaxChars(maxChars);
                 }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
-            this.exchangeFormatter = formatter;
         }
     }
 
@@ -1460,7 +1458,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         // or on the exception policies
-        if (!exceptionPolicies.isEmpty()) {
+        if (exceptionPolicies != null && !exceptionPolicies.isEmpty()) {
             // walk them to see if any of them have a maximum redeliveries > 0 or retry until set
             for (ExceptionPolicy def : exceptionPolicies.values()) {
                 if (def.determineIfRedeliveryIsEnabled(camelContext)) {
@@ -1512,7 +1510,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         // calculate if we can use simple task or not
         // if we need redelivery and other things then we cannot)
         // however if we dont then its less memory overhead (and a bit less cpu) of using the simple task
-        simpleTask = deadLetter == null && !redeliveryEnabled && exceptionPolicies.isEmpty()
+        simpleTask = deadLetter == null && !redeliveryEnabled && (exceptionPolicies == null || exceptionPolicies.isEmpty())
                 && onPrepareProcessor == null;
     }
 

@@ -4,9 +4,10 @@ package org.apache.camel.component.ehcache;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,40 +17,11 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("cacheName", java.lang.String.class);
-        map.put("cacheManager", org.ehcache.CacheManager.class);
-        map.put("cacheManagerConfiguration", org.ehcache.config.Configuration.class);
-        map.put("configurationUri", java.lang.String.class);
-        map.put("createCacheIfNotExist", boolean.class);
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("eventFiring", org.ehcache.event.EventFiring.class);
-        map.put("eventOrdering", org.ehcache.event.EventOrdering.class);
-        map.put("eventTypes", java.lang.String.class);
-        map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
-        map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
-        map.put("action", java.lang.String.class);
-        map.put("key", java.lang.Object.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("configuration", org.ehcache.config.CacheConfiguration.class);
-        map.put("configurations", java.util.Map.class);
-        map.put("keyType", java.lang.String.class);
-        map.put("synchronous", boolean.class);
-        map.put("valueType", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(EhcacheEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         EhcacheEndpoint target = (EhcacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": target.getConfiguration().setAction(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "cachemanager":
@@ -85,15 +57,41 @@ public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport impleme
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return java.lang.String.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "cachemanager":
+        case "cacheManager": return org.ehcache.CacheManager.class;
+        case "cachemanagerconfiguration":
+        case "cacheManagerConfiguration": return org.ehcache.config.Configuration.class;
+        case "configuration": return org.ehcache.config.CacheConfiguration.class;
+        case "configurationuri":
+        case "configurationUri": return java.lang.String.class;
+        case "configurations": return java.util.Map.class;
+        case "createcacheifnotexist":
+        case "createCacheIfNotExist": return boolean.class;
+        case "eventfiring":
+        case "eventFiring": return org.ehcache.event.EventFiring.class;
+        case "eventordering":
+        case "eventOrdering": return org.ehcache.event.EventOrdering.class;
+        case "eventtypes":
+        case "eventTypes": return java.lang.String.class;
+        case "exceptionhandler":
+        case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
+        case "exchangepattern":
+        case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "key": return java.lang.Object.class;
+        case "keytype":
+        case "keyType": return java.lang.String.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "synchronous": return boolean.class;
+        case "valuetype":
+        case "valueType": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -101,8 +99,6 @@ public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport impleme
         EhcacheEndpoint target = (EhcacheEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "action": return target.getConfiguration().getAction();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "cachemanager":
@@ -133,6 +129,14 @@ public class EhcacheEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "synchronous": return target.isSynchronous();
         case "valuetype":
         case "valueType": return target.getConfiguration().getValueType();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "configurations": return org.ehcache.config.CacheConfiguration.class;
         default: return null;
         }
     }

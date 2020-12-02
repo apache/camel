@@ -17,31 +17,18 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.kinesis.KinesisClient;
+import software.amazon.awssdk.core.SdkSystemSetting;
 
-public class AWSKinesisLocalContainerService extends AWSLocalContainerService<KinesisClient> {
+public class AWSKinesisLocalContainerService extends AWSLocalContainerService {
     private static final Logger LOG = LoggerFactory.getLogger(AWSKinesisLocalContainerService.class);
+
+    static {
+        System.setProperty(SdkSystemSetting.CBOR_ENABLED.property(), "false");
+    }
 
     public AWSKinesisLocalContainerService() {
         super(Service.KINESIS);
-
-        LOG.info("Initializing the local AWS services");
-        getContainer().start();
-    }
-
-    @Override
-    public KinesisClient getClient() {
-        Region region = Region.US_EAST_1;
-        KinesisClient client = KinesisClient.builder()
-                .region(region)
-                .credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER)
-                .endpointOverride(getServiceEndpoint())
-                .build();
-
-        return client;
     }
 }

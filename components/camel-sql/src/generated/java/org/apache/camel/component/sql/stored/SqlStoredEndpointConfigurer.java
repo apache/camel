@@ -4,9 +4,10 @@ package org.apache.camel.component.sql.stored;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,29 +17,10 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("template", java.lang.String.class);
-        map.put("batch", boolean.class);
-        map.put("dataSource", javax.sql.DataSource.class);
-        map.put("function", boolean.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("noop", boolean.class);
-        map.put("outputHeader", java.lang.String.class);
-        map.put("useMessageBodyForTemplate", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("synchronous", boolean.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(SqlStoredEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SqlStoredEndpoint target = (SqlStoredEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "batch": target.setBatch(property(camelContext, boolean.class, value)); return true;
         case "datasource":
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
@@ -56,23 +38,28 @@ public class SqlStoredEndpointConfigurer extends PropertyConfigurerSupport imple
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "batch": return boolean.class;
+        case "datasource":
+        case "dataSource": return javax.sql.DataSource.class;
+        case "function": return boolean.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "noop": return boolean.class;
+        case "outputheader":
+        case "outputHeader": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "usemessagebodyfortemplate":
+        case "useMessageBodyForTemplate": return boolean.class;
+        default: return null;
+        }
     }
 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SqlStoredEndpoint target = (SqlStoredEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "batch": return target.isBatch();
         case "datasource":
         case "dataSource": return target.getDataSource();

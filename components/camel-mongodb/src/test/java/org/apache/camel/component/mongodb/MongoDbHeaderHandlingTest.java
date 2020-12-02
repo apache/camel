@@ -91,7 +91,7 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
             }
         });
         assertTrue(resultExch.getMessage().getBody() instanceof Document);
-        assertTrue(resultExch.getMessage().getBody().equals(record1));
+        assertEquals(record1, resultExch.getMessage().getBody());
         assertTrue(resultExch.getMessage().getHeader(MongoDbConstants.WRITERESULT) instanceof UpdateResult);
 
         Document record2 = testCollection.find(eq(MONGO_ID, "testSave1")).first();

@@ -35,45 +35,45 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteSharedEndpointTest ext
 
     @Test
     public void testEndpointRegistryKeepRouteEndpointsRemoveRouteSharedEndpoint() throws Exception {
-        assertTrue(context.hasEndpoint("direct://start") != null);
-        assertTrue(context.hasEndpoint("log://start") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertTrue(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
-        assertTrue(context.hasEndpoint("direct://bar") != null);
-        assertTrue(context.hasEndpoint("log://private") != null);
+        assertNotNull(context.hasEndpoint("direct://start"));
+        assertNotNull(context.hasEndpoint("log://start"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNotNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
+        assertNotNull(context.hasEndpoint("direct://bar"));
+        assertNotNull(context.hasEndpoint("log://private"));
 
         assertEquals(7, context.getEndpointRegistry().staticSize());
 
         // we dont have this endpoint yet
-        assertFalse(context.hasEndpoint("mock://unknown0") != null);
+        assertNull(context.hasEndpoint("mock://unknown0"));
 
         for (int i = 0; i < 50; i++) {
             template.sendBody("mock:unknown" + i, "Hello " + i);
         }
 
         assertEquals(7, context.getEndpointRegistry().staticSize());
-        assertTrue(context.hasEndpoint("direct://start") != null);
-        assertTrue(context.hasEndpoint("log://start") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
-        assertTrue(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
-        assertTrue(context.hasEndpoint("direct://bar") != null);
-        assertTrue(context.hasEndpoint("log://private") != null);
+        assertNotNull(context.hasEndpoint("direct://start"));
+        assertNotNull(context.hasEndpoint("log://start"));
+        assertNotNull(context.hasEndpoint("log://foo"));
+        assertNotNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
+        assertNotNull(context.hasEndpoint("direct://bar"));
+        assertNotNull(context.hasEndpoint("log://private"));
 
         // now stop and remove the bar route
         context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
         assertEquals(5, context.getEndpointRegistry().staticSize());
-        assertTrue(context.hasEndpoint("direct://start") != null);
-        assertTrue(context.hasEndpoint("log://start") != null);
-        assertTrue(context.hasEndpoint("log://foo") != null);
+        assertNotNull(context.hasEndpoint("direct://start"));
+        assertNotNull(context.hasEndpoint("log://start"));
+        assertNotNull(context.hasEndpoint("log://foo"));
         // log:bar is still in use, so should still be here
-        assertTrue(context.hasEndpoint("log://bar") != null);
-        assertTrue(context.hasEndpoint("mock://result") != null);
-        assertFalse(context.hasEndpoint("direct://bar") != null);
-        assertFalse(context.hasEndpoint("log://private") != null);
+        assertNotNull(context.hasEndpoint("log://bar"));
+        assertNotNull(context.hasEndpoint("mock://result"));
+        assertNull(context.hasEndpoint("direct://bar"));
+        assertNull(context.hasEndpoint("log://private"));
     }
 
     @Override

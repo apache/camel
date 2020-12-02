@@ -4,9 +4,10 @@ package org.apache.camel.component.kubernetes.secrets;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,44 +17,12 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class KubernetesSecretsEndpointConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("masterUrl", java.lang.String.class);
-        map.put("apiVersion", java.lang.String.class);
-        map.put("dnsDomain", java.lang.String.class);
-        map.put("kubernetesClient", io.fabric8.kubernetes.client.KubernetesClient.class);
-        map.put("lazyStartProducer", boolean.class);
-        map.put("operation", java.lang.String.class);
-        map.put("portName", java.lang.String.class);
-        map.put("portProtocol", java.lang.String.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("connectionTimeout", java.lang.Integer.class);
-        map.put("synchronous", boolean.class);
-        map.put("caCertData", java.lang.String.class);
-        map.put("caCertFile", java.lang.String.class);
-        map.put("clientCertData", java.lang.String.class);
-        map.put("clientCertFile", java.lang.String.class);
-        map.put("clientKeyAlgo", java.lang.String.class);
-        map.put("clientKeyData", java.lang.String.class);
-        map.put("clientKeyFile", java.lang.String.class);
-        map.put("clientKeyPassphrase", java.lang.String.class);
-        map.put("oauthToken", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("trustCerts", java.lang.Boolean.class);
-        map.put("username", java.lang.String.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(KubernetesSecretsEndpointConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         KubernetesSecretsEndpoint target = (KubernetesSecretsEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": target.getConfiguration().setApiVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "cacertdata":
         case "caCertData": target.getConfiguration().setCaCertData(property(camelContext, java.lang.String.class, value)); return true;
         case "cacertfile":
@@ -95,15 +64,48 @@ public class KubernetesSecretsEndpointConfigurer extends PropertyConfigurerSuppo
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "apiversion":
+        case "apiVersion": return java.lang.String.class;
+        case "cacertdata":
+        case "caCertData": return java.lang.String.class;
+        case "cacertfile":
+        case "caCertFile": return java.lang.String.class;
+        case "clientcertdata":
+        case "clientCertData": return java.lang.String.class;
+        case "clientcertfile":
+        case "clientCertFile": return java.lang.String.class;
+        case "clientkeyalgo":
+        case "clientKeyAlgo": return java.lang.String.class;
+        case "clientkeydata":
+        case "clientKeyData": return java.lang.String.class;
+        case "clientkeyfile":
+        case "clientKeyFile": return java.lang.String.class;
+        case "clientkeypassphrase":
+        case "clientKeyPassphrase": return java.lang.String.class;
+        case "connectiontimeout":
+        case "connectionTimeout": return java.lang.Integer.class;
+        case "dnsdomain":
+        case "dnsDomain": return java.lang.String.class;
+        case "kubernetesclient":
+        case "kubernetesClient": return io.fabric8.kubernetes.client.KubernetesClient.class;
+        case "lazystartproducer":
+        case "lazyStartProducer": return boolean.class;
+        case "oauthtoken":
+        case "oauthToken": return java.lang.String.class;
+        case "operation": return java.lang.String.class;
+        case "password": return java.lang.String.class;
+        case "portname":
+        case "portName": return java.lang.String.class;
+        case "portprotocol":
+        case "portProtocol": return java.lang.String.class;
+        case "synchronous": return boolean.class;
+        case "trustcerts":
+        case "trustCerts": return java.lang.Boolean.class;
+        case "username": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -112,8 +114,6 @@ public class KubernetesSecretsEndpointConfigurer extends PropertyConfigurerSuppo
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apiversion":
         case "apiVersion": return target.getConfiguration().getApiVersion();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
         case "cacertdata":
         case "caCertData": return target.getConfiguration().getCaCertData();
         case "cacertfile":

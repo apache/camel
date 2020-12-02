@@ -16,61 +16,25 @@
  */
 package org.apache.camel.component.aws2.lambda.localstack;
 
-import java.net.URI;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws2.lambda.Lambda2Component;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
-import org.apache.camel.test.testcontainers.junit5.Wait;
+import org.apache.camel.test.infra.aws.common.services.AWSService;
+import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
+import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
-import org.testcontainers.containers.GenericContainer;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.lambda.LambdaClient;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class Aws2LambdaBaseTest extends ContainerAwareTestSupport {
-
-    public static final String CONTAINER_IMAGE = "localstack/localstack:0.12.1";
-    public static final String CONTAINER_NAME = "lambda";
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return localstackContainer();
-    }
-
-    public static GenericContainer localstackContainer() {
-        return new GenericContainer(CONTAINER_IMAGE)
-                .withNetworkAliases(CONTAINER_NAME)
-                .withEnv("SERVICES", "lambda")
-                .withExposedPorts(4566)
-                .waitingFor(Wait.forListeningPort())
-                .waitingFor(Wait.forLogMessageContaining("Ready.", 1));
-    }
-
-    public String getEventbridgeUrl() {
-        return String.format(
-                "%s:%d",
-                getContainerHost(CONTAINER_NAME),
-                getContainerPort(CONTAINER_NAME, 4566));
-    }
-
-    public LambdaClient getLambdaClient() {
-        LambdaClient lambdaClient = LambdaClient
-                .builder()
-                .endpointOverride(URI.create("http://" + getEventbridgeUrl()))
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("xxx", "yyy")))
-                .region(Region.EU_WEST_1)
-                .build();
-        return lambdaClient;
-    }
+public class Aws2LambdaBaseTest extends CamelTestSupport {
+    @RegisterExtension
+    public static AWSService service = AWSServiceFactory.createLambdaService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         Lambda2Component lambdaComponent = context.getComponent("aws2-lambda", Lambda2Component.class);
-        lambdaComponent.getConfiguration().setAwsLambdaClient(getLambdaClient());
+        lambdaComponent.getConfiguration().setAwsLambdaClient(AWSSDKClientUtils.newLambdaClient());
         return context;
     }
 }

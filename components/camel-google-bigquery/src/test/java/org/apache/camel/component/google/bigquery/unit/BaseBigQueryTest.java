@@ -17,7 +17,8 @@
 package org.apache.camel.component.google.bigquery.unit;
 
 import com.google.api.services.bigquery.Bigquery;
-import com.google.api.services.bigquery.model.TableDataInsertAllResponse;
+import com.google.cloud.bigquery.BigQuery;
+import com.google.cloud.bigquery.InsertAllResponse;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConfiguration;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryEndpoint;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryProducer;
@@ -25,20 +26,18 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BaseBigQueryTest extends CamelTestSupport {
     protected GoogleBigQueryEndpoint endpoint = mock(GoogleBigQueryEndpoint.class);
-    protected Bigquery.Tabledata.InsertAll mockInsertall = mock(Bigquery.Tabledata.InsertAll.class);
     protected GoogleBigQueryProducer producer;
     protected Bigquery.Tabledata tabledataMock;
     protected String tableId = "testTableId";
     protected String datasetId = "testDatasetId";
     protected String projectId = "testProjectId";
     protected GoogleBigQueryConfiguration configuration = new GoogleBigQueryConfiguration();
-    protected Bigquery bigquery;
+    protected BigQuery bigquery;
 
     @BeforeEach
     public void init() throws Exception {
@@ -57,13 +56,9 @@ public class BaseBigQueryTest extends CamelTestSupport {
     }
 
     protected void setupBigqueryMock() throws Exception {
-        bigquery = mock(Bigquery.class);
-
+        bigquery = mock(BigQuery.class);
         tabledataMock = mock(Bigquery.Tabledata.class);
-        when(bigquery.tabledata()).thenReturn(tabledataMock);
-        when(tabledataMock.insertAll(anyString(), anyString(), anyString(), any())).thenReturn(mockInsertall);
-
-        TableDataInsertAllResponse mockResponse = new TableDataInsertAllResponse();
-        when(mockInsertall.execute()).thenReturn(mockResponse);
+        InsertAllResponse mockResponse = mock(InsertAllResponse.class);
+        when(bigquery.insertAll(any())).thenReturn(mockResponse);
     }
 }

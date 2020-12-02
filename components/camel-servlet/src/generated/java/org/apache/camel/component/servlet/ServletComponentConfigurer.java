@@ -4,9 +4,10 @@ package org.apache.camel.component.servlet;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
+import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.spi.ConfigurerStrategy;
 import org.apache.camel.spi.GeneratedPropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 
@@ -16,23 +17,6 @@ import org.apache.camel.support.component.PropertyConfigurerSupport;
 @SuppressWarnings("unchecked")
 public class ServletComponentConfigurer extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer, PropertyConfigurerGetter {
 
-    private static final Map<String, Object> ALL_OPTIONS;
-    static {
-        Map<String, Object> map = new CaseInsensitiveMap();
-        map.put("bridgeErrorHandler", boolean.class);
-        map.put("servletName", java.lang.String.class);
-        map.put("attachmentMultipartBinding", boolean.class);
-        map.put("fileNameExtWhitelist", java.lang.String.class);
-        map.put("httpRegistry", org.apache.camel.http.common.HttpRegistry.class);
-        map.put("allowJavaSerializedObject", boolean.class);
-        map.put("basicPropertyBinding", boolean.class);
-        map.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
-        map.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
-        map.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
-        ALL_OPTIONS = map;
-        ConfigurerStrategy.addConfigurerClearer(ServletComponentConfigurer::clearConfigurers);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         ServletComponent target = (ServletComponent) obj;
@@ -41,8 +25,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "allowJavaSerializedObject": target.setAllowJavaSerializedObject(property(camelContext, boolean.class, value)); return true;
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": target.setAttachmentMultipartBinding(property(camelContext, boolean.class, value)); return true;
-        case "basicpropertybinding":
-        case "basicPropertyBinding": target.setBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
+        case "autowiredenabled":
+        case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "filenameextwhitelist":
@@ -62,15 +46,30 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
     }
 
     @Override
-    public Map<String, Object> getAllOptions(Object target) {
-        return ALL_OPTIONS;
-    }
-
-    public static void clearBootstrapConfigurers() {
-    }
-
-    public static void clearConfigurers() {
-        ALL_OPTIONS.clear();
+    public Class<?> getOptionType(String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "allowjavaserializedobject":
+        case "allowJavaSerializedObject": return boolean.class;
+        case "attachmentmultipartbinding":
+        case "attachmentMultipartBinding": return boolean.class;
+        case "autowiredenabled":
+        case "autowiredEnabled": return boolean.class;
+        case "bridgeerrorhandler":
+        case "bridgeErrorHandler": return boolean.class;
+        case "filenameextwhitelist":
+        case "fileNameExtWhitelist": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
+        case "httpbinding":
+        case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
+        case "httpconfiguration":
+        case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
+        case "httpregistry":
+        case "httpRegistry": return org.apache.camel.http.common.HttpRegistry.class;
+        case "servletname":
+        case "servletName": return java.lang.String.class;
+        default: return null;
+        }
     }
 
     @Override
@@ -81,8 +80,8 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "allowJavaSerializedObject": return target.isAllowJavaSerializedObject();
         case "attachmentmultipartbinding":
         case "attachmentMultipartBinding": return target.isAttachmentMultipartBinding();
-        case "basicpropertybinding":
-        case "basicPropertyBinding": return target.isBasicPropertyBinding();
+        case "autowiredenabled":
+        case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "filenameextwhitelist":

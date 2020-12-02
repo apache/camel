@@ -205,6 +205,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.KinesisFirehose2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KinesisFirehoseEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KubernetesConfigMapsEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.KubernetesCustomResourcesEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KubernetesDeploymentsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KubernetesHPAEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.KubernetesJobEndpointBuilderFactory,

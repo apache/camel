@@ -20,7 +20,6 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -47,19 +46,7 @@ public class MSKComponentClientRegistryTest extends CamelTestSupport {
     }
 
     @Test
-    public void createEndpointWithAutoDiscoverClientFalse() throws Exception {
-
-        AmazonMSKClientMock awsMSKClient = new AmazonMSKClientMock();
-        context.getRegistry().bind("awsMskClient", awsMSKClient);
-        MSK2Component component = context.getComponent("aws2-msk", MSK2Component.class);
-        MSK2Endpoint endpoint = (MSK2Endpoint) component
-                .createEndpoint("aws-msk://label?accessKey=xxx&secretKey=yyy&autoDiscoverClient=false");
-
-        assertNotSame(awsMSKClient, endpoint.getConfiguration().getMskClient());
-    }
-
-    @Test
-    public void createEndpointWithAutoDiscoverClientTrue() throws Exception {
+    public void createEndpointWithAutowire() throws Exception {
 
         AmazonMSKClientMock awsMSKClient = new AmazonMSKClientMock();
         context.getRegistry().bind("awsMskClient", awsMSKClient);

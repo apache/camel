@@ -43,8 +43,8 @@ The Twilio component supports 8 options, which are listed below.
 | *configuration* (common) | To use the shared configuration |  | TwilioConfiguration
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *restClient* (advanced) | To use the shared REST client |  | TwilioRestClient
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
+| *restClient* (advanced) | *Autowired* To use the shared REST client |  | TwilioRestClient
 | *accountSid* (security) | The account SID to use. |  | String
 | *password* (security) | Auth token for the account. |  | String
 | *username* (security) | The account to use. |  | String
@@ -71,7 +71,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (23 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,7 +84,6 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
@@ -227,7 +226,7 @@ The account API method(s) has the following set of parameters listed in the tabl
 | updater | *pathSid* |  Update by unique Account Sid | String
 |===
 
-In addition to the parameters above, the account API can also use from the 23 endpoint query option
+In addition to the parameters above, the account API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -311,7 +310,7 @@ The address API method(s) has the following set of parameters listed in the tabl
 | updater | *pathSid* |  The unique string that identifies the resource | String
 |===
 
-In addition to the parameters above, the address API can also use from the 23 endpoint query option
+In addition to the parameters above, the address API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -363,7 +362,7 @@ The address-dependent-phone-number API method(s) has the following set of parame
 | reader | *pathAddressSid* |  The SID of the Address resource associated with the phone number | String
 |===
 
-In addition to the parameters above, the address-dependent-phone-number API can also use from the 23 endpoint query option
+In addition to the parameters above, the address-dependent-phone-number API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -441,7 +440,7 @@ The application API method(s) has the following set of parameters listed in the 
 | updater | *pathSid* |  The unique string that identifies the resource | String
 |===
 
-In addition to the parameters above, the application API can also use from the 23 endpoint query option
+In addition to the parameters above, the application API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -499,7 +498,7 @@ The available-phone-number-country API method(s) has the following set of parame
 | reader | *pathAccountSid* |  The SID of the Account requesting the available phone number Country resources | String
 |===
 
-In addition to the parameters above, the available-phone-number-country API can also use from the 23 endpoint query option
+In addition to the parameters above, the available-phone-number-country API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -551,7 +550,7 @@ The available-phone-number-country-local API method(s) has the following set of 
 | reader | *pathCountryCode* |  The ISO Country code of the country from which to read phone numbers | String
 |===
 
-In addition to the parameters above, the available-phone-number-country-local API can also use from the 23 endpoint query option
+In addition to the parameters above, the available-phone-number-country-local API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -603,7 +602,7 @@ The available-phone-number-country-mobile API method(s) has the following set of
 | reader | *pathCountryCode* |  The ISO Country code of the country from which to read phone numbers | String
 |===
 
-In addition to the parameters above, the available-phone-number-country-mobile API can also use from the 23 endpoint query option
+In addition to the parameters above, the available-phone-number-country-mobile API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -655,7 +654,7 @@ The available-phone-number-country-toll-free API method(s) has the following set
 | reader | *pathCountryCode* |  The ISO Country code of the country from which to read phone numbers | String
 |===
 
-In addition to the parameters above, the available-phone-number-country-toll-free API can also use from the 23 endpoint query option
+In addition to the parameters above, the available-phone-number-country-toll-free API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -746,7 +745,7 @@ The call API method(s) has the following set of parameters listed in the table b
 | updater | *pathSid* |  The unique string that identifies this resource | String
 |===
 
-In addition to the parameters above, the call API can also use from the 23 endpoint query option
+In addition to the parameters above, the call API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -814,7 +813,7 @@ The call-feedback API method(s) has the following set of parameters listed in th
 | updater | *qualityScore* |  The call quality expressed as an integer from 1 to 5 | Integer
 |===
 
-In addition to the parameters above, the call-feedback API can also use from the 23 endpoint query option
+In addition to the parameters above, the call-feedback API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -881,7 +880,7 @@ The call-feedback-summary API method(s) has the following set of parameters list
 | fetcher | *pathSid* |  A string that uniquely identifies this feedback summary resource | String
 |===
 
-In addition to the parameters above, the call-feedback-summary API can also use from the 23 endpoint query option
+In addition to the parameters above, the call-feedback-summary API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -941,7 +940,7 @@ The call-notification API method(s) has the following set of parameters listed i
 | reader | *pathCallSid* |  The Call SID of the resource to fetch | String
 |===
 
-In addition to the parameters above, the call-notification API can also use from the 23 endpoint query option
+In addition to the parameters above, the call-notification API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1025,7 +1024,7 @@ The call-recording API method(s) has the following set of parameters listed in t
 | updater | *status* |  The new status of the recording | Status
 |===
 
-In addition to the parameters above, the call-recording API can also use from the 23 endpoint query option
+In addition to the parameters above, the call-recording API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1090,7 +1089,7 @@ The conference API method(s) has the following set of parameters listed in the t
 | updater | *pathSid* |  The unique string that identifies this resource | String
 |===
 
-In addition to the parameters above, the conference API can also use from the 23 endpoint query option
+In addition to the parameters above, the conference API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1175,7 +1174,7 @@ The conference-participant API method(s) has the following set of parameters lis
 | updater | *pathConferenceSid* |  The SID of the participant's conference | String
 |===
 
-In addition to the parameters above, the conference-participant API can also use from the 23 endpoint query option
+In addition to the parameters above, the conference-participant API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1247,7 +1246,7 @@ The connect-app API method(s) has the following set of parameters listed in the 
 | updater | *pathSid* |  The unique string that identifies the resource | String
 |===
 
-In addition to the parameters above, the connect-app API can also use from the 23 endpoint query option
+In addition to the parameters above, the connect-app API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1331,7 +1330,7 @@ The incoming-phone-number API method(s) has the following set of parameters list
 | updater | *pathSid* |  The unique string that identifies the resource | String
 |===
 
-In addition to the parameters above, the incoming-phone-number API can also use from the 23 endpoint query option
+In addition to the parameters above, the incoming-phone-number API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1389,7 +1388,7 @@ The incoming-phone-number-local API method(s) has the following set of parameter
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the incoming-phone-number-local API can also use from the 23 endpoint query option
+In addition to the parameters above, the incoming-phone-number-local API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1447,7 +1446,7 @@ The incoming-phone-number-mobile API method(s) has the following set of paramete
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the incoming-phone-number-mobile API can also use from the 23 endpoint query option
+In addition to the parameters above, the incoming-phone-number-mobile API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1505,7 +1504,7 @@ The incoming-phone-number-toll-free API method(s) has the following set of param
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the incoming-phone-number-toll-free API can also use from the 23 endpoint query option
+In addition to the parameters above, the incoming-phone-number-toll-free API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1577,7 +1576,7 @@ The key API method(s) has the following set of parameters listed in the table be
 | updater | *pathSid* |  The unique string that identifies the resource | String
 |===
 
-In addition to the parameters above, the key API can also use from the 23 endpoint query option
+In addition to the parameters above, the key API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1673,7 +1672,7 @@ The message API method(s) has the following set of parameters listed in the tabl
 | updater | *pathSid* |  The unique string that identifies the resource | String
 |===
 
-In addition to the parameters above, the message API can also use from the 23 endpoint query option
+In addition to the parameters above, the message API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1725,7 +1724,7 @@ The message-feedback API method(s) has the following set of parameters listed in
 | creator | *pathMessageSid* |  The SID of the Message resource for which the feedback was provided | String
 |===
 
-In addition to the parameters above, the message-feedback API can also use from the 23 endpoint query option
+In addition to the parameters above, the message-feedback API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1793,7 +1792,7 @@ The message-media API method(s) has the following set of parameters listed in th
 | reader | *pathMessageSid* |  The SID of the Message resource that this Media resource belongs to | String
 |===
 
-In addition to the parameters above, the message-media API can also use from the 23 endpoint query option
+In addition to the parameters above, the message-media API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1844,7 +1843,7 @@ The new-key API method(s) has the following set of parameters listed in the tabl
 | creator | *pathAccountSid* |  The SID of the Account that will be responsible for the new Key resource | String
 |===
 
-In addition to the parameters above, the new-key API can also use from the 23 endpoint query option
+In addition to the parameters above, the new-key API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1895,7 +1894,7 @@ The new-signing-key API method(s) has the following set of parameters listed in 
 | creator | *pathAccountSid* |  The SID of the Account that will be responsible for the new Key resource | String
 |===
 
-In addition to the parameters above, the new-signing-key API can also use from the 23 endpoint query option
+In addition to the parameters above, the new-signing-key API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -1953,7 +1952,7 @@ The notification API method(s) has the following set of parameters listed in the
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the notification API can also use from the 23 endpoint query option
+In addition to the parameters above, the notification API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2025,7 +2024,7 @@ The outgoing-caller-id API method(s) has the following set of parameters listed 
 | updater | *pathSid* |  The unique string that identifies the resource | String
 |===
 
-In addition to the parameters above, the outgoing-caller-id API can also use from the 23 endpoint query option
+In addition to the parameters above, the outgoing-caller-id API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2104,7 +2103,7 @@ The queue API method(s) has the following set of parameters listed in the table 
 | updater | *pathSid* |  The unique string that identifies this resource | String
 |===
 
-In addition to the parameters above, the queue API can also use from the 23 endpoint query option
+In addition to the parameters above, the queue API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2173,7 +2172,7 @@ The queue-member API method(s) has the following set of parameters listed in the
 | updater | *url* |  The absolute URL of the Queue resource | URI
 |===
 
-In addition to the parameters above, the queue-member API can also use from the 23 endpoint query option
+In addition to the parameters above, the queue-member API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2238,7 +2237,7 @@ The recording API method(s) has the following set of parameters listed in the ta
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the recording API can also use from the 23 endpoint query option
+In addition to the parameters above, the recording API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2306,7 +2305,7 @@ The recording-add-on-result API method(s) has the following set of parameters li
 | reader | *pathReferenceSid* |  The SID of the recording to which the result to delete belongs | String
 |===
 
-In addition to the parameters above, the recording-add-on-result API can also use from the 23 endpoint query option
+In addition to the parameters above, the recording-add-on-result API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2377,7 +2376,7 @@ The recording-add-on-result-payload API method(s) has the following set of param
 | reader | *pathReferenceSid* |  The SID of the recording to which the AddOnResult resource that contains the payloads to delete belongs | String
 |===
 
-In addition to the parameters above, the recording-add-on-result-payload API can also use from the 23 endpoint query option
+In addition to the parameters above, the recording-add-on-result-payload API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2445,7 +2444,7 @@ The recording-transcription API method(s) has the following set of parameters li
 | reader | *pathRecordingSid* |  The SID of the recording that created the transcription to delete | String
 |===
 
-In addition to the parameters above, the recording-transcription API can also use from the 23 endpoint query option
+In addition to the parameters above, the recording-transcription API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2510,7 +2509,7 @@ The short-code API method(s) has the following set of parameters listed in the t
 | updater | *pathSid* |  The unique string that identifies this resource | String
 |===
 
-In addition to the parameters above, the short-code API can also use from the 23 endpoint query option
+In addition to the parameters above, the short-code API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2582,7 +2581,7 @@ The signing-key API method(s) has the following set of parameters listed in the 
 | updater | *pathSid* |  The sid | String
 |===
 
-In addition to the parameters above, the signing-key API can also use from the 23 endpoint query option
+In addition to the parameters above, the signing-key API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2662,7 +2661,7 @@ The sip-credential-list API method(s) has the following set of parameters listed
 | updater | *pathSid* |  Update by unique credential list Sid | String
 |===
 
-In addition to the parameters above, the sip-credential-list API can also use from the 23 endpoint query option
+In addition to the parameters above, the sip-credential-list API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2747,7 +2746,7 @@ The sip-credential-list-credential API method(s) has the following set of parame
 | updater | *pathSid* |  The unique id that identifies the resource to update | String
 |===
 
-In addition to the parameters above, the sip-credential-list-credential API can also use from the 23 endpoint query option
+In addition to the parameters above, the sip-credential-list-credential API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2826,7 +2825,7 @@ The sip-domain API method(s) has the following set of parameters listed in the t
 | updater | *pathSid* |  The unique string that identifies the resource | String
 |===
 
-In addition to the parameters above, the sip-domain API can also use from the 23 endpoint query option
+In addition to the parameters above, the sip-domain API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2902,7 +2901,7 @@ The sip-domain-credential-list-mapping API method(s) has the following set of pa
 | reader | *pathDomainSid* |  A string that identifies the SIP Domain for which the CredentialList resource will be mapped | String
 |===
 
-In addition to the parameters above, the sip-domain-credential-list-mapping API can also use from the 23 endpoint query option
+In addition to the parameters above, the sip-domain-credential-list-mapping API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -2978,7 +2977,7 @@ The sip-domain-ip-access-control-list-mapping API method(s) has the following se
 | reader | *pathDomainSid* |  A string that uniquely identifies the SIP Domain | String
 |===
 
-In addition to the parameters above, the sip-domain-ip-access-control-list-mapping API can also use from the 23 endpoint query option
+In addition to the parameters above, the sip-domain-ip-access-control-list-mapping API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3058,7 +3057,7 @@ The sip-ip-access-control-list API method(s) has the following set of parameters
 | updater | *pathSid* |  A string that identifies the resource to update | String
 |===
 
-In addition to the parameters above, the sip-ip-access-control-list API can also use from the 23 endpoint query option
+In addition to the parameters above, the sip-ip-access-control-list API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3143,7 +3142,7 @@ The sip-ip-access-control-list-ip-address API method(s) has the following set of
 | updater | *pathSid* |  A string that identifies the IpAddress resource to update | String
 |===
 
-In addition to the parameters above, the sip-ip-access-control-list-ip-address API can also use from the 23 endpoint query option
+In addition to the parameters above, the sip-ip-access-control-list-ip-address API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3194,7 +3193,7 @@ The token API method(s) has the following set of parameters listed in the table 
 | creator | *pathAccountSid* |  The SID of the Account that will create the resource | String
 |===
 
-In addition to the parameters above, the token API can also use from the 23 endpoint query option
+In addition to the parameters above, the token API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3259,7 +3258,7 @@ The transcription API method(s) has the following set of parameters listed in th
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the transcription API can also use from the 23 endpoint query option
+In addition to the parameters above, the transcription API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3310,7 +3309,7 @@ The usage-record API method(s) has the following set of parameters listed in the
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the usage-record API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-record API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3361,7 +3360,7 @@ The usage-record-all-time API method(s) has the following set of parameters list
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the usage-record-all-time API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-record-all-time API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3412,7 +3411,7 @@ The usage-record-daily API method(s) has the following set of parameters listed 
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the usage-record-daily API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-record-daily API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3463,7 +3462,7 @@ The usage-record-last-month API method(s) has the following set of parameters li
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the usage-record-last-month API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-record-last-month API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3514,7 +3513,7 @@ The usage-record-monthly API method(s) has the following set of parameters liste
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the usage-record-monthly API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-record-monthly API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3565,7 +3564,7 @@ The usage-record-this-month API method(s) has the following set of parameters li
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the usage-record-this-month API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-record-this-month API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3616,7 +3615,7 @@ The usage-record-today API method(s) has the following set of parameters listed 
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the usage-record-today API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-record-today API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3667,7 +3666,7 @@ The usage-record-yearly API method(s) has the following set of parameters listed
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the usage-record-yearly API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-record-yearly API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3718,7 +3717,7 @@ The usage-record-yesterday API method(s) has the following set of parameters lis
 | reader | *pathAccountSid* |  The SID of the Account that created the resources to read | String
 |===
 
-In addition to the parameters above, the usage-record-yesterday API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-record-yesterday API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3799,7 +3798,7 @@ The usage-trigger API method(s) has the following set of parameters listed in th
 | updater | *pathSid* |  The unique string that identifies the resource | String
 |===
 
-In addition to the parameters above, the usage-trigger API can also use from the 23 endpoint query option
+In addition to the parameters above, the usage-trigger API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.
@@ -3851,7 +3850,7 @@ The validation-request API method(s) has the following set of parameters listed 
 | creator | *phoneNumber* |  The phone number to verify in E.164 format | PhoneNumber
 |===
 
-In addition to the parameters above, the validation-request API can also use from the 23 endpoint query option
+In addition to the parameters above, the validation-request API can also use from the 22 endpoint query option
 which is listed in the _Query Parameters_ section.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header.

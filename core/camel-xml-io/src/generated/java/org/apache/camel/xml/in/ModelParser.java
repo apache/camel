@@ -1191,6 +1191,7 @@ public class ModelParser extends BaseParser {
     protected SplitDefinition doParseSplitDefinition() throws IOException, XmlPullParserException {
         return doParse(new SplitDefinition(), (def, key, val) -> {
             switch (key) {
+                case "delimiter": def.setDelimiter(val); break;
                 case "executorServiceRef": def.setExecutorServiceRef(val); break;
                 case "onPrepareRef": def.setOnPrepareRef(val); break;
                 case "parallelAggregate": def.setParallelAggregate(val); break;
@@ -2326,6 +2327,15 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
+    protected CSimpleExpression doParseCSimpleExpression() throws IOException, XmlPullParserException {
+        return doParse(new CSimpleExpression(), (def, key, val) -> {
+            if ("resultType".equals(key)) {
+                def.setResultTypeName(val);
+                return true;
+            }
+            return expressionDefinitionAttributeHandler().accept(def, key, val);
+        }, noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected ConstantExpression doParseConstantExpression() throws IOException, XmlPullParserException {
         return doParse(new ConstantExpression(),
             expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
@@ -2467,6 +2477,7 @@ public class ModelParser extends BaseParser {
     protected XQueryExpression doParseXQueryExpression() throws IOException, XmlPullParserException {
         return doParse(new XQueryExpression(), (def, key, val) -> {
             switch (key) {
+                case "configurationRef": def.setConfigurationRef(val); break;
                 case "headerName": def.setHeaderName(val); break;
                 case "type": def.setType(val); break;
                 default: return expressionDefinitionAttributeHandler().accept(def, key, val);
@@ -2971,6 +2982,7 @@ public class ModelParser extends BaseParser {
     protected ExpressionDefinition doParseExpressionDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
             case "expressionDefinition": return doParseExpressionDefinition();
+            case "csimple": return doParseCSimpleExpression();
             case "constant": return doParseConstantExpression();
             case "exchangeProperty": return doParseExchangePropertyExpression();
             case "groovy": return doParseGroovyExpression();

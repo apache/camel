@@ -71,7 +71,7 @@ The Servlet component supports 10 options, which are listed below.
 | *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
 | *httpRegistry* (consumer) | To use a custom org.apache.camel.component.servlet.HttpRegistry. |  | HttpRegistry
 | *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
-| *basicPropertyBinding* (advanced) | *Deprecated* Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *httpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
 | *httpConfiguration* (advanced) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
@@ -97,7 +97,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (24 parameters):
+=== Query Parameters (23 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -122,7 +122,6 @@ with the following path and query parameters:
 | *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
 | *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
-| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
 | *mapHttpMessageFormUrlEncoded{zwsp}Body* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
 | *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
@@ -206,6 +205,37 @@ follows:
 But it is *strongly advised* to use unique `servlet-name` for each Camel
 application to avoid this duplication clash, as well any unforeseen
 side-effects.
+
+== Servlet >= 3.0 and AsyncContext
+
+To enable Camel to benefit from Servlet asynchronous support you must:
+
+. Enable `async` boolean init parameter by setting it to `true`
+. Without more configuration it will reuse servlet thread pool to handle the processing but you can set `executorRef` to an executor service reference to let another pool handle the processing of the exchange.
+It will use camel context registry by default and potentially fallback on an executor policy or default executor service if no bean matches this name.
+
+Note that to force camel to get back pre-3.7.0 behavior which was to wait in another container background thread, you can set `forceAwait` boolean init parameter to `true`.
+
+Sample async configuration:
+
+[source,xml]
+-----------------------------------------------------------------------------------------------
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <display-name>Camel Http Transport Servlet</display-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+    <init-param>
+      <param-name>async</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>executorRef</param-name>
+      <param-value>my-threads</param-value>
+    </init-param>
+  </servlet>
+-----------------------------------------------------------------------------------------------
+
+
 
 == Sample
 

@@ -19,19 +19,27 @@ package org.apache.camel.test.infra.aws2.clients;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.function.Supplier;
 
 import org.apache.camel.test.infra.aws.common.AWSConfigs;
 import org.apache.camel.test.infra.aws2.common.SystemPropertiesAWSCredentialsProvider;
 import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
+import software.amazon.awssdk.core.SdkClient;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.ec2.Ec2Client;
+import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
+import software.amazon.awssdk.services.iam.IamClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
-import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
+import software.amazon.awssdk.services.kms.KmsClient;
+import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.SqsClientBuilder;
+import software.amazon.awssdk.services.sts.StsClient;
 
 public final class AWSSDKClientUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AWSSDKClientUtils.class);
@@ -58,12 +66,25 @@ public final class AWSSDKClientUtils {
         return awsInstanceType == null || awsInstanceType.equals("local-aws-container");
     }
 
-    public static KinesisClient newKinesisClient() {
-        LOG.debug("Creating a new AWS v2 Kinesis client");
+    /**
+     * Generic AWS v2 client builder
+     * 
+     * @param  property              the system property used to figure out if it's local service or not
+     * @param  name                  the service name
+     * @param  clientBuilderSupplier A supplier type for creating the builder class
+     * @param  yClass                The client type to be generated
+     * @param  <T>
+     * @param  <Y>
+     * @return                       A new client of the given type
+     */
+    private static <T extends AwsClientBuilder, Y extends SdkClient> Y newClient(
+            String property, String name,
+            Supplier<T> clientBuilderSupplier, Class<Y> yClass) {
+        T clientBuilder = clientBuilderSupplier.get();
 
-        String awsInstanceType = System.getProperty("aws-service.kinesis.instance.type");
+        LOG.debug("Creating a new AWS v2 {} client", name);
 
-        KinesisClientBuilder clientBuilder = KinesisClient.builder();
+        String awsInstanceType = System.getProperty(property);
 
         clientBuilder.region(Region.US_EAST_1);
 
@@ -80,55 +101,72 @@ public final class AWSSDKClientUtils {
             clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
         }
 
-        return clientBuilder.build();
+        Object o = clientBuilder.build();
+        if (yClass.isInstance(o)) {
+            return (Y) o;
+        }
+
+        throw new UnsupportedOperationException("Invalid class type for AWS client");
+    }
+
+    /**
+     * Generic AWS v2 client builder
+     * 
+     * @param  name                  the service name
+     * @param  clientBuilderSupplier A supplier type for creating the builder class
+     * @param  yClass                The client type to be generated
+     * @param  <T>
+     * @param  <Y>
+     * @return                       A new client of the given type
+     */
+    private static <T extends AwsClientBuilder, Y extends SdkClient> Y newClient(
+            String name,
+            Supplier<T> clientBuilderSupplier, Class<Y> yClass) {
+        return newClient("aws-service.instance.type", name, clientBuilderSupplier, yClass);
+    }
+
+    public static KinesisClient newKinesisClient() {
+        return newClient("aws-service.kinesis.instance.type", "Kinesis", KinesisClient::builder,
+                KinesisClient.class);
     }
 
     public static SqsClient newSQSClient() {
-        LOG.debug("Creating a new AWS v2 SQS client");
-
-        String awsInstanceType = System.getProperty("aws-service.instance.type");
-
-        SqsClientBuilder clientBuilder = SqsClient.builder();
-
-        clientBuilder.region(Region.US_EAST_1);
-
-        URI endpoint = getEndpoint();
-
-        if (isLocalContainer(awsInstanceType) || endpoint != null) {
-            clientBuilder.endpointOverride(endpoint);
-        }
-
-        if (isLocalContainer(awsInstanceType)) {
-            clientBuilder.credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER);
-
-        } else {
-            clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
-        }
-
-        return clientBuilder.build();
+        return newClient("SQS", SqsClient::builder, SqsClient.class);
     }
 
     public static S3Client newS3Client() {
-        LOG.debug("Creating a new S3 client");
-        S3ClientBuilder clientBuilder = S3Client.builder();
+        return newClient("S3", S3Client::builder, S3Client.class);
+    }
 
-        String awsInstanceType = System.getProperty("aws-service.instance.type");
+    public static SnsClient newSNSClient() {
+        return newClient("SNS", SnsClient::builder, SnsClient.class);
+    }
 
-        clientBuilder.region(Region.US_EAST_1);
+    public static CloudWatchClient newCloudWatchClient() {
+        return newClient("Cloud Watch", CloudWatchClient::builder, CloudWatchClient.class);
+    }
 
-        URI endpoint = getEndpoint();
+    public static Ec2Client newEC2Client() {
+        return newClient("EC2", Ec2Client::builder, Ec2Client.class);
+    }
 
-        if (isLocalContainer(awsInstanceType) || endpoint != null) {
-            clientBuilder.endpointOverride(endpoint);
-        }
+    public static EventBridgeClient newEventBridgeClient() {
+        return newClient("EventBridge", EventBridgeClient::builder, EventBridgeClient.class);
+    }
 
-        if (isLocalContainer(awsInstanceType)) {
-            clientBuilder.credentialsProvider(TestAWSCredentialsProvider.CONTAINER_LOCAL_DEFAULT_PROVIDER);
+    public static IamClient newIAMClient() {
+        return newClient("EventBridge", IamClient::builder, IamClient.class);
+    }
 
-        } else {
-            clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
-        }
+    public static KmsClient newKMSClient() {
+        return newClient("KMS", KmsClient::builder, KmsClient.class);
+    }
 
-        return clientBuilder.build();
+    public static LambdaClient newLambdaClient() {
+        return newClient("Lambda", LambdaClient::builder, LambdaClient.class);
+    }
+
+    public static StsClient newSTSClient() {
+        return newClient("STS", StsClient::builder, StsClient.class);
     }
 }
