@@ -26,6 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.stream.StreamSupport;
 
 import io.vertx.core.Vertx;
 import io.vertx.kafka.client.producer.KafkaProducer;
@@ -43,6 +44,8 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.internals.DefaultPartitioner;
 import org.apache.kafka.common.Cluster;
 import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -462,6 +465,28 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
         });
     }
 
+    @Test
+    void testIfPropagateHeadersFromCamelMessage() {
+        configuration.setTopic("someTopic");
+
+        final Message message = createMessage();
+
+        // set some headers
+        message.setHeader("CamelDummy", "test-camel-dummy-header");
+        message.setHeader(VertxKafkaConstants.TOPIC, "someTopic");
+        message.setHeader("MyHeader", "test-value-my-header");
+        message.setBody("message");
+
+        sendEvent(message);
+
+        assertProducedMessages(records -> {
+            assertEquals(1, records.size());
+            // we expect only one header since they are filtered out
+            assertEquals(1, records.get(0).headers().toArray().length);
+            assertEquals("test-value-my-header", new String(getHeaderValue("MyHeader", records.get(0).headers())));
+        });
+    }
+
     private Message createMessage() {
         return new DefaultExchange(context).getIn();
     }
@@ -533,6 +558,13 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
     private void sendEvent(final Message message) {
         operations.sendEvents(message, doneSync -> {
         });
+    }
+
+    private byte[] getHeaderValue(String headerKey, Headers headers) {
+        Header foundHeader = StreamSupport.stream(headers.spliterator(), false).filter(header -> header.key().equals(headerKey))
+                .findFirst().orElse(null);
+        assertNotNull(foundHeader, "Header should be sent");
+        return foundHeader.value();
     }
 
     public static class EvenOddPartitioner extends DefaultPartitioner {
