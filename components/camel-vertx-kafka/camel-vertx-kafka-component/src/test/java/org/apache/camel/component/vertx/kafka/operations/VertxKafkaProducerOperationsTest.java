@@ -26,7 +26,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.stream.StreamSupport;
 
 import io.vertx.core.Vertx;
 import io.vertx.kafka.client.producer.KafkaProducer;
@@ -34,6 +33,7 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.vertx.kafka.VertxKafkaConstants;
+import org.apache.camel.component.vertx.kafka.VertxKafkaTestUtils;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
@@ -44,7 +44,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.internals.DefaultPartitioner;
 import org.apache.kafka.common.Cluster;
 import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -561,10 +560,7 @@ class VertxKafkaProducerOperationsTest extends CamelTestSupport {
     }
 
     private byte[] getHeaderValue(String headerKey, Headers headers) {
-        Header foundHeader = StreamSupport.stream(headers.spliterator(), false).filter(header -> header.key().equals(headerKey))
-                .findFirst().orElse(null);
-        assertNotNull(foundHeader, "Header should be sent");
-        return foundHeader.value();
+        return VertxKafkaTestUtils.getHeaderValue(headerKey, headers);
     }
 
     public static class EvenOddPartitioner extends DefaultPartitioner {

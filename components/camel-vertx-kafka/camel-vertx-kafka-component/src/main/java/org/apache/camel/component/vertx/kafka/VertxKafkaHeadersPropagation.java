@@ -23,12 +23,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import io.vertx.core.buffer.Buffer;
-import io.vertx.kafka.client.consumer.KafkaConsumerRecord;
 import io.vertx.kafka.client.producer.KafkaHeader;
 import io.vertx.kafka.client.producer.impl.KafkaHeaderImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.vertx.kafka.serde.DefaultVertxKafkaHeaderSerializer;
+import org.apache.camel.component.vertx.kafka.serde.VertxKafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 public class VertxKafkaHeadersPropagation {
@@ -47,9 +46,9 @@ public class VertxKafkaHeadersPropagation {
                 .collect(Collectors.toList());
     }
 
-    public static Map<String, Object> getPropagatedHeaders(
-            final KafkaConsumerRecord<Object, Object> record, final Message message) {
-        return record.headers()
+    public static Map<String, Buffer> getPropagatedHeaders(
+            final List<KafkaHeader> headers, final Message message) {
+        return headers
                 .stream()
                 .filter(entry -> shouldBeFiltered(new AbstractMap.SimpleEntry<>(entry.key(), entry.value()),
                         message.getExchange(), headerFilterStrategy))
@@ -62,7 +61,7 @@ public class VertxKafkaHeadersPropagation {
     }
 
     private static KafkaHeader getRecordHeader(final Map.Entry<String, Object> entry) {
-        final Buffer headerValue = DefaultVertxKafkaHeaderSerializer.serialize(entry.getValue());
+        final Buffer headerValue = VertxKafkaHeaderSerializer.serialize(entry.getValue());
 
         if (headerValue == null) {
             return null;

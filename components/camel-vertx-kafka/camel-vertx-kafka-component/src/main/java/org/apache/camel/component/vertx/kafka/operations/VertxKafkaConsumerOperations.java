@@ -80,7 +80,6 @@ public class VertxKafkaConsumerOperations {
         // since we use on assigment handler
         seekOnPartitionAssignment(topicSubscription, errorHandler);
 
-        // for now support we support single topic, however we can add set of topics as well as pattern assignment
         subscribeToTopics(topicSubscription.getTopics())
                 .subscribe((unused) -> {
                 }, errorHandler, () -> {
@@ -92,7 +91,7 @@ public class VertxKafkaConsumerOperations {
         // seek if we have either position
         if (isSeekToSet(topicSubscription)) {
             // once we have our partitions assigned, we start to seek
-            onPartitionAssignment()
+            getTopicPartitionsOnPartitionAssignment()
                     .flatMap(topicPartition -> seekToOffsetOrPositionInPartition(topicPartition, topicSubscription))
                     .subscribe(result -> {
                     }, errorHandler, () -> LOG.info("Seeking partitions is done."));
@@ -104,7 +103,7 @@ public class VertxKafkaConsumerOperations {
                 || ObjectHelper.isNotEmpty(topicSubscription.getSeekToPosition());
     }
 
-    private Flux<TopicPartition> onPartitionAssignment() {
+    private Flux<TopicPartition> getTopicPartitionsOnPartitionAssignment() {
         return Flux.create(sink -> kafkaConsumer.partitionsAssignedHandler(partitions -> {
             LOG.info("Partition {} is assigned to consumer", partitions);
             partitions.forEach(topicPartition -> {

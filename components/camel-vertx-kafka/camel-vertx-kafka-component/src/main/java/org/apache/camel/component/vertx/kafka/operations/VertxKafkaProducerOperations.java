@@ -30,8 +30,8 @@ import org.apache.camel.Message;
 import org.apache.camel.component.vertx.kafka.VertxKafkaConfigurationOptionsProxy;
 import org.apache.camel.component.vertx.kafka.VertxKafkaConstants;
 import org.apache.camel.component.vertx.kafka.VertxKafkaHeadersPropagation;
-import org.apache.camel.component.vertx.kafka.VertxKafkaTypeSerializer;
 import org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration;
+import org.apache.camel.component.vertx.kafka.serde.VertxKafkaTypeSerializer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,6 +171,7 @@ public class VertxKafkaProducerOperations {
         final String firstCheckStep = ObjectHelper.isEmpty(innerOverrideTopic) ? innerTopic : innerOverrideTopic;
         final String secondCheckStep = ObjectHelper.isEmpty(firstCheckStep) ? parentTopic : firstCheckStep;
 
+        // third check step
         return ObjectHelper.isEmpty(secondCheckStep) ? configurationOptionsProxy.getTopic(message) : secondCheckStep;
     }
 

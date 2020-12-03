@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 
 @Component("vertx-kafka")
 public class VertxKafkaComponent extends DefaultComponent {
@@ -59,6 +60,16 @@ public class VertxKafkaComponent extends DefaultComponent {
         configuration.setTopic(remaining);
 
         final VertxKafkaEndpoint endpoint = new VertxKafkaEndpoint(uri, this, configuration);
+
+        // extract the additional properties map
+        if (PropertiesHelper.hasProperties(parameters, "additionalProperties.")) {
+            final Map<String, Object> additionalProperties = endpoint.getConfiguration().getAdditionalProperties();
+
+            // add and overwrite additional properties from endpoint to
+            // pre-configured properties
+            additionalProperties.putAll(PropertiesHelper.extractProperties(parameters, "additionalProperties."));
+        }
+
         setProperties(endpoint, parameters);
 
         validateConfigurations(configuration);

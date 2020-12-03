@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.StreamSupport;
 
 import io.vertx.kafka.client.producer.RecordMetadata;
 import org.apache.camel.Endpoint;
@@ -40,7 +39,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -369,10 +367,7 @@ public class VertxKafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     }
 
     private byte[] getHeaderValue(String headerKey, Headers headers) {
-        Header foundHeader = StreamSupport.stream(headers.spliterator(), false).filter(header -> header.key().equals(headerKey))
-                .findFirst().orElse(null);
-        assertNotNull(foundHeader, "Header should be sent");
-        return foundHeader.value();
+        return VertxKafkaTestUtils.getHeaderValue(headerKey, headers);
     }
 
     @SuppressWarnings("unchecked")

@@ -29,6 +29,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         VertxKafkaComponent target = (VertxKafkaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acks": getOrCreateConfiguration(target).setAcks(property(camelContext, java.lang.String.class, value)); return true;
+        case "additionalproperties":
+        case "additionalProperties": getOrCreateConfiguration(target).setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "allowautocreatetopics":
         case "allowAutoCreateTopics": getOrCreateConfiguration(target).setAllowAutoCreateTopics(property(camelContext, boolean.class, value)); return true;
         case "autocommitintervalms":
@@ -229,6 +231,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acks": return java.lang.String.class;
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
         case "allowautocreatetopics":
         case "allowAutoCreateTopics": return boolean.class;
         case "autocommitintervalms":
@@ -425,6 +429,8 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         VertxKafkaComponent target = (VertxKafkaComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acks": return getOrCreateConfiguration(target).getAcks();
+        case "additionalproperties":
+        case "additionalProperties": return getOrCreateConfiguration(target).getAdditionalProperties();
         case "allowautocreatetopics":
         case "allowAutoCreateTopics": return getOrCreateConfiguration(target).isAllowAutoCreateTopics();
         case "autocommitintervalms":
@@ -612,6 +618,15 @@ public class VertxKafkaComponentConfigurer extends PropertyConfigurerSupport imp
         case "vertx": return target.getVertx();
         case "vertxoptions":
         case "vertxOptions": return target.getVertxOptions();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.lang.Object.class;
         default: return null;
         }
     }

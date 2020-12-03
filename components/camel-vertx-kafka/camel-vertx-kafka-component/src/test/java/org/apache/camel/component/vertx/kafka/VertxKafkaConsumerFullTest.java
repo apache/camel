@@ -21,10 +21,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
+import io.vertx.core.buffer.Buffer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.vertx.kafka.serde.VertxKafkaHeaderSerializer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.AfterEach;
@@ -106,8 +108,16 @@ public class VertxKafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         byte[] propagatedHeaderValue = "propagated incorrect topic".getBytes();
         to.expectedHeaderReceived(VertxKafkaConstants.TOPIC, TOPIC);
 
+        String propagatedStringHeaderKey = "propagatedStringHeaderKey";
+        byte[] propagatedStringHeaderValue = "propagated value".getBytes();
+
+        String propagatedLongHeaderKey = "propagatedLongHeaderKey";
+        byte[] propagatedLongHeaderValue = VertxKafkaHeaderSerializer.serialize(5454545454545L).getBytes();
+
         ProducerRecord<String, String> data = new ProducerRecord<>(TOPIC, "1", "message");
         data.headers().add(new RecordHeader(propagatedHeaderKey, propagatedHeaderValue));
+        data.headers().add(new RecordHeader(propagatedStringHeaderKey, propagatedStringHeaderValue));
+        data.headers().add(new RecordHeader(propagatedLongHeaderKey, propagatedLongHeaderValue));
         producer.send(data);
 
         to.assertIsSatisfied(3000);
@@ -115,6 +125,8 @@ public class VertxKafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertTrue(headers.containsKey(VertxKafkaConstants.TOPIC), "Should receive KafkaEndpoint populated kafka.TOPIC header");
         assertEquals(TOPIC, headers.get(VertxKafkaConstants.TOPIC), "Topic name received");
+        assertEquals("propagated value", ((Buffer) headers.get("propagatedStringHeaderKey")).toString());
+        assertEquals(5454545454545L, ((Buffer) headers.get("propagatedLongHeaderKey")).getLong(0));
     }
 
     @Test

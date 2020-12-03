@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -41,6 +42,49 @@ public interface VertxKafkaEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedVertxKafkaEndpointConsumerBuilder advanced() {
             return (AdvancedVertxKafkaEndpointConsumerBuilder) this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointConsumerBuilder additionalProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalProperties", "additionalProperties." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointConsumerBuilder additionalProperties(
+                Map values) {
+            doSetMultiValueProperties("additionalProperties", "additionalProperties.", values);
+            return this;
         }
         /**
          * A list of host/port pairs to use for establishing the initial
@@ -1875,6 +1919,49 @@ public interface VertxKafkaEndpointBuilderFactory {
             return (AdvancedVertxKafkaEndpointProducerBuilder) this;
         }
         /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointProducerBuilder additionalProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalProperties", "additionalProperties." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointProducerBuilder additionalProperties(
+                Map values) {
+            doSetMultiValueProperties("additionalProperties", "additionalProperties.", values);
+            return this;
+        }
+        /**
          * A list of host/port pairs to use for establishing the initial
          * connection to the Kafka cluster. The client will make use of all
          * servers irrespective of which servers are specified here for
@@ -3546,6 +3633,48 @@ public interface VertxKafkaEndpointBuilderFactory {
                 VertxKafkaEndpointProducerBuilder {
         default AdvancedVertxKafkaEndpointBuilder advanced() {
             return (AdvancedVertxKafkaEndpointBuilder) this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointBuilder additionalProperties(
+                String key,
+                Object value) {
+            doSetMultiValueProperty("additionalProperties", "additionalProperties." + key, value);
+            return this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * additionalProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointBuilder additionalProperties(Map values) {
+            doSetMultiValueProperties("additionalProperties", "additionalProperties.", values);
+            return this;
         }
         /**
          * A list of host/port pairs to use for establishing the initial

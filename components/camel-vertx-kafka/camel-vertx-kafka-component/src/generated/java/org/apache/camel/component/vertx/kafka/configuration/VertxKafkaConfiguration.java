@@ -1,11 +1,14 @@
 package org.apache.camel.component.vertx.kafka.configuration;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 
 @UriParams
 public class VertxKafkaConfiguration implements Cloneable {
@@ -161,6 +164,9 @@ public class VertxKafkaConfiguration implements Cloneable {
     // sasl.login.class
     @UriParam(label = "common,security")
     private String saslLoginClass;
+    // Additional properties
+    @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
+    private Map<String, Object> additionalProperties = new HashMap<>();
     // seek.to.offset
     @UriParam(label = "consumer")
     private Long seekToOffset;
@@ -968,6 +974,21 @@ public class VertxKafkaConfiguration implements Cloneable {
     }
 
     /**
+     * Sets additional properties for either kafka consumer or kafka producer in
+     * case they can't be set directly on the camel configurations (e.g: new
+     * Kafka properties that are not reflected yet in Camel configurations), the
+     * properties have to be prefixed with `additionalProperties.`. E.g:
+     * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
+     */
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    /**
      * Set if KafkaConsumer will read from a particular offset on startup. This
      * config will take precedence over seekTo config
      */
@@ -1725,6 +1746,7 @@ public class VertxKafkaConfiguration implements Cloneable {
         addPropertyIfNotNull(props, "exclude.internal.topics", excludeInternalTopics);
         addPropertyIfNotNull(props, "isolation.level", isolationLevel);
         addPropertyIfNotNull(props, "allow.auto.create.topics", allowAutoCreateTopics);
+        applyAdditionalProperties(props, getAdditionalProperties());
         return props;
     }
 
@@ -1797,6 +1819,7 @@ public class VertxKafkaConfiguration implements Cloneable {
         addPropertyIfNotNull(props, "enable.idempotence", enableIdempotence);
         addPropertyIfNotNull(props, "transaction.timeout.ms", transactionTimeoutMs);
         addPropertyIfNotNull(props, "transactional.id", transactionalId);
+        applyAdditionalProperties(props, getAdditionalProperties());
         return props;
     }
 
@@ -1805,6 +1828,14 @@ public class VertxKafkaConfiguration implements Cloneable {
         	return (VertxKafkaConfiguration) clone();
         } catch (CloneNotSupportedException e) {
         	throw new RuntimeCamelException(e);
+        }
+    }
+
+    private void applyAdditionalProperties(
+            Properties props,
+            Map<String, Object> additionalProperties) {
+        if (!ObjectHelper.isEmpty(getAdditionalProperties())) {
+        	additionalProperties.forEach((property, value) -> addPropertyIfNotNull(props, property, value));
         }
     }
 

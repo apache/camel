@@ -18,6 +18,7 @@ package org.apache.camel.maven.component.vertx.kafka.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.tooling.util.srcgen.Annotation;
+import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 import org.apache.camel.util.ObjectHelper;
@@ -92,6 +94,7 @@ public final class ConfigJavaClass {
         setSettersAndGettersMethodsForType();
         setCreateConfigurationMethods();
         setCopyMethod();
+        setApplyAdditionalProperties();
         setAddPropertyIfNotNullMethod();
     }
 
@@ -101,6 +104,8 @@ public final class ConfigJavaClass {
 
     private void setImports() {
         javaClass.addImport(RuntimeCamelException.class);
+        javaClass.addImport(HashMap.class);
+        javaClass.addImport(ObjectHelper.class);
     }
 
     private void setClassNameAndType() {
@@ -119,6 +124,9 @@ public final class ConfigJavaClass {
     private void setClassFields() {
         // set common configs first
         setClassFieldsForType(commonConfigs, "common");
+
+        // add additional properties
+        setAdditionalAdditionalPropertiesClassField();
 
         // set consumer configs
         setClassFieldsForType(consumerConfigs, "consumer");
@@ -152,6 +160,22 @@ public final class ConfigJavaClass {
         });
     }
 
+    private void setAdditionalAdditionalPropertiesClassField() {
+        final GenericType type = new GenericType(Map.class, new GenericType(String.class), new GenericType(Object.class));
+
+        final org.apache.camel.tooling.util.srcgen.Field field = javaClass.addField()
+                .setName("additionalProperties")
+                .setType(type)
+                .setComment("Additional properties")
+                .setLiteralInitializer("new HashMap<>()")
+                .setPrivate();
+
+        field.addAnnotation(UriParam.class)
+                .setStringValue("label", "common")
+                .setStringValue("prefix", "additionalProperties.")
+                .setLiteralValue("multiValue", "true");
+    }
+
     private void setFieldUriParamAnnotation(final ConfigField fieldConfig, final Annotation annotation, final String type) {
         final List<String> labels = new ArrayList<>();
         labels.add(type);
@@ -181,6 +205,8 @@ public final class ConfigJavaClass {
 
     private void setSettersAndGettersMethodsForType() {
         setSettersAndGettersMethodsForType(commonConfigs);
+        setAdditionalPropertiesGetterSetter();
+
         setSettersAndGettersMethodsForType(consumerConfigs);
         setSettersAndGettersMethodsForType(producerConfigs);
     }
@@ -216,6 +242,30 @@ public final class ConfigJavaClass {
         });
     }
 
+    private void setAdditionalPropertiesGetterSetter() {
+        final Method method = javaClass.addMethod()
+                .setName("setAdditionalProperties")
+                .addParameter("Map<String, Object>", "additionalProperties")
+                .setPublic()
+                .setReturnType(Void.TYPE)
+                .setBody(String.format("this.%1$s = %1$s;", "additionalProperties"));
+
+        String description
+                = "Sets additional properties for either kafka consumer or kafka producer in case they can't be set directly on the"
+                  + " camel configurations (e.g: new Kafka properties that are not reflected yet in Camel configurations), the"
+                  + " properties have to be prefixed with `additionalProperties.`. E.g:"
+                  + " `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`";
+
+        method.getJavaDoc().setFullText(description);
+
+        // getters
+        javaClass.addMethod()
+                .setName("getAdditionalProperties")
+                .setPublic()
+                .setReturnType("Map<String, Object>")
+                .setBody(String.format("return %s;", "additionalProperties"));
+    }
+
     private void setCreateConfigurationMethods() {
         if (ObjectHelper.isNotEmpty(consumerConfigs) || ObjectHelper.isNotEmpty(commonConfigs)) {
             setCreateConfigurationMethodPerType(consumerConfigs, commonConfigs, "consumer");
@@ -241,9 +291,16 @@ public final class ConfigJavaClass {
         commonConfigs.forEach((fieldName, fieldConfig) -> setAddPropertyIfNotNullForEveryProperty(stringBuilder, fieldConfig));
         configs.forEach((fieldName, fieldConfig) -> setAddPropertyIfNotNullForEveryProperty(stringBuilder, fieldConfig));
 
+        // add additional property
+        setApplyAdditionalPropertiesInCreateConfig(stringBuilder);
+
         stringBuilder.append("return props;");
 
         createConfig.setBody(stringBuilder.toString());
+    }
+
+    private void setApplyAdditionalPropertiesInCreateConfig(final StringBuilder stringBuilder) {
+        stringBuilder.append("applyAdditionalProperties(props, getAdditionalProperties());\n");
     }
 
     private void setAddPropertyIfNotNullForEveryProperty(final StringBuilder stringBuilder, final ConfigField fieldConfig) {
@@ -280,6 +337,20 @@ public final class ConfigJavaClass {
 
         final String body = "if (value != null) {\n"
                             + "\tprops.put(key, value.toString());\n"
+                            + "}\n";
+        method.setBody(body);
+    }
+
+    private void setApplyAdditionalProperties() {
+        Method method = javaClass.addMethod()
+                .setName("applyAdditionalProperties")
+                .addParameter(Properties.class, "props")
+                .addParameter("Map<String, Object>", "additionalProperties")
+                .setReturnType("void")
+                .setPrivate();
+
+        final String body = "if (!ObjectHelper.isEmpty(getAdditionalProperties())) {\n"
+                            + "\tadditionalProperties.forEach((property, value) -> addPropertyIfNotNull(props, property, value));\n"
                             + "}\n";
         method.setBody(body);
     }

@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class VertxKafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
@@ -67,7 +66,6 @@ public class VertxKafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
     }
 
     @Test
-    @Disabled
     public void kafkaMessagesIsConsumedByCamel() throws Exception {
 
         to.expectedBodiesReceivedInAnyOrder("m1", "m2");

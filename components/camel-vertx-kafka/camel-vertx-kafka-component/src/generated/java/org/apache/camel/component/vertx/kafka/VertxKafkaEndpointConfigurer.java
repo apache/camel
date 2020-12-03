@@ -22,6 +22,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         VertxKafkaEndpoint target = (VertxKafkaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acks": target.getConfiguration().setAcks(property(camelContext, java.lang.String.class, value)); return true;
+        case "additionalproperties":
+        case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "allowautocreatetopics":
         case "allowAutoCreateTopics": target.getConfiguration().setAllowAutoCreateTopics(property(camelContext, boolean.class, value)); return true;
         case "autocommitintervalms":
@@ -216,6 +218,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acks": return java.lang.String.class;
+        case "additionalproperties":
+        case "additionalProperties": return java.util.Map.class;
         case "allowautocreatetopics":
         case "allowAutoCreateTopics": return boolean.class;
         case "autocommitintervalms":
@@ -411,6 +415,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         VertxKafkaEndpoint target = (VertxKafkaEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "acks": return target.getConfiguration().getAcks();
+        case "additionalproperties":
+        case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "allowautocreatetopics":
         case "allowAutoCreateTopics": return target.getConfiguration().isAllowAutoCreateTopics();
         case "autocommitintervalms":
@@ -597,6 +603,15 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "valueDeserializer": return target.getConfiguration().getValueDeserializer();
         case "valueserializer":
         case "valueSerializer": return target.getConfiguration().getValueSerializer();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalproperties":
+        case "additionalProperties": return java.lang.Object.class;
         default: return null;
         }
     }

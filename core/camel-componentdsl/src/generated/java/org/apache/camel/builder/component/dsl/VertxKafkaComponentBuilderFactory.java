@@ -51,6 +51,24 @@ public interface VertxKafkaComponentBuilderFactory {
             extends
                 ComponentBuilder<VertxKafkaComponent> {
         /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map<java.lang.String,
+         * java.lang.Object></code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaComponentBuilder additionalProperties(
+                java.util.Map<java.lang.String, java.lang.Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
          * A list of host/port pairs to use for establishing the initial
          * connection to the Kafka cluster. The client will make use of all
          * servers irrespective of which servers are specified here for
@@ -1650,6 +1668,7 @@ public interface VertxKafkaComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "additionalProperties": getOrCreateConfiguration((VertxKafkaComponent) component).setAdditionalProperties((java.util.Map) value); return true;
             case "bootstrapServers": getOrCreateConfiguration((VertxKafkaComponent) component).setBootstrapServers((java.lang.String) value); return true;
             case "clientDnsLookup": getOrCreateConfiguration((VertxKafkaComponent) component).setClientDnsLookup((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((VertxKafkaComponent) component).setClientId((java.lang.String) value); return true;
