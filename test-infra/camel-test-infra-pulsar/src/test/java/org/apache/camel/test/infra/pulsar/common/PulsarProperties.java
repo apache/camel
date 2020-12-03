@@ -14,22 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar;
 
-import org.apache.camel.test.infra.pulsar.services.PulsarService;
-import org.apache.camel.test.infra.pulsar.services.PulsarServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+package org.apache.camel.test.infra.pulsar.common;
 
-public class PulsarTestSupport extends CamelTestSupport {
-    @RegisterExtension
-    static PulsarService service = PulsarServiceFactory.createService();
+public final class PulsarProperties {
+    public static final String PULSAR_BROKER_URL = "pulsar.broker.url";
+    public static final String PULSAR_ADMIN_URL = "pulsar.admin.url";
 
-    public String getPulsarBrokerUrl() {
-        return service.getPulsarBrokerUrl();
-    }
+    private PulsarProperties() {
 
-    public String getPulsarAdminUrl() {
-        return service.getPulsarAdminUrl();
     }
 }
