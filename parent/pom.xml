@@ -83,7 +83,7 @@
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-storage-java-sdk-version>8.6.0</azure-storage-java-sdk-version>
-        <azure-storage-blob-java-sdk12-version>12.8.0</azure-storage-blob-java-sdk12-version>
+        <azure-storage-blob-java-sdk12-version>12.9.0</azure-storage-blob-java-sdk12-version>
         <azure-storage-queue-java-sdk12-version>12.6.0</azure-storage-queue-java-sdk12-version>
         <azure-eventhubs-java-version>5.2.0</azure-eventhubs-java-version>
         <azure-eventhubs-checkpointstore-blob-version>1.2.0</azure-eventhubs-checkpointstore-blob-version>
