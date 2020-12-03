@@ -26,6 +26,7 @@ import com.google.api.services.bigquery.BigqueryScopes;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.bigquery.BigQuery;
 import com.google.cloud.bigquery.BigQueryOptions;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,7 @@ public class GoogleBigQueryConnectionFactory {
     private final Logger logger = LoggerFactory.getLogger(GoogleBigQueryConnectionFactory.class);
 
     private String credentialsFileLocation;
-
+    private String serviceURL;
     private BigQuery client;
 
     public GoogleBigQueryConnectionFactory() {
@@ -72,6 +73,10 @@ public class GoogleBigQueryConnectionFactory {
         BigQueryOptions.Builder builder = BigQueryOptions.newBuilder()
                 .setCredentials(credentials);
 
+        if (ObjectHelper.isNotEmpty(serviceURL)) {
+            builder.setHost(serviceURL);
+        }
+
         return builder.build().getService();
     }
 
@@ -105,6 +110,16 @@ public class GoogleBigQueryConnectionFactory {
 
     public GoogleBigQueryConnectionFactory setCredentialsFileLocation(String credentialsFileLocation) {
         this.credentialsFileLocation = credentialsFileLocation;
+        resetClient();
+        return this;
+    }
+
+    public String getServiceURL() {
+        return serviceURL;
+    }
+
+    public GoogleBigQueryConnectionFactory setServiceURL(String serviceURL) {
+        this.serviceURL = serviceURL;
         resetClient();
         return this;
     }
