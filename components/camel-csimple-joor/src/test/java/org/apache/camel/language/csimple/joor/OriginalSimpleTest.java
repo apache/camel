@@ -841,9 +841,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     private void assertOgnlOnHeadersWithSquareBrackets(String key) {
         exchange.getIn().setHeader(key, new OrderLine(123, "Camel in Action"));
-        assertExpression("${headers[" + key + "].name}", "Camel in Action");
-        assertExpression("${in.headers[" + key + "].name}", "Camel in Action");
-        assertExpression("${in.headers[\"" + key + "\"].name}", "Camel in Action");
+        assertExpression("${headerAs(" + key + ", OrderLine).name}", "Camel in Action");
+        assertExpression("${headerAs(" + key + ", OrderLine).name}", "Camel in Action");
+        assertExpression("${headerAs(\"" + key + "\", OrderLine).name}", "Camel in Action");
     }
 
     @Test
@@ -856,8 +856,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     public void assertOgnlOnExchangePropertiesWithBracket(String key) throws Exception {
         exchange.setProperty(key, new OrderLine(123, "Camel in Action"));
-        assertExpression("${exchangeProperty[" + key + "].name}", "Camel in Action");
-        assertExpression("${exchangeProperty[\"" + key + "\"].name}", "Camel in Action");
+        assertExpression("${exchangePropertyAs(" + key + ", OrderLine).name}", "Camel in Action");
+        assertExpression("${exchangePropertyAs(\"" + key + "\", OrderLine).name}", "Camel in Action");
     }
 
     @Test
