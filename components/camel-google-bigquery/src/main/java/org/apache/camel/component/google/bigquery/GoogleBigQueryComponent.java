@@ -54,6 +54,9 @@ public class GoogleBigQueryComponent extends DefaultComponent {
         configuration.parseRemaining(remaining);
 
         if (configuration.getConnectionFactory() == null) {
+            if (connectionFactory == null) {
+                connectionFactory = new GoogleBigQueryConnectionFactory();
+            }
             configuration.setConnectionFactory(getConnectionFactory());
         }
 
@@ -85,9 +88,6 @@ public class GoogleBigQueryComponent extends DefaultComponent {
     }
 
     public GoogleBigQueryConnectionFactory getConnectionFactory() {
-        if (connectionFactory == null) {
-            connectionFactory = new GoogleBigQueryConnectionFactory();
-        }
         return connectionFactory;
     }
 
