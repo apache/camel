@@ -32,6 +32,51 @@ In other words the simple language is using _duck typing_ (if it looks like a du
 and csimple is using Java type (typesafety). If there is a type error then simple will report this at runtime,
 and with csimple there will be a Java compilation error.
 
+=== Additional CSimple functions
+
+The csimple language includes some additional functions to support common use-cases working with `Collection`, `Map` or array types.
+The following functions _bodyAsIndex_, _headerAsIndex_, and _exchangePropertyAsIndex_ is used for these use-cases as they are typed.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Function |Type |Description
+
+|bodyAsIndex(_type_, _index_) |Type | To be used for collecting the body from an existing `Collection`, `Map` or array (lookup by the index)
+and then converting the body to the given type determined by its classname. The converted body can be null.
+
+|mandatoryBodyAsIndex(_type_, _index_) |Type | To be used for collecting the body from an existing `Collection`, `Map` or array (lookup by the index)
+and then converting the body to the given type determined by its classname. Expects the body to be not null.
+
+|headerAsIndex(_key_, _type_, _index_) |Type | To be used for collecting a header from an existing `Collection`, `Map` or array (lookup by the index)
+and then converting the header value to the given type determined by its classname. The converted header can be null.
+
+|mandatoryHeaderAsIndex(_key_, _type_, _index_) |Type | To be used for collecting a header from an existing `Collection`, `Map` or array (lookup by the index)
+and then converting the header value to the given type determined by its classname. Expects the header to be not null.
+
+|exchangePropertyAsIndex(_key_, _type_, _index_) |Type | To be used for collecting an exchange property from an existing `Collection`, `Map` or array (lookup by the index)
+and then converting the exchange property to the given type determined by its classname. The converted exchange property can be null.
+
+|mandatoryExchangePropertyAsIndex(_key_, _type_, _index_) |Type | To be used for collecting an exchange property from an existing `Collection`, `Map` or array (lookup by the index)
+and then converting the exchange property to the given type determined by its classname. Expects the exchange property to be not null.
+
+|=======================================================================
+
+For example given the following simple expression:
+
+====
+Hello ${body[0].name}
+====
+
+This script has no type information, and the simple language will resolve this at runtime, by introspecting the message body
+and if it's a collection based then lookup the first element, and then invoke a method named `getName` via reflection.
+
+In csimple (compiled) we want to pre compile this and therefore the end user must provide type information with the _bodyAsIndex_ function:
+
+====
+Hello ${bodyAsIndex(com.foo.MyUser, 0).name}
+====
+
+
 == Compilation
 
 The csimple language is parsed into regular Java source code and compiled together with all the other source code, or it can be compiled once during bootstrap via the `camel-csimple-joor` module.
