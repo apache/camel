@@ -27,7 +27,7 @@ import static org.apache.camel.test.junit5.TestSupport.isPlatform;
  * Test to verify that the XMPP consumer will reconnect when the connection is lost. Also verifies that the XMPP
  * producer will lazily re-establish a lost connection.
  */
-public class XmppRobustConnectionTest extends XmppBaseTest {
+public class XmppRobustConnectionTest extends XmppBaseContainerTest {
 
     @Disabled("Since upgrade to smack 4.2.0 the robust connection handling doesn't seem to work, as consumerEndpoint below receives only 5 payloads instead of the expected 9")
     @Test

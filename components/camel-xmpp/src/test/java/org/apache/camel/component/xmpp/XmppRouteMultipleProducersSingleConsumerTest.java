@@ -68,17 +68,17 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends XmppBaseTest {
     }
 
     protected String getProducer1Uri() {
-        return "xmpp://localhost:" + xmppServer.getUrl()
+        return "xmpp://localhost:" + getUrl()
                + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getProducer2Uri() {
-        return "xmpp://localhost:" + xmppServer.getUrl()
+        return "xmpp://localhost:" + getUrl()
                + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&user=camel_producer1&password=secret&serviceName=apache.camel";
     }
 
     protected String getConsumerUri() {
-        return "xmpp://localhost:" + xmppServer.getUrl()
+        return "xmpp://localhost:" + getUrl()
                + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-room@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 }
