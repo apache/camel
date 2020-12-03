@@ -492,10 +492,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${exchangePropertyAsIndex(wicket, OrderLine, '0').getId}", 123);
         assertExpression("${exchangePropertyAsIndex(wicket, OrderLine, '1').getName}", "ActiveMQ in Action");
 
-        assertExpression("${exchangePropertyAs(wicket, OrderLine)[0].getId}", 123);
-        assertExpression("${exchangePropertyAs(wicket, OrderLine)[1].getName}", "ActiveMQ in Action");
         try {
-            assertExpression("${exchangeProperty.wicket[2]}", "");
+            assertExpression("${exchangePropertyAsIndex(wicket, OrderLine, '2')}", "");
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
@@ -506,6 +504,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
             }
         }
         assertExpression("${exchangeProperty.unknown[cool]}", null);
+        assertExpression("${exchangePropertyAsIndex(unknown, OrderLine, 'cool')}", null);
     }
 
     @Test
@@ -564,7 +563,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         } catch (ExpressionIllegalSyntaxException e) {
             assertTrue(e.getMessage()
                     .startsWith(
-                            "Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: exchangeProperty.foobar[bar at location 0"));
+                            "Valid syntax: ${exchangeProperty.name[key]} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -576,7 +575,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         } catch (Exception e) {
             assertTrue(e.getMessage()
                     .startsWith(
-                            "Valid syntax: ${exchangePropertyAs(key, type).OGNL} was: exchangeProperty.foobar[bar at location 0"));
+                            "Valid syntax: ${exchangeProperty.name[key]} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -1036,14 +1035,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
     @Test
     public void testOGNLHeaderMapNotMap() throws Exception {
-        try {
-            assertExpression("${header.foo[bar]}", null);
-            fail("Should have thrown an exception");
-        } catch (RuntimeBeanExpressionException e) {
-            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Key: bar not found in bean: abc of type: java.lang.String using OGNL path [[bar]]",
-                    cause.getMessage());
-        }
+        assertExpression("${header.foo[bar]}", null);
     }
 
     @Test
@@ -1130,7 +1122,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertPredicate("${bodyAs(Animal).getAge} > \"6\"", false);
 
         assertPredicate("${bodyAs(Animal).getAge} < ${bodyAs(Animal).getFriend.getAge}", true);
-        assertPredicate("${bodyAs(Animal).getFriend.isDangerous} == true", true);
+        assertPredicate("${bodyAs(Animal).getFriend.isDangerous()} == true", true);
     }
 
     @Test
@@ -1149,7 +1141,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertPredicate("${bodyAs(Animal).age} > \"6\"", false);
 
         assertPredicate("${bodyAs(Animal).age} < ${bodyAs(Animal).friend.age}", true);
-        assertPredicate("${bodyAs(Animal).friend.dangerous} == true", true);
+        assertPredicate("${bodyAs(Animal).friend.isDangerous()} == true", true);
     }
 
     @Test
@@ -1207,19 +1199,13 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(order);
 
-        assertExpression("${in.body.lines[0].id}", 123);
-        assertExpression("${in.body.lines[0].name}", "Camel in Action");
+        assertExpression("${bodyAs(Order).lines[0].id}", 123);
+        assertExpression("${bodyAs(Order).lines[0].name}", "Camel in Action");
 
-        assertExpression("${in.body.lines[1].id}", 456);
-        assertExpression("${in.body.lines[1].name}", "ActiveMQ in Action");
+        assertExpression("${bodyAs(Order).lines[1].id}", 456);
+        assertExpression("${bodyAs(Order).lines[1].name}", "ActiveMQ in Action");
 
-        assertExpression("${in.body.lines[last].id}", 456);
-        assertExpression("${in.body.lines[last].name}", "ActiveMQ in Action");
-
-        assertExpression("${in.body.lines[last-1].id}", 123);
-        assertExpression("${in.body.lines[last-1].name}", "Camel in Action");
-
-        assertExpression("${in.body.lines.size}", 2);
+        assertExpression("${bodyAs(Order).lines.size()}", 2);
     }
 
     @Test
@@ -1526,14 +1512,12 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         Animal tiger = new Animal("Tony the Tiger", 13);
         exchange.getIn().setBody(tiger);
 
-        assertExpression("${bodyAs(Animal).isDangerous}", "true");
-        assertExpression("${bodyAs(Animal).dangerous}", "true");
+        assertExpression("${bodyAs(Animal).isDangerous()}", "true");
 
         Animal camel = new Animal("Camel", 6);
         exchange.getIn().setBody(camel);
 
-        assertExpression("${bodyAs(Animal).isDangerous}", "false");
-        assertExpression("${bodyAs(Animal).dangerous}", "false");
+        assertExpression("${bodyAs(Animal).isDangerous()}", "false");
     }
 
     @Test
@@ -1555,7 +1539,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getIn().setHeader("max", 4);
         exchange.getIn().setHeader("min", 2);
 
-        assertExpression("${bodyAs(String).substring(${header.min}, ${header.max})}", "me");
+        assertExpression("${bodyAs(String).substring(${headerAs(min, int)}, ${headerAs(max, int)})}", "me");
     }
 
     @Test
@@ -1729,10 +1713,10 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody(new String[] { "foo", "bar" });
         assertExpression("${body[0]}", "foo");
         assertExpression("${body[1]}", "bar");
-        assertExpression("${body.length}", 2);
+        assertExpression("${bodyAs(String[]).length}", 2);
 
         exchange.getIn().setBody(new String[] { "foo", "bar", "beer" });
-        assertExpression("${body.length}", 3);
+        assertExpression("${bodyAs(String[]).length}", 3);
     }
 
     @Test
@@ -1741,7 +1725,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${body[0]}", 65);
         assertExpression("${body[1]}", 66);
         assertExpression("${body[2]}", 67);
-        assertExpression("${body.length}", 3);
+        assertExpression("${bodyAs(byte[]).length}", 3);
     }
 
     @Test
@@ -1750,7 +1734,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${body[0]}", 1);
         assertExpression("${body[1]}", 20);
         assertExpression("${body[2]}", 300);
-        assertExpression("${body.length}", 3);
+        assertExpression("${bodyAs(int[]).length}", 3);
     }
 
     @Test
@@ -1777,8 +1761,8 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     @Test
     public void testSimpleRegexp() throws Exception {
         exchange.getIn().setBody("12345678");
-        assertPredicate("${body} regex \"\\d+\"", true);
-        assertPredicate("${body} regex \"\\w{1,4}\"", false);
+        assertPredicate("${body} regex '\\d+'", true);
+        assertPredicate("${body} regex '\\w{1,4}'", false);
 
         exchange.getIn().setBody("tel:+97444549697");
         assertPredicate("${body} regex \"^(tel:\\+)(974)(44)(\\d+)|^(974)(44)(\\d+)\"", true);
@@ -1921,20 +1905,6 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         assertEquals(1, data.size());
         assertEquals("B", data.get(0));
-    }
-
-    @Test
-    public void testBodyOgnlOnAnimalWithOgnlParams() throws Exception {
-        exchange.getIn().setBody(new Animal("tiger", 13));
-        exchange.getIn().setHeader("friend", new Animal("donkey", 4));
-        assertExpression("${body.setFriend(${header.friend})}", null);
-
-        Animal animal = exchange.getIn().getBody(Animal.class);
-        assertEquals("tiger", animal.getName());
-        assertEquals(13, animal.getAge());
-        assertNotNull(animal.getFriend(), "Should have a friend");
-        assertEquals("donkey", animal.getFriend().getName());
-        assertEquals(4, animal.getFriend().getAge());
     }
 
     @Test
