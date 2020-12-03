@@ -215,7 +215,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     @Test
     public void testBodyExpressionWithArray() throws Exception {
         exchange.getIn().setBody(new MyClass());
-        Expression exp = context.resolveLanguage("csimple").createExpression("${bodyAs(OriginalSimpleTest.MyClass).myArray}");
+        Expression exp = context.resolveLanguage("csimple").createExpression("${bodyAs(MyClass).myArray}");
         assertNotNull(exp);
         Object val = exp.evaluate(exchange, Object.class);
         assertIsInstanceOf(Object[].class, val);
@@ -1298,11 +1298,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(lines);
 
-        assertExpression("${in.body[0].id}", 123);
-        assertExpression("${in.body[0].name}", "Camel in Action");
+        assertExpression("${bodyAsIndex(OrderLine, 0).id}", 123);
+        assertExpression("${bodyAsIndex(OrderLine, 0).name}", "Camel in Action");
 
-        assertExpression("${in.body[1].id}", 456);
-        assertExpression("${in.body[1].name}", "ActiveMQ in Action");
+        assertExpression("${bodyAsIndex(OrderLine, 1).id}", 456);
+        assertExpression("${bodyAsIndex(OrderLine, 1).name}", "ActiveMQ in Action");
     }
 
     @Test
@@ -1315,27 +1315,11 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody(order);
 
         try {
-            assertExpression("${in.body.getLines[3].getId}", 123);
+            assertExpression("${bodyAs(Order).getLines[3].getId}", 123);
             fail("Should have thrown an exception");
-        } catch (RuntimeBeanExpressionException e) {
+        } catch (ExpressionEvaluationException e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Index: 3, Size: 2 out of bounds with List from bean"));
-        }
-
-        try {
-            assertExpression("${in.body.getLines[last-2].getId}", 123);
-            fail("Should have thrown an exception");
-        } catch (RuntimeBeanExpressionException e) {
-            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Index: -1, Size: 2 out of bounds with List from bean"));
-        }
-
-        try {
-            assertExpression("${in.body.getLines[last - XXX].getId}", 123);
-            fail("Should have thrown an exception");
-        } catch (RuntimeBeanExpressionException e) {
-            ExpressionIllegalSyntaxException cause = assertIsInstanceOf(ExpressionIllegalSyntaxException.class, e.getCause());
-            assertEquals("last - XXX", cause.getExpression());
+            assertEquals(cause.getMessage(), "Index 3 out of bounds for length 2");
         }
     }
 
