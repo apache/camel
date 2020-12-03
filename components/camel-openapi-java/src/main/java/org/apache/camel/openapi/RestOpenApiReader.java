@@ -1256,6 +1256,13 @@ public class RestOpenApiReader {
             } else if ("boolean".equals(typeName) || "java.lang.Boolean".equals(typeName)) {
                 prop.format = "boolean";
                 prop.type = "number";
+            } else if ("file".equals(typeName) || "java.io.File".equals(typeName)) {
+                if (openApi instanceof Oas20Document) {
+                    prop.type = "file";
+                } else if (openApi instanceof Oas30Document) {
+                    prop.type = "string";
+                    prop.format = "binary";
+                }
             } else {
                 prop.type = "string";
             }
