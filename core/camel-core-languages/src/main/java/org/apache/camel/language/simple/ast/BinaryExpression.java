@@ -34,6 +34,7 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.support.builder.ValueBuilder;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Represents a binary expression in the AST.
@@ -308,9 +309,13 @@ public class BinaryExpression extends BaseSimpleNode {
         } else if (operator == BinaryOperatorType.NOT_IS) {
             return "!is(exchange, " + leftExp + ", " + rightExp + ")";
         } else if (operator == BinaryOperatorType.REGEX) {
-            return "regexp(exchange, " + leftExp + ", " + rightExp + ")";
+            // regexp is a pain with escapes
+            String escaped = StringHelper.replaceAll(rightExp, "\\", "\\\\");
+            return "regexp(exchange, " + leftExp + ", " + escaped + ")";
         } else if (operator == BinaryOperatorType.NOT_REGEX) {
-            return "!regexp(exchange, " + leftExp + ", " + rightExp + ")";
+            // regexp is a pain with escapes
+            String escaped = StringHelper.replaceAll(rightExp, "\\", "\\\\");
+            return "!regexp(exchange, " + leftExp + ", " + escaped + ")";
         } else if (operator == BinaryOperatorType.IN) {
             return "in(exchange, " + leftExp + ", " + rightExp + ")";
         } else if (operator == BinaryOperatorType.NOT_IN) {
