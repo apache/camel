@@ -563,12 +563,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return answer;
         }
 
-        // body and headers first
+        // body, headers and exchange property first
         answer = createCodeBody(function);
         if (answer != null) {
             return answer;
         }
         answer = createCodeHeader(function);
+        if (answer != null) {
+            return answer;
+        }
+        answer = createCodeExchangeProperty(function);
         if (answer != null) {
             return answer;
         }
@@ -608,76 +612,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
             }
             return "exception(exchange)" + ognlCodeMethods(remainder, null);
-        }
-
-        // exchangePropertyAs
-        remainder = ifStartsWithReturnRemainder("exchangePropertyAs(", function);
-        if (remainder != null) {
-            String keyAndType = StringHelper.before(remainder, ")");
-            if (keyAndType == null) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${exchangePropertyAs(key, type)} was: " + function, token.getIndex());
-            }
-
-            String key = StringHelper.before(keyAndType, ",");
-            String type = StringHelper.after(keyAndType, ",");
-            remainder = StringHelper.after(remainder, ")");
-            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${exchangePropertyAs(key, type)} was: " + function, token.getIndex());
-            }
-            key = StringHelper.removeQuotes(key);
-            key = key.trim();
-            type = StringHelper.removeQuotes(type);
-            if (!type.endsWith(".class")) {
-                type = type + ".class";
-            }
-            type = type.replace('$', '.');
-            type = type.trim();
-            return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
-        }
-
-        // exchange property
-        remainder = ifStartsWithReturnRemainder("exchangeProperty", function);
-        if (remainder != null) {
-            // remove leading character (dot or ?)
-            if (remainder.startsWith(".") || remainder.startsWith("?")) {
-                remainder = remainder.substring(1);
-            }
-            // remove starting and ending brackets
-            if (remainder.startsWith("[") && remainder.endsWith("]")) {
-                remainder = remainder.substring(1, remainder.length() - 1);
-            }
-            // remove quotes from key
-            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
-            key = key.trim();
-
-            // validate syntax
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(key);
-            if (invalid) {
-                throw new SimpleParserException(
-                        "Valid syntax: ${exchangeProperty.name[key]} was: " + function, token.getIndex());
-            }
-
-            // it is an index?
-            String index = null;
-            if (key.endsWith("]")) {
-                index = StringHelper.between(key, "[", "]");
-                if (index != null) {
-                    key = StringHelper.before(key, "[");
-                }
-            }
-            if (index != null) {
-                index = StringHelper.removeLeadingAndEndingQuotes(index);
-                return "exchangePropertyAsIndex(exchange, Object.class, \"" + key + "\", \"" + index + "\")";
-            } else if (OgnlHelper.isValidOgnlExpression(remainder)) {
-                // ognl based exchange property must be typed
-                throw new SimpleParserException(
-                        "Valid syntax: ${exchangePropertyAs(key, type)} was: " + function, token.getIndex());
-            } else {
-                // regular property
-                return "exchangeProperty(exchange, \"" + key + "\")";
-            }
         }
 
         // system property
@@ -1123,8 +1057,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "message.getHeaders()";
         }
 
-        // TODO: exchangePropertyAsIndex
-
         // in header function
         remainder = ifStartsWithReturnRemainder("in.headers", function);
         if (remainder == null) {
@@ -1188,6 +1120,125 @@ public class SimpleFunctionExpression extends LiteralExpression {
             } else {
                 // regular header
                 return "header(message, \"" + key + "\")";
+            }
+        }
+
+        return null;
+    }
+
+    private String createCodeExchangeProperty(final String function) {
+        // exchangePropertyAsIndex
+        String remainder = ifStartsWithReturnRemainder("exchangePropertyAsIndex(", function);
+        if (remainder != null) {
+            String keyTypeAndIndex = StringHelper.before(remainder, ")");
+            if (keyTypeAndIndex == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAsIndex(key, type, index)} was: " + function, token.getIndex());
+            }
+            String[] parts = keyTypeAndIndex.split(",");
+            if (parts.length != 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAsIndex(key, type, index)} was: " + function, token.getIndex());
+            }
+            String key = parts[0];
+            String type = parts[1];
+            String index = parts[2];
+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type) || ObjectHelper.isEmpty(index)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAsIndex(key, type, index)} was: " + function, token.getIndex());
+            }
+            key = StringHelper.removeQuotes(key);
+            key = key.trim();
+            type = StringHelper.removeQuotes(type);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.replace('$', '.');
+            type = type.trim();
+            index = StringHelper.removeQuotes(index);
+            index = index.trim();
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${exchangePropertyAsIndex(key, type, index).OGNL} was: " + function,
+                            token.getIndex());
+                }
+                return "exchangePropertyAsIndex(exchange, " + type + ", \"" + key + "\", \"" + index + "\")"
+                       + ognlCodeMethods(remainder, type);
+            } else {
+                return "exchangePropertyAsIndex(exchange, " + type + ", \"" + key + "\", \"" + index + "\")";
+            }
+        }
+
+        // exchangePropertyAs
+        remainder = ifStartsWithReturnRemainder("exchangePropertyAs(", function);
+        if (remainder != null) {
+            String keyAndType = StringHelper.before(remainder, ")");
+            if (keyAndType == null) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAs(key, type)} was: " + function, token.getIndex());
+            }
+
+            String key = StringHelper.before(keyAndType, ",");
+            String type = StringHelper.after(keyAndType, ",");
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAs(key, type)} was: " + function, token.getIndex());
+            }
+            key = StringHelper.removeQuotes(key);
+            key = key.trim();
+            type = StringHelper.removeQuotes(type);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.replace('$', '.');
+            type = type.trim();
+            return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
+        }
+
+        // exchange property
+        remainder = ifStartsWithReturnRemainder("exchangeProperty", function);
+        if (remainder != null) {
+            // remove leading character (dot or ?)
+            if (remainder.startsWith(".") || remainder.startsWith("?")) {
+                remainder = remainder.substring(1);
+            }
+            // remove starting and ending brackets
+            if (remainder.startsWith("[") && remainder.endsWith("]")) {
+                remainder = remainder.substring(1, remainder.length() - 1);
+            }
+            // remove quotes from key
+            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
+            key = key.trim();
+
+            // validate syntax
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(key);
+            if (invalid) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangeProperty.name[key]} was: " + function, token.getIndex());
+            }
+
+            // it is an index?
+            String index = null;
+            if (key.endsWith("]")) {
+                index = StringHelper.between(key, "[", "]");
+                if (index != null) {
+                    key = StringHelper.before(key, "[");
+                }
+            }
+            if (index != null) {
+                index = StringHelper.removeLeadingAndEndingQuotes(index);
+                return "exchangePropertyAsIndex(exchange, Object.class, \"" + key + "\", \"" + index + "\")";
+            } else if (OgnlHelper.isValidOgnlExpression(remainder)) {
+                // ognl based exchange property must be typed
+                throw new SimpleParserException(
+                        "Valid syntax: ${exchangePropertyAs(key, type)} was: " + function, token.getIndex());
+            } else {
+                // regular property
+                return "exchangeProperty(exchange, \"" + key + "\")";
             }
         }
 
@@ -1333,6 +1384,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 String index = StringHelper.betweenOuterPair(m, '[', ']');
                 if (index != null) {
                     m = StringHelper.before(m, "[");
+                }
+
+                // special for length on arrays
+                if (m != null && m.equals("length")) {
+                    if (type != null && type.contains("[]")) {
+                        sb.append(".length");
+                        continue;
+                    }
                 }
 
                 // shorthand getter syntax: .name -> .getName()

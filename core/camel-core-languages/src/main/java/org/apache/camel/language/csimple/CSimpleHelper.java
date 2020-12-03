@@ -18,6 +18,7 @@ package org.apache.camel.language.csimple;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -655,34 +656,48 @@ public final class CSimpleHelper {
     }
 
     private static Object doObjectAsIndex(CamelContext context, Object obj, String key) {
-        if (obj instanceof Map) {
-            Map map = (Map) obj;
-            obj = map.get(key);
+        if (obj != null && obj.getClass().isArray()) {
+            int size = Array.getLength(obj);
+            Integer num = indexAsNumber(context, key, size);
+            if (num != null && num >= 0 && size > 0 && size > num - 1) {
+                obj = Array.get(obj, num);
+            }
         } else if (obj instanceof List) {
             List list = (List) obj;
-            Integer num;
-            if (key.startsWith("last")) {
-                num = list.size() - 1;
-
-                // maybe its an expression to subtract a number after last
-                String after = StringHelper.after(key, "-");
-                if (after != null) {
-                    Integer redux
-                            = context.getTypeConverter().tryConvertTo(Integer.class, after.trim());
-                    if (redux != null) {
-                        num -= redux;
-                    } else {
-                        throw new ExpressionIllegalSyntaxException(key);
-                    }
-                }
-            } else {
-                num = context.getTypeConverter().tryConvertTo(Integer.class, key);
-            }
+            Integer num = indexAsNumber(context, key, list.size());
             if (num != null && num >= 0 && !list.isEmpty() && list.size() > num - 1) {
                 obj = list.get(num);
             }
+        } else if (obj instanceof Map) {
+            Map map = (Map) obj;
+            obj = map.get(key);
+        } else {
+            // object not a collection type
+            return null;
         }
         return obj;
+    }
+
+    private static Integer indexAsNumber(CamelContext context, String key, int size) {
+        Integer num;
+        if (key.startsWith("last")) {
+            num = size - 1;
+
+            // maybe its an expression to subtract a number after last
+            String after = StringHelper.after(key, "-");
+            if (after != null) {
+                Integer redux
+                        = context.getTypeConverter().tryConvertTo(Integer.class, after.trim());
+                if (redux != null) {
+                    num -= redux;
+                } else {
+                    throw new ExpressionIllegalSyntaxException(key);
+                }
+            }
+        } else {
+            num = context.getTypeConverter().tryConvertTo(Integer.class, key);
+        }
+        return num;
     }
 
 }
