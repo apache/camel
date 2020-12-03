@@ -59,14 +59,14 @@ public class XmppMultiUserChatTest extends XmppBaseTest {
 
         // here on purpose we provide the room query parameter without the domain name as 'camel-test', and Camel
         // will resolve it properly to 'camel-test@conference.apache.camel'
-        return "xmpp://localhost:" + xmppServer.getUrl()
+        return "xmpp://localhost:" + getUrl()
                + "/?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_producer@apache.camel&password=secret&nickname=camel_producer";
     }
 
     protected String getConsumerUri() {
         // however here we provide the room query parameter as fully qualified, including the domain name as
         // 'camel-test@conference.apache.camel'
-        return "xmpp://localhost:" + xmppServer.getUrl()
+        return "xmpp://localhost:" + getUrl()
                + "/?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer@apache.camel&password=secret&nickname=camel_consumer";
     }
 }

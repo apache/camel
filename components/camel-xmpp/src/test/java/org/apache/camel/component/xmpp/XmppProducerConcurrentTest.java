@@ -56,7 +56,7 @@ public class XmppProducerConcurrentTest extends XmppBaseTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("xmpp://" + xmppServer.getUrl()
+                        .to("xmpp://" + getUrl()
                             + "?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_consumer&password=secret&serviceName=apache.camel")
                         .to("mock:result");
             }

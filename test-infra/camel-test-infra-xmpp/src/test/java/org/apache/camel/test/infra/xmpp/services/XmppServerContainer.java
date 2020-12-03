@@ -14,20 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.test.infra.xmpp.services;
 
 import java.io.IOException;
-import java.net.*;
-import java.security.KeyStore;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-
-import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ObjectHelper;
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
-import org.jxmpp.jid.impl.JidCreate;
+import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -39,42 +32,19 @@ public class XmppServerContainer extends GenericContainer {
 
     private static final String CONTAINER_NAME = "vysper-wrapper";
     private static final String VYSPER_IMAGE = "5mattho/vysper-wrapper:0.3";
-    private static final Integer PORT_DEFAULT = 5222;
     private static final Integer PORT_REST = 8080;
 
     public XmppServerContainer() {
         super(VYSPER_IMAGE);
         setWaitStrategy(Wait.forListeningPort());
-        withExposedPorts(PORT_DEFAULT, PORT_REST);
+        withExposedPorts(XmppProperties.PORT_DEFAULT, PORT_REST);
         withNetworkAliases(CONTAINER_NAME);
         withLogConsumer(new Slf4jLogConsumer(LOGGER));
         waitingFor(Wait.forLogMessage(".*Started Application in.*", 1));
     }
 
     public String getUrl() {
-        return String.format("%s:%d", this.getContainerIpAddress(), this.getMappedPort(PORT_DEFAULT));
-    }
-
-    public void bindSSLContextTo(Registry registry) throws Exception {
-        KeyStore keyStore = KeyStore.getInstance("JKS");
-
-        keyStore.load(ObjectHelper.loadResourceAsStream("bogus_mina_tls.cert"), "boguspw".toCharArray());
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init(keyStore);
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
-
-        ConnectionConfiguration connectionConfig = XMPPTCPConnectionConfiguration.builder()
-                .setXmppDomain(JidCreate.domainBareFrom("apache.camel"))
-                .setHostAddress(InetAddress.getByName(this.getContainerIpAddress()))
-                .setPort(this.getMappedPort(PORT_DEFAULT))
-                //                .setHostAddress(InetAddress.getLocalHost())
-                //                .setPort(PORT_DEFAULT)
-                .setCustomSSLContext(sslContext)
-                .setHostnameVerifier((hostname, session) -> true)
-                .build();
-
-        registry.bind("customConnectionConfig", connectionConfig);
+        return String.format("%s:%d", this.getContainerIpAddress(), this.getMappedPort(XmppProperties.PORT_DEFAULT));
     }
 
     public void stopXmppEndpoint() throws IOException {
@@ -92,5 +62,9 @@ public class XmppServerContainer extends GenericContainer {
         conn.setRequestMethod("GET");
         conn.getInputStream();
         conn.disconnect();
+    }
+
+    public int getPortDefault() {
+        return getMappedPort(XmppProperties.PORT_DEFAULT);
     }
 }

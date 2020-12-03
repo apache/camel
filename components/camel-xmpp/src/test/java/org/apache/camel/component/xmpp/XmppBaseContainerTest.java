@@ -14,28 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.xmpp;
 
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.infra.xmpp.services.XmppService;
-import org.apache.camel.test.infra.xmpp.services.XmppServiceFactory;
+import org.apache.camel.test.infra.xmpp.services.XmppServerContainer;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class XmppBaseTest extends CamelTestSupport {
-    @RegisterExtension
-    static XmppService service = XmppServiceFactory.createService();
+public class XmppBaseContainerTest extends CamelTestSupport {
+    protected XmppServerContainer xmppServer = new XmppServerContainer();
 
     @Override
     protected Registry createCamelRegistry() throws Exception {
         Registry registry = new SimpleRegistry();
 
-        XmppTestUtil.bindSSLContextTo(registry, service.host(), service.port());
+        XmppTestUtil.bindSSLContextTo(registry, xmppServer.getHost(), xmppServer.getPortDefault());
         return registry;
-    }
-
-    protected String getUrl() {
-        return service.getUrl();
     }
 }

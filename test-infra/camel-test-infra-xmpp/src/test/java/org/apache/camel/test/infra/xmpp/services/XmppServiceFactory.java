@@ -14,28 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.test.infra.xmpp.services;
 
-import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.infra.xmpp.services.XmppService;
-import org.apache.camel.test.infra.xmpp.services.XmppServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class XmppBaseTest extends CamelTestSupport {
-    @RegisterExtension
-    static XmppService service = XmppServiceFactory.createService();
+public final class XmppServiceFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(XmppServiceFactory.class);
 
-    @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
+    private XmppServiceFactory() {
 
-        XmppTestUtil.bindSSLContextTo(registry, service.host(), service.port());
-        return registry;
     }
 
-    protected String getUrl() {
-        return service.getUrl();
+    public static XmppService createService() {
+        String instanceType = System.getProperty("xmpp.instance.type");
+
+        if (instanceType == null || instanceType.equals("local-xmpp-container")) {
+            return new XmppLocalContainerService();
+        }
+
+        if (instanceType.equals("remote")) {
+            return new XmppRemoteService();
+        }
+
+        LOG.error("Xmpp instance must be one of 'local-xmpp-container' or 'remote");
+        throw new UnsupportedOperationException("Invalid Xmpp instance type");
     }
 }
