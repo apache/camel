@@ -53,6 +53,7 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.BooleanProperty;
 import io.swagger.models.properties.ByteArrayProperty;
 import io.swagger.models.properties.DoubleProperty;
+import io.swagger.models.properties.FileProperty;
 import io.swagger.models.properties.FloatProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.LongProperty;
@@ -739,6 +740,8 @@ public class RestSwaggerReader {
                 prop = new DoubleProperty();
             } else if ("boolean".equals(typeName) || "java.lang.Boolean".equals(typeName)) {
                 prop = new BooleanProperty();
+            } else if ("file".equals(typeName) || "java.io.File".equals(typeName)) {
+                prop = new FileProperty();
             } else {
                 prop = new StringProperty(typeName);
             }
