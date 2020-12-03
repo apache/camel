@@ -99,7 +99,7 @@ public class PulsarConsumerReadCompactedTest extends PulsarTestSupport {
         final Topics topics = givenPulsarAdmin().topics();
 
         topics.triggerCompaction(TOPIC_URI);
-        while (!topics.compactionStatus(TOPIC_URI).status.equals(LongRunningProcessStatus.Status.RUNNING)) {
+        while (topics.compactionStatus(TOPIC_URI).status.equals(LongRunningProcessStatus.Status.RUNNING)) {
             LOGGER.info("Waiting for compaction completeness...");
             Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
         }
