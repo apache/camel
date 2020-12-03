@@ -14,28 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.test.infra.xmpp.services;
 
-import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.infra.xmpp.services.XmppService;
-import org.apache.camel.test.infra.xmpp.services.XmppServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.infra.common.services.TestService;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class XmppBaseTest extends CamelTestSupport {
-    @RegisterExtension
-    static XmppService service = XmppServiceFactory.createService();
+/**
+ * Test infra service for Xmpp
+ */
+public interface XmppService extends BeforeAllCallback, AfterAllCallback, TestService {
+    String host();
+
+    int port();
+
+    String getUrl();
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
-
-        XmppTestUtil.bindSSLContextTo(registry, service.host(), service.port());
-        return registry;
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
+        initialize();
     }
 
-    protected String getUrl() {
-        return service.getUrl();
+    @Override
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        shutdown();
     }
 }

@@ -14,28 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.xmpp;
+package org.apache.camel.test.infra.xmpp.services;
 
-import org.apache.camel.spi.Registry;
-import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.test.infra.xmpp.services.XmppService;
-import org.apache.camel.test.infra.xmpp.services.XmppServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 
-public class XmppBaseTest extends CamelTestSupport {
-    @RegisterExtension
-    static XmppService service = XmppServiceFactory.createService();
+public class XmppRemoteService implements XmppService {
 
     @Override
-    protected Registry createCamelRegistry() throws Exception {
-        Registry registry = new SimpleRegistry();
-
-        XmppTestUtil.bindSSLContextTo(registry, service.host(), service.port());
-        return registry;
+    public void registerProperties() {
+        // NO-OP
     }
 
-    protected String getUrl() {
-        return service.getUrl();
+    @Override
+    public void initialize() {
+        registerProperties();
+    }
+
+    @Override
+    public void shutdown() {
+        // NO-OP
+    }
+
+    @Override
+    public String getUrl() {
+        return System.getProperty(XmppProperties.XMPP_URL);
+    }
+
+    @Override
+    public String host() {
+        return System.getProperty(XmppProperties.XMPP_HOST);
+    }
+
+    @Override
+    public int port() {
+        String port = System.getProperty(XmppProperties.XMPP_PORT);
+
+        if (port == null) {
+            return XmppProperties.PORT_DEFAULT;
+        }
+
+        return Integer.valueOf(port);
     }
 }

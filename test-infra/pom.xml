@@ -62,5 +62,6 @@
         <module>camel-test-infra-nats</module>
         <module>camel-test-infra-nsq</module>
         <module>camel-test-infra-pulsar</module>
+        <module>camel-test-infra-xmpp</module>
     </modules>
 </project>

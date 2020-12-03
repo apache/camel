@@ -97,7 +97,7 @@ public class XmppRouteTest extends XmppBaseTest {
     }
 
     protected String getUriPrefix() {
-        return "xmpp://" + xmppServer.getUrl()
+        return "xmpp://" + getUrl()
                + "/camel?connectionConfig=#customConnectionConfig&room=camel-anon&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 

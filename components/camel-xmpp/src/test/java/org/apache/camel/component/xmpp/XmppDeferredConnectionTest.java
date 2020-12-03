@@ -30,16 +30,18 @@ import org.slf4j.LoggerFactory;
  * expected.
  */
 
-public class XmppDeferredConnectionTest extends XmppBaseTest {
+public class XmppDeferredConnectionTest extends XmppBaseContainerTest {
     private static final Logger LOG = LoggerFactory.getLogger(XmppDeferredConnectionTest.class);
 
     /**
      * Ensures that the XMPP server instance is created and 'stopped' before the camel routes are initialized
      */
     @Override
-    public void doPreSetup() {
+    public void doPreSetup() throws Exception {
         super.doPreSetup();
         try {
+            xmppServer.start();
+
             xmppServer.stopXmppEndpoint();
         } catch (IOException e) {
             LOG.warn("Failed to stop XMPP endpoint: {}", e.getMessage(), e);

@@ -70,12 +70,12 @@ public class XmppRouteChatTest extends XmppBaseTest {
     }
 
     protected String getProducerUri() {
-        return "xmpp://" + xmppServer.getUrl()
+        return "xmpp://" + getUrl()
                + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-producer@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel";
     }
 
     protected String getConsumerUri() {
-        return "xmpp://" + xmppServer.getUrl()
+        return "xmpp://" + getUrl()
                + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test-consumer@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel";
     }
 
