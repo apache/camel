@@ -656,7 +656,7 @@ for details on how to generate the DTO.
 
 
 // component options: START
-The Salesforce component supports 73 options, which are listed below.
+The Salesforce component supports 74 options, which are listed below.
 
 
 
@@ -669,6 +669,7 @@ The Salesforce component supports 73 options, which are listed below.
 | *apiVersion* (common) | Salesforce API version. | 50.0 | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
+| *compositeMethod* (common) | Composite (raw) method. |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
 | *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
 | *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
@@ -768,7 +769,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (44 parameters):
+=== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -780,6 +781,7 @@ with the following path and query parameters:
 | *apiVersion* (common) | Salesforce API version. | 50.0 | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
+| *compositeMethod* (common) | Composite (raw) method. |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
 | *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
 | *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat

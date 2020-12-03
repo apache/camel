@@ -50,6 +50,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
         case "clientSecret": target.setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "compositemethod":
+        case "compositeMethod": getOrCreateConfig(target).setCompositeMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "config": target.setConfig(property(camelContext, org.apache.camel.component.salesforce.SalesforceEndpointConfig.class, value)); return true;
         case "contenttype":
         case "contentType": getOrCreateConfig(target).setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
@@ -197,6 +199,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "clientId": return java.lang.String.class;
         case "clientsecret":
         case "clientSecret": return java.lang.String.class;
+        case "compositemethod":
+        case "compositeMethod": return java.lang.String.class;
         case "config": return org.apache.camel.component.salesforce.SalesforceEndpointConfig.class;
         case "contenttype":
         case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
@@ -345,6 +349,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "clientId": return target.getClientId();
         case "clientsecret":
         case "clientSecret": return target.getClientSecret();
+        case "compositemethod":
+        case "compositeMethod": return getOrCreateConfig(target).getCompositeMethod();
         case "config": return target.getConfig();
         case "contenttype":
         case "contentType": return getOrCreateConfig(target).getContentType();
