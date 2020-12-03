@@ -1394,6 +1394,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     }
                 }
 
+                // single quotes for string literals should be replaced as double quotes
+                if (m != null) {
+                    m = OgnlHelper.methodAsDoubleQuotes(m);
+                }
+
                 // shorthand getter syntax: .name -> .getName()
                 if (m != null && !m.isEmpty()) {
                     // a method so append with a dot

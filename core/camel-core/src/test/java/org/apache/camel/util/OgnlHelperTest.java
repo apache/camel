@@ -136,4 +136,13 @@ public class OgnlHelperTest {
         assertEquals(".bar(true, ${header.bar[0]?.code})", methods.get(1));
     }
 
+    @Test
+    public void testMethodAsDoubleQuotes() throws Exception {
+        String out = OgnlHelper.methodAsDoubleQuotes("${bodyAs(String).compareTo('It\\'s a great World')}");
+        assertEquals("${bodyAs(String).compareTo(\"It's a great World\")}", out);
+
+        out = OgnlHelper.methodAsDoubleQuotes("${bodyAs(String).compareTo(\"It's a great World\")}");
+        assertEquals("${bodyAs(String).compareTo(\"It's a great World\")}", out);
+    }
+
 }

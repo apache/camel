@@ -1583,17 +1583,24 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     public void testBodyOgnlSpaces() throws Exception {
         exchange.getIn().setBody("Hello World");
 
-        // no quotes, which is discouraged to use
-        // TODO: single quotes as double quotes
-        // assertExpression("${bodyAs(String).compareTo('Hello World')}", 0);
-
+        assertExpression("${bodyAs(String).compareTo('Hello World')}", 0);
         assertExpression("${bodyAs(String).compareTo(\"Hello World\")}", 0);
+
+        assertExpression("${bodyAs(String).compareTo('Hello World')}", 0);
         assertExpression("${bodyAs(String).compareTo(${bodyAs(String)})}", 0);
-        assertExpression("${bodyAs(String).compareTo(\"foo\")}", "Hello World".compareTo("foo"));
+        assertExpression("${bodyAs(String).compareTo('foo')}", "Hello World".compareTo("foo"));
 
         assertExpression("${bodyAs(String).compareTo( \"Hello World\" )}", 0);
         assertExpression("${bodyAs(String).compareTo( ${bodyAs(String)} )}", 0);
         assertExpression("${bodyAs(String).compareTo( \"foo\" )}", "Hello World".compareTo("foo"));
+    }
+
+    @Test
+    public void testBodySingleQuote() throws Exception {
+        exchange.getIn().setBody("It's a great World");
+
+        assertExpression("${bodyAs(String).compareTo(\"It's a great World\")}", 0);
+        assertExpression("${bodyAs(String).compareTo('It\\'s a great World')}", 0);
     }
 
     @Test
