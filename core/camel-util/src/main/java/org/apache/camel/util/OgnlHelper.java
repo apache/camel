@@ -276,4 +276,38 @@ public final class OgnlHelper {
         return methods;
     }
 
+    public static String methodAsDoubleQuotes(String ognl) {
+        StringBuilder sb = new StringBuilder();
+
+        int singleBracketCnt = 0;
+        int doubleBracketCnt = 0;
+        for (int i = 0; i < ognl.length(); i++) {
+            char ch = ognl.charAt(i);
+            char next = i < ognl.length() - 1 ? ognl.charAt(i + 1) : 0;
+
+            if (ch == '\\' && next == '\'') {
+                if (singleBracketCnt % 2 != 0) {
+                    // its an escaped single quote inside an existing quote
+                    // then unescape it
+                    sb.append('\'');
+                    // and skip over to next
+                    i++;
+                    continue;
+                }
+            }
+
+            if (doubleBracketCnt % 2 == 0 && ch == '\'') {
+                singleBracketCnt++;
+                sb.append('"');
+            } else if (singleBracketCnt % 2 == 0 && ch == '"') {
+                doubleBracketCnt++;
+                sb.append('"');
+            } else {
+                sb.append(ch);
+            }
+        }
+
+        return sb.toString();
+    }
+
 }
