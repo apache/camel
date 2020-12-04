@@ -14,16 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.couchdb;
+package org.apache.camel.test.infra.couchdb.services;
 
-import org.apache.camel.test.infra.couchdb.services.CouchDbService;
-import org.apache.camel.test.infra.couchdb.services.CouchDbServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.infra.common.services.TestService;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class CouchDbTestSupport extends CamelTestSupport {
-    @SuppressWarnings("unused")
-    @RegisterExtension
-    static CouchDbService service = CouchDbServiceFactory.createService();
+/**
+ * Test infra service for CouchDb
+ */
+public interface CouchDbService extends BeforeAllCallback, AfterAllCallback, TestService {
 
+    String host();
+
+    int port();
+
+    default String getServiceAddress() {
+        return String.format("%s:%d", host(), port());
+    }
+
+    @Override
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
+        initialize();
+    }
+
+    @Override
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        shutdown();
+    }
 }

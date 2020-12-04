@@ -14,16 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.couchdb;
+package org.apache.camel.test.infra.couchdb.services;
 
-import org.apache.camel.test.infra.couchdb.services.CouchDbService;
-import org.apache.camel.test.infra.couchdb.services.CouchDbServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+import org.apache.camel.test.infra.couchdb.common.CouchDbProperties;
 
-public class CouchDbTestSupport extends CamelTestSupport {
-    @SuppressWarnings("unused")
-    @RegisterExtension
-    static CouchDbService service = CouchDbServiceFactory.createService();
+public class CouchDbRemoteService implements CouchDbService {
+
+    @Override
+    public void registerProperties() {
+        // NO-OP
+    }
+
+    @Override
+    public void initialize() {
+        registerProperties();
+    }
+
+    @Override
+    public void shutdown() {
+        // NO-OP
+    }
+
+    @Override
+    public String host() {
+        return System.getProperty(CouchDbProperties.HOST);
+    }
+
+    @Override
+    public int port() {
+        String port = System.getProperty(CouchDbProperties.PORT);
+
+        if (port == null) {
+            return CouchDbProperties.DEFAULT_PORT;
+        }
+
+        return Integer.valueOf(port);
+    }
 
 }
