@@ -54,7 +54,7 @@ public class CouchDbCrudTest extends CouchDbTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         final String couchDbUrlFormat
-                = "couchdb:http://" + getCouchDbHost() + ":" + getCouchDbPort() + "/camelcouchdb?createDatabase=true%s";
+                = "couchdb:http://{{couchdb.service.address}}/camelcouchdb?createDatabase=true%s";
 
         return new RouteBuilder() {
             @Override

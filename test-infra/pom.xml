@@ -65,5 +65,6 @@
         <module>camel-test-infra-xmpp</module>
         <module>camel-test-infra-zookeeper</module>
         <module>camel-test-infra-postgres</module>
+        <module>camel-test-infra-couchdb</module>
     </modules>
 </project>
