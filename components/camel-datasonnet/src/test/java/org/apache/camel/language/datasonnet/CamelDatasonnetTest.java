@@ -35,7 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CamelDatasonnetTest extends CamelSpringTestSupport {
-    private MockEndpoint mock;// = getMockEndpoint("mock:direct:end");
+    private MockEndpoint mock;
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
