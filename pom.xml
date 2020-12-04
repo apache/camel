@@ -130,8 +130,8 @@
         <jaxb-xjc-version>2.3.3</jaxb-xjc-version>
         <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
-        <gmavenplus-plugin-version>1.10.1</gmavenplus-plugin-version>
-        <groovy-version>3.0.6</groovy-version>
+        <gmavenplus-plugin-version>1.11.1</gmavenplus-plugin-version>
+        <groovy-version>3.0.7</groovy-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
     </properties>
