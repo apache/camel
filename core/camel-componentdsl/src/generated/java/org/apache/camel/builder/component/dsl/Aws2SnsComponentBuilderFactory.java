@@ -289,7 +289,7 @@ public interface Aws2SnsComponentBuilderFactory {
             return this;
         }
         /**
-         * Set whether the SQS client should expect to load credentials on an
+         * Set whether the SNS client should expect to load credentials on an
          * AWS infra instance or to expect static credentials to be passed in.
          * 
          * The option is a: <code>boolean</code> type.
