@@ -63,5 +63,6 @@
         <module>camel-test-infra-nsq</module>
         <module>camel-test-infra-pulsar</module>
         <module>camel-test-infra-xmpp</module>
+        <module>camel-test-infra-zookeeper</module>
     </modules>
 </project>

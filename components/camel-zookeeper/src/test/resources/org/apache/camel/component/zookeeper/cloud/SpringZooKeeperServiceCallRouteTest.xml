@@ -34,7 +34,7 @@
     <route id="scall">
       <from uri="direct:start"/>
       <serviceCall name="http-service" component="http">
-        <zookeeperServiceDiscovery nodes="{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}" basePath="/camel"/>
+        <zookeeperServiceDiscovery nodes="{{zookeeper.connection.string}}" basePath="/camel"/>
       </serviceCall>
       <to uri="mock:result"/>
     </route>

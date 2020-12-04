@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper;
+package org.apache.camel.test.infra.zookeeper.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,33 +62,7 @@ public class ZooKeeperContainer extends GenericContainer {
         }
     }
 
-    @Override
-    public void start() {
-        LOGGER.info("****************************************");
-        LOGGER.info("* Starting ZooKeeper container         *");
-        LOGGER.info("****************************************");
-
-        super.start();
-
-        LOGGER.info("****************************************");
-        LOGGER.info("* ZooKeeper container started          *");
-        LOGGER.info("****************************************");
-    }
-
-    @Override
-    public void stop() {
-        LOGGER.info("****************************************");
-        LOGGER.info("* Stopping ZooKeeper container         *");
-        LOGGER.info("****************************************");
-
-        super.stop();
-
-        LOGGER.info("****************************************");
-        LOGGER.info("* ZooKeeper container stopped          *");
-        LOGGER.info("****************************************");
-    }
-
     public String getConnectionString() {
-        return getContainerIpAddress() + ":" + getMappedPort(CLIENT_PORT);
+        return String.format("%s:%d", getContainerIpAddress(), getMappedPort(CLIENT_PORT));
     }
 }
