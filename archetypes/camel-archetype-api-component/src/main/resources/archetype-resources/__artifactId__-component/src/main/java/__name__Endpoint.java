@@ -18,6 +18,7 @@ package ${package};
 
 import java.util.Map;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -40,7 +41,7 @@ import ${package}.internal.${name}PropertiesHelper;
  * TODO: Update one line description above what the component does.
  */
 @UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", 
-             consumerClass = ${name}Consumer.class, label = "custom")
+             category = {Category.API})
 public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}Configuration> {
 
     @UriPath @Metadata(required = true)

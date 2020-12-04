@@ -16,6 +16,7 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +34,7 @@ import java.util.concurrent.ExecutorService;
  * TODO: Update one line description above what the component does.
  */
 @UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name",
-             consumerClass = ${name}Consumer.class, label = "custom")
+             category = {Category.JAVA})
 public class ${name}Endpoint extends DefaultEndpoint {
     @UriPath @Metadata(required = true)
     private String name;
