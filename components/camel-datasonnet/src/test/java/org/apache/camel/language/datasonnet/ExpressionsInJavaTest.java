@@ -16,6 +16,10 @@
  */
 package org.apache.camel.language.datasonnet;
 
+import java.util.Collections;
+import java.util.List;
+
+import com.datasonnet.document.MediaTypes;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -38,6 +42,9 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
     @Produce("direct:chainExpressions")
     protected ProducerTemplate chainExpressionsProducer;
 
+    @Produce("direct:fluentBuilder")
+    protected ProducerTemplate fluentBuilderProducer;
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -56,6 +63,28 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
                                         .setBody(datasonnet("'Good bye, ' + payload", String.class))
                                     .end()
                                 .to("mock:direct:response");
+
+                from("direct:fluentBuilder")
+                        // no optional params, look in header
+                        .setHeader(Exchange.CONTENT_TYPE, constant(MediaTypes.APPLICATION_JAVA_VALUE))
+                        .setBody(DatasonnetExpression.builder("payload"))
+                        .removeHeader(Exchange.CONTENT_TYPE)
+
+                        // override output
+                        .transform(DatasonnetExpression.builder("payload", String.class)
+                                .outputMediaType(MediaTypes.APPLICATION_JSON))
+
+                        // override input
+                        .transform(
+                                DatasonnetExpression.builder("payload", List.class).bodyMediaType(MediaTypes.APPLICATION_JSON))
+
+                        // override both
+                        .setHeader(Exchange.CONTENT_TYPE, constant(MediaTypes.APPLICATION_JSON_VALUE))
+                        .setBody(constant("<root>some-value</root>"))
+                        .transform(DatasonnetExpression.builder("payload.root['$']", String.class)
+                                .bodyMediaType(MediaTypes.APPLICATION_XML)
+                                .outputMediaType(MediaTypes.APPLICATION_JSON))
+                        .to("mock:direct:response");
             }
         };
     }
@@ -76,5 +105,14 @@ public class ExpressionsInJavaTest extends CamelTestSupport {
         Exchange exchange = endEndpoint.assertExchangeReceived(endEndpoint.getReceivedCounter() - 1);
         String response = exchange.getIn().getBody().toString();
         JSONAssert.assertEquals("{\"hello\":\"World\"}", response, true);
+    }
+
+    @Test
+    public void testFluentBuilder() throws Exception {
+        endEndpoint.expectedMessageCount(1);
+        fluentBuilderProducer.sendBody(Collections.singletonList("datasonnet"));
+        Exchange exchange = endEndpoint.assertExchangeReceived(endEndpoint.getReceivedCounter() - 1);
+        String response = exchange.getMessage().getBody(String.class);
+        assertEquals("\"some-value\"", response);
     }
 }

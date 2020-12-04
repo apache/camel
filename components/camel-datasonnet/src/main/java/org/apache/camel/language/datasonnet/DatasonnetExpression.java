@@ -64,6 +64,28 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         this.metaExpression = expression;
     }
 
+    public static DatasonnetExpression builder(String expression) {
+        DatasonnetExpression answer = new DatasonnetExpression(expression);
+        return answer;
+    }
+
+    public static DatasonnetExpression builder(Expression expression) {
+        DatasonnetExpression answer = new DatasonnetExpression(expression);
+        return answer;
+    }
+
+    public static DatasonnetExpression builder(String expression, Class<?> resultType) {
+        DatasonnetExpression answer = new DatasonnetExpression(expression);
+        answer.setResultType(resultType);
+        return answer;
+    }
+
+    public static DatasonnetExpression builder(Expression expression, Class<?> resultType) {
+        DatasonnetExpression answer = new DatasonnetExpression(expression);
+        answer.setResultType(resultType);
+        return answer;
+    }
+
     @Override
     public boolean matches(Exchange exchange) {
         this.outputMediaType = MediaTypes.APPLICATION_JAVA;
@@ -231,6 +253,18 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
      */
     public void setResultType(Class<?> targetType) {
         this.resultType = targetType;
+    }
+
+    // Fluent builder methods
+    // -------------------------------------------------------------------------
+    public DatasonnetExpression bodyMediaType(MediaType bodyMediaType) {
+        setBodyMediaType(bodyMediaType);
+        return this;
+    }
+
+    public DatasonnetExpression outputMediaType(MediaType outputMediaType) {
+        setOutputMediaType(outputMediaType);
+        return this;
     }
 
     @Override
