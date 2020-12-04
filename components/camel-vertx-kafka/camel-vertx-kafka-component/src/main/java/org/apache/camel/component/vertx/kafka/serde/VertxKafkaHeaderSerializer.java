@@ -24,6 +24,9 @@ public final class VertxKafkaHeaderSerializer {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxKafkaHeaderSerializer.class);
 
+    private VertxKafkaHeaderSerializer() {
+    }
+
     public static Buffer serialize(final Object value) {
         if (value instanceof String) {
             return Buffer.buffer((String) value);
