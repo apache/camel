@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.couchdb;
 
-import org.apache.camel.test.infra.couchdb.services.CouchDbService;
-import org.apache.camel.test.infra.couchdb.services.CouchDbServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
+package org.apache.camel.test.infra.couchdb.common;
 
-public class CouchDbTestSupport extends CamelTestSupport {
-    @SuppressWarnings("unused")
-    @RegisterExtension
-    static CouchDbService service = CouchDbServiceFactory.createService();
+public final class CouchDbProperties {
+    public static final String SERVICE_ADDRESS = "couchdb.service.address";
+    public static final String HOST = "couchdb.host";
+    public static final String PORT = "couchdb.port";
+    public static final int DEFAULT_PORT = 5984;
 
+    private CouchDbProperties() {
+
+    }
 }
