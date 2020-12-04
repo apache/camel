@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VertxKafkaProducerOperationsTest extends CamelTestSupport {
 
-    private final static String TOPIC_NAME_WITH_PARTITIONS = "test_topic_with_partitions";
+    private static final String TOPIC_NAME_WITH_PARTITIONS = "test_topic_with_partitions";
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxKafkaProducerOperationsTest.class);
 

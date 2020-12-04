@@ -324,12 +324,12 @@ public class ConfigField {
 
     public static final class ConfigFieldBuilder {
         private String name;
-        private String documentation = null;
-        private Object defaultValue = null;
-        private String variableName = null;
-        private ConfigDef.Importance importance = null;
+        private String documentation;
+        private Object defaultValue;
+        private String variableName;
+        private ConfigDef.Importance importance;
         private ConfigDef.Type type;
-        private ConfigDef.Validator validator = null;
+        private ConfigDef.Validator validator;
         private boolean isDeprecated;
         private boolean isRequired;
         private boolean isUriPathOption;

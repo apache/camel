@@ -28,6 +28,10 @@ public class VertxKafkaProducer extends DefaultAsyncProducer {
     private KafkaProducer<Object, Object> kafkaProducer;
     private VertxKafkaProducerOperations producerOperations;
 
+    public VertxKafkaProducer(final VertxKafkaEndpoint endpoint) {
+        super(endpoint);
+    }
+
     @Override
     protected void doStart() {
         // create kafka client
@@ -35,10 +39,6 @@ public class VertxKafkaProducer extends DefaultAsyncProducer {
 
         // create our operations
         producerOperations = new VertxKafkaProducerOperations(kafkaProducer, getConfiguration());
-    }
-
-    public VertxKafkaProducer(final VertxKafkaEndpoint endpoint) {
-        super(endpoint);
     }
 
     @Override

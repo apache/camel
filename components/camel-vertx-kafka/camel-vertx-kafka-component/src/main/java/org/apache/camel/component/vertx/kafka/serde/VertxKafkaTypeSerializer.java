@@ -27,7 +27,7 @@ import org.apache.kafka.common.utils.Bytes;
 
 public final class VertxKafkaTypeSerializer {
 
-    private static final Map<String, Class<?>> typeToClass = new HashMap<>();
+    private static final Map<String, Class<?>> TYPE_TO_CLASS = new HashMap<>();
 
     static {
         bind("org.apache.kafka.common.serialization.StringSerializer", String.class);
@@ -54,7 +54,7 @@ public final class VertxKafkaTypeSerializer {
             }
         }
 
-        final Object convertedValue = convertValue(message.getExchange(), inputValue, typeToClass.get(valueSerializer));
+        final Object convertedValue = convertValue(message.getExchange(), inputValue, TYPE_TO_CLASS.get(valueSerializer));
 
         if (ObjectHelper.isNotEmpty(convertedValue)) {
             return convertedValue;
@@ -72,6 +72,6 @@ public final class VertxKafkaTypeSerializer {
     }
 
     private static void bind(final String type, final Class<?> typeClass) {
-        typeToClass.put(type, typeClass);
+        TYPE_TO_CLASS.put(type, typeClass);
     }
 }

@@ -216,7 +216,7 @@ class VertxKafkaConsumerOperationsTest {
     }
 
     private static class Latch {
-        final private AtomicBoolean doneFlag = new AtomicBoolean(false);
+        private final AtomicBoolean doneFlag = new AtomicBoolean(false);
 
         public void done() {
             doneFlag.set(true);

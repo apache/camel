@@ -362,7 +362,7 @@ public final class ConfigJavaClass {
     public static final class ConfigJavaClassGeneratorBuilder {
         private String packageName;
         private String className;
-        private String parentClassName = null;
+        private String parentClassName;
         private Map<String, ConfigField> consumerConfigs = Collections.emptyMap();
         private Map<String, ConfigField> producerConfigs = Collections.emptyMap();
 

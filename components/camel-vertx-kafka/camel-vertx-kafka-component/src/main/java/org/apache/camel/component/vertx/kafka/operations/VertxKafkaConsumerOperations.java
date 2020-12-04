@@ -81,7 +81,7 @@ public class VertxKafkaConsumerOperations {
         seekOnPartitionAssignment(topicSubscription, errorHandler);
 
         subscribeToTopics(topicSubscription.getTopics())
-                .subscribe((unused) -> {
+                .subscribe(unused -> {
                 }, errorHandler, () -> {
                 });
     }

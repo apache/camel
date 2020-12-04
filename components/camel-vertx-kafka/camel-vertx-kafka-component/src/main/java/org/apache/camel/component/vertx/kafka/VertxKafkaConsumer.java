@@ -34,6 +34,10 @@ public class VertxKafkaConsumer extends DefaultConsumer {
 
     private KafkaConsumer<Object, Object> kafkaConsumer;
 
+    public VertxKafkaConsumer(final VertxKafkaEndpoint endpoint, final Processor processor) {
+        super(endpoint, processor);
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -56,10 +60,6 @@ public class VertxKafkaConsumer extends DefaultConsumer {
         }
 
         super.doStop();
-    }
-
-    public VertxKafkaConsumer(final VertxKafkaEndpoint endpoint, final Processor processor) {
-        super(endpoint, processor);
     }
 
     public VertxKafkaConfiguration getConfiguration() {

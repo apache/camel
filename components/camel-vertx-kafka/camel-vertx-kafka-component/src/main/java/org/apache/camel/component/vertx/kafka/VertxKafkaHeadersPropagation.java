@@ -30,17 +30,17 @@ import org.apache.camel.Message;
 import org.apache.camel.component.vertx.kafka.serde.VertxKafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
-public class VertxKafkaHeadersPropagation {
+public final class VertxKafkaHeadersPropagation {
 
     // for now we don't support overriding this in the config, we shall add it in the next iteration
-    private static final HeaderFilterStrategy headerFilterStrategy = new VertxKafkaHeaderFilterStrategy();
+    private static final HeaderFilterStrategy HEADER_FILTER_STRATEGY = new VertxKafkaHeaderFilterStrategy();
 
     private VertxKafkaHeadersPropagation() {
     }
 
     public static List<KafkaHeader> getPropagatedHeaders(final Message message) {
         return message.getHeaders().entrySet().stream()
-                .filter(entry -> shouldBeFiltered(entry, message.getExchange(), headerFilterStrategy))
+                .filter(entry -> shouldBeFiltered(entry, message.getExchange(), HEADER_FILTER_STRATEGY))
                 .map(VertxKafkaHeadersPropagation::getRecordHeader)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -51,7 +51,7 @@ public class VertxKafkaHeadersPropagation {
         return headers
                 .stream()
                 .filter(entry -> shouldBeFiltered(new AbstractMap.SimpleEntry<>(entry.key(), entry.value()),
-                        message.getExchange(), headerFilterStrategy))
+                        message.getExchange(), HEADER_FILTER_STRATEGY))
                 .collect(Collectors.toMap(KafkaHeader::key, KafkaHeader::value));
     }
 
