@@ -35,7 +35,6 @@ import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
 import io.minio.Result;
-import io.minio.errors.InvalidBucketNameException;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 import org.apache.camel.Exchange;
@@ -88,9 +87,8 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
                         makeBucket(destinationBucketName);
                         LOG.trace("Destination Bucket created");
                     } else {
-                        throw new InvalidBucketNameException(
-                                "Bucket {} does not exists, set autoCreateBucket option for bucket auto creation",
-                                destinationBucketName);
+                        throw new IllegalArgumentException(
+                                "Destination Bucket does not exists, set autoCreateBucket option for bucket auto creation");
                     }
                 }
             } else {
