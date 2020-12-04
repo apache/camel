@@ -60,6 +60,9 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     @BindToRegistry
     private Animal myAnimal = new Animal("Donkey", 17);
 
+    @BindToRegistry
+    private Greeter greeter = new Greeter();
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
@@ -1922,6 +1925,14 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression(exp, "99");
     }
 
+    @Test
+    public void testNestedFunction() throws Exception {
+        exchange.getMessage().setBody("Tony");
+        exchange.getMessage().setHeader("counter", 3);
+
+        assertExpression("Hello ${bean:greeter(${body}, ${header.counter})}", "Hello TonyTonyTony");
+    }
+
     @Override
     protected String getLanguageName() {
         return "csimple";
@@ -1988,6 +1999,18 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         public String toString() {
             return name;
         }
+    }
+
+    public static final class Greeter {
+
+        public String greetMe(String name, int times) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < times; i++) {
+                sb.append(name);
+            }
+            return sb.toString();
+        }
+
     }
 
     public static final class Order {
