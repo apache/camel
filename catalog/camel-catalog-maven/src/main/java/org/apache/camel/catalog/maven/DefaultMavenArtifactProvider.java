@@ -25,6 +25,8 @@ import java.util.Set;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.CamelCatalog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.extractComponentJavaType;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentJSonSchema;
@@ -35,6 +37,7 @@ import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadCompone
  */
 public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultMavenArtifactProvider.class);
     private String cacheDirectory;
     private boolean log;
 
@@ -67,7 +70,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
         try {
             if (cacheDirectory != null) {
                 if (log) {
-                    System.out.println("DEBUG: Using cache directory: " + cacheDirectory);
+                    LOG.debug("Using cache directory: {}", cacheDirectory);
                 }
                 System.setProperty("grape.root", cacheDirectory);
             }
@@ -86,7 +89,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                 param.put("transitive", false);
 
                 if (log) {
-                    System.out.println("Downloading " + groupId + ":" + artifactId + ":" + version);
+                    LOG.info("Downloading " + groupId + ":" + artifactId + ":" + version);
                 }
                 Grape.grab(param);
 
@@ -98,8 +101,9 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
         } catch (Exception e) {
             if (log) {
-                System.out.println("WARN: Error during add components from artifact " + groupId + ":" + artifactId + ":"
-                                   + version + " due " + e.getMessage());
+                LOG.warn("Error during add components from artifact " + groupId + ":" + artifactId + ":"
+                         + version + " due " + e.getMessage(),
+                        e);
             }
         }
 
@@ -121,7 +125,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                             String json = loadComponentJSonSchema(log, classLoader, scheme);
                             if (json != null) {
                                 if (log) {
-                                    System.out.println("Adding component: " + scheme);
+                                    LOG.info("Adding component: {}", scheme);
                                 }
                                 camelCatalog.addComponent(scheme, javaType, json);
                                 names.add(scheme);

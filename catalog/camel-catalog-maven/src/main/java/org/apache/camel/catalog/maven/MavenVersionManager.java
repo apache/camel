@@ -28,6 +28,8 @@ import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.VersionManager;
 import org.apache.ivy.util.url.URLHandlerRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link VersionManager} that can load the resources using Maven to download needed artifacts from a local or remote
@@ -36,6 +38,8 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  * This implementation uses Groovy Grape to download the Maven JARs.
  */
 public class MavenVersionManager implements VersionManager, Closeable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MavenVersionManager.class);
 
     private final ClassLoader classLoader = new GroovyClassLoader();
     private final TimeoutHttpClientHandler httpClient = new TimeoutHttpClientHandler();
@@ -112,7 +116,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             return true;
         } catch (Exception e) {
             if (log) {
-                System.out.print("WARN: Cannot load version " + version + " due " + e.getMessage());
+                LOG.warn("Cannot load version " + version + " due " + e.getMessage(), e);
             }
             return false;
         }
@@ -142,7 +146,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             return true;
         } catch (Exception e) {
             if (log) {
-                System.out.print("WARN: Cannot load runtime provider version " + version + " due " + e.getMessage());
+                LOG.warn("Cannot load runtime provider version " + version + " due " + e.getMessage(), e);
             }
             return false;
         }
@@ -188,7 +192,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             }
         } catch (IOException e) {
             if (log) {
-                System.out.print("WARN: Cannot open resource " + name + " and version " + version + " due " + e.getMessage());
+                LOG.warn("Cannot open resource " + name + " and version " + version + " due " + e.getMessage(), e);
             }
         }
 
