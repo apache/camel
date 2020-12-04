@@ -40,4 +40,9 @@ public class CSimpleScript2 extends CSimpleSupport {
         return headerAs(message, "gold", int.class) > 123;
     }
 
+    @Override
+    public boolean isPredicate() {
+        return true;
+    }
+
 }
