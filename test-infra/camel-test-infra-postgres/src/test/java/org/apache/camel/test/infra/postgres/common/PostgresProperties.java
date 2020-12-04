@@ -15,23 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.pg.replication.slot.integration;
+package org.apache.camel.test.infra.postgres.common;
 
-import org.apache.camel.test.infra.postgres.services.PostgresLocalContainerService;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.containers.PostgreSQLContainer;
+public final class PostgresProperties {
+    public static final String SERVICE_ADDRESS = "postgres.service.address";
+    public static final String HOST = "postgres.service.host";
+    public static final String PORT = "postgres.service.port";
+    public static final String USERNAME = "postgres.user.name";
+    public static final String PASSWORD = "postgres.user.password";
 
-public class PgReplicationTestSupport extends CamelTestSupport {
+    public static final int DEFAULT_PORT = 5432;
 
-    @RegisterExtension
-    static PostgresLocalContainerService service;
+    private PostgresProperties() {
 
-    static {
-        PostgreSQLContainer container = new PostgreSQLContainer<>(PostgresLocalContainerService.DEFAULT_POSTGRES_CONTAINER)
-                .withDatabaseName("camel")
-                .withCommand("postgres -c wal_level=logical");
-
-        service = new PostgresLocalContainerService(container);
     }
 }

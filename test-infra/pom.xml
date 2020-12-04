@@ -64,5 +64,6 @@
         <module>camel-test-infra-pulsar</module>
         <module>camel-test-infra-xmpp</module>
         <module>camel-test-infra-zookeeper</module>
+        <module>camel-test-infra-postgres</module>
     </modules>
 </project>
