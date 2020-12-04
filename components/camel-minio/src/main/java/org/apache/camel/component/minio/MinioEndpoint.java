@@ -26,10 +26,10 @@ import java.nio.charset.StandardCharsets;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
-import io.minio.ObjectStat;
 import io.minio.SetBucketPolicyArgs;
 import io.minio.StatObjectArgs;
-import io.minio.errors.InvalidBucketNameException;
+import io.minio.StatObjectResponse;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -106,8 +106,7 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
                 makeBucket(bucketName);
                 LOG.trace("Bucket created");
             } else {
-                throw new InvalidBucketNameException(
-                        "Bucket {} does not exists, set autoCreateBucket option for bucket auto creation", bucketName);
+                throw new IllegalArgumentException("Bucket does not exists, set autoCreateBucket option for bucket auto creation");
 
             }
         }
@@ -246,22 +245,22 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
         MinioChecks.checkIfConfigIsNotEmptyAndSetAndConfig(getConfiguration()::getUnModifiedSince,
                 statObjectRequest::unmodifiedSince);
 
-        ObjectStat stat = minioClient.statObject(statObjectRequest.build());
+        StatObjectResponse stat = minioClient.statObject(statObjectRequest.build());
 
         // set all stat as message headers
-        message.setHeader(MinioConstants.OBJECT_NAME, stat.name());
-        message.setHeader(MinioConstants.BUCKET_NAME, stat.bucketName());
+        message.setHeader(MinioConstants.OBJECT_NAME, stat.object());
+        message.setHeader(MinioConstants.BUCKET_NAME, stat.bucket());
         message.setHeader(MinioConstants.E_TAG, stat.etag());
-        message.setHeader(MinioConstants.LAST_MODIFIED, stat.httpHeaders().get("last-modified"));
-        message.setHeader(MinioConstants.VERSION_ID, stat.httpHeaders().get("x-amz-version-id"));
+        message.setHeader(MinioConstants.LAST_MODIFIED, stat.headers().get("last-modified"));
+        message.setHeader(MinioConstants.VERSION_ID, stat.headers().get("x-amz-version-id"));
         message.setHeader(MinioConstants.CONTENT_TYPE, stat.contentType());
-        message.setHeader(MinioConstants.CONTENT_LENGTH, stat.length());
-        message.setHeader(MinioConstants.CONTENT_ENCODING, stat.httpHeaders().get("content-encoding"));
-        message.setHeader(MinioConstants.CONTENT_DISPOSITION, stat.httpHeaders().get("content-disposition"));
-        message.setHeader(MinioConstants.CACHE_CONTROL, stat.httpHeaders().get("cache-control"));
-        message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, stat.httpHeaders().get("x-amz-server-side-encryption"));
-        message.setHeader(MinioConstants.EXPIRATION_TIME, stat.httpHeaders().get("x-amz-expiration"));
-        message.setHeader(MinioConstants.REPLICATION_STATUS, stat.httpHeaders().get("x-amz-replication-status"));
-        message.setHeader(MinioConstants.STORAGE_CLASS, stat.httpHeaders().get("x-amz-storage-class"));
+        message.setHeader(MinioConstants.CONTENT_LENGTH, stat.size());
+        message.setHeader(MinioConstants.CONTENT_ENCODING, stat.headers().get("content-encoding"));
+        message.setHeader(MinioConstants.CONTENT_DISPOSITION, stat.headers().get("content-disposition"));
+        message.setHeader(MinioConstants.CACHE_CONTROL, stat.headers().get("cache-control"));
+        message.setHeader(MinioConstants.SERVER_SIDE_ENCRYPTION, stat.headers().get("x-amz-server-side-encryption"));
+        message.setHeader(MinioConstants.EXPIRATION_TIME, stat.headers().get("x-amz-expiration"));
+        message.setHeader(MinioConstants.REPLICATION_STATUS, stat.headers().get("x-amz-replication-status"));
+        message.setHeader(MinioConstants.STORAGE_CLASS, stat.headers().get("x-amz-storage-class"));
     }
 }
