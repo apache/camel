@@ -40,10 +40,10 @@ public class PgReplicationSlotCamelTest extends PgReplicationTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        String url = String.format("jdbc:postgresql://%s/camel", getAuthority());
+        String url = String.format("jdbc:postgresql://%s/camel", service.getServiceAddress());
         Properties props = new Properties();
-        props.setProperty("user", "camel");
-        props.setProperty("password", "camel");
+        props.setProperty("user", service.userName());
+        props.setProperty("password", service.password());
 
         this.connection = DriverManager.getConnection(url, props);
         try (Statement statement = this.connection.createStatement()) {
@@ -64,11 +64,12 @@ public class PgReplicationSlotCamelTest extends PgReplicationTestSupport {
             @Override
             public void configure() {
 
-                String uriFormat = "pg-replication-slot://%s/camel/camel_test_slot:test_decoding?user=%s" +
-                                   "&password=%s&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false";
+                String uriFormat
+                        = "pg-replication-slot://{{postgres.service.address}}/camel/camel_test_slot:test_decoding?"
+                          + "user={{postgres.user.name}}&password={{postgres.user.password}}"
+                          + "&slotOptions.skip-empty-xacts=true&slotOptions.include-xids=false";
 
-                String uri = String.format(uriFormat, getAuthority(), getUser(), getPassword());
-                from(uri).to(mockEndpoint);
+                from(uriFormat).to(mockEndpoint);
             }
         };
     }

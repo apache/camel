@@ -14,24 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.test.infra.postgres.services;
 
-package org.apache.camel.component.pg.replication.slot.integration;
+import org.apache.camel.test.infra.common.services.TestService;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-import org.apache.camel.test.infra.postgres.services.PostgresLocalContainerService;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.containers.PostgreSQLContainer;
+/**
+ * Test infra service for Postgres
+ */
+public interface PostgresService extends BeforeAllCallback, AfterAllCallback, TestService {
 
-public class PgReplicationTestSupport extends CamelTestSupport {
+    String host();
 
-    @RegisterExtension
-    static PostgresLocalContainerService service;
+    int port();
 
-    static {
-        PostgreSQLContainer container = new PostgreSQLContainer<>(PostgresLocalContainerService.DEFAULT_POSTGRES_CONTAINER)
-                .withDatabaseName("camel")
-                .withCommand("postgres -c wal_level=logical");
+    String userName();
 
-        service = new PostgresLocalContainerService(container);
+    String password();
+
+    String getServiceAddress();
+
+    @Override
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
+        initialize();
+    }
+
+    @Override
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        shutdown();
     }
 }
