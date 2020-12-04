@@ -27,10 +27,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperServiceFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class ZooKeeperClusteredRoutePolicyTest {
+    @RegisterExtension
+    static ZooKeeperService service = ZooKeeperServiceFactory.createService();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClusteredRoutePolicyTest.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).collect(Collectors.toList());
     private static final List<String> RESULTS = new ArrayList<>();
@@ -50,27 +55,16 @@ public final class ZooKeeperClusteredRoutePolicyTest {
 
     @Test
     public void test() throws Exception {
-        ZooKeeperContainer container = null;
-
-        try {
-            container = new ZooKeeperContainer();
-            container.start();
-
-            String connectString = container.getConnectionString();
-            for (String id : CLIENTS) {
-                SCHEDULER.submit(() -> run(connectString, id));
-            }
-
-            LATCH.await(1, TimeUnit.MINUTES);
-            SCHEDULER.shutdownNow();
-
-            assertEquals(CLIENTS.size(), RESULTS.size());
-            assertTrue(RESULTS.containsAll(CLIENTS));
-        } finally {
-            if (container != null) {
-                container.stop();
-            }
+        String connectString = service.getConnectionString();
+        for (String id : CLIENTS) {
+            SCHEDULER.submit(() -> run(connectString, id));
         }
+
+        LATCH.await(1, TimeUnit.MINUTES);
+        SCHEDULER.shutdownNow();
+
+        assertEquals(CLIENTS.size(), RESULTS.size());
+        assertTrue(RESULTS.containsAll(CLIENTS));
     }
 
     // ************************************

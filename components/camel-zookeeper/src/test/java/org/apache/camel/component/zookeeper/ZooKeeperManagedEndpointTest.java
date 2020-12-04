@@ -79,7 +79,7 @@ public class ZooKeeperManagedEndpointTest extends ZooKeeperTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/node?timeout=1000&backoff=2000")
+                from("zookeeper://{{zookeeper.connection.string}}/node?timeout=1000&backoff=2000")
                         .to("mock:test");
             }
         };
