@@ -228,6 +228,10 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                     exp = exp.replaceAll("\n", "\\\\n");
                     exp = exp.replaceAll("\t", "\\\\t");
                     exp = exp.replaceAll("\r", "\\\\r");
+                    if (exp.endsWith("\\") && !exp.endsWith("\\\\")) {
+                        // there is a single trailing slash which we need to escape
+                        exp += "\\";
+                    }
                     sb.append(exp);
                     sb.append("\"");
                 } else {

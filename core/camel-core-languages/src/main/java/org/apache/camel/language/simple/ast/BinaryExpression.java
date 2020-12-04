@@ -305,9 +305,21 @@ public class BinaryExpression extends BaseSimpleNode {
         } else if (operator == BinaryOperatorType.NOT_CONTAINS_IGNORECASE) {
             return "!containsIgnoreCase(exchange, " + leftExp + ", " + rightExp + ")";
         } else if (operator == BinaryOperatorType.IS) {
-            return "is(exchange, " + leftExp + ", " + rightExp + ".class" + ")";
+            String type = StringHelper.removeQuotes(rightExp);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.replace('$', '.');
+            type = type.trim();
+            return "is(exchange, " + leftExp + ", " + type + ")";
         } else if (operator == BinaryOperatorType.NOT_IS) {
-            return "!is(exchange, " + leftExp + ", " + rightExp + ")";
+            String type = StringHelper.removeQuotes(rightExp);
+            if (!type.endsWith(".class")) {
+                type = type + ".class";
+            }
+            type = type.replace('$', '.');
+            type = type.trim();
+            return "!is(exchange, " + leftExp + ", " + type + ")";
         } else if (operator == BinaryOperatorType.REGEX) {
             // regexp is a pain with escapes
             String escaped = StringHelper.replaceAll(rightExp, "\\", "\\\\");

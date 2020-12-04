@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -424,7 +425,9 @@ public final class CSimpleHelper {
         properties[3] = ref;
         properties[1] = method;
         properties[4] = scope;
-        return bean.createExpression(null, properties).evaluate(exchange, Object.class);
+        Expression exp = bean.createExpression(null, properties);
+        exp.init(exchange.getContext());
+        return exp.evaluate(exchange, Object.class);
     }
 
     private static Language getOrCreateBeanLanguage(CamelContext camelContext) {
