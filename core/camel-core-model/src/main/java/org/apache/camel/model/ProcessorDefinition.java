@@ -1305,7 +1305,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a log message to be logged at INFO level.
      *
-     * @param  message the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage} syntax)
+     * @param  message the log message (you can use simple language syntax)
      * @return         the builder
      */
     public Type log(String message) {
@@ -1318,8 +1318,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Creates a log message to be logged at the given level.
      *
      * @param  loggingLevel the logging level to use
-     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
-     *                      syntax)
+     * @param  message      the log message (you can use simple language syntax)
      * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, String message) {
@@ -1334,8 +1333,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param  loggingLevel the logging level to use
      * @param  logName      the log name to use
-     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
-     *                      syntax)
+     * @param  message      the log message (you can use simple language syntax)
      * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, String logName, String message) {
@@ -1351,8 +1349,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param  loggingLevel the logging level to use
      * @param  logger       the logger to use
-     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
-     *                      syntax)
+     * @param  message      the log message (you can use simple language syntax)
      * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, Logger logger, String message) {
@@ -1369,8 +1366,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  loggingLevel the logging level to use
      * @param  logName      the log name to use
      * @param  marker       log marker name
-     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
-     *                      syntax)
+     * @param  message      the log message (you can use simple language syntax)
      * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, String logName, String marker, String message) {
@@ -1388,8 +1384,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  loggingLevel the logging level to use
      * @param  logger       the logger to use
      * @param  marker       log marker name
-     * @param  message      the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage}
-     *                      syntax)
+     * @param  message      the log message (you can use simple language syntax)
      * @return              the builder
      */
     public Type log(LoggingLevel loggingLevel, Logger logger, String marker, String message) {
@@ -3182,7 +3177,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see                org.apache.camel.processor.PollEnricher
      */
     public Type pollEnrich(EndpointProducerBuilder resourceUri) {
-        return pollEnrich(resourceUri.getUri());
+        return pollEnrich(resourceUri.expr(), -1, (String) null, false);
     }
 
     /**
