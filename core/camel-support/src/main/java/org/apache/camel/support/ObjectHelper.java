@@ -119,6 +119,17 @@ public final class ObjectHelper {
                 Long rightNum = (Long) rightValue;
                 return leftNum.compareTo(rightNum) == 0;
             }
+        } else if ((rightValue instanceof String) &&
+                (leftValue instanceof Integer || leftValue instanceof Long)) {
+            if (leftValue instanceof Integer) {
+                Integer leftNum = (Integer) leftValue;
+                Integer rightNum = Integer.valueOf((String) rightValue);
+                return leftNum.compareTo(rightNum) == 0;
+            } else {
+                Long leftNum = (Long) leftValue;
+                Long rightNum = Long.valueOf((String) rightValue);
+                return leftNum.compareTo(rightNum) == 0;
+            }
         } else if (rightValue instanceof Double && leftValue instanceof String && isFloatingNumber((String) leftValue)) {
             Double leftNum = Double.valueOf((String) leftValue);
             Double rightNum = (Double) rightValue;
@@ -206,6 +217,17 @@ public final class ObjectHelper {
             } else {
                 Long leftNum = Long.valueOf((String) leftValue);
                 Long rightNum = (Long) rightValue;
+                return leftNum.compareTo(rightNum);
+            }
+        } else if ((rightValue instanceof String) &&
+                (leftValue instanceof Integer || leftValue instanceof Long)) {
+            if (leftValue instanceof Integer) {
+                Integer leftNum = (Integer) leftValue;
+                Integer rightNum = Integer.valueOf((String) rightValue);
+                return leftNum.compareTo(rightNum);
+            } else {
+                Long leftNum = (Long) leftValue;
+                Long rightNum = Long.valueOf((String) rightValue);
                 return leftNum.compareTo(rightNum);
             }
         } else if (rightValue instanceof Double && leftValue instanceof String && isFloatingNumber((String) leftValue)) {

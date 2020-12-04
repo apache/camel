@@ -178,7 +178,7 @@ public abstract class LanguageSupport implements Language, IsSingleton, CamelCon
             }
         }
 
-        return camelContext.getTypeConverter().convertTo(type, value);
+        return getCamelContext().getTypeConverter().convertTo(type, value);
     }
 
 }
