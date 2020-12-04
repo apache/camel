@@ -34,7 +34,7 @@ public class BackOffTimerTest {
     @Test
     public void testBackOffTimer() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicInteger counter = new AtomicInteger(0);
+        final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
         final BackOff backOff = BackOff.builder().delay(100).build();
         final BackOffTimer timer = new BackOffTimer(executor);
@@ -68,7 +68,7 @@ public class BackOffTimerTest {
     @Test
     public void testBackOffTimerWithMaxAttempts() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicInteger counter = new AtomicInteger(0);
+        final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
         final BackOff backOff = BackOff.builder().delay(100).maxAttempts(5L).build();
         final BackOffTimer timer = new BackOffTimer(executor);
@@ -97,7 +97,7 @@ public class BackOffTimerTest {
     @Test
     public void testBackOffTimerWithMaxElapsedTime() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicInteger counter = new AtomicInteger(0);
+        final AtomicInteger counter = new AtomicInteger();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
         final BackOff backOff = BackOff.builder().delay(100).maxElapsedTime(400).build();
         final BackOffTimer timer = new BackOffTimer(executor);

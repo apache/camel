@@ -38,8 +38,8 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregatorConcurrencyTest.class);
 
-    private static final AtomicInteger COUNTER = new AtomicInteger(0);
-    private static final AtomicInteger SUM = new AtomicInteger(0);
+    private static final AtomicInteger COUNTER = new AtomicInteger();
+    private static final AtomicInteger SUM = new AtomicInteger();
 
     private final int size = 100;
     private final String uri = "direct:start";

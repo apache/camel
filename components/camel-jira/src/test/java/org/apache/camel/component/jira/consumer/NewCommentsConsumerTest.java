@@ -161,7 +161,7 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         SearchResult searchResult = new SearchResult(0, 50, 3, newIssues);
         Promise<SearchResult> searchResultPromise = Promises.promise(searchResult);
         when(searchRestClient.searchJql(anyString(), any(), any(), any())).thenReturn(searchResultPromise);
-        AtomicInteger regulator = new AtomicInteger(0);
+        AtomicInteger regulator = new AtomicInteger();
         when(issueRestClient.getIssue(anyString())).then(inv -> {
             int idx = regulator.getAndIncrement();
             Issue issue = issueWithNoComments;

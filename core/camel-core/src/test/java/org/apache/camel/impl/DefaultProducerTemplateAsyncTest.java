@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
-    private static final AtomicInteger ORDER = new AtomicInteger(0);
+    private static final AtomicInteger ORDER = new AtomicInteger();
 
     @Test
     public void testRequestAsync() throws Exception {

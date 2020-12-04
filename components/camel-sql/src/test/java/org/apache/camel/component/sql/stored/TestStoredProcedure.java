@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public final class TestStoredProcedure {
 
-    public static final AtomicLong BATCHFN_CALL_COUNTER = new AtomicLong(0);
+    public static final AtomicLong BATCHFN_CALL_COUNTER = new AtomicLong();
 
     private static final Logger LOG = LoggerFactory.getLogger(TestStoredProcedure.class);
 

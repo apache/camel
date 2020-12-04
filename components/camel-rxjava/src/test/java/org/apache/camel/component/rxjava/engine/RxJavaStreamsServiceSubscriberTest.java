@@ -109,7 +109,7 @@ public class RxJavaStreamsServiceSubscriberTest extends RxJavaStreamsServiceTest
                         .count());
 
         // Ensure order is preserved when using a single consumer
-        AtomicLong num = new AtomicLong(0);
+        AtomicLong num = new AtomicLong();
 
         endpoint.getExchanges().stream()
                 .map(x -> x.getIn().getBody(Long.class))

@@ -73,7 +73,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
     }
 
     public static class MyBean {
-        private static AtomicInteger counter = new AtomicInteger(0);
+        private static AtomicInteger counter = new AtomicInteger();
         private int id;
 
         public MyBean() {

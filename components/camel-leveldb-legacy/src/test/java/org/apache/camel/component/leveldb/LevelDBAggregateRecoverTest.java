@@ -31,7 +31,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 public class LevelDBAggregateRecoverTest extends CamelTestSupport {
 
-    private static AtomicInteger counter = new AtomicInteger(0);
+    private static AtomicInteger counter = new AtomicInteger();
     private LevelDBAggregationRepository repo;
 
     @Override

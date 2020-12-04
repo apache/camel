@@ -36,8 +36,8 @@ public class WebhookRegistrationTest extends WebhookTestBase {
 
     @BeforeEach
     public void initialize() {
-        this.registered = new AtomicInteger(0);
-        this.unregistered = new AtomicInteger(0);
+        this.registered = new AtomicInteger();
+        this.unregistered = new AtomicInteger();
     }
 
     @Test
