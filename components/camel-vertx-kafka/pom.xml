@@ -45,7 +45,6 @@
             <artifactId>camel-support</artifactId>
         </dependency>
 
-        <!-- debezium embedded engine -->
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-kafka-client</artifactId>
