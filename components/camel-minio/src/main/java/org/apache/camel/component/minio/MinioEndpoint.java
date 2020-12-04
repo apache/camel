@@ -29,7 +29,6 @@ import io.minio.MinioClient;
 import io.minio.SetBucketPolicyArgs;
 import io.minio.StatObjectArgs;
 import io.minio.StatObjectResponse;
-
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -106,7 +105,8 @@ public class MinioEndpoint extends ScheduledPollEndpoint {
                 makeBucket(bucketName);
                 LOG.trace("Bucket created");
             } else {
-                throw new IllegalArgumentException("Bucket does not exists, set autoCreateBucket option for bucket auto creation");
+                throw new IllegalArgumentException(
+                        "Bucket does not exists, set autoCreateBucket option for bucket auto creation");
 
             }
         }
