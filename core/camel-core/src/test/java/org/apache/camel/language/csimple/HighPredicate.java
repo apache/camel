@@ -29,6 +29,11 @@ public class HighPredicate extends CSimpleSupport {
     }
 
     @Override
+    public boolean isPredicate() {
+        return true;
+    }
+
+    @Override
     public String getText() {
         return "${body} > 10";
     }

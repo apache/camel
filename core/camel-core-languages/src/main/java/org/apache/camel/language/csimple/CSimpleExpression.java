@@ -26,6 +26,11 @@ import org.apache.camel.Predicate;
 public interface CSimpleExpression extends Expression, Predicate {
 
     /**
+     * Whether this script is to be used as predicate only.
+     */
+    boolean isPredicate();
+
+    /**
      * The csimple script as text
      */
     String getText();

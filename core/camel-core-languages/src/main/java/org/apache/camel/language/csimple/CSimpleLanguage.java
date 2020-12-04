@@ -20,9 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -51,15 +49,16 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CSimpleLanguage.class);
 
-    private final Map<String, CSimpleExpression> compiled;
+    private final Map<String, CSimpleExpression> compiledPredicates = new ConcurrentHashMap<>();
+    private final Map<String, CSimpleExpression> compiledExpressions = new ConcurrentHashMap<>();
+
     /**
      * If set, this implementation attempts to compile those expressions at runtime, that are not yet available in
-     * {@link #compiled}; otherwise no compilation attempts will be made at runtime
+     * {@link #compiledPredicates}; otherwise no compilation attempts will be made at runtime
      */
     private final CompilationSupport compilationSupport;
 
     public CSimpleLanguage() {
-        this.compiled = new ConcurrentHashMap<>();
         this.compilationSupport = new CompilationSupport();
     }
 
@@ -69,7 +68,13 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
      * @param compiled the compiled
      */
     private CSimpleLanguage(Map<String, CSimpleExpression> compiled) {
-        this.compiled = compiled;
+        compiled.forEach((k, v) -> {
+            if (v.isPredicate()) {
+                this.compiledPredicates.put(k, v);
+            } else {
+                this.compiledExpressions.put(k, v);
+            }
+        });
         this.compilationSupport = null;
     }
 
@@ -130,11 +135,11 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
         String text = expression.replaceAll("\n", "");
         text = text.trim();
 
-        Predicate answer = compiled.get(text);
+        Predicate answer = compiledPredicates.get(text);
         if (answer == null && compilationSupport != null) {
             CSimpleExpression exp = compilationSupport.compilePredicate(getCamelContext(), expression);
             if (exp != null) {
-                compiled.put(text, exp);
+                compiledPredicates.put(text, exp);
                 answer = exp;
             }
         }
@@ -153,11 +158,11 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
         String text = expression.replaceAll("\n", "");
         text = text.trim();
 
-        Expression answer = compiled.get(text);
+        Expression answer = compiledExpressions.get(text);
         if (answer == null && compilationSupport != null) {
             CSimpleExpression exp = compilationSupport.compileExpression(getCamelContext(), expression);
             if (exp != null) {
-                compiled.put(text, exp);
+                compiledExpressions.put(text, exp);
                 answer = exp;
             }
         }
@@ -180,12 +185,10 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
     }
 
     public static class Builder {
-        private Map<String, CSimpleExpression> compiled = new LinkedHashMap<String, CSimpleExpression>();
+        private Map<String, CSimpleExpression> compiled = new HashMap<>();
 
         public CSimpleLanguage build() {
-            final Map<String, CSimpleExpression> cmpl = Collections.unmodifiableMap(compiled);
-            compiled = null; // invalidate the builder to prevent leaking the mutable collection
-            return new CSimpleLanguage(cmpl);
+            return new CSimpleLanguage(compiled);
         }
 
         public Builder expression(CSimpleExpression expression) {
@@ -225,12 +228,8 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
                 compiler = (CSimpleCompiler) ecc.getInjector().newInstance(clazz.get(), false);
                 if (compiler != null) {
                     LOG.info("Detected camel-csimple-joor compiler");
-                    if (imports != null) {
-                        imports.forEach(compiler::addImport);
-                    }
-                    if (aliases != null) {
-                        aliases.forEach(compiler::addAliases);
-                    }
+                    imports.forEach(compiler::addImport);
+                    aliases.forEach(compiler::addAliases);
                 }
                 ServiceHelper.initService(compiler);
             }
@@ -275,15 +274,20 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
                         Class<CSimpleExpression> clazz
                                 = ecc.getClassResolver().resolveMandatoryClass(fqn, CSimpleExpression.class);
                         CSimpleExpression ce = clazz.getConstructor(CamelContext.class).newInstance(getCamelContext());
-                        compiled.put(ce.getText(), ce);
+                        if (ce.isPredicate()) {
+                            compiledPredicates.put(ce.getText(), ce);
+                        } else {
+                            compiledExpressions.put(ce.getText(), ce);
+                        }
                     }
                 } catch (Exception e) {
                     throw new RuntimeCamelException("Error initializing csimple language", e);
                 } finally {
                     IOHelper.close(is);
                 }
-                if (!compiled.isEmpty()) {
-                    LOG.info("Loaded and initialized {} csimple expressions from classpath", compiled.size());
+                int size = compiledPredicates.size() + compiledExpressions.size();
+                if (size > 0) {
+                    LOG.info("Loaded and initialized {} csimple expressions from classpath", size);
                 }
             }
         }
