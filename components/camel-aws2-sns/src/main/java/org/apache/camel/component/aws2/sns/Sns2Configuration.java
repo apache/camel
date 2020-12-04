@@ -277,7 +277,7 @@ public class Sns2Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the SQS client should expect to load credentials on an AWS infra instance or to expect static
+     * Set whether the SNS client should expect to load credentials on an AWS infra instance or to expect static
      * credentials to be passed in.
      */
     public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
