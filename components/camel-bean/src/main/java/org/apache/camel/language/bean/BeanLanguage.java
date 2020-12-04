@@ -165,9 +165,11 @@ public class BeanLanguage extends LanguageSupport implements PropertyConfigurer,
             throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
         }
         if (properties.length == 5) {
-            BeanScope scope = (BeanScope) properties[4];
-            if (scope != null) {
-                answer.setScope(scope);
+            Object scope = properties[4];
+            if (scope instanceof BeanScope) {
+                answer.setScope((BeanScope) scope);
+            } else if (scope != null) {
+                answer.setScope(BeanScope.valueOf(scope.toString()));
             }
         }
         answer.setBeanComponent(beanComponent);
