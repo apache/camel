@@ -103,6 +103,12 @@ public class CSimpleCodeGenerator {
         sb.append("\n");
 
         sb.append("    @Override\n");
+        sb.append("    public boolean isPredicate() {\n");
+        sb.append("        return ").append(predicate).append(";\n");
+        sb.append("    }\n");
+        sb.append("\n");
+
+        sb.append("    @Override\n");
         sb.append("    public String getText() {\n");
         // \ should be escaped
         String escaped = StringHelper.replaceAll(text, "\\", "\\\\");
