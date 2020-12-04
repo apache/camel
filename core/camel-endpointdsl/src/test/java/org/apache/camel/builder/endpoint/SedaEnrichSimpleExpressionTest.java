@@ -31,7 +31,7 @@ public class SedaEnrichSimpleExpressionTest extends CamelTestSupport {
                 from(direct("start")).enrich(seda("${exchangeProperty.whereTo}").offerTimeout(1000)).to("mock:result");
 
                 from("seda:cheese")
-                    .transform().constant("Hello World");
+                        .transform().constant("Hello World");
             }
         };
     }
