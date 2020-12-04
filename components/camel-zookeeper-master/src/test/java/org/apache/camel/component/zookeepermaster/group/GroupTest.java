@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.component.zookeepermaster.ZKContainer;
 import org.apache.camel.component.zookeepermaster.group.internal.ChildData;
 import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperGroup;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperContainer;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
@@ -64,12 +64,12 @@ public class GroupTest {
         }
     };
 
-    private ZKContainer startZooKeeper(int port, Path root) throws Exception {
+    private ZooKeeperContainer startZooKeeper(int port, Path root) throws Exception {
         LOGGER.info("****************************************");
         LOGGER.info("* Starting ZooKeeper container         *");
         LOGGER.info("****************************************");
 
-        ZKContainer container = new ZKContainer(port);
+        ZooKeeperContainer container = new ZooKeeperContainer(port);
         container.withNetworkAliases("zk-" + port);
 
         if (root != null) {
@@ -136,7 +136,7 @@ public class GroupTest {
             assertFalse(group.isMaster());
         }
 
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
@@ -196,7 +196,7 @@ public class GroupTest {
         GroupCondition groupCondition = new GroupCondition();
         group.add(groupCondition);
 
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
@@ -247,7 +247,7 @@ public class GroupTest {
         assertFalse(group.isMaster());
         group.update(new NodeState("foo"));
 
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
@@ -279,7 +279,7 @@ public class GroupTest {
                 .build();
         curator.start();
 
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
@@ -331,7 +331,7 @@ public class GroupTest {
     @Test
     public void testGroupClose() throws Exception {
         int port = AvailablePortFinder.getNextAvailable();
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {
@@ -379,7 +379,7 @@ public class GroupTest {
     public void testAddFieldIgnoredOnParse() throws Exception {
 
         int port = AvailablePortFinder.getNextAvailable();
-        ZKContainer container = null;
+        ZooKeeperContainer container = null;
         Path dataDir = Files.createTempDirectory("zk-");
 
         try {

@@ -33,7 +33,7 @@ public class ConsumeDataTest extends ZooKeeperTestSupport {
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] { new RouteBuilder() {
             public void configure() throws Exception {
-                from("zookeeper://{{container:host:zookeeper}}:{{container:port:2181@zookeeper}}/camel?repeat=true")
+                from("zookeeper://{{zookeeper.connection.string}}/camel?repeat=true")
                         .to("mock:zookeeper-data");
             }
         } };

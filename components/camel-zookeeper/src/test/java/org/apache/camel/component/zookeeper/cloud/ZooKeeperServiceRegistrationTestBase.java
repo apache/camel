@@ -23,8 +23,8 @@ import java.util.UUID;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.component.zookeeper.ZooKeeperContainer;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperContainer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;

@@ -23,7 +23,9 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.testcontainers.junit5.ContainerAwareTestSupport;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
+import org.apache.camel.test.infra.zookeeper.services.ZooKeeperServiceFactory;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -32,23 +34,21 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.GenericContainer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ZooKeeperTestSupport extends ContainerAwareTestSupport {
+public class ZooKeeperTestSupport extends CamelTestSupport {
+    @RegisterExtension
+    static ZooKeeperService service = ZooKeeperServiceFactory.createService();
+
     protected String testPayload = "This is a test";
     protected byte[] testPayloadBytes = testPayload.getBytes();
     protected TestZookeeperClient client;
-
-    @Override
-    protected GenericContainer<?> createContainer() {
-        return new ZooKeeperContainer();
-    }
 
     @Override
     public void doPreSetup() throws Exception {
@@ -61,8 +61,7 @@ public class ZooKeeperTestSupport extends ContainerAwareTestSupport {
     }
 
     public String getConnectionString() {
-        return getContainerHost(ZooKeeperContainer.CONTAINER_NAME) + ":"
-               + getContainerPort(ZooKeeperContainer.CONTAINER_NAME, ZooKeeperContainer.CLIENT_PORT);
+        return service.getConnectionString();
     }
 
     public ZooKeeper getConnection() {
