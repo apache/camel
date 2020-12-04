@@ -137,7 +137,7 @@ public class BeanLifecycleTest extends ContextTestSupport {
     }
 
     public static class MyStatefulBean implements Service {
-        private static final AtomicInteger INSTANCES = new AtomicInteger(0);
+        private static final AtomicInteger INSTANCES = new AtomicInteger();
 
         public MyStatefulBean() {
             INSTANCES.incrementAndGet();

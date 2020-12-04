@@ -73,7 +73,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
 
-        AtomicInteger value = new AtomicInteger(0);
+        AtomicInteger value = new AtomicInteger();
 
         Flux.from(crs.fromStream("numbers", Integer.class))
                 .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue()))
@@ -98,7 +98,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         final int num = 30;
         final CountDownLatch latch = new CountDownLatch(num);
-        final AtomicInteger value = new AtomicInteger(0);
+        final AtomicInteger value = new AtomicInteger();
 
         Flux.from(crs.fromStream("tick", Integer.class))
                 .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue()))
@@ -184,7 +184,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
 
         Publisher<Exchange> timer = crs.from("timer:reactive?period=250&repeatCount=3");
 
-        AtomicInteger value = new AtomicInteger(0);
+        AtomicInteger value = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(3);
 
         Flux.from(timer)

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public class JdbcAggregateRecoverWithSedaTest extends AbstractJdbcAggregationTestSupport {
 
-    private static AtomicInteger counter = new AtomicInteger(0);
+    private static AtomicInteger counter = new AtomicInteger();
 
     @Override
     void configureJdbcAggregationRepository() {

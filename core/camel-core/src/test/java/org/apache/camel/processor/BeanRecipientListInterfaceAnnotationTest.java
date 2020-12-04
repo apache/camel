@@ -39,7 +39,7 @@ public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListT
     }
 
     public static class MyBean implements Route {
-        private static AtomicInteger counter = new AtomicInteger(0);
+        private static AtomicInteger counter = new AtomicInteger();
         private int id;
 
         public MyBean() {

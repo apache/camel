@@ -40,7 +40,7 @@ public class NsqProducerTest extends NsqTestSupport {
 
         template.sendBody("direct:send", TEST_MESSAGE);
 
-        AtomicInteger counter = new AtomicInteger(0);
+        AtomicInteger counter = new AtomicInteger();
         NSQLookup lookup = new DefaultNSQLookup();
         lookup.addLookupAddress("localhost", 4161);
 
@@ -67,7 +67,7 @@ public class NsqProducerTest extends NsqTestSupport {
             template.sendBody("direct:send", "test" + i);
         }
 
-        AtomicInteger counter = new AtomicInteger(0);
+        AtomicInteger counter = new AtomicInteger();
         NSQLookup lookup = new DefaultNSQLookup();
         lookup.addLookupAddress("localhost", 4161);
 

@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JdbcSpringAggregateRecoverWithRedeliveryPolicyTest extends CamelSpringTestSupport {
 
-    private static AtomicInteger counter = new AtomicInteger(0);
+    private static AtomicInteger counter = new AtomicInteger();
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {

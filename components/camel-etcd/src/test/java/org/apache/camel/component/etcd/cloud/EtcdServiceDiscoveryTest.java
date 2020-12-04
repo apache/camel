@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
     private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
-    private static final AtomicInteger PORT = new AtomicInteger(0);
+    private static final AtomicInteger PORT = new AtomicInteger();
 
     private EtcdClient client;
     private EtcdConfiguration configuration;

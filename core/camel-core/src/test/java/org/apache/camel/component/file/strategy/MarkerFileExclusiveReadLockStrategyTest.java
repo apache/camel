@@ -40,7 +40,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
 
     private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategyTest.class);
     private static final int NUMBER_OF_THREADS = 5;
-    private AtomicInteger numberOfFilesProcessed = new AtomicInteger(0);
+    private AtomicInteger numberOfFilesProcessed = new AtomicInteger();
 
     @Override
     @BeforeEach

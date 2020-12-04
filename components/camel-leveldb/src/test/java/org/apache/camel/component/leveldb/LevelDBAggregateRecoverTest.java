@@ -36,7 +36,7 @@ public class LevelDBAggregateRecoverTest extends LevelDBTestSupport {
     private static AtomicInteger getCounter(SerializerType serializerType) {
         AtomicInteger counter = counters.get(serializerType);
         if (counter == null) {
-            counter = new AtomicInteger(0);
+            counter = new AtomicInteger();
             counters.put(serializerType, counter);
         }
         return counter;

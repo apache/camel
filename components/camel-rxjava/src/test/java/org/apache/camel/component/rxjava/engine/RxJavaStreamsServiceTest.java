@@ -65,7 +65,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
 
-        AtomicInteger value = new AtomicInteger(0);
+        AtomicInteger value = new AtomicInteger();
 
         Flowable.fromPublisher(crs.fromStream("numbers", Integer.class))
                 .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue())).subscribe();
@@ -86,7 +86,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
 
         final int num = 30;
         final CountDownLatch latch = new CountDownLatch(num);
-        final AtomicInteger value = new AtomicInteger(0);
+        final AtomicInteger value = new AtomicInteger();
 
         Flowable.fromPublisher(crs.fromStream("tick", Integer.class))
                 .doOnNext(res -> assertEquals(value.incrementAndGet(), res.intValue())).doOnNext(n -> latch.countDown())
@@ -164,7 +164,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
 
         Publisher<Exchange> timer = crs.from("timer:reactive?period=250&repeatCount=3");
 
-        AtomicInteger value = new AtomicInteger(0);
+        AtomicInteger value = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(3);
 
         Flowable.fromPublisher(timer)
@@ -248,7 +248,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
     public void testTo() throws Exception {
         context.start();
 
-        AtomicInteger value = new AtomicInteger(0);
+        AtomicInteger value = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(1);
 
         Flowable.just(1, 2, 3).flatMap(e -> crs.to("bean:hello", e, String.class))
@@ -262,7 +262,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
     public void testToWithExchange() throws Exception {
         context.start();
 
-        AtomicInteger value = new AtomicInteger(0);
+        AtomicInteger value = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(1);
 
         Flowable.just(1, 2, 3).flatMap(e -> crs.to("bean:hello", e)).map(Exchange::getMessage).map(e -> e.getBody(String.class))
@@ -276,7 +276,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
     public void testToFunction() throws Exception {
         context.start();
 
-        AtomicInteger value = new AtomicInteger(0);
+        AtomicInteger value = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(1);
         Function<Object, Publisher<String>> fun = crs.to("bean:hello", String.class);
 
@@ -290,7 +290,7 @@ public class RxJavaStreamsServiceTest extends RxJavaStreamsServiceTestSupport {
     public void testToFunctionWithExchange() throws Exception {
         context.start();
 
-        AtomicInteger value = new AtomicInteger(0);
+        AtomicInteger value = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(1);
         Function<Object, Publisher<Exchange>> fun = crs.to("bean:hello");
 

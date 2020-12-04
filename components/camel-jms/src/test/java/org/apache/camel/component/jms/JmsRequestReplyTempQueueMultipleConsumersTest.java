@@ -109,7 +109,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
                             synchronized (msgsPerThread) {
                                 AtomicInteger count = msgsPerThread.get(threadName);
                                 if (count == null) {
-                                    count = new AtomicInteger(0);
+                                    count = new AtomicInteger();
                                     msgsPerThread.put(threadName, count);
                                 }
                                 count.incrementAndGet();

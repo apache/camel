@@ -81,7 +81,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
     }
 
     public static class BareSoapServiceImpl implements BareSoapService {
-        private AtomicInteger invocations = new AtomicInteger(0);
+        private AtomicInteger invocations = new AtomicInteger();
 
         @Override
         public void doSomething() {

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConsumerNativeConcurrentTest extends SoroushBotTestSupport {
     ConcurrentHashMap<String, Thread> userToThread;
-    AtomicInteger badThread = new AtomicInteger(0);
+    AtomicInteger badThread = new AtomicInteger();
 
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {

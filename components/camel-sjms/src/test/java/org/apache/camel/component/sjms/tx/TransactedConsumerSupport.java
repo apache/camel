@@ -112,7 +112,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
                              .log("Route " + routeNumber + " 1st attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
                              .to("mock:test.before." + routeNumber)
                              .process(new Processor() {
-                                 private final AtomicInteger counter = new AtomicInteger(0);
+                                 private final AtomicInteger counter = new AtomicInteger();
 
                                  @Override
                                  public void process(Exchange exchange) throws Exception {
