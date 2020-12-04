@@ -36,7 +36,10 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30SchemaDefinition;
 public class RestModelConverters {
 
     public List<? extends OasSchema> readClass(OasDocument oasDocument, Class<?> clazz) {
-        if (oasDocument instanceof Oas20Document) {
+        if (clazz.equals(java.io.File.class)) {
+            // File is a special type in OAS2 / OAS3 (no model)
+            return null;
+        } else if (oasDocument instanceof Oas20Document) {
             return readClassOas20((Oas20Document) oasDocument, clazz);
         } else if (oasDocument instanceof Oas30Document) {
             return readClassOas30((Oas30Document) oasDocument, clazz);
