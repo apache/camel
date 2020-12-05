@@ -427,8 +427,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         } else if (bean instanceof PropertyConfigurerAware) {
             configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
         }
-        // use advanced binding
-        PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
+        // use configurer and ignore case as end users may type an option name with mixed case
+        PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true).bind(camelContext, bean, parameters);
     }
 
     /**
