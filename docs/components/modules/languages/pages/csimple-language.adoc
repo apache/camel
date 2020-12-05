@@ -209,6 +209,55 @@ For example the following scripts cannot compile:
     ${bodyAs(MyUser)?.address?.zip} > 10000
 ----
 
+== Auto imports
+
+The csimple language will automatic import from:
+
+[source,java]
+----
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.*;
+import org.apache.camel.*;
+import org.apache.camel.util.*;
+----
+
+== Configuration file
+
+You can configure the csimple language in the `camel-csimple.properties` file which is loaded from the root classpath.
+
+For example you can add additional imports in the `camel-csimple.properties` file by adding:
+
+[source,properties]
+----
+import com.foo.MyUser;
+import com.bar.*;
+import static com.foo.MyHelper.*;
+----
+
+You can also add aliases (key=value) where an alias will be used as a shorthand replacement in the code.
+
+[source,properties]
+----
+echo()=${bodyAs(String)} ${bodyAs(String)}
+----
+
+Which allows to use _echo()_ in the csimple language script such as:
+
+[source,java]
+----
+from("direct:hello")
+    .transform(csimple("Hello echo()"))
+    .log("You said ${body}");
+----
+
+The _echo()_ alias will be replaced with its value resulting in a script as:
+
+[source,java]
+----
+    .transform(csimple("Hello ${bodyAs(String)} ${bodyAs(String)}"))
+----
+
 == More documentation
 
 See the xref:simple-language.adoc[Simple] language as csimple has the same set of functions as simple language.
