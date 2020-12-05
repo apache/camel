@@ -17,6 +17,7 @@
 package org.apache.camel.language.datasonnet;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.TimeZone;
@@ -159,6 +160,6 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
 
     private String loadResourceAsString(String name) throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream(name);
-        return IOUtils.toString(is);
+        return IOUtils.toString(is, Charset.defaultCharset());
     }
 }
