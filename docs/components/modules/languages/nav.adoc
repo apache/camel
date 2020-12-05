@@ -5,6 +5,7 @@
 ** xref:languages:bean-language.adoc[Bean method]
 ** xref:languages:constant-language.adoc[Constant]
 ** xref:languages:csimple-language.adoc[CSimple]
+** xref:languages:datasonnet-language.adoc[DataSonnet]
 ** xref:languages:exchangeProperty-language.adoc[ExchangeProperty]
 ** xref:languages:file-language.adoc[File]
 ** xref:languages:groovy-language.adoc[Groovy]
