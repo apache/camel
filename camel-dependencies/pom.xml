@@ -328,7 +328,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
-    <jetty9-version>9.4.32.v20200930</jetty9-version>
+    <jetty9-version>9.4.35.v20201120</jetty9-version>
     <jgit-version>5.9.0.202009080501-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -523,7 +523,7 @@
     <spring-data-redis-version>2.3.0.RELEASE</spring-data-redis-version>
     <spring-integration-version>5.4.1</spring-integration-version>
     <spring-ldap-version>2.3.3.RELEASE</spring-ldap-version>
-    <spring-security-version>5.4.1</spring-security-version>
+    <spring-security-version>5.4.2</spring-security-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
     <spring-ws-version>3.0.10.RELEASE</spring-ws-version>
