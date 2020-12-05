@@ -447,8 +447,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         } else {
             configurer = null;
         }
-        // use advanced binding
-        PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
+        // use configurer and ignore case as end users may type an option name with mixed case
+        PropertyBindingSupport.build().withConfigurer(configurer).withIgnoreCase(true).bind(camelContext, bean, parameters);
     }
 
     @Override

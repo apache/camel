@@ -317,6 +317,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
                 .withTarget(dataFormat)
                 .withReference(true)
                 .withMandatory(true)
+                .withIgnoreCase(true)
                 .withConfigurer(configurer)
                 .withProperties(properties)
                 .bind();

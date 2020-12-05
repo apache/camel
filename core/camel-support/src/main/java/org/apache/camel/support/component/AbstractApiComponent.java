@@ -131,6 +131,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), getCamelContext());
         PropertyBindingSupport.build()
                 .withConfigurer(configurer)
+                .withIgnoreCase(true)
                 .bind(getCamelContext(), endpointConfiguration, componentProperties);
         return endpointConfiguration;
     }

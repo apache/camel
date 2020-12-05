@@ -275,6 +275,7 @@ public class ExpressionReifier<T extends ExpressionDefinition> extends AbstractR
         }
         PropertyBindingSupport.build()
                 .withConfigurer(configurer)
+                .withIgnoreCase(true)
                 .bind(camelContext, target, properties);
     }
 

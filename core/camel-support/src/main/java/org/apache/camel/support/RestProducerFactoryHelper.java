@@ -76,7 +76,7 @@ public final class RestProducerFactoryHelper {
 
         // component was not added to the context we can configure it
         final Component newlyCreated = camelContext.getComponent(componentName, true, false);
-        PropertyBindingSupport.build().withRemoveParameters(false)
+        PropertyBindingSupport.build().withRemoveParameters(false).withIgnoreCase(true)
                 .withConfigurer(newlyCreated.getComponentPropertyConfigurer())
                 .bind(camelContext, newlyCreated, componentProperties);
         ServiceHelper.startService(newlyCreated);
