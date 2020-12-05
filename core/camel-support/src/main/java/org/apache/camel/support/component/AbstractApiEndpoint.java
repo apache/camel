@@ -31,8 +31,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.PropertyConfigurerHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -97,8 +100,35 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     @Override
     public void configureProperties(Map<String, Object> options) {
-        super.configureProperties(options);
-        setProperties(getConfiguration(), options);
+        if (options != null && !options.isEmpty()) {
+            // configure scheduler first
+            configureScheduledPollConsumerProperties(options);
+
+            PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
+            PropertyConfigurer configurer2
+                    = PropertyConfigurerHelper.resolvePropertyConfigurer(getCamelContext(), getConfiguration());
+
+            // we have a mix of options that are general endpoint and then specialized
+            // so we need to configure first without reflection
+            // use configurer and ignore case as end users may type an option name with mixed case
+            PropertyBindingSupport.build().withConfigurer(configurer)
+                    .withIgnoreCase(true).withReflection(false)
+                    .bind(getCamelContext(), this, options);
+            PropertyBindingSupport.build().withConfigurer(configurer2)
+                    .withIgnoreCase(true).withReflection(false)
+                    .bind(getCamelContext(), getConfiguration(), options);
+
+            // after reflection-free then we fallback to allow reflection
+            // in case some options are still left
+            if (!options.isEmpty()) {
+                PropertyBindingSupport.build().withConfigurer(configurer)
+                        .withIgnoreCase(true).withReflection(true)
+                        .bind(getCamelContext(), this, options);
+                PropertyBindingSupport.build().withConfigurer(configurer2)
+                        .withIgnoreCase(true).withReflection(true)
+                        .bind(getCamelContext(), getConfiguration(), options);
+            }
+        }
 
         // validate and initialize state
         initState();
