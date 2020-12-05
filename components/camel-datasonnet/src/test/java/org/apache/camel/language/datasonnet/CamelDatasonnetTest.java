@@ -109,6 +109,7 @@ public class CamelDatasonnetTest extends CamelSpringTestSupport {
         theGizmo.setManufacturer(manufacturer);
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
         theGizmo.setDate(df.parse("2020-01-06"));
 
         runCamelTest(theGizmo,
