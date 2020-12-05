@@ -2340,6 +2340,17 @@ public class ModelParser extends BaseParser {
         return doParse(new ConstantExpression(),
             expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
+    protected DatasonnetExpression doParseDatasonnetExpression() throws IOException, XmlPullParserException {
+        return doParse(new DatasonnetExpression(), (def, key, val) -> {
+            switch (key) {
+                case "bodyMediaType": def.setBodyMediaType(val); break;
+                case "outputMediaType": def.setOutputMediaType(val); break;
+                case "resultType": def.setResultTypeName(val); break;
+                default: return expressionDefinitionAttributeHandler().accept(def, key, val);
+            }
+            return true;
+        }, noElementHandler(), expressionDefinitionValueHandler());
+    }
     protected ExchangePropertyExpression doParseExchangePropertyExpression() throws IOException, XmlPullParserException {
         return doParse(new ExchangePropertyExpression(),
             expressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
@@ -2984,6 +2995,7 @@ public class ModelParser extends BaseParser {
             case "expressionDefinition": return doParseExpressionDefinition();
             case "csimple": return doParseCSimpleExpression();
             case "constant": return doParseConstantExpression();
+            case "datasonnet": return doParseDatasonnetExpression();
             case "exchangeProperty": return doParseExchangePropertyExpression();
             case "groovy": return doParseGroovyExpression();
             case "header": return doParseHeaderExpression();
