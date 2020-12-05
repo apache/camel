@@ -40,19 +40,20 @@ import org.slf4j.LoggerFactory;
 
 @Language("datasonnet")
 public class DatasonnetLanguage extends LanguageSupport implements PropertyConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetLanguage.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasonnetLanguage.class);
 
     private static final Map<String, String> CLASSPATH_IMPORTS = new HashMap<>();
 
     static {
-        LOGGER.debug("One time classpath search...");
+        LOG.debug("One time classpath search...");
         try (ScanResult scanResult = new ClassGraph().whitelistPaths("/").scan()) {
             scanResult.getResourcesWithExtension("libsonnet")
                     .forEachByteArray((resource, bytes) -> {
-                        LOGGER.debug("Loading DataSonnet library: " + resource.getPath());
+                        LOG.debug("Loading DataSonnet library: {}", resource.getPath());
                         CLASSPATH_IMPORTS.put(resource.getPath(), new String(bytes, StandardCharsets.UTF_8));
                     });
         }
+        LOG.debug("One time classpath search done");
     }
 
     // Cache used to stores the Mappers

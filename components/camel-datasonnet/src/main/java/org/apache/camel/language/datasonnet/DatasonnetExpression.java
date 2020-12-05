@@ -18,6 +18,7 @@ package org.apache.camel.language.datasonnet;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DatasonnetExpression extends ExpressionAdapter implements ExpressionResultTypeAware {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatasonnetExpression.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DatasonnetExpression.class);
 
     private String expression;
     private Expression metaExpression;
@@ -111,7 +112,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                 return (T) result.getContent();
             }
         } catch (Exception e) {
-            throw new RuntimeExpressionException("Unable to evaluate DataSonnet expression : " + expression, e);
+            throw new RuntimeExpressionException("Unable to evaluate DataSonnet expression: " + expression, e);
         } finally {
             CML.getInstance().getExchange().remove();
         }
@@ -173,7 +174,7 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
         }
 
         Map<String, String> answer = new HashMap<>();
-        LOGGER.debug("Explicit library path is " + libraryPaths);
+        LOG.debug("Explicit library path is: {}", libraryPaths);
         for (String nextPath : libraryPaths) {
             final File nextLibDir = new File(nextPath);
             if (nextLibDir.isDirectory()) {
@@ -183,16 +184,16 @@ public class DatasonnetExpression extends ExpressionAdapter implements Expressio
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                             File f = file.toFile();
                             if (!f.isDirectory() && f.getName().toLowerCase().endsWith(".libsonnet")) {
-                                String content = IOUtils.toString(file.toUri());
+                                String content = IOUtils.toString(file.toUri(), Charset.defaultCharset());
                                 Path relative = nextLibDir.toPath().relativize(file);
-                                LOGGER.debug("Loading DataSonnet library: " + relative);
+                                LOG.debug("Loading DataSonnet library: {}", relative);
                                 answer.put(relative.toString(), content);
                             }
                             return FileVisitResult.CONTINUE;
                         }
                     });
                 } catch (IOException e) {
-                    LOGGER.error("Unable to load libraries from " + nextPath, e);
+                    LOG.warn("Unable to load DataSonnet library from: " + nextPath, e);
                 }
             }
         }
