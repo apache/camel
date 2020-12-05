@@ -175,6 +175,7 @@
         <module>camel-crypto</module>
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
+        <module>camel-datasonnet</module>
         <module>camel-debezium-common</module>
         <module>camel-debezium-mongodb</module>
         <module>camel-debezium-mysql</module>
