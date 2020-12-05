@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionFactory;
 import org.apache.camel.model.language.CSimpleExpression;
 import org.apache.camel.model.language.ConstantExpression;
+import org.apache.camel.model.language.DatasonnetExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
@@ -323,6 +324,16 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
         JoorExpression exp = new JoorExpression(text);
         exp.setResultType(resultType);
         return expression(exp);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/datasonnet.html">Datasonnet expression</a>
+     *
+     * @param  text the expression to be evaluated
+     * @return      the builder to continue processing the DSL
+     */
+    public T datasonnet(String text) {
+        return expression(new DatasonnetExpression(text));
     }
 
     /**
@@ -803,7 +814,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
 
     /**
      * Evaluates an XML token expression on the message body with XML content
-     * 
+     *
      * @param  path       the xpath like path notation specifying the child nodes to tokenize
      * @param  mode       one of 'i', 'w', or 'u' to inject the namespaces to the token, to wrap the token with its
      *                    ancestor contet, or to unwrap to its element child
@@ -836,7 +847,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath expression</a> on the supplied header name's
      * contents
-     * 
+     *
      * @param  text       the expression to be evaluated
      * @param  headerName the name of the header to apply the expression to
      * @return            the builder to continue processing the DSL
@@ -965,7 +976,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware {
 
     /**
      * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery expression</a>
-     * 
+     *
      * @param  text       the expression to be evaluated
      * @param  headerName the name of the header to apply the expression to
      * @return            the builder to continue processing the DSL
