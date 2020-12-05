@@ -278,6 +278,14 @@ Configure data formats.
     </xs:annotation>
   </xs:element>
 
+  <xs:element name="datasonnet" type="tns:datasonnetExpression">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+To use DataSonnet scripts in Camel expressions or predicates.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:element name="defaultLoadBalancer" type="tns:defaultServiceCallServiceLoadBalancerConfiguration">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -3185,6 +3193,7 @@ external sources to control this aggregator.
       <xs:element ref="tns:expressionDefinition"/>
       <xs:element ref="tns:csimple"/>
       <xs:element ref="tns:constant"/>
+      <xs:element ref="tns:datasonnet"/>
       <xs:element ref="tns:exchangeProperty"/>
       <xs:element ref="tns:groovy"/>
       <xs:element ref="tns:header"/>
@@ -3416,6 +3425,7 @@ implementation. Default value: Singleton
             <xs:element ref="tns:expressionDefinition"/>
             <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
@@ -4385,6 +4395,7 @@ data formats marshalling to JSON etc. Default value: false
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -4437,6 +4448,7 @@ pool. Is by default true. Default value: true
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -4501,6 +4513,7 @@ producers.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -4606,6 +4619,7 @@ endpoint. Default value: false
             <xs:element ref="tns:expressionDefinition"/>
             <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
@@ -4819,6 +4833,7 @@ Global option value.
             <xs:element ref="tns:expressionDefinition"/>
             <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
@@ -5476,6 +5491,7 @@ To refer to a custom logger instance to lookup from the registry.
             <xs:element ref="tns:expressionDefinition"/>
             <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
@@ -9042,6 +9058,7 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -9173,6 +9190,7 @@ Reference to the Processor to lookup in the registry to use.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -9452,6 +9470,7 @@ Name of property to remove.
             <xs:element ref="tns:expressionDefinition"/>
             <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
@@ -9953,6 +9972,7 @@ Parameter description.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -10144,6 +10164,7 @@ use.
       <xs:element ref="tns:expressionDefinition"/>
       <xs:element ref="tns:csimple"/>
       <xs:element ref="tns:constant"/>
+      <xs:element ref="tns:datasonnet"/>
       <xs:element ref="tns:exchangeProperty"/>
       <xs:element ref="tns:groovy"/>
       <xs:element ref="tns:header"/>
@@ -10204,6 +10225,7 @@ Default value: SECONDS
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -10233,6 +10255,7 @@ Default value: SECONDS
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -10278,6 +10301,7 @@ forward.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -10316,6 +10340,7 @@ will be used.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -10354,6 +10379,7 @@ constant name will be used.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -10391,6 +10417,7 @@ Sets a reference to lookup for the comparator to use for sorting.
             <xs:element ref="tns:expressionDefinition"/>
             <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
@@ -10865,6 +10892,7 @@ rejection handler. Is by default true. Default value: true
             <xs:element ref="tns:expressionDefinition"/>
             <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
@@ -11129,6 +11157,7 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -11286,6 +11315,7 @@ Sets a reference to use for lookup the policy in the registry.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
@@ -12021,6 +12051,7 @@ Set the base path to store in ZK.
             <xs:element ref="tns:expressionDefinition"/>
             <xs:element ref="tns:csimple"/>
             <xs:element ref="tns:constant"/>
+            <xs:element ref="tns:datasonnet"/>
             <xs:element ref="tns:exchangeProperty"/>
             <xs:element ref="tns:groovy"/>
             <xs:element ref="tns:header"/>
@@ -12239,6 +12270,35 @@ Sets the class name of the result type (type from output).
   <xs:complexType name="constantExpression">
     <xs:simpleContent>
       <xs:extension base="tns:expression"/>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="datasonnetExpression">
+    <xs:simpleContent>
+      <xs:extension base="tns:expression">
+        <xs:attribute name="bodyMediaType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The String representation of the message's body MediaType.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="outputMediaType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+The String representation of the MediaType to output.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="resultType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the class name of the result type (type from output) The default result
+type is com.datasonnet.document.Document.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
 
@@ -13693,6 +13753,7 @@ password, application or accessCode.
           <xs:element ref="tns:expressionDefinition"/>
           <xs:element ref="tns:csimple"/>
           <xs:element ref="tns:constant"/>
+          <xs:element ref="tns:datasonnet"/>
           <xs:element ref="tns:exchangeProperty"/>
           <xs:element ref="tns:groovy"/>
           <xs:element ref="tns:header"/>
