@@ -18,10 +18,10 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
@@ -34,11 +34,13 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
+import static org.apache.camel.tooling.util.PackageHelper.loadText;
+
 /**
  * Prepares the apache-camel/pom.xml and common-bin to keep the Camel artifacts up-to-date.
  */
-@Mojo(name = "prepare-release-pom", threadSafe = true)
-public class PrepareReleasePomMojo extends AbstractMojo {
+@Mojo(name = "prepare-assembly", threadSafe = true)
+public class PrepareAssemblyMojo extends AbstractMojo {
 
     /**
      * The maven project.
@@ -61,8 +63,8 @@ public class PrepareReleasePomMojo extends AbstractMojo {
     /**
      * The directory for components
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components")
-    protected File componentsDir;
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-allcomponents/pom.xml")
+    protected File allComponentsPomFile;
 
     /**
      * Maven ProjectHelper.
@@ -78,24 +80,31 @@ public class PrepareReleasePomMojo extends AbstractMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        updatePomAndCommonBin(componentsDir, "org.apache.camel", "camel components");
+        updatePomAndCommonBin(allComponentsPomFile, "org.apache.camel", "camel components");
     }
 
-    protected void updatePomAndCommonBin(File dir, String groupId, String token)
+    protected void updatePomAndCommonBin(File allComponentsPom, String groupId, String token)
             throws MojoExecutionException, MojoFailureException {
         SortedSet<String> artifactIds = new TreeSet<>();
 
+        final String pomText;
         try {
-            Set<File> poms = new HashSet<>();
-            findComponentPoms(dir, poms);
-            for (File pom : poms) {
-                String aid = asArtifactId(pom);
-                if (isValidArtifactId(aid)) {
-                    artifactIds.add(aid);
-                }
-            }
+            pomText = loadText(allComponentsPom);
         } catch (IOException e) {
-            throw new MojoFailureException("Error due " + e.getMessage(), e);
+            throw new MojoExecutionException("Error loading camel-allcomponents pom.xml file", e);
+        }
+
+        final String before = Strings.before(pomText, "<dependencies>");
+        final String after = Strings.after(pomText, "</dependencies>");
+
+        final String between = pomText.substring(before.length(), pomText.length() - after.length());
+
+        Pattern pattern = Pattern.compile(
+                "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>\\s*</dependency>");
+        Matcher matcher = pattern.matcher(between);
+        TreeSet<String> dependencies = new TreeSet<>();
+        while (matcher.find()) {
+            artifactIds.add(matcher.group(2));
         }
 
         getLog().debug("ArtifactIds: " + artifactIds);
@@ -134,32 +143,6 @@ public class PrepareReleasePomMojo extends AbstractMojo {
         }
         getLog().info("apache-camel/src/main/descriptors/common-bin.xml contains " + artifactIds.size() + " " + token
                       + " dependencies");
-    }
-
-    private void findComponentPoms(File parentDir, Set<File> components) {
-        File[] files = parentDir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory() && file.getName().startsWith("camel-")) {
-                    findComponentPoms(file, components);
-                } else if (parentDir.getName().startsWith("camel-") && file.getName().equals("pom.xml")) {
-                    components.add(file);
-                }
-            }
-        }
-    }
-
-    private String asArtifactId(File pom) throws IOException {
-        String text = PackageHelper.loadText(pom);
-        text = Strings.after(text, "</parent>");
-        if (text != null) {
-            return Strings.between(text, "<artifactId>", "</artifactId>");
-        }
-        return null;
-    }
-
-    private boolean isValidArtifactId(String aid) {
-        return aid != null && !aid.endsWith("-maven-plugin") && !aid.endsWith("-parent");
     }
 
     private boolean updateXmlFile(File file, String token, String changed, String spaces) throws MojoExecutionException {
