@@ -142,6 +142,11 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             new PackageOtherMojo(
                     getLog(), project, projectHelper, otherOutDir,
                     schemaOutDir, buildContext).prepareOthers();
+            // skip maven plugins or from core as core is maintained manually
+            boolean skip = project.getArtifactId().endsWith("-maven-plugin");
+            if (!skip) {
+                count = 1;
+            }
         }
 
         // whether to sync pom
@@ -154,8 +159,10 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             }
         }
 
-        // Update all component pom sync point
-        if (count > 0 && (val == null || val.equals("true"))) {
+        // skip from core folder as they are manitained manually in parent and should not be in all-components
+        boolean core = project.getParentArtifact() != null && project.getParentArtifact().getArtifactId().equals("core");
+        if (!core && count > 0 && (val == null || val.equals("true"))) {
+            // Update all component pom sync point
             syncParentPomFile();
             syncAllComponentsPomFile();
         }

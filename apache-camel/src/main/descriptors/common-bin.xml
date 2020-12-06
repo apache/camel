@@ -26,7 +26,6 @@
       <scope>runtime</scope>
       <includes>
         <!-- camel core -->
-        <include>org.apache.camel:apt</include>
         <include>org.apache.camel:camel-api</include>
         <include>org.apache.camel:camel-util</include>
         <include>org.apache.camel:camel-management-api</include>
@@ -52,6 +51,7 @@
         <include>org.apache.camel:camel-caffeine-lrucache</include>
         <include>org.apache.camel:camel-xml-io</include>
         <include>org.apache.camel:camel-xml-jaxb</include>
+        <include>org.apache.camel:camel-xml-jaxp</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
@@ -66,6 +66,7 @@
         <include>org.apache.camel:camel-as2-api</include>
         <include>org.apache.camel:camel-asn1</include>
         <include>org.apache.camel:camel-asterisk</include>
+        <include>org.apache.camel:camel-atlasmap</include>
         <include>org.apache.camel:camel-atmos</include>
         <include>org.apache.camel:camel-atmosphere-websocket</include>
         <include>org.apache.camel:camel-atom</include>
@@ -140,16 +141,19 @@
         <include>org.apache.camel:camel-consul</include>
         <include>org.apache.camel:camel-controlbus</include>
         <include>org.apache.camel:camel-corda</include>
+        <include>org.apache.camel:camel-core-languages</include>
         <include>org.apache.camel:camel-couchbase</include>
         <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-cron</include>
         <include>org.apache.camel:camel-crypto</include>
         <include>org.apache.camel:camel-crypto-cms</include>
+        <include>org.apache.camel:camel-csimple-joor</include>
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-cxf-transport</include>
         <include>org.apache.camel:camel-dataformat</include>
         <include>org.apache.camel:camel-dataset</include>
+        <include>org.apache.camel:camel-datasonnet</include>
         <include>org.apache.camel:camel-debezium-common</include>
         <include>org.apache.camel:camel-debezium-mongodb</include>
         <include>org.apache.camel:camel-debezium-mysql</include>
@@ -168,7 +172,6 @@
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-elasticsearch-rest</include>
         <include>org.apache.camel:camel-elsql</include>
-        <include>org.apache.camel:camel-elytron</include>
         <include>org.apache.camel:camel-etcd</include>
         <include>org.apache.camel:camel-etcd3</include>
         <include>org.apache.camel:camel-exec</include>
@@ -239,12 +242,14 @@
         <include>org.apache.camel:camel-johnzon</include>
         <include>org.apache.camel:camel-jolt</include>
         <include>org.apache.camel:camel-jooq</include>
+        <include>org.apache.camel:camel-joor</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
         <include>org.apache.camel:camel-jslt</include>
         <include>org.apache.camel:camel-json-validator</include>
         <include>org.apache.camel:camel-jsonapi</include>
         <include>org.apache.camel:camel-jsonata</include>
+        <include>org.apache.camel:camel-jsonb</include>
         <include>org.apache.camel:camel-jsonpath</include>
         <include>org.apache.camel:camel-jt400</include>
         <include>org.apache.camel:camel-jta</include>
@@ -255,6 +260,7 @@
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-ldif</include>
         <include>org.apache.camel:camel-leveldb</include>
+        <include>org.apache.camel:camel-leveldb-legacy</include>
         <include>org.apache.camel:camel-log</include>
         <include>org.apache.camel:camel-lra</include>
         <include>org.apache.camel:camel-lucene</include>
@@ -403,6 +409,7 @@
         <include>org.apache.camel:camel-workday</include>
         <include>org.apache.camel:camel-xchange</include>
         <include>org.apache.camel:camel-xj</include>
+        <include>org.apache.camel:camel-xml-jaxp</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xpath</include>

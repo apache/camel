@@ -121,9 +121,11 @@
                 <artifactId>camel-package-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <!-- prepare the catalog, readme files, etc. -->
                         <goals>
+                            <!-- prepare the catalog, readme files, etc. -->
                             <goal>prepare-catalog</goal>
+                            <!-- prepare apache-camel assembly -->
+                            <goal>prepare-assembly</goal>
                         </goals>
                         <phase>process-resources</phase>
                     </execution>
