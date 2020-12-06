@@ -90,7 +90,7 @@ added.
 |Arno Noordover |het CAK
 |Bahaa Zaid|
 |Barry Kaplan | 
-|Brett Meyer |3RiverDev, Savoir Technologies
+|Brett Meyer |Impact Upgrade
 |Brian Diesenhaus | 
 |Brian Guan | 
 |Brian Madigan | 
