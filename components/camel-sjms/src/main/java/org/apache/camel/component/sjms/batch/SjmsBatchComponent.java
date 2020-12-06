@@ -17,7 +17,6 @@
 package org.apache.camel.component.sjms.batch;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 import javax.jms.ConnectionFactory;
 
@@ -29,8 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 
 @Component("sjms-batch")
 public class SjmsBatchComponent extends HeaderFilterStrategyComponent {
-
-    private ExecutorService asyncStartStopExecutorService;
 
     @Metadata(label = "advanced")
     private ConnectionFactory connectionFactory;
@@ -95,25 +92,6 @@ public class SjmsBatchComponent extends HeaderFilterStrategyComponent {
      */
     public void setRecoveryInterval(int recoveryInterval) {
         this.recoveryInterval = recoveryInterval;
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        if (asyncStartStopExecutorService != null) {
-            getCamelContext().getExecutorServiceManager().shutdownNow(asyncStartStopExecutorService);
-            asyncStartStopExecutorService = null;
-        }
-        super.doShutdown();
-    }
-
-    protected synchronized ExecutorService getAsyncStartStopExecutorService() {
-        if (asyncStartStopExecutorService == null) {
-            // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
-            // for each task, and the thread pool will shrink when no more tasks running
-            asyncStartStopExecutorService
-                    = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
-        }
-        return asyncStartStopExecutorService;
     }
 
 }
