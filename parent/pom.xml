@@ -2650,10 +2650,6 @@
 			</dependency>
 			<!-- camel components: END -->
 
-            <!-- NOTE: auto-generated list of starter components when building camel catalog -->
-            <!-- camel starters: START -->
-            <!-- camel starters: END -->
-
             <!-- camel catalog -->
             <dependency>
                 <groupId>org.apache.camel</groupId>
