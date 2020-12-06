@@ -52,59 +52,37 @@ public final class OpenApiHelper {
     public static void clearVendorExtensions(OasDocument openApi) {
 
         if (openApi instanceof Oas20Document) {
-
-            if (openApi.getExtensions() != null) {
-                openApi.getExtensions().clear();
-            }
-
+            openApi.clearExtensions();
             if (((Oas20Document) openApi).definitions.getDefinitions() != null) {
                 for (Oas20SchemaDefinition schemaDefinition : ((Oas20Document) openApi).definitions.getDefinitions()) {
-                    if (schemaDefinition.getExtensions() != null) {
-                        schemaDefinition.getExtensions().clear();
-                    }
+                    schemaDefinition.clearExtensions();
                 }
             }
-
             if (openApi.paths != null) {
                 for (OasPathItem path : openApi.paths.getPathItems()) {
-                    if (path.getExtensions() != null) {
-                        path.getExtensions().clear();
-                    }
+                    path.clearExtensions();
                     for (OasOperation op : getOperationMap(path).values()) {
-                        if (op.getExtensions() != null) {
-                            op.getExtensions().clear();
-                        }
+                        op.clearExtensions();
                     }
                 }
             }
         } else if (openApi instanceof Oas30Document) {
-            if (openApi.getExtensions() != null) {
-                openApi.getExtensions().clear();
-            }
-
+            openApi.clearExtensions();
             if (((Oas30Document) openApi).components != null
                     && ((Oas30Document) openApi).components.schemas != null) {
                 for (Oas30SchemaDefinition schemaDefinition : ((Oas30Document) openApi).components.schemas.values()) {
-                    if (schemaDefinition.getExtensions() != null) {
-                        schemaDefinition.getExtensions().clear();
-                    }
+                    schemaDefinition.clearExtensions();
                 }
             }
-
             if (openApi.paths != null) {
                 for (OasPathItem path : openApi.paths.getPathItems()) {
-                    if (path.getExtensions() != null) {
-                        path.getExtensions().clear();
-                    }
+                    path.clearExtensions();
                     for (OasOperation op : getOperationMap(path).values()) {
-                        if (op.getExtensions() != null) {
-                            op.getExtensions().clear();
-                        }
+                        op.clearExtensions();
                     }
                 }
             }
         }
-
     }
 
     private static Map<HttpMethod, OasOperation> getOperationMap(OasPathItem path) {

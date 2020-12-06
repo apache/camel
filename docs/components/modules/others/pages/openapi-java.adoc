@@ -198,6 +198,6 @@ json is returned as the default format.
 
 == Examples
 
-In the Apache Camel distribution we ship
-the `camel-example-openapi-cdi` and `camel-example-openapi-java` which
-demonstrates using this OpenApi component.
+In the Apache Camel distribution we ship the `camel-example-openapi-cdi`
+and `camel-example-spring-boot-rest-openapi-simple` which demonstrates
+using this OpenApi component.
