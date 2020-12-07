@@ -571,6 +571,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-salesforce":
                 case "camel-fhir":
                 case "camel-debezium-common":
+                case "camel-vertx-kafka":
                     return false;
                 default:
                     return true;
@@ -1151,6 +1152,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 return dir.resolve("camel-servicenow-component");
             case "camel-fhir":
                 return dir.resolve("camel-fhir-component");
+            case "camel-vertx-kafka":
+                return dir.resolve("camel-vertx-kafka-component");
             default:
                 return dir;
         }
