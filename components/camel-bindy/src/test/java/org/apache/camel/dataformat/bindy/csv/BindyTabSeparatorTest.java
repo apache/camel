@@ -75,9 +75,9 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:unmarshal",
                 "123\tCamel in Action\t2\t\t\n"
-                        + "456\tCamel in Action\t1\t\t\t\n"
-                        + "456\tCamel in Action\t2\t\t\n"
-                        + "456\tCamel in Action\t1\t\t\t\n",
+                                                       + "456\tCamel in Action\t1\t\t\t\n"
+                                                       + "456\tCamel in Action\t2\t\t\n"
+                                                       + "456\tCamel in Action\t1\t\t\t\n",
                 Exchange.CONTENT_ENCODING, "iso8859-1");
 
         assertMockEndpointsSatisfied();
