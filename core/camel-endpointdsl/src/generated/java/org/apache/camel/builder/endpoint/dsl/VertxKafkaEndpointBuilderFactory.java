@@ -23,6 +23,7 @@ import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Sent and receive messages to/from an Apache Kafka broker using vert.x Kafka
@@ -170,6 +171,34 @@ public interface VertxKafkaEndpointBuilderFactory {
         default VertxKafkaEndpointConsumerBuilder connectionsMaxIdleMs(
                 String connectionsMaxIdleMs) {
             doSetProperty("connectionsMaxIdleMs", connectionsMaxIdleMs);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointConsumerBuilder headerFilterStrategy(
+                HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointConsumerBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -2048,6 +2077,34 @@ public interface VertxKafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointProducerBuilder headerFilterStrategy(
+                HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointProducerBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * A list of classes to use as interceptors. Implementing the
          * org.apache.kafka.clients.producer.ProducerInterceptor interface
          * allows you to intercept (and possibly mutate) the records received by
@@ -3759,6 +3816,34 @@ public interface VertxKafkaEndpointBuilderFactory {
         default VertxKafkaEndpointBuilder connectionsMaxIdleMs(
                 String connectionsMaxIdleMs) {
             doSetProperty("connectionsMaxIdleMs", connectionsMaxIdleMs);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointBuilder headerFilterStrategy(
+                HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaEndpointBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**

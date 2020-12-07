@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import io.vertx.kafka.client.producer.KafkaHeader;
 import io.vertx.kafka.client.producer.KafkaProducer;
 import io.vertx.kafka.client.producer.KafkaProducerRecord;
 import io.vertx.kafka.client.producer.RecordMetadata;
@@ -145,9 +146,12 @@ public class VertxKafkaProducerOperations {
         final Object messageKey = getMessageKey(message);
         final Object messageValue = getMessageValue(message, inputData);
         final Integer partitionId = getPartitionId(message);
+        final List<KafkaHeader> propagatedHeaders
+                = new VertxKafkaHeadersPropagation(configurationOptionsProxy.getConfiguration().getHeaderFilterStrategy())
+                        .getPropagatedHeaders(message);
 
         return KafkaProducerRecord.create(topic, messageKey, messageValue, partitionId)
-                .addHeaders(VertxKafkaHeadersPropagation.getPropagatedHeaders(message));
+                .addHeaders(propagatedHeaders);
     }
 
     private String getTopic(final Message message, final String parentTopic) {

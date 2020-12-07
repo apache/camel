@@ -34,6 +34,7 @@ public class VertxKafkaComponent extends DefaultComponent {
 
     @Metadata
     private VertxKafkaConfiguration configuration = new VertxKafkaConfiguration();
+    private boolean managedVertx;
 
     @Metadata(label = "advanced", autowired = true)
     private Vertx vertx;
@@ -87,15 +88,15 @@ public class VertxKafkaComponent extends DefaultComponent {
             } else {
                 vertx = Vertx.vertx();
             }
+            managedVertx = true;
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (vertx != null) {
+        if (managedVertx && vertx != null) {
             vertx.close();
         }
-        vertx = null;
 
         super.doStop();
     }

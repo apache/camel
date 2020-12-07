@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.vertx.kafka;
 
+import java.util.Map;
+
+import io.vertx.core.buffer.Buffer;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import io.vertx.kafka.client.consumer.KafkaConsumerRecord;
 import org.apache.camel.Exchange;
@@ -72,10 +75,13 @@ public class VertxKafkaConsumer extends DefaultConsumer {
     }
 
     private void onEventListener(final KafkaConsumerRecord<Object, Object> record) {
-        final Exchange exchange = getEndpoint().createVertxKafkaExchange(record);
-        // set propagated headers
-        VertxKafkaHeadersPropagation.getPropagatedHeaders(record.headers(), exchange.getIn())
-                .forEach((key, value) -> exchange.getIn().setHeader(key, value));
+        final Exchange exchange = getEndpoint().createExchange(record);
+        final Map<String, Buffer> propagatedHeaders
+                = new VertxKafkaHeadersPropagation(getConfiguration().getHeaderFilterStrategy())
+                        .getPropagatedHeaders(record.headers(), exchange.getIn());
+
+        // set propagated headers on exchange
+        propagatedHeaders.forEach((key, value) -> exchange.getIn().setHeader(key, value));
 
         // add exchange callback
         exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
@@ -96,6 +102,9 @@ public class VertxKafkaConsumer extends DefaultConsumer {
 
     private void onErrorListener(final Throwable error) {
         final Exchange exchange = getEndpoint().createExchange();
+
+        // set the thrown exception
+        exchange.setException(error);
 
         // log exception if an exception occurred and was not handled
         if (exchange.getException() != null) {

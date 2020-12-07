@@ -74,6 +74,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "groupId": target.getConfiguration().setGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "groupinstanceid":
         case "groupInstanceId": target.getConfiguration().setGroupInstanceId(property(camelContext, java.lang.String.class, value)); return true;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": target.getConfiguration().setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "interceptorclasses":
@@ -270,6 +272,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "groupId": return java.lang.String.class;
         case "groupinstanceid":
         case "groupInstanceId": return java.lang.String.class;
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return int.class;
         case "interceptorclasses":
@@ -467,6 +471,8 @@ public class VertxKafkaEndpointConfigurer extends PropertyConfigurerSupport impl
         case "groupId": return target.getConfiguration().getGroupId();
         case "groupinstanceid":
         case "groupInstanceId": return target.getConfiguration().getGroupInstanceId();
+        case "headerfilterstrategy":
+        case "headerFilterStrategy": return target.getConfiguration().getHeaderFilterStrategy();
         case "heartbeatintervalms":
         case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "interceptorclasses":

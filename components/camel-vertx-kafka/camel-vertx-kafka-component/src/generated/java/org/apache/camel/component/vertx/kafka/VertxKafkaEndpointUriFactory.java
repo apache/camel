@@ -20,7 +20,7 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(97);
+        Set<String> props = new HashSet<>(98);
         props.add("synchronous");
         props.add("receiveBufferBytes");
         props.add("saslLoginRefreshWindowFactor");
@@ -52,6 +52,7 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("allowAutoCreateTopics");
         props.add("maxPartitionFetchBytes");
         props.add("saslLoginCallbackHandlerClass");
+        props.add("headerFilterStrategy");
         props.add("sslTruststorePassword");
         props.add("sessionTimeoutMs");
         props.add("clientDnsLookup");

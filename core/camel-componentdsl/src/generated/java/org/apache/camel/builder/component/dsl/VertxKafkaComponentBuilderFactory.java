@@ -154,6 +154,20 @@ public interface VertxKafkaComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * 
+         * Group: common
+         */
+        default VertxKafkaComponentBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
          * A list of classes to use as interceptors. Implementing the
          * org.apache.kafka.clients.producer.ProducerInterceptor interface
          * allows you to intercept (and possibly mutate) the records received by
@@ -1674,6 +1688,7 @@ public interface VertxKafkaComponentBuilderFactory {
             case "clientId": getOrCreateConfiguration((VertxKafkaComponent) component).setClientId((java.lang.String) value); return true;
             case "configuration": ((VertxKafkaComponent) component).setConfiguration((org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration) value); return true;
             case "connectionsMaxIdleMs": getOrCreateConfiguration((VertxKafkaComponent) component).setConnectionsMaxIdleMs((long) value); return true;
+            case "headerFilterStrategy": getOrCreateConfiguration((VertxKafkaComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "interceptorClasses": getOrCreateConfiguration((VertxKafkaComponent) component).setInterceptorClasses((java.lang.String) value); return true;
             case "metadataMaxAgeMs": getOrCreateConfiguration((VertxKafkaComponent) component).setMetadataMaxAgeMs((long) value); return true;
             case "metricReporters": getOrCreateConfiguration((VertxKafkaComponent) component).setMetricReporters((java.lang.String) value); return true;

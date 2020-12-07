@@ -11,7 +11,11 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 
 @UriParams
-public class VertxKafkaConfiguration implements Cloneable {
+public class VertxKafkaConfiguration
+        extends
+            BaseVertxKafkaConfiguration
+        implements
+            Cloneable {
 
     // partition.id
     @UriParam(label = "common")

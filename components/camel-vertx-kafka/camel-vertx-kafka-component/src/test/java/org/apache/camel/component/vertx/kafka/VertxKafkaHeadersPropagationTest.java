@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VertxKafkaHeadersPropagationTest extends CamelTestSupport {
 
@@ -74,7 +75,8 @@ class VertxKafkaHeadersPropagationTest extends CamelTestSupport {
         message.setBody("test body");
         message.setHeaders(camelHeaders);
 
-        final List<KafkaHeader> kafkaHeaders = VertxKafkaHeadersPropagation.getPropagatedHeaders(message);
+        final List<KafkaHeader> kafkaHeaders
+                = new VertxKafkaHeadersPropagation(new VertxKafkaHeaderFilterStrategy()).getPropagatedHeaders(message);
 
         assertNotNull(kafkaHeaders, "Kafka Headers should not be null.");
         // we have 6 headers
@@ -121,7 +123,8 @@ class VertxKafkaHeadersPropagationTest extends CamelTestSupport {
         kafkaHeaders.add(convertToKafkaHeader(propagatedLongHeaderKey, propagatedLongHeaderValue));
 
         final Map<String, Buffer> propagatedHeaders
-                = VertxKafkaHeadersPropagation.getPropagatedHeaders(kafkaHeaders, new DefaultExchange(context).getMessage());
+                = new VertxKafkaHeadersPropagation(new VertxKafkaHeaderFilterStrategy()).getPropagatedHeaders(kafkaHeaders,
+                        new DefaultExchange(context).getMessage());
 
         // 3 since one is skipped due to the camel prefix
         assertEquals(3, propagatedHeaders.size());
@@ -134,6 +137,35 @@ class VertxKafkaHeadersPropagationTest extends CamelTestSupport {
         return headersAsList
                 .stream()
                 .collect(Collectors.toMap(KafkaHeader::key, header -> header));
+    }
+
+    @Test
+    void testGetPropagatedHeadersFromKafkaHeadersWithCustomStrategy() {
+        String propagatedHeaderKey = VertxKafkaConstants.TOPIC;
+        byte[] propagatedHeaderValue = "propagated incorrect topic".getBytes();
+
+        String propagatedStringHeaderKey = "TEST_PROPAGATED_STRING_HEADER";
+        String propagatedStringHeaderValue = "propagated string header value";
+
+        String propagatedIntegerHeaderKey = "TEST_PROPAGATED_INTEGER_HEADER";
+        Integer propagatedIntegerHeaderValue = 54545;
+
+        String propagatedLongHeaderKey = "PROPAGATED_LONG_HEADER";
+        Long propagatedLongHeaderValue = 5454545454545L;
+
+        final List<KafkaHeader> kafkaHeaders = new LinkedList<>();
+        kafkaHeaders.add(convertToKafkaHeader(propagatedHeaderKey, propagatedHeaderValue));
+        kafkaHeaders.add(convertToKafkaHeader(propagatedStringHeaderKey, propagatedStringHeaderValue));
+        kafkaHeaders.add(convertToKafkaHeader(propagatedIntegerHeaderKey, propagatedIntegerHeaderValue));
+        kafkaHeaders.add(convertToKafkaHeader(propagatedLongHeaderKey, propagatedLongHeaderValue));
+
+        final Map<String, Buffer> propagatedHeaders
+                = new VertxKafkaHeadersPropagation(new VertxKafkaTestHeaderFilterStrategy()).getPropagatedHeaders(kafkaHeaders,
+                        new DefaultExchange(context).getMessage());
+
+        assertEquals(2, propagatedHeaders.size());
+        assertTrue(propagatedHeaders.containsKey(VertxKafkaConstants.TOPIC));
+        assertTrue(propagatedHeaders.containsKey("PROPAGATED_LONG_HEADER"));
     }
 
     private byte[] getHeaderValue(String headerKey, Map<String, KafkaHeader> headers) {

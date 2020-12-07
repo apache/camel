@@ -154,6 +154,7 @@
                         <value.deserializer>org.apache.kafka.common.serialization.StringDeserializer</value.deserializer>
                     </overriddenDefaultValues>
                     <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
+                    <parentClassName>BaseVertxKafkaConfiguration</parentClassName>
                 </configuration>
             </plugin>
         </plugins>

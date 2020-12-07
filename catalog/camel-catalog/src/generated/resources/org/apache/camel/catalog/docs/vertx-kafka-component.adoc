@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (96 parameters):
+=== Query Parameters (97 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,6 +85,7 @@ with the following path and query parameters:
 | *clientDnsLookup* (common) | Controls how the client uses DNS lookups. If set to use_all_dns_ips, connect to each returned IP address in sequence until a successful connection is established. After a disconnection, the next IP is used. Once all IPs have been used once, the client resolves the IP(s) from the hostname again (both the JVM and the OS cache DNS name lookups, however). If set to resolve_canonical_bootstrap_servers_only, resolve each bootstrap address into a list of canonical names. After the bootstrap phase, this behaves the same as use_all_dns_ips. If set to default (deprecated), attempt to connect to the first IP address returned by the lookup, even if the lookup returns multiple IP addresses. There are 3 enums and the value can be one of: default, use_all_dns_ips, resolve_canonical_bootstrap_servers_only | use_all_dns_ips | String
 | *clientId* (common) | An id string to pass to the server when making requests. The purpose of this is to be able to track the source of requests beyond just ip/port by allowing a logical application name to be included in server-side request logging. |  | String
 | *connectionsMaxIdleMs* (common) | Close idle connections after the number of milliseconds specified by this config. | 9m | long
+| *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *interceptorClasses* (common) | A list of classes to use as interceptors. Implementing the org.apache.kafka.clients.producer.ProducerInterceptor interface allows you to intercept (and possibly mutate) the records received by the producer before they are published to the Kafka cluster. By default, there are no interceptors. |  | String
 | *metadataMaxAgeMs* (common) | The period of time in milliseconds after which we force a refresh of metadata even if we haven't seen any partition leadership changes to proactively discover any new brokers or partitions. | 5m | long
 | *metricReporters* (common) | A list of classes to use as metrics reporters. Implementing the org.apache.kafka.common.metrics.MetricsReporter interface allows plugging in classes that will be notified of new metric creation. The JmxReporter is always included to register JMX statistics. |  | String
@@ -181,7 +182,7 @@ with the following path and query parameters:
 
 == Component Options
 // component options: START
-The Vert.x Kafka component supports 97 options, which are listed below.
+The Vert.x Kafka component supports 98 options, which are listed below.
 
 
 
@@ -194,6 +195,7 @@ The Vert.x Kafka component supports 97 options, which are listed below.
 | *clientId* (common) | An id string to pass to the server when making requests. The purpose of this is to be able to track the source of requests beyond just ip/port by allowing a logical application name to be included in server-side request logging. |  | String
 | *configuration* (common) | The component configurations |  | VertxKafkaConfiguration
 | *connectionsMaxIdleMs* (common) | Close idle connections after the number of milliseconds specified by this config. | 9m | long
+| *headerFilterStrategy* (common) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *interceptorClasses* (common) | A list of classes to use as interceptors. Implementing the org.apache.kafka.clients.producer.ProducerInterceptor interface allows you to intercept (and possibly mutate) the records received by the producer before they are published to the Kafka cluster. By default, there are no interceptors. |  | String
 | *metadataMaxAgeMs* (common) | The period of time in milliseconds after which we force a refresh of metadata even if we haven't seen any partition leadership changes to proactively discover any new brokers or partitions. | 5m | long
 | *metricReporters* (common) | A list of classes to use as metrics reporters. Implementing the org.apache.kafka.common.metrics.MetricsReporter interface allows plugging in classes that will be notified of new metric creation. The JmxReporter is always included to register JMX statistics. |  | String
