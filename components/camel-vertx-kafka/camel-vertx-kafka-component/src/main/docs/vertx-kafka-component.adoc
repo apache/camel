@@ -42,7 +42,7 @@ Almost all the Kafka configuration for the component are *auto generated* from K
 
 == URI format
 
-[source,java]
+[source,text]
 ---------------------------
 vertx-kafka:topic[?options]
 ---------------------------
@@ -367,7 +367,9 @@ Following header value types are supported when producing the message *from* cam
 Note: all headers propagated *from* kafka *to* camel exchange will contain `io.vertx.core.buffer.Buffer` value by default.
 
 Having the support of `io.vertx.core.buffer.Buffer` header type, will allow you un-wrap the header to any type without much knowledge in `byte[]`. For example:
-```
+
+[source,java]
+----
 from("direct")
     .process(exchange -> {
         // set kafka header
@@ -375,9 +377,11 @@ from("direct")
         exchange.getIn().setBody("test event");
 })
 .to("vertx-kafka:test_topic?bootstrapServers=kafka9092")
-```
+----
 Then later:
-```
+
+[source,java]
+----
 from("vertx-kafka:test_topic?bootstrapServers=kafka9092")
     .process(exchange -> {
         // get our kafka header
@@ -385,7 +389,7 @@ from("vertx-kafka:test_topic?bootstrapServers=kafka9092")
         System.out.println(headerBuffer.getDouble(0); // it will print 2.0
 })
 .to("direct)
-```
+----
 
 By default all headers are being filtered by `KafkaHeaderFilterStrategy`.
 Strategy filters out headers which start with `Camel` or `org.apache.camel` prefixes.
@@ -419,7 +423,8 @@ from("vertx-kafka:test1,test2?bootstrapServers=localhost:9092")
 
 Here is the minimal route you need in order to write messages to Kafka.
 
-```
+[source,java]
+----
 from("direct")
     .process(exchange -> {
         // set kafka header
@@ -430,10 +435,12 @@ from("direct")
         exchange.getIn().setBody("test event");
 })
 .to("vertx-kafka:test_topic?bootstrapServers=kafka9092")
-```
+----
 
 Also, the component supports as well *aggregation* of messages by sending events as *iterable* of either Exchanges/Messages or normal data (e.g: list of Strings). For example:
-```
+
+[source,java]
+----
 from("direct:start")
 .process(exchange -> {
         final List<String> messages = new LinkedList<>();
@@ -445,7 +452,7 @@ from("direct:start")
         exchange.getIn().setBody(messages);
 })
 .to("vertx-kafka:test_topic?bootstrapServers=kafka9092")
-```
+----
 
 
 include::camel-spring-boot::page$vertx-kafka-starter.adoc[]
