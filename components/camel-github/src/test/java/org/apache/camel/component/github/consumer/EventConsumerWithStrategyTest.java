@@ -74,7 +74,7 @@ public class EventConsumerWithStrategyTest extends GitHubComponentTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("github:event?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo&eventFetchStrategy=#strategy")
+                from("github:event?repoOwner=anotherguy&repoName=somerepo&eventFetchStrategy=#strategy")
                         .to(mockResultEndpoint);
             }
         };

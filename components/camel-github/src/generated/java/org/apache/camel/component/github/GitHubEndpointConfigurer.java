@@ -44,7 +44,6 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "oauthtoken":
         case "oauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
-        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "repeatcount":
@@ -72,7 +71,6 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
-        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -103,7 +101,6 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return boolean.class;
         case "oauthtoken":
         case "oauthToken": return java.lang.String.class;
-        case "password": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "repeatcount":
@@ -131,7 +128,6 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
-        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -163,7 +159,6 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "oauthtoken":
         case "oauthToken": return target.getOauthToken();
-        case "password": return target.getPassword();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "repeatcount":
@@ -191,7 +186,6 @@ public class GitHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
-        case "username": return target.getUsername();
         default: return null;
         }
     }

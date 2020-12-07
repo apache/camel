@@ -158,6 +158,14 @@ Other information have been stored in headers declared in GitConstants class
 - GIT_TAG_LEAF - "CamelGitTagLeaf" - Leaf
 - GIT_TAG_OBJECT_ID - "CamelGitTagObjectId" - Object Id
 
+=== camel-github
+
+Login using username and password is no longer supported by github and these options has been removed
+(https://developer.github.com/changes/2020-02-14-deprecating-password-auth/)
+
+Login must be done using the `oauthToken` option.
+
+
 === Camel-AWS2-S3 Autowire support
 
 The camel-aws2-s3 has now support for autowiring the amazonS3Client option with S3Client instance coming from the registry.

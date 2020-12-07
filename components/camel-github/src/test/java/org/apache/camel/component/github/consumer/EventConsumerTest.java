@@ -53,7 +53,7 @@ public class EventConsumerTest extends GitHubComponentTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("github:event?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo")
+                from("github:event?repoOwner=anotherguy&repoName=somerepo")
                         .to(mockResultEndpoint);
             }
         };

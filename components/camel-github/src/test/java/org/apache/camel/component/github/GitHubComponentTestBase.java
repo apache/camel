@@ -17,6 +17,7 @@
 package org.apache.camel.component.github;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.github.services.MockCommitService;
 import org.apache.camel.component.github.services.MockEventService;
@@ -46,6 +47,14 @@ public abstract class GitHubComponentTestBase extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        GitHubComponent ghc = context.getComponent("github", GitHubComponent.class);
+        ghc.setOauthToken("mytoken");
+        return context;
+    }
 
     @Test
     public void emptyAtStartupTest() throws Exception {

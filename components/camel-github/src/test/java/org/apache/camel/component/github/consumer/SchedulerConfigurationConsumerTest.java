@@ -18,7 +18,6 @@ package org.apache.camel.component.github.consumer;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
@@ -39,8 +38,7 @@ public class SchedulerConfigurationConsumerTest extends GitHubComponentTestBase 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.addComponent("github", new GitHubComponent());
-                from("github://commit/master?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo&repeatCount=5&sendEmptyMessageWhenIdle=true&delay=1")
+                from("github://commit/master?repoOwner=anotherguy&repoName=somerepo&repeatCount=5&sendEmptyMessageWhenIdle=true&delay=1")
                         .to(mockCommitsEndpoint);
             }
         };

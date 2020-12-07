@@ -27,6 +27,8 @@ public class GitHubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "oauthtoken":
+        case "oauthToken": target.setOauthToken(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -40,6 +42,8 @@ public class GitHubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeErrorHandler": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "oauthtoken":
+        case "oauthToken": return java.lang.String.class;
         default: return null;
         }
     }
@@ -54,6 +58,8 @@ public class GitHubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "oauthtoken":
+        case "oauthToken": return target.getOauthToken();
         default: return null;
         }
     }
