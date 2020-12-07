@@ -52,6 +52,11 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
     public SlackConsumer(SlackEndpoint endpoint, Processor processor) throws IOException, DeserializationException {
         super(endpoint, processor);
         this.slackEndpoint = endpoint;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         this.channelId = getChannelId(slackEndpoint.getChannel());
     }
 

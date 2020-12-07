@@ -86,6 +86,10 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
             throw new RuntimeCamelException(
                     "Missing required endpoint configuration: token must be defined for Slack consumer");
         }
+        if (ObjectHelper.isEmpty(channel)) {
+            throw new RuntimeCamelException(
+                    "Missing required endpoint configuration: channel must be defined for Slack consumer");
+        }
         SlackConsumer consumer = new SlackConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
