@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.PullRequest;
@@ -46,10 +45,9 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
 
             @Override
             public void configure() throws Exception {
-                context.addComponent("github", new GitHubComponent());
                 from(PULL_REQUEST_PRODUCER_ENDPOINT)
                         .process(new ClosePullRequestProducerProcessor())
-                        .to("github://closePullRequest?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
+                        .to("github://closePullRequest?repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
         };

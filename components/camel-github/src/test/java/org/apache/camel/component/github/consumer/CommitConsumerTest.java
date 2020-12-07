@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.User;
@@ -33,8 +32,7 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
 
             @Override
             public void configure() throws Exception {
-                context.addComponent("github", new GitHubComponent());
-                from("github://commit/master?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo")
+                from("github://commit/master?repoOwner=anotherguy&repoName=somerepo")
                         .process(new GitHubCommitProcessor())
                         .to(mockResultEndpoint);
             }

@@ -47,28 +47,6 @@ public interface GitHubEndpointBuilderFactory {
             return (AdvancedGitHubEndpointConsumerBuilder) this;
         }
         /**
-         * GitHub OAuth token, required unless username & password are provided.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointConsumerBuilder oauthToken(String oauthToken) {
-            doSetProperty("oauthToken", oauthToken);
-            return this;
-        }
-        /**
-         * GitHub password, required unless oauthToken is provided.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointConsumerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * GitHub repository name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -90,17 +68,6 @@ public interface GitHubEndpointBuilderFactory {
          */
         default GitHubEndpointConsumerBuilder repoOwner(String repoOwner) {
             doSetProperty("repoOwner", repoOwner);
-            return this;
-        }
-        /**
-         * GitHub username, required unless oauthToken is provided.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointConsumerBuilder username(String username) {
-            doSetProperty("username", username);
             return this;
         }
         /**
@@ -554,6 +521,18 @@ public interface GitHubEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * GitHub OAuth token. Must be configured on either component or
+         * endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GitHubEndpointConsumerBuilder oauthToken(String oauthToken) {
+            doSetProperty("oauthToken", oauthToken);
+            return this;
+        }
     }
 
     /**
@@ -722,28 +701,6 @@ public interface GitHubEndpointBuilderFactory {
             return (AdvancedGitHubEndpointProducerBuilder) this;
         }
         /**
-         * GitHub OAuth token, required unless username & password are provided.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointProducerBuilder oauthToken(String oauthToken) {
-            doSetProperty("oauthToken", oauthToken);
-            return this;
-        }
-        /**
-         * GitHub password, required unless oauthToken is provided.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointProducerBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * GitHub repository name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -765,17 +722,6 @@ public interface GitHubEndpointBuilderFactory {
          */
         default GitHubEndpointProducerBuilder repoOwner(String repoOwner) {
             doSetProperty("repoOwner", repoOwner);
-            return this;
-        }
-        /**
-         * GitHub username, required unless oauthToken is provided.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointProducerBuilder username(String username) {
-            doSetProperty("username", username);
             return this;
         }
         /**
@@ -853,6 +799,18 @@ public interface GitHubEndpointBuilderFactory {
             doSetProperty("targetUrl", targetUrl);
             return this;
         }
+        /**
+         * GitHub OAuth token. Must be configured on either component or
+         * endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GitHubEndpointProducerBuilder oauthToken(String oauthToken) {
+            doSetProperty("oauthToken", oauthToken);
+            return this;
+        }
     }
 
     /**
@@ -905,28 +863,6 @@ public interface GitHubEndpointBuilderFactory {
             return (AdvancedGitHubEndpointBuilder) this;
         }
         /**
-         * GitHub OAuth token, required unless username & password are provided.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointBuilder oauthToken(String oauthToken) {
-            doSetProperty("oauthToken", oauthToken);
-            return this;
-        }
-        /**
-         * GitHub password, required unless oauthToken is provided.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default GitHubEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * GitHub repository name.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -951,14 +887,15 @@ public interface GitHubEndpointBuilderFactory {
             return this;
         }
         /**
-         * GitHub username, required unless oauthToken is provided.
+         * GitHub OAuth token. Must be configured on either component or
+         * endpoint.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: common
+         * Group: security
          */
-        default GitHubEndpointBuilder username(String username) {
-            doSetProperty("username", username);
+        default GitHubEndpointBuilder oauthToken(String oauthToken) {
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
     }

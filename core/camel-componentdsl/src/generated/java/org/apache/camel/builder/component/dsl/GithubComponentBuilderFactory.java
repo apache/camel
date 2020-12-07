@@ -105,6 +105,18 @@ public interface GithubComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * GitHub OAuth token. Must be configured on either component or
+         * endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default GithubComponentBuilder oauthToken(java.lang.String oauthToken) {
+            doSetProperty("oauthToken", oauthToken);
+            return this;
+        }
     }
 
     class GithubComponentBuilderImpl
@@ -125,6 +137,7 @@ public interface GithubComponentBuilderFactory {
             case "bridgeErrorHandler": ((GitHubComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((GitHubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((GitHubComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "oauthToken": ((GitHubComponent) component).setOauthToken((java.lang.String) value); return true;
             default: return false;
             }
         }

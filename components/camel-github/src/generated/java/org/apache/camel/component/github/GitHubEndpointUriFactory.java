@@ -20,14 +20,13 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(32);
+        Set<String> props = new HashSet<>(30);
         props.add("backoffMultiplier");
         props.add("eventFetchStrategy");
         props.add("synchronous");
         props.add("initialDelay");
         props.add("type");
         props.add("scheduler");
-        props.add("password");
         props.add("bridgeErrorHandler");
         props.add("useFixedDelay");
         props.add("runLoggingLevel");
@@ -43,8 +42,8 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
         props.add("schedulerProperties");
         props.add("exchangePattern");
         props.add("branchName");
-        props.add("oauthToken");
         props.add("encoding");
+        props.add("oauthToken");
         props.add("backoffIdleThreshold");
         props.add("lazyStartProducer");
         props.add("delay");
@@ -52,9 +51,10 @@ public class GitHubEndpointUriFactory extends org.apache.camel.support.component
         props.add("startScheduler");
         props.add("exceptionHandler");
         props.add("targetUrl");
-        props.add("username");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(1);
+        secretProps.add("oauthToken");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }
 
     @Override

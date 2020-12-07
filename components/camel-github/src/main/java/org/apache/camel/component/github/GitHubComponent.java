@@ -19,6 +19,7 @@ package org.apache.camel.component.github;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
@@ -28,9 +29,14 @@ import org.apache.camel.support.DefaultComponent;
 @Component("github")
 public class GitHubComponent extends DefaultComponent {
 
+    @Metadata(label = "security", secret = true)
+    private String oauthToken;
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         GitHubEndpoint endpoint = new GitHubEndpoint(uri, this);
+        endpoint.setOauthToken(oauthToken);
+
         setProperties(endpoint, parameters);
 
         String[] parts = remaining.split("/");
@@ -43,7 +49,18 @@ public class GitHubComponent extends DefaultComponent {
                 endpoint.setBranchName(s);
             }
         }
-
         return endpoint;
     }
+
+    public String getOauthToken() {
+        return oauthToken;
+    }
+
+    /**
+     * GitHub OAuth token. Must be configured on either component or endpoint.
+     */
+    public void setOauthToken(String oauthToken) {
+        this.oauthToken = oauthToken;
+    }
+
 }

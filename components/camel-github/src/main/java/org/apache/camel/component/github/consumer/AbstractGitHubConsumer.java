@@ -54,11 +54,7 @@ public abstract class AbstractGitHubConsumer extends ScheduledPollConsumer {
     }
 
     protected void initService(GitHubService service) {
-        if (endpoint.hasOauth()) {
-            service.getClient().setOAuth2Token(endpoint.getOauthToken());
-        } else {
-            service.getClient().setCredentials(endpoint.getUsername(), endpoint.getPassword());
-        }
+        service.getClient().setOAuth2Token(endpoint.getOauthToken());
     }
 
     protected RepositoryService getRepositoryService() {

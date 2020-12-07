@@ -49,11 +49,7 @@ public abstract class AbstractGitHubProducer extends DefaultProducer {
     }
 
     protected void initService(GitHubService service) {
-        if (endpoint.hasOauth()) {
-            service.getClient().setOAuth2Token(endpoint.getOauthToken());
-        } else {
-            service.getClient().setCredentials(endpoint.getUsername(), endpoint.getPassword());
-        }
+        service.getClient().setOAuth2Token(endpoint.getOauthToken());
     }
 
     protected RepositoryService getRepositoryService() {

@@ -37,6 +37,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -68,11 +69,7 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
     private GitHubType type;
     @UriPath(label = "consumer")
     private String branchName;
-    @UriParam
-    private String username;
-    @UriParam
-    private String password;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String oauthToken;
     @UriParam
     @Metadata(required = true)
@@ -157,41 +154,15 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
         this.branchName = branchName;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * GitHub username, required unless oauthToken is provided
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * GitHub password, required unless oauthToken is provided
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getOauthToken() {
         return oauthToken;
     }
 
     /**
-     * GitHub OAuth token, required unless username & password are provided
+     * GitHub OAuth token. Must be configured on either component or endpoint.
      */
     public void setOauthToken(String oauthToken) {
         this.oauthToken = oauthToken;
-    }
-
-    public boolean hasOauth() {
-        return oauthToken != null && oauthToken.length() > 0;
     }
 
     public String getRepoOwner() {
@@ -258,5 +229,12 @@ public class GitHubEndpoint extends ScheduledPollEndpoint {
      */
     public void setEventFetchStrategy(GitHubEventFetchStrategy eventFetchStrategy) {
         this.eventFetchStrategy = eventFetchStrategy;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        ObjectHelper.notNull(oauthToken, "oauthToken");
     }
 }
