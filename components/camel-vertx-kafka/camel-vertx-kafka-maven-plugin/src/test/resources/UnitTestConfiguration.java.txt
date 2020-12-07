@@ -1,0 +1,273 @@
+package org.apache.camel.maven.component.vertx.kafka.config;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
+
+@UriParams
+public class UnitTestConfiguration implements Cloneable {
+
+    // topic.config.1
+    @UriPath(label = "common", defaultValue = "default value")
+    @Metadata(required = true)
+    private String topicConfig1 = "default value";
+    // topic.config.2
+    @UriPath(label = "common,test_label_1,test_label_2", defaultValue = "default value")
+    @Metadata(required = true)
+    private String topicConfig2 = "default value";
+    // common.test.field.1
+    @UriParam(label = "common", defaultValue = "default", enums = "default,default2")
+    private String commonTestField1 = "default";
+    // common.test.field.2
+    @UriParam(label = "common")
+    private String commonTestField2;
+    // common.test.field.3
+    @UriParam(label = "common")
+    private String commonTestField3;
+    // Additional properties
+    @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
+    private Map<String, Object> additionalProperties = new HashMap<>();
+    // consumer.test.field.1
+    @UriParam(label = "consumer")
+    private String consumerTestField1;
+    // consumer.test.field.2
+    @UriParam(label = "consumer")
+    private String consumerTestField2;
+    // consumer.test.field.3
+    @UriParam(label = "consumer")
+    private String consumerTestField3;
+    // consumer.test.field.4
+    @UriParam(label = "consumer", defaultValue = "10")
+    private int consumerTestField4 = 10;
+    // consumer.test.field.5
+    @UriParam(label = "consumer")
+    private Integer consumerTestField5;
+    // producer.test.field.1
+    @UriParam(label = "producer", defaultValue = "default value")
+    private String producerTestField1 = "default value";
+    // producer.test.field.2
+    @UriParam(label = "producer")
+    private String producerTestField2;
+    // producer.test.field.3
+    @UriParam(label = "producer", defaultValue = "test-1,test-2,test-3")
+    private String producerTestField3 = "test-1,test-2,test-3";
+
+    /**
+     * docs1
+     */
+    public void setTopicConfig1(String topicConfig1) {
+        this.topicConfig1 = topicConfig1;
+    }
+
+    public String getTopicConfig1() {
+        return topicConfig1;
+    }
+
+    /**
+     * docs1
+     */
+    public void setTopicConfig2(String topicConfig2) {
+        this.topicConfig2 = topicConfig2;
+    }
+
+    public String getTopicConfig2() {
+        return topicConfig2;
+    }
+
+    /**
+     * docs1
+     */
+    public void setCommonTestField1(String commonTestField1) {
+        this.commonTestField1 = commonTestField1;
+    }
+
+    public String getCommonTestField1() {
+        return commonTestField1;
+    }
+
+    /**
+     * docs2
+     */
+    public void setCommonTestField2(String commonTestField2) {
+        this.commonTestField2 = commonTestField2;
+    }
+
+    public String getCommonTestField2() {
+        return commonTestField2;
+    }
+
+    /**
+     * docs2
+     */
+    public void setCommonTestField3(String commonTestField3) {
+        this.commonTestField3 = commonTestField3;
+    }
+
+    public String getCommonTestField3() {
+        return commonTestField3;
+    }
+
+    /**
+     * Sets additional properties for either kafka consumer or kafka producer in
+     * case they can't be set directly on the camel configurations (e.g: new
+     * Kafka properties that are not reflected yet in Camel configurations), the
+     * properties have to be prefixed with `additionalProperties.`. E.g:
+     * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
+     */
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    /**
+     * docs1
+     */
+    public void setConsumerTestField1(String consumerTestField1) {
+        this.consumerTestField1 = consumerTestField1;
+    }
+
+    public String getConsumerTestField1() {
+        return consumerTestField1;
+    }
+
+    /**
+     * docs2
+     */
+    public void setConsumerTestField2(String consumerTestField2) {
+        this.consumerTestField2 = consumerTestField2;
+    }
+
+    public String getConsumerTestField2() {
+        return consumerTestField2;
+    }
+
+    /**
+     * doc3
+     */
+    public void setConsumerTestField3(String consumerTestField3) {
+        this.consumerTestField3 = consumerTestField3;
+    }
+
+    public String getConsumerTestField3() {
+        return consumerTestField3;
+    }
+
+    /**
+     * doc4
+     */
+    public void setConsumerTestField4(int consumerTestField4) {
+        this.consumerTestField4 = consumerTestField4;
+    }
+
+    public int getConsumerTestField4() {
+        return consumerTestField4;
+    }
+
+    /**
+     * doc5
+     */
+    public void setConsumerTestField5(Integer consumerTestField5) {
+        this.consumerTestField5 = consumerTestField5;
+    }
+
+    public Integer getConsumerTestField5() {
+        return consumerTestField5;
+    }
+
+    /**
+     * docs1
+     */
+    public void setProducerTestField1(String producerTestField1) {
+        this.producerTestField1 = producerTestField1;
+    }
+
+    public String getProducerTestField1() {
+        return producerTestField1;
+    }
+
+    /**
+     * docs2
+     */
+    public void setProducerTestField2(String producerTestField2) {
+        this.producerTestField2 = producerTestField2;
+    }
+
+    public String getProducerTestField2() {
+        return producerTestField2;
+    }
+
+    /**
+     * docs2
+     */
+    public void setProducerTestField3(String producerTestField3) {
+        this.producerTestField3 = producerTestField3;
+    }
+
+    public String getProducerTestField3() {
+        return producerTestField3;
+    }
+
+    public Properties createConsumerConfiguration() {
+        final Properties props = new Properties();
+        addPropertyIfNotNull(props, "topic.config.1", topicConfig1);
+        addPropertyIfNotNull(props, "topic.config.2", topicConfig2);
+        addPropertyIfNotNull(props, "common.test.field.1", commonTestField1);
+        addPropertyIfNotNull(props, "common.test.field.2", commonTestField2);
+        addPropertyIfNotNull(props, "common.test.field.3", commonTestField3);
+        addPropertyIfNotNull(props, "consumer.test.field.1", consumerTestField1);
+        addPropertyIfNotNull(props, "consumer.test.field.2", consumerTestField2);
+        addPropertyIfNotNull(props, "consumer.test.field.3", consumerTestField3);
+        addPropertyIfNotNull(props, "consumer.test.field.4", consumerTestField4);
+        addPropertyIfNotNull(props, "consumer.test.field.5", consumerTestField5);
+        applyAdditionalProperties(props, getAdditionalProperties());
+        return props;
+    }
+
+    public Properties createProducerConfiguration() {
+        final Properties props = new Properties();
+        addPropertyIfNotNull(props, "topic.config.1", topicConfig1);
+        addPropertyIfNotNull(props, "topic.config.2", topicConfig2);
+        addPropertyIfNotNull(props, "common.test.field.1", commonTestField1);
+        addPropertyIfNotNull(props, "common.test.field.2", commonTestField2);
+        addPropertyIfNotNull(props, "common.test.field.3", commonTestField3);
+        addPropertyIfNotNull(props, "producer.test.field.1", producerTestField1);
+        addPropertyIfNotNull(props, "producer.test.field.2", producerTestField2);
+        addPropertyIfNotNull(props, "producer.test.field.3", producerTestField3);
+        applyAdditionalProperties(props, getAdditionalProperties());
+        return props;
+    }
+
+    public UnitTestConfiguration copy() {
+        try {
+        	return (UnitTestConfiguration) clone();
+        } catch (CloneNotSupportedException e) {
+        	throw new RuntimeCamelException(e);
+        }
+    }
+
+    private void applyAdditionalProperties(
+            Properties props,
+            Map<String, Object> additionalProperties) {
+        if (!ObjectHelper.isEmpty(getAdditionalProperties())) {
+        	additionalProperties.forEach((property, value) -> addPropertyIfNotNull(props, property, value));
+        }
+    }
+
+    private static <T> void addPropertyIfNotNull(
+            Properties props,
+            String key,
+            T value) {
+        if (value != null) {
+        	props.put(key, value.toString());
+        }
+    }
+}

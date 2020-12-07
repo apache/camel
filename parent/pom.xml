@@ -2515,6 +2515,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-vertx-kafka</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-vertx-websocket</artifactId>
 				<version>${project.version}</version>
 			</dependency>

@@ -14883,6 +14883,51 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Vert.x Kafka (camel-vertx-kafka)
+     * Sent and receive messages to/from an Apache Kafka broker using vert.x
+     * Kafka client
+     * 
+     * Category: messaging
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-vertx-kafka
+     * 
+     * Syntax: <code>vertx-kafka:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic to use. On the consumer you can use comma to separate
+     * multiple topics. A producer can only send a message to a single topic.
+     * 
+     * @param path topic
+     */
+    public static org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.VertxKafkaEndpointBuilder vertxKafka(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.endpointBuilder("vertx-kafka", path);
+    }
+    /**
+     * Vert.x Kafka (camel-vertx-kafka)
+     * Sent and receive messages to/from an Apache Kafka broker using vert.x
+     * Kafka client
+     * 
+     * Category: messaging
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-vertx-kafka
+     * 
+     * Syntax: <code>vertx-kafka:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * Name of the topic to use. On the consumer you can use comma to separate
+     * multiple topics. A producer can only send a message to a single topic.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     */
+    public static org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.VertxKafkaEndpointBuilder vertxKafka(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.VertxKafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
      * Vert.x
