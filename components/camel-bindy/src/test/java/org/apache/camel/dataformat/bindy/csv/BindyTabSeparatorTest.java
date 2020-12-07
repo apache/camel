@@ -74,8 +74,10 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:unmarshal",
-                "123\tCamel in Action\t2\t\t\n456\tCamel in Action\t1\t\t\t\n"
-                                                       + "456\tCamel in Action\t2\t\t\n456\tCamel in Action\t1\t\t\t\n",
+                "123\tCamel in Action\t2\t\t\n"
+                        + "456\tCamel in Action\t1\t\t\t\n"
+                        + "456\tCamel in Action\t2\t\t\n"
+                        + "456\tCamel in Action\t1\t\t\t\n",
                 Exchange.CONTENT_ENCODING, "iso8859-1");
 
         assertMockEndpointsSatisfied();
@@ -86,8 +88,8 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());
         assertEquals(2, order.getAmount());
-        assertNull(order.getOrderText());
-        assertNull(order.getSalesRef());
+        assertEquals("", order.getOrderText());
+        assertEquals("", order.getSalesRef());
         assertNull(order.getCustomerRef());
     }
 
