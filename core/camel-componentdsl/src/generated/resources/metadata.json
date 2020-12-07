@@ -7495,6 +7495,28 @@
     "producerOnly": true,
     "lenientProperties": true
   },
+  "VertxKafkaComponentBuilderFactory": {
+    "kind": "component",
+    "name": "vertx-kafka",
+    "title": "Vert.x Kafka",
+    "description": "Sent and receive messages to\/from an Apache Kafka broker using vert.x Kafka client",
+    "deprecated": false,
+    "firstVersion": "3.7.0",
+    "label": "messaging",
+    "javaType": "org.apache.camel.component.vertx.kafka.VertxKafkaComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-vertx-kafka",
+    "version": "3.7.0-SNAPSHOT",
+    "scheme": "vertx-kafka",
+    "extendsScheme": "",
+    "syntax": "vertx-kafka:topic",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "VertxWebsocketComponentBuilderFactory": {
     "kind": "component",
     "name": "vertx-websocket",

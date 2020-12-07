@@ -3838,6 +3838,18 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.VertxHttpComponentBuilderFactory.vertxHttp();
     }
     /**
+     * Vert.x Kafka (camel-vertx-kafka)
+     * Sent and receive messages to/from an Apache Kafka broker using vert.x
+     * Kafka client
+     * 
+     * Category: messaging
+     * Since: 3.7
+     * Maven coordinates: org.apache.camel:camel-vertx-kafka
+     */
+    static org.apache.camel.builder.component.dsl.VertxKafkaComponentBuilderFactory.VertxKafkaComponentBuilder vertxKafka() {
+        return org.apache.camel.builder.component.dsl.VertxKafkaComponentBuilderFactory.vertxKafka();
+    }
+    /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
      * Vert.x
