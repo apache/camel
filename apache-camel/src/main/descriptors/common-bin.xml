@@ -396,6 +396,7 @@
         <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-vertx</include>
         <include>org.apache.camel:camel-vertx-http</include>
+        <include>org.apache.camel:camel-vertx-kafka</include>
         <include>org.apache.camel:camel-vertx-websocket</include>
         <include>org.apache.camel:camel-vm</include>
         <include>org.apache.camel:camel-weather</include>
