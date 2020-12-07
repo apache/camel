@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -37,9 +36,6 @@ public class DataFormatDefinition extends IdentifiedType {
     private DataFormat dataFormat;
     @XmlTransient
     private String dataFormatName;
-    @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
-    private String contentTypeHeader;
 
     public DataFormatDefinition() {
     }
@@ -66,21 +62,6 @@ public class DataFormatDefinition extends IdentifiedType {
 
     public void setDataFormat(DataFormat dataFormat) {
         this.dataFormat = dataFormat;
-    }
-
-    public String getContentTypeHeader() {
-        return contentTypeHeader;
-    }
-
-    /**
-     * Whether the data format should set the <tt>Content-Type</tt> header with the type from the data format if the
-     * data format is capable of doing so.
-     * <p/>
-     * For example <tt>application/xml</tt> for data formats marshalling to XML, or <tt>application/json</tt> for data
-     * formats marshalling to JSON etc.
-     */
-    public void setContentTypeHeader(String contentTypeHeader) {
-        this.contentTypeHeader = contentTypeHeader;
     }
 
     public String getShortName() {

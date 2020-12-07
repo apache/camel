@@ -33,6 +33,7 @@ import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.CBORDataFormat;
+import org.apache.camel.model.dataformat.ContentTypeHeaderAware;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
@@ -269,9 +270,10 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         if (dataFormat == null) {
             dataFormat = doCreateDataFormat();
             if (dataFormat != null) {
-                if (dataFormat instanceof DataFormatContentTypeHeader) {
+                if (dataFormat instanceof DataFormatContentTypeHeader && definition instanceof ContentTypeHeaderAware) {
+                    String header = ((ContentTypeHeaderAware) definition).getContentTypeHeader();
                     // is enabled by default so assume true if null
-                    final boolean contentTypeHeader = parseBoolean(definition.getContentTypeHeader(), true);
+                    final boolean contentTypeHeader = parseBoolean(header, true);
                     ((DataFormatContentTypeHeader) dataFormat).setContentTypeHeader(contentTypeHeader);
                 }
                 // configure the rest of the options

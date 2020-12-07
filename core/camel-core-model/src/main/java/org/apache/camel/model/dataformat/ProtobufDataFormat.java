@@ -31,12 +31,17 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.2.0", label = "dataformat,transformation", title = "Protobuf")
 @XmlRootElement(name = "protobuf")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProtobufDataFormat extends DataFormatDefinition {
+public class ProtobufDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
     @XmlAttribute
     private String instanceClass;
     @XmlAttribute
     @Metadata(enums = "native,json", defaultValue = "native")
     private String contentTypeFormat;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether the data format should set the Content-Type header with the type from the data format."
+                            + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
+    private String contentTypeHeader;
     @XmlTransient
     private Object defaultInstance;
 
@@ -77,6 +82,14 @@ public class ProtobufDataFormat extends DataFormatDefinition {
 
     public String getContentTypeFormat() {
         return contentTypeFormat;
+    }
+
+    public String getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(String contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     public Object getDefaultInstance() {

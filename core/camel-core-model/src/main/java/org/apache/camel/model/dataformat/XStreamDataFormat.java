@@ -38,7 +38,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,xml,json", title = "XStream")
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.NONE)
-public class XStreamDataFormat extends DataFormatDefinition {
+public class XStreamDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
     @XmlAttribute
     private String permissions;
     @XmlAttribute
@@ -49,6 +49,11 @@ public class XStreamDataFormat extends DataFormatDefinition {
     private String driverRef;
     @XmlAttribute
     private String mode;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether the data format should set the Content-Type header with the type from the data format."
+                            + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
+    private String contentTypeHeader;
 
     @XmlElement(name = "converters")
     private List<PropertyDefinition> converters;
@@ -270,6 +275,14 @@ public class XStreamDataFormat extends DataFormatDefinition {
             permissionsBuilder.add(clazz.getName());
         }
         setPermissions(permissionsBuilder.toString());
+    }
+
+    public String getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(String contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
 }
