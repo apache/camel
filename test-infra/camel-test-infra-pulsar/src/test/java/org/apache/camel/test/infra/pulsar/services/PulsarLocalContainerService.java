@@ -24,7 +24,7 @@ import org.testcontainers.containers.PulsarContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class PulsarLocalContainerService implements PulsarService, ContainerService<PulsarContainer> {
-    protected static final String CONTAINER_IMAGE = "apachepulsar/pulsar:2.6.2";
+    protected static final String CONTAINER_IMAGE = "apachepulsar/pulsar:2.7.0";
 
     private static final Logger LOG = LoggerFactory.getLogger(PulsarLocalContainerService.class);
 
