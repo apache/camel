@@ -38,7 +38,7 @@ public class DataFormatDefinition extends IdentifiedType {
     @XmlTransient
     private String dataFormatName;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true")
     private String contentTypeHeader;
 
     public DataFormatDefinition() {

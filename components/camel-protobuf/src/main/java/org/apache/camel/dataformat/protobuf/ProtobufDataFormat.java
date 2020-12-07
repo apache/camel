@@ -53,7 +53,7 @@ public class ProtobufDataFormat extends ServiceSupport
     private CamelContext camelContext;
     private Message defaultInstance;
     private String instanceClassName;
-    private boolean contentTypeHeader;
+    private boolean contentTypeHeader = true;
     private String contentTypeFormat = CONTENT_TYPE_FORMAT_NATIVE;
 
     public ProtobufDataFormat() {
@@ -139,11 +139,7 @@ public class ProtobufDataFormat extends ServiceSupport
         }
 
         if (isContentTypeHeader()) {
-            if (exchange.getMessage() != null) {
-                exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentTypeHeader);
-            } else {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentTypeHeader);
-            }
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentTypeHeader);
         }
     }
 
