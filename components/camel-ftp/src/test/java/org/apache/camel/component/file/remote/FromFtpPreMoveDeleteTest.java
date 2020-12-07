@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpPreMoveDeleteTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&preMove=work&delete=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/movefile?password=admin&preMove=work&delete=true";
     }
 
     @Override
@@ -56,7 +56,7 @@ public class FromFtpPreMoveDeleteTest extends FtpServerTestSupport {
 
         // and file should be deleted
         Thread.sleep(1000);
-        File file = new File(FTP_ROOT_DIR + "/movefile/work/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/movefile/work/hello.txt");
         assertFalse(file.exists(), "The file should have been deleted");
     }
 
@@ -81,7 +81,7 @@ public class FromFtpPreMoveDeleteTest extends FtpServerTestSupport {
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // assert the file is pre moved
-                        File file = new File(FTP_ROOT_DIR + "/movefile/work/hello.txt");
+                        File file = new File(service.getFtpRootDir() + "/movefile/work/hello.txt");
                         assertTrue(file.exists(), "The file should have been moved");
                     }
                 }).to("mock:result");

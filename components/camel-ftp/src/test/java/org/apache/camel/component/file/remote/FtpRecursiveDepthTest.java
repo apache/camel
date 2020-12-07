@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class FtpRecursiveDepthTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/depth?password=admin&recursive=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/depth?password=admin&recursive=true";
     }
 
     @Test
@@ -32,17 +32,19 @@ public class FtpRecursiveDepthTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a2", "b2");
 
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth?password=admin", "a", Exchange.FILE_NAME,
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth?password=admin", "a", Exchange.FILE_NAME,
                 "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth?password=admin", "b", Exchange.FILE_NAME,
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth?password=admin", "b", Exchange.FILE_NAME,
                 "b.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth/foo?password=admin", "a2", Exchange.FILE_NAME,
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth/foo?password=admin", "a2",
+                Exchange.FILE_NAME,
                 "a2.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth/foo/bar?password=admin", "a3",
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth/foo/bar?password=admin", "a3",
                 Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth/bar?password=admin", "b2", Exchange.FILE_NAME,
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth/bar?password=admin", "b2",
+                Exchange.FILE_NAME,
                 "b2.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth/bar/foo?password=admin", "b3",
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth/bar/foo?password=admin", "b3",
                 Exchange.FILE_NAME, "b.txt");
 
         // only expect 2 of the 6 sent, those at depth 2

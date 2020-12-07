@@ -36,7 +36,8 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
 
     // must user "consumer." prefix on the parameters to the file component
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp4/camel?password=admin&binary=true" + "&delay=5000&recursive=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/tmp4/camel?password=admin&binary=true"
+               + "&delay=5000&recursive=false";
     }
 
     @Override

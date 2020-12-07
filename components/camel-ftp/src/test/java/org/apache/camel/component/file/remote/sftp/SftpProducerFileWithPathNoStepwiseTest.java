@@ -21,25 +21,23 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpProducerFileWithPathNoStepwiseTest extends SftpServerTestSupport {
 
     private String getFtpUrl() {
-        return "sftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?password=admin&stepwise=false";
+        return "sftp://admin@localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "?password=admin&stepwise=false";
     }
 
     @Test
     public void testProducerFileWithPathNoStepwise() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "hello/claus.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/hello/claus.txt");
+        File file = new File(service.getFtpRootDir() + "/hello/claus.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

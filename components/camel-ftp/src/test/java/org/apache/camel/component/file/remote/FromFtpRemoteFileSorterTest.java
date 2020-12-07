@@ -33,7 +33,7 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
     private MyRemoteFileSorter sorter = new MyRemoteFileSorter();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/sorter?password=admin&sorter=#mySorter";
+        return "ftp://admin@localhost:{{ftp.server.port}}/sorter?password=admin&sorter=#mySorter";
     }
 
     @Override

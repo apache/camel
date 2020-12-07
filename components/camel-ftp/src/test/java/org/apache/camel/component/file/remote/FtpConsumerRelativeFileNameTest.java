@@ -27,7 +27,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertDirectoryEquals;
 public class FtpConsumerRelativeFileNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
+        return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/target/filename-consumer?password=admin&recursive=true&sortBy=file:name";
     }
 

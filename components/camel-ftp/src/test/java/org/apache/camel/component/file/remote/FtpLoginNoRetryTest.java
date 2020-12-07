@@ -44,13 +44,14 @@ public class FtpLoginNoRetryTest extends FtpServerTestSupport {
         }
 
         // assert file NOT created
-        File file = new File(FTP_ROOT_DIR + "login/report.txt");
+        File file = new File(service.getFtpRootDir() + "login/report.txt");
         assertFalse(file.exists(), "The file should NOT exists");
     }
 
     private void uploadFile(String username, String password) throws Exception {
-        Endpoint endpoint = context.getEndpoint("ftp://" + username + "@localhost:" + getPort() + "/login?password=" + password
-                                                + "&maximumReconnectAttempts=0");
+        Endpoint endpoint
+                = context.getEndpoint("ftp://" + username + "@localhost:{{ftp.server.port}}/login?password=" + password
+                                      + "&maximumReconnectAttempts=0");
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");

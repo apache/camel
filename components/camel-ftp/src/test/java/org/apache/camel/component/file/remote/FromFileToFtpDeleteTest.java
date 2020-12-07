@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}?password=admin";
     }
 
     @Test
@@ -50,7 +50,7 @@ public class FromFileToFtpDeleteTest extends FtpServerTestSupport {
         assertFalse(file.exists(), "File should be deleted");
 
         // file should exists on ftp server
-        file = new File(FTP_ROOT_DIR + "/hello.txt");
+        file = new File(service.getFtpRootDir() + "/hello.txt");
         assertTrue(file.exists(), "File should exist on ftp server");
     }
 

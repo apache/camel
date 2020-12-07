@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class FtpConsumerTemplateUseListFalseTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/nolist/?password=admin"
+        return "ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin"
                + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&delete=true";
     }
 
@@ -60,7 +60,8 @@ public class FtpConsumerTemplateUseListFalseTest extends FtpServerTestSupport {
         // prepares the FTP Server by creating a file on the server that we want
         // to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint("ftp://admin@localhost:" + getPort() + "/nolist/?password=admin&binary=false");
+        Endpoint endpoint
+                = context.getEndpoint("ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin&binary=false");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");
         exchange.getIn().setHeader(Exchange.FILE_NAME, "report.txt");

@@ -43,7 +43,7 @@ public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSup
      * strategy
      */
     private String getFtpPollingUrl() {
-        return "ftp://admin@localhost:" + getPort()
+        return "ftp://admin@localhost:{{ftp.server.port}}"
                + "?password=admin&delete=true&binary=true&delay=1000&initialDelay=1500&readLock=rename";
     }
 
@@ -51,12 +51,12 @@ public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSup
      * we use this URL to write out our binary test file to begin with
      */
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&binary=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}?password=admin&binary=true";
     }
 
     @Test
     public void testFromFileToFtp() throws Exception {
-        File expectedOnFtpServer = new File(FTP_ROOT_DIR + "/logo.jpeg");
+        File expectedOnFtpServer = new File(service.getFtpRootDir() + "/logo.jpeg");
         // the poller won't start for 1.5 seconds, so we check to make sure the
         // file
         // is there first check 1 - is the file there (default root location)

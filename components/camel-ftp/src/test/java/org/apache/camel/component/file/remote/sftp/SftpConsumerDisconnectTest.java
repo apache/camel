@@ -40,10 +40,6 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
 
     @Test
     public void testConsumeDelete() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         // prepare sample file to be consumed by SFTP consumer
         createSampleFile(SAMPLE_FILE_NAME_1);
 
@@ -60,18 +56,14 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
         Thread.sleep(250);
 
         // File is deleted
-        File deletedFile = new File(FTP_ROOT_DIR + "/" + SAMPLE_FILE_NAME_1);
+        File deletedFile = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME_1);
         assertFalse(deletedFile.exists(), "File should have been deleted: " + deletedFile);
     }
 
     @Test
     public void testConsumeMove() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         // moved file after its processed
-        String movedFile = FTP_ROOT_DIR + "/.camel/" + SAMPLE_FILE_NAME_2;
+        String movedFile = service.getFtpRootDir() + "/.camel/" + SAMPLE_FILE_NAME_2;
 
         // prepare sample file to be consumed by SFTP consumer
         createSampleFile(SAMPLE_FILE_NAME_2);
@@ -94,21 +86,22 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&delete=true")
-                        .routeId("foo").noAutoStartup().process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                disconnectAllSessions(); // disconnect all Sessions from
-                                                        // the SFTP server
-                            }
-                        }).to("mock:result");
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                     + "?username=admin&password=admin&delete=true")
+                             .routeId("foo").noAutoStartup().process(new Processor() {
+                                 @Override
+                                 public void process(Exchange exchange) throws Exception {
+                                     service.disconnectAllSessions(); // disconnect all Sessions from
+                                     // the SFTP server
+                                 }
+                             }).to("mock:result");
+                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
                      + "?username=admin&password=admin&noop=false&move=.camel").routeId("bar").noAutoStartup()
                              .process(new Processor() {
                                  @Override
                                  public void process(Exchange exchange) throws Exception {
-                                     disconnectAllSessions(); // disconnect all Sessions
-                                                             // from the SFTP server
+                                     service.disconnectAllSessions(); // disconnect all Sessions
+                                     // from the SFTP server
                                  }
                              }).to("mock:result");
             }
@@ -116,7 +109,7 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
     }
 
     private void createSampleFile(String fileName) throws IOException {
-        File file = new File(FTP_ROOT_DIR + "/" + fileName);
+        File file = new File(service.getFtpRootDir() + "/" + fileName);
 
         FileUtils.write(file, SAMPLE_FILE_PAYLOAD, SAMPLE_FILE_CHARSET);
     }

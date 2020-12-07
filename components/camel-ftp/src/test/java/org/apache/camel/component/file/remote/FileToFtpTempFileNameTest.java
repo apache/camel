@@ -38,7 +38,7 @@ public class FileToFtpTempFileNameTest extends FtpServerTestSupport {
 
         assertTrue(notify.matchesWaitTime());
 
-        File file = new File(FTP_ROOT_DIR + "/out/sub/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/out/sub/hello.txt");
         assertTrue(file.exists(), "File should exists " + file);
     }
 
@@ -48,7 +48,7 @@ public class FileToFtpTempFileNameTest extends FtpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/in?recursive=true")
-                        .to("ftp://admin:admin@localhost:" + getPort()
+                        .to("ftp://admin:admin@localhost:{{ftp.server.port}}"
                             + "/out/?fileName=${file:name}&tempFileName=${file:onlyname}.part&stepwise=false");
             }
         };

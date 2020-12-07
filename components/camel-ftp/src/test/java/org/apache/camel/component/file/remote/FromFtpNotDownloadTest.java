@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class FromFtpNotDownloadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/download?password=admin&noop=true&download=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/download?password=admin&noop=true&download=false";
     }
 
     @Override

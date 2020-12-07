@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class FromFileToFtpWithChmodTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=3000&chmod=777";
+        return "ftp://admin@localhost:{{ftp.server.port}}/tmp2/camel?password=admin&initialDelay=3000&chmod=777";
     }
 
     @Test

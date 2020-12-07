@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class FtpRecursiveDepth3Test extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/depth3?password=admin&recursive=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/depth3?password=admin&recursive=true";
     }
 
     @Test
@@ -32,17 +32,17 @@ public class FtpRecursiveDepth3Test extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b");
 
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3?password=admin", "a", Exchange.FILE_NAME,
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth3?password=admin", "a", Exchange.FILE_NAME,
                 "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3?password=admin", "b", Exchange.FILE_NAME,
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth3?password=admin", "b", Exchange.FILE_NAME,
                 "b.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/foo?password=admin", "a2",
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth3/foo?password=admin", "a2",
                 Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/foo/bar?password=admin", "a3",
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth3/foo/bar?password=admin", "a3",
                 Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/bar?password=admin", "b2",
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth3/bar?password=admin", "b2",
                 Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("ftp://admin@localhost:" + getPort() + "/depth3/bar/foo?password=admin", "b3",
+        template.sendBodyAndHeader("ftp://admin@localhost:{{ftp.server.port}}/depth3/bar/foo?password=admin", "b3",
                 Exchange.FILE_NAME, "b.txt");
 
         assertMockEndpointsSatisfied();

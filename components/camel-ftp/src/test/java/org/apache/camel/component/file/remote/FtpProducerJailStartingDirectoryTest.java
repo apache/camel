@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class FtpProducerJailStartingDirectoryTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/upload/jail?binary=false&password=admin&tempPrefix=.uploading";
+        return "ftp://admin@localhost:{{ftp.server.port}}/upload/jail?binary=false&password=admin&tempPrefix=.uploading";
     }
 
     @Test

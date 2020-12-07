@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpClientConfigRefTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/timeout/?password=admin&ftpClientConfig=#myConfig";
+        return "ftp://admin@localhost:{{ftp.server.port}}/timeout/?password=admin&ftpClientConfig=#myConfig";
     }
 
     @BindToRegistry("myConfig")

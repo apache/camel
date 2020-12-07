@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerAllowNullBodyTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/allownull?password=admin&fileName=allowNullBody.txt";
+        return "ftp://admin@localhost:{{ftp.server.port}}/allownull?password=admin&fileName=allowNullBody.txt";
     }
 
     @Test
     public void testAllowNullBodyTrue() throws Exception {
         template.sendBody(getFtpUrl() + "&allowNullBody=true", null);
 
-        assertFileExists(FTP_ROOT_DIR + "/allownull/allowNullBody.txt");
+        assertFileExists(service.getFtpRootDir() + "/allownull/allowNullBody.txt");
     }
 
     @Test
@@ -50,7 +50,7 @@ public class FtpProducerAllowNullBodyTest extends FtpServerTestSupport {
                 = assertIsInstanceOf(GenericFileOperationFailedException.class, ex.getCause());
         assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
 
-        assertFalse(new File(FTP_ROOT_DIR + "/allownull/allowNullBody.txt").exists(),
+        assertFalse(new File(service.getFtpRootDir() + "/allownull/allowNullBody.txt").exists(),
                 "allowNullBody set to false with null body should not create a new file");
     }
 

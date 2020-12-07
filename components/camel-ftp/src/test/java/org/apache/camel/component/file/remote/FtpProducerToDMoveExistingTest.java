@@ -31,7 +31,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
 public class FtpProducerToDMoveExistingTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
+        return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/${header.myDir}?password=admin&fileExist=Move&moveExisting=old-${file:onlyname}";
     }
 
@@ -47,8 +47,8 @@ public class FtpProducerToDMoveExistingTest extends FtpServerTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFileExists(FTP_ROOT_DIR + "/out/old-hello.txt");
-        assertFileExists(FTP_ROOT_DIR + "/out/hello.txt");
+        assertFileExists(service.getFtpRootDir() + "/out/old-hello.txt");
+        assertFileExists(service.getFtpRootDir() + "/out/hello.txt");
     }
 
     @Override

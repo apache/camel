@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FtpConsumerAbsolutePathTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "///foo?password=admin&delay=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}///foo?password=admin&delay=5000";
     }
 
     @Override

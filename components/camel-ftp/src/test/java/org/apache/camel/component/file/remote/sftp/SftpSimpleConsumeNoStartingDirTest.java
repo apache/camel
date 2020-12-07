@@ -23,15 +23,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpSimpleConsumeNoStartingDirTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         // create files using regular file
         File file = new File("a.txt");
         FileOutputStream fos = new FileOutputStream(file, false);
@@ -53,7 +51,7 @@ public class SftpSimpleConsumeNoStartingDirTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/"
+                from("sftp://localhost:{{ftp.server.port}}/"
                      + "?fileName=a.txt&username=admin&password=admin&delay=10000&disconnect=true").routeId("foo")
                              .noAutoStartup().to("log:result", "mock:result");
             }

@@ -21,7 +21,7 @@ public class FromFtpSimpleNoEndpointPathRelativeMoveToRelativeNotStepwiseTest
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&recursive=true&binary=false"
+        return "ftp://admin@localhost:{{ftp.server.port}}?password=admin&recursive=true&binary=false"
                + "&move=.done&initialDelay=2500&delay=5000&stepwise=false";
     }
 

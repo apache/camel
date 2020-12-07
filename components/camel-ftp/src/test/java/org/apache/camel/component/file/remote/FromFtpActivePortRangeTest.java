@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpActivePortRangeTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/portrange/?password=admin&activePortRange=10000-19999";
+        return "ftp://admin@localhost:{{ftp.server.port}}/portrange/?password=admin&activePortRange=10000-19999";
     }
 
     @Override

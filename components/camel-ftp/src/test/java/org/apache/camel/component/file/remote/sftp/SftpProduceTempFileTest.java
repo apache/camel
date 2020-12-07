@@ -21,36 +21,30 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpProduceTempFileTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpTempFile() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
-        template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+        template.sendBodyAndHeader("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
                                    + "?username=admin&password=admin&tempFileName=temp-${file:name}",
                 "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/hello.txt");
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
 
     @Test
     public void testSftpTempFileNoStartingPath() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         template.sendBodyAndHeader(
-                "sftp://localhost:" + getPort() + "/?username=admin&password=admin&tempFileName=temp-${file:name}",
+                "sftp://localhost:{{ftp.server.port}}/?username=admin&password=admin&tempFileName=temp-${file:name}",
                 "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 

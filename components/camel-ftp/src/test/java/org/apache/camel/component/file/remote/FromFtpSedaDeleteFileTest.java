@@ -35,14 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpSedaDeleteFileTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/deletefile?password=admin&binary=false&delete=true";
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
+        return "ftp://admin@localhost:{{ftp.server.port}}/deletefile?password=admin&binary=false&delete=true";
     }
 
     @Test
@@ -56,10 +49,11 @@ public class FromFtpSedaDeleteFileTest extends FtpServerTestSupport {
         Thread.sleep(500);
 
         // assert the file is deleted
-        File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/deletefile/hello.txt");
         assertFalse(file.exists(), "The file should have been deleted");
     }
 
+    @BeforeEach
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want
         // to unit
@@ -74,7 +68,7 @@ public class FromFtpSedaDeleteFileTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/deletefile/hello.txt");
         assertTrue(file.exists(), "The file should exists");
     }
 

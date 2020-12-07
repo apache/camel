@@ -22,23 +22,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthenticator;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
-
+    private static HttpProxyServer proxyServer;
     private final int proxyPort = AvailablePortFinder.getNextAvailable();
 
-    @Test
-    public void testSftpSimpleConsumeThroughProxy() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
-        // start http proxy
-        HttpProxyServer proxyServer = DefaultHttpProxyServer.bootstrap()
+    @BeforeAll
+    public void setupProxy() {
+        proxyServer = DefaultHttpProxyServer.bootstrap()
                 .withPort(proxyPort)
                 .withProxyAuthenticator(new ProxyAuthenticator() {
                     @Override
@@ -51,11 +52,19 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
                         return "myrealm";
                     }
                 }).start();
+    }
 
+    @AfterAll
+    public void cleanup() {
+        proxyServer.stop();
+    }
+
+    @Test
+    public void testSftpSimpleConsumeThroughProxy() throws Exception {
         String expected = "Hello World";
 
         // create file using regular file
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -65,8 +74,6 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
         context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
-
-        proxyServer.stop();
     }
 
     @Override
@@ -74,7 +81,7 @@ public class SftpSimpleConsumeThroughProxyTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
                      + "?username=admin&password=admin&delay=10000&disconnect=true&proxy=#proxy").routeId("foo").noAutoStartup()
                              .to("mock:result");
             }

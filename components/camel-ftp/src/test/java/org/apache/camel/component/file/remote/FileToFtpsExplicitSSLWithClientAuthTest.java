@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class FileToFtpsExplicitSSLWithClientAuthTest extends FtpsServerExplicitSSLWithClientAuthTestSupport {
 
     protected String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort()
+        return "ftps://admin@localhost:{{ftp.server.port}}"
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
                + "&securityProtocol=SSLv3&implicit=false&ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.type=JKS"
                + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password&delete=true";
@@ -34,10 +34,6 @@ public class FileToFtpsExplicitSSLWithClientAuthTest extends FtpsServerExplicitS
 
     @Test
     public void testFromFileToFtp() throws Exception {
-        // some platforms cannot test SSL
-        if (!canTest) {
-            return;
-        }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

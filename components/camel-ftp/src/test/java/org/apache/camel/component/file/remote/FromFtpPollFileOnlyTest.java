@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/fileonly/?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/fileonly/?password=admin";
     }
 
     @Override
@@ -53,7 +53,7 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
         // to unit
         // test that we can pool and store as a local file
         Endpoint endpoint
-                = context.getEndpoint("ftp://admin@localhost:" + getPort() + "/fileonly/?password=admin&binary=false");
+                = context.getEndpoint("ftp://admin@localhost:{{ftp.server.port}}/fileonly/?password=admin&binary=false");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");
         exchange.getIn().setHeader(Exchange.FILE_NAME, "report.txt");

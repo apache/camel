@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,15 +31,13 @@ import static org.apache.camel.test.junit5.TestSupport.createDirectory;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- *
- */
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpChangedReadLockTest extends SftpServerTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SftpChangedReadLockTest.class);
 
     protected String getFtpUrl() {
-        return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+        return "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
                + "/changed?username=admin&password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
     }
 
@@ -51,10 +50,6 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
 
     @Test
     public void testChangedReadLock() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/slowfile.dat");
@@ -76,8 +71,8 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
     private void writeSlowFile() throws Exception {
         LOG.debug("Writing slow file...");
 
-        createDirectory(FTP_ROOT_DIR + "/changed");
-        FileOutputStream fos = new FileOutputStream(FTP_ROOT_DIR + "/changed/slowfile.dat", true);
+        createDirectory(service.getFtpRootDir() + "/changed");
+        FileOutputStream fos = new FileOutputStream(service.getFtpRootDir() + "/changed/slowfile.dat", true);
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);

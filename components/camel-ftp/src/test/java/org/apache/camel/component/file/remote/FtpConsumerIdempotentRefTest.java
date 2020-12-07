@@ -32,12 +32,12 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
 
     private static boolean invoked;
 
-    @BindToRegistry("myRepo")
+    @BindToRegistry("myIdempotentRepo")
     private MyIdempotentRepository myIdempotentRepo = new MyIdempotentRepository();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
-               + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}"
+               + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myIdempotentRepo&delete=true";
     }
 
     @Test

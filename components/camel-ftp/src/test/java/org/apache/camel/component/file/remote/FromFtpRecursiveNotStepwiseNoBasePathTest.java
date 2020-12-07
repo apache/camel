@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpRecursiveNotStepwiseNoBasePathTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false" + "&recursive=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}?password=admin&initialDelay=3000&stepwise=false&recursive=true";
     }
 
     @Override

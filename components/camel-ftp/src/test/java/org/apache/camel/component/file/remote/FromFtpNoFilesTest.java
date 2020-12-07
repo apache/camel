@@ -29,13 +29,13 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 public class FromFtpNoFilesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin&binary=false&readLock=rename&delay=2000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/slowfile?password=admin&binary=false&readLock=rename&delay=2000";
     }
 
     @Test
     public void testPoolIn3SecondsButNoFiles() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR);
-        createDirectory(FTP_ROOT_DIR + "slowfile");
+        deleteDirectory(service.getFtpRootDir());
+        createDirectory(service.getFtpRootDir() + "slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 

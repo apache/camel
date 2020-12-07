@@ -31,17 +31,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/done?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/done?password=admin";
     }
 
     @Test
     public void testProducerConstantDoneFileName() throws Exception {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
 
-        File done = new File(FTP_ROOT_DIR + "/done/done");
+        File done = new File(service.getFtpRootDir() + "/done/done");
         assertEquals(true, done.exists(), "Done file should exists");
     }
 
@@ -50,10 +50,10 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
 
-        File done = new File(FTP_ROOT_DIR + "/done/done-hello.txt");
+        File done = new File(service.getFtpRootDir() + "/done/done-hello.txt");
         assertEquals(true, done.exists(), "Done file should exists");
     }
 
@@ -62,10 +62,10 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name}.done", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
 
-        File done = new File(FTP_ROOT_DIR + "/done/hello.txt.done");
+        File done = new File(service.getFtpRootDir() + "/done/hello.txt.done");
         assertEquals(true, done.exists(), "Done file should exists");
     }
 
@@ -74,10 +74,10 @@ public class FtpProducerDoneFileNameTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=${file:name.noext}.done", "Hello World", Exchange.FILE_NAME,
                 "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/done/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/done/hello.txt");
         assertEquals(true, file.exists(), "File should exists");
 
-        File done = new File(FTP_ROOT_DIR + "/done/hello.done");
+        File done = new File(service.getFtpRootDir() + "/done/hello.done");
         assertEquals(true, done.exists(), "Done file should exists");
     }
 

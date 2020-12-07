@@ -43,7 +43,7 @@ public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
 
     @BeforeEach
     public void setup() throws Exception {
-        new File(FTP_ROOT_DIR + "/polling").mkdirs();
+        new File(service.getFtpRootDir() + "/polling").mkdirs();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class FtpPollingConsumerIdleMessageTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://admin@localhost:" + getPort() + "/polling?password=admin&delay=50"
+                from("ftp://admin@localhost:{{ftp.server.port}}/polling?password=admin&delay=50"
                      + "&sendEmptyMessageWhenIdle=true").to("mock:result");
             }
         };

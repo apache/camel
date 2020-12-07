@@ -24,25 +24,25 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.sftp.SftpServerTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpPollEnrichConsumeWithDisconnectAndDeleteTest extends SftpServerTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SftpPollEnrichConsumeWithDisconnectAndDeleteTest.class);
 
+    @Timeout(value = 30)
     @Test
     public void testSftpSimpleConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         String expected = "Hello World";
 
         // create file using regular file
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -65,7 +65,7 @@ public class SftpPollEnrichConsumeWithDisconnectAndDeleteTest extends SftpServer
                                                                                 // to
                                                                                 // be
                                                                                 // deleted
-            File file = new File(FTP_ROOT_DIR + "/hello.txt");
+            File file = new File(service.getFtpRootDir() + "/hello.txt");
             fileExists = file.exists();
 
             if (fileExists) {
@@ -83,7 +83,7 @@ public class SftpPollEnrichConsumeWithDisconnectAndDeleteTest extends SftpServer
             @Override
             public void configure() throws Exception {
                 from("vm:trigger")
-                        .pollEnrich("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                        .pollEnrich("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
                                     + "?username=admin&password=admin&delay=10000&disconnect=true&delete=true")
                         .routeId("foo").to("mock:result");
             }

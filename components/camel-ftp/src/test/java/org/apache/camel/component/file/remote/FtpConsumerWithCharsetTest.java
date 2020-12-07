@@ -43,7 +43,7 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
     private final String payload = "\u00e6\u00f8\u00e5 \u00a9";
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/upload?password=admin&charset=iso-8859-1";
+        return "ftp://admin@localhost:{{ftp.server.port}}/upload?password=admin&charset=iso-8859-1";
     }
 
     @Override
@@ -66,7 +66,7 @@ public class FtpConsumerWithCharsetTest extends FtpServerTestSupport {
 
         prepareFtpServer();
         // Check that the payload exists in upload and is in iso charset.ß
-        File file = new File(FTP_ROOT_DIR + "/upload/iso.txt");
+        File file = new File(service.getFtpRootDir() + "/upload/iso.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
 
         // Lets also test byte wise
