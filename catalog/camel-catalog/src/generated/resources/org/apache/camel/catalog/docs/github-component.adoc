@@ -49,10 +49,6 @@ for this component:
 github://endpoint[?options]
 ---------------------------
 
-== Mandatory Options:
-
-Note that these can be configured directly through the endpoint.
-
 
 // component options: START
 The GitHub component supports 4 options, which are listed below.
@@ -128,8 +124,17 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+== Configuring authentication
 
+The github component requires to be configured with an authentication token on either the component or endpoint level.
 
+For example to set it on the component:
+
+[source,java]
+----
+GitHubComponent ghc = context.getComponent("github", GitHubComponent.class);
+ghc.setOauthToken("mytoken");
+----
 
 == Consumer Endpoints:
 
