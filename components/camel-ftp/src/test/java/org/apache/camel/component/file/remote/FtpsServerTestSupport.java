@@ -19,6 +19,9 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManagerFactory;
+
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.listener.ListenerFactory;
@@ -44,6 +47,9 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
     @Override
     protected FtpServerFactory createFtpServerFactory() throws Exception {
         try {
+            LOG.info("KeyManagerFactory using the default algorithm {}", KeyManagerFactory.getDefaultAlgorithm());
+            LOG.info("TrustManagerFactory using the default algorithm {}", TrustManagerFactory.getDefaultAlgorithm());
+
             return doCreateFtpServerFactory();
         } catch (Exception e) {
             // ignore if algorithm is not on the OS
@@ -84,6 +90,7 @@ public abstract class FtpsServerTestSupport extends FtpServerTestSupport {
 
         sslConfigFactory.setKeystoreFile(FTPSERVER_KEYSTORE);
         sslConfigFactory.setKeystoreType("JKS");
+
         sslConfigFactory.setKeystoreAlgorithm("SunX509");
         sslConfigFactory.setKeystorePassword(FTPSERVER_KEYSTORE_PASSWORD);
         sslConfigFactory.setKeyPassword(FTPSERVER_KEYSTORE_PASSWORD);
