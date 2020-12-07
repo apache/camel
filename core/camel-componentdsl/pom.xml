@@ -45,18 +45,26 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-util</artifactId>
+            <artifactId>camel-allcomponents</artifactId>
+            <type>pom</type>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-reactive-executor-vertx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-threadpoolfactory-vertx</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-allcomponents</artifactId>
-            <type>pom</type>
-            <scope>provided</scope>
-        </dependency>
+
         <!-- testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
