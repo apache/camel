@@ -287,17 +287,9 @@ public class ModelParser extends BaseParser {
             return true;
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
-    protected <T extends DataFormatDefinition> AttributeHandler<T> dataFormatDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            if ("contentTypeHeader".equals(key)) {
-                def.setContentTypeHeader(val);
-                return true;
-            }
-            return identifiedTypeAttributeHandler().accept(def, key, val);
-        };
-    }
     protected DataFormatDefinition doParseDataFormatDefinition() throws IOException, XmlPullParserException {
-        return doParse(new DataFormatDefinition(), dataFormatDefinitionAttributeHandler(),  noElementHandler(), noValueHandler());
+        return doParse(new DataFormatDefinition(), 
+            identifiedTypeAttributeHandler(),  noElementHandler(), noValueHandler());
     }
     protected <T extends IdentifiedType> AttributeHandler<T> identifiedTypeAttributeHandler() {
         return (def, key, val) -> {
@@ -1699,7 +1691,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "clazzName": def.setClazzName(val); break;
                 case "usingIterator": def.setUsingIterator(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -1709,7 +1701,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "baseURI": def.setBaseURI(val); break;
                 case "outputFormat": def.setOutputFormat(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, (def, key) -> {
@@ -1727,7 +1719,7 @@ public class ModelParser extends BaseParser {
                 def.setInstanceClassName(val);
                 return true;
             }
-            return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+            return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
     protected BarcodeDataFormat doParseBarcodeDataFormat() throws IOException, XmlPullParserException {
@@ -1737,7 +1729,7 @@ public class ModelParser extends BaseParser {
                 case "height": def.setHeight(val); break;
                 case "imageType": def.setImageType(val); break;
                 case "width": def.setWidth(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -1748,7 +1740,7 @@ public class ModelParser extends BaseParser {
                 case "lineLength": def.setLineLength(val); break;
                 case "lineSeparator": def.setLineSeparator(val); break;
                 case "urlSafe": def.setUrlSafe(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -1764,7 +1756,7 @@ public class ModelParser extends BaseParser {
                 case "mapping": def.setMapping(val); break;
                 case "streamName": def.setStreamName(val); break;
                 case "unmarshalSingleObject": def.setUnmarshalSingleObject(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -1777,7 +1769,7 @@ public class ModelParser extends BaseParser {
                 case "locale": def.setLocale(val); break;
                 case "type": def.setType(val); break;
                 case "unwrapSingleInstance": def.setUnwrapSingleInstance(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -1795,7 +1787,7 @@ public class ModelParser extends BaseParser {
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
                 case "useList": def.setUseList(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -1812,7 +1804,7 @@ public class ModelParser extends BaseParser {
                 case "keyRef": def.setKeyRef(val); break;
                 case "macAlgorithm": def.setMacAlgorithm(val); break;
                 case "shouldAppendHMAC": def.setShouldAppendHMAC(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -1847,7 +1839,7 @@ public class ModelParser extends BaseParser {
                 case "trim": def.setTrim(val); break;
                 case "useMaps": def.setUseMaps(val); break;
                 case "useOrderedMaps": def.setUseOrderedMaps(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, (def, key) -> {
@@ -1864,7 +1856,7 @@ public class ModelParser extends BaseParser {
                 def.setRef(val);
                 return true;
             }
-            return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+            return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
     protected DataFormatsDefinition doParseDataFormatsDefinition() throws IOException, XmlPullParserException {
@@ -1885,6 +1877,7 @@ public class ModelParser extends BaseParser {
     protected <T extends FhirDataformat> AttributeHandler<T> fhirDataformatAttributeHandler() {
         return (def, key, val) -> {
             switch (key) {
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "dontEncodeElements": def.setDontEncodeElements(asStringSet(val)); break;
                 case "dontStripVersionsFromReferencesAtPaths": def.setDontStripVersionsFromReferencesAtPaths(asStringList(val)); break;
                 case "encodeElements": def.setEncodeElements(asStringSet(val)); break;
@@ -1897,7 +1890,7 @@ public class ModelParser extends BaseParser {
                 case "stripVersionsFromReferences": def.setStripVersionsFromReferences(val); break;
                 case "summaryMode": def.setSummaryMode(val); break;
                 case "suppressNarratives": def.setSuppressNarratives(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         };
@@ -1917,7 +1910,7 @@ public class ModelParser extends BaseParser {
                 case "ignoreFirstRecord": def.setIgnoreFirstRecord(val); break;
                 case "parserFactoryRef": def.setParserFactoryRef(val); break;
                 case "textQualifier": def.setTextQualifier(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -1929,14 +1922,14 @@ public class ModelParser extends BaseParser {
                 case "flattened": def.setFlattened(val); break;
                 case "namedOnly": def.setNamedOnly(val); break;
                 case "pattern": def.setPattern(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
     }
     protected GzipDataFormat doParseGzipDataFormat() throws IOException, XmlPullParserException {
         return doParse(new GzipDataFormat(),
-            dataFormatDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+            identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
     }
     protected HL7DataFormat doParseHL7DataFormat() throws IOException, XmlPullParserException {
         return doParse(new HL7DataFormat(), (def, key, val) -> {
@@ -1944,7 +1937,7 @@ public class ModelParser extends BaseParser {
                 def.setValidate(val);
                 return true;
             }
-            return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+            return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
     protected IcalDataFormat doParseIcalDataFormat() throws IOException, XmlPullParserException {
@@ -1953,7 +1946,7 @@ public class ModelParser extends BaseParser {
                 def.setValidating(val);
                 return true;
             }
-            return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+            return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
     protected JacksonXMLDataFormat doParseJacksonXMLDataFormat() throws IOException, XmlPullParserException {
@@ -1962,6 +1955,7 @@ public class ModelParser extends BaseParser {
                 case "allowJmsType": def.setAllowJmsType(val); break;
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
                 case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "enableJaxbAnnotationModule": def.setEnableJaxbAnnotationModule(val); break;
@@ -1973,7 +1967,7 @@ public class ModelParser extends BaseParser {
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
                 case "useList": def.setUseList(val); break;
                 case "xmlMapper": def.setXmlMapper(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -1981,6 +1975,7 @@ public class ModelParser extends BaseParser {
     protected JaxbDataFormat doParseJaxbDataFormat() throws IOException, XmlPullParserException {
         return doParse(new JaxbDataFormat(), (def, key, val) -> {
             switch (key) {
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "contextPath": def.setContextPath(val); break;
                 case "contextPathIsClassName": def.setContextPathIsClassName(val); break;
                 case "encoding": def.setEncoding(val); break;
@@ -1999,7 +1994,7 @@ public class ModelParser extends BaseParser {
                 case "schemaLocation": def.setSchemaLocation(val); break;
                 case "schemaSeverityLevel": def.setSchemaSeverityLevel(val); break;
                 case "xmlStreamWriterWrapper": def.setXmlStreamWriterWrapper(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2009,7 +2004,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "dataFormatTypes": def.setDataFormatTypes(asClassArray(val)); break;
                 case "mainFormatType": def.setMainFormatType(asClass(val)); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2021,6 +2016,7 @@ public class ModelParser extends BaseParser {
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); break;
                 case "autoDiscoverObjectMapper": def.setAutoDiscoverObjectMapper(val); break;
                 case "collectionTypeName": def.setCollectionTypeName(val); break;
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "dropRootNode": def.setDropRootNode(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
@@ -2036,7 +2032,7 @@ public class ModelParser extends BaseParser {
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
                 case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); break;
                 case "useList": def.setUseList(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2047,7 +2043,7 @@ public class ModelParser extends BaseParser {
                 def.setUsingParallelCompression(val);
                 return true;
             }
-            return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+            return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
     protected MimeMultipartDataFormat doParseMimeMultipartDataFormat() throws IOException, XmlPullParserException {
@@ -2058,7 +2054,7 @@ public class ModelParser extends BaseParser {
                 case "includeHeaders": def.setIncludeHeaders(val); break;
                 case "multipartSubType": def.setMultipartSubType(val); break;
                 case "multipartWithoutAttachment": def.setMultipartWithoutAttachment(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2080,7 +2076,7 @@ public class ModelParser extends BaseParser {
                 case "signatureKeyUserid": def.setSignatureKeyUserid(val); break;
                 case "signaturePassword": def.setSignaturePassword(val); break;
                 case "signatureVerificationOption": def.setSignatureVerificationOption(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2089,15 +2085,16 @@ public class ModelParser extends BaseParser {
         return doParse(new ProtobufDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "contentTypeFormat": def.setContentTypeFormat(val); break;
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "instanceClass": def.setInstanceClass(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
     }
     protected RssDataFormat doParseRssDataFormat() throws IOException, XmlPullParserException {
         return doParse(new RssDataFormat(),
-            dataFormatDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+            identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
     }
     protected SoapJaxbDataFormat doParseSoapJaxbDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SoapJaxbDataFormat(), (def, key, val) -> {
@@ -2108,14 +2105,14 @@ public class ModelParser extends BaseParser {
                 case "namespacePrefixRef": def.setNamespacePrefixRef(val); break;
                 case "schema": def.setSchema(val); break;
                 case "version": def.setVersion(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
     }
     protected SyslogDataFormat doParseSyslogDataFormat() throws IOException, XmlPullParserException {
         return doParse(new SyslogDataFormat(),
-            dataFormatDefinitionAttributeHandler(), noElementHandler(), noValueHandler());
+            identifiedTypeAttributeHandler(), noElementHandler(), noValueHandler());
     }
     protected TarFileDataFormat doParseTarFileDataFormat() throws IOException, XmlPullParserException {
         return doParse(new TarFileDataFormat(), (def, key, val) -> {
@@ -2124,7 +2121,7 @@ public class ModelParser extends BaseParser {
                 case "maxDecompressedSize": def.setMaxDecompressedSize(val); break;
                 case "preservePathElements": def.setPreservePathElements(val); break;
                 case "usingIterator": def.setUsingIterator(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2133,8 +2130,9 @@ public class ModelParser extends BaseParser {
         return doParse(new ThriftDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "contentTypeFormat": def.setContentTypeFormat(val); break;
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "instanceClass": def.setInstanceClass(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2144,7 +2142,7 @@ public class ModelParser extends BaseParser {
             switch (key) {
                 case "dataObjectType": def.setDataObjectTypeName(val); break;
                 case "omitXmlDeclaration": def.setOmitXmlDeclaration(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2177,7 +2175,7 @@ public class ModelParser extends BaseParser {
                 case "nullValue": def.setNullValue(val); break;
                 case "numberOfRecordsToRead": def.setNumberOfRecordsToRead(val); break;
                 case "skipEmptyLines": def.setSkipEmptyLines(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         };
@@ -2235,7 +2233,7 @@ public class ModelParser extends BaseParser {
                 case "secureTag": def.setSecureTag(val); break;
                 case "secureTagContents": def.setSecureTagContents(val); break;
                 case "xmlCipherAlgorithm": def.setXmlCipherAlgorithm(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());
@@ -2243,12 +2241,13 @@ public class ModelParser extends BaseParser {
     protected XStreamDataFormat doParseXStreamDataFormat() throws IOException, XmlPullParserException {
         return doParse(new XStreamDataFormat(), (def, key, val) -> {
             switch (key) {
+                case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "driver": def.setDriver(val); break;
                 case "driverRef": def.setDriverRef(val); break;
                 case "encoding": def.setEncoding(val); break;
                 case "mode": def.setMode(val); break;
                 case "permissions": def.setPermissions(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, (def, key) -> {
@@ -2268,7 +2267,7 @@ public class ModelParser extends BaseParser {
                 def.setRequest(val);
                 return true;
             }
-            return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+            return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
     protected YAMLDataFormat doParseYAMLDataFormat() throws IOException, XmlPullParserException {
@@ -2285,7 +2284,7 @@ public class ModelParser extends BaseParser {
                 case "resolver": def.setResolver(val); break;
                 case "unmarshalTypeName": def.setUnmarshalTypeName(val); break;
                 case "useApplicationContextClassLoader": def.setUseApplicationContextClassLoader(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, (def, key) -> {
@@ -2312,7 +2311,7 @@ public class ModelParser extends BaseParser {
                 def.setCompressionLevel(val);
                 return true;
             }
-            return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+            return identifiedTypeAttributeHandler().accept(def, key, val);
         }, noElementHandler(), noValueHandler());
     }
     protected ZipFileDataFormat doParseZipFileDataFormat() throws IOException, XmlPullParserException {
@@ -2322,7 +2321,7 @@ public class ModelParser extends BaseParser {
                 case "maxDecompressedSize": def.setMaxDecompressedSize(val); break;
                 case "preservePathElements": def.setPreservePathElements(val); break;
                 case "usingIterator": def.setUsingIterator(val); break;
-                default: return dataFormatDefinitionAttributeHandler().accept(def, key, val);
+                default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
         }, noElementHandler(), noValueHandler());

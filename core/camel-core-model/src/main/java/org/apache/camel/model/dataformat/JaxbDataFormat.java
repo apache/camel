@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "1.0.0", label = "dataformat,transformation,xml", title = "JAXB")
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxbDataFormat extends DataFormatDefinition {
+public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
     @XmlAttribute(required = true)
     private String contextPath;
     @XmlAttribute
@@ -78,6 +78,11 @@ public class JaxbDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(label = "advanced")
     private String jaxbProviderProperties;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether the data format should set the Content-Type header with the type from the data format."
+                            + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
+    private String contentTypeHeader;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -302,6 +307,14 @@ public class JaxbDataFormat extends DataFormatDefinition {
      */
     public void setJaxbProviderProperties(String jaxbProviderProperties) {
         this.jaxbProviderProperties = jaxbProviderProperties;
+    }
+
+    public String getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(String contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
 }

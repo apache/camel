@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "JacksonXML")
 @XmlRootElement(name = "jacksonxml")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JacksonXMLDataFormat extends DataFormatDefinition {
+public class JacksonXMLDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
     @XmlAttribute
     private String xmlMapper;
     @XmlAttribute
@@ -69,6 +69,11 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String allowUnmarshallType;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether the data format should set the Content-Type header with the type from the data format."
+                            + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
+    private String contentTypeHeader;
 
     public JacksonXMLDataFormat() {
         super("jacksonxml");
@@ -270,6 +275,14 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
      */
     public void setAllowUnmarshallType(String allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
+    }
+
+    public String getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(String contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
 }

@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation,json", title = "JSon")
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JsonDataFormat extends DataFormatDefinition {
+public class JsonDataFormat extends DataFormatDefinition implements ContentTypeHeaderAware {
     @XmlAttribute
     private String objectMapper;
     @XmlAttribute
@@ -84,6 +84,11 @@ public class JsonDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String dropRootNode;
+    @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
+              description = "Whether the data format should set the Content-Type header with the type from the data format."
+                            + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
+    private String contentTypeHeader;
 
     public JsonDataFormat() {
         super("json");
@@ -91,6 +96,14 @@ public class JsonDataFormat extends DataFormatDefinition {
 
     public JsonDataFormat(JsonLibrary library) {
         this.library = library;
+    }
+
+    public String getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(String contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     public String getObjectMapper() {
