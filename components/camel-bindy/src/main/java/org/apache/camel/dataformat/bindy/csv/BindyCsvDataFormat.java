@@ -205,7 +205,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
                 // if separator is a tab, don't trim any leading whitespaces (could be empty values separated by tabs)
                 if (separator.equals("\t")) {
-                    // trim only trailing whitespaces
+                    // trim only trailing whitespaces (remove new lines etc but keep tab character)
                     trimmedLine = line.replaceAll("[ \\n\\x0B\\f\\r]+$", "");
                 } else {
                     trimmedLine = line.trim();
