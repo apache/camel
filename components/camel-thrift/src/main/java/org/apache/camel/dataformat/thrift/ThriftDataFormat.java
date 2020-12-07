@@ -53,7 +53,7 @@ public class ThriftDataFormat extends ServiceSupport
     @SuppressWarnings("rawtypes")
     private TBase defaultInstance;
     private String instanceClassName;
-    private boolean contentTypeHeader;
+    private boolean contentTypeHeader = true;
     private String contentTypeFormat = CONTENT_TYPE_FORMAT_BINARY;
 
     public ThriftDataFormat() {
@@ -150,11 +150,7 @@ public class ThriftDataFormat extends ServiceSupport
         }
 
         if (isContentTypeHeader()) {
-            if (exchange.hasOut()) {
-                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, contentTypeHeader);
-            } else {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, contentTypeHeader);
-            }
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, contentTypeHeader);
         }
     }
 
