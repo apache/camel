@@ -1451,7 +1451,7 @@ public interface VertxKafkaComponentBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.2,TLSv1.3
          * Group: security
          */
         default VertxKafkaComponentBuilder sslEnabledProtocols(
