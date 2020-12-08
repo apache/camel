@@ -283,6 +283,10 @@ public class ConfigField {
             return convertValueToStringAndUnwrap(value);
         }
         if (type == ConfigDef.Type.LIST) {
+            // in case the value already in string joined with comma
+            if (value instanceof String) {
+                return (String) value;
+            }
             return ((List<Object>) value)
                     .stream()
                     .map(this::convertValueToStringAndUnwrap)
