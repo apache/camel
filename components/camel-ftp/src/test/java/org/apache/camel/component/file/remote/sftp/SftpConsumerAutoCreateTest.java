@@ -21,36 +21,34 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.SftpEndpoint;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
-
     protected String getFtpUrl() {
-        return "sftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "/foo/bar/baz/xxx?password=admin";
+        return "sftp://admin@localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "/foo/bar/baz/xxx?password=admin";
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    @AfterEach
+    public void cleanupDir() {
+        FileUtil.removeDir(new File(service.getFtpRootDir(), "/foo/bar/baz/xxx"));
     }
 
     @Test
     public void testAutoCreate() throws Exception {
-        if (!canTest()) {
-            return;
-        }
         SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
-        assertTrue(new File(FTP_ROOT_DIR + "/foo/bar/baz/xxx").exists());
+        assertTrue(new File(service.getFtpRootDir() + "/foo/bar/baz/xxx").exists());
         // producer should create necessary subdirs
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", Exchange.FILE_NAME, "sub1/sub2/hello.txt");
-        assertTrue(new File(FTP_ROOT_DIR + "/foo/bar/baz/xxx/sub1/sub2").exists());
+        assertTrue(new File(service.getFtpRootDir() + "/foo/bar/baz/xxx/sub1/sub2").exists());
 
         // to see if another connect causes problems with autoCreate=true
         endpoint.stop();
@@ -59,15 +57,12 @@ public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
     }
 
     @Test
-    public void testNoAutoCreate() throws Exception {
+    public void testNoAutoCreate() {
         SftpEndpoint endpoint = (SftpEndpoint) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=false");
         endpoint.start();
-        try {
-            endpoint.getExchanges();
-            fail("Should fail with 550 No such directory.");
-        } catch (GenericFileOperationFailedException ignored) {
-            // ignore
-        }
+
+        assertThrows(GenericFileOperationFailedException.class, () -> endpoint.getExchanges(),
+                "Should fail with 550 No such directory.");
     }
 
 }

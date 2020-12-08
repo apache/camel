@@ -26,10 +26,12 @@ import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpConsumerWithCharsetTest extends SftpServerTestSupport {
 
     private static final String SAMPLE_FILE_NAME
@@ -45,10 +47,6 @@ public class SftpConsumerWithCharsetTest extends SftpServerTestSupport {
 
     @Test
     public void testConsumeWithCharset() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         // prepare sample file to be consumed by SFTP consumer
         createSampleFile();
 
@@ -74,7 +72,8 @@ public class SftpConsumerWithCharsetTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&charset="
+                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+                     + "?username=admin&password=admin&charset="
                      + SAMPLE_FILE_CHARSET).routeId("foo").noAutoStartup()
                              .to("mock:result");
             }
@@ -82,7 +81,7 @@ public class SftpConsumerWithCharsetTest extends SftpServerTestSupport {
     }
 
     private void createSampleFile() throws IOException {
-        File file = new File(FTP_ROOT_DIR + "/" + SAMPLE_FILE_NAME);
+        File file = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME);
 
         FileUtils.write(file, SAMPLE_FILE_PAYLOAD, SAMPLE_FILE_CHARSET);
     }

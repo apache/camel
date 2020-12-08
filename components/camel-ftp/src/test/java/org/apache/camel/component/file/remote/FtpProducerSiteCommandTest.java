@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerSiteCommandTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/site?password=admin&siteCommand=help site";
+        return "ftp://admin@localhost:{{ftp.server.port}}/site?password=admin&siteCommand=help site";
     }
 
     @Test
     public void testSiteCommand() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/site/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/site/hello.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

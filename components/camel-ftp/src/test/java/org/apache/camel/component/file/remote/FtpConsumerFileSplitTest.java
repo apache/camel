@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerFileSplitTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin&delete=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/incoming/?password=admin&delete=true";
     }
 
     @Test

@@ -38,7 +38,7 @@ public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport
     private MyPollStrategy strategy = new MyPollStrategy();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/recover?password=admin&pollStrategy=#myPoll";
+        return "ftp://admin@localhost:{{ftp.server.port}}/recover?password=admin&pollStrategy=#myPoll";
     }
 
     @Test

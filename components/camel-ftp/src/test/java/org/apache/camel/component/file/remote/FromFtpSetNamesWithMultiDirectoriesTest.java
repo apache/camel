@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
+        return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/incoming?password=admin&binary=true&recursive=true&initialDelay=0&delay=100";
     }
 
@@ -81,7 +81,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         // prepares the FTP Server by creating a file on the server that we want
         // to unit
         // test that we can pool and store as a local file
-        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming/data1/?password=admin&binary=true";
+        String ftpUrl = "ftp://admin@localhost:{{ftp.server.port}}/incoming/data1/?password=admin&binary=true";
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg"));
@@ -91,7 +91,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         producer.process(exchange);
         producer.stop();
 
-        ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming/data2/?password=admin&binary=true";
+        ftpUrl = "ftp://admin@localhost:{{ftp.server.port}}/incoming/data2/?password=admin&binary=true";
         endpoint = context.getEndpoint(ftpUrl);
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo2.png"));

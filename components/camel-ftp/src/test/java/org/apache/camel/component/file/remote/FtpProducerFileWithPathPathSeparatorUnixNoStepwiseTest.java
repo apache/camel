@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerFileWithPathPathSeparatorUnixNoStepwiseTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/upload?password=admin&stepwise=false&separator=UNIX";
+        return "ftp://admin@localhost:{{ftp.server.port}}/upload?password=admin&stepwise=false&separator=UNIX";
     }
 
     @Test
@@ -43,7 +43,7 @@ public class FtpProducerFileWithPathPathSeparatorUnixNoStepwiseTest extends FtpS
         });
         assertNotNull(out);
 
-        File file = new File(FTP_ROOT_DIR + "/upload/hello/claus.txt");
+        File file = new File(service.getFtpRootDir() + "/upload/hello/claus.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
 

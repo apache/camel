@@ -23,7 +23,7 @@ public class FromFtpKeepLastModifiedNotStepwiseTest extends FromFtpKeepLastModif
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/keep?password=admin&binary=false&noop=true&stepwise=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/keep?password=admin&binary=false&noop=true&stepwise=false";
     }
 
 }

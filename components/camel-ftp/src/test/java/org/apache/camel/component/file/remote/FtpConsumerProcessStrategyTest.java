@@ -34,15 +34,12 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
     private MyStrategy myStrategy = new MyStrategy();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?password=admin&processStrategy=#myStrategy";
+        return "ftp://admin@localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
+               + "?password=admin&processStrategy=#myStrategy";
     }
 
     @Test
     public void testFtpConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
 
         String out = consumer.receiveBody(getFtpUrl(), 5000, String.class);

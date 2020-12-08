@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tempprefix/?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/tempprefix/?password=admin";
     }
 
     @Test
@@ -55,7 +55,7 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         assertEquals(true, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -71,7 +71,7 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         assertEquals(true, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -87,7 +87,7 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         assertEquals(true, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -103,7 +103,7 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         // should not write new file as we should ignore
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -124,7 +124,7 @@ public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/tempprefix/hello.txt");
         // should not write new file as we should ignore
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpNoopTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&noop=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/noop?password=admin&binary=false&noop=true";
     }
 
     @Override
@@ -54,7 +54,7 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
 
         // assert the file is still there
-        File file = new File(FTP_ROOT_DIR + "/noop/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/noop/hello.txt");
         assertTrue(file.exists(), "The file should exists");
     }
 

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/tmp5/camel?password=admin&binary=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/tmp5/camel?password=admin&binary=false";
     }
 
     @Override

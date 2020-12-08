@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerFileWithPathNoStepwiseTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/upload?password=admin&stepwise=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/upload?password=admin&stepwise=false";
     }
 
     @Test
     public void testProducerFileWithPathNoStepwise() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "hello/claus.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/upload/hello/claus.txt");
+        File file = new File(service.getFtpRootDir() + "/upload/hello/claus.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

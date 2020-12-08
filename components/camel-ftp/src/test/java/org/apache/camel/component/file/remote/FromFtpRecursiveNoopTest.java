@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpRecursiveNoopTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&initialDelay=3000"
+        return "ftp://admin@localhost:{{ftp.server.port}}/noop?password=admin&binary=false&initialDelay=3000"
                + "&recursive=true&noop=true";
     }
 

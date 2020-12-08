@@ -19,35 +19,38 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FtpConsumerAutoCreateTest extends FtpServerTestSupport {
+    private static final String TEST_DIR = "target/res/home/foo/bar/baz/xxx";
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "///foo/bar/baz/xxx?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}///foo/bar/baz/xxx?password=admin";
     }
 
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
+    @AfterEach
+    public void cleanupDir() {
+        FileUtil.removeDir(new File(TEST_DIR));
     }
 
     @Test
-    public void testAutoCreate() throws Exception {
+    public void testAutoCreate() {
         FtpEndpoint<?> endpoint = (FtpEndpoint<?>) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=true");
         endpoint.start();
         endpoint.getExchanges();
-        assertTrue(new File("target/res/home/foo/bar/baz/xxx").exists());
+        assertTrue(new File(TEST_DIR).exists());
         // producer should create necessary subdirs
         sendFile(getFtpUrl(), "Hello World", "sub1/sub2/hello.txt");
-        assertTrue(new File("target/res/home/foo/bar/baz/xxx/sub1/sub2").exists());
+        assertTrue(new File(TEST_DIR, "sub1/sub2").exists());
 
         // to see if another connect causes problems with autoCreate=true
         endpoint.stop();
@@ -56,7 +59,7 @@ public class FtpConsumerAutoCreateTest extends FtpServerTestSupport {
     }
 
     @Test
-    public void testNoAutoCreate() throws Exception {
+    public void testNoAutoCreate() {
         FtpEndpoint<?> endpoint = (FtpEndpoint<?>) this.getMandatoryEndpoint(getFtpUrl() + "&autoCreate=false");
         endpoint.start();
         try {

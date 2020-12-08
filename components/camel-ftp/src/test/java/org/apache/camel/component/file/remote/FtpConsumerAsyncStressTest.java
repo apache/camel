@@ -30,7 +30,7 @@ public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
     private int files = 100;
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/filestress/?password=admin&maxMessagesPerPoll=25";
+        return "ftp://admin@localhost:{{ftp.server.port}}/filestress/?password=admin&maxMessagesPerPoll=25";
     }
 
     @Override
@@ -38,7 +38,8 @@ public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         for (int i = 0; i < files; i++) {
-            template.sendBodyAndHeader("file://" + FTP_ROOT_DIR + "/filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
+            template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/filestress", "Hello World", Exchange.FILE_NAME,
+                    i + ".txt");
         }
     }
 

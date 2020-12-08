@@ -34,16 +34,12 @@ public class FtpSimpleConsumeStreamingStepwiseFalseTest extends FtpServerTestSup
 
     @Test
     public void testFtpSimpleConsumeAbsolute() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         String expected = "Hello World";
 
         // create file using regular file
 
         // FTP Server does not support absolute path, so lets simulate it
-        String path = FTP_ROOT_DIR + "/tmp/mytemp";
+        String path = service.getFtpRootDir() + "/tmp/mytemp";
         template.sendBodyAndHeader("file:" + path, expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint();
@@ -71,7 +67,7 @@ public class FtpSimpleConsumeStreamingStepwiseFalseTest extends FtpServerTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://localhost:" + getPort()
+                from("ftp://localhost:{{ftp.server.port}}"
                      + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&stepwise="
                      + String.valueOf(isStepwise())).routeId("foo").noAutoStartup()
                              .to("mock:result");

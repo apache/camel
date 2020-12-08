@@ -38,10 +38,6 @@ public class FtpConsumerPostProcessingOnDisconnect extends FtpServerTestSupport 
 
     @Test
     public void testConsumeDelete() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         // prepare sample file to be consumed by FTP consumer
         createSampleFile(SAMPLE_FILE_NAME_1);
 
@@ -57,18 +53,14 @@ public class FtpConsumerPostProcessingOnDisconnect extends FtpServerTestSupport 
 
         // File is deleted
         Thread.sleep(250);
-        File deletedFile = new File(FTP_ROOT_DIR + "/" + SAMPLE_FILE_NAME_1);
+        File deletedFile = new File(service.getFtpRootDir() + "/" + SAMPLE_FILE_NAME_1);
         assertFalse(deletedFile.exists(), "File should have been deleted: " + deletedFile);
     }
 
     @Test
     public void testConsumeMove() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         // moved file after its processed
-        String movedFile = FTP_ROOT_DIR + "/.camel/" + SAMPLE_FILE_NAME_2;
+        String movedFile = service.getFtpRootDir() + "/.camel/" + SAMPLE_FILE_NAME_2;
 
         // prepare sample file to be consumed by FTP consumer
         createSampleFile(SAMPLE_FILE_NAME_2);
@@ -91,19 +83,19 @@ public class FtpConsumerPostProcessingOnDisconnect extends FtpServerTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("ftp://admin@localhost:" + getPort() + "?password=admin&delete=true").routeId("foo").noAutoStartup()
+                from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&delete=true").routeId("foo").noAutoStartup()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                disconnectAllSessions(); // disconnect all Sessions on FTP server
+                                service.disconnectAllSessions(); // disconnect all Sessions on FTP server
                             }
                         }).to("mock:result");
-                from("ftp://admin@localhost:" + getPort() + "?password=admin&noop=false&move=.camel").routeId("bar")
+                from("ftp://admin@localhost:{{ftp.server.port}}?password=admin&noop=false&move=.camel").routeId("bar")
                         .noAutoStartup()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                disconnectAllSessions(); // disconnect all Sessions on FTP server
+                                service.disconnectAllSessions(); // disconnect all Sessions on FTP server
                             }
                         }).to("mock:result");
             }
@@ -111,7 +103,7 @@ public class FtpConsumerPostProcessingOnDisconnect extends FtpServerTestSupport 
     }
 
     private void createSampleFile(String fileName) throws IOException {
-        File file = new File(FTP_ROOT_DIR + "/" + fileName);
+        File file = new File(service.getFtpRootDir() + "/" + fileName);
         FileUtils.write(file, SAMPLE_FILE_PAYLOAD, SAMPLE_FILE_CHARSET);
     }
 

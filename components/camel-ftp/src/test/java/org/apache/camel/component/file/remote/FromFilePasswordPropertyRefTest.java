@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 public class FromFilePasswordPropertyRefTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://localhost:" + getPort() + "/tmp3/camel?username=us@r&password=#property:myPass&initialDelay=3000";
+        return "ftp://localhost:{{ftp.server.port}}/tmp3/camel?username=us@r&password=#property:myPass&initialDelay=3000";
     }
 
     @Override

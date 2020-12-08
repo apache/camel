@@ -19,14 +19,16 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 /**
  * Test the ftps component over SSL (explicit) and without client authentication
  */
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.FtpsEmbeddedService#hasRequiredAlgorithms")
 public class FileToFtpsWithCustomKeyAndTrustStorePropertiesTest extends FtpsServerExplicitSSLWithClientAuthTestSupport {
 
     private String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort()
+        return "ftps://admin@localhost:{{ftp.server.port}}"
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
                + "&securityProtocol=SSLv3&implicit=false&ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.type=JKS"
                + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password"
@@ -36,10 +38,6 @@ public class FileToFtpsWithCustomKeyAndTrustStorePropertiesTest extends FtpsServ
 
     @Test
     public void testFromFileToFtp() throws Exception {
-        // some platforms cannot test SSL
-        if (!canTest) {
-            return;
-        }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

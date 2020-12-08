@@ -41,7 +41,7 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "/sub/hello.txt");
-        mock.expectedFileExists(FTP_ROOT_DIR + "/out/sub/ruled.txt", "Hello World");
+        mock.expectedFileExists(service.getFtpRootDir() + "/out/sub/ruled.txt", "Hello World");
         mock.expectedFileExists("target/out/sub/hello.txt", "Hello World");
 
         assertMockEndpointsSatisfied();
@@ -59,7 +59,7 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:input").to("ftp://admin:admin@localhost:" + getPort() + "/out/").to("file://target/out",
+                from("direct:input").to("ftp://admin:admin@localhost:{{ftp.server.port}}/out/").to("file://target/out",
                         "mock:result");
             }
         };

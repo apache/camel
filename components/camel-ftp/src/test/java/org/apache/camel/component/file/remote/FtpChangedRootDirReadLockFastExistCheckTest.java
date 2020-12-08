@@ -23,7 +23,7 @@ public class FtpChangedRootDirReadLockFastExistCheckTest extends FtpChangedRootD
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
+        return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/?password=admin&readLock=changed&readLockCheckInterval=1000&delete=true&fastExistsCheck=true";
     }
 

@@ -38,7 +38,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
     private MyGuidGenerator guid = new MyGuidGenerator();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin&delay=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/filelanguage?password=admin&delay=5000";
     }
 
     @Override
@@ -61,7 +61,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        File file = new File(FTP_ROOT_DIR + "/filelanguage/backup/" + now + "/123-report2.bak");
+        File file = new File(service.getFtpRootDir() + "/filelanguage/backup/" + now + "/123-report2.bak");
         assertTrue(file.exists(), "File should have been renamed");
     }
 

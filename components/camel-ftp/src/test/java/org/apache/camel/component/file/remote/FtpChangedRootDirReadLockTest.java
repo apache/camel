@@ -36,7 +36,7 @@ public class FtpChangedRootDirReadLockTest extends FtpServerTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FtpChangedRootDirReadLockTest.class);
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
+        return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/?password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
     }
 
@@ -61,8 +61,8 @@ public class FtpChangedRootDirReadLockTest extends FtpServerTestSupport {
     private void writeSlowFile() throws Exception {
         LOG.debug("Writing slow file...");
 
-        createDirectory(FTP_ROOT_DIR + "/");
-        FileOutputStream fos = new FileOutputStream(FTP_ROOT_DIR + "/slowfile.dat", true);
+        createDirectory(service.getFtpRootDir() + "/");
+        FileOutputStream fos = new FileOutputStream(service.getFtpRootDir() + "/slowfile.dat", true);
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);

@@ -20,20 +20,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpSimpleConsumeRecursiveTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleConsumeRecursive() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         // create files using regular file
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, "A", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR + "/foo", "B", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR + "/bar", "C", Exchange.FILE_NAME, "c.txt");
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR + "/bar/cake", "D", Exchange.FILE_NAME, "d.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir(), "A", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/foo", "B", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/bar", "C", Exchange.FILE_NAME, "c.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/bar/cake", "D", Exchange.FILE_NAME, "d.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(4);
@@ -48,7 +46,7 @@ public class SftpSimpleConsumeRecursiveTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
                      + "?username=admin&password=admin&delay=10000&disconnect=true&recursive=true").routeId("foo")
                              .noAutoStartup().to("log:result", "mock:result");
             }

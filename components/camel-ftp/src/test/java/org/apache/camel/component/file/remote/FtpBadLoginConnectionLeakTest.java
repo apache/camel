@@ -44,7 +44,7 @@ public class FtpBadLoginConnectionLeakTest extends FtpServerTestSupport {
     private SocketFactory sf = new AuditingSocketFactory();
 
     private String getFtpUrl() {
-        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber"
+        return "ftp://dummy@localhost:{{ftp.server.port}}/badlogin?password=cantremeber"
                + "&throwExceptionOnConnectFailed=false&ftpClient.socketFactory=#sf";
     }
 

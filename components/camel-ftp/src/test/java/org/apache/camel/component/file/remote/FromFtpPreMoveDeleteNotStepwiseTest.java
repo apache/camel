@@ -23,6 +23,6 @@ public class FromFtpPreMoveDeleteNotStepwiseTest extends FromFtpPreMoveDeleteTes
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&preMove=work&delete=true&stepwise=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/movefile?password=admin&preMove=work&delete=true&stepwise=false";
     }
 }

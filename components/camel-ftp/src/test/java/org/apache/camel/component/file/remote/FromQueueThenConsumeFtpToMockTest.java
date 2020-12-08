@@ -36,12 +36,12 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
     // second time before we stop the consumer
     // this is because we only want to run a single poll and get the file
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/getme?password=admin&binary=false&delay=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/getme?password=admin&binary=false&delay=5000";
     }
     // END SNIPPET: e1
 
     private String getStoreUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/getme?password=admin&binary=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/getme?password=admin&binary=false";
     }
 
     @Override

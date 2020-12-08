@@ -23,6 +23,6 @@ public class FromFtpFilterNotStepwiseTest extends FromFtpFilterTest {
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/filter?password=admin&binary=false&filter=#myFilter&stepwise=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/filter?password=admin&binary=false&filter=#myFilter&stepwise=false";
     }
 }

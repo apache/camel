@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PaddyRouteTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/paddy/?password=admin&recursive=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/paddy/?password=admin&recursive=true";
     }
 
     @Test
