@@ -1754,7 +1754,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.3
+         * Default: TLSv1.2
          * Group: security
          */
         default VertxKafkaEndpointConsumerBuilder sslProtocol(String sslProtocol) {
@@ -3554,7 +3554,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.3
+         * Default: TLSv1.2
          * Group: security
          */
         default VertxKafkaEndpointProducerBuilder sslProtocol(String sslProtocol) {
@@ -4684,7 +4684,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.3
+         * Default: TLSv1.2
          * Group: security
          */
         default VertxKafkaEndpointBuilder sslProtocol(String sslProtocol) {

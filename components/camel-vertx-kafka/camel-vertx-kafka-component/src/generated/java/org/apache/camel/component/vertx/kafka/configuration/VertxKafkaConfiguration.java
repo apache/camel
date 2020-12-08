@@ -79,8 +79,8 @@ public class VertxKafkaConfiguration
     @UriParam(label = "common,security", defaultValue = "PLAINTEXT")
     private String securityProtocol = "PLAINTEXT";
     // ssl.protocol
-    @UriParam(label = "common,security", defaultValue = "TLSv1.3")
-    private String sslProtocol = "TLSv1.3";
+    @UriParam(label = "common,security", defaultValue = "TLSv1.2")
+    private String sslProtocol = "TLSv1.2";
     // ssl.provider
     @UriParam(label = "common,security")
     private String sslProvider;

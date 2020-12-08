@@ -152,6 +152,8 @@
                         <value.serializer>org.apache.kafka.common.serialization.StringSerializer</value.serializer>
                         <key.deserializer>org.apache.kafka.common.serialization.StringDeserializer</key.deserializer>
                         <value.deserializer>org.apache.kafka.common.serialization.StringDeserializer</value.deserializer>
+                        <ssl.enabled.protocols>TLSv1.2,TLSv1.3</ssl.enabled.protocols>
+                        <ssl.protocol>TLSv1.2</ssl.protocol>
                     </overriddenDefaultValues>
                     <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                     <parentClassName>BaseVertxKafkaConfiguration</parentClassName>
