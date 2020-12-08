@@ -34,14 +34,10 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteTest extends FtpServerTe
 
     @Test
     public void testFtpSimpleConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         String expected = "Hello World";
 
         // create file using regular file
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR + "/poll", expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir() + "/poll", expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -64,7 +60,7 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteTest extends FtpServerTe
                                                                                 // to
                                                                                 // be
                                                                                 // deleted
-            File file = new File(FTP_ROOT_DIR + "/poll/hello.txt");
+            File file = new File(service.getFtpRootDir() + "/poll/hello.txt");
             fileExists = file.exists();
 
             if (fileExists) {
@@ -81,7 +77,7 @@ public class FtpPollEnrichConsumeWithDisconnectAndDeleteTest extends FtpServerTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:trigger").pollEnrich("ftp://admin@localhost:" + getPort() + "/poll?password=admin&delete=true")
+                from("vm:trigger").pollEnrich("ftp://admin@localhost:{{ftp.server.port}}/poll?password=admin&delete=true")
                         .routeId("foo").to("mock:result");
             }
         };

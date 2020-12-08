@@ -28,16 +28,12 @@ import org.junit.jupiter.api.Test;
 public class FileToFtpsWithDefaultSettingsIPV6Test extends FtpsServerExplicitTLSWithoutClientAuthTestSupport {
 
     private String getFtpUrl() {
-        return "ftps://admin@[::1]:" + getPort()
+        return "ftps://admin@[::1]:{{ftp.server.port}}"
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true";
     }
 
     @Test
     public void testFromFileToFtp() throws Exception {
-        // some platforms cannot test SSL
-        if (!canTest) {
-            return;
-        }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

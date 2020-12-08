@@ -23,6 +23,6 @@ public class FromFtpDeleteFileNotStepwiseTest extends FromFtpDeleteFileTest {
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/deletefile?password=admin&binary=false&delete=true&stepwise=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/deletefile?password=admin&binary=false&delete=true&stepwise=false";
     }
 }

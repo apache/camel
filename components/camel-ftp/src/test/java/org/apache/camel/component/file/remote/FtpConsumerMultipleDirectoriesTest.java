@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/multidir/?password=admin&recursive=true&delay=5000&sortBy=file:path";
+        return "ftp://admin@localhost:{{ftp.server.port}}/multidir/?password=admin&recursive=true&delay=5000&sortBy=file:path";
     }
 
     @Override

@@ -18,22 +18,28 @@ package org.apache.camel.component.file.remote.sftp;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.remote.BaseServerTestSupport;
+import org.apache.camel.component.file.remote.services.SftpEmbeddedService;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class FromSftpRecursiveNotStepwiseNoBasePathTest extends SftpServerTestSupport {
+public class FromSftpRecursiveNotStepwiseNoBasePathTest extends BaseServerTestSupport {
+
+    @RegisterExtension
+    protected static SftpEmbeddedService service = new SftpEmbeddedService(true);
 
     protected String getSftpUrl() {
-        return "sftp://admin@localhost:" + getPort() + "?password=admin&initialDelay=3000&stepwise=false" + "&recursive=true";
+        return "sftp://admin@localhost:{{ftp.server.port}}?password=admin&initialDelay=3000&stepwise=false"
+               + "&recursive=true";
     }
 
-    @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        rootDirMode = true;
-        super.setUp();
-        prepareFtpServer();
+    public void prepareFtpServer() throws Exception {
+        sendFile("Bye World", "bye.txt");
+        sendFile("Hello World", "sub/hello.txt");
+        sendFile("Goodday World", "sub/sub2/godday.txt");
     }
 
     @Test
@@ -54,13 +60,7 @@ public class FromSftpRecursiveNotStepwiseNoBasePathTest extends SftpServerTestSu
         };
     }
 
-    private void prepareFtpServer() throws Exception {
-        sendFile("Bye World", "bye.txt");
-        sendFile("Hello World", "sub/hello.txt");
-        sendFile("Goodday World", "sub/sub2/godday.txt");
-    }
-
     public void sendFile(Object body, String fileName) {
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, body, Exchange.FILE_NAME, fileName);
+        template.sendBodyAndHeader("file://{{ftp.root.dir}}", body, Exchange.FILE_NAME, fileName);
     }
 }

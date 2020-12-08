@@ -19,24 +19,22 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 /**
  * Test the ftps component over SSL (implicit) without client authentication
  */
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.FtpsEmbeddedService#hasRequiredAlgorithms")
 public class FileToFtpsImplicitSSLWithoutClientAuthTest extends FtpsServerImplicitSSLWithoutClientAuthTestSupport {
 
     protected String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort()
+        return "ftps://admin@localhost:{{ftp.server.port}}"
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
                + "&securityProtocol=SSLv3&implicit=true&delete=true";
     }
 
     @Test
     public void testFromFileToFtp() throws Exception {
-        // some platforms cannot test SSL
-        if (!canTest) {
-            return;
-        }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

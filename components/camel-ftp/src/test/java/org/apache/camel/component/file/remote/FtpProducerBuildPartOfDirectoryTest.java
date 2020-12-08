@@ -30,14 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerBuildPartOfDirectoryTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/upload/user/claus?binary=false&password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/upload/user/claus?binary=false&password=admin";
     }
 
     @Test
     public void testProduceAndBuildPartOfRemotFolderTest() throws Exception {
         sendFile(getFtpUrl(), "Bye World", "claus.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/upload/user/claus/claus.txt");
+        File file = new File(service.getFtpRootDir() + "/upload/user/claus/claus.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Bye World", IOConverter.toString(file, null));
     }

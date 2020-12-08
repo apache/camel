@@ -16,144 +16,20 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.ftpserver.ConnectionConfigFactory;
-import org.apache.ftpserver.FtpServer;
-import org.apache.ftpserver.FtpServerFactory;
-import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
-import org.apache.ftpserver.ftplet.UserManager;
-import org.apache.ftpserver.impl.DefaultFtpServer;
-import org.apache.ftpserver.impl.FtpIoSession;
-import org.apache.ftpserver.listener.Listener;
-import org.apache.ftpserver.listener.ListenerFactory;
-import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
-import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.component.file.remote.services.FtpEmbeddedService;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Base class for unit testing using a FTPServer
  */
 public abstract class FtpServerTestSupport extends BaseServerTestSupport {
-
-    protected static final String FTP_ROOT_DIR = "./target/res/home";
-    protected static final File USERS_FILE = new File("./src/test/resources/users.properties");
-    protected static final String DEFAULT_LISTENER = "default";
-
-    private static final Logger LOG = LoggerFactory.getLogger(FtpServerTestSupport.class);
-
-    protected FtpServer ftpServer;
-    protected boolean canTest;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory(FTP_ROOT_DIR);
-
-        canTest = false;
-        initPort();
-        FtpServerFactory factory = createFtpServerFactory();
-        if (factory != null) {
-            ftpServer = factory.createServer();
-            if (ftpServer != null) {
-                ftpServer.start();
-                canTest = true;
-            }
-        }
-
-        try {
-            super.setUp();
-        } catch (Exception e) {
-            // ignore if algorithm is not on the OS
-            NoSuchAlgorithmException nsae = ObjectHelper.getException(NoSuchAlgorithmException.class, e);
-            if (nsae != null) {
-                canTest = false;
-
-                String name = System.getProperty("os.name");
-                String message = nsae.getMessage();
-                LOG.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
-            } else {
-                // some other error then throw it so the test can fail
-                throw e;
-            }
-        }
-    }
-
-    @Override
-    @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        if (ftpServer != null) {
-            try {
-                ftpServer.stop();
-                ftpServer = null;
-            } catch (Exception e) {
-                // ignore while shutting down as we could be polling during
-                // shutdown
-                // and get errors when the ftp server is stopping. This is only
-                // an issue
-                // since we host the ftp server embedded in the same jvm for
-                // unit testing
-            }
-        }
-    }
-
-    protected boolean canTest() {
-        return canTest;
-    }
-
-    protected FtpServerFactory createFtpServerFactory() throws Exception {
-        assertTrue(USERS_FILE.exists());
-        assertTrue(getPort() > 0, "Port number is not initialized in an expected range: " + getPort());
-
-        NativeFileSystemFactory fsf = new NativeFileSystemFactory();
-        fsf.setCreateHome(true);
-
-        PropertiesUserManagerFactory pumf = new PropertiesUserManagerFactory();
-        pumf.setAdminName("admin");
-        pumf.setPasswordEncryptor(new ClearTextPasswordEncryptor());
-        pumf.setFile(USERS_FILE);
-        UserManager userMgr = pumf.createUserManager();
-
-        ListenerFactory factory = new ListenerFactory();
-        factory.setPort(getPort());
-
-        FtpServerFactory serverFactory = new FtpServerFactory();
-        serverFactory.setUserManager(userMgr);
-        serverFactory.setFileSystem(fsf);
-        serverFactory.setConnectionConfig(new ConnectionConfigFactory().createConnectionConfig());
-        serverFactory.addListener(DEFAULT_LISTENER, factory.createListener());
-
-        return serverFactory;
-    }
+    @RegisterExtension
+    static FtpEmbeddedService service = new FtpEmbeddedService();
 
     public void sendFile(String url, Object body, String fileName) {
         template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, simple(fileName));
     }
-
-    protected void disconnectAllSessions() throws IOException {
-        // stop all listeners
-        Map<String, Listener> listeners = ((DefaultFtpServer) ftpServer).getListeners();
-        for (Listener listener : listeners.values()) {
-            Set<FtpIoSession> sessions = listener.getActiveSessions();
-            for (FtpIoSession session : sessions) {
-                session.closeNow();
-            }
-        }
-    }
-
 }

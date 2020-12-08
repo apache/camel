@@ -25,16 +25,12 @@ public class FtpSimpleConsumeAbsoluteTest extends FtpServerTestSupport {
 
     @Test
     public void testFtpSimpleConsumeAbsolute() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         String expected = "Hello World";
 
         // create file using regular file
 
         // FTP Server does not support absolute path, so lets simulate it
-        String path = FTP_ROOT_DIR + "/tmp/mytemp";
+        String path = service.getFtpRootDir() + "/tmp/mytemp";
         template.sendBodyAndHeader("file:" + path, expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -54,7 +50,7 @@ public class FtpSimpleConsumeAbsoluteTest extends FtpServerTestSupport {
                 // notice we use an absolute starting path: /tmp/mytemp
                 // - we must remember to use // slash because of the url
                 // separator
-                from("ftp://localhost:" + getPort() + "//tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true")
+                from("ftp://localhost:{{ftp.server.port}}//tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true")
                         .routeId("foo").noAutoStartup().to("mock:result");
             }
         };

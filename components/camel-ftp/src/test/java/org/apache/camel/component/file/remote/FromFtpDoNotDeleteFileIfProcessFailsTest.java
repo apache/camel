@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/deletefile/?password=admin&delete=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/deletefile/?password=admin&delete=true";
     }
 
     @Override
@@ -54,7 +54,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
         Thread.sleep(200);
 
         // assert the file is deleted
-        File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/deletefile/hello.txt");
         assertTrue(file.exists(), "The file should NOT have been deleted");
     }
 
@@ -72,7 +72,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
         producer.stop();
 
         // assert file is created
-        File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/deletefile/hello.txt");
         assertTrue(file.exists(), "The file should exists");
     }
 

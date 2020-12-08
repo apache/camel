@@ -25,15 +25,14 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
-               + "/poll/?password=admin&delay=6000&delete=true&sortBy=file:name&maxMessagesPerPoll=2";
+        return "ftp://admin@localhost:{{ftp.server.port}}/poll/?password=admin&delay=6000&delete=true&sortBy=file:name&maxMessagesPerPoll=2";
     }
 
-    @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
+    void prepareFtpServer() throws Exception {
+        sendFile(getFtpUrl(), "Bye World", "bye.txt");
+        sendFile(getFtpUrl(), "Hello World", "hello.txt");
+        sendFile(getFtpUrl(), "Godday World", "godday.txt");
     }
 
     @Test
@@ -53,12 +52,6 @@ public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 1);
 
         assertMockEndpointsSatisfied();
-    }
-
-    private void prepareFtpServer() throws Exception {
-        sendFile(getFtpUrl(), "Bye World", "bye.txt");
-        sendFile(getFtpUrl(), "Hello World", "hello.txt");
-        sendFile(getFtpUrl(), "Godday World", "godday.txt");
     }
 
     @Override

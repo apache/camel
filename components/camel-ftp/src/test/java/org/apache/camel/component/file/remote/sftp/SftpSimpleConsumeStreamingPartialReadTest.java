@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,18 +33,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests that a file move can occur on the server even if the remote stream was only partially read.
  */
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         String expected = "Hello World";
 
         // create file using regular file
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -58,7 +56,7 @@ public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSup
         // Wait a little bit for the move to finish.
         Thread.sleep(2000);
 
-        File resultFile = new File(FTP_ROOT_DIR + File.separator + "failed", "hello.txt");
+        File resultFile = new File(service.getFtpRootDir() + File.separator + "failed", "hello.txt");
         assertTrue(resultFile.exists());
         assertFalse(resultFile.isDirectory());
     }
@@ -68,7 +66,7 @@ public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
                      + "?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true"
                      + "&move=done&moveFailed=failed").routeId("foo").noAutoStartup().process(new Processor() {
 

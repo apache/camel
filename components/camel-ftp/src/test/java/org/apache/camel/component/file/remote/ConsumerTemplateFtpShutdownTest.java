@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ConsumerTemplateFtpShutdownTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/template?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/template?password=admin";
     }
 
     @Test

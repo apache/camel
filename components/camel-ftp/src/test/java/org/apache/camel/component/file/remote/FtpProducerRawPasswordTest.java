@@ -35,7 +35,7 @@ public class FtpProducerRawPasswordTest extends FtpServerTestSupport {
         // a RAW value and should not be
         // uri encoded. This allows us to use the password 'as is' containing +
         // & and other signs
-        return "ftp://joe@localhost:" + getPort() + "/upload?password=RAW(p+%w0&r)d)&binary=false";
+        return "ftp://joe@localhost:{{ftp.server.port}}/upload?password=RAW(p+%w0&r)d)&binary=false";
         // END SNIPPET: e1
     }
 
@@ -43,7 +43,7 @@ public class FtpProducerRawPasswordTest extends FtpServerTestSupport {
     public void testRawPassword() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "camel.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/upload/camel.txt");
+        File file = new File(service.getFtpRootDir() + "/upload/camel.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

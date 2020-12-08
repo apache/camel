@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerDualDoneFileNameTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/done?password=admin&initialDelay=0&delay=100&stepwise=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/done?password=admin&initialDelay=0&delay=100&stepwise=false";
     }
 
     @Test

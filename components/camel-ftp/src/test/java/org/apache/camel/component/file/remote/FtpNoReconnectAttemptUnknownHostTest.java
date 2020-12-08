@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class FtpNoReconnectAttemptUnknownHostTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@doesnotexisthost:" + getPort() + "/reconnect?maximumReconnectAttempts=0&password=admin";
+        return "ftp://admin@doesnotexisthost:{{ftp.server.port}}/reconnect?maximumReconnectAttempts=0&password=admin";
     }
 
     @Test

@@ -21,7 +21,9 @@ import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
+import org.junit.jupiter.api.TestInstance;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FileToFtpsExplicitSSLWithClientAuthAndSSLContextParametersTest extends FileToFtpsExplicitSSLWithClientAuthTest {
 
     @BindToRegistry("sslContextParameters")
@@ -47,7 +49,7 @@ public class FileToFtpsExplicitSSLWithClientAuthAndSSLContextParametersTest exte
 
     @Override
     protected String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort()
+        return "ftps://admin@localhost:" + service.getPort()
                + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
                + "&implicit=false&sslContextParameters=#sslContextParameters&delete=true";
     }

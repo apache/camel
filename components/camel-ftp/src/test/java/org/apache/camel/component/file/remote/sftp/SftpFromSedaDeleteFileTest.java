@@ -33,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class SftpFromSedaDeleteFileTest extends SftpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&knownHostsFile=" + getKnownHostsFile()
+        return "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "?username=admin&knownHostsFile="
+               + service.getKnownHostsFile()
                + "&privateKeyFile=./src/test/resources/id_rsa"
                + "&privateKeyPassphrase=secret&delay=500&disconnect=false&delete=true";
     }
@@ -56,12 +57,12 @@ public class SftpFromSedaDeleteFileTest extends SftpServerTestSupport {
         Thread.sleep(500);
 
         // assert the file is deleted
-        File file = new File(FTP_ROOT_DIR + "/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/hello.txt");
         assertFalse(file.exists(), "The file should have been deleted");
     }
 
     private void createSampleFile() throws IOException {
-        File file = new File(FTP_ROOT_DIR + "/" + "foo.txt");
+        File file = new File(service.getFtpRootDir() + "/" + "foo.txt");
 
         FileUtils.write(file, "Hello World this file will be deleted");
     }

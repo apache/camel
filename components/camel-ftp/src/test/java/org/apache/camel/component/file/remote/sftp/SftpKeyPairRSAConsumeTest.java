@@ -31,7 +31,9 @@ import org.apache.camel.util.IOHelper;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
 
     private static KeyPair keyPair;
@@ -45,14 +47,10 @@ public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         String expected = "Hello World";
 
         // create file using regular file
-        template.sendBodyAndHeader("file://" + FTP_ROOT_DIR, expected, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -72,7 +70,6 @@ public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
         return output.toByteArray();
     }
 
-    @Override
     protected PublickeyAuthenticator getPublickeyAuthenticator() {
         return (username, key, session) -> key.equals(keyPair.getPublic());
     }
@@ -80,12 +77,12 @@ public class SftpKeyPairRSAConsumeTest extends SftpServerTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         context.getRegistry().bind("keyPair", keyPair);
-        context.getRegistry().bind("knownHosts", buildKnownHosts());
+        context.getRegistry().bind("knownHosts", service.buildKnownHosts());
 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
+                from("sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir()
                      + "?username=admin&knownHosts=#knownHosts&keyPair=#keyPair&delay=10000&strictHostKeyChecking=yes&disconnect=true")
                              .routeId("foo").noAutoStartup()
                              .to("mock:result");

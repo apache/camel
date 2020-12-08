@@ -66,5 +66,6 @@
         <module>camel-test-infra-zookeeper</module>
         <module>camel-test-infra-postgres</module>
         <module>camel-test-infra-couchdb</module>
+        <module>camel-test-infra-ftp</module>
     </modules>
 </project>

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&fileExist=Fail";
+        return "ftp://admin@localhost:{{ftp.server.port}}?password=admin&fileExist=Fail";
     }
 
     @Override
@@ -52,6 +52,6 @@ public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
         assertEquals("File already exist: hello.txt. Cannot write new file.", cause.getMessage());
 
         // root file should still exist
-        assertFileExists(FTP_ROOT_DIR + "/hello.txt");
+        assertFileExists(service.getFtpRootDir() + "/hello.txt");
     }
 }

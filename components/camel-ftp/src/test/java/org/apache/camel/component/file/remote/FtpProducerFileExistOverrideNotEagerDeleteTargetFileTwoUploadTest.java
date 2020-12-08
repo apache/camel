@@ -21,7 +21,7 @@ public class FtpProducerFileExistOverrideNotEagerDeleteTargetFileTwoUploadTest
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
+        return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/exist?password=admin&tempPrefix=upload-&fileExist=Override&disconnect=true&eagerDeleteTargetFile=false";
     }
 

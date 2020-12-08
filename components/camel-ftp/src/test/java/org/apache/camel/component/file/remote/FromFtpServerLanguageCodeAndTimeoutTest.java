@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpServerLanguageCodeAndTimeoutTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
+        return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/codetimeout/?password=admin&ftpClientConfig.serverLanguageCode=fr&ftpClient.dataTimeout=4000";
     }
 

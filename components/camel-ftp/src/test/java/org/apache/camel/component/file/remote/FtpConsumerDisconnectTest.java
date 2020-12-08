@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/done?password=admin&disconnect=true&delay=5000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/done?password=admin&disconnect=true&delay=5000";
     }
 
     @Override

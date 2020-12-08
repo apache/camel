@@ -24,17 +24,18 @@ import org.junit.jupiter.api.Test;
 public class FtpReconnectAttemptServerStoppedTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort()
+        return "ftp://admin@localhost:{{ftp.server.port}}"
                + "/reconnect?password=admin&maximumReconnectAttempts=2&reconnectDelay=500&delete=true";
     }
 
     @Test
     public void testFromFileToFtp() throws Exception {
         // suspect serve so we cannot connect
-        ftpServer.suspend();
+        service.suspend();
 
         // put a file in the folder (do not use ftp as we then will connect)
-        template.sendBodyAndHeader("file:" + FTP_ROOT_DIR + "/reconnect", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:" + service.getFtpRootDir() + "/reconnect", "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -48,7 +49,7 @@ public class FtpReconnectAttemptServerStoppedTest extends FtpServerTestSupport {
         mock.expectedMessageCount(1);
 
         // resume the server so we can connect
-        ftpServer.resume();
+        service.resume();
 
         // wait a bit so that the server resumes properly
         Thread.sleep(3000);

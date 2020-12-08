@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/exist?password=admin&delay=2000&noop=true&fileExist=Fail";
+        return "ftp://admin@localhost:{{ftp.server.port}}/exist?password=admin&delay=2000&noop=true&fileExist=Fail";
     }
 
     @Override
@@ -48,7 +48,7 @@ public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
     public void testFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists(FTP_ROOT_DIR + "/exist/hello.txt", "Hello World");
+        mock.expectedFileExists(service.getFtpRootDir() + "/exist/hello.txt", "Hello World");
 
         String uri = getFtpUrl();
         Exception ex = assertThrows(CamelExecutionException.class,

@@ -33,13 +33,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class FromFtpConsumerTemplateRollbackTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/deletefile?password=admin&binary=false&delete=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/deletefile?password=admin&binary=false&delete=true";
     }
 
     protected String getFtpUrlInvalid() {
         // use invalid starting directory and do not allow creating it so we
         // force the poll to fail
-        return "ftp://admin@localhost:" + getPort() + "/unknown?password=admin&binary=false&delete=true&autoCreate=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/unknown?password=admin&binary=false&delete=true&autoCreate=false";
     }
 
     @Override
@@ -74,7 +74,7 @@ public class FromFtpConsumerTemplateRollbackTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/deletefile/hello.txt");
         assertTrue(file.exists(), "The file should exists");
     }
 

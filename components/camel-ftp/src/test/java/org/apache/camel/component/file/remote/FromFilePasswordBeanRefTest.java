@@ -27,7 +27,7 @@ public class FromFilePasswordBeanRefTest extends FtpServerTestSupport {
     private String somename = "t%st";
 
     protected String getFtpUrl() {
-        return "ftp://localhost:" + getPort() + "/tmp3/camel?username=us@r&password=#bean:myPass&initialDelay=3000";
+        return "ftp://localhost:{{ftp.server.port}}/tmp3/camel?username=us@r&password=#bean:myPass&initialDelay=3000";
     }
 
     @Test

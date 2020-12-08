@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpServerLanguageCodeTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/code/?password=admin&ftpClientConfig.serverLanguageCode=fr";
+        return "ftp://admin@localhost:{{ftp.server.port}}/code/?password=admin&ftpClientConfig.serverLanguageCode=fr";
     }
 
     @Override

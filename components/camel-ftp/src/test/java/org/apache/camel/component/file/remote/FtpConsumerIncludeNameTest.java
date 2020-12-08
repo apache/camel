@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class FtpConsumerIncludeNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/includename?password=admin" + "&include=report.*&exclude=.*xml";
+        return "ftp://admin@localhost:{{ftp.server.port}}/includename?password=admin" + "&include=report.*&exclude=.*xml";
     }
 
     @Override

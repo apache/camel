@@ -27,14 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FtpProducerSendNoopFalseTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/upload?password=admin&sendNoop=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/upload?password=admin&sendNoop=false";
     }
 
     @Test
     public void testSendNoopFalse() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "hello/claus.txt");
 
-        File file = new File(FTP_ROOT_DIR + "/upload/hello/claus.txt");
+        File file = new File(service.getFtpRootDir() + "/upload/hello/claus.txt");
         assertTrue(file.exists(), "The uploaded file should exists");
         assertEquals("Hello World", IOConverter.toString(file, null));
     }

@@ -36,7 +36,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     private MyGuidGenerator guid = new MyGuidGenerator();
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin";
+        return "ftp://admin@localhost:{{ftp.server.port}}/filelanguage?password=admin";
     }
 
     @Override
@@ -50,14 +50,14 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     public void testProduceBeanByExpression() throws Exception {
         template.sendBody(getFtpUrl() + "&fileName=${bean:myguidgenerator}.bak", "Hello World");
 
-        assertFileExists(FTP_ROOT_DIR + "/filelanguage/123.bak");
+        assertFileExists(service.getFtpRootDir() + "/filelanguage/123.bak");
     }
 
     @Test
     public void testProduceBeanByHeader() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "${bean:myguidgenerator}.bak");
 
-        assertFileExists(FTP_ROOT_DIR + "/filelanguage/123.bak");
+        assertFileExists(service.getFtpRootDir() + "/filelanguage/123.bak");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello World", "myfile-${date:now:yyyyMMdd}.txt");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists(FTP_ROOT_DIR + "/filelanguage/myfile-" + date + ".txt");
+        assertFileExists(service.getFtpRootDir() + "/filelanguage/myfile-" + date + ".txt");
     }
 
     @Test
@@ -73,27 +73,27 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         template.sendBody(getFtpUrl() + "&fileName=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists(FTP_ROOT_DIR + "/filelanguage/myfile-" + date + ".txt");
+        assertFileExists(service.getFtpRootDir() + "/filelanguage/myfile-" + date + ".txt");
     }
 
     @Test
     public void testProducerComplexByExpression() throws Exception {
         // need one extra subdirectory (=foo) to be able to start with .. in the
         // fileName option
-        String url = "ftp://admin@localhost:" + getPort() + "/filelanguage/foo?password=admin&jailStartingDirectory=false";
+        String url = "ftp://admin@localhost:{{ftp.server.port}}/filelanguage/foo?password=admin&jailStartingDirectory=false";
 
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
         template.sendBody(url + "&fileName=" + expression, "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists(FTP_ROOT_DIR + "/filelanguage/filelanguageinbox/myfile-123-" + date + ".txt");
+        assertFileExists(service.getFtpRootDir() + "/filelanguage/filelanguageinbox/myfile-123-" + date + ".txt");
     }
 
     @Test
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
         template.sendBodyAndHeader(getFtpUrl() + "&fileName=myfile-${header.foo}.txt", "Hello World", "foo", "abc");
 
-        assertFileExists(FTP_ROOT_DIR + "/filelanguage/myfile-abc.txt");
+        assertFileExists(service.getFtpRootDir() + "/filelanguage/myfile-abc.txt");
     }
 
     @Test
@@ -105,7 +105,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&fileName=mybirthday-${date:header.birthday:yyyyMMdd}.txt", "Hello World",
                 "birthday", date);
 
-        assertFileExists(FTP_ROOT_DIR + "/filelanguage/mybirthday-19740420.txt");
+        assertFileExists(service.getFtpRootDir() + "/filelanguage/mybirthday-19740420.txt");
     }
 
     public class MyGuidGenerator {

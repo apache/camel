@@ -30,15 +30,24 @@ import org.junit.jupiter.api.Test;
 public class FromFtpUseListFalseTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/nolist/?password=admin"
+        return "ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin"
                + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true";
     }
 
-    @Override
     @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
+    private void prepareFtpServer() throws Exception {
+        // prepares the FTP Server by creating a file on the server that we want
+        // to unit
+        // test that we can pool and store as a local file
+        Endpoint endpoint
+                = context.getEndpoint("ftp://admin@localhost:{{ftp.server.port}}/nolist/?password=admin&binary=false");
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody("Hello World from FTPServer");
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "report.txt");
+        Producer producer = endpoint.createProducer();
+        producer.start();
+        producer.process(exchange);
+        producer.stop();
     }
 
     @Test
@@ -51,20 +60,6 @@ public class FromFtpUseListFalseTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         mock.assertIsSatisfied();
-    }
-
-    private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want
-        // to unit
-        // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint("ftp://admin@localhost:" + getPort() + "/nolist/?password=admin&binary=false");
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody("Hello World from FTPServer");
-        exchange.getIn().setHeader(Exchange.FILE_NAME, "report.txt");
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
     }
 
     @Override

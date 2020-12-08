@@ -21,24 +21,24 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledIf(value = "org.apache.camel.component.file.remote.services.SftpEmbeddedService#hasRequiredAlgorithms")
 public class SftpSetCipherTest extends SftpServerTestSupport {
 
     @Test
     public void testSftpSetCipherName() throws Exception {
-        if (!canTest()) {
-            return;
-        }
-
         String cipher = "blowfish-cbc";
-        String uri = "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&ciphers=" + cipher;
+        String uri
+                = "sftp://localhost:{{ftp.server.port}}/" + service.getFtpRootDir() + "?username=admin&password=admin&ciphers="
+                  + cipher;
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // test setting the cipher doesn't interfere with message payload
-        File file = new File(FTP_ROOT_DIR + "/hello.txt");
+        File file = new File(service.getFtpRootDir() + "/hello.txt");
         assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 

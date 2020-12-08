@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpMoveFileAbsoluteFolderRecursiveTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false"
+        return "ftp://admin@localhost:{{ftp.server.port}}/movefile?password=admin&recursive=true&binary=false"
                + "&move=/.done/${file:name}.old&initialDelay=2500&delay=5000";
     }
 
@@ -43,9 +43,9 @@ public class FromFtpMoveFileAbsoluteFolderRecursiveTest extends FtpServerTestSup
     public void testPollFileAndShouldBeMoved() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello", "Bye", "Goodday");
-        mock.expectedFileExists(FTP_ROOT_DIR + "/.done/hello.txt.old");
-        mock.expectedFileExists(FTP_ROOT_DIR + "/.done/bye/bye.txt.old");
-        mock.expectedFileExists(FTP_ROOT_DIR + "/.done/goodday/goodday.txt.old");
+        mock.expectedFileExists(service.getFtpRootDir() + "/.done/hello.txt.old");
+        mock.expectedFileExists(service.getFtpRootDir() + "/.done/bye/bye.txt.old");
+        mock.expectedFileExists(service.getFtpRootDir() + "/.done/goodday/goodday.txt.old");
 
         mock.assertIsSatisfied();
     }

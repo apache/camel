@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class FtpConsumerDoneFileNameFixedTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/done?password=admin&initialDelay=0&delay=100&stepwise=false";
+        return "ftp://admin@localhost:{{ftp.server.port}}/done?password=admin&initialDelay=0&delay=100&stepwise=false";
     }
 
     @Test
@@ -55,7 +55,7 @@ public class FtpConsumerDoneFileNameFixedTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         // done file should be deleted now
-        File file = new File(FTP_ROOT_DIR + "done/fin.dat");
+        File file = new File(service.getFtpRootDir() + "done/fin.dat");
         assertFalse(file.exists(), "Done file should be deleted: " + file);
     }
 

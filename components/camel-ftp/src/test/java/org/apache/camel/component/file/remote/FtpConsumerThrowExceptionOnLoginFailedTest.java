@@ -43,7 +43,7 @@ public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSup
     private MyPoll poll = new MyPoll();
 
     private String getFtpUrl() {
-        return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremember"
+        return "ftp://dummy@localhost:{{ftp.server.port}}/badlogin?password=cantremember"
                + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll&autoCreate=false";
     }
 

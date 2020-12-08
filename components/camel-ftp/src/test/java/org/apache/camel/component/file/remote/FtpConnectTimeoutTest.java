@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 public class FtpConnectTimeoutTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/timeout/?password=admin&connectTimeout=2000";
+        return "ftp://admin@localhost:{{ftp.server.port}}/timeout/?password=admin&connectTimeout=2000";
     }
 
     @Test

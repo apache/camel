@@ -20,7 +20,7 @@ public class FromFtpSimpleRelativeMoveToAbsoluteNotStepwiseTest extends FromFtpS
 
     @Override
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false"
+        return "ftp://admin@localhost:{{ftp.server.port}}/movefile?password=admin&recursive=true&binary=false"
                + "&move=/movefile/.done&initialDelay=2500&delay=5000&stepwise=false";
     }
 

@@ -37,7 +37,7 @@ public class FtpProducerDisconnectTest extends FtpServerTestSupport {
     }
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/done?password=admin&disconnect=true";
+        return "ftp://admin@localhost:{{ftp.server.port}}/done?password=admin&disconnect=true";
     }
 
     @Test

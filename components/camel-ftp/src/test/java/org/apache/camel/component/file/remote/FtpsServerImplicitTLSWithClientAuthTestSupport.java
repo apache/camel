@@ -16,35 +16,18 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.component.file.remote.services.FtpsEmbeddedService;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
 /**
  * Abstract base class for unit testing using a secure FTP Server over TLS (implicit) and with client authentication.
  */
 public abstract class FtpsServerImplicitTLSWithClientAuthTestSupport extends FtpsServerTestSupport {
+    @RegisterExtension
+    static FtpsEmbeddedService service = new FtpsEmbeddedService(true, AUTH_VALUE_TLS, true);
 
-    /*
-     * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#
-     * getClientAuth()
-     */
-    @Override
-    protected String getClientAuth() {
-        return "true";
-    }
-
-    /*
-     * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#
-     * useImplicit()
-     */
-    @Override
-    protected boolean useImplicit() {
-        return true;
-    }
-
-    /*
-     * @see org.apache.camel.component.file.remote.FtpServerSecureTestSupport#
-     * getAuthValue()
-     */
-    @Override
-    protected String getAuthValue() {
-        return AUTH_VALUE_TLS;
+    @Deprecated
+    public static int getPort() {
+        return service.getPort();
     }
 }
