@@ -150,6 +150,17 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
     }
 
     @Override
+    public Expression createExpression(String expression, Object[] properties) {
+        Class<?> resultType = (Class<?>) (properties != null && properties.length == 1 ? properties[0] : null);
+        if (Boolean.class == resultType || boolean.class == resultType) {
+            // we want it compiled as a predicate
+            return (Expression) createPredicate(expression);
+        } else {
+            return createExpression(expression);
+        }
+    }
+
+    @Override
     public Expression createExpression(String expression) {
         if (expression == null) {
             throw new IllegalArgumentException("expression must be specified");
