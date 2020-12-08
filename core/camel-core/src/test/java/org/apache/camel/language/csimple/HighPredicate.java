@@ -24,8 +24,7 @@ import static org.apache.camel.language.csimple.CSimpleHelper.bodyAs;
 
 public class HighPredicate extends CSimpleSupport {
 
-    public HighPredicate(CamelContext context) {
-        init(context);
+    public HighPredicate() {
     }
 
     @Override

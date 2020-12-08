@@ -97,8 +97,7 @@ public class CSimpleCodeGenerator {
         sb.append("public class ").append(name).append(" extends org.apache.camel.language.csimple.CSimpleSupport {\n");
         sb.append("\n");
 
-        sb.append("    public ").append(name).append("(CamelContext context) {\n");
-        sb.append("        init(context);\n");
+        sb.append("    public ").append(name).append("() {\n");
         sb.append("    }\n");
         sb.append("\n");
 
