@@ -88,8 +88,8 @@ public class VertxKafkaConfiguration
     @UriParam(label = "common,security")
     private String sslCipherSuites;
     // ssl.enabled.protocols
-    @UriParam(label = "common,security", defaultValue = "TLSv1.2")
-    private String sslEnabledProtocols = "TLSv1.2";
+    @UriParam(label = "common,security", defaultValue = "TLSv1.2,TLSv1.3")
+    private String sslEnabledProtocols = "TLSv1.2,TLSv1.3";
     // ssl.keystore.type
     @UriParam(label = "common,security", defaultValue = "JKS")
     private String sslKeystoreType = "JKS";
