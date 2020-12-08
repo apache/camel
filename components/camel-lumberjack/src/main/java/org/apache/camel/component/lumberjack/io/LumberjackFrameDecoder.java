@@ -22,9 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Inflater;
+import java.util.zip.InflaterOutputStream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
@@ -40,6 +42,8 @@ import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_DATA;
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_JSON;
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_WINDOW;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V1;
+import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V2;
 
 /**
  * Decode lumberjack protocol frames. Support protocol V1 and V2 and frame types D, J, W and C.<br/>
@@ -57,12 +61,8 @@ import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_
 final class LumberjackFrameDecoder extends ByteToMessageDecoder {
     private static final Logger LOG = LoggerFactory.getLogger(LumberjackFrameDecoder.class);
 
-    private final LumberjackSessionHandler sessionHandler;
     private final ObjectMapper jackson = new ObjectMapper();
-
-    LumberjackFrameDecoder(LumberjackSessionHandler sessionHandler) {
-        this.sessionHandler = sessionHandler;
-    }
+    private LumberjackWindow window;
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
@@ -76,8 +76,10 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
                 return;
             }
 
-            int frameVersion = in.readUnsignedByte();
-            sessionHandler.versionRead(frameVersion);
+            byte frameVersion = in.readByte();
+
+            // make sure we get the right version
+            verifyVersion(frameVersion);
 
             int frameType = in.readUnsignedByte();
             LOG.debug("Received a lumberjack frame of type {}", (char) frameType);
@@ -90,7 +92,7 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
                     frameDecoded = handleDataFrame(in, out);
                     break;
                 case TYPE_WINDOW:
-                    frameDecoded = handleWindowFrame(in);
+                    frameDecoded = handleWindowFrame(in, frameVersion, out);
                     break;
                 case TYPE_COMPRESS:
                     frameDecoded = handleCompressedFrame(ctx, in, out);
@@ -122,8 +124,8 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
 
         Object jsonMessage = jackson.readValue(jsonStr, Object.class);
 
-        // put message in the pipeline
-        out.add(new LumberjackMessage(sequenceNumber, jsonMessage));
+        window.addMessage(new LumberjackMessage(sequenceNumber, jsonMessage));
+        sendWindowIfComplete(out);
         return true;
     }
 
@@ -151,17 +153,27 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
             dataMessage.put(key, value);
         }
 
-        out.add(new LumberjackMessage(sequenceNumber, dataMessage));
+        window.addMessage(new LumberjackMessage(sequenceNumber, dataMessage));
+        sendWindowIfComplete(out);
         return true;
     }
 
-    private boolean handleWindowFrame(ByteBuf in) {
+    private boolean handleWindowFrame(ByteBuf in, byte frameVersion, List<Object> out) {
         if (!in.isReadable(FRAME_WINDOW_HEADER_LENGTH)) {
             return false;
         }
 
-        // update window size
-        sessionHandler.windowSizeRead(in.readInt());
+        // receive a new window in the pipeline while another one is still processing (should not happen)
+        // inspired from logstash-input-beats : https://github.com/logstash-plugins/logstash-input-beats
+        if (window != null) {
+            LOG.warn("New window size received but the current window was not complete, sending the current window");
+            out.add(window);
+            // init window for this pipeline
+            window = null;
+        }
+
+        int windowSize = in.readInt();
+        window = new LumberjackWindow(frameVersion, windowSize);
         return true;
     }
 
@@ -176,25 +188,24 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
         }
 
         // decompress payload
+        // inspired from logstash-input-beats : https://github.com/logstash-plugins/logstash-input-beats
         Inflater inflater = new Inflater();
-        if (in.hasArray()) {
-            inflater.setInput(in.array(), in.arrayOffset() + in.readerIndex(), compressedPayloadLength);
-            in.skipBytes(compressedPayloadLength);
-        } else {
-            byte[] array = new byte[compressedPayloadLength];
-            in.readBytes(array);
-            inflater.setInput(array);
+        ByteBuf decompressed = ctx.alloc().buffer(compressedPayloadLength);
+        try (
+             ByteBufOutputStream buffOutput = new ByteBufOutputStream(decompressed);
+             InflaterOutputStream inflaterStream = new InflaterOutputStream(buffOutput, inflater)) {
+            in.readBytes(inflaterStream, compressedPayloadLength);
+        } finally {
+            inflater.end();
         }
 
-        while (!inflater.finished()) {
-            ByteBuf decompressed = ctx.alloc().heapBuffer(1024, 1024);
-            byte[] outArray = decompressed.array();
-            int count = inflater.inflate(outArray, decompressed.arrayOffset(), decompressed.writableBytes());
-            decompressed.writerIndex(count);
-            // put data in the pipeline
-            out.add(decompressed);
+        try {
+            while (decompressed.readableBytes() > 0) {
+                decode(ctx, decompressed, out);
+            }
+        } finally {
+            decompressed.release();
         }
-
         return true;
     }
 
@@ -216,5 +227,30 @@ final class LumberjackFrameDecoder extends ByteToMessageDecoder {
         String str = in.toString(in.readerIndex(), length, StandardCharsets.UTF_8);
         in.skipBytes(length);
         return str;
+    }
+
+    /**
+     * reads version
+     *
+     * @param version
+     */
+    private void verifyVersion(byte version) {
+        if (this.window == null || this.window.getVersion() == -1) {
+            if (version != VERSION_V1 && version != VERSION_V2) {
+                throw new RuntimeException("Unsupported frame version=" + version);
+            }
+            LOG.debug("Lumberjack protocol version is {}", (char) version);
+        } else if (window.getVersion() != version) {
+            throw new IllegalStateException(
+                    "Protocol version changed during session from " + window.getVersion() + " to " + version);
+        }
+    }
+
+    public void sendWindowIfComplete(List<Object> out) {
+        if (window.isComplete()) {
+            out.add(window);
+            // init window to handle other windows
+            window = null;
+        }
     }
 }
