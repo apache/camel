@@ -437,9 +437,13 @@ public final class CSimpleHelper {
         return beanLanguage;
     }
 
-    public static long increment(Exchange exchange, Object number) {
+    public static Object increment(Exchange exchange, Object number) {
         Number num = exchange.getContext().getTypeConverter().tryConvertTo(Number.class, exchange, number);
-        if (num != null) {
+        if (num instanceof Integer) {
+            int val = num.intValue();
+            val++;
+            return val;
+        } else if (num instanceof Long) {
             long val = num.longValue();
             val++;
             return val;
@@ -450,9 +454,13 @@ public final class CSimpleHelper {
         }
     }
 
-    public static long decrement(Exchange exchange, Object number) {
+    public static Object decrement(Exchange exchange, Object number) {
         Number num = exchange.getContext().getTypeConverter().tryConvertTo(Number.class, exchange, number);
-        if (num != null) {
+        if (num instanceof Integer) {
+            int val = num.intValue();
+            val--;
+            return val;
+        } else if (num instanceof Long) {
             long val = num.longValue();
             val--;
             return val;
