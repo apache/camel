@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
@@ -125,6 +126,12 @@ public class RoutesConfigurer {
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
+        }
+
+        Set<ConfigureRouteTemplates> set = camelContext.getRegistry().findByType(ConfigureRouteTemplates.class);
+        for (ConfigureRouteTemplates crt : set) {
+            LOG.debug("Configuring route templates via: {}", crt);
+            crt.configure(camelContext);
         }
     }
 }

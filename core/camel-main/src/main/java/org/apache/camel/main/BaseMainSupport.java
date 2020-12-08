@@ -452,27 +452,6 @@ public abstract class BaseMainSupport extends BaseService {
         // then configure and add the routes
         RoutesConfigurer configurer = new RoutesConfigurer(routesCollector, mainConfigurationProperties.getRoutesBuilders());
         configurer.configureRoutes(camelContext, mainConfigurationProperties);
-
-        // allow to do additional configuration after routes are configured
-        for (Object config : mainConfigurationProperties.getConfigurations()) {
-            // invoke configure method if exists
-            Method method = findMethod(config.getClass(), "configureRouteTemplates");
-            if (method != null) {
-                LOG.info("Calling configureRouteTemplates method on configuration class: {}", config.getClass().getName());
-                invokeMethod(method, config);
-            } else {
-                Object arg = camelContext;
-                method = findMethod(config.getClass(), "configureRouteTemplates", CamelContext.class);
-                if (method == null) {
-                    method = findMethod(config.getClass(), "configureRouteTemplates", Main.class);
-                    arg = this;
-                }
-                if (method != null) {
-                    LOG.info("Calling configureRouteTemplates method on configuration class: {}", config.getClass().getName());
-                    invokeMethod(method, config, arg);
-                }
-            }
-        }
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {

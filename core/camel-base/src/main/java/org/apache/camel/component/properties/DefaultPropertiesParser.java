@@ -307,7 +307,12 @@ public class DefaultPropertiesParser implements PropertiesParser {
                 }
             }
 
-            return parseProperty(key, value, properties);
+            // parse property may return null (such as when using spring boot and route templates)
+            String answer = parseProperty(key, value, properties);
+            if (answer == null) {
+                answer = value;
+            }
+            return answer;
         }
     }
 
