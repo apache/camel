@@ -26,16 +26,14 @@ import org.slf4j.LoggerFactory;
 /**
  * This handler connects the Netty pipeline to the Camel endpoint.
  */
-final class LumberjackMessageHandler extends SimpleChannelInboundHandler<LumberjackMessage> {
+final class LumberjackMessageHandler extends SimpleChannelInboundHandler<LumberjackWindow> {
     private static final Logger LOG = LoggerFactory.getLogger(LumberjackMessageHandler.class);
 
-    private final LumberjackSessionHandler sessionHandler;
     private final LumberjackMessageProcessor messageProcessor;
 
     private volatile boolean process = true;
 
-    LumberjackMessageHandler(LumberjackSessionHandler sessionHandler, LumberjackMessageProcessor messageProcessor) {
-        this.sessionHandler = sessionHandler;
+    LumberjackMessageHandler(LumberjackMessageProcessor messageProcessor) {
         this.messageProcessor = messageProcessor;
     }
 
@@ -50,18 +48,37 @@ final class LumberjackMessageHandler extends SimpleChannelInboundHandler<Lumberj
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, LumberjackMessage msg) throws Exception {
-        if (process) {
-            messageProcessor.onMessageReceived(msg.getPayload(), success -> {
-                if (success) {
-                    sessionHandler.notifyMessageProcessed(ctx, msg.getSequenceNumber());
-                } else {
-                    ctx.close();
-
-                    // Mark that we shouldn't process the next messages that are already decoded and are waiting in netty queues
-                    process = false;
+    protected void channelRead0(ChannelHandlerContext ctx, LumberjackWindow window) throws Exception {
+        try {
+            for (LumberjackMessage msg : window) {
+                if (process) {
+                    messageProcessor.onMessageReceived(msg.getPayload(), success -> {
+                        if (success) {
+                            notifyMessageProcessed(ctx, msg.getSequenceNumber(), window);
+                        } else {
+                            ctx.close();
+                            // Mark that we shouldn't process the next messages that are already decoded and are waiting in netty queues
+                            process = false;
+                        }
+                    });
                 }
-            });
+            }
+        } finally {
+            ctx.flush();
         }
     }
+
+    /**
+     * Notify message processed if end of window
+     *
+     * @param ctx
+     * @param sequenceNumber
+     * @param window
+     */
+    private void notifyMessageProcessed(ChannelHandlerContext ctx, int sequenceNumber, LumberjackWindow window) {
+        if (sequenceNumber == window.getSize()) {
+            ctx.writeAndFlush(new LumberjackAck(window.getVersion(), sequenceNumber));
+        }
+    }
+
 }
