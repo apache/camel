@@ -1635,7 +1635,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.2,TLSv1.3
          * Group: security
          */
         default VertxKafkaEndpointConsumerBuilder sslEnabledProtocols(
@@ -1754,7 +1754,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.3
          * Group: security
          */
         default VertxKafkaEndpointConsumerBuilder sslProtocol(String sslProtocol) {
@@ -3435,7 +3435,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.2,TLSv1.3
          * Group: security
          */
         default VertxKafkaEndpointProducerBuilder sslEnabledProtocols(
@@ -3554,7 +3554,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.3
          * Group: security
          */
         default VertxKafkaEndpointProducerBuilder sslProtocol(String sslProtocol) {
@@ -4567,7 +4567,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.2,TLSv1.3
          * Group: security
          */
         default VertxKafkaEndpointBuilder sslEnabledProtocols(
@@ -4684,7 +4684,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: TLSv1.2
+         * Default: TLSv1.3
          * Group: security
          */
         default VertxKafkaEndpointBuilder sslProtocol(String sslProtocol) {
