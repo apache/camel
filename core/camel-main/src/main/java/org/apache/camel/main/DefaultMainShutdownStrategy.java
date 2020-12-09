@@ -29,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link MainShutdownStrategy} that add a virtual machine shutdown hook
- * to properly stop the main instance.
+ * Implementation of {@link MainShutdownStrategy} that add a virtual machine shutdown hook to properly stop the main
+ * instance.
  */
 public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     protected static final Logger LOG = LoggerFactory.getLogger(DefaultMainShutdownStrategy.class);
