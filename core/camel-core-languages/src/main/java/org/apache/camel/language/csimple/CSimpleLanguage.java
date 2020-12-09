@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -49,8 +51,8 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CSimpleLanguage.class);
 
-    private final Map<String, CSimpleExpression> compiledPredicates = new ConcurrentHashMap<>();
-    private final Map<String, CSimpleExpression> compiledExpressions = new ConcurrentHashMap<>();
+    private final Map<String, CSimpleExpression> compiledPredicates;
+    private final Map<String, CSimpleExpression> compiledExpressions;
 
     /**
      * If set, this implementation attempts to compile those expressions at runtime, that are not yet available in
@@ -59,6 +61,8 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
     private final CompilationSupport compilationSupport;
 
     public CSimpleLanguage() {
+        this.compiledPredicates = new ConcurrentHashMap<>();
+        this.compiledExpressions = new ConcurrentHashMap<>();
         this.compilationSupport = new CompilationSupport();
     }
 
@@ -67,14 +71,11 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
      *
      * @param compiled the compiled
      */
-    private CSimpleLanguage(Map<String, CSimpleExpression> compiled) {
-        compiled.forEach((k, v) -> {
-            if (v.isPredicate()) {
-                this.compiledPredicates.put(k, v);
-            } else {
-                this.compiledExpressions.put(k, v);
-            }
-        });
+    private CSimpleLanguage(
+                            Map<String, CSimpleExpression> compiledPredicates,
+                            Map<String, CSimpleExpression> compiledExpressions) {
+        this.compiledPredicates = compiledPredicates;
+        this.compiledExpressions = compiledExpressions;
         this.compilationSupport = null;
     }
 
@@ -196,14 +197,23 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
     }
 
     public static class Builder {
-        private Map<String, CSimpleExpression> compiled = new HashMap<>();
+        private Map<String, CSimpleExpression> compiledPredicates = new LinkedHashMap<>();
+        private Map<String, CSimpleExpression> compiledExpressions = new LinkedHashMap<>();
 
         public CSimpleLanguage build() {
-            return new CSimpleLanguage(compiled);
+            final Map<String, CSimpleExpression> predicates = compiledPredicates.isEmpty()
+                    ? Collections.emptyMap()
+                    : Collections.unmodifiableMap(compiledPredicates);
+            this.compiledPredicates = null; // invalidate the builder to prevent leaking the mutable collection
+            final Map<String, CSimpleExpression> expressions = compiledExpressions.isEmpty()
+                    ? Collections.emptyMap()
+                    : Collections.unmodifiableMap(compiledExpressions);
+            this.compiledExpressions = null; // invalidate the builder to prevent leaking the mutable collection
+            return new CSimpleLanguage(predicates, expressions);
         }
 
         public Builder expression(CSimpleExpression expression) {
-            compiled.put(expression.getText(), expression);
+            (expression.isPredicate() ? compiledPredicates : compiledExpressions).put(expression.getText(), expression);
             return this;
         }
     }
@@ -284,7 +294,7 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
                         // load class
                         Class<CSimpleExpression> clazz
                                 = ecc.getClassResolver().resolveMandatoryClass(fqn, CSimpleExpression.class);
-                        CSimpleExpression ce = clazz.getConstructor(CamelContext.class).newInstance(getCamelContext());
+                        CSimpleExpression ce = clazz.getConstructor().newInstance();
                         if (ce.isPredicate()) {
                             compiledPredicates.put(ce.getText(), ce);
                         } else {
