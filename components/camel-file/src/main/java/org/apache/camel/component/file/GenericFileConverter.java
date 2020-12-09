@@ -136,22 +136,6 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static byte[] genericFileToByteArray(GenericFile<?> file, Exchange exchange) throws IOException {
-        String str = genericFileToString(file, exchange);
-        if (str != null) {
-            // and use charset if the exchange was explicit configured or the file was configured, and fallback to system
-            String charset = ExchangeHelper.getCharsetName(exchange, false);
-            if (charset != null) {
-                return str.getBytes(charset);
-            } else {
-                return str.getBytes();
-            }
-        } else {
-            return null;
-        }
-    }
-
-    @Converter
     public static String genericFileToString(GenericFile<?> file, Exchange exchange)
             throws IOException {
         // use reader first as it supports the file charset
