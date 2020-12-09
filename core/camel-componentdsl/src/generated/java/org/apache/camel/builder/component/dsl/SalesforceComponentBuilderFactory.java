@@ -123,6 +123,18 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Composite (raw) method.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceComponentBuilder compositeMethod(
+                java.lang.String compositeMethod) {
+            doSetProperty("compositeMethod", compositeMethod);
+            return this;
+        }
+        /**
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option is a:
@@ -1055,6 +1067,7 @@ public interface SalesforceComponentBuilderFactory {
             case "apiVersion": getOrCreateConfiguration((SalesforceComponent) component).setApiVersion((java.lang.String) value); return true;
             case "backoffIncrement": getOrCreateConfiguration((SalesforceComponent) component).setBackoffIncrement((long) value); return true;
             case "batchId": getOrCreateConfiguration((SalesforceComponent) component).setBatchId((java.lang.String) value); return true;
+            case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;
             case "contentType": getOrCreateConfiguration((SalesforceComponent) component).setContentType((org.apache.camel.component.salesforce.api.dto.bulk.ContentType) value); return true;
             case "defaultReplayId": getOrCreateConfiguration((SalesforceComponent) component).setDefaultReplayId((java.lang.Long) value); return true;
             case "format": getOrCreateConfiguration((SalesforceComponent) component).setFormat((org.apache.camel.component.salesforce.internal.PayloadFormat) value); return true;

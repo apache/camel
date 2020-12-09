@@ -35,6 +35,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "batchId": target.getConfiguration().setBatchId(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "compositemethod":
+        case "compositeMethod": target.getConfiguration().setCompositeMethod(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttype":
         case "contentType": target.getConfiguration().setContentType(property(camelContext, org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class, value)); return true;
         case "defaultreplayid":
@@ -127,6 +129,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "batchId": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "compositemethod":
+        case "compositeMethod": return java.lang.String.class;
         case "contenttype":
         case "contentType": return org.apache.camel.component.salesforce.api.dto.bulk.ContentType.class;
         case "defaultreplayid":
@@ -220,6 +224,8 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "batchId": return target.getConfiguration().getBatchId();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "compositemethod":
+        case "compositeMethod": return target.getConfiguration().getCompositeMethod();
         case "contenttype":
         case "contentType": return target.getConfiguration().getContentType();
         case "defaultreplayid":
