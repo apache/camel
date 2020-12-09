@@ -692,11 +692,9 @@ The Salesforce component supports 74 options, which are listed below.
 | Name | Description | Default | Type
 | *apexMethod* (common) | APEX method name |  | String
 | *apexQueryParams* (common) | Query params for APEX method |  | Map
-| *apexUrl* (common) | APEX method URL |  | String
 | *apiVersion* (common) | Salesforce API version. | 50.0 | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
-| *compositeMethod* (common) | Composite (raw) method. |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
 | *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
 | *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
@@ -738,6 +736,8 @@ The Salesforce component supports 74 options, which are listed below.
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *longPollingTransportProperties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *apexUrl* (producer) | APEX method URL |  | String
+| *compositeMethod* (producer) | Composite (raw) method. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
 | *httpProxyExcludedAddresses* (proxy) | A list of addresses for which HTTP proxy server should not be used. |  | Set
@@ -804,11 +804,9 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *apexMethod* (common) | APEX method name |  | String
 | *apexQueryParams* (common) | Query params for APEX method |  | Map
-| *apexUrl* (common) | APEX method URL |  | String
 | *apiVersion* (common) | Salesforce API version. | 50.0 | String
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. | 1000 | long
 | *batchId* (common) | Bulk API Batch ID |  | String
-| *compositeMethod* (common) | Composite (raw) method. |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV. There are 6 enums and the value can be one of: XML, CSV, JSON, ZIP_XML, ZIP_CSV, ZIP_JSON |  | ContentType
 | *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap | -1 | Long
 | *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON. There are 2 enums and the value can be one of: JSON, XML |  | PayloadFormat
@@ -845,6 +843,8 @@ with the following path and query parameters:
 | *replayId* (consumer) | The replayId value to use when subscribing |  | Long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. There are 3 enums and the value can be one of: InOnly, InOut, InOptionalOut |  | ExchangePattern
+| *apexUrl* (producer) | APEX method URL |  | String
+| *compositeMethod* (producer) | Composite (raw) method. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
