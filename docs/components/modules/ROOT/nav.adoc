@@ -332,7 +332,6 @@
 ** xref:twitter-search-component.adoc[Twitter Search]
 ** xref:twitter-timeline-component.adoc[Twitter Timeline]
 ** xref:undertow-component.adoc[Undertow]
-** xref:elytron-component.adoc[Undertow Elytron Security Provider]
 ** xref:validator-component.adoc[Validator]
 ** xref:velocity-component.adoc[Velocity]
 ** xref:vertx-component.adoc[Vert.x]
