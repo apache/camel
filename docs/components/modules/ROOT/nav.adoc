@@ -203,7 +203,7 @@
 ** xref:mllp-component.adoc[MLLP]
 ** xref:mock-component.adoc[Mock]
 ** xref:mongodb-component.adoc[MongoDB]
-** xref:mongodb3-component.adoc[MongoDB]
+** xref:mongodb3-component.adoc[MongoDB 3]
 ** xref:mongodb-gridfs-component.adoc[MongoDB GridFS]
 ** xref:mqtt-component.adoc[MQTT]
 ** xref:msv-component.adoc[MSV]

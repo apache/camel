@@ -1,8 +1,8 @@
 [[mongodb3-component]]
-= MongoDB Component
+= MongoDB 3 Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-mongodb3/src/main/docs/mongodb3-component.adoc
-:docTitle: MongoDB
+:docTitle: MongoDB 3
 :artifactId: camel-mongodb3
 :description: Component for working with documents stored in MongoDB database.
 :since: 2.19
