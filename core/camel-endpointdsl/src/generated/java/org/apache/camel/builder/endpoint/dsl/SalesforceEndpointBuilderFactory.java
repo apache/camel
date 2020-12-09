@@ -81,17 +81,6 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * APEX method URL.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointConsumerBuilder apexUrl(String apexUrl) {
-            doSetProperty("apexUrl", apexUrl);
-            return this;
-        }
-        /**
          * Salesforce API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -140,18 +129,6 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder batchId(String batchId) {
             doSetProperty("batchId", batchId);
-            return this;
-        }
-        /**
-         * Composite (raw) method.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointConsumerBuilder compositeMethod(
-                String compositeMethod) {
-            doSetProperty("compositeMethod", compositeMethod);
             return this;
         }
         /**
@@ -1014,17 +991,6 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * APEX method URL.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointProducerBuilder apexUrl(String apexUrl) {
-            doSetProperty("apexUrl", apexUrl);
-            return this;
-        }
-        /**
          * Salesforce API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1073,18 +1039,6 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder batchId(String batchId) {
             doSetProperty("batchId", batchId);
-            return this;
-        }
-        /**
-         * Composite (raw) method.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointProducerBuilder compositeMethod(
-                String compositeMethod) {
-            doSetProperty("compositeMethod", compositeMethod);
             return this;
         }
         /**
@@ -1742,6 +1696,29 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * APEX method URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default SalesforceEndpointProducerBuilder apexUrl(String apexUrl) {
+            doSetProperty("apexUrl", apexUrl);
+            return this;
+        }
+        /**
+         * Composite (raw) method.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default SalesforceEndpointProducerBuilder compositeMethod(
+                String compositeMethod) {
+            doSetProperty("compositeMethod", compositeMethod);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1872,17 +1849,6 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * APEX method URL.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointBuilder apexUrl(String apexUrl) {
-            doSetProperty("apexUrl", apexUrl);
-            return this;
-        }
-        /**
          * Salesforce API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1930,17 +1896,6 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder batchId(String batchId) {
             doSetProperty("batchId", batchId);
-            return this;
-        }
-        /**
-         * Composite (raw) method.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointBuilder compositeMethod(String compositeMethod) {
-            doSetProperty("compositeMethod", compositeMethod);
             return this;
         }
         /**

@@ -74,17 +74,6 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
-         * APEX method URL.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceComponentBuilder apexUrl(java.lang.String apexUrl) {
-            doSetProperty("apexUrl", apexUrl);
-            return this;
-        }
-        /**
          * Salesforce API version.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -120,18 +109,6 @@ public interface SalesforceComponentBuilderFactory {
          */
         default SalesforceComponentBuilder batchId(java.lang.String batchId) {
             doSetProperty("batchId", batchId);
-            return this;
-        }
-        /**
-         * Composite (raw) method.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceComponentBuilder compositeMethod(
-                java.lang.String compositeMethod) {
-            doSetProperty("compositeMethod", compositeMethod);
             return this;
         }
         /**
@@ -670,6 +647,29 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * APEX method URL.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default SalesforceComponentBuilder apexUrl(java.lang.String apexUrl) {
+            doSetProperty("apexUrl", apexUrl);
+            return this;
+        }
+        /**
+         * Composite (raw) method.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default SalesforceComponentBuilder compositeMethod(
+                java.lang.String compositeMethod) {
+            doSetProperty("compositeMethod", compositeMethod);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1063,11 +1063,9 @@ public interface SalesforceComponentBuilderFactory {
             switch (name) {
             case "apexMethod": getOrCreateConfiguration((SalesforceComponent) component).setApexMethod((java.lang.String) value); return true;
             case "apexQueryParams": getOrCreateConfiguration((SalesforceComponent) component).setApexQueryParams((java.util.Map) value); return true;
-            case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
             case "apiVersion": getOrCreateConfiguration((SalesforceComponent) component).setApiVersion((java.lang.String) value); return true;
             case "backoffIncrement": getOrCreateConfiguration((SalesforceComponent) component).setBackoffIncrement((long) value); return true;
             case "batchId": getOrCreateConfiguration((SalesforceComponent) component).setBatchId((java.lang.String) value); return true;
-            case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;
             case "contentType": getOrCreateConfiguration((SalesforceComponent) component).setContentType((org.apache.camel.component.salesforce.api.dto.bulk.ContentType) value); return true;
             case "defaultReplayId": getOrCreateConfiguration((SalesforceComponent) component).setDefaultReplayId((java.lang.Long) value); return true;
             case "format": getOrCreateConfiguration((SalesforceComponent) component).setFormat((org.apache.camel.component.salesforce.internal.PayloadFormat) value); return true;
@@ -1109,6 +1107,8 @@ public interface SalesforceComponentBuilderFactory {
             case "httpClientProperties": ((SalesforceComponent) component).setHttpClientProperties((java.util.Map) value); return true;
             case "longPollingTransportProperties": ((SalesforceComponent) component).setLongPollingTransportProperties((java.util.Map) value); return true;
             case "bridgeErrorHandler": ((SalesforceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
+            case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;
             case "lazyStartProducer": ((SalesforceComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SalesforceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "httpProxyExcludedAddresses": ((SalesforceComponent) component).setHttpProxyExcludedAddresses((java.util.Set) value); return true;
