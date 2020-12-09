@@ -19,7 +19,6 @@ package org.apache.camel.language.csimple;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -27,23 +26,17 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class CSimpleSupport implements CSimpleExpression, CSimpleMethod {
 
-    private ExtendedCamelContext camelContext;
-
-    @Override
-    public void init(CamelContext context) {
-        this.camelContext = context.adapt(ExtendedCamelContext.class);
-    }
-
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Object body = exchange.getIn().getBody();
+        final CamelContext context = exchange.getContext();
+        final Object body = exchange.getIn().getBody();
         Object out;
         try {
-            out = evaluate(exchange.getContext(), exchange, exchange.getIn(), body);
+            out = evaluate(context, exchange, exchange.getIn(), body);
         } catch (Exception e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
-        return camelContext.getTypeConverter().convertTo(type, exchange, out);
+        return context.getTypeConverter().convertTo(type, exchange, out);
     }
 
     @Override

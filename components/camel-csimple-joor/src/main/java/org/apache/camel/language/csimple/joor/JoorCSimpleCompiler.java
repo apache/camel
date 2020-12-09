@@ -101,7 +101,7 @@ public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompil
             }
             Reflect ref = Reflect.compile(code.getFqn(), code.getCode());
             Class<?> clazz = ref.type();
-            answer = (CSimpleExpression) clazz.getConstructor(CamelContext.class).newInstance(camelContext);
+            answer = (CSimpleExpression) clazz.getConstructor().newInstance();
         } catch (Exception e) {
             throw new JoorCSimpleCompilationException(code.getFqn(), code.getCode(), e);
         }

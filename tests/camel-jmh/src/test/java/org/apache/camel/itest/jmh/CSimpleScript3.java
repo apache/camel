@@ -25,8 +25,7 @@ import static org.apache.camel.language.csimple.CSimpleHelper.headerAs;
 
 public class CSimpleScript3 extends CSimpleSupport {
 
-    public CSimpleScript3(CamelContext context) {
-        init(context);
+    public CSimpleScript3() {
     }
 
     @Override
