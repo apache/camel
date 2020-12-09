@@ -228,6 +228,13 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
 
                 from("direct:apexCallPatch")
                         .to("salesforce:apexCall/Merchandise/?rawPayload=true&format=" + format + "&apexMethod=PATCH");
+
+                // testComposite (only JSON format is supported)
+                if (format.equalsIgnoreCase("json")) {
+                    from("direct:composite").to(
+                            "salesforce:composite?rawPayload=true&format=" + format
+                                                + "&sObjectName=foo&sObjectIdName=bar&compositeMethod=PATCH");
+                }
             }
         };
     }
@@ -240,8 +247,8 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
                 "direct:createSObject", "direct:updateSObject", "direct:deleteSObject", "direct:getSObjectWithId",
                 "direct:upsertSObject",
                 "direct:deleteSObjectWithId", "direct:getBlobField", "direct:query", "direct:queryAll", "direct:search",
-                "direct:apexCallGet",
-                "direct:apexCallGetWithId", "direct:apexCallPatch" };
+                "direct:apexCallGet", "direct:apexCallGetWithId", "direct:apexCallPatch",
+                "direct:composite" };
 
         final String[] formats = { "XML", "JSON" };
 

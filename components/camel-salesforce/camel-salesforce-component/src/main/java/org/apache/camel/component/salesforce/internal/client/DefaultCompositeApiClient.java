@@ -93,6 +93,33 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         xStreamCompositeTree.alias("SObjectTreeResponse", SObjectTreeResponse.class);
     }
 
+    public void submitCompositeRaw(
+            final InputStream raw, final Map<String, List<String>> headers,
+            final ResponseCallback<InputStream> callback,
+            final String sObjectName, final String extId, String compositeMethod)
+            throws SalesforceException {
+        checkCompositeFormat(format, SObjectComposite.REQUIRED_PAYLOAD_FORMAT);
+
+        final String url = String.format("%s%s/%s/%s/%s", versionUrl(), "composite", "sobjects", sObjectName, extId);
+
+        Request request;
+        if (compositeMethod != null) {
+            request = createRequest(compositeMethod, url, headers);
+        } else {
+            request = createRequest(HttpMethod.POST, url, headers);
+        }
+
+        final ContentProvider content = new InputStreamContentProvider(raw);
+        request.content(content);
+
+        doHttpRequest(request, new ClientResponseCallback() {
+            @Override
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
+                callback.onResponse(Optional.of(response), headers, ex);
+            }
+        });
+    }
+
     @Override
     public void submitComposite(
             final SObjectComposite composite, final Map<String, List<String>> headers,
@@ -152,9 +179,17 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
                         responseHeaders, exception));
     }
 
+    Request createRequest(final String method, final String url, final Map<String, List<String>> headers) {
+        final Request request = getRequest(method, url, headers);
+        return populateRequest(request);
+    }
+
     Request createRequest(final HttpMethod method, final String url, final Map<String, List<String>> headers) {
         final Request request = getRequest(method, url, headers);
+        return populateRequest(request);
+    }
 
+    private Request populateRequest(Request request) {
         // setup authorization
         setAccessToken(request);
 

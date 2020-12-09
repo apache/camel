@@ -143,6 +143,18 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Composite (raw) method.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceEndpointConsumerBuilder compositeMethod(
+                String compositeMethod) {
+            doSetProperty("compositeMethod", compositeMethod);
+            return this;
+        }
+        /**
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option is a:
@@ -1064,6 +1076,18 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Composite (raw) method.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceEndpointProducerBuilder compositeMethod(
+                String compositeMethod) {
+            doSetProperty("compositeMethod", compositeMethod);
+            return this;
+        }
+        /**
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option is a:
@@ -1906,6 +1930,17 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder batchId(String batchId) {
             doSetProperty("batchId", batchId);
+            return this;
+        }
+        /**
+         * Composite (raw) method.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default SalesforceEndpointBuilder compositeMethod(String compositeMethod) {
+            doSetProperty("compositeMethod", compositeMethod);
             return this;
         }
         /**

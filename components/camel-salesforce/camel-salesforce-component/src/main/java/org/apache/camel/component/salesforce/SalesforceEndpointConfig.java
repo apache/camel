@@ -61,6 +61,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String SOBJECT_SEARCH = "sObjectSearch";
     public static final String APEX_METHOD = "apexMethod";
     public static final String APEX_URL = "apexUrl";
+    public static final String COMPOSITE_METHOD = "compositeMethod";
     public static final String LIMIT = "limit";
 
     // prefix for parameters in headers
@@ -125,7 +126,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String sObjectSearch;
     @UriParam
     private String apexMethod;
-    @UriParam
+    @UriParam(label = "producer")
+    private String compositeMethod;
+    @UriParam(label = "producer")
     private String apexUrl;
     @UriParam
     private Map<String, Object> apexQueryParams;
@@ -377,6 +380,17 @@ public class SalesforceEndpointConfig implements Cloneable {
         this.apexQueryParams = apexQueryParams;
     }
 
+    public String getCompositeMethod() {
+        return compositeMethod;
+    }
+
+    /**
+     * Composite (raw) method.
+     */
+    public void setCompositeMethod(String compositeMethod) {
+        this.compositeMethod = compositeMethod;
+    }
+
     public ApprovalRequest getApproval() {
         return approval;
     }
@@ -616,6 +630,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
         valueMap.put(APEX_METHOD, apexMethod);
         valueMap.put(APEX_URL, apexUrl);
+        valueMap.put(COMPOSITE_METHOD, compositeMethod);
         valueMap.put(LIMIT, limit);
         valueMap.put(APPROVAL, approval);
         // apexQueryParams are handled explicitly in AbstractRestProcessor
