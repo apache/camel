@@ -29,8 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link MainShutdownStrategy} that add a virtual machine shutdown hook to properly stop the main
- * instance.
+ * Implementation of {@link MainShutdownStrategy} that add a virtual machine shutdown hook
+ * to properly stop the main instance.
  */
 public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     protected static final Logger LOG = LoggerFactory.getLogger(DefaultMainShutdownStrategy.class);
@@ -72,7 +72,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
     }
 
     private void handleHangup() {
-        LOG.info("Received hang up - stopping the main instance.");
+        LOG.info("Received hangup signal, stopping the main instance.");
         // and shutdown listener to allow camel context to graceful shutdown if JVM shutdown hook is triggered
         // as otherwise the JVM terminates before Camel is graceful shutdown
         addShutdownListener(() -> {
