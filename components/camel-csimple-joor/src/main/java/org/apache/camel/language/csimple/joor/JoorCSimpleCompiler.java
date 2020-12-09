@@ -31,6 +31,7 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.joor.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,7 +157,7 @@ public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompil
     protected void doStop() throws Exception {
         super.doStop();
         if (counter > 0) {
-            LOG.info("csimple-joor compiled {} scripts in {} millis", counter, taken);
+            LOG.info("csimple-joor compiled {} scripts in {}", counter, TimeUtils.printDuration(taken));
         }
     }
 

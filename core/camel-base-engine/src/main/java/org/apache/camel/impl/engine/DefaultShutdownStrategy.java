@@ -54,6 +54,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -264,10 +265,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             currentShutdownTaskFuture = null;
         }
 
-        // convert to seconds as its easier to read than a big milli seconds number
-        long seconds = TimeUnit.SECONDS.convert(watch.taken(), TimeUnit.MILLISECONDS);
-
-        LOG.info("Graceful shutdown of {} routes completed in {} seconds", routesOrdered.size(), seconds);
+        LOG.info("Graceful shutdown of {} routes completed in {}", routesOrdered.size(),
+                TimeUtils.printDuration(watch.taken()));
         return true;
     }
 
