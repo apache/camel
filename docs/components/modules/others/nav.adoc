@@ -7,6 +7,7 @@
 ** xref:cdi.adoc[CDI]
 ** xref:csimple-joor.adoc[CSimple jOOR]
 ** xref:cxf-transport.adoc[CXF Transport]
+** xref:elytron.adoc[Elytron]
 ** xref:etcd3.adoc[Etcd3]
 ** xref:headersmap.adoc[Headersmap]
 ** xref:hystrix.adoc[Hystrix]
