@@ -21,7 +21,6 @@ import java.util.Optional;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StartupListener;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -106,9 +105,7 @@ public class MasterConsumer extends DefaultConsumer {
 
     @ManagedAttribute(description = "Are we the master")
     public boolean isMaster() {
-        return view != null
-                ? view.getLocalMember().isLeader()
-                : false;
+        return view != null && view.getLocalMember().isLeader();
     }
 
     // **************************************
@@ -132,7 +129,7 @@ public class MasterConsumer extends DefaultConsumer {
         ServiceHelper.startService(delegatedEndpoint);
         ServiceHelper.startService(delegatedConsumer);
 
-        LOG.info("Leadership taken: consumer started: {}", delegatedEndpoint);
+        LOG.info("Leadership taken. Consumer started: {}", delegatedEndpoint);
     }
 
     private synchronized void onLeadershipLost() throws Exception {
@@ -141,7 +138,7 @@ public class MasterConsumer extends DefaultConsumer {
 
         delegatedConsumer = null;
 
-        LOG.info("Leadership lost: consumer stopped: {}", delegatedEndpoint);
+        LOG.info("Leadership lost. Consumer stopped: {}", delegatedEndpoint);
     }
 
     // **************************************
@@ -155,14 +152,19 @@ public class MasterConsumer extends DefaultConsumer {
                 return;
             }
 
-            try {
-                if (view.getLocalMember().isLeader()) {
+            if (view.getLocalMember().isLeader()) {
+                try {
                     onLeadershipTaken();
-                } else if (delegatedConsumer != null) {
-                    onLeadershipLost();
+                } catch (Exception e) {
+                    getExceptionHandler().handleException("Error starting consumer while taking leadership", e);
                 }
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            } else if (delegatedConsumer != null) {
+                try {
+                    onLeadershipLost();
+                } catch (Exception e) {
+                    getExceptionHandler()
+                            .handleException("Error stopping consumer while loosing leadership. This exception is ignored.", e);
+                }
             }
         }
     }
