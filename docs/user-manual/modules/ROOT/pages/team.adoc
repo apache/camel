@@ -47,7 +47,8 @@ sort it in alphabetical order.
 |Luca Burgazzoli |lburgazzoli |Red Hat
 |Martin Krasser |krasserm | 
 |Nicky Sandhu |nsandhu | 
-|Onder Sezgin |onders | 
+|Onder Sezgin |onders |
+|Otavio Rodolfo Piske |orpiske | Red Hat
 |Quinn Stevenson |quinn | 
 |Raul Kripalani |raulk | 
 |Rich Newcomb |rnewcomb | 
