@@ -80,7 +80,7 @@ The Pulsar component supports 36 options, which are listed below.
 | *sendTimeoutMs* (producer) | Send timeout in milliseconds | 30000 | int
 | *autoConfiguration* (advanced) | The pulsar auto configuration |  | AutoConfiguration
 | *autowiredEnabled* (advanced) | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. | true | boolean
-| *pulsarClient* (advanced) | The pulsar client |  | PulsarClient
+| *pulsarClient* (advanced) | *Autowired* The pulsar client |  | PulsarClient
 |===
 // component options: END
 

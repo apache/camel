@@ -50,16 +50,14 @@ public class PulsarEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String topic;
-
     @UriParam(defaultValue = "true", label = "advanced")
-    private boolean synchronous;
+    private boolean synchronous = true;
 
     @UriParam
     private PulsarConfiguration pulsarConfiguration;
 
     public PulsarEndpoint(String uri, PulsarComponent component) {
         super(uri, component);
-        this.synchronous = true;
     }
 
     @Override
@@ -168,6 +166,11 @@ public class PulsarEndpoint extends DefaultEndpoint {
         ObjectHelper.notNull(topic, "topic", this);
 
         uri = persistence + "://" + tenant + "/" + namespace + "/" + topic;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(pulsarClient, "pulsarClient", this);
     }
 
     @Override
