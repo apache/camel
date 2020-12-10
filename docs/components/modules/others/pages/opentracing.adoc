@@ -32,6 +32,11 @@ messages that matches the pattern. The content is a Set<String> where the key is
 uses the rules from Intercept.
 |encoding |false| Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean.
 Dashes need for instances to be encoded for JMS property keys.
+|setTracingStrategy | NoopTracingStrategy | Allows a custom Camel `InterceptStrategy` to be provided in order to
+augment the default Spans with data from each processor in a route. `OpenTracingTracingStrategy` will create spans for each
+processor, except for Camel log and OpenTracing processors, and activate a Scope in order to enable third-party instrumentation
+in processors through the default ScopeManager. Processor spans can be excluded through the exludePatterns set, these
+will be matched using the processor's ID.
 
 |=======================================================================
 
