@@ -48,7 +48,6 @@ public class MasterComponent extends DefaultComponent {
 
     public MasterComponent(CamelContext context) {
         super(context);
-
         this.serviceSelector = ClusterServiceSelectors.DEFAULT_SELECTOR;
     }
 
@@ -70,7 +69,7 @@ public class MasterComponent extends DefaultComponent {
         return new MasterEndpoint(
                 uri,
                 this,
-                getClusterService(),
+                service,
                 namespace,
                 delegateUri);
     }
@@ -104,20 +103,15 @@ public class MasterComponent extends DefaultComponent {
         this.serviceSelector = serviceSelector;
     }
 
-    // ********************************
-    // Helpers
-    // ********************************
+    @Override
+    protected void doInit() throws Exception {
+        CamelContext context = getCamelContext();
+        ObjectHelper.notNull(context, "Camel Context");
 
-    private CamelClusterService getClusterService() throws Exception {
         if (service == null) {
-            CamelContext context = getCamelContext();
-
-            ObjectHelper.notNull(context, "Camel Context");
-
             service = ClusterServiceHelper.lookupService(context, serviceSelector).orElseThrow(
                     () -> new IllegalStateException("No cluster service found"));
         }
-
-        return service;
     }
+
 }

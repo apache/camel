@@ -34,8 +34,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Have only a single consumer in a cluster consuming from a given endpoint; with automatic failover if the JVM dies.
  */
 @ManagedResource(description = "Managed Master Endpoint")
-@UriEndpoint(
-             firstVersion = "2.20.0",
+@UriEndpoint(firstVersion = "2.20.0",
              scheme = "master",
              syntax = "master:namespace:delegateUri",
              consumerOnly = true,
