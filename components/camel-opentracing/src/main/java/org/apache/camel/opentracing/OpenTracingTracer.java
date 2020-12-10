@@ -104,8 +104,7 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
             io.opentracing.Span parentSpan = ((OpenTracingSpanAdapter) parent).getOpenTracingSpan();
             spanBuilder.asChildOf(parentSpan);
         }
-        Span span = spanBuilder.start();
-        return new OpenTracingSpanAdapter(span, tracer.scopeManager().activate(span, false));
+        return new OpenTracingSpanAdapter(spanBuilder.start());
     }
 
     @Override
@@ -131,8 +130,7 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
             }
         }
 
-        Span span = builder.start();
-        return new OpenTracingSpanAdapter(span, tracer.scopeManager().activate(span, false));
+        return new OpenTracingSpanAdapter(builder.start());
     }
 
     public Tracer getTracer() {
@@ -146,7 +144,6 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
     protected void finishSpan(SpanAdapter span) {
         OpenTracingSpanAdapter openTracingSpanWrapper = (OpenTracingSpanAdapter) span;
         openTracingSpanWrapper.getOpenTracingSpan().finish();
-        openTracingSpanWrapper.getOpenTracingScope().close();
     }
 
     protected void inject(SpanAdapter span, InjectAdapter adapter) {
