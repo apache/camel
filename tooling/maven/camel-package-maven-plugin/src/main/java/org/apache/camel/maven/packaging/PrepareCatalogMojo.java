@@ -33,7 +33,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,9 +65,9 @@ import static org.apache.camel.tooling.util.PackageHelper.loadText;
 public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final String[] EXCLUDE_DOC_FILES
-            = { "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common", "camel-debezium-common" };
-
-    private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
+            = {
+                    "camel-core-model", "camel-core-xml", "camel-http-common", "camel-http-base", "camel-jetty-common",
+                    "camel-debezium-common" };
 
     private static final int UNUSED_LABELS_WARN = 15;
 
@@ -559,6 +558,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         jsonFiles = allJsonFiles.stream().filter(p -> {
             Path m = getModule(p);
             switch (m.getFileName().toString()) {
+                case "camel-core-model":
                 case "camel-core-xml":
                 case "camel-box":
                 case "camel-http-base":
@@ -661,14 +661,20 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<Path> duplicateAdocFiles = new TreeSet<>();
 
         // find all camel maven modules
-        Stream.concat(list(componentsDir.toPath()).filter(dir -> !"target".equals(dir.getFileName().toString())).map(this::getComponentPath),
-                Stream.of(coreDir.toPath(), modelDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath()))
+        Stream.concat(list(componentsDir.toPath()).filter(dir -> !dir.getFileName().startsWith(".") && !"target".equals(dir.getFileName().toString())).map(this::getComponentPath),
+                Stream.of(coreDir.toPath(), baseDir.toPath(), languagesDir.toPath(), jaxpDir.toPath()))
                 .forEach(dir -> {
                     List<Path> l = PackageHelper.walk(dir.resolve("src/main/docs")).filter(f -> f.getFileName().toString().endsWith(".adoc")).collect(Collectors.toList());
                     if (l.isEmpty()) {
-                        missingAdocFiles.add(dir);
+                        String n = dir.getFileName().toString();
+                        boolean isDir = dir.toFile().isDirectory();
+                        boolean valid = isDir && !n.startsWith(".") && !n.endsWith("-base") && !n.endsWith("-common");
+                        if (valid) {
+                            missingAdocFiles.add(dir);
+                        }
+                    } else {
+                        adocFiles.addAll(l);
                     }
-                    adocFiles.addAll(l);
                 });
 
         getLog().info("Found " + adocFiles.size() + " ascii document files");
