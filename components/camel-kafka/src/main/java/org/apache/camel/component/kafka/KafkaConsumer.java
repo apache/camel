@@ -451,11 +451,13 @@ public class KafkaConsumer extends DefaultConsumer {
                 boolean forceCommit) {
             if (partitionLastOffset != -1) {
                 if (!endpoint.getConfiguration().isAllowManualCommit() && offsetRepository != null) {
-                    LOG.debug("Saving offset repository state {} from topic {} with offset: {}", threadId, topicName,
+                    LOG.debug("Saving offset repository state {} [topic: {} partition: {} offset: {}]", threadId, topicName,
+                            partition.partition(),
                             partitionLastOffset);
                     offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
                 } else if (forceCommit) {
-                    LOG.debug("Forcing commitSync {} from topic {} with offset: {}", threadId, topicName, partitionLastOffset);
+                    LOG.debug("Forcing commitSync {} [topic: {} partition: {} offset: {}]", threadId, topicName,
+                            partition.partition(), partitionLastOffset);
                     consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
                 }
             }
