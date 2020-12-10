@@ -46,7 +46,7 @@ public class MasterConsumer extends DefaultConsumer {
     private final Endpoint delegatedEndpoint;
     private final Processor processor;
     private final CamelClusterEventListener.Leadership leadershipListener;
-    private Consumer delegatedConsumer;
+    private volatile Consumer delegatedConsumer;
     private volatile CamelClusterView view;
 
     public MasterConsumer(MasterEndpoint masterEndpoint, Processor processor, CamelClusterService clusterService) {
@@ -81,8 +81,7 @@ public class MasterConsumer extends DefaultConsumer {
             view = null;
         }
 
-        ServiceHelper.stopAndShutdownServices(delegatedConsumer);
-        ServiceHelper.stopAndShutdownServices(delegatedEndpoint);
+        ServiceHelper.stopAndShutdownServices(delegatedConsumer, delegatedEndpoint);
 
         delegatedConsumer = null;
     }
@@ -126,15 +125,13 @@ public class MasterConsumer extends DefaultConsumer {
             getEndpoint().getCamelContext().addStartupListener((StartupListener) delegatedConsumer);
         }
 
-        ServiceHelper.startService(delegatedEndpoint);
-        ServiceHelper.startService(delegatedConsumer);
+        ServiceHelper.startService(delegatedEndpoint, delegatedConsumer);
 
         LOG.info("Leadership taken. Consumer started: {}", delegatedEndpoint);
     }
 
     private synchronized void onLeadershipLost() throws Exception {
-        ServiceHelper.stopAndShutdownServices(delegatedConsumer);
-        ServiceHelper.stopAndShutdownServices(delegatedEndpoint);
+        ServiceHelper.stopAndShutdownServices(delegatedConsumer, delegatedEndpoint);
 
         delegatedConsumer = null;
 
