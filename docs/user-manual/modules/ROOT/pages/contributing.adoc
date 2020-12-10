@@ -25,6 +25,7 @@ We also participate in Google Summer of Code and Outreachy programs, for informa
 * <<improving-the-documentation,Improving the documentation>>
 * <<if-you-find-a-bug-or-problem,If you find a bug or problem>>
 * <<working-on-the-code,Working on the code>>
+* <<testing-the-changes,Testing the changes>>
 * <<running-checkstyle,Running checkstyle>>
 * <<verify-karaf-features,Verify Karaf features>>
 * <<apache-camel-committers-should-work-on-the-asf-git-repo,Apache Camel committers should work on the ASF git repo>>
@@ -102,6 +103,24 @@ If you intend to work on the code and provide patches and other work you want to
 
 
 If you aren't able to build component after adding some new URI parameters due to `Empty doc for option: [OPTION], parent options: <null>` please make sure that you either added properly javadoc for get/set method or description in `@UriPath` annotation.
+
+[#testing-the-changes]
+== Testing the changes
+
+If you need to implement tests for your changes, you will probably need to handle 3 separate things: simulate the infrastructure
+required for the test (ie.: JMS brokers, Kafka, etc), the code changes and the test logic itself. Naturally, there is no rule of
+thumb for how the code changes and test logic should be. However, in regard to simulating the test infrastructure, there is a
+growing library of reusable components that can be helpful. These components are locate in the test-infra module and provide
+support for simulating message brokers, cloud environments, databases and much more.
+
+Using these components is usually as simple as registering them as JUnit 5 extensions:
+
+ @RegisterExtension
+ static NatsService service = NatsServiceFactory.createService();
+
+Then, you can access the service by using the methods and properties provided by the services. This varies according to each service.
+
+If you need to implement a new test infra service, check the readme on the test-infra module for additional details.
 
 [#running-checkstyle]
 == Running checkstyle
