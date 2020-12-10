@@ -58,7 +58,7 @@ public class ThirdPartyInstrumentationIntegrationTest extends CamelTestSupport {
 
         OpenTracingTracer openTracingTracer = new OpenTracingTracer();
         openTracingTracer.setTracer(tracer);
-        openTracingTracer.setTracingStrategy(new NoopTracingStrategy());
+        openTracingTracer.setTracingStrategy(new OpenTracingTracingStrategy(openTracingTracer));
         openTracingTracer.init(context);
         return context;
     }
@@ -68,7 +68,7 @@ public class ThirdPartyInstrumentationIntegrationTest extends CamelTestSupport {
         template.requestBody("direct:DirectProcessor", "");
 
         List<MockSpan> actualSpans = tracer.finishedSpans();
-        assertEquals(2, actualSpans.size(), "Unexpected spans registered");
+        assertEquals(3, actualSpans.size(), "Unexpected spans registered");
 
         Set<Long> traceIds = getTraceIds(actualSpans);
         assertEquals(1, traceIds.size(), () -> "Expected all spans belonging to the same trace, but got: " + traceIds);
@@ -81,7 +81,7 @@ public class ThirdPartyInstrumentationIntegrationTest extends CamelTestSupport {
         template.requestBody("direct:DirectProcessor", "");
 
         List<MockSpan> actualSpans = tracer.finishedSpans();
-        assertEquals(4, actualSpans.size(), "Unexpected spans registered");
+        assertEquals(6, actualSpans.size(), "Unexpected spans registered");
 
         Set<Long> traceIds = getTraceIds(actualSpans);
         assertEquals(2, traceIds.size(), () -> "Expected all spans belonging to two traces, but got: " + traceIds);
@@ -92,7 +92,7 @@ public class ThirdPartyInstrumentationIntegrationTest extends CamelTestSupport {
         executeInThirdPartySpan(() -> template.requestBody("direct:DirectProcessor", ""));
 
         List<MockSpan> actualSpans = tracer.finishedSpans();
-        assertEquals(3, actualSpans.size(), "Unexpected spans registered");
+        assertEquals(4, actualSpans.size(), "Unexpected spans registered");
 
         Set<Long> traceIds = getTraceIds(actualSpans);
         assertEquals(1, traceIds.size(), "Expected all spans belonging to the same trace, but got: " + traceIds);

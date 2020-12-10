@@ -72,11 +72,11 @@ public class OpenTracingTracingStrategy implements InterceptStrategy {
                     || target instanceof GetBaggageProcessor
                     || target instanceof SetBaggageProcessor);
 
-            try (Scope scope = tracer.getTracer().scopeManager().activate(processorSpan, true)) {
-                if (activateExchange) {
-                    ActiveSpanManager.activate(exchange, new OpenTracingSpanAdapter(processorSpan, scope));
-                }
+            if (activateExchange) {
+                ActiveSpanManager.activate(exchange, new OpenTracingSpanAdapter(processorSpan));
+            }
 
+            try (Scope scope = tracer.getTracer().scopeManager().activate(processorSpan, false)) {
                 target.process(exchange);
             } catch (Exception ex) {
                 processorSpan.log(errorLogs(ex));
