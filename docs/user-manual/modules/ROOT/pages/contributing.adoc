@@ -6,10 +6,10 @@ Here are some guidelines on how to best approach the Apache Camel community and 
 
 There are many ways you can help make Camel better - please dive in and help!
 
-* Try surf the documentation - if somethings confusing or not clear, let us know.
+* Try surf the documentation - if some things are confusing or not clear, let us know.
 * Download the code & try it out and see what you think.
 * Browse the source code. Got an itch to scratch, want to tune some operation or add some feature?
-* Want to do some hacking on Camel? Try surfing the our https://issues.apache.org/jira/browse/CAMEL[issue tracker] for open issues or features that need to be implemented, take ownership of an issue and try fix it.
+* Want to do some hacking on Camel? Try surfing our https://issues.apache.org/jira/browse/CAMEL[issue tracker] for open issues or features that need to be implemented. Take ownership of an issue and try to fix it.
 * If you are a new Camel rider and would like to help us, you can also find https://issues.apache.org/jira/issues/?filter=12348073[some easy to resolve issues] or issues we https://issues.apache.org/jira/issues/?filter=12348074[need help with].
 * Leave a comment on the issue to let us know you are working on it and add yourself as a watcher to get informed about all modifications.
 
@@ -17,7 +17,7 @@ Identify areas you can contribute first. You don't have to be an expert in an ar
 
 Introduce yourself on the developer's mailing list (see below), tell us what area of work or problem you wish to address in Camel. Create a draft of your solution, this can be simple 1-2 sentences on the change you wish to make. Try to be as specific as you can: include a short description of your intent, what you tried and what didn't work, or what you need help with. The best way of approaching the developers is by describing what you would like to work on and asking specific questions on how to get started. We'll do our best to guide you and help you make your contribution. 
 
-We also participate in Google Summer of Code and Outreachy programs, for information about those look at those program websites. If you wish to participate in either of those follow the guidelines and schedule set by those programs. If you're unsure please reach out via official communication channels of those programs, or ask on the developer's mailing list for help.
+We also participate in Google Summer of Code and Outreachy programs, for information about those look at those program websites. If you wish to participate in either of those follow the guidelines and schedule set by those programs. If you are unsure please reach out via official communication channels of those programs, or ask on the developer's mailing list for help.
 
 == Table of Contents
 
@@ -51,7 +51,7 @@ We can also be reached on the Zulip chat at https://camel.zulipchat.com.
 
 We track issues using https://issues.apache.org/jira/browse/CAMEL[ASF Jira], look for https://issues.apache.org/jira/issues/?filter=12348073[some easy to resolve issues] or issues we https://issues.apache.org/jira/issues/?filter=12348074[need help with].
 
-When you're ready to contribute create a Pull request to one of the Camel projects you can find under the Apache organization https://github.com/apache?q=camel[on GitHub].
+After you're ready to contribute create a Pull request to one of the Camel projects you can find under the Apache organization https://github.com/apache?q=camel[on GitHub].
 
 Expect that your Pull request will receive a review and that you will need to respond and correspond to that via comments at GitHub.
 
