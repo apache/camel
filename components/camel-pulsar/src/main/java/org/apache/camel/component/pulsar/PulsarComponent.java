@@ -32,7 +32,7 @@ public class PulsarComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private AutoConfiguration autoConfiguration;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", autowired = true)
     private PulsarClient pulsarClient;
     @Metadata(label = "consumer,advanced")
     private PulsarMessageReceiptFactory pulsarMessageReceiptFactory = new DefaultPulsarMessageReceiptFactory();
