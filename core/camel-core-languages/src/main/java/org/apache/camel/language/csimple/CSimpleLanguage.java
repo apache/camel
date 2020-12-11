@@ -68,11 +68,8 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
 
     /**
      * For 100% pre-compiled use cases
-     *
-     * @param compiled the compiled
      */
-    private CSimpleLanguage(
-                            Map<String, CSimpleExpression> compiledPredicates,
+    private CSimpleLanguage(Map<String, CSimpleExpression> compiledPredicates,
                             Map<String, CSimpleExpression> compiledExpressions) {
         this.compiledPredicates = compiledPredicates;
         this.compiledExpressions = compiledExpressions;
@@ -140,6 +137,7 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
         if (answer == null && compilationSupport != null) {
             CSimpleExpression exp = compilationSupport.compilePredicate(getCamelContext(), expression);
             if (exp != null) {
+                exp.init(getCamelContext());
                 compiledPredicates.put(text, exp);
                 answer = exp;
             }
@@ -174,6 +172,7 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
         if (answer == null && compilationSupport != null) {
             CSimpleExpression exp = compilationSupport.compileExpression(getCamelContext(), expression);
             if (exp != null) {
+                exp.init(getCamelContext());
                 compiledExpressions.put(text, exp);
                 answer = exp;
             }
@@ -295,6 +294,7 @@ public class CSimpleLanguage extends LanguageSupport implements StaticService {
                         Class<CSimpleExpression> clazz
                                 = ecc.getClassResolver().resolveMandatoryClass(fqn, CSimpleExpression.class);
                         CSimpleExpression ce = clazz.getConstructor().newInstance();
+                        ce.init(getCamelContext());
                         if (ce.isPredicate()) {
                             compiledPredicates.put(ce.getText(), ce);
                         } else {

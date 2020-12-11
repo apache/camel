@@ -83,6 +83,7 @@ public class CSimpleCodeGenerator {
         sb.append("\n");
         sb.append("import org.apache.camel.*;\n");
         sb.append("import org.apache.camel.util.*;\n");
+        sb.append("import org.apache.camel.spi.*;\n");
         sb.append("import static org.apache.camel.language.csimple.CSimpleHelper.*;\n");
         sb.append("\n");
         // custom imports
@@ -96,7 +97,8 @@ public class CSimpleCodeGenerator {
         sb.append("\n");
         sb.append("public class ").append(name).append(" extends org.apache.camel.language.csimple.CSimpleSupport {\n");
         sb.append("\n");
-
+        sb.append("    Language bean;\n");
+        sb.append("\n");
         sb.append("    public ").append(name).append("() {\n");
         sb.append("    }\n");
         sb.append("\n");
@@ -147,6 +149,17 @@ public class CSimpleCodeGenerator {
         }
         sb.append("\n");
         sb.append("    }\n");
+
+        // only resolve bean language if we use it as camel-bean must then be on the classpath
+        if (script.contains("bean(exchange, bean,")) {
+            sb.append("\n");
+            sb.append("    @Override\n");
+            sb.append("    public void init(CamelContext context) {\n");
+            sb.append("        bean = context.resolveLanguage(\"bean\");\n");
+            sb.append("    }\n");
+            sb.append("\n");
+        }
+
         sb.append("}\n");
         sb.append("\n");
 
