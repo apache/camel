@@ -42,6 +42,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     private final NettyProducer producer;
     private volatile boolean messageReceived;
     private volatile boolean exceptionHandled;
+    private volatile boolean disconnecting;
 
     public ClientChannelHandler(NettyProducer producer) {
         this.producer = producer;
@@ -54,6 +55,11 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
         // to keep track of open sockets
         producer.getAllChannels().add(ctx.channel());
+
+        // reset flags
+        disconnecting = false;
+        messageReceived = false;
+        exceptionHandled = false;
 
         super.channelActive(ctx);
     }
@@ -113,7 +119,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         // to keep track of open sockets
         producer.getAllChannels().remove(ctx.channel());
 
-        if (exchange != null) {
+        if (exchange != null && !disconnecting) {
             // this channel is maybe closing graceful and the exchange is already done
             // and if so we should not trigger an exception
             boolean doneUoW = exchange.getUnitOfWork() == null;
@@ -136,6 +142,9 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                 callback.done(false);
             }
         }
+
+        // reset flag as the channel has been disconnected (state is now inactive)
+        disconnecting = false;
 
         // make sure the event can be processed by other handlers
         super.channelInactive(ctx);
@@ -210,6 +219,8 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Closing channel when complete at address: {}", producer.getConfiguration().getAddress());
                 }
+                // flag to know we are forcing a disconnect
+                disconnecting = true;
                 NettyHelper.close(ctx.channel());
             }
         } finally {
