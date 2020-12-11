@@ -23,6 +23,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <!-- START SNIPPET: e1 -->
+  <!-- tag::e1[] -->
 
   <!-- bridge spring property placeholder with Camel -->
   <!-- you must NOT use the <context:property-placeholder at the same time, only this bridge bean -->
@@ -30,9 +31,11 @@
     <property name="location" value="classpath:org/apache/camel/component/properties/cheese.properties"/>
   </bean>
 
+  <!-- end::e1[] -->
   <!-- END SNIPPET: e1 -->
 
   <!-- START SNIPPET: e2 -->
+  <!-- tag::e2[] -->
 
   <!-- a bean that uses Spring property placeholder -->
   <!-- the ${hi} is a spring property placeholder -->
@@ -49,6 +52,7 @@
     </route>
   </camelContext>
 
+  <!-- end::e2[] -->
   <!-- END SNIPPET: e2 -->
 
 </beans>
