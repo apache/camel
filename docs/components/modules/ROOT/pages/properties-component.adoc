@@ -613,16 +613,22 @@ type.
 
 To bridge Spring and Camel you must define a single bean as shown below:
 
-*Bridging Spring and Camel property placeholders*
+[source,xml]
+----
+include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/components/properties/CamelSpringPropertyPlaceholderConfigurerTest.xml[tags=e1]
+----
 
-You *must not* use the spring <context:property-placeholder> namespace
+You *must not* use the spring `<context:property-placeholder>` namespace
 at the same time; this is not possible.
 
 After declaring this bean, you can define property placeholders using
-both the Spring style, and the Camel style within the <camelContext> tag
+both the Spring style, and the Camel style within the `<camelContext>` tag
 as shown below:
 
-*Using bridge property placeholders*
+[source,xml]
+----
+include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/components/properties/CamelSpringPropertyPlaceholderConfigurerTest.xml[tags=e2]
+----
 
 Notice how the hello bean is using pure Spring property placeholders
 using the `${ }` notation. And in the Camel routes we use the Camel
