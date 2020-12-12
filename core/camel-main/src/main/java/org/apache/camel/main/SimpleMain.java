@@ -53,7 +53,7 @@ public class SimpleMain extends BaseMainSupport {
             listener.beforeStop(this);
         }
 
-        super.doStart();
+        super.doStop();
 
         getCamelContext().stop();
 
