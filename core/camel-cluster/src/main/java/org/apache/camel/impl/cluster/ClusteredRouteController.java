@@ -27,11 +27,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Experimental;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -47,7 +45,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Experimental
+/**
+ * Clustered {@link org.apache.camel.spi.RouteController}.
+ */
 public class ClusteredRouteController extends DefaultRouteController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusteredRouteController.class);
 
@@ -212,78 +212,6 @@ public class ClusteredRouteController extends DefaultRouteController {
         }
 
         super.setCamelContext(camelContext);
-    }
-
-    // *******************************
-    // Route operations are disabled
-    // *******************************
-
-    @Override
-    public void startRoute(String routeId) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.startRoute(routeId);
-    }
-
-    @Override
-    public void stopRoute(String routeId) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.stopRoute(routeId);
-    }
-
-    @Override
-    public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.stopRoute(routeId, timeout, timeUnit);
-    }
-
-    @Override
-    public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        return super.stopRoute(routeId, timeout, timeUnit, abortAfterTimeout);
-    }
-
-    @Override
-    public void suspendRoute(String routeId) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.suspendRoute(routeId);
-    }
-
-    @Override
-    public void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.suspendRoute(routeId, timeout, timeUnit);
-    }
-
-    @Override
-    public void resumeRoute(String routeId) throws Exception {
-        failIfClustered(routeId);
-
-        // Delegate to default impl.
-        super.resumeRoute(routeId);
-    }
-
-    // *******************************
-    // Helpers
-    // *******************************
-
-    private void failIfClustered(String routeId) {
-        // Can't perform action on routes managed by this controller as they
-        // are clustered and they may be part of the same view.
-        if (routes.contains(routeId)) {
-            throw new UnsupportedOperationException("Operation not supported as route " + routeId + " is clustered");
-        }
     }
 
     // *******************************
