@@ -36,6 +36,7 @@
         <firstVersion>3.2.0</firstVersion>
         <label>core</label>
         <camel-prepare-component>false</camel-prepare-component>
+        <supportLevel>preview</supportLevel>
     </properties>
 
     <dependencies>
