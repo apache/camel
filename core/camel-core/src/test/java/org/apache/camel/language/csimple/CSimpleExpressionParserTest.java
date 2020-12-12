@@ -109,15 +109,15 @@ public class CSimpleExpressionParserTest {
         CSimpleExpressionParser parser = new CSimpleExpressionParser();
 
         String code = parser.parseExpression("${bean:foo}");
-        Assertions.assertEquals("bean(exchange, \"foo\", null, null)", code);
+        Assertions.assertEquals("bean(exchange, bean, \"foo\", null, null)", code);
         code = parser.parseExpression("${bean:foo?method=bar}");
-        Assertions.assertEquals("bean(exchange, \"foo\", \"bar\", null)", code);
+        Assertions.assertEquals("bean(exchange, bean, \"foo\", \"bar\", null)", code);
         code = parser.parseExpression("${bean:foo?method=bar(123, true)}");
-        Assertions.assertEquals("bean(exchange, \"foo\", \"bar(123, true)\", null)", code);
+        Assertions.assertEquals("bean(exchange, bean, \"foo\", \"bar(123, true)\", null)", code);
         code = parser.parseExpression("${bean:foo::bar}");
-        Assertions.assertEquals("bean(exchange, \"foo\", \"bar\", null)", code);
+        Assertions.assertEquals("bean(exchange, bean, \"foo\", \"bar\", null)", code);
         code = parser.parseExpression("${bean:foo?method=bar&scope=Prototype}");
-        Assertions.assertEquals("bean(exchange, \"foo\", \"bar\", \"Prototype\")", code);
+        Assertions.assertEquals("bean(exchange, bean, \"foo\", \"bar\", \"Prototype\")", code);
     }
 
     @Test
