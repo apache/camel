@@ -230,8 +230,8 @@ public interface AzureEventhubsComponentBuilderFactory {
          * of the partition will start from {link EventPosition#latest() latest}
          * position.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * com.azure.messaging.eventhubs.models.EventPosition></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * com.azure.messaging.eventhubs.models.EventPosition&gt;</code> type.
          * 
          * Group: consumer
          */

@@ -90,7 +90,8 @@ public interface GoogleDriveComponentBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          */

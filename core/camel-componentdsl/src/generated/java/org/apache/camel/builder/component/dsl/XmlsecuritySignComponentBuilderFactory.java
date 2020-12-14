@@ -162,8 +162,8 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * org.jcp.xml.dsig.validateManifests
          * javax.xml.crypto.dsig.cacheReference.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: producer
          */
@@ -443,7 +443,8 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * the transform methods.
          * 
          * The option is a:
-         * <code>java.util.List<javax.xml.crypto.AlgorithmMethod></code> type.
+         * <code>java.util.List&lt;javax.xml.crypto.AlgorithmMethod&gt;</code>
+         * type.
          * 
          * Group: producer
          */
@@ -467,7 +468,7 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * configuration.
          * 
          * The option is a:
-         * <code>java.util.List<javax.xml.crypto.dsig.spec.XPathFilterParameterSpec></code> type.
+         * <code>java.util.List&lt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&gt;</code> type.
          * 
          * Group: producer
          */

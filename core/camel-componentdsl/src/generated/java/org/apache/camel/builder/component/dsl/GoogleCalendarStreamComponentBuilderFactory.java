@@ -174,7 +174,8 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/calendar/auth for more info.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: consumer
          */

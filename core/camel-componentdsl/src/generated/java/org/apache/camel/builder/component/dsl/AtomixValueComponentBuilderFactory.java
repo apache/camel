@@ -102,8 +102,7 @@ public interface AtomixValueComponentBuilderFactory {
          * The nodes the AtomixClient should connect to.
          * 
          * The option is a:
-         * <code>java.util.List<io.atomix.catalyst.transport.Address></code>
-         * type.
+         * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
          * 
          * Group: common
          */
@@ -260,8 +259,8 @@ public interface AtomixValueComponentBuilderFactory {
         /**
          * Cluster wide resources configuration.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.util.Properties></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.util.Properties&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -273,8 +272,8 @@ public interface AtomixValueComponentBuilderFactory {
         /**
          * Local resources configurations.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.util.Properties></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.util.Properties&gt;</code> type.
          * 
          * Group: advanced
          */

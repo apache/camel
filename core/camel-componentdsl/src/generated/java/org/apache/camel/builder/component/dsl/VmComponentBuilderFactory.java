@@ -167,7 +167,7 @@ public interface VmComponentBuilderFactory {
          * Sets the default queue factory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange></code> type.
+         * <code>org.apache.camel.component.seda.BlockingQueueFactory&lt;org.apache.camel.Exchange&gt;</code> type.
          * 
          * Group: advanced
          */

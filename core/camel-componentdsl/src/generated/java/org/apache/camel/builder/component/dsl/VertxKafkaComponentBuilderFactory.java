@@ -56,10 +56,10 @@ public interface VertxKafkaComponentBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: common
          */
@@ -72,8 +72,8 @@ public interface VertxKafkaComponentBuilderFactory {
          * A list of host/port pairs to use for establishing the initial
          * connection to the Kafka cluster. The client will make use of all
          * servers irrespective of which servers are specified here for
-         * bootstrapping&mdash;this list only impacts the initial hosts used to
-         * discover the full set of servers. This list should be in the form
+         * bootstrapping&amp;mdash;this list only impacts the initial hosts used
+         * to discover the full set of servers. This list should be in the form
          * host1:port1,host2:port2,.... Since these servers are just used for
          * the initial connection to discover the full cluster membership (which
          * may change dynamically), this list need not contain the full set of
@@ -956,11 +956,11 @@ public interface VertxKafkaComponentBuilderFactory {
          * sent out. However in some circumstances the client may want to reduce
          * the number of requests even under moderate load. This setting
          * accomplishes this by adding a small amount of artificial
-         * delay&mdash;that is, rather than immediately sending out a record the
-         * producer will wait for up to the given delay to allow other records
-         * to be sent so that the sends can be batched together. This can be
-         * thought of as analogous to Nagle's algorithm in TCP. This setting
-         * gives the upper bound on the delay for batching: once we get
+         * delay&amp;mdash;that is, rather than immediately sending out a record
+         * the producer will wait for up to the given delay to allow other
+         * records to be sent so that the sends can be batched together. This
+         * can be thought of as analogous to Nagle's algorithm in TCP. This
+         * setting gives the upper bound on the delay for batching: once we get
          * batch.size worth of records for a partition it will be sent
          * immediately regardless of this setting, however if we have fewer than
          * this many bytes accumulated for this partition we will 'linger' for

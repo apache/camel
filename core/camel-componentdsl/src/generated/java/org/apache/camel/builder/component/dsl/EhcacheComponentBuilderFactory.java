@@ -235,8 +235,8 @@ public interface EhcacheComponentBuilderFactory {
         /**
          * A map of cache configuration to be used to create caches.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * org.ehcache.config.CacheConfiguration></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */

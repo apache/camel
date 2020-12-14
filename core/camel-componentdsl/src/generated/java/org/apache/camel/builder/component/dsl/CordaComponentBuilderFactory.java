@@ -139,8 +139,7 @@ public interface CordaComponentBuilderFactory {
          * free.
          * 
          * The option is a:
-         * <code>java.lang.Class<net.corda.core.contracts.ContractState></code>
-         * type.
+         * <code>java.lang.Class&lt;net.corda.core.contracts.ContractState&gt;</code> type.
          * 
          * Group: consumer (advanced)
          */
@@ -171,7 +170,7 @@ public interface CordaComponentBuilderFactory {
          * net.corda.core.flows.StartableByRPC.
          * 
          * The option is a:
-         * <code>java.lang.Class<net.corda.core.flows.FlowLogic<java.lang.Object>></code> type.
+         * <code>java.lang.Class&lt;net.corda.core.flows.FlowLogic&lt;java.lang.Object&gt;&gt;</code> type.
          * 
          * Group: consumer (advanced)
          */

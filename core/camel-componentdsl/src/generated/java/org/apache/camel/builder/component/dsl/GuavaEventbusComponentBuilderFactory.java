@@ -87,7 +87,8 @@ public interface GuavaEventbusComponentBuilderFactory {
          * creating multi-event listeners and for handling DeadEvent properly.
          * This option cannot be used together with eventClass option.
          * 
-         * The option is a: <code>java.lang.Class<java.lang.Object></code> type.
+         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
+         * type.
          * 
          * Group: consumer
          */

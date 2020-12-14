@@ -49,7 +49,8 @@ public interface Web3jComponentBuilderFactory {
         /**
          * Contract address or a list of addresses.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          */
@@ -124,7 +125,8 @@ public interface Web3jComponentBuilderFactory {
         /**
          * A transaction privateFor nodes with public keys in a Quorum network.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: common
          */

@@ -52,10 +52,10 @@ public interface KafkaComponentBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: common
          */
@@ -489,8 +489,8 @@ public interface KafkaComponentBuilderFactory {
          * autocommit.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.StateRepository<java.lang.String,
-         * java.lang.String></code> type.
+         * <code>org.apache.camel.spi.StateRepository&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: consumer
          */

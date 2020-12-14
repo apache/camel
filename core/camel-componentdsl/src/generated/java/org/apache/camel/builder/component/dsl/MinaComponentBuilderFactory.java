@@ -366,7 +366,7 @@ public interface MinaComponentBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * <code>java.util.List<org.apache.mina.core.filterchain.IoFilter></code> type.
+         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
          * 
          * Group: codec
          */

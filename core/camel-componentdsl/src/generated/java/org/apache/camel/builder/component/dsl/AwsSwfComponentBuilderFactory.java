@@ -260,8 +260,8 @@ public interface AwsSwfComponentBuilderFactory {
          * To configure the ClientConfiguration using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -274,8 +274,8 @@ public interface AwsSwfComponentBuilderFactory {
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -288,8 +288,8 @@ public interface AwsSwfComponentBuilderFactory {
          * To configure the AmazonSimpleWorkflowClient using the key/values from
          * the Map.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          */
