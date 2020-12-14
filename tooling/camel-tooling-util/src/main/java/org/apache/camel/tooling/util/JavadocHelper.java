@@ -118,4 +118,23 @@ public final class JavadocHelper {
         s = s.replaceAll("\\\\(http:|https:)", "$1");
         return s.trim();
     }
+
+    /**
+     * Encodes the text into safe XML by replacing < > and & with XML tokens
+     *
+     * @param  text the text
+     * @return      the encoded text
+     */
+    public static String xmlEncode(String text) {
+        if (text == null) {
+            return "";
+        }
+        // must replace amp first, so we dont replace &lt; to amp later
+        text = text.replace("&", "&amp;");
+        text = text.replace("\"", "&quot;");
+        text = text.replace("<", "&lt;");
+        text = text.replace(">", "&gt;");
+        return text;
+    }
+
 }

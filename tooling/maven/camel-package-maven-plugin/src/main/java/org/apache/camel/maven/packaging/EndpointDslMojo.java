@@ -48,6 +48,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tooling.util.srcgen.GenericType;
@@ -466,7 +467,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     }
                     // include default value (if any)
                     if (option.getDefaultValue() != null) {
-                        baseDesc += "\nDefault: " + option.getDefaultValue();
+                        // must xml encode default value so its valid as javadoc
+                        String value = JavadocHelper.xmlEncode(option.getDefaultValue().toString());
+                        baseDesc += "\nDefault: " + value;
                     }
                     baseDesc += "\nGroup: " + option.getGroup();
                 }
