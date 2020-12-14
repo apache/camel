@@ -139,10 +139,10 @@ public interface AtlasMapEndpointBuilderFactory {
         }
         /**
          * The Exchange property name for a source message map which hold
-         * java.util.Map&lt;String, Message&gt; where the key is AtlasMap
-         * Document ID. AtlasMap consumes Message bodies as source documents, as
-         * well as message headers as source properties where the scope equals
-         * to Document ID.
+         * java.util.Map&amp;lt;String, Message&amp;gt; where the key is
+         * AtlasMap Document ID. AtlasMap consumes Message bodies as source
+         * documents, as well as message headers as source properties where the
+         * scope equals to Document ID.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -191,7 +191,7 @@ public interface AtlasMapEndpointBuilderFactory {
         }
         /**
          * The Exchange property name for a target document map which hold
-         * java.util.Map&lt;String, Object&gt; where the key is AtlasMap
+         * java.util.Map&amp;lt;String, Object&amp;gt; where the key is AtlasMap
          * Document ID. AtlasMap populates multiple target documents into this
          * map.
          * 

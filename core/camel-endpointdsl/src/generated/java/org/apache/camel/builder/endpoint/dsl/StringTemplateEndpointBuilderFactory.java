@@ -136,7 +136,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
-         * Default: <
+         * Default: &lt;
          * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStart(char delimiterStart) {
@@ -148,7 +148,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
-         * Default: <
+         * Default: &lt;
          * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStart(
@@ -161,7 +161,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
-         * Default: >
+         * Default: &gt;
          * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStop(char delimiterStop) {
@@ -173,7 +173,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
-         * Default: >
+         * Default: &gt;
          * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStop(String delimiterStop) {
