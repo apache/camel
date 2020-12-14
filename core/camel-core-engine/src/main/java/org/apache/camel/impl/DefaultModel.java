@@ -78,7 +78,10 @@ public class DefaultModel implements Model {
 
     @Override
     public void addModelLifecycleStrategy(ModelLifecycleStrategy modelLifecycleStrategy) {
-        this.modelLifecycleStrategies.add(modelLifecycleStrategy);
+        // avoid adding double which can happen with spring xml on spring boot
+        if (!this.modelLifecycleStrategies.contains(modelLifecycleStrategy)) {
+            this.modelLifecycleStrategies.add(modelLifecycleStrategy);
+        }
     }
 
     @Override
