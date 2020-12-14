@@ -103,30 +103,29 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         rawPayload = endpoint.getConfiguration().isRawPayload();
 
-        if (rawPayload) {
-            return;
-        }
-
         // get sObjectClass to convert to
-        final String sObjectName = endpoint.getConfiguration().getSObjectName();
-        if (sObjectName != null) {
-            sObjectClass = endpoint.getComponent().getClassMap().get(sObjectName);
-            if (sObjectClass == null) {
-                throw new IllegalArgumentException(String.format("SObject Class not found for %s", sObjectName));
-            }
-        } else {
-            final String className = endpoint.getConfiguration().getSObjectClass();
-            if (className != null) {
-                sObjectClass = endpoint.getComponent().getCamelContext().getClassResolver().resolveClass(className);
+        if (!rawPayload) {
+            final String sObjectName = endpoint.getConfiguration().getSObjectName();
+            if (sObjectName != null) {
+                sObjectClass = endpoint.getComponent().getClassMap().get(sObjectName);
                 if (sObjectClass == null) {
-                    throw new IllegalArgumentException(String.format("SObject Class not found %s", className));
+                    throw new IllegalArgumentException(String.format("SObject Class not found for %s", sObjectName));
                 }
             } else {
-                LOG.warn("Property sObjectName or sObjectClass NOT set, messages will be of type java.lang.Map");
-                sObjectClass = null;
+                final String className = endpoint.getConfiguration().getSObjectClass();
+                if (className != null) {
+                    sObjectClass = endpoint.getComponent().getCamelContext().getClassResolver().resolveClass(className);
+                    if (sObjectClass == null) {
+                        throw new IllegalArgumentException(String.format("SObject Class not found %s", className));
+                    }
+                } else {
+                    LOG.warn("Property sObjectName or sObjectClass NOT set, messages will be of type java.lang.Map");
+                    sObjectClass = null;
+                }
             }
+        } else {
+            sObjectClass = null;
         }
-
     }
 
     public String getTopicName() {
