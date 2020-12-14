@@ -889,7 +889,7 @@ public class SipConfiguration {
     }
 
     /**
-     * This setting is used to distinguish between a Presence Agent & a consumer. This is due to the fact that the SIP
+     * This setting is used to distinguish between a Presence Agent and a consumer. This is due to the fact that the SIP
      * Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to
      * true.
      */

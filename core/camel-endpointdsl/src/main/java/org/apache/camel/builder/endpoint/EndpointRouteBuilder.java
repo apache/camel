@@ -36,7 +36,7 @@ public abstract class EndpointRouteBuilder extends RouteBuilder implements Endpo
      * Add routes to a context using a lambda expression. It can be used as following:
      * 
      * <pre>
-     * RouteBuilder.addRoutes(context, rb ->
+     * RouteBuilder.addRoutes(context, rb -&gt;
      *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
      * </pre>
      *
