@@ -1953,7 +1953,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addLifecycleStrategy(LifecycleStrategy lifecycleStrategy) {
-        getLifecycleStrategies().add(lifecycleStrategy);
+        // avoid adding double which can happen with spring xml on spring boot
+        if (!getLifecycleStrategies().contains(lifecycleStrategy)) {
+            getLifecycleStrategies().add(lifecycleStrategy);
+        }
     }
 
     @Override
@@ -1993,7 +1996,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
-        getInterceptStrategies().add(interceptStrategy);
+        // avoid adding double which can happen with spring xml on spring boot
+        if (!getInterceptStrategies().contains(interceptStrategy)) {
+            getInterceptStrategies().add(interceptStrategy);
+        }
     }
 
     @Override
@@ -2007,7 +2013,10 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addRoutePolicyFactory(RoutePolicyFactory routePolicyFactory) {
-        getRoutePolicyFactories().add(routePolicyFactory);
+        // avoid adding double which can happen with spring xml on spring boot
+        if (!getRoutePolicyFactories().contains(routePolicyFactory)) {
+            getRoutePolicyFactories().add(routePolicyFactory);
+        }
     }
 
     @Override
@@ -2020,7 +2029,10 @@ public abstract class AbstractCamelContext extends BaseService
         if (logListeners == null) {
             logListeners = new LinkedHashSet<>();
         }
-        logListeners.add(listener);
+        // avoid adding double which can happen with spring xml on spring boot
+        if (!logListeners.contains(listener)) {
+            logListeners.add(listener);
+        }
     }
 
     @Override
