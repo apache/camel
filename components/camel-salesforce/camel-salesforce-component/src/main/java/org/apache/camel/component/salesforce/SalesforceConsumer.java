@@ -103,6 +103,10 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         rawPayload = endpoint.getConfiguration().isRawPayload();
 
+        if (rawPayload) {
+            return;
+        }
+
         // get sObjectClass to convert to
         final String sObjectName = endpoint.getConfiguration().getSObjectName();
         if (sObjectName != null) {
