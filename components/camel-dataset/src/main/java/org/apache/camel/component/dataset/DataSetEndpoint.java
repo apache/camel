@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provide data for load & soak testing of your Camel application.
+ * Provide data for load and soak testing of your Camel application.
  *
  * It works by allowing you to create DataSet instances both as a source of messages and as a way to assert that the
  * data set is received. Camel will use the throughput logger when sending dataset's.

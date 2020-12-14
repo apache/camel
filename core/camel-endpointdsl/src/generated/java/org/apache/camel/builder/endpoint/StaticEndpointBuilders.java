@@ -4188,7 +4188,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Dataset (camel-dataset)
-     * Provide data for load & soak testing of your Camel application.
+     * Provide data for load and soak testing of your Camel application.
      * 
      * Category: core,testing
      * Since: 1.3
@@ -4207,7 +4207,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Dataset (camel-dataset)
-     * Provide data for load & soak testing of your Camel application.
+     * Provide data for load and soak testing of your Camel application.
      * 
      * Category: core,testing
      * Since: 1.3
@@ -8005,7 +8005,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JClouds (camel-jclouds)
-     * Interact with jclouds compute & blobstore service.
+     * Interact with jclouds compute and blobstore service.
      * 
      * Category: api,cloud,compute
      * Since: 2.9
@@ -8029,7 +8029,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * JClouds (camel-jclouds)
-     * Interact with jclouds compute & blobstore service.
+     * Interact with jclouds compute and blobstore service.
      * 
      * Category: api,cloud,compute
      * Since: 2.9
