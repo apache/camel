@@ -447,7 +447,7 @@ public interface RestEndpointBuilderFactory {
         /**
          * Query parameters for the HTTP service to call. The query parameters
          * can contain multiple parameters separated by ampersand such such as
-         * foo=123&bar=456.
+         * foo=123&amp;bar=456.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
