@@ -20,6 +20,6 @@ package org.apache.camel.test.infra.aws2.services;
 public class AWSSQSLocalContainerService extends AWSLocalContainerService {
 
     public AWSSQSLocalContainerService() {
-        super("localstack/localstack:0.12.2", Service.SQS);
+        super("localstack/localstack:0.12.3", Service.SQS);
     }
 }
