@@ -376,8 +376,8 @@ public interface InfinispanComponentBuilderFactory {
         /**
          * Implementation specific properties for the CacheManager.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.String></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: advanced
          */

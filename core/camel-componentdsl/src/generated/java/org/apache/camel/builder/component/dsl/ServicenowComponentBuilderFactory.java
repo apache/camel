@@ -235,8 +235,8 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Defines both request and response models.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Class<java.lang.Object>></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
          * Group: producer
          */
@@ -277,8 +277,8 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Defines the request model.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Class<java.lang.Object>></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
          * Group: producer
          */
@@ -302,8 +302,8 @@ public interface ServicenowComponentBuilderFactory {
         /**
          * Defines the response model.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Class<java.lang.Object>></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Class&lt;java.lang.Object&gt;&gt;</code> type.
          * 
          * Group: producer
          */

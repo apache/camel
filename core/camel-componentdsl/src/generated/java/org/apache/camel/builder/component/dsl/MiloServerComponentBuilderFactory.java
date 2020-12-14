@@ -271,7 +271,7 @@ public interface MiloServerComponentBuilderFactory {
          * Security policies.
          * 
          * The option is a:
-         * <code>java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy></code> type.
+         * <code>java.util.Set&lt;org.eclipse.milo.opcua.stack.core.security.SecurityPolicy&gt;</code> type.
          * 
          * Group: security
          */

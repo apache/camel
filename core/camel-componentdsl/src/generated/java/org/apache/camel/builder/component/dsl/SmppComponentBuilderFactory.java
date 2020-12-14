@@ -554,8 +554,8 @@ public interface SmppComponentBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.String></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: proxy
          */

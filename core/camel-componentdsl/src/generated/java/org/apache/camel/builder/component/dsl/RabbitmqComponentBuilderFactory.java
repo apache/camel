@@ -385,8 +385,8 @@ public interface RabbitmqComponentBuilderFactory {
          * Map of additional headers. These headers will be set only when the
          * 'allowCustomHeaders' is set to true.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: producer
          */
@@ -402,8 +402,8 @@ public interface RabbitmqComponentBuilderFactory {
          * Any other keys will be ignored. When the message already contains
          * these headers they will be given precedence over these properties.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: producer
          */
@@ -557,8 +557,8 @@ public interface RabbitmqComponentBuilderFactory {
          * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -620,8 +620,8 @@ public interface RabbitmqComponentBuilderFactory {
          * Connection client properties (client info used in negotiating with
          * the server).
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          */

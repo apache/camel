@@ -76,8 +76,8 @@ public interface WordpressComponentBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: common
          */

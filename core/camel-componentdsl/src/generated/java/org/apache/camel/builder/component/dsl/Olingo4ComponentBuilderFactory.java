@@ -106,8 +106,8 @@ public interface Olingo4ComponentBuilderFactory {
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.String></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
          * 
          * Group: common
          */

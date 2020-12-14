@@ -319,7 +319,8 @@ public interface ConsulComponentBuilderFactory {
         /**
          * The note meta-data to use for queries.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: advanced
          */
