@@ -23,6 +23,7 @@ import javax.annotation.Generated;
 import org.apache.camel.maven.packaging.ComponentDslMojo;
 import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.apache.camel.tooling.util.JavadocHelper;
 import org.apache.camel.tooling.util.srcgen.JavaClass;
 import org.apache.camel.tooling.util.srcgen.Method;
 
@@ -111,6 +112,8 @@ public final class ComponentDslBuilderFactoryGenerator {
         if (!componentModel.getDescription().isEmpty()) {
             doc = componentModel.getDescription() + "\n\n" + doc;
         }
+        // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
+        doc = JavadocHelper.xmlEncode(doc);
         javaClass.getJavaDoc().setText(doc);
     }
 
