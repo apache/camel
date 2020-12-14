@@ -2,7 +2,7 @@
 = JClouds Component
 :docTitle: JClouds
 :artifactId: camel-jclouds
-:description: Interact with jclouds compute & blobstore service.
+:description: Interact with jclouds compute and blobstore service.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
