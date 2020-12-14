@@ -448,6 +448,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 // basic description
                 String baseDesc = option.getDescription();
                 if (!Strings.isEmpty(baseDesc)) {
+                    // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
+                    baseDesc = JavadocHelper.xmlEncode(baseDesc);
+
                     if (!baseDesc.endsWith(".")) {
                         baseDesc += ".";
                     }
