@@ -138,6 +138,9 @@ public final class ComponentDslBuilderFactoryGenerator {
             method.addAnnotation(Deprecated.class);
         }
 
-        method.getJavaDoc().setFullText(DslHelper.getMainDescriptionWithoutPathOptions(componentModel));
+        String doc = DslHelper.getMainDescriptionWithoutPathOptions(componentModel);
+        // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
+        doc = JavadocHelper.xmlEncode(doc);
+        method.getJavaDoc().setText(doc);
     }
 }
