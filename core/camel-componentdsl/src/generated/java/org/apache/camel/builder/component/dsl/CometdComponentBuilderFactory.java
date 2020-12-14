@@ -112,7 +112,7 @@ public interface CometdComponentBuilderFactory {
          * incoming and outgoing requests.
          * 
          * The option is a:
-         * <code>java.util.List<org.cometd.bayeux.server.BayeuxServer.Extension></code> type.
+         * <code>java.util.List&lt;org.cometd.bayeux.server.BayeuxServer.Extension&gt;</code> type.
          * 
          * Group: advanced
          */

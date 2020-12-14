@@ -161,7 +161,8 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * https://developers.google.com/identity/protocols/googlescopes for
          * more info.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: consumer
          */

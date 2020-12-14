@@ -384,8 +384,8 @@ public interface JettyComponentBuilderFactory {
          * A map which contains general HTTP connector properties. Uses the same
          * principle as sslSocketConnectorProperties.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: security
          */
@@ -398,8 +398,8 @@ public interface JettyComponentBuilderFactory {
          * A map which contains per port number specific HTTP connectors. Uses
          * the same principle as sslSocketConnectors.
          * 
-         * The option is a: <code>java.util.Map<java.lang.Integer,
-         * org.eclipse.jetty.server.Connector></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.Integer,
+         * org.eclipse.jetty.server.Connector&gt;</code> type.
          * 
          * Group: security
          */
@@ -451,8 +451,8 @@ public interface JettyComponentBuilderFactory {
         /**
          * A map which contains general SSL connector properties.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: security
          */
@@ -464,8 +464,8 @@ public interface JettyComponentBuilderFactory {
         /**
          * A map which contains per port number specific SSL connectors.
          * 
-         * The option is a: <code>java.util.Map<java.lang.Integer,
-         * org.eclipse.jetty.server.Connector></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.Integer,
+         * org.eclipse.jetty.server.Connector&gt;</code> type.
          * 
          * Group: security
          */

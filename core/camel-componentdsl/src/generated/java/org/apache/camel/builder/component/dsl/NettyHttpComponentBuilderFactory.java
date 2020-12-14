@@ -708,8 +708,8 @@ public interface NettyHttpComponentBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          */
@@ -868,7 +868,8 @@ public interface NettyHttpComponentBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List<io.netty.channel.ChannelHandler></code> type.
+         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
+         * type.
          * 
          * Group: codec
          */
@@ -899,7 +900,8 @@ public interface NettyHttpComponentBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List<io.netty.channel.ChannelHandler></code> type.
+         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
+         * type.
          * 
          * Group: codec
          */

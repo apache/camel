@@ -148,7 +148,8 @@ public interface Aws2SesComponentBuilderFactory {
          * List of reply-to email address(es) for the message, override it using
          * 'CamelAwsSesReplyToAddresses' header.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: producer
          */
@@ -185,7 +186,8 @@ public interface Aws2SesComponentBuilderFactory {
          * List of destination email address. Can be overriden with
          * 'CamelAwsSesTo' header.
          * 
-         * The option is a: <code>java.util.List<java.lang.String></code> type.
+         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
+         * type.
          * 
          * Group: producer
          */

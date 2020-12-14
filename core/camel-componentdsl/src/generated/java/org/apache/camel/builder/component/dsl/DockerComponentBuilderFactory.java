@@ -234,8 +234,8 @@ public interface DockerComponentBuilderFactory {
         /**
          * Additional configuration parameters as key/value pairs.
          * 
-         * The option is a: <code>java.util.Map<java.lang.String,
-         * java.lang.Object></code> type.
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
          * 
          * Group: advanced
          */
