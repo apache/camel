@@ -4,7 +4,7 @@
 :page-source: components/camel-jclouds/src/main/docs/jclouds-component.adoc
 :docTitle: JClouds
 :artifactId: camel-jclouds
-:description: Interact with jclouds compute & blobstore service.
+:description: Interact with jclouds compute and blobstore service.
 :since: 2.9
 :supportLevel: Stable
 :component-header: Both producer and consumer are supported
