@@ -483,6 +483,8 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     String desc = baseDesc.replace("@@REPLACE_ME@@",
                             "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;")
                                                                      + "</code> type.");
+                    desc = JavadocHelper.xmlEncode(desc);
+
                     Method fluent = target.addMethod().setDefault().setName(option.getName())
                             .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                             .addParameter(new GenericType(String.class), "key")
@@ -493,7 +495,12 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     if (option.isDeprecated()) {
                         fluent.addAnnotation(Deprecated.class);
                     }
-                    fluent.getJavaDoc().setFullText(desc);
+
+                    String text = desc;
+                    text += "\n\n@param key the option key";
+                    text += "\n@param value the option value";
+                    text += "\n@return the dsl builder\n";
+                    fluent.getJavaDoc().setText(text);
                     // add multi value method that takes a Map
                     fluent = target.addMethod().setDefault().setName(option.getName())
                             .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
@@ -504,12 +511,17 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     if (option.isDeprecated()) {
                         fluent.addAnnotation(Deprecated.class);
                     }
-                    fluent.getJavaDoc().setFullText(desc);
+                    text = desc;
+                    text += "\n\n@param values the values";
+                    text += "\n@return the dsl builder\n";
+                    fluent.getJavaDoc().setText(text);
                 } else {
                     // regular option
                     String desc = baseDesc.replace("@@REPLACE_ME@@",
                             "\nThe option is a: <code>" + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;")
                                                                      + "</code> type.");
+                    desc = JavadocHelper.xmlEncode(desc);
+
                     Method fluent = target.addMethod().setDefault().setName(option.getName())
                             .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                             .addParameter(isPrimitive(ogtype.toString()) ? ogtype : gtype, option.getName())
@@ -518,13 +530,19 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     if (option.isDeprecated()) {
                         fluent.addAnnotation(Deprecated.class);
                     }
-                    fluent.getJavaDoc().setFullText(desc);
+                    String text = desc;
+                    text += "\n\n@param " + option.getName() + " the value to set";
+                    text += "\n@return the dsl builder\n";
+                    fluent.getJavaDoc().setText(text);
+
                     if (ogtype.getRawClass() != String.class) {
                         // regular option by String parameter variant
                         desc = baseDesc.replace("@@REPLACE_ME@@",
                                 "\nThe option will be converted to a <code>"
                                                                   + ogtype.toString().replace("<", "&lt;").replace(">", "&gt;")
                                                                   + "</code> type.");
+                        desc = JavadocHelper.xmlEncode(desc);
+
                         fluent = target.addMethod().setDefault().setName(option.getName())
                                 .setReturnType(new GenericType(loadClass(target.getCanonicalName())))
                                 .addParameter(new GenericType(String.class), option.getName())
@@ -533,7 +551,10 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                         if (option.isDeprecated()) {
                             fluent.addAnnotation(Deprecated.class);
                         }
-                        fluent.getJavaDoc().setFullText(desc);
+                        text = desc;
+                        text += "\n\n@param " + option.getName() + " the value to set";
+                        text += "\n@return the dsl builder\n";
+                        fluent.getJavaDoc().setText(text);
                     }
                 }
             }
